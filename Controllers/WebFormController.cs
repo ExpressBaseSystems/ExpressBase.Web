@@ -103,21 +103,8 @@ namespace ExpressBase.Web.Controllers
                 Operation = OperationConstants.EDIT;
             if (!this.HasPermission(RefId, Operation, CurrentLoc))
                 return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 });
-                //throw new FormException("Access Denied");
+
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            //int _CurrentLoc = this.LoggedInUser.Preference.DefaultLocation;
-            //if (!this.LoggedInUser.LocationIds.Contains(CurrentLoc))
-            //{
-            //    if (this.LoggedInUser.LocationIds.Contains(-1))
-            //    {
-            //        List<EbLocation> t = JsonConvert.DeserializeObject<List<EbLocation>>(ViewBag.Locations);
-            //        var temp = t.FirstOrDefault<EbLocation>(e => e.LocId == CurrentLoc);
-            //        if (temp != null)
-            //            _CurrentLoc = CurrentLoc;
-            //    }
-            //}
-            //else
-            //    _CurrentLoc = CurrentLoc;
             InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
                 new InsertDataFromWebformRequest
                 {
@@ -125,17 +112,15 @@ namespace ExpressBase.Web.Controllers
                     FormData = Values,
                     RowId = RowId,
                     CurrentLoc = CurrentLoc,
-                    UserObj = this.LoggedInUser,
-                    SolutionObj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid))
+                    UserObj = this.LoggedInUser
                 });
             return JsonConvert.SerializeObject(Resp);
-            //return 0;
         }
 
         public int DeleteWebformData(string RefId, int RowId, int CurrentLoc)
         {
             if (!this.HasPermission(RefId, OperationConstants.DELETE, CurrentLoc))
-                return -2; //throw new FormException("Access Denied");
+                return -2; //Access Denied
             DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
         }
@@ -143,7 +128,7 @@ namespace ExpressBase.Web.Controllers
         public int CancelWebformData(string RefId, int RowId, int CurrentLoc)
         {
             if (!this.HasPermission(RefId, OperationConstants.CANCEL, CurrentLoc))
-                return -2; //throw new FormException("Access Denied");
+                return -2; //Access Denied
             CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
         }

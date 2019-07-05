@@ -3,22 +3,24 @@
     string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
     string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
 }
-<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
-<script>
-    $('title').text("@console"+" Login");
-    function recaptchaCallback(token) {
-        if (token) {
-            document.getElementById("log_form").submit();
-            $(".loader_top").EbLoader("show");
+@section JavaScript{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+    <script>
+        $('title').text("@console"+" Login");
+        function recaptchaCallback(token) {
+            if (token) {
+                document.getElementById("log_form").submit();
+                $(".loader_top").EbLoader("show");
+            }
         }
-    }
-</script>
+    </script>
+}
 <section class="eb_login">
     <div class="container">
-        <div class="row" style="height:100%;display: flex;justify-content: center;align-items: center;">
+        <div class="row h-100" style="display: flex;justify-content: center;align-items: center;">
             <div class="col-md-5 col-lg-5 col-sm-12 col-xs-12 login_container_usr">
                 <div class="loader_top" id="loader_profile"></div>
-                <form id="log_form" action="~/Ext/TenantSignin" method="post" data-toggle="validator" role="form">
+                <form id="log_form" action="~/Ext/TenantSignin" method="post">
                     <div class="login-sec-image text-center">
                         <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
                     </div>
@@ -37,15 +39,14 @@
                         </div>
                         <div class="help-block with-errors"></div>
                     </div>
-                    <input type="hidden" name="reDir" value="@ViewBag.reDirectUrl" />
-                    <div class="form-group mb-25">
+                    @*<div class="form-group mb-25">
                         <div class="fpNdRemMe">
-                            <div class="rememberMe">
+                            @*<div class="rememberMe">
                                 <input type="checkbox" /> <span>Remember me</span>
                             </div>
-                            <a href="/ForgotPassword">Forgot password?</a>
+                            @*<a href="/ForgotPassword">Forgot password?</a>
                         </div>
-                    </div>
+                    </div>*@
                     <div class="form-group">
                         <button type="submit" id="logNow" class="btn signin-btn g-recaptcha w-100" data-sitekey=@ViewBag.ReCaptchaKey data-callback='recaptchaCallback'>
                             Sign In
@@ -89,13 +90,14 @@
         </div>
     </div>
 </section>
-<script>
-    $(document).ready(function () {
-        setTimeout(function () {
-            $('body').click();
-        }, 2000);
-        $('.Eb_Image').Lazy();
-        if ('@ViewBag.ErrorMsg')
-            EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
-    });
-</script>
+
+@section JsCode{
+    <script>
+        $(document).ready(function () {
+            $("#log_form").validator();
+            $('.Eb_Image').Lazy();
+            if ('@ViewBag.ErrorMsg')
+                EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
+        });
+    </script>
+}

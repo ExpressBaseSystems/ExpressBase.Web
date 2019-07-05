@@ -1,5 +1,4 @@
-﻿/*@import url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css);*/
-.field-icon {
+﻿.field-icon {
     right: 0;
     top: 15px;
     position: absolute;
@@ -143,15 +142,64 @@
         background-color: #4382f7;
         color: white;
     }
+/*.eb_required_group {
+    margin-right: -15px;
+    margin-left: -15px;
+}*/
+/* start css for radio button on card 3 in sign up page*/
+.ulradio {
+    margin: 0px;
+}
 
-
+.liradio {
+    color: #AAAAAA;
+    display: block;
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 100px;
+    border-radius: 4px;
+    border: 1px thin;
+    padding: 20px;
+    margin: 10px 0 10px 0;
+    cursor: pointer;
+    /*box-shadow: 2px 6px 6px rgba(0, 0, 0, .5);*/
+    -webkit-box-shadow: 0px 0px 0px 1px rgba(66,66,66,0.13);
+    -moz-box-shadow: 0px 0px 0px 1px rgba(66,66,66,0.13);
+    box-shadow: 0px 0px 0px 1px rgba(66,66,66,0.13);
+}
 
 .inptradio {
     position: absolute;
     visibility: hidden;
 }
 
-
+.lblradio {
+    display: block;
+    position: relative;
+    font-weight: 300;
+    font-size: 1.07em;
+    padding-left: 50px;
+    padding-top: 10px;
+    margin: 10px auto;
+    height: 30px;
+    z-index: 9;
+    cursor: pointer;
+    -webkit-transition: all 0.25s linear;
+}
+/*.lblradio:hover {
+        color: green;
+}*/
+.liradio:hover {
+    //color: black;
+    //font-size: 1.08em;
+    /*border-radius: 6px;
+    border: 6px thin;*/
+    /*box-shadow: 0px 2px 7px rgba(0, 0, 0, .5);*/
+    -webkit-box-shadow: 0px 0px 7px -3px rgba(0,0,0,1);
+    -moz-box-shadow: 0px 0px 7px -3px rgba(0,0,0,1);
+    box-shadow: 0px 0px 7px -3px rgba(0,0,0,1);
+}
 
 .checkradio {
     display: block;
@@ -233,13 +281,14 @@
         width: 0px;
         height: 0px;
         border-top: 10px solid transparent;
-        border-left: 10px solid #ffffff;
+        border-left: 10px solid #f5f5f5;
         border-bottom: 10px solid transparent;
         border-right: 10px solid transparent;
         position: absolute;
         left: 100%;
         top: 60%;
         margin-left: -2px;
+        
     }
 
 
@@ -347,7 +396,7 @@
 }
 */
 .txthighlightred:focus {
-    border-color: #a94442;
+    border-color: #fa6d72;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(169,68,66,.6);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(169,68,66,.6);
@@ -488,5 +537,85 @@ input {
     -webkit-border-radius: 27px;
 }
 
+/* facebook button class*/
+/*.facebookBtn {
+    background: #4060A5;
+}
+
+    .facebookBtn:before { use :before to add the relevant icons 
+        font-family: "FontAwesome";
+        content: "\f09a";  add facebook icon 
+    }
+
+    .facebookBtn:hover {
+        color: #4060A5;
+        background: #fff;
+        border-color: #4060A5; /* change the border color on mouse hover */
+    }
+
+/* twitter button class
+.twitterBtn {
+    background: #00ABE3;
+}
+
+    .twitterBtn:before {
+        font-family: "FontAwesome";
+        content: "\f099"; /* add twitter icon 
+    }
+
+    .twitterBtn:hover {
+        color: #00ABE3;
+        background: #fff;
+        border-color: #00ABE3;
+    }
+
+
+/* linkedin button class
+.linkedinBtn {
+    background: #0094BC;
+}
+
+    .linkedinBtn:before {
+        font-family: "FontAwesome";
+        content: "\f0e1";  add linkedin icon 
+    }
+
+    .linkedinBtn:hover {
+        color: #0094BC;
+        background: #fff;
+        border-color: #0094BC;
+    }
+
+/* pinterest button class
+.gmailBtn {
+    background: #cb2027;
+}
+
+.gmailBtn:before {
+    font-family: "FontAwesome";
+    content: "\f1a0"; /* add pinterest icon 
+}
+
+.gmailBtn:hover {
+    color: #cb2027;
+    background: #fff;
+    border-color: #cb2027;
+}
+
+/* github button class
+.githubBtn {
+    background: #201f1f;
+}
+
+    .githubBtn:before {
+        font-family: "FontAwesome";
+        content: "\f09b"; /* add pinterest icon 
+    }
+
+    .githubBtn:hover {
+        color: #201f1f;
+        background: #fff;
+        border-color: #201f1f;
+    }*/
 
 /*********new style for leftpart image*/

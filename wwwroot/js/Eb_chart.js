@@ -1509,10 +1509,11 @@ function initMap() {
             map.fitBounds(bounds);
     }
     else {
-        $(`map${TableId}`).append("<div class='map_inner'>No Data Available</div>");
+        $(`#map${TableId}`).append("<div class='map_inner'>No Data Available</div>");
     }
     
 }
+
 function someFunction(e){
     alert("hhhhhh");
 }

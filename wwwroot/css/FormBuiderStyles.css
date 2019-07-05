@@ -692,6 +692,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
+.dropdown-toggle.clearfix {
+    width: 100%;
+}
+
 [singleselect="true"] .selected-tag {
     width: 100%;
 }

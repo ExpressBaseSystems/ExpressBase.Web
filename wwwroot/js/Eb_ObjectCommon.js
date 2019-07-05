@@ -21,11 +21,12 @@
     this.isversioned = (isversioned === 'True');
 
     this.init = function () {
+        this.target = $("#versionNav li.active a").attr("href");//edits by amal
         $('#status').off('click').on('click', this.LoadStatusPage.bind(this));
         $('#ver_his').off("click").on("click", this.Version_List.bind(this));
         $('#compare').off('click').on('click', this.Compare.bind(this));
         $('#save').off("click").on("click", this.Save.bind(this));
-        $('#commit').off("click").on("click", this.Commit.bind(this, false));
+        $('#commit').off("click").on("click", this.Commit.bind(false));
         $('a[data-toggle="tab"].cetab').off("click").on('click', this.TabChangeSuccess.bind(this));
         $('.wrkcpylink').off("click").on("click", this.OpenPrevVer.bind(this));
         $(window).off("keydown").on("keydown", this.checkKeyDown.bind(this));
@@ -33,7 +34,6 @@
         $('#profiler').off('click').on('click', this.onProfilerClick.bind(this));
         $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
         $('#singlesave').off('click').on('click', this.SingleSave.bind(this));
-        this.target = $("#versionNav li.active a").attr("href");//edits by amal
 
         if (this.Current_obj !== null)
             if (this.Current_obj.VersionNumber !== "")
@@ -150,7 +150,7 @@
     };
 
     this.UpdateDashboard = function () {
-        $.post("../Eb_Object/UpdateObjectDashboard", { refid: this.ver_Refid }).done(this.UpdateDashboard_Success.bind(this));
+        $.post("../Eb_Object/UpdateObjectDashboard", { refid: this.ver_Refid, versioning: this.isversioned }).done(this.UpdateDashboard_Success.bind(this));
     };
 
     this.UpdateDashboard_Success = function (data) {
@@ -423,27 +423,29 @@
             this.ajaxSave(tagvalues, apps, getNav);
     };
 
-    this.Commit = function (callback) {
+    this.Commit = function (event,callback) {
         $("#eb_common_loader").EbLoader("show");
         var tagvalues = $('#tags').val();
         var apps = $("#apps").val();
         if (apps === "")
             apps = "0";
         var changeLog = $('#obj_changelog').text();
-        var getNav = this.target; /*$("#versionNav li.active a").attr("href");*/
+        var getNav =  $("#versionNav li.active a").attr("href"); 
         if (this.isBeforSaveImplemets(getNav)) {
             if (this.ObjCollection[getNav].BeforeSave())
                 this.ajaxCommit(tagvalues, apps, getNav, changeLog, function (data) {
-                    callback(data);
+                    if (callback)
+                        callback(data);
                 });
             else
                 $("#eb_common_loader").EbLoader("hide");
         }
         else
             this.ajaxCommit(tagvalues, apps, getNav, changeLog, function (data) {
-                callback(data);
+                if (callback)
+                    callback(data);
             });
-    };
+    }.bind(this);
 
     this.ajaxSave = function (tagvalues, apps, getNav, callback) {
         if (this.Current_obj.Validate === undefined || this.Current_obj.Validate()) {
@@ -468,7 +470,8 @@
                 _tags: tagvalues,
                 _apps: apps
             }, function (data) {
-                callback(data);
+                if (callback)
+                    callback(data);
                 this.UpdateTab(data);
             }.bind(this));
         }
@@ -632,7 +635,7 @@
 
     this.SingleSave = function () {
         $('#obj_changelog').text("Single Save");
-        this.Commit(function (data) {
+        this.Commit({},function (data) {
             if (this.Current_obj.Status !== "Live") {
                 $.post("../Eb_Object/ChangeStatus",
                     {

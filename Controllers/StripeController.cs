@@ -17,7 +17,7 @@ using ExpressBase.Common.LocationNSolution;
 
 namespace StripeApp.Controllers
 {
-    enum Month { Jan=1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec };
+    enum Month { Jan = 1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec };
     public class StripeController : EbBaseIntCommonController
     {
         public StripeController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
@@ -26,7 +26,7 @@ namespace StripeApp.Controllers
         {
             ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if(soln.PricingTier == 0)
+            if (soln.PricingTier == 0)
             {
                 ViewBag.Status = true;
             }
@@ -41,7 +41,7 @@ namespace StripeApp.Controllers
             }
             return View("Index");
         }
-        
+
         public IActionResult CustomerInvoices()
         {
             string cust_id = "cus_FHCU2qwKlkSp3g";
@@ -56,14 +56,14 @@ namespace StripeApp.Controllers
             });
             ViewBag.Count = stripeinvoice.Invoices.List.Count;
             ViewBag.StripeInvoice = stripeinvoice;
-            
+
             GetCustomerUpcomingInvoiceResponse stripeupcominginvoice = this.ServiceClient.Post<GetCustomerUpcomingInvoiceResponse>(new GetCustomerUpcomingInvoiceRequest
             {
                 CustId = cust_id
             });
             ViewBag.UpCount = stripeupcominginvoice.Invoice.Data.Count;
             ViewBag.StripeUpcomingInvoice = stripeupcominginvoice;
-          
+
             return View();
         }
 
@@ -76,11 +76,11 @@ namespace StripeApp.Controllers
         {
             ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            string cust_id ="";
+            string cust_id = "";
             if (soln.PricingTier == 0)
             {
                 ViewBag.Status = true;
-               // return View("Index");
+                // return View("Index");
             }
             else
             {
@@ -104,7 +104,7 @@ namespace StripeApp.Controllers
                     CustId = cust_id
                 });
                 ViewBag.Card = resp;
-                
+
                 //---------------------------Invoice----------------------
                 GetCustomerInvoiceResponse stripeinvoice = this.ServiceClient.Post<GetCustomerInvoiceResponse>(new GetCustomerInvoiceRequest
                 {
@@ -122,7 +122,6 @@ namespace StripeApp.Controllers
             }
             return View("StripeHome");
         }
-
         //public IActionResult Charge(string stripeEmail, string stripeToken)
         //{
         //    var customers = new CustomerService();
@@ -146,7 +145,7 @@ namespace StripeApp.Controllers
         //}
 
         [HttpPost]
-        public ActionResult Index(int userno, string name, string email, string address, string city, string state, string zip, string country,string token)
+        public Object Index(int user_no, string name, string email, string address, string city, string state, string zip, string country, string token, string sid)
         {
             //string planId = "TEST-PLAN-02";
             string CouponId = "COUPON-2-15-3-2-15000";
@@ -155,42 +154,42 @@ namespace StripeApp.Controllers
             string planId = "";
             string invoiceid = "";
 
-            if (CheckCustomer(Token.Id,email))
+            if (CheckCustomer(Token.Id, email, sid))
             {
-                custid = CreateCustomer(Token.Id,email);
+                custid = CreateCustomer(Token.Id, email, sid);
             }
             else
             {
-                custid = CreateCustomer(Token.Id,email);
-                UpdateCard(custid, Token.Card.Id,name,address,city,state,zip,country);
+                custid = CreateCustomer(Token.Id, email, sid);
+                UpdateCard(custid, Token.Id, Token.Card.Id, name, address, city, state, zip, country);
             }
             //planId = "plan_FH9R9kOAeqMdva";
             planId = "TestPlan-01";
 
             CreateCharge(custid);
 
-            CreateSubscriptionResponse res = CreateSubscription(custid, planId,CouponId,userno);
-            ViewBag.SubscribeObjects = res;
-            return View("SubscribedView");
+            CreateSubscriptionResponse res = CreateSubscription(custid, planId, CouponId, user_no, sid);
+            return res;
         }
-        
-        public bool CheckCustomer(string tokenid,string email)
+
+        public bool CheckCustomer(string tokenid, string email, string sid)
         {
             CheckCustomerResponse res = this.ServiceClient.Post<CheckCustomerResponse>(new CheckCustomerRequest
             {
                 EmailId = email,
                 TokenId = tokenid,
-                SolutionId = "" /*ViewBag.cid*/
+                SolutionId = sid
             });
             return res.Status;
         }
-        
-        public void UpdateCard(string custid, string cardid, string name, string address, string city, string state, string zip, string country)
+
+        public void UpdateCard(string custid,string token_id, string cardid, string name, string address, string city, string state, string zip, string country)
         {
             this.ServiceClient.Post<UpdateCardResponse>(new UpdateCardRequest
             {
                 CustId = custid,
                 CardId = cardid,
+                TokenId = token_id,
                 Name = name,
                 Address = address,
                 City = city,
@@ -209,13 +208,13 @@ namespace StripeApp.Controllers
             });
         }
 
-        public string CreateCustomer(string tokenid, string email)
+        public string CreateCustomer(string tokenid, string email, string sid)
         {
             CreateCustomerResponse res = this.ServiceClient.Post<CreateCustomerResponse>(new CreateCustomerRequest
             {
                 EmailId = email,
                 TokenId = tokenid,
-                /*SolnId = ""*/ /*ViewBag.cid*/
+                SolnId = sid
             });
             return res.CustomerId;
         }
@@ -241,15 +240,16 @@ namespace StripeApp.Controllers
             return res.CouponId;
         }
 
-        public CreateSubscriptionResponse CreateSubscription(string custid, string planid, string coupid,int userno)
+        public CreateSubscriptionResponse CreateSubscription(string custid, string planid, string coupid, int userno, string sid)
         {
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", sid));
             CreateSubscriptionResponse res = this.ServiceClient.Post<CreateSubscriptionResponse>(new CreateSubscriptionRequest
             {
                 Total = userno,
                 CustId = custid,
                 PlanId = planid,
-                CoupId = coupid
+                CoupId = coupid,
+                SolnId = sid
             });
             return res;
         }
@@ -290,8 +290,8 @@ namespace StripeApp.Controllers
 
         }
 
-       
-        public Object UpdateCustomerSubscription(int user_no)
+
+        public Object UpdateCustomerSubscription(int user_no, string sid)
         {
             string planId = "TestPlan-01";
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
@@ -299,11 +299,28 @@ namespace StripeApp.Controllers
             {
                 Total = user_no,
                 PlanId = planId,
-                SolnId = (TempData["SolnId"]).ToString()
+                SolnId = sid
             });
             return res;
         }
 
+        public Object UpdateCustomerCard(string cust_id, string name, string email, string address, string city, string state, string zip, string country, string sid)
+        {
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            UpdateCustomerCardResponse res = this.ServiceClient.Post<UpdateCustomerCardResponse>(new UpdateCustomerCardRequest
+            {
+                CustId = cust_id,
+                Name = name,
+                Address = address,
+                City = city,
+                State = state,
+                Country = country,
+                Zip = zip,
+                SolnId = sid
+            });
+            res.Email = email;
+            return res;
+        }
         public IActionResult ViewPlans(object ob)
         {
             GetPlansResponse stripeplans = this.ServiceClient.Post<GetPlansResponse>(new GetPlansRequest

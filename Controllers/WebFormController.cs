@@ -27,6 +27,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Index(string refId, string _params, int _mode, int _locId)
         {
+            Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.rowId = 0;
             ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
@@ -37,6 +38,7 @@ namespace ExpressBase.Web.Controllers
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
                 if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
+                    Console.WriteLine("Webform Render - View mode request identified.");
                     WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
                     if (wfd.MultipleTables.Count == 0)
                     {
@@ -90,7 +92,6 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-                Console.WriteLine(ex.StackTrace);
                 return new WebformData();
             }
         }
@@ -102,21 +103,8 @@ namespace ExpressBase.Web.Controllers
                 Operation = OperationConstants.EDIT;
             if (!this.HasPermission(RefId, Operation, CurrentLoc))
                 return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 });
-                //throw new FormException("Access Denied");
+
             WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            //int _CurrentLoc = this.LoggedInUser.Preference.DefaultLocation;
-            //if (!this.LoggedInUser.LocationIds.Contains(CurrentLoc))
-            //{
-            //    if (this.LoggedInUser.LocationIds.Contains(-1))
-            //    {
-            //        List<EbLocation> t = JsonConvert.DeserializeObject<List<EbLocation>>(ViewBag.Locations);
-            //        var temp = t.FirstOrDefault<EbLocation>(e => e.LocId == CurrentLoc);
-            //        if (temp != null)
-            //            _CurrentLoc = CurrentLoc;
-            //    }
-            //}
-            //else
-            //    _CurrentLoc = CurrentLoc;
             InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
                 new InsertDataFromWebformRequest
                 {
@@ -124,17 +112,15 @@ namespace ExpressBase.Web.Controllers
                     FormData = Values,
                     RowId = RowId,
                     CurrentLoc = CurrentLoc,
-                    UserObj = this.LoggedInUser,
-                    SolutionObj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid))
+                    UserObj = this.LoggedInUser
                 });
             return JsonConvert.SerializeObject(Resp);
-            //return 0;
         }
 
         public int DeleteWebformData(string RefId, int RowId, int CurrentLoc)
         {
             if (!this.HasPermission(RefId, OperationConstants.DELETE, CurrentLoc))
-                return -2; //throw new FormException("Access Denied");
+                return -2; //Access Denied
             DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
         }
@@ -142,14 +128,13 @@ namespace ExpressBase.Web.Controllers
         public int CancelWebformData(string RefId, int RowId, int CurrentLoc)
         {
             if (!this.HasPermission(RefId, OperationConstants.CANCEL, CurrentLoc))
-                return -2; //throw new FormException("Access Denied");
+                return -2; //Access Denied
             CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
         }
 
         public string GetAuditTrail(string refid, int rowid, int currentloc)
         {
-            //throw new FormException("Exception: AuditTrail not implemented");
             try
             {
                 if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
@@ -162,7 +147,6 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in GetAuditTrail. Message: " + ex.Message);
-                Console.WriteLine(ex.StackTrace);
                 return string.Empty;
             }
         }
@@ -190,7 +174,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch(Exception e)
             {
-                Console.WriteLine("Exception when checking user permission: " + e.Message);
+                Console.WriteLine(string.Format("Exception when checking user permission: {0}\nRefId = {1}\nOperation = {2}\nLocId = {3}", e.Message, RefId, ForWhat, LocId));
             }
 
             return false;

@@ -135,23 +135,25 @@
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
                     <a class="nav-link" data-toggle="tab" href="#home" role="tab">
-                        <i class="fa fa-home"></i> 
+                        <i class="fa fa-home"></i>
                         General
                     </a>
                 </li>
                 <li class="nav-item">
                     <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">
-                        <i class="fa fa-plug"></i> 
+                        <i class="fa fa-plug"></i>
                         Connection Manager
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#team" role="tab">
-                        <i class="fa fa-users"></i> Team</a>
+                        <i class="fa fa-users"></i> Team
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#billing" role="tab">
-                        <i class="fa fa-usd"></i> Billing</a>
+                        <i class="fa fa-usd"></i> Billing
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">
@@ -171,11 +173,13 @@
                         <ul class="nav nav-tabs tab-inside-tab chormer-effect" role="tablist">
                             <li class="nav-item active">
                                 <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">
-                                <i class="fa fa-plus-square"></i> New Connections</a>
+                                    <i class="fa fa-plus-square"></i> New Connections
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">
-                                <i class="fa fa-list"></i> My Connections</a>
+                                    <i class="fa fa-list"></i> My Connections
+                                </a>
                             </li>
                         </ul>
                         <div class="tab-content" style="padding:10px 0">
@@ -186,7 +190,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/POSTGRES.png" align="middle" style="width:63%" />
                                                 <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -196,37 +200,17 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/mysql.png" align="middle" style="width:70%" />
                                                 <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit"*@ data-whatever="ORACLE">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
-                                                <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit"*@ data-whatever="MSSQL">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
-                                                <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    </div>                                    
                                     <div id="mongo" class="connection_wrap_outer" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/MongodB.png" style="width:50%; margin:auto;" />
                                                 <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,7 +220,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/cloudnary.png" style="width:75%" />
                                                 <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -246,7 +230,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="EmailConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/svg/email.svg" style="width:47%" />
                                                 <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -256,7 +240,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="TwilioConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/twilio.png" style="width:95%" />
                                                 <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i> 
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -266,7 +250,7 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="ExpertTextingConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/expert texting.png" style="width:85%" />
                                                 <div class="image-add">
-                                                        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -276,11 +260,123 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/maps-google.png" style="width:100%" />
                                                 <div class="image-add">
-                                                    <i class="fa fa-plus-square" aria-hidden="true"></i>
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit"*@ data-whatever="ORACLE">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit"*@ data-whatever="MSSQL">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/SendGrid.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="slack" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="slackConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/slack.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="whatsapp" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="whatsappConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/WhatsApp_Logo.png" style="width:50%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="facebook" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="facebookConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/fb_logo.png" style="width:50%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="dropbox" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="dropboxConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Dropbox-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="googleanalitics" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/google-analytics-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="quickbooks" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/QuickBooks_logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="shopify" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/shopify-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="tab-pane" id="MyIntegrations" role="tabpanel">
@@ -295,28 +391,8 @@
                                                 </h4>
                                             </div>
                                             <div id="All" class="panel-collapse collapse in">
-                                                <div id ="integration_config_all"class="panel-body">
-                                                    @*@{
-                                                        foreach (KeyValuePair<string, List<EbIntegrationConfData>> Conf_type in ViewBag.Connections.IntegrationsConfig)
-                                                        {
-                                                            List<EbIntegrationConfData> Row0 = Conf_type.Value;
-                                                            foreach (EbIntegrationConfData row0 in Row0)
-                                                            {
-                                                                <div class="inteConfContainer @string.Concat(row0.Type, "edit")" data-whatever="@row0.Type" datawhater="@row0.Id">
+                                                <div id="integration_config_all" class="panel-body">
 
-                                                                    <div id="nm" class="inteConfContainer_Image ">
-                                                                        @Html.Raw(Image_url[row0.Type])
-                                                                    </div>
-                                                                    <div id="nm" class="inteConfContainer_NN" data-toggle="tooltip" data-placement="top" title="Updated on : @row0.CreatedOn">
-                                                                        <span>@row0.NickName</span>
-                                                                    </div>
-                                                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }
-                                                    }*@
                                                     <div>
                                                     </div>
                                                 </div>
@@ -345,36 +421,7 @@
                                             </div>
                                             <div id="EbFILES" class="panel-collapse collapse">
                                                 <div id="EbFILES-All" class="panel-body">
-                                                    @*@{
-                                                        if (ViewBag.Connections.Integrations.ContainsKey("EbFILES"))
-                                                        {
-                                                            List<EbIntegrationData> Row2 = ViewBag.Connections.Integrations["EbFILES"];
-                                                            foreach (EbIntegrationData row2 in Row2)
-                                                            {
-                                                                <div class="integrationContainer hover-mover @string.Concat(row2.Type, "edit") @row2.Preference" data-whatever="@row2.Type" datawhater="@row2.Id" dataConffId="@row2.ConfId">
-                                                                    <div class="integrationContainer_Image">
-                                                                        @Html.Raw(Image_url[row2.Ctype])
-                                                                    </div>
-                                                                    <div id="nm" class="integrationContainer_NN">
-                                                                        <span>@row2.NickName</span>
-                                                                        @{
-                                                                            if (row2.Preference == "1")
-                                                                            {
-                                                                                <span  class="PF_span">PRIMARY</span>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <span  class="PF_span">Fallback</span>
-                                                                            }
-                                                                        }
-                                                                    </div>
-                                                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }
-                                                    }*@
+
                                                 </div>
                                             </div>
                                         </div>
@@ -388,37 +435,7 @@
                                             </div>
                                             <div id="SMTP_call" class="panel-collapse collapse">
                                                 <div id="SMTP-All" class="panel-body">
-                                                    @*@{
-                                                        if (ViewBag.Connections.Integrations.ContainsKey("SMTP"))
-                                                        {
-                                                            List<EbIntegrationData> Row1 = ViewBag.Connections.Integrations["SMTP"];
-                                                            foreach (EbIntegrationData row1 in Row1)
-                                                            {
-                                                                <div class="integrationContainer hover-mover @string.Concat(row1.Type, "edit") @row1.Preference" data-whatever="@row1.Type" datawhater="@row1.Id" dataConffId="@row1.ConfId">
 
-                                                                    <div class="integrationContainer_Image">
-                                                                        @Html.Raw(Image_url[row1.Ctype])
-                                                                    </div>
-                                                                    <div id="nm" class="integrationContainer_NN">
-                                                                        <span>@row1.NickName</span>
-                                                                        @{
-                                                                            if (row1.Preference == "1")
-                                                                            {
-                                                                                <span  class="PF_span">PRIMARY</span>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <span  class="PF_span">Fallback</span>
-                                                                            }
-                                                                        }
-                                                                    </div>
-                                                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }
-                                                    }*@
                                                 </div>
                                             </div>
                                         </div>
@@ -432,38 +449,7 @@
                                             </div>
                                             <div id="Cloudinary" class="panel-collapse collapse">
                                                 <div id="Cloudinary-all" class="panel-body">
-                                                    @*@{
-                                                        if (ViewBag.Connections.Integrations.ContainsKey("Cloudinary"))
-                                                        {
-                                                            List<EbIntegrationData> Row3 = ViewBag.Connections.Integrations["Cloudinary"];
-                                                            foreach (EbIntegrationData row3 in Row3)
-                                                            {
-                                                                <div class="integrationContainer hover-mover @string.Concat(row3.Type, "edit")" data-whatever="@row3.Type" datawhater="@row3.Id">
 
-                                                                    <div class="integrationContainer_Image">
-                                                                        @Html.Raw(Image_url[row3.Ctype])
-                                                                    </div>
-                                                                    <div id="nm" class="integrationContainer_NN">
-                                                                        <span>@row3.NickName</span>
-                                                                        @{
-                                                                            if (row3.Preference == "1")
-                                                                            {
-                                                                                <span  class="PF_span">PRIMARY</span>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <span  class="PF_span">Fallback</span>
-                                                                            }
-                                                                        }
-                                                                    </div>
-
-                                                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }
-                                                    }*@
                                                 </div>
                                             </div>
                                         </div>
@@ -477,38 +463,20 @@
                                             </div>
                                             <div id="SMS" class="panel-collapse collapse">
                                                 <div id="SMS-all" class="panel-body">
-                                                    @*@{
-                                                        if (ViewBag.Connections.Integrations.ContainsKey("SMS"))
-                                                        {
-                                                            List<EbIntegrationData> Row4 = ViewBag.Connections.Integrations["SMS"];
-                                                            foreach (EbIntegrationData row4 in Row4)
-                                                            {
-                                                                <div class="integrationContainer hover-mover @string.Concat(row4.Type, "edit") @row4.Preference" data-whatever="@row4.Type" datawhater="@row4.Id" dataConffId="@row4.ConfId">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_map" data-toggle="collapse" data-parent="#MyIntegrations" href="#MAP">
+                                                        GOOGLE MAPS
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="MAP" class="panel-collapse collapse">
+                                                <div id="MAP-all" class="panel-body">
 
-                                                                    <div class="integrationContainer_Image">
-                                                                        @Html.Raw(Image_url[row4.Ctype])
-                                                                    </div>
-                                                                    <div id="nm" class="integrationContainer_NN">
-                                                                        <span>@row4.NickName</span>
-                                                                        @{
-                                                                            if (row4.Preference == "1")
-                                                                            {
-                                                                                <span  class="PF_span">PRIMARY</span>
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                <span  class="PF_span">Fallback</span>
-                                                                            }
-                                                                        }
-                                                                    </div>
-
-                                                                    <div id="nm" class="inteConfContainer_caret-down ">
-                                                                        <i class="fa fa-caret-down" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            }
-                                                        }
-                                                    }*@
                                                 </div>
                                             </div>
                                         </div>
@@ -580,119 +548,129 @@
 
 
 
-<div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="margin-top:100px;">
-    <div class="modal-dialog">
+<div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="align-items: center;">
+    <div class="modal-dialog" style="width: 1000px;">
         <div class="modal-content" id="dbConnection_mask">
             <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
                 <div class="modal-header relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">DataBase Connection</h4>
+                    <h4 id="dbConnectionheader" class="modal-title">DataBase Connection</h4>
                     <div id="dbConnection_loder" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Database</label>
-                                <input id="dbvendorInput" name="DatabaseVendor" type="text" value="PGSQL" class="form-control Inputclear Vendor" readonly />
-                            </div>
-                            <div class="form-group">
-                                <label>DataBase Name</label>
-                                <input id="dbDatabaseNameInput" name="DatabaseName" type="text" class="form-control dbConnectionInput Inputclear" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="dbNickNameInput" name="NickName" type="text" class="form-control dbConnectionInput Inputclear" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Enable SSL</label>
-                                <input id="dbIsSSLInput" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <label>User Name</label>
-                            <div class="col-md-12 pd-0">
-                                <table class="table table-bordered table-form">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:130px;"></th>
-                                            <th>User Name</th>
-                                            <th>Password</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Admin</td>
-                                            <td><input id="dbUserNameInput" name="UserName" type="text" class="form-control dbConnectionInput Inputclear" required /></td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input id="dbPasswordInput" autocomplete="new-password" name="Password" class="form-control Password dbConnectionInput Inputclear" type="password" required />
-                                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="advanced-tr" style="display:none">
-                                            <td>Read-Write User</td>
-                                            <td><input name="ReadWriteUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input autocomplete="new-password" name="ReadWritePassword" class="form-control Password dbConnectionInput Inputclear" type="password" />
-                                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="advanced-tr" style="display:none">
-                                            <td>ReadOnly User</td>
-                                            <td><input name="ReadOnlyUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input autocomplete="new-password" name="ReadOnlyPassword" class="form-control Password Inputclear" type="password" />
-                                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="uname-advanced-sec form-inline">
-                                    <label style="margin-right:5px;">Advanced</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="UserNamesAdvanced">
-                                        <span class="slider round"></span>
-                                    </label>
+                <div class="modal-body" style="display:flex">
+                    <div id="vender-data-holder" class="vender-data-holder"></div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="dbNickNameInput" name="NickName" type="text" class="form-control dbConnectionInput Inputclear" required />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Server Address</label>
-                                <input id="dbServerInput" name="Server" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>DataBase Name</label>
+                                    <input id="dbDatabaseNameInput" name="DatabaseName" type="text" class="form-control dbConnectionInput Inputclear" required />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <input id="dbvendorInput" name="DatabaseVendor" type="hidden" value="PGSQL" class="form-control Inputclear Vendor" readonly />
+                                <div class="form-group" style="margin-top: 32px;">
+                                    <label>Enable SSL</label>
+                                    <input id="dbIsSSLInput" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Port</label>
-                                <input id="dbPortInput" name="Port" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Server Address</label>
+                                    <input id="dbServerInput" name="Server" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Port</label>
+                                    <input id="dbPortInput" name="Port" pattern="^[0-9]*$" maxlength="5" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>TimeOut</label>
+                                    <input id="dbTimeoutInput" name="Timeout" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
+                            <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                
+                                <div class="col-md-12 pd-0">
+                                    <div class="uname-advanced-sec form-inline">
+                                        <label>Credentials :    </label>
+                                        <label style="margin-left: 16px;margin-right:5px;">Advanced</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="UserNamesAdvanced">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <table class="table table-bordered table-form">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:130px;"></th>
+                                                <th>User Name</th>
+                                                <th>Password</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Admin</td>
+                                                <td><input id="dbUserNameInput" name="UserName" type="text" class="form-control dbConnectionInput Inputclear" required /></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input id="dbPasswordInput" autocomplete="new-password" name="Password" class="form-control Password dbConnectionInput Inputclear" type="password" required />
+                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="advanced-tr" style="display:none">
+                                                <td>Read-Write User</td>
+                                                <td><input name="ReadWriteUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input autocomplete="new-password" name="ReadWritePassword" class="form-control Password dbConnectionInput Inputclear" type="password" />
+                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="advanced-tr" style="display:none">
+                                                <td>ReadOnly User</td>
+                                                <td><input name="ReadOnlyUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input autocomplete="new-password" name="ReadOnlyPassword" class="form-control Password Inputclear" type="password" />
+                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>TimeOut</label>
-                                <input id="dbTimeoutInput" name="Timeout" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                        <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
-                        <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -712,73 +690,83 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Mongo Files Db Connection</h4>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <input name="DatabaseVendor" type="hidden" value="MongoDB" class="form-control Vendor" readonly />
-                            @* <input name="MongoId" type="hidden" />*@
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="FilesInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder">
+                        <img class='img-responsive' src='../images/MongodB.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>MongoDB is a cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schema. MongoDB is licensed under the Server Side Public License.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="FilesInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                </div>
                             </div>
-                            <div class="form-group">
+                            <input name="DatabaseVendor" type="hidden" value="MongoDB" class="form-control Vendor" readonly />
+                            <div class="form-group" style="margin-top: 32px;">
                                 <label>Enable SSL</label>
                                 <input id="FilesInputIsSSL" class=" Inputclear" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
                             </div>
+
                         </div>
-                        <div class="form-group">
-                            <div class="col-md-6">
-                                <label>User Name</label>
-                                <div class="col-md-12 pd-0">
-                                    <table class="table table-bordered table-form">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:130px;"></th>
-                                                <th>User Name</th>
-                                                <th>Password</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Admin</td>
-                                                <td><input id="FilesInputUsername" name="UserName" type="text" class="Inputclear form-control" required /></td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input id="FilesInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
-                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                        <div class="row">
+
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <label>User Name</label>
+                                    <div class="col-md-12 pd-0">
+                                        <table class="table table-bordered table-form">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:130px;"></th>
+                                                    <th>User Name</th>
+                                                    <th>Password</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Admin</td>
+                                                    <td><input id="FilesInputUsername" name="UserName" type="text" class="Inputclear form-control" required /></td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input id="FilesInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
+                                                            <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                                <i class="fa fa-eye " aria-hidden="true"></i>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Host</label>
+                                    <input id="FilesInputServer" name="Server" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
                                 </div>
                             </div>
-
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Host</label>
-                                <input id="FilesInputServer" name="Server" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Port</label>
+                                    <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Port</label>
-                                <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="FilesInputIntConfId" name="Id" value="0" />
                     </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                    <input type="hidden" class="Inputclear IntConfId" id="FilesInputIntConfId" name="Id" value="0" />
                 </div>
-
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary MongoConnection">Save</button>
                 </div>
@@ -896,7 +884,7 @@
 </div>
 
 <div id="cldnry_conEdit" class="modal fade input-clear" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content" id="cloudnary_mask">
             <form action="" method="post" id="CloudnaryConnectionSubmit" data-toggle="validator">
                 <div class="modal-header relative">
@@ -904,30 +892,44 @@
                     <h4 class="modal-title">Cloudnary Connection</h4>
                     <div id="cloudnary_loader" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <input name="DatabaseVendor" value="Cloudinary" class="form-control Vendor" type="hidden" readonly />
-                                <label>Cloud</label>
-                                <input id="CloudnaryInputCloud" type="text" name="Cloud" class="form-control Inputclear" value="" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="CloudnaryInputNickname" type="text" name="NickName" class="form-control Inputclear" value="" required />
+                <div class="modal-body" style="display:flex;">
+                    <div class="vender-data-holder">
+                        <img class='img-responsive' src='~/images/cloudnary.png' align='middle' style='height: 28px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Cloudinary is a SaaS technology company. The company provides a cloud-based image and video management solution. It enables users to upload, store, manage, manipulate and deliver images and video for websites and apps.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="CloudnaryInputNickname" type="text" name="NickName" class="form-control Inputclear" value="" required />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Api Key</label>
-                                <input id="CloudnaryInputApikey" type="text" name="ApiKey" class="form-control Inputclear" value="" required />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input name="DatabaseVendor" value="Cloudinary" class="form-control Vendor" type="hidden" readonly />
+                                    <label>Cloud</label>
+                                    <input id="CloudnaryInputCloud" type="text" name="Cloud" class="form-control Inputclear" value="" required />
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Api Secret</label>
-                                <input id="CloudnaryInputApisecret" type="text" name="ApiSecret" class="form-control Inputclear" value="" required />
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Api Key</label>
+                                    <input id="CloudnaryInputApikey" type="text" name="ApiKey" class="form-control Inputclear" value="" required />
+                                </div>
                             </div>
-                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                            <input type="hidden" class="Inputclear IntConfId" id="CloudnaryInputIntConfId" name="Id" value="0" />
+                            <div class="col-md-8">                               
+                                <div class="form-group">
+                                    <label>Api Secret</label>
+                                    <input id="CloudnaryInputApisecret" type="text" name="ApiSecret" class="form-control Inputclear" value="" required />
+                                </div>
+                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                                <input type="hidden" class="Inputclear IntConfId" id="CloudnaryInputIntConfId" name="Id" value="0" />
+                            </div>
                         </div>
                     </div>
                 </div>

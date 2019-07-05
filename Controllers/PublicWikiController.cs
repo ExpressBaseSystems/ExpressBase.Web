@@ -27,13 +27,18 @@ namespace ExpressBase.Web.Controllers
             }
         
 
-            [HttpGet]
+            [HttpGet("publicwiki/docs")]
             public IActionResult GetWikiList()
             {
                 GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
                 ViewBag.WikiList = resp.WikiList;
                 return View();
             }
+        [HttpGet("publicwiki/docs/{id}")]
+        public IActionResult GetWikiList2(string id)
+        {
+            return Redirect("/publicwiki/docs");
+        }
 
         [HttpGet("publicwiki/view/{id}")]
         public IActionResult GetArticleById(string id)
@@ -57,12 +62,16 @@ namespace ExpressBase.Web.Controllers
             });
             return resp.WikiListBySearch;
         }
+
         public IActionResult WikiLayout()
-        {
-            
+        { 
+            return View();
+        }
+        public IActionResult Edit()
+        { 
             return View();
         }
 
-
+      
     }
 }

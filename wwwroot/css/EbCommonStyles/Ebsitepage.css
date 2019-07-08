@@ -5,42 +5,7 @@
     z-index: 2;
 }
 
-@media only screen and (max-width: 600px) {
-    .rightcolpad {
-        padding-left: 0px ;
-        padding-right: 0px;
-        padding-top: 0px !important;
-    }
-    .rightcolpadtop {
-        padding-top: 0px !important;
-        margin-bottom:0px !important;
-    }
-    .rightcol_mar_bot {
-      
-        margin-bottom: 0px !important;
-    }
-    .rightcolmartop{
-        margin-top:10px !important;
-        margin-bottom:0px !important;
-    }
-    .rcorners1{
-        visibility:hidden;
-
-    }
-
-
-
-    .rightpart {
-        padding-top: 10px !important;
-        height: auto !important;
-    }
-
-  
-
-}
-
 .eb-signup_wrapper {
-    background: #508bf9;
     font-family: Montserrat;
 }
 
@@ -54,66 +19,75 @@
     .eb-signup_wrapper .eb-signup_socilaWrpr {
         justify-content: center;
         display: flex;
+        flex: 85%;
+        max-width: 90%;
+        background: linear-gradient(to right,#eef9fe,#edf7ff);
+        margin-top: 50px;
+        border-radius: 6px;
+        border: 1px solid #d3edff;
+        flex-flow: column;
+        position: relative;
     }
-
+        .eb-signup_wrapper .eb-signup_socilaWrpr::before {
+            content: "Or using";
+            position: absolute;
+            top: -35px;
+            width: 100%;
+            font-size: 17px;
+            font-weight: 500;
+        }
         .eb-signup_wrapper .eb-signup_socilaWrpr .eb-signup_socilaWrpr_inner {
             display: flex;
+            justify-content: center;
         }
 
     .eb-signup_wrapper .eb-signup-tnc {
-        position: absolute;
-        bottom: 10px;
         width: 100%;
         font-size: 12px;
         font-weight: 500;
+        margin-top:5rem;
     }
-
-   
-
     .eb-signup_wrapper .rightpart {
         background: white;
         height: 100%;
         display: flex;
-        align-items: center;
-        padding: 50px 30px 0px 30px;
-        position: relative;
         flex-flow: column;
     }
+.right-part-inner {
+    justify-content: center;
+    padding-top: 6rem;
+    flex-flow: column;
+    max-width:700px;
+}
 
-    .eb-signup_wrapper .sinpt {
-        height: 45px;
-    }
+.eb-signup_wrapper .sinpt {
+    height: 45px;
+}
+.eb-signup-selltext h2 {
+    font-size: 35px;
+    font-weight: 400;
+    margin-bottom:15px;
+}
+.eb-signup-selltext h4 {
+   font-size:25px;
+}
 
-    .eb-signup_wrapper .icon_input .sinpt {
-        padding-left: 35px;
-    }
-
-    .eb-signup_wrapper .socialss_container {
-        text-align: center;
-        margin-top: auto;
-        margin-bottom: 40px;
-    }
+.eb-signup_wrapper .icon_input .sinpt {
+    padding-left: 35px;
+}
     .eb-signup_wrapper .leftpart {
-        height: 100%;
-        /*background: linear-gradient(150deg,#53f 15%,#05d5ff 70%,#a6ffcb 94%);*/
+       display:flex;
+       justify-content:center;
+       align-items:center;
+       flex-flow:column;
+       padding-top:6rem;
     }
 
 .leftsideimg {
-    object-fit: fill !important;
-    width: 80vh;
-    padding-top: 70px;
-    padding-left: 80PX;
-    overflow: hidden;
-    align-content: center;
-    margin-top: 0px;
-    margin-right: 0px;
+    height:350px;
 }
 .imglogo {
-    margin-top: -52px;
-    
-    left:0;
-    position:absolute;
-
+   height:40px;
 }
 .lg_img {
   
@@ -125,14 +99,17 @@
     display: flex;
     height: 100%;
     flex-flow: column;
-    flex: 0 0 90%;
+    flex: 0 0 85%;
     max-width: 90%;
-    padding-top: 8vh;
+    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    padding: 25px;
+    border-radius: 6px;
+    border: 1px solid #d3edff;
 }
 
 .eb-signup_wrapper .lg_button {
     color: white;
-    background-color: #508bf9;
+    background-color: #4987fb;
     padding: 6px 30px;
     height: 45px;
     margin-top: 15px;
@@ -507,10 +484,6 @@ input {
         }
 
 .radiodiv {
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    border-radius: 4px;
     padding-bottom: 7px;
     padding-top: 9px;
     margin-bottom: 20px;
@@ -537,85 +510,43 @@ input {
     -webkit-border-radius: 27px;
 }
 
-/* facebook button class*/
-/*.facebookBtn {
-    background: #4060A5;
-}
+/*media query*/
 
-    .facebookBtn:before { use :before to add the relevant icons 
-        font-family: "FontAwesome";
-        content: "\f09a";  add facebook icon 
+@media only screen and (max-width: 600px) {
+    .rightcolpad {
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-top: 0px !important;
     }
 
-    .facebookBtn:hover {
-        color: #4060A5;
-        background: #fff;
-        border-color: #4060A5; /* change the border color on mouse hover */
+    .rightcolpadtop {
+        padding-top: 0px !important;
+        margin-bottom: 0px !important;
     }
 
-/* twitter button class
-.twitterBtn {
-    background: #00ABE3;
-}
-
-    .twitterBtn:before {
-        font-family: "FontAwesome";
-        content: "\f099"; /* add twitter icon 
+    .rightcol_mar_bot {
+        margin-bottom: 0px !important;
     }
 
-    .twitterBtn:hover {
-        color: #00ABE3;
-        background: #fff;
-        border-color: #00ABE3;
+    .rightcolmartop {
+        margin-top: 10px !important;
+        margin-bottom: 0px !important;
     }
 
-
-/* linkedin button class
-.linkedinBtn {
-    background: #0094BC;
-}
-
-    .linkedinBtn:before {
-        font-family: "FontAwesome";
-        content: "\f0e1";  add linkedin icon 
+    .rcorners1 {
+        visibility: hidden;
     }
 
-    .linkedinBtn:hover {
-        color: #0094BC;
-        background: #fff;
-        border-color: #0094BC;
+    .rightpart {
+       padding:0;
     }
 
-/* pinterest button class
-.gmailBtn {
-    background: #cb2027;
-}
-
-.gmailBtn:before {
-    font-family: "FontAwesome";
-    content: "\f1a0"; /* add pinterest icon 
-}
-
-.gmailBtn:hover {
-    color: #cb2027;
-    background: #fff;
-    border-color: #cb2027;
-}
-
-/* github button class
-.githubBtn {
-    background: #201f1f;
-}
-
-    .githubBtn:before {
-        font-family: "FontAwesome";
-        content: "\f09b"; /* add pinterest icon 
+    .center_rightpart {
+        flex: 0 0 100%;
+        max-width: 100%;
     }
-
-    .githubBtn:hover {
-        color: #201f1f;
-        background: #fff;
-        border-color: #201f1f;
-    }*/
-
-/*********new style for leftpart image*/
+    .eb-signup_wrapper .eb-signup_socilaWrpr {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

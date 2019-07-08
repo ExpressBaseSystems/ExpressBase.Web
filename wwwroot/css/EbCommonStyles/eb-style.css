@@ -73,7 +73,8 @@ body, html,.html-root {
     }
 
 .eb_blue {
-    background: #508bf9;
+    /*background: #508bf9;*/
+    background-color: #4987fb;
     color:white;
 }
 
@@ -93,10 +94,12 @@ body, html,.html-root {
 .eb_btnwhite {
     background: white;
     color: #528ff0;
-    border-color: #508bf9 !important;
+    /*border-color: #508bf9 !important;*/
+    border-color: #4987fb !important;
 }
 .eb_btnblue {
-    background: #508bf9;
+    /*background: #508bf9;*/
+    background: #4987fb;
     color: #fff;
 }
     .eb_btnblue:hover {
@@ -480,10 +483,6 @@ Navigation bar
     .active_Link:hover {
         background-color: #0a6794 !important;
     }
-
-@media(max-width: 768px) {
-}
-
 .padding-zero {
     padding: 0px;
 }
@@ -501,73 +500,6 @@ Navigation bar
     -webkit-border-radius: 50%;
     border-radius: 50%;
 }
-
-/*Responsive media queries*/
-@media (max-width: 768px) {
-}
-
-@media (min-width: 451px) and (max-width: 768px) {
-}
-
-@media (min-width: 450px) and (max-width: 800px) {
-    .ext-pageheader .drp_container {
-        width: 400px !important;
-    }
-}
-
-@media only screen and (min-device-width: 480px) and (max-device-width: 640px) and (orientation: landscape) {
-    .ext-pageheader .nav > li {
-        float: left;
-        width: 100%;
-    }
-
-    .ext-pageheader .drp_container::after {
-        display: none;
-    }
-}
-
-@media (min-width: 20px) and (max-width: 450px) {
-    .m-l-60 {
-        float: unset;
-        margin-right: unset;
-    }
-
-    .ext-pageheader .navbar-collapse {
-        text-align: center;
-    }
-
-    .ext-pageheader .nav > li {
-        float: left;
-        width: 100%;
-    }
-
-    .ext-pageheader .drp_items_desc {
-        float: left;
-        width: 100%;
-        padding-left: 0;
-    }
-
-    .ext-pageheader li[class='open'] {
-        background: #fafafa;
-    }
-
-    .ext-pageheader .drp_container::after {
-        display: none;
-    }
-    .login_container form, .login_container_usr form{
-        padding:0 !important;
-    }
-    .login_container .log-eblogo {
-        left: 0;
-    }
-    .eb_login{
-        background:white;
-    }
-    .login_container_usr{
-        box-shadow:none;
-    }
-}
-
 /*layout inner pages style*/
 .html-root-layout {
     background-color: #f2f2f2;
@@ -1063,3 +995,72 @@ Navigation bar
         margin-top: 20px;
     }
 /*error page end*/
+/*Responsive media queries*/
+@media (max-width: 768px) {
+}
+
+@media (min-width: 451px) and (max-width: 768px) {
+}
+
+@media (min-width: 450px) and (max-width: 800px) {
+    .ext-pageheader .drp_container {
+        width: 400px !important;
+    }
+}
+
+@media only screen and (min-device-width: 480px) and (max-device-width: 640px) and (orientation: landscape) {
+    .ext-pageheader .nav > li {
+        float: left;
+        width: 100%;
+    }
+
+    .ext-pageheader .drp_container::after {
+        display: none;
+    }
+}
+
+@media (min-width: 20px) and (max-width: 450px) {
+    .m-l-60 {
+        float: unset;
+        margin-right: unset;
+    }
+
+    .ext-pageheader .navbar-collapse {
+        text-align: center;
+    }
+
+    .ext-pageheader .nav > li {
+        float: left;
+        width: 100%;
+    }
+
+    .ext-pageheader .drp_items_desc {
+        float: left;
+        width: 100%;
+        padding-left: 0;
+    }
+
+    .ext-pageheader li[class='open'] {
+        background: #fafafa;
+    }
+
+    .ext-pageheader .drp_container::after {
+        display: none;
+    }
+
+    .login_container form, .login_container_usr form {
+        padding: 0 !important;
+    }
+
+    .login_container .log-eblogo {
+        left: 0;
+    }
+
+    .eb_login {
+        background: white;
+    }
+
+    .login_container_usr {
+        box-shadow: none;
+    }
+}

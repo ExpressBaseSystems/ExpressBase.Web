@@ -228,6 +228,7 @@ namespace StripeApp.Controllers
         {
             this.ServiceClient.Post<CreateChargeResponse>(new CreateCharge2Request { CustId = custid, Total = Request.Form["tot"] });
         }
+
         public string CreatePlan()
         {
             CreatePlanResponse res = this.ServiceClient.Post<CreatePlanResponse>(new CreatePlanRequest { Total = Request.Form["tot"], Interval = 0, Interval_count = 1 });
@@ -289,8 +290,7 @@ namespace StripeApp.Controllers
             return View();
 
         }
-
-
+        
         public Object UpdateCustomerSubscription(int user_no, string sid)
         {
             string planId = "TestPlan-01";
@@ -299,6 +299,20 @@ namespace StripeApp.Controllers
             {
                 Total = user_no,
                 PlanId = planId,
+                SolnId = sid
+            });
+            return res;
+        }
+
+        public Object AddCustomerCard(string cust_id,string token, string sid)
+        {
+            StripeToken Token = JsonConvert.DeserializeObject<StripeToken>(token);
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            AddCustomerCardResponse res = this.ServiceClient.Post<AddCustomerCardResponse>(new AddCustomerCardRequest
+            {
+                CustId = cust_id,
+                TokenId = Token.Id,
+                CardId = Token.Card.Id,
                 SolnId = sid
             });
             return res;
@@ -321,6 +335,7 @@ namespace StripeApp.Controllers
             res.Email = email;
             return res;
         }
+
         public IActionResult ViewPlans(object ob)
         {
             GetPlansResponse stripeplans = this.ServiceClient.Post<GetPlansResponse>(new GetPlansRequest

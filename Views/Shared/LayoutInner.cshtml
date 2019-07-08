@@ -1,4 +1,5 @@
-﻿@{var bApnd = true;
+﻿@using ExpressBase.Web.Filters;
+@{var bApnd = true;
     if (ViewBag.Env == "Development")
     {
         bApnd = false;
@@ -169,5 +170,6 @@
     {
         @RenderSection("JsCode")
     }
+    @Html.RenderJsCode()
 </body>
 </html>

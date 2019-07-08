@@ -302,9 +302,12 @@
         margin:auto;
     }
 
-    .inteConfContainer_NN{
-        width:50%;
-        margin:auto;
+    .inteConfContainer_NN {
+        width: 50%;
+        margin: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .inteConfContainer_caret-down{

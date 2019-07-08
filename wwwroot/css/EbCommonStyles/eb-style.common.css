@@ -54,7 +54,6 @@
 .outer-row-profsetup {
     height: 100vh;
     padding-top: 40px;
-    font-family: open sans;
     font-weight: 300;
     background: #efefef;
 }
@@ -111,7 +110,6 @@
     }
 
         .outer-row-profsetup .savebtn .btn {
-            font-family: open sans;
             font-weight: 300;
             color: #fff;
             background-color: #339bb3;
@@ -170,7 +168,7 @@
     .sln-configLink a {
         color: #738db1;
         font-size: 15px;
-        font-weight: 500;
+        font-weight: 400;
     }
     .sln-configLink:hover a {
         text-decoration:none;
@@ -201,7 +199,7 @@
     margin: 0 0 15px;
     font-size: 19px;
     color: #333;
-    font-weight: 500;
+    font-weight: 400;
 }
 
 .tdasboard-sidebar {
@@ -215,7 +213,6 @@
     height: inherit;
     width: 100%;
     padding-top: 30px;
-    font-family: open sans;
     background-color: #031b4d;
     border: 0 solid #e7e7e7;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
@@ -255,11 +252,9 @@
 }
 
 .s-dash-workplace {
-    font-family: open sans;
-    font-weight: 300;
     display: flex;
     display:-webkit-flex;
-    flex-flow: column wrap;
+    flex-flow: column;
     margin-left: auto;
     flex: 1;
     -webkit-flex:1;
@@ -271,6 +266,7 @@
 }
 .s-dash-solution-desc h4 {
     font-size: 22px;
+    font-weight:400;
 }
 .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
     opacity: unset;
@@ -442,7 +438,6 @@
     border-radius: 2px;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    font-family: roboto;
 }
 
 #eb-common-price-modal .modal-dialog {
@@ -567,7 +562,6 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: open sans;
 }
 
 .flex-center {
@@ -575,14 +569,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: open sans;
 }
 
 .flex-center_rowwise {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: open sans;
 }
 
 .tdash_btn {

@@ -7,9 +7,6 @@
     float:left;
     width:100%;
 }
-.create_loc_mod{
-    font-family:open sans;
-}
 .location_conf .btn_container {
     margin-bottom: 15px;
     width:100%;
@@ -47,7 +44,6 @@
 }
 /*billing*/
 .billing_wrap {
-    font-family: open sans;
     background-color: white;
     padding: 30px;
     border-radius: 4px;
@@ -196,7 +192,7 @@
     }
 
     .connection_wrap_outer:hover .image-add {
-        opacity: 1;
+        opacity: .75;
         z-index:100;
 
     }
@@ -216,6 +212,23 @@
         text-align: center;
     }
 
+    .image-add .fa-coming-soon {
+        color: #000000;
+        font-size: 27px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-weight: 800;
+    }
+
+    .image-add .fa-coming-soon:before {
+        content: "";
+    }
+
 
     .connection_wrap {
     display: flex;
@@ -224,6 +237,7 @@
     border: 1px solid #e8e8e8;
     /*background-color: #f2f2f2;*/
     flex-direction: column;
+    height:100%;
 }
         .connection_wrap .connection_wrap_header {
             padding: 10px 41px;
@@ -244,6 +258,20 @@
         margin: auto;
     }
 
+.vender-data-holder {
+    width: 25%;
+    border-right: 1px solid #e8e8e8;
+}
+.connection-vender-desp {
+    padding: 2%;
+}
+    .connection-vender-desp > span {
+        padding: 22%;
+    }
+    .connection-data-holder {
+        width: 75%;
+        padding: 2%;
+    }
 
 .inteConfContainer {
     width: 23%;
@@ -274,9 +302,12 @@
         margin:auto;
     }
 
-    .inteConfContainer_NN{
-        width:50%;
-        margin:auto;
+    .inteConfContainer_NN {
+        width: 50%;
+        margin: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .inteConfContainer_caret-down{
@@ -459,7 +490,6 @@
     /*locswitch*/
     .loc_switchModal {
         display: none;
-        font-family: open sans;
         position: fixed;
         width: 100%;
         height: 100%;
@@ -474,7 +504,6 @@
     min-width: 60%;
     display: flex;
     flex-direction: column;
-    font-family: open sans;
     border-radius: 6px;
     max-width: 60%;
 }
@@ -698,7 +727,6 @@ outline:none;
         font-weight: 400;
         color: #4d4a4e !important;
         background-color: transparent;
-        font-weight: 600;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -782,6 +810,7 @@ outline:none;
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 15px;
+    font-weight:400;
 }
 
 .appdash_obj_container .objitems p {

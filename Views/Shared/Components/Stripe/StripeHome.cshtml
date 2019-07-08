@@ -156,12 +156,13 @@
         }
 
         .form-margin-card {
-            margin:30px 50px 0px;
+            margin: 30px 50px 0px;
         }
 
         .subscribed-margin {
             margin: 40px 400px;
         }
+
         .modalheader {
             min-height: 16.43px;
             padding: 15px;
@@ -182,7 +183,7 @@
                     </div>
                 </div>
                 <div class="div-seperate button-margin">
-                    <button class="button-style" onclick="showusr()">Upgrade</button>
+                    @*<button class="button-style" onclick="showusr()">Upgrade</button>*@
                 </div>
             </div>
 
@@ -381,18 +382,22 @@
                             <div class="div-heading row">
                                 <label class="stripe-headings">CARD DETAILS</label>
                             </div>
-                            <div class=" scrollable" id="style-15">
-                                <div class="div-card">
-                                    <div class="row">
-                                        <div class="col-md-offset-2 col-md-6 card-number">
-                                            **** **** **** @ViewBag.Card.Last4
+                            <div class="cardupdate scrollable" id="style-15">
+                                @{
+                                    for (int i = 0; i < ViewBag.Card.Count; i++)
+                                    {
+                                        <div class="div-card">
+                                            <div class="row">
+                                                <div class="col-md-offset-2 col-md-6 card-number">
+                                                    **** **** **** @ViewBag.Card.Cards.Card[i].Last4
+                                                </div>
+                                                <div class="col-md-4 card-exp">
+                                                    Exp. (@ViewBag.Card.Cards.Card[i].ExpMonth / @ViewBag.Card.Cards.Card[i].ExpYear)
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="col-md-4 card-exp">
-                                            Exp. (@ViewBag.Card.ExpMonth / @ViewBag.Card.ExpYear)
-                                        </div>
-                                    </div>
-                                </div>
-
+                                    }
+                                }
                             </div>
                             <div class="row" style="padding:20px 0px 10px 0px;">
                                 <div class="col-md-12">
@@ -726,7 +731,8 @@
                                     <div id="card-element" class="col-md-11">
                                         <!-- A Stripe Element will be inserted here. -->
                                     </div>
-                                    <input type="hidden" id="token" name="token">
+                                    <input type="hidden" id="tokenid" name="tokenid">
+                                    <input type="hidden" id="cust_id" name="cust_id" value="@ViewBag.CustId" />
                                     <!-- Used to display form errors. -->
                                     <div id="card-errors" role="alert"></div>
                                 </div>
@@ -856,14 +862,14 @@
                 }
             });
         });
-      
+
     });
 
     this.viewbilldata = function ()
     {
         location.reload();
     }
-           
+
 
 
     $('#pay1').on('click', function () {
@@ -905,11 +911,11 @@
                         <div class="div-footer">
                             You will be charged $${data.amount * data.quantity} (${data.periodStart} - ${data.periodEnd}) on ${data.periodEnd}
                         </div>
-                    </div>`);      
+                    </div>`);
                 this.upgradecontent(data);
-            }.bind(this)            
+            }.bind(this)
         });
-        
+
     }.bind(this));
 
     this.upgradecontent = function (data) {
@@ -922,7 +928,7 @@
     $('#custupdate').on('click', function () {
         $.ajax({
             type: "POST",
-            url: "../Stripe/UpdateCustomerCard",
+            url: "../Stripe/UpdateCustomerSubscription",
             data: { cust_id: $('#custid').val(), name: $('#upname').val(), email: $('#upemailid').val(), address: $('#upadd1').val(), city: $('#upcity').val(), state: $('#upstate').val(), zip: $('#upzip').val(), country: $('#upcountry option:selected').val(), sid: sid },
             success: function (data) {
                 $('#modal-cust').hide();
@@ -986,6 +992,47 @@
                                 </div>`
         $(".cust-update").empty().append(html);
     }.bind(this);
-    
+
+    $('#addcard').on('click', function () {
+        stripe.createToken(card).then(function (result) {
+            if (result.error) {
+                // Inform the user if there was an error.
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                let dt = new Date(result.token.created * 1000);
+                result.token.created = dt.getUTCFullYear() + "-" + (dt.getUTCMonth() + 1) + "-" + dt.getUTCDate() + " " + dt.getUTCHours() + ":" + dt.getUTCMinutes() + ":" + dt.getUTCSeconds();
+                console.log('hfghj');
+                document.getElementById('tokenid').value = JSON.stringify(result.token);
+            }
+        $.ajax({
+            type: "POST",
+            url: "../Stripe/AddCustomerCard",
+            data: { cust_id: $('#cust_id').val(), token: $('#tokenid').val(), sid: sid },
+            success: function (data) {
+                $('#modal-card').hide();
+                this.updatecardcontent(data);
+            }.bind(this)
+            });
+        });
+    }.bind(this));
+
+    this.updatecardcontent = function (data) {
+        var html = ``;
+        for (var i = 0; i < ViewBag.Card.Count; i++) {
+            html = html + ` <div class="div-card">
+                                <div class="row">
+                                     <div class="col-md-offset-2 col-md-6 card-number">
+                                          **** **** **** ${data.Cards.Card[i].Last4}
+                                                </div>
+                                                <div class="col-md-4 card-exp">
+                                                    Exp. (${data.Cards.Card[i].ExpMonth} / ${data.Cards.Card[i].ExpYear})
+                                                </div>
+                                            </div>
+                                        </div> `
+        }
+        $(".cardupdate").empty().append(html);
+    }.bind(this);
+
 
 </script>

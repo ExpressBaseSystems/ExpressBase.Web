@@ -108,7 +108,12 @@ $(function () {
         {
             "name": "Bolivia",
             "code": "BO"
-    },
+        },
+
+
+//        Bonaire
+//Sint Eustatius Saba 
+//BQ
         {
             "name": "Bosnia and Herzegovina",
             "code": "BA"
@@ -144,7 +149,11 @@ $(function () {
         {
             "name": "Burundi",
             "code": "BI"
-    },
+        },
+
+
+        //Cabo Verde
+        //CV
         {
             "name": "Cambodia",
             "code": "KH"
@@ -197,14 +206,14 @@ $(function () {
             "name": "Comoros",
             "code": "KM"
     },
-        {
-            "name": "Congo",
-            "code": "CG"
-    },
-        {
-            "name": "Congo, The Democratic Republic of the",
-            "code": "CD"
-    },
+    //    {
+    //        "name": "Congo",
+    //        "code": "CG"
+    //},
+    //    {
+    //        "name": "Congo, The Democratic Republic of the",
+    //        "code": "CD"
+    //},
         {
             "name": "Cook Islands",
             "code": "CK"
@@ -221,10 +230,10 @@ $(function () {
             "name": "Croatia",
             "code": "HR"
     },
-        {
-            "name": "Cuba",
-            "code": "CU"
-    },
+    //    {
+    //        "name": "Cuba",
+    //        "code": "CU"
+    //},
         {
             "name": "Cyprus",
             "code": "CY"
@@ -272,7 +281,10 @@ $(function () {
         {
             "name": "Estonia",
             "code": "EE"
-    },
+        },
+
+        //Eswatini
+        //SZ
         {
             "name": "Ethiopia",
             "code": "ET"
@@ -409,14 +421,14 @@ $(function () {
             "name": "Indonesia",
             "code": "ID"
     },
-        {
-            "name": "Iran, Islamic Republic Of",
-            "code": "IR"
-    },
-        {
-            "name": "Iraq",
-            "code": "IQ"
-    },
+    //    {
+    //        "name": "Iran, Islamic Republic Of",
+    //        "code": "IR"
+    //},
+    //    {
+    //        "name": "Iraq",
+    //        "code": "IQ"
+    //},
         {
             "name": "Ireland",
             "code": "IE"
@@ -461,14 +473,14 @@ $(function () {
             "name": "Kiribati",
             "code": "KI"
     },
-        {
-            "name": "Korea, Democratic People\"S Republic of",
-            "code": "KP"
-    },
-        {
-            "name": "Korea, Republic of",
-            "code": "KR"
-    },
+    //    {
+    //        "name": "Korea, Democratic People\"S Republic of",
+    //        "code": "KP"
+    //},
+    //    {
+    //        "name": "Korea, Republic of",
+    //        "code": "KR"
+    //},
         {
             "name": "Kuwait",
             "code": "KW"
@@ -485,10 +497,10 @@ $(function () {
             "name": "Latvia",
             "code": "LV"
     },
-        {
-            "name": "Lebanon",
-            "code": "LB"
-    },
+    //    {
+    //        "name": "Lebanon",
+    //        "code": "LB"
+    //},
         {
             "name": "Lesotho",
             "code": "LS"
@@ -497,10 +509,11 @@ $(function () {
             "name": "Liberia",
             "code": "LR"
     },
-        {
-            "name": "Libyan Arab Jamahiriya",
-            "code": "LY"
-    },
+    //    {
+    //        "name": "Libyan Arab Jamahiriya",
+    //        "code": "LY"
+    //},
+        // Libya
         {
             "name": "Liechtenstein",
             "code": "LI"
@@ -518,6 +531,7 @@ $(function () {
             "code": "MO"
     },
         {
+
             "name": "Macedonia, The Former Yugoslav Republic of",
             "code": "MK"
     },
@@ -721,14 +735,16 @@ $(function () {
             "name": "Romania",
             "code": "RO"
     },
-        {
-            "name": "Russian Federation",
-            "code": "RU"
-    },
+    //    {
+    //        "name": "Russian Federation",
+    //        "code": "RU"
+    //},
         {
             "name": "RWANDA",
             "code": "RW"
-    },
+        },
+        // Saint Barthélemy
+        //BL
         {
             "name": "Saint Helena",
             "code": "SH"
@@ -788,7 +804,9 @@ $(function () {
         {
             "name": "Singapore",
             "code": "SG"
-    },
+        },
+        //Sint Maarten 
+        //SX
         {
             "name": "Slovakia",
             "code": "SK"
@@ -801,10 +819,10 @@ $(function () {
             "name": "Solomon Islands",
             "code": "SB"
     },
-        {
-            "name": "Somalia",
-            "code": "SO"
-    },
+    //    {
+    //        "name": "Somalia",
+    //        "code": "SO"
+    //},
         {
             "name": "South Africa",
             "code": "ZA"
@@ -812,7 +830,9 @@ $(function () {
         {
             "name": "South Georgia and the South Sandwich Islands",
             "code": "GS"
-    },
+        },
+        //South Sudan
+        //SS
         {
             "name": "Spain",
             "code": "ES"
@@ -821,10 +841,10 @@ $(function () {
             "name": "Sri Lanka",
             "code": "LK"
     },
-        {
-            "name": "Sudan",
-            "code": "SD"
-    },
+    //    {
+    //        "name": "Sudan",
+    //        "code": "SD"
+    //},
         {
             "name": "Suriname",
             "code": "SR"
@@ -845,10 +865,10 @@ $(function () {
             "name": "Switzerland",
             "code": "CH"
     },
-        {
-            "name": "Syrian Arab Republic",
-            "code": "SY"
-    },
+    //    {
+    //        "name": "Syrian Arab Republic",
+    //        "code": "SY"
+    //},
         {
             "name": "Taiwan, Province of China",
             "code": "TW"
@@ -909,18 +929,20 @@ $(function () {
             "name": "Uganda",
             "code": "UG"
     },
-        {
-            "name": "Ukraine",
-            "code": "UA"
-    },
-        {
+    //    {
+    //        "name": "Ukraine",
+    //        "code": "UA"
+    //},
+    {
             "name": "United Arab Emirates",
             "code": "AE"
     },
         {
             "name": "United Kingdom",
             "code": "GB"
-    },
+        },
+
+
         {
             "name": "United States",
             "code": "US"
@@ -941,10 +963,10 @@ $(function () {
             "name": "Vanuatu",
             "code": "VU"
     },
-        {
-            "name": "Venezuela",
-            "code": "VE"
-    },
+    //    {
+    //        "name": "Venezuela",
+    //        "code": "VE"
+    //},
         {
             "name": "Viet Nam",
             "code": "VN"
@@ -965,10 +987,10 @@ $(function () {
             "name": "Western Sahara",
             "code": "EH"
     },
-        {
-            "name": "Yemen",
-            "code": "YE"
-    },
+    //    {
+    //        "name": "Yemen",
+    //        "code": "YE"
+    //},
         {
             "name": "Zambia",
             "code": "ZM"

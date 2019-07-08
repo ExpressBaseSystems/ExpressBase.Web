@@ -351,7 +351,7 @@ const WebFormRender = function (option) {
     this.saveSuccess = function (_respObj) {// need cleanup
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
-        let locName = loc__.CurrentLocObj.LongName;
+        let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
@@ -564,7 +564,7 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
                                     //EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
@@ -615,7 +615,7 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
                                     //EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
@@ -914,47 +914,44 @@ const WebFormRender = function (option) {
             this.setEditModeCtrls();
             this.SwitchToViewMode();
 
-            setTimeout(function () {
-                let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
-                let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
-                if (ol !== nl) {
-                    EbDialog("show", {
-                        Message: "Switching from " + getObjByval(loc__.Locations, "LocId", ol).LongName + " to " + getObjByval(loc__.Locations, "LocId", nl).LongName,
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            loc__.SwitchLocation(_formData.MultipleTables[_formData.MasterTable][0].LocId);
-                            this.setHeader(this.mode);
-                        }.bind(this)
-                    });
-                }
-            }.bind(this), 500);
+            let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
+            let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
+            if (ol !== nl) {
+                EbDialog("show", {
+                    Message: "Switching from " + getObjByval(ebcontext.locations.Locations, "LocId", ol).LongName + " to " + getObjByval(ebcontext.locations.Locations, "LocId", nl).LongName,
+                    Buttons: {
+                        "Ok": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        ebcontext.locations.SwitchLocation(_formData.MultipleTables[_formData.MasterTable][0].LocId);
+                        this.setHeader(this.mode);
+                    }.bind(this)
+                });
+            }
 
         }
-        setTimeout(function () {
-            loc__.Listener.ChangeLocation = function (o) {
-                if (this.rowId > 0) {
-                    EbDialog("show", {
-                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            reloadFormPage();
-                        }.bind(this)
-                    });
-                }
-            }.bind(this);
-        }.bind(this), 500);
+        
+        ebcontext.locations.Listener.ChangeLocation = function (o) {
+            if (this.rowId > 0) {
+                EbDialog("show", {
+                    Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                    Buttons: {
+                        "Ok": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        reloadFormPage();
+                    }.bind(this)
+                });
+            }
+        }.bind(this);
     };
 
     this.init();

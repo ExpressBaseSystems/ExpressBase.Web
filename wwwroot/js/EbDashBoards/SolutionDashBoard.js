@@ -1351,11 +1351,11 @@ var SolutionDashBoard = function (connections, sid) {
         InteConfig = this.Connections.IntegrationsConfig;
         $.each(InteConfig, function (i, rows) {
             $.each(rows, function (j, rowss) {
-                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rows.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
+                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rowss.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
                                 <div id = "nm" class="inteConfContainer_Image ">
                                     ${Imageurl[rowss.Type]}
                                 </div >
-                                <div id="nm" class="inteConfContainer_NN" data-toggle="tooltip" data-placement="top" title="Updated on : ${rowss.CreatedOn}">
+                                <div id="nm" class="inteConfContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rowss.NickName} \nUpdated on: ${rowss.CreatedOn}">
                                     <span>${rowss.NickName}</span>
                                 </div>
                                 <div id="nm" class="inteConfContainer_caret-down ">

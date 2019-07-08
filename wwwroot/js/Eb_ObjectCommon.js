@@ -134,8 +134,18 @@
             this.ObjCollection[target].EbObject = this.Current_obj;
             this.ObjCollection[target].Refid = this.ver_Refid;
             $(`#versionNav [href='${target}']`).attr("data-verNum", this.Current_obj.VersionNumber);//edits by amal
-            if (this.isversioned)
-                $(`#versionNav [href='${target}']`).text("v." + this.Current_obj.VersionNumber);//edits by amal
+            $(`#versionNav [href='${target}']`).empty();
+            if (this.isversioned) {
+                if (this.Current_obj.VersionNumber.slice(-1) === 'w') {
+                    icon = "fa-pencil";
+                }
+                else {
+                    icon = "fa-lock";
+                }
+                $(`#versionNav [href='${target}']`).html( "<i class='fa " + icon + "'  aria-hidden='true' ></i > v. "+ this.Current_obj.VersionNumber);
+            } else {
+                $(`#versionNav [href='${target}']`).html("<i class='fa fa-pencil' aria - hidden='true' ></i >" + ((this.Current_obj.DisplayName.length > 8 )? this.Current_obj.DisplayName.substring(0, 8)+"...": this.Current_obj.DisplayName.length));
+            }
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
 
@@ -423,14 +433,14 @@
             this.ajaxSave(tagvalues, apps, getNav);
     };
 
-    this.Commit = function (event,callback) {
+    this.Commit = function (event, callback) {
         $("#eb_common_loader").EbLoader("show");
         var tagvalues = $('#tags').val();
         var apps = $("#apps").val();
         if (apps === "")
             apps = "0";
         var changeLog = $('#obj_changelog').text();
-        var getNav =  $("#versionNav li.active a").attr("href"); 
+        var getNav = $("#versionNav li.active a").attr("href");
         if (this.isBeforSaveImplemets(getNav)) {
             if (this.ObjCollection[getNav].BeforeSave())
                 this.ajaxCommit(tagvalues, apps, getNav, changeLog, function (data) {
@@ -635,14 +645,16 @@
 
     this.SingleSave = function () {
         $('#obj_changelog').text("Single Save");
-        this.Commit({},function (data) {
+        this.Commit({}, function (data) {
             if (this.Current_obj.Status !== "Live") {
                 $.post("../Eb_Object/ChangeStatus",
                     {
                         _refid: data.refid,
                         _changelog: "Single Save",
                         _status: "3"
-                    });
+                    }, function () {
+                        this.Current_obj.Status = "Live";
+                    }.bind(this));
             }
         }.bind(this));
     }.bind(this);

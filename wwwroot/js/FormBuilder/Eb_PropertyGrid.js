@@ -817,7 +817,7 @@
     this.rowFocus = function (e) {
         let $e = $(e.target);
         let prop = $e.attr("name").slice(0, -2);
-        let ht = prop + " : &nbsp;&nbsp;" + ($e.closest("tr").attr("tr-for") === "23") ? "" : getObjByval(this.Metas, "name", prop).helpText;
+        let ht = prop + " : &nbsp;&nbsp;" + (($e.closest("tr").attr("tr-for") === "23") ? "" : getObjByval(this.Metas, "name", prop).helpText);
         $("#" + this.wraperId + "_HelpBox").html(ht);
     }.bind(this);
 

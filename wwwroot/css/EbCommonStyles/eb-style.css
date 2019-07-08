@@ -31,6 +31,7 @@ body, html,.html-root {
     height: 100%;
     overflow: visible !important;
     width:100%;
+    font-family:Roboto,sans-serif;
 }
 .flex-shrink-zero {
     -webkit-flex-shrink: 0 !important;
@@ -571,7 +572,7 @@ Navigation bar
 .html-root-layout {
     background-color: #f2f2f2;
     height: 100%;
-    font-family:open sans;
+    font-family:Roboto;
 }
 
 #layout_div #objlist-items {
@@ -827,7 +828,6 @@ Navigation bar
     padding: 7px 20px !important;
     color: #1488c5 !important;
     font-size: 15px;
-    font-family: open sans;
 }
 
 .nav_drp_li .dropdown-menu {

@@ -250,7 +250,7 @@
                 $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             else if (ebcontext.user.wc === "uc") {
                 if (ctrl.LoadCurrentLocation)
-                    $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + loc__.CurrentLocObj.LocId + ']').trigger('click');
+                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.CurrentLocObj.LocId + ']').trigger('click');
                 else
                     $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             }
@@ -451,13 +451,13 @@
         //if (_rowId === undefined || _rowId === 0) {
         //    setTimeout(function () {
         //        if (ctrl.DisplayMember === 1) {
-        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
+        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
         //        }
         //        else if (ctrl.DisplayMember === 3) {
-        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LongName);
+        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LongName);
         //        }
         //        else {
-        //            $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
+        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.ShortName);
         //        }
         //    }, 500);
         //}        

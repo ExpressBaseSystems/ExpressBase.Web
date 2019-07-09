@@ -680,7 +680,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .eb-ctrl-label {
     position: relative;
     font-size: 11.5px;
-    font-weight: bold;
+    font-weight: 600;
+    font-family: Roboto;
+    letter-spacing: 0.3PX;
     padding: 1px;
     padding: 2px 0px;
     display: inline-block;

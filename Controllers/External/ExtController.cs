@@ -282,7 +282,7 @@ namespace ExpressBase.Web.Controllers
 
                 var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest {
                     SolutionName = "My First solution",
-                    Description = "my first solutiopn",
+                    Description = "This is my first solution",
                     DeployDB = true,
                 });
 

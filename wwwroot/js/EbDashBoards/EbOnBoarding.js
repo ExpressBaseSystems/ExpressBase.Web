@@ -14,7 +14,9 @@ var EbOnBoarding = function () {
                 type: 'POST',
                 url: "../Ext/Board",
                 beforeSend: function () {
-                    $(".commonLoader").EbLoader("show");
+                    $("#loaderdiv").EbLoader("show");
+                    $(".iconspin").addClass("fa fa-spinner fa-pulse")
+                    $("#save-profile").prop('disabled', true);
                 },
                 data: {
                     email: $("#email").val().trim(),
@@ -24,10 +26,25 @@ var EbOnBoarding = function () {
                     password: $("#inputPassword").val().trim()
                 }
             }).done(function (data) {
-                $(".commonLoader").EbLoader("hide");
+                $("#loaderdiv").EbLoader("hide");
                 if (data.id > 0) {
                     location.href = "/MySolutions";
                 }
+                else {
+                    if (data.isEmailUniq == false) {
+                        EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
+                        $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                        $("#save-profile").prop('disabled', false);
+                    }
+                    else {
+                        if (data.AccountCreated == false) {
+                            EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
+                            $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                            $("#save-profile").prop('disabled', false);
+                        }
+                    }
+                }
+
             }.bind(this));
         }
 
@@ -169,6 +186,7 @@ var EbOnBoarding = function () {
             $('#email').removeClass('txthighlightred').addClass('txthighlight');
         }
     }
+
     this.Namevalidate = function () {
     let name = $("#name").val();
     let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
@@ -184,15 +202,18 @@ var EbOnBoarding = function () {
         $("#namelbl").css("visibility", "hidden");
         $('#name').removeClass('txthighlightred').addClass('txthighlight');
     }
-}
+    }
+
+
+    //do not delete the commented code
     this.Countryselect = function () {
         if ($("#country option:selected").val() == 0) {
-            $("#countrylbl").css("visibility", "visible");
-            $("#country").focus();
-            $('#country').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
-        else {
+    //        $("#countrylbl").css("visibility", "visible");
+    //        $("#country").focus();
+    //        $('#country').removeClass('txthighlight').addClass('txthighlightred');
+    //        sts = false;
+    //    }
+    //    else {
             $('#country').removeClass('txthighlightred').addClass('txthighlight');
             $("#countrylbl").css("visibility", "hidden");
 

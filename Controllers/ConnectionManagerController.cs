@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
+using System.Collections.Generic;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -595,8 +596,8 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             EbDbConfig con = new EbDbConfig();
             DatabaseVendors vendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());
-
-
+            string res;
+            AddDBResponse response = new AddDBResponse();
             if (vendor == DatabaseVendors.PGSQL)
             {
                 con = new PostgresConfig()
@@ -665,13 +666,14 @@ namespace ExpressBase.Web.Controllers
                 };
             }
 
-            this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
+            response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
             {
                 DbConfig = con,
                 // IsNew = false,
                 SolnId = req["SolutionId"]
             });
-            return JsonConvert.SerializeObject(con);
+            GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+            return JsonConvert.SerializeObject(resp);
         }
 
         [HttpPost]
@@ -696,7 +698,8 @@ namespace ExpressBase.Web.Controllers
                     NickName = req["nickname"]
                 };
                 res = this.ServiceClient.Post<AddTwilioResponse>(new AddTwilioRequest { Config = twilioCon, /*IsNew = true,*/ SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(twilioCon);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -730,7 +733,8 @@ namespace ExpressBase.Web.Controllers
                     NickName = req["nickname"]
                 };
                 res = this.ServiceClient.Post<AddETResponse>(new AddETRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -764,7 +768,8 @@ namespace ExpressBase.Web.Controllers
                     NickName = req["nickname"]
                 };
                 res = this.ServiceClient.Post<AddMongoResponse>(new AddMongoRequest { Config = con/*, IsNew = true*/, SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -802,7 +807,8 @@ namespace ExpressBase.Web.Controllers
                 };
                 con.ProviderName = (SmtpProviders)Enum.Parse(typeof(SmtpProviders), req["Emailvendor"]);
                 res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con, /*IsNew = true,*/ SolnId = req["SolnId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -813,7 +819,7 @@ namespace ExpressBase.Web.Controllers
         public string AddCloudinary()
         {
             AddCloudinaryResponse res = new AddCloudinaryResponse();
-            var req = this.HttpContext.Request.Form;
+            IFormCollection req = this.HttpContext.Request.Form;
             try
             {
                 EbCloudinaryConfig con = new EbCloudinaryConfig
@@ -826,7 +832,33 @@ namespace ExpressBase.Web.Controllers
                 };
 
                 res = this.ServiceClient.Post<AddCloudinaryResponse>(new AddCloudinaryRequest { Config = con/*, IsNew = true*/ , SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(con);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+
+        public string AddGoogleMap()
+        {
+            AddGoogleMapResponse res = new AddGoogleMapResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbGoogleMapConfig con = new EbGoogleMapConfig
+                {
+                    ApiKey = req["ApiKey"],
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    MapType=MapType.COMMON,
+                    Vendor=MapVendors.GOOGLEMAP
+            };
+                res = this.ServiceClient.Post<AddGoogleMapResponse>(new AddGoogleMapRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -876,10 +908,11 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"]),
                     ConfigId = Convert.ToInt32(req["ConfId"]),
                     Preference = Enum.Parse<ConPreferences>(req["Preference"].ToString()),
-                    Type = Enum.Parse<EbConnections>(req["Type"].ToString())
+                    Type = Enum.Parse<EbConnectionTypes>(req["Type"].ToString())
                 };
                 res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj, SolnId = req["SolutionId"] });
-                return JsonConvert.SerializeObject(res);
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
@@ -888,10 +921,99 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public void ConnectionsHelper()
+        public string IntegrateConfDelete(int Id, string sid)
         {
-            _GetConectionsResponse res = ServiceClient.Get<_GetConectionsResponse>(new _GetConectionsRequest { });
+            EbIntegrationConfDeleteResponse res = new EbIntegrationConfDeleteResponse();
+            var req = this.HttpContext.Request.Form;
+            try
+            {
+                EbIntegrationConf _obj = new EbIntegrationConf
+                {
+                    Id = Convert.ToInt32(req["Id[Id]"])
+                };
+                res = this.ServiceClient.Post<EbIntegrationConfDeleteResponse>(new EbIntergationConfDeleteRequest { IntegrationConfdelete = _obj, SolnId = sid });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
         }
+
+        public string IntegrateDelete(int Id, string sid)
+        {
+            EbIntegrationDeleteResponse res = new EbIntegrationDeleteResponse();
+            var req = this.HttpContext.Request.Form;
+            try
+            {
+                EbIntegration _obj = new EbIntegration
+                {
+                    Id = Convert.ToInt32(req["Id[Id]"])
+                };
+                res = this.ServiceClient.Post<EbIntegrationDeleteResponse>(new EbIntergationDeleteRequest { Integrationdelete = _obj, SolnId = sid });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
+        }
+
+        public string IntegrationSwitch(string preferancetype, string sid)
+        {
+            var req = JsonConvert.DeserializeObject<List<EbIntegration>>(preferancetype);
+            var SolnId = ViewBag.cid;
+            EbIntegrationSwitchResponse res = new EbIntegrationSwitchResponse();
+
+            try
+            {
+                res = this.ServiceClient.Post<EbIntegrationSwitchResponse>(new EbIntergationSwitchRequest { Integrations = req, SolnId = sid });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
+        }
+
+        public string PrimaryDelete(string preferancetype, string sid, string deleteId)
+        {
+
+            var SolnId = ViewBag.cid;
+            EbIntegrationResponse res = new EbIntegrationResponse();
+
+            try
+            {
+                if (preferancetype != null)
+                {
+                    var req = JsonConvert.DeserializeObject<EbIntegration>(preferancetype);
+                    res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, SolnId = sid });
+                }
+                EbIntegration _obj = new EbIntegration
+                {
+                    Id = Convert.ToInt32(deleteId)
+                };
+                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntergationDeleteRequest { Integrationdelete = _obj, SolnId = sid });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return JsonConvert.SerializeObject(res);
+            }
+        }
+
+        //public void ConnectionsHelper()
+        //{
+        //    _GetConectionsResponse res = ServiceClient.Get<_GetConectionsResponse>(new _GetConectionsRequest { });
+        //}
     }
 }
 

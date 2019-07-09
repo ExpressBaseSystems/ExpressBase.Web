@@ -7,9 +7,6 @@
     float:left;
     width:100%;
 }
-.create_loc_mod{
-    font-family:open sans;
-}
 .location_conf .btn_container {
     margin-bottom: 15px;
     width:100%;
@@ -47,7 +44,6 @@
 }
 /*billing*/
 .billing_wrap {
-    font-family: open sans;
     background-color: white;
     padding: 30px;
     border-radius: 4px;
@@ -110,9 +106,9 @@
 .tenant_sidebar {
     width: 100px;
 }
-.tenant_workpane {
+/*.tenant_workpane {
     width: calc(100% - 100px);
-}
+}*/
 .tenant_sidebar .t-container {
     padding-top: 0 !important;
 }
@@ -147,165 +143,244 @@
     padding-top: 5px;
 }
 
-.vend_img {
-    margin-left: 24px;
-}
-
-.db_vendorimg {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin:auto;
-}
-.connection_wrap_outer {
-    padding: 5px;
-    width: 16.6666666667%;
-}
-.connection_wrap {
-    /*margin: 5px;*/
-    height: 129px;
-    display: flex;
-    box-shadow: 0 3px 3px rgba(0,0,0,.05);
-    border-radius: 2px;
-    border: 1px solid #e8e8e8;
-    /*background-color: #f2f2f2;*/
-    /*flex-direction: column;*/
-}
-    .connection_wrap .connection_wrap_header {
-        padding: 10px 41px;
-        display: flex;
-    }
-.connection_wrap_footer {
-    padding: 8px 99px;
-    border-top: 1px solid #e8dfdf;
-}
-    .connection_wrap_footer a {
-        color: #6d6d6d;
-        font-weight: 400;
-        cursor:pointer;
-    }
-    .connection_wrap_footer label {
-        border-radius: 2px;
-        color: white;
-        background-color: #47af08;
-        font-weight: 400;
-        font-size: 12px;
-        padding: 2px;
-    }
-
-
-
-
-
-
-.inteConfContainer {
-    width: 20%;
-    height: 15%;
-    float: left;
-    padding: 5px;
-}
-
 .chormer-effect {
-    background: white!important;
+    background: white !important;
     border: none;
 }
-    .chormer-effect.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+
+    .chormer-effect.nav-tabs > li.active > a, .chormer-effect.nav-tabs > li.active > a:hover, .chormer-effect.nav-tabs > li.active > a:focus {
         border: none !important;
-        //text-decoration: underline;
+        color: #1c6bbb;
+        font-weight: 600;
     }
 
     .chormer-effect > li > a {
         padding: 9px 12px !important;
     }
-.inteConfContainer_pd {
-    /*float: left;
-        border-radius: 5px;
-        display: flex;
-        flex-direction: column;*/
-    box-shadow: 0 3px 9px rgba(0,0,0,.05);
-    background-color: white;
+
+.connection_wrap_outer {
+    padding: 5px;
+    width: 16.6666666667%;
 }
 
+    .connection_wrap_outer {
+        position: relative;
+        /*width: 50%;*/
+    }
 
-.integrationMain {
-    height: 129px;
+    .image-vender {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin: auto;
+        transition: .5s ease;
+    }
+
+    .image-add {
+        position: absolute;
+         /*top: 79px; 
+        bottom: 9px;
+         left: 71px; 
+        right: 0;*/
+        height: 73%; 
+        width: 63%; 
+        opacity: 0;
+        transition: .5s ease;
+        background-color: white; 
+        /*margin-right: 15%;
+        margin-bottom: 14%;*/
+    }
+
+    .connection_wrap_outer:hover .image-add {
+        opacity: .75;
+        z-index:100;
+
+    }
+    /*.connection_wrap_outer:hover .image-vender {
+        opacity: 1;
+    }*/
+
+    .image-add .fa-plus-circle {
+        color: #4d86d6;
+        font-size: 44px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+    }
+
+    .image-add .fa-coming-soon {
+        color: #000000;
+        font-size: 27px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+        text-align: center;
+        font-weight: 800;
+    }
+
+    .image-add .fa-coming-soon:before {
+        content: "";
+    }
+
+
+    .connection_wrap {
+    display: flex;
     box-shadow: 0 3px 3px rgba(0,0,0,.05);
     border-radius: 2px;
     border: 1px solid #e8e8e8;
+    /*background-color: #f2f2f2;*/
+    flex-direction: column;
+    height:100%;
 }
-
-.integration_wrap_outer {
-    margin: 1%;
-    padding: 25px;
-    width: 20%;
-}
-
-    .integration_wrap .integration_wrap_header {
-        padding: 0px 14px;
-    }
-
-        .integrationbody{
+        .connection_wrap .connection_wrap_header {
+            padding: 10px 41px;
             display: flex;
-            justify-content: center;
-            align-items: center;
             margin: auto;
-            padding: 2%;
-            min-height: 38px;
+            min-height: 110px;
         }
-        .s_info h4 {
-            margin: 5px 0;
-            font-size: 16px;
-            color: #444242;
-            font-weight: 400;
-        }
-        .edit-pencil-holder {
-            display: inline-flex;
-            float: right;
-        }
+    
+    .vend_img {
+        margin-left: 24px;
+        height: 40px;
+    }
 
-        .EditorModalcaller {
-            margin-right: 2%;
-            margin-top: .5%;
-        }
+    .db_vendorimg {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+    }
 
-.integra-p-s-divider{
-    margin: 1%;
+.vender-data-holder {
+    width: 25%;
+    border-right: 1px solid #e8e8e8;
+}
+.connection-vender-desp {
     padding: 2%;
-    width: 60%;
 }
-.integra-divider {
-    margin: 1%
-}
+    .connection-vender-desp > span {
+        padding: 22%;
+    }
+    .connection-data-holder {
+        width: 75%;
+        padding: 2%;
+    }
 
-.modalintegre-list-a {
-    margin: 7px !important;
-    font-size: medium;
-}
-
-.editpannel {
-    width: 24%;
-    height: 100%;
-    background-color: #f2f2f2;
+.inteConfContainer {
+    width: 23%;
+    height: 73px;
     float: left;
-    padding: 5px;
+    padding: 7px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
+    color: black;
+    font-size: 17px;
+    font-weight: bolder;
+    padding: 5px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 1%;
+    box-shadow: 0 3px 9px rgba(0,0,0,.05);
+    background-color: white;
+    border-radius: 5px;
 }
-.addnew {
-    height:158px;
-}
-    .solution_container_pd .s_info {
-        padding: 5px 15px;
-        line-height: 1.3em;
+    .inteConfContainer:hover {
+        background-color: #f2f2f299;
     }
 
-    .cloudinaryVendBody {
-        margin-top: 8%;
-        width: 48%;
-        margin-left: 29%;
+    .context-menu-active {
+        background-color: #f2f2f2;
     }
+    .inteConfContainer .inteConfContainer_Image {
+        width:32%;
+        margin:auto;
+    }
+
+    .inteConfContainer_NN {
+        width: 50%;
+        margin: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .inteConfContainer_caret-down{
+        width:4%;
+        margin:auto;
+    }
+    .inteConfContainer:hover .inteConfContainer_caret-down {
+        transform: scale(2);
+        transition: all .75s;
+    }
+
+
+
+
+.integrationbody {
+    font-size: 14px;
+}
+.integrationContainer {
+    width: 23%;
+    height: 73px;
+    float: left;
+    padding: 7px;
+    display: flex;
+    color: black;
+    font-size: 17px;
+    font-weight: bolder;
+    padding: 5px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 1%;
+    box-shadow: 0 3px 9px rgba(0,0,0,.05);
+    background-color: white;
+    border-radius: 5px;
+}
+
+    .integrationContainer:hover {
+        background-color: #f2f2f2;
+    }
+
+    .integrationContainer .context-menu-active {
+        background-color: #f2f2f2;
+    }
+
+    .integrationContainer .integrationContainer_Image {
+        width: 32%;
+        margin: auto;
+    }
+
+    .integrationContainer_NN {
+        width: 50%;
+        margin: auto;
+        display:grid;
+    }
+    .integrationContainer_NN .PF_span {
+        font-weight: 100;
+    }
+
+    .integrationContainer_caret-down {
+        width: 4%;
+        margin: auto;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 .tab {
     float: left;
@@ -328,12 +403,8 @@
         transition: 0.3s;
         font-size: 17px;
     }
-        .tab button:hover {
-            background-color: #ddd;
-        }
-        .tab button.active {
-            background-color: #f2f2f2;
-        }
+        
+
     .tabcontent {
         float: left;
         padding: 0px 12px;
@@ -361,38 +432,69 @@
         color: white;
     }
     /*appdash*/
-    .appcontainer{
-        float:left;
-        padding:5px;
-    }
+.appcontainer {
+    padding: 5px;
+    width: 25%;
+}
+.tabpane-flex{
+    display:flex;
+    flex-flow:row wrap;
+}
+.appcontainer-head .title {
+    font-size: 17px;
+    font-weight: 400;
+    padding-left: 10px;
+}
 .appcontainer_inner {
     display: flex;
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
-    border-radius: 2px;
-    border: 1px solid #e8e8e8;
-    background-color: #f2f2f2;
+    border-radius: 4px;
+    border: 1px solid #ccc;
     color: #4a4747;
     text-decoration: none !important;
-    padding: 10px 5px;
+    padding: 20px 10px;
+    flex-flow: row nowrap;
+    position:relative;
 }
-.appcontainer_inner .flex-center{
-    font-size:27px;
+
+.appcontainer_inner .appcontainer-icon-container {
+    padding-right:10px;
 }
-.txtdecor_none{
-    text-decoration:none;
+    .appcontainer_inner .appcontainer-icon-container .appcontainer-icon {
+        font-size: 20px;
+    }
+    .appcontainer_inner .appcontainer-body .title{
+        font-size:15px;
+        font-weight:400;
+        margin-bottom:5px;
+    }
+        .appcontainer_inner .appcontainer-body .description {
+            font-size:12px;
+        }
+.txtdecor_none {
+    text-decoration: none;
 }
-.appcontainer_inner:hover {
-    background-color: #f3f8ff !important;
+.appcontainer_inner .openinnew {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display:none;
 }
-/*locswitch*/
-.loc_switchModal {
-    display: none;
-    font-family: open sans;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
+.appcontainer_inner:hover, .appcontainer_inner:focus, .appcontainer_inner:active {
+    background-color: #508bf9 !important;
+    color: white;
 }
+    .appcontainer_inner:hover .openinnew, .appcontainer_inner:focus .openinnew, .appcontainer_inner:active .openinnew {
+        display: block;
+    }
+    /*locswitch*/
+    .loc_switchModal {
+        display: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 1000;
+    }
 .display-flex{
     display:flex;
 }
@@ -402,7 +504,6 @@
     min-width: 60%;
     display: flex;
     flex-direction: column;
-    font-family: open sans;
     border-radius: 6px;
     max-width: 60%;
 }
@@ -626,7 +727,6 @@ outline:none;
         font-weight: 400;
         color: #4d4a4e !important;
         background-color: transparent;
-        font-weight: 600;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -710,6 +810,7 @@ outline:none;
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 15px;
+    font-weight:400;
 }
 
 .appdash_obj_container .objitems p {
@@ -783,7 +884,41 @@ outline:none;
     .appdash_obj_container .objitems .object_container:hover {
         background-color: #f3f8ff;
     }
-
+.newObjectmdl .eb-newobj-mdlbdy {
+    display: flex;
+    flex-flow: row wrap;
+}
+    .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile {
+        padding: 5px;
+        width: 16.6%;
+    }
+    .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner {
+        border: 1px solid #ccc;
+        display: flex;
+        flex-flow: column;
+        text-align: center;
+        padding: 15px 5px;
+        border-radius: 4px;
+        text-decoration: none;
+        color: #333;
+    }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner:hover {
+            background-color: #508bf9;
+            color:white;
+        }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner .icon {
+            font-size: 25px;
+            color: #5388ea;
+            padding: 10px 0;
+        }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner:hover .icon {
+            color: white;
+        }
+        .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner .name {
+            display: flex;
+            flex-flow: row wrap;
+            justify-content:center;
+        }
 /*marker for export*/
 .ExportMark {
     position: absolute;

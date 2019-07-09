@@ -1,94 +1,49 @@
 ﻿
-.column {
-    float: left;
-    margin-top: 00px;
-    height: 575px;
-}
-
-.left_view {
-    padding-top: 0px;
-    padding-left: 6px;
-    padding-right: 20px;
-    width: 20%;
-    overflow: auto;
-    background-color: #eaedec;
-}
-
-.right1 {
-    width: 80%;
-    PADDING-TOP: 0PX;
-    padding-left: 100px;
-    padding-right: 100px;
-    background-color: white;
-}
 .render {
     background-color: #f8f8f8;
-    max-width: 636px;
-    height: 521px;
+    max-width: 644px;
+    height: 405px;
     border: 2px solid blue;
-    padding: 50px;
-    margin: 20px;
+    padding: 20px;
+    margin: 0px;
     overflow: auto;
 }
-
-div.ex3 {
-    overflow: auto;
+.CurrentSelection {
+    color: darkblue;
+    font-weight: bolder;
 }
-
-div.ex2 {
-    width: 80%;
+div.searchDiv {
+    width: 100%;
     height: 82px;
     overflow: hidden;
+    border-bottom: solid 1px #bfbfbf;
+    margin: 5px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
 }
 
-div.ex2 center {
+div.searchDiv center {
     text-align: left;
 }
 
-div.ex2 h1 {
-    font-size: 20px;
+div.searchDiv h1 {
+   display: block;
+    font-size: 13px;
     padding: 0px;
-    margin-bottom: 0px;
-    margin-top: 0px;
+    margin-bottom: -12px;
+    margin-top: -12px;
     text-align: left;
 }
 
-div.ex2 p {
+div.searchDiv p {
     color: black;
     font-size: 13px;
     padding: 0px;
     margin-bottom: 0px;
     line-height: 20px;
 }
-
-
-.header {
-    background-color: lightgrey;
-    width: 100%;
-    border: 00px;
-   
-}
-.header_column {
-    float: left;
-    height: 50px;
-}
-
-.header_left {
-    width: 20%;
-    padding: 41px;
-
-    background-color: #eaedec;
-}
-
-.header_right {
-    width: 80%;
-    padding: 41px;
-    padding-left: 116px;
-}
-
-.ic {
-    font-size: large;
-    width: 193px;
+div.searchDiv a {
+    font-size: 20px;
 }
 
 .block {
@@ -98,22 +53,11 @@ div.ex2 p {
     width: 876px;
     overflow:auto;
 }
-.wiki-align {
-    padding-right: 60px;
-    padding-left: 60px;
-}
-
-.navbar {
-    position: relative;
-    min-height: 50px;
-    margin-bottom: -1px;
-    border: 1px solid transparent;
-}
 
 .input-group {
     width: 301px;
     height: 31px;
-    position: fixed;
+    position: relative;
     margin-left: 62px;
 }
 .input-group input{
@@ -123,41 +67,9 @@ div.ex2 p {
     border-color: #508cf9;
 }
 
-
-.navbar1 {
-    background-color: #508bf9;
-    border-color: #508bf9;
-    color: #FFF;
-    height: 550px;
-    overflow: auto;
-    padding-left: 0px;
-    padding-top: 20px;
-    margin-top: 10px;
-    -webkit-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
-    -moz-box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
-    box-shadow: 5px 4px 5px 0px rgba(107,107,107,1);
-    border-radius: 0px 5px 5px 0px;
-    -moz-border-radius: 0px 5px 5px 0px;
-    -webkit-border-radius: 0px 5px 5px 0px;
-    border: 0px solid #000000;
-}
-.navbar1 a {
-        color: #FFF;
-}
-.navbar1 .row {
-    padding-left: 10px;
-}
-.navbar1 h5 {
-    font-size: 16px;
-    line-height: 5px;
-    font-family: Montserrat;
-    text-shadow: inherit;
-}
-
-
 .props {
-    width: 56px;
-    height: 40px;
+    width: 63px;
+    height: 25px;
     align-content: center;
 }
 .props:hover {
@@ -166,6 +78,7 @@ div.ex2 p {
 .props:active {
     background-color: cornflowerblue;
 }
+
 iframe {
     width: 470px;
     height: 315px;
@@ -186,11 +99,8 @@ iframe {
 }
 
 .style-4::-webkit-scrollbar-thumb {
-    background-color: #557aff;
+    background-color: lightgrey #557aff;
 }
-.code{
-}
-
 
 h1 {
     font-size: 40px;
@@ -224,10 +134,6 @@ h4 {
     font-weight: 400;
 }
 
-/* Won't be used here */
-
-
-
 h6 {
     font-size: 12px;
     line-height: 20px;
@@ -236,16 +142,16 @@ h6 {
     text-shadow: inherit;
 }
 
-.p {
+p {
     width: 100%;
     font-size: 15px;
     line-height: 3.2rem;
-    /* color: white; */
     font-family: Montserrat;
     font-weight: 400;
-    color: #4e566d;
+    color: #4c4848;
 }
-ul li {
+
+  ul li {
     font-family: sans-serif;
     color: #3b415e;
     font-weight: 400;
@@ -263,12 +169,11 @@ a {
     line-height: 26px;
 }
 
-a:focus, a:hover {
+props.a:focus, a:hover {
     -webkit-transition-property: font-size; /* Safari */
   -webkit-transition-duration: .2s; /* Safari */
   -webkit-transition-delay: .1s;
    transition-timing-function: linear;
-    font-size:14px;
     color: blue;
     text-decoration: none;
 }
@@ -282,23 +187,188 @@ a:focus, a:hover {
     text-decoration: none;
   }
 
-.overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    background-color: #cd9557;
-    opacity: .7;
-    z-index: 1;
+/*share links*/
+.icon-bar {
+  position: fixed;
+  top: 75%;
+  left:95%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
 }
 
-.trihuddiv {
-    position: fixed;
-    width: 2%;
-    /* height: 100%; */
-    clip-path: polygon(0 0,100% 0,100% -14%,0% 92%);
-    background: #fff;
-    height: 670px;
-    top: 0px;
+.icon-bar a {
+  display: block;
+  text-align: center;
+  padding: 16px;
+  transition: all 0.3s ease;
+  color: white;
+  font-size: 20px;
+}
+
+.icon-bar a:hover {
+  background-color: #000;
+}
+
+.facebook {
+  background: #3B5998;
+  color: white;
+}
+
+.twitter {
+  background: #55ACEE;
+  color: white;
+}
+.linkedin {
+  background: #007bb5;
+  color: white;
+}
+
+.whatsapp {
+  background: green;
+  color: white;
+}
+
+/*wiki admin*/
+
+.public h1 {
+    font-size: 25px;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    text-align: left;
+}
+.admin_wiki_list {
+    height: 39px;
+    width: 100%;
+    overflow: hidden;
+}
+.admin_wiki_list  h1{
+    font-size:15px;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    text-align: left;
+}
+.admin_wiki_list  p{
+    font-size:10px;
+    line-height: 10px;
+    font-family: Montserrat;
+    color: #4c4848;
+}
+
+.admin_wiki_list center {
+    text-align: left;
+}
+
+.admin_wiki_list h2 {
+    font-size: 13px;
+    padding: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    text-align: left;
+}
+
+.container {
+    padding: 20px;
+}
+
+.form-control {
+    width: 120px;
+}
+
+.popover {
+    max-width: 400px;
+}
+
+#popover-content-logout > * {
+    background-color: #ff0000 !important;
+}
+
+
+.dragable_wiki_list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 60%;
+    margin-left: 50px;
+}
+
+   .dragable_wiki_list li {
+        margin: 0 3px 3px 3px;
+        padding: 0.4em;
+        padding-left: 1.5em;
+        font-size: 13px;
+        height: 28px;
+        width: 400px;
+    }
+
+.dragable_wiki_list li span {
+    position: center;
+    margin-left: -1.3em;
+}
+#layout_div {
+    background-color: white;
+}
+
+.WikiMenu {
+    font-size: 25px;
+    line-height: 42px;
+    color: #2d2d2d;
+    font-weight: 400;
+    font-family: Montserrat;
+}
+.WikiList {
+    width: auto;
+    margin-left: 50px;
+    border-bottom: solid 1px #bfbfbf;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+}
+
+.UpdateOrder {
+    width: 211px;
+    height: 35px;
+    font-size: 20px;
+    font-family: sans-serif;
+    color: white;
+    background: #4d86d6;
+    border: 0px;
+    margin-left: 135px;
+    margin-top: 15px;
+}
+.wiki_btn {
+    font-size: 14px;
+    width: 150px;
+    height: 35px;
+    border: 0px;
+    background: #4d86d6;
+    margin-top: 25px;
+    color: white;
+    font-family: Montserrat;
+}
+    .wiki_btn:hover{
+        border:0px;
+    }
+
+.wiki_admin_h1 {
+    font-family: Montserrat;
+    letter-spacing: -1.25px;
+    font-size: 44px;
+    line-height: 48px;
+    font-weight: 600;
+    text-align: inherit;
+    color: rgba(0, 0, 0, 0.84);
+    font-style: normal;
+}
+
+.menu_border{
+    border:solid 1px;
+}
+
+.render_field {
+    width: 45px;
+    height: 30px;
+    margin-right: 25px;
+    border: 2px solid #73AD21;
 }

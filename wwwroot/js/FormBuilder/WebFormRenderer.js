@@ -61,11 +61,14 @@ const WebFormRender = function (option) {
     };
 
     this.setFormObject = function () {
-        let flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
-        $.each(flatControlsWithDG, function (i, ctrl) {
+        this.flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
+        $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
         this.setFormObjectMode();
+        this.FRC.setUpdateDependentControlsFn();
+        
+
         return this.formObject;
     };
 
@@ -84,26 +87,9 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.bindFnsToctrls = function (Obj) {
-        if (Obj.Required)
-            this.bindRequired(Obj);
-        if (Obj.Unique)
-            this.bindUniqueCheck(Obj);
-        if (Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "")
-            this.bindOnChange(Obj);
-        if (Obj.Validators.$values.length > 0)
-            this.bindValidators(Obj);
-    };
-
     this.initNCs = function () {
-        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
-        $.each(allFlatControls, function (k, Obj) {
-            this.updateCtrlUI(Obj);
-        }.bind(this));
-
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
-
             if (Obj.ObjType === "PowerSelect")
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
@@ -111,16 +97,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-
             this.initControls.init(Obj, opt);
-
-            this.bindFnsToctrls(Obj);
-
-            if (Obj.DefaultValue)
-                Obj.setValue(Obj.DefaultValue);
-
-            if (Obj.IsDisable)
-                Obj.disable();
         }.bind(this));
     };
 
@@ -145,90 +122,33 @@ const WebFormRender = function (option) {
 
         this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.setFormObject();
+        this.updateCtrlsUI();
+        this.initNCs();// order 1
+        this.FRC.setDefaultvalsNC(this.flatControls);// order 2
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
-        this.initNCs();
+
+
+        this.FRC.fireInitOnchangeNC();
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
-            this.bindOnChange(_DG);
+            this.FRC.bindOnChange(_DG);
         }.bind(this));
     };
 
-    this.bindOnChange = function (control) {
-        try {
-            control.bindOnChange(new Function("form", "user", `event`, atob(control.OnChangeFn.Code)).bind("this-placeholder", this.formObject, this.userObject));
-        }
-        catch (e) {
-            console.eb_log("eb error :");
-            console.eb_log(e);
-            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
-        }
-    };
-
-    this.bindValidators = function (control) {
-        $("#" + control.EbSid_CtxId).on("blur", this.FRC.isValidationsOK.bind(this.FRC, control));
-    };
-
-    this.bindRequired = function (control) {
-        if (control.ObjType === "SimpleSelect")
-            $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
-        else
-            $("#" + control.EbSid_CtxId).on("blur", this.FRC.isRequiredOK.bind(this.FRC, control)).on("focus", this.FRC.removeInvalidStyle.bind(this, control));
-    };
-
-    this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
-        ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+    this.updateCtrlsUI = function () {
+        let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
+        $.each(allFlatControls, function (k, Obj) {
+            this.updateCtrlUI(Obj);
+        }.bind(this));
     };
 
     //this.unbindUniqueCheck = function (control) {
     //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
     //};
-
-    this.isSameValInUniqCtrl = function (ctrl) {
-        let val = ctrl.getValue();
-        return val === this.uniqCtrlsInitialVals[ctrl.EbSid];
-    };
-
-    this.checkUnique = function (ctrl) {/////////////// move
-        if (Object.entries(this.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))// avoid check if edit mode and value is same as initial
-            return;
-        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)// avoid check if numeric and value is 0
-            return;
-
-        //let unique_flag = true;
-        let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        let val = ctrl.getValue();
-        if (isNaNOrEmpty(val))
-            return;
-        //this.hideLoader();
-        //this.showLoader();
-        hide_inp_loader($ctrl, this.$saveBtn);
-        show_inp_loader($ctrl, this.$saveBtn);
-        $.ajax({
-            type: "POST",
-            url: "../WebForm/DoUniqueCheck",
-            data: {
-                TableName: this.FormObj.TableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
-            },
-            success: function (isUnique) {
-                //this.hideLoader();
-                hide_inp_loader($ctrl, this.$saveBtn);
-                if (!isUnique) {
-                    //unique_flag = false;
-                    $ctrl.attr("uniq-ok", "false");
-                    this.FRC.addInvalidStyle(ctrl, "This field is unique, try another value");
-                }
-                else {
-                    $ctrl.attr("uniq-ok", "true");
-                    this.FRC.removeInvalidStyle(ctrl);
-                }
-                //return unique_flag;
-            }.bind(this)
-        });
-    };
 
     this.getWebFormVals = function () {
         return getValsFromForm(this.FormObj);
@@ -431,7 +351,7 @@ const WebFormRender = function (option) {
     this.saveSuccess = function (_respObj) {// need cleanup
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
-        let locName = loc__.CurrentLocObj.LongName;
+        let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
@@ -524,12 +444,13 @@ const WebFormRender = function (option) {
 
     };
 
+    //functions to be executed before save in frontend
     this.BeforeSave = function () {
         if (!this.FormObj.BeforeSaveRoutines)
             return;
         $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
             if (!r.IsDisabled && r.Script.Lang === 0 && r.Script.Code !== "") {
-                new Function("form", "user", `event`, atob(r.Script.Code)).bind("this-placeholder", this.setFormObject(), this.userObject)();
+                new Function("form", "user", `event`, atob(r.Script.Code)).bind(this.formObject, this.setFormObject(), this.userObject)();
             }
         }.bind(this));
     };
@@ -643,7 +564,7 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
                                     //EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
@@ -694,7 +615,7 @@ const WebFormRender = function (option) {
                             success: function (result) {
                                 this.hideLoader();
                                 if (result > 0) {
-                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + loc__.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
+                                    EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
                                     //EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
@@ -993,47 +914,44 @@ const WebFormRender = function (option) {
             this.setEditModeCtrls();
             this.SwitchToViewMode();
 
-            setTimeout(function () {
-                let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
-                let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
-                if (ol !== nl) {
-                    EbDialog("show", {
-                        Message: "Switching from " + getObjByval(loc__.Locations, "LocId", ol).LongName + " to " + getObjByval(loc__.Locations, "LocId", nl).LongName,
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            loc__.SwitchLocation(_formData.MultipleTables[_formData.MasterTable][0].LocId);
-                            this.setHeader(this.mode);
-                        }.bind(this)
-                    });
-                }
-            }.bind(this), 500);
+            let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
+            let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
+            if (ol !== nl) {
+                EbDialog("show", {
+                    Message: "Switching from " + getObjByval(ebcontext.locations.Locations, "LocId", ol).LongName + " to " + getObjByval(ebcontext.locations.Locations, "LocId", nl).LongName,
+                    Buttons: {
+                        "Ok": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        ebcontext.locations.SwitchLocation(_formData.MultipleTables[_formData.MasterTable][0].LocId);
+                        this.setHeader(this.mode);
+                    }.bind(this)
+                });
+            }
 
         }
-        setTimeout(function () {
-            loc__.Listener.ChangeLocation = function (o) {
-                if (this.rowId > 0) {
-                    EbDialog("show", {
-                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            reloadFormPage();
-                        }.bind(this)
-                    });
-                }
-            }.bind(this);
-        }.bind(this), 500);
+        
+        ebcontext.locations.Listener.ChangeLocation = function (o) {
+            if (this.rowId > 0) {
+                EbDialog("show", {
+                    Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                    Buttons: {
+                        "Ok": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        reloadFormPage();
+                    }.bind(this)
+                });
+            }
+        }.bind(this);
     };
 
     this.init();

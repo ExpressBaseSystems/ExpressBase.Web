@@ -123,16 +123,18 @@
         let formObject = ctrlOpts.formObject;
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
+        let fun = null;
         if (ctrl.ShowDateAs_ === 1) {
             $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-            if (ctrl.OnChange) {
-                let fun = new Function("form", "User", atob(ctrl.OnChange));
+            if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
+                fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
                 $input.MonthPicker({
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });
             }
+            ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
@@ -151,7 +153,7 @@
                     datepicker: true,
                     mask: true
                 });
-                $input.val(userObject.Preference.ShortDate);
+                //$input.val(userObject.Preference.ShortDate);
             }
             else if (ctrl.EbDateType === 17) { //Time
                 $input.datetimepicker({
@@ -161,7 +163,7 @@
                     timepicker: true,
                     datepicker: false
                 });
-                $input.val(userObject.Preference.ShortTime);
+                //$input.val(userObject.Preference.ShortTime);
             }
             else {
                 $input.datetimepicker({ //DateTime
@@ -171,8 +173,9 @@
                     timepicker: true,
                     datepicker: true
                 });
-                $input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
+                //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
+            this.setCurrentDate(ctrl, $input);
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
@@ -189,6 +192,8 @@
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
             if (ctrl.IsNullable) {
+                if (!($('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+                    $input.val('');
                 $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
                 $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             }
@@ -200,13 +205,26 @@
         let $ctrl = $(event.target).closest("input[type='checkbox']");
         if ($ctrl.is(":checked")) {
             if ($ctrl.closest(".input-group").find("input[type='text']").val() === "")
-                $ctrl.closest(".input-group").find("input[type='text']").val(ebcontext.user.Preference.ShortDate);
+                //$ctrl.closest(".input-group").find("input[type='text']").val(ebcontext.user.Preference.ShortDate);
+                this.setCurrentDate(ctrl, $ctrl.closest(".input-group").find("input[type='text']"));
             $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false).next(".input-group-addon").css('pointer-events', 'auto');
             //ctrl.DoNotPersist = false;
         }
         else {
             $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             //ctrl.DoNotPersist = true;
+        }
+    };
+
+    this.setCurrentDate = function (ctrl, $input) {
+        if (ctrl.EbDateType === 5) { //Date
+            $input.val(ebcontext.user.Preference.ShortDate);
+        }
+        else if (ctrl.EbDateType === 17) { //Time
+            $input.val(ebcontext.user.Preference.ShortTime);
+        }
+        else {
+            $input.val(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime);
         }
     };
 
@@ -222,6 +240,21 @@
         });
 
         $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, ctrl));
+
+        if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        }
+        else {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
+            if (ebcontext.user.wc === "dc")
+                $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+            else if (ebcontext.user.wc === "uc") {
+                if (ctrl.LoadCurrentLocation)
+                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('[value=' + ebcontext.locations.CurrentLocObj.LocId + ']').trigger('click');
+                else
+                    $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
+            }
+        }
     };
 
     this.UserLocationCheckboxChanged = function (ctrl) {
@@ -238,20 +271,22 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            this.Bot.userLoc.lat = position.coords.latitude;
-            this.Bot.userLoc.long = position.coords.longitude;
-            this.InitMap4inpG(ctrl);
-        }.bind(this));
+        ebcontext.userLoc = { lat: 0 ,long: 0};
+        if (_rowId === undefined || _rowId === 0) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
+            }.bind(this));
+        }
+        this.InitMap4inpG(ctrl);
     };
 
     this.InitMap4inpG = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
-        var name = ctrl.Name;
+        var name = ctrl.EbSid;
         $input.locationpicker({
             location: {
-                latitude: this.Bot.userLoc.lat,
-                longitude: this.Bot.userLoc.long
+                latitude: ebcontext.userLoc.lat,
+                longitude: ebcontext.userLoc.long
             },
             radius: 5,
             zoom: 18,
@@ -266,7 +301,7 @@
                 componentRestrictions: { country: 'fr' }
             }
         });
-        $(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
+        //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
     };
 
@@ -380,6 +415,12 @@
             var val = $('#' + this.id + 'Lbl').text().trim();
             $('#' + ctrl.Name).val(val);
         });
+        if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code && ctrl.OnChangeFn.Code !== '') {
+            if (ctrl.DefaultValue !== "")
+                $("body input[name='" + ctrl.EbSid_CtxId + "'][value='" + ctrl.DefaultValue + "']").prop("checked", true).trigger("change");
+            else
+                $("body input[name='" + ctrl.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
+        }
     };
 
     this.CheckBoxGroup = function (ctrl) {
@@ -406,28 +447,41 @@
         $("#iFrameFormModal").modal("show");
     };
 
-    this.SysLocation = function (ctrl) {
-        if (_rowId === 0) {
-            setTimeout(function () {
-                if (ctrl.DisplayMember === 1) {
-                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.LocId);
-                }
-                else {
-                    $("#" + ctrl.EbSid_CtxId).val(loc__.CurrentLocObj.ShortName);
-                }
-            }, 500);
-        }        
+    this.SysLocation = function (ctrl) {//all sys controls init commented to avoid confusion with the default value in new mode
+        //if (_rowId === undefined || _rowId === 0) {
+        //    setTimeout(function () {
+        //        if (ctrl.DisplayMember === 1) {
+        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
+        //        }
+        //        else if (ctrl.DisplayMember === 3) {
+        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LongName);
+        //        }
+        //        else {
+        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.ShortName);
+        //        }
+        //    }, 500);
+        //}        
     };
     this.SysCreatedBy = function (ctrl) {
-        if (ctrl.DisplayMember === 1) {
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
-        }
-        else {
-            $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
-        }
+        //if (ctrl.DisplayMember === 1) {
+        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        //}
+        //else {
+        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        //}
+    };
+    this.SysModifiedBy = function (ctrl) {
+        //if (_rowId > 0) {
+        //    if (ctrl.DisplayMember === 1) {
+        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
+        //    }
+        //    else {
+        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        //    }
+        //}        
     };
     this.SysCreatedAt = function (ctrl) {
-        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.Preference.ShortDate);
+        //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
 
     this.Numeric = function (ctrl) {

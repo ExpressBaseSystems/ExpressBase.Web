@@ -335,8 +335,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
-                    $extCont: $(".ppcont"),
-                    style: { top: "80px" }
+                    $extCont: $(".ppcont")
                 }, this.PGobj);
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
@@ -3324,7 +3323,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
-        var idx = this.Api.row($(e.target).parent().parent()).index();
+        var idx = this.Api.row($(e.target).parents().closest("td")).index();
         if (typeof (idx) !== "undefined")
             //this.rowData = this.Api.row(idx).data();
             this.rowData = this.unformatedData[idx];
@@ -3368,7 +3367,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else if (this.popup) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -3698,8 +3697,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.colorRow = function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
         $.each(this.ebSettings.Columns.$values, function (i, value) {
-            var rgb = '';
-            var fl = '';
             if (value.name === 'sys_row_color') {
                 HEX = Number(aData[value.data]).toString(16);
                 var t = (HEX.toString().length < 6) ? ("0" + HEX.toString()) : HEX;
@@ -3839,6 +3836,35 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.start();
+};
+
+var ConditionalFormat = function () {
+    this.getModal = function () {
+        let modal1 = `
+            <div class="modal fade" id="treemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                <div class="modal-dialog">
+                    <div class="treemodal-container">
+                        <h4 class="treemodal-header">Conditional Rendering</span></h4>
+                        <div class="tree_item_cont">
+                            <label>From </label>
+                            <span id="movefrom"></span>
+                        </div>
+                        <div class="tree_item_cont">
+                            <label>To</label>
+                            <button class="btn treemodalul">Select Group
+                            <span class="caret"></span></button>
+                        </div>
+                        <div class="pull-right">
+                            <button class="btn" id="treemodal_submit">Move</button>
+                            <button class="btn" id="treemodal_cancel">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        $("body").append(modal1);
+    };
+
+    this.getModal();
 };
 
 function returnOperator(op) {

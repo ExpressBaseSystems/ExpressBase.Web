@@ -470,9 +470,18 @@
 
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) { ////////// need optimization
-        let oldVal = this.PropsObj.__oldValues[this.CurProp];
+        let oldVal = "";
+        try {
+            oldVal = this.PropsObj.__oldValues[this.CurProp];
+        }
+        catch (e) {
+            alert(e);
+            console.log(e);
+        }
         this.getvaluesFromPG();
-        this.PropsObj.__oldValues = $.extend({}, this.PropsObj);
+        let objCopy = ($.extend({}, this.PropsObj));
+        delete objCopy.__oldValues;
+        this.PropsObj.__oldValues = objCopy;
         let subTypeOf = null;
         if (e) {
             let $e = $(e.target);
@@ -600,7 +609,7 @@
                 this.$fitCornerBtn.insertAfter(this.$wraper.find(".pgpin"));
                 this.$fitCornerBtn.on("click", function () {
                     this.$extCont.attr("style", "");
-                    this.$extCont.attr("dragging","false");
+                    this.$extCont.attr("dragging", "false");
                     this.$fitCornerBtn.hide();
                 }.bind(this));
             }
@@ -807,9 +816,12 @@
     // fires when a prop row is focused To show help text
     this.rowFocus = function (e) {
         let $e = $(e.target);
-        let prop = $e.attr("name").slice(0, -2);
-        let ht = prop + " : &nbsp;&nbsp;" + ($e.closest("tr").attr("tr-for") === "23") ? "" : getObjByval(this.Metas, "name", prop).helpText;
-        $("#" + this.wraperId + "_HelpBox").html(ht);
+        let prop = $e.attr("name").slice(0, -2); let helpText = getObjByval(this.Metas, "name", prop).helpText;
+        if (helpText) {
+            let ht = prop + " : &nbsp;&nbsp;" + (($e.closest("tr").attr("tr-for") === "23") ? "" : helpText);
+            $("#" + this.wraperId + "_HelpBox").html(ht);
+        } else
+            $("#" + this.wraperId + "_HelpBox").html("");
     }.bind(this);
 
     //toggles a propGroup and set necessory flags as attribute

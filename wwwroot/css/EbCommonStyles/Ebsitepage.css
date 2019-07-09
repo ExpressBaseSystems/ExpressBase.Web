@@ -1,22 +1,128 @@
-﻿@import url(//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css);
-
-
-.field-icon {
-    float: right;
-    /*margin-left: -25px;*/
-    margin-top: -25px;
-    position: relative;
+﻿.field-icon {
+    right: 0;
+    top: 15px;
+    position: absolute;
     z-index: 2;
 }
 
-
-
-.eb_required_group {
-    margin-right: -15px;
-    margin-left: -15px;
+.eb-signup_wrapper {
+    font-family: Montserrat;
 }
 
+    .eb-signup_wrapper h1 {
+        font-size: 1.8em;
+        margin-bottom: 30px;
+        font-weight: 400;
+        margin-top: 10px;
+    }
 
+    .eb-signup_wrapper .eb-signup_socilaWrpr {
+        justify-content: center;
+        display: flex;
+        flex: 85%;
+        max-width: 90%;
+        background: linear-gradient(to right,#eef9fe,#edf7ff);
+        margin-top: 50px;
+        border-radius: 6px;
+        border: 1px solid #d3edff;
+        flex-flow: column;
+        position: relative;
+    }
+        .eb-signup_wrapper .eb-signup_socilaWrpr::before {
+            content: "Or using";
+            position: absolute;
+            top: -35px;
+            width: 100%;
+            font-size: 17px;
+            font-weight: 500;
+        }
+        .eb-signup_wrapper .eb-signup_socilaWrpr .eb-signup_socilaWrpr_inner {
+            display: flex;
+            justify-content: center;
+        }
+
+    .eb-signup_wrapper .eb-signup-tnc {
+        width: 100%;
+        font-size: 12px;
+        font-weight: 500;
+        margin-top:2rem;
+    }
+    .eb-signup_wrapper .rightpart {
+        background: white;
+        height: 100%;
+        display: flex;
+        flex-flow: column;
+    }
+.right-part-inner {
+    justify-content: center;
+    padding-top: 6rem;
+    flex-flow: column;
+    max-width:700px;
+}
+
+.eb-signup_wrapper .sinpt {
+    height: 45px;
+}
+.eb-signup-selltext h2 {
+    font-size: 35px;
+    font-weight: 400;
+    margin-bottom:15px;
+}
+.eb-signup-selltext h4 {
+   font-size:25px;
+}
+
+.eb-signup_wrapper .icon_input .sinpt {
+    padding-left: 35px;
+}
+    .eb-signup_wrapper .leftpart {
+       display:flex;
+       justify-content:center;
+       align-items:center;
+       flex-flow:column;
+       padding-top:6rem;
+    }
+
+.leftsideimg {
+    height:350px;
+}
+.imglogo {
+   height:40px;
+}
+.lg_img {
+  
+}
+.signintop:hover{
+    text-decoration:none;
+}
+.center_rightpart {
+    display: flex;
+    height: 100%;
+    flex-flow: column;
+    flex: 0 0 85%;
+    max-width: 90%;
+    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    padding: 25px;
+    border-radius: 6px;
+    border: 1px solid #d3edff;
+}
+
+.eb-signup_wrapper .lg_button {
+    color: white;
+    background-color: #4987fb;
+    padding: 6px 30px;
+    height: 45px;
+    margin-top: 15px;
+}
+
+    .eb-signup_wrapper .lg_button:hover {
+        background-color: #4382f7;
+        color: white;
+    }
+/*.eb_required_group {
+    margin-right: -15px;
+    margin-left: -15px;
+}*/
 /* start css for radio button on card 3 in sign up page*/
 .ulradio {
     margin: 0px;
@@ -105,7 +211,6 @@
     font-style: normal;
 }
 
-
 .inptradio[type=radio]:checked ~ .check {
     border: 5px solid #4d86d6;
 }
@@ -134,15 +239,18 @@
 }
 
 #rcorners1 {
-    border-radius: 4px; 
-    background-color: #f5f5f5;
+    display: none;
+    border-radius: 4px;
+    background-color: #ffffff;
     color: black;
-    float: left;
-    width: 17%;
-    height: 20%;
     box-shadow: 1px 1px 5px rgba(0,0,0,.5);
     line-height: 1.8;
     padding: 15px;
+    bottom: 0;
+    position: absolute;
+    z-index: 10;
+    left: -300px;
+    width: 300px;
 }
 
     #rcorners1:after {
@@ -150,14 +258,14 @@
         width: 0px;
         height: 0px;
         border-top: 10px solid transparent;
-        border-left: 10px solid #f5f5f5;
+        border-left: 10px solid #ffffff;
         border-bottom: 10px solid transparent;
         border-right: 10px solid transparent;
+     
         position: absolute;
         left: 100%;
         top: 60%;
         margin-left: -2px;
-        
     }
 
 
@@ -257,24 +365,22 @@
         transform: translate(19px, 0);
     }
 }
-
-
-.txthighlight:focus {
-    /*border: none;*/
-    /*-webkit-box-shadow: 0px 0px 7px 0px rgba(95,163,245,0.51);
-    -moz-box-shadow: 0px 0px 7px 0px rgba(95,163,245,0.51);
-    box-shadow: 0px 0px 7px 0px rgba(95,163,245,0.51);*/
+/*.txthighlight:focus {
     border-color: #66afe9;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 }
-
+*/
 .txthighlightred:focus {
-    border-color: #fa6d72;
+    border-color: #a94442;
     outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(241, 84, 84, 0.5);
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(169,68,66,.6);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(169,68,66,.6);
+}
+
+.ebnotify {
+    color: #a94442;
 }
 
 .sol_db_info {
@@ -282,83 +388,16 @@
     height: 30px;
     max-height: 30px;
 }
-
-
-
-
-/*signin page css*/ 
-
-
-.leftpart {
-   
-    background: #AAAAAA;
-    height: 100vh;
-}
-
-.rightpart {
-    background: #fffdfd;
-    height: 100vh;
-}
-
+/*signin page css*/
 input {
     border: none;
     margin: 0;
 }
+
 .input-group-addon {
-    
     /*background: #FFFFFF;
     border-left:  solid #ea4c88;
     color: #9f9f9f;*/
-    
-}
-
-.lg_button {
-    display: block;
-    border: none;
-    color: white;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-    border-radius: 4px;
-    background-color: #508bf9;
-    width: auto;
-    padding: 14px 40px;
-}
-    .lg_button:hover {
-        display: block;
-        border: none;
-        color: white;
-        padding: 14px 28px;
-        font-size: 16px;
-        cursor: pointer;
-        text-align: center;
-        border-radius: 4px;
-        background-color: #508bf9;
-        width: auto;
-        padding: 14px 40px;
-    }
-
-
-.center_rightpart {
-    width: 75%;
-    height: 75%;
-    top: 15%;
-    margin: 0 auto;
-    position: relative;
-    
-}
-
-
-
-
-.sinpt {
-    width: 100%;
-    border-radius: 4px;
-    outline: none;
-    padding: 8px;
-    box-sizing: border-box;
-   
 }
 
 .selinp {
@@ -369,9 +408,6 @@ input {
     height: 46px;
     box-sizing: border-box;
 }
-.icon_input .sinpt {
-    padding-left: 35px;
-}
 
 .icon_input {
     position: relative;
@@ -380,26 +416,21 @@ input {
     .icon_input i {
         position: absolute;
         left: 0;
-        top: 8px;
+        top: 6px;
         padding: 9px 8px;
-        color: #aaa;
+        color: #7da4ec;
         transition: 0.3s;
-       
     }
 
-.txthighlight:focus + i {
+/*.txthighlight:focus + i {
     color: #66afe9;
-}
-.txthighlightred:focus + i {
+}*/
+/*.txthighlightred:focus + i {
     color: #fa6d72;
-}
-
-
-
+}*/
 .radio_cstm {
     position: absolute;
     opacity: 0;
-   
 }
 
     .radio_cstm:checked + label,
@@ -410,9 +441,7 @@ input {
         line-height: 20px;
         display: inline-block;
         color: #555;
-        font:inherit;
-        
-
+        font: inherit;
     }
 
         .radio_cstm:checked + label:before,
@@ -426,7 +455,6 @@ input {
             border: 4px solid #ddd;
             border-radius: 100%;
             background: #fff;
-
         }
 
         .radio_cstm:checked + label:after,
@@ -455,15 +483,70 @@ input {
             transform: scale(1);
         }
 
-
 .radiodiv {
-    color: #555;
-    background-color: #fff;
-    background-image: none;
-    
-    border-radius: 4px;
     padding-bottom: 7px;
     padding-top: 9px;
-   
-    margin-bottom:20px;
+    margin-bottom: 20px;
+}
+/******social media sign in******/
+
+.smGlobalBtn { /* global button class */
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border: 2px solid #ddd; /* add border to the buttons */
+    box-shadow: 0 3px 3px #999;
+    padding: 0px;
+    text-decoration: none;
+    text-align: center;
+    color: #fff;
+    font-size: 25px;
+    font-weight: normal;
+    line-height: 2em;
+    border-radius: 27px;
+    -moz-border-radius: 27px;
+    -webkit-border-radius: 27px;
+}
+
+/*media query*/
+
+@media only screen and (max-width: 600px) {
+    .rightcolpad {
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-top: 0px !important;
+    }
+
+    .rightcolpadtop {
+        padding-top: 0px !important;
+        margin-bottom: 0px !important;
+    }
+
+    .rightcol_mar_bot {
+        margin-bottom: 0px !important;
+    }
+
+    .rightcolmartop {
+        margin-top: 10px !important;
+        margin-bottom: 0px !important;
+    }
+
+    .rcorners1 {
+        visibility: hidden;
+    }
+
+    .rightpart {
+       padding:0;
+    }
+
+    .center_rightpart {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .eb-signup_wrapper .eb-signup_socilaWrpr {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
 }

@@ -233,8 +233,8 @@ var EbBasicDataTable = function (Option) {
             url = "../Eb_Object/getData";
         else if (this.source === "datareader")
             url = "../CE/getDataCollcetion";
-        else
-            url = "../dv/getData";
+        else if (this.source === "powerselect")
+            url = "../dv/getData4PowerSelect";
         var o = new Object();
         o.scrollY = this.scrollHeight;
         o.scrollX = "100%";

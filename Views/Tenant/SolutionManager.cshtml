@@ -5,7 +5,10 @@
     @using ExpressBase.Objects.ServiceStack_Artifacts;
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<script src="~/js/EbOnBoarding/SolutionDashBoard.js" type="text/javascript"></script>
+
+@section JavaScript{
+    <script src="~/js/EbDashBoards/SolutionDashBoard.js" type="text/javascript"></script>
+}
 @{
     string proto = string.Empty;
 
@@ -32,27 +35,45 @@
     //{
     //    filedefault = (EbConnections.FilesDbConnection.IsDefault)? "(Default)" : "";
     //}
+
+    Dictionary<string, string>
+    Image_url = new Dictionary<string, string>
+        ();
+    Image_url.Add("PGSQL", "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:45px' />");
+    Image_url.Add("MSSQL", "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />");
+    Image_url.Add("MYSQL", "<img class='img-responsive' src='../images/mysql.png' align='middle' style='height:35px' />");
+    Image_url.Add("ORACLE", "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />");
+    Image_url.Add("MongoDB", "<img class='img-responsive' src='../images/MongodB.png' align='middle' style='height:40px' />");
+    Image_url.Add("Cloudinary", "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />");
+    Image_url.Add("ExpertTexting", "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />");
+    Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
+    Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
+
+    <script>
+        const sid = '@ViewBag.cid';
+    </script>
 }
 <script>
     var cm = new EbHeader().setName("Solution Configuration");
-</script>
+
+/**/</script>
 
 <style>
 
     /*.cloudnaryVendorImage{
-        margin-left: 24px;
-        margin-top: 23px;
-    }*/
-    .POSTGRESVendorImage {
-        margin-left: 43px;
-    }
+                margin-left: 24px;
+                margin-top: 23px;
+            }*/
+    /*.POSTGRESVendorImage {
+                margin-left: 43px;
+            }
 
-    .EmailVendorImage {
-        margin-left: 50px;
-        margin-top: 4px;
-    }
+            .EmailVendorImage {
+                margin-left: 50px;
+                margin-top: 4px;
+            }*/
 </style>
-<div class="row s-dash-container">
+<div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
@@ -90,49 +111,59 @@
         </div>
     </div>
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-9 pd-0">
                 <h4 class="mr-t-0 mr-0">@ViewBag.Connections.SolutionInfo.SolutionName</h4>
-                <p class="small mr-0">@ViewBag.Connections.SolutionInfo.EsolutionId Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
+                <p class="small mr-t-10 mr-b-0">Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
                 <p class="small mr-0">
                     @ViewBag.Connections.SolutionInfo.Description
                 </p>
             </div>
             <div class="col-md-3 pd-0 form-inline">
-                <form method="post" action="@sso_dev.Replace(" myaccount.", "")" target="_blank">
+                <form method="post" action="@sso_dev.Replace(" myaccount.", "" )" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="dc" />
-                    <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
+                    <button class="ebbtn eb_btnwhite eb_btn-sm pull-right btn_s_fr" type="submit" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="dc">
                         <i class="fa fa-wrench"></i> Dev Home
                     </button>
                 </form>
-                <form method="post" action="@sso_user.Replace(" myaccount.", "")" target="_blank">
+                <form method="post" action="@sso_user.Replace(" myaccount.", "" )" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="uc" />
-                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
+                    <button class="ebbtn eb_btnblue eb_btn-sm pull-right" sid="@ViewBag.Connections.SolutionInfo.EsolutionId" wc="uc">
                         <i class="fa fa-user-o" aria-hidden="true"></i> User Home
                     </button>
                 </form>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <ul class="nav nav-tabs" role="tablist">
+            <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
-                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">General</a>
+                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">
+                        <i class="fa fa-home"></i>
+                        General
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#Integrations" role="tab">Connection Manager</a>
+                    <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">
+                        <i class="fa fa-plug"></i>
+                        Connection Manager
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#team" role="tab">Team</a>
+                    <a class="nav-link" data-toggle="tab" href="#team" role="tab">
+                        <i class="fa fa-users"></i> Team
+                    </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#billing" role="tab">Billing</a>
+                    <a class="nav-link" data-toggle="tab" href="#billing" role="tab">
+                        <i class="fa fa-usd"></i> Billing
+                    </a>
                 </li>
             </ul>
-            <div class="tab-content">
+            <div class="tab-content" style="margin-bottom:0px;" >
                 <div class="tab-pane active" id="home" role="tabpanel">
                     <div class="form-group">
                         <div class="col-md-4 pd-0">
@@ -146,397 +177,316 @@
                 </div>
                 <div class="tab-pane" id="Integrations" role="tabpanel">
                     <div class="col-md-12 pd-0">
-                        <ul class="nav nav-tabs chormer-effect" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">Integrations</a>
+                        <ul class="nav nav-tabs tab-inside-tab chormer-effect" role="tablist">
+                            <li class="nav-item active">
+                                <a class="nav-link" data-toggle="tab" href="#Integration" role="tab">
+                                    <i class="fa fa-plus-square"></i> New Connections
+                                </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">My Inegrations</a>
+                                <a class="nav-link" data-toggle="tab" id="MyIntegration" href="#MyIntegrations" role="tab">
+                                    <i class="fa fa-list"></i> My Connections
+                                </a>
                             </li>
                         </ul>
-                        <div class="tab-content">
+                        <div class="tab-content" style="margin-bottom:0px; padding-bottom:0px">
                             <div class="tab-pane active" id="Integration" role="tabpanel">
                                 <div class="eb_connection_wrapper flex-container">
-                                    <div class="connection_wrap_outer DisplayAllModal" id="Postgres" data-whatever="PGSQL">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg ">
-                                                    <img class="img-responsive" src="~/images/POSTGRES.png" align="middle" style="width:75%" />
+                                    <div class="connection_wrap_outer   db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" id="Postgres" data-whatever="PGSQL">
+                                        <div class="connection_wrap w-100 ">
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/POSTGRES.png" align="middle" style="width:63%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mysql" class="connection_wrap_outer DisplayAllModal" data-whatever="MYSQL">
+                                    <div id="mysql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MYSQL">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/mysql.png" align="middle" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/mysql.png" align="middle" style="width:70%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="oracle" class="connection_wrap_outer DisplayAllModal" data-whatever="ORACLE">
+                                    <div id="mongo" class="connection_wrap_outer" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/oracle.png" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/MongodB.png" style="width:50%; margin:auto;" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mssql" class="connection_wrap_outer DisplayAllModal" data-whatever="MSSQL">
+                                    <div id="cloudinary" class="connection_wrap_outer" data-toggle="modal" data-target="#cldnry_conEdit" data-whatever="Cloudinary">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="DbConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/sqlserver.png" style="width:62%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/cloudnary.png" style="width:75%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mongo" class="connection_wrap_outer DisplayAllModal" data-whatever="MongoDB">
+                                    <div id="SMTP" class="connection_wrap_outer" data-toggle="modal" data-target="#EmailconnectionEdit" data-whatever="SMTP">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="FilesConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/MongodB.png" style="width:70%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="EmailConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/svg/email.svg" style="width:47%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="cloudinary" class="connection_wrap_outer DisplayAllModal" data-whatever="Cloudinary">
+                                    <div id="twilio" class="connection_wrap_outer" data-toggle="modal" data-target="#TwilioConnectionEdit" data-whatever="Twilio">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="FilesConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/cloudnary.png" style="width:75%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="TwilioConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Twilio.png" style="width:95%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="SMTP" class="connection_wrap_outer DisplayAllModal" data-whatever="SMTP">
+                                    <div id="expert" class="connection_wrap_outer" data-toggle="modal" data-target="#ExpertTextingConnectionEdit" data-whatever="ExpertTexting">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="EmailConnection_config">
-                                                <div class="db_vendorimg ">
-                                                    <img class="img-responsive" src="~/images/svg/email.svg" style="width:47%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="ExpertTextingConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Expert Texting.png" style="width:85%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="twilio" class="connection_wrap_outer DisplayAllModal" data-whatever="Twilio">
+                                    <div id="maps" class="connection_wrap_outer" data-toggle="modal" data-target="#MapConnectionEdit" data-whatever="Maps">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="TwilioConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/twilio.png" style="width:95%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/maps-google.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="expert" class="connection_wrap_outer DisplayAllModal" data-whatever="ExpertTexting">
+
+                                    <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit" *@ data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100" id="ExpertTextingConnection_config">
-                                                <div class="db_vendorimg">
-                                                    <img class="img-responsive" src="~/images/expert texting.png" style="width:85%" />
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/oracle.png" style="width:70%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit" *@ data-whatever="MSSQL">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/SendGrid.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="slack" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="slackConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/slack.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="whatsapp" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="whatsappConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/WhatsApp_Logo.png" style="width:50%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="facebook" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="facebookConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/fb_logo.png" style="width:50%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="dropbox" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="dropboxConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Dropbox-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="googleanalitics" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/google-analytics-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @*<div id="quickbooks" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/QuickBooks_logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                    <div id="shopify" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/shopify-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             <div class="tab-pane" id="MyIntegrations" role="tabpanel">
-                                <div class="eb_connection_wrapper flex-container">
-                                    <div class="tab">
-                                        <button class="tablinks VerticalTabContent" datatype="Object" id="defaultOpen">Object</button>
-                                        <button class="tablinks VerticalTabContent" datatype="Data">Data</button>
-                                        <button class="tablinks VerticalTabContent" datatype="File">File</button>
-                                        <button class="tablinks VerticalTabContent" datatype="Logs">Logs</button>
-                                        <button class="tablinks VerticalTabContent" datatype="SMTP">SMTP</button>
-                                        <button class="tablinks VerticalTabContent" datatype="SMS">SMS</button>
-                                        <button class="tablinks VerticalTabContent" datatype="Cloudinary">Cloudinary</button>
-                                    </div>
+                                <div class="flex-container">
+                                    <div class="panel-group" id="ALL">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title myintegration-collapse-title">
+                                                    <a id="Integration_conf_all" data-toggle="collapse" data-parent="#MyIntegrations" href="#All">
+                                                        All
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="All" class="panel-collapse collapse in">
+                                                <div id="integration_config_all" class="panel-body">
 
-                                    <div id="Object_Call" class="tabcontent">
-                                        <h3>Objects</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("EbOBJECTS"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["EbOBJECTS"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                       @* <input type="hidden" class="Inputclear" id="IntConfId" IntConfId="@temp[i].Id" value="@temp[i].Id" />*@
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbOBJECTS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbOBJECTS" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
+                                                    <div>
                                                     </div>
                                                 </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="Data_Call" class="tabcontent">
-                                        <h3>Data</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("EbDATA"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["EbDATA"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="EbDATA-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                    }
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_data" data-toggle="collapse" data-parent="#MyIntegrations" href="#EbDATA">
+                                                        Data Store
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="EbDATA" class="panel-collapse collapse">
+                                                <div id="EbDATA-All" class="panel-body">
                                                 </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbDATA-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbDATA" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="File_Call" class="tabcontent">
-                                        <h3>File</h3>
-                                    </div>
-                                    <div id="Logs_Call" class="tabcontent">
-                                        <h3>Logs</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("EbLOGS"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["EbLOGS"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="EbLOGS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="EbLOGS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="EbLOGS" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="SMTP_Call" class="tabcontent">
-                                        <h3>SMTP</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("SMTP"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["SMTP"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="SMTP-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                        else if (temp[i].Preferance == "2")
-                                                        {
-                                                            <div class="input-group  integra-divider">
-                                                                <span class="input-group-addon">Secondary</span>
-                                                                <input id="SMTP-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="@temp[i].ConfId" pref="FALLBACK" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="SMTP-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group  integra-divider">
-                                                        <span class="input-group-addon">Secondary</span>
-                                                        <input id="SMTP-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMTP" IntConfId="0" pref="FALLBACK" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="SMS_Call" class="tabcontent">
-                                        <h3>SMS</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("SMS"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["SMS"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="SMS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="@temp[i].ConfId" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
-                                                        else if (temp[i].Preferance == "2")
-                                                        {
-                                                            <div class="input-group  integra-divider">
-                                                                <span class="input-group-addon">Secondary</span>
-                                                                <input id="SMS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                                <div class="input-group-btn">
-                                                                    <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="@temp[i].ConfId" pref="FALLBACK" type="submit">
-                                                                        <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        }
-                                                    }
-                                                </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="SMS-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="0" pref="PRIMARY" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="input-group  integra-divider">
-                                                        <span class="input-group-addon">Secondary</span>
-                                                        <input id="SMS-Secondary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btngreen eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="SMS" IntConfId="0" pref="FALLBACK" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="Cloudinary_Call" class="tabcontent">
-                                        <h3>Cloudinary</h3>
-                                        @{ if (ViewBag.Connections.Integrations.ContainsKey("Cloudinary"))
-                                            {
-                                                var temp = ViewBag.Connections.Integrations["Cloudinary"];
-                                                <div class=" integra-p-s-divider">
-                                                    @for (var i = 0; i < temp.Count; i++)
-                                                    {
-                                                        @if (temp[i].Preference == "1")
-                                                        {
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input type="hidden" class="Inputclear" id="IntConfId" name="Id" value="@temp[i].Id" />
-                                                        <input id="Cloudinary-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" readonly value="@temp[i].NickName">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" IntConfId="@temp[i].ConfId" pref="1" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                        }
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_files" data-toggle="collapse" data-parent="#MyIntegrations" href="#EbFILES">
+                                                        File Store
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="EbFILES" class="panel-collapse collapse">
+                                                <div id="EbFILES-All" class="panel-body">
 
-                                                    }
                                                 </div>
-                                            }
-                                            else
-                                            {
-                                                <div class=" integra-p-s-divider">
-                                                    <div class="input-group integra-divider">
-                                                        <span class="input-group-addon">Primary  </span>
-                                                        <input id="Cloudinary-Primary" type="text" class="form-control" name="msg" placeholder="No Account Selected" value="">
-                                                        <div class="input-group-btn">
-                                                            <button class="ebbtn eb_btnorange eb_btn-sm pull-right btn_s_fr Inter_modal_list" data-type="Cloudinary" IntConfId="0" pref="1" type="submit">
-                                                                <i class="fa fa-cog" aria-hidden="true"></i> Change
-                                                            </button>
-                                                        </div>
-                                                    </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_SMTP" data-toggle="collapse" data-parent="#MyIntegrations" href="#SMTP_call">
+                                                        Email
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="SMTP_call" class="panel-collapse collapse">
+                                                <div id="SMTP-All" class="panel-body">
+
                                                 </div>
-                                            }
-                                        }
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_cloudinary" data-toggle="collapse" data-parent="#MyIntegrations" href="#Cloudinary">
+                                                        Cloudinary
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="Cloudinary" class="panel-collapse collapse">
+                                                <div id="Cloudinary-all" class="panel-body">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_sms" data-toggle="collapse" data-parent="#MyIntegrations" href="#SMS">
+                                                        Message
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="SMS" class="panel-collapse collapse">
+                                                <div id="SMS-all" class="panel-body">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_map" data-toggle="collapse" data-parent="#MyIntegrations" href="#MAP">
+                                                        GOOGLE MAPS
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="MAP" class="panel-collapse collapse">
+                                                <div id="MAP-all" class="panel-body">
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -548,97 +498,7 @@
 
                 </div>
                 <div class="tab-pane" id="billing" role="tabpanel">
-                    <div class="billing_wrap">
-                        <div class="head__">
-                            <h2 class="mr-t-0">Payment methods</h2>
-                            <p class="u-mb-5">
-                                Please enter your preferred payment method below. You can use a credit card or prepay through PayPal.
-                            </p>
-                            <div class="form-group">
-                                <label class="col-md-12 col-lg-12 pd-0">Total Users</label>
-                                <div class="col-md-3 col-sm-3 col-lg-3 pd-0">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                        </span>
-                                        <input type="number" class="form-control" id="no_user" placeholder="">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="s-dash-workplace">
-                            <div class="s-dash-workplace-tabs">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    @*
-                                        <li class="nav-item active">
-                                            <a class="nav-link" data-toggle="tab" href="#creditpayment_tab" role="tab">
-                                                Credit Card
-                                            </a>
-                                        </li>*@
-                                    <li class="nav-item">
-                                        <a class="nav-link" data-toggle="tab" href="#paypalpayment_tab" role="tab"> PayPal</a>
-                                    </li>
-                                </ul>
-                                <div class="tab-content">
-                                    @*<div class="tab-pane active" id="creditpayment_tab" role="tabpanel">
-                                            <div class="credit_info_head">
-                                                <p class="col-md-10">
-                                                    Card will be charged monthly for number of users. All major credit cards accepted.
-                                                </p>
-                                                <button class="ebbtn eb_btnblue col-md-2" onclick="$('.credit_info').toggle('fast');">Add Card</button>
-                                            </div>
-                                            <div class="credit_info">
-                                                <form class="form-horizontal" method="post" action="/PayPal/CreditCardPayment">
-                                                    <div class="form-group">
-                                                        <label class="pay_label">Name On Card</label>
-                                                        <input type="text" class="form-control" name="CardHolder" placeholder="" value="Amal K dev">
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="pay_label">Card Number</label>
-                                                        <div class="input-group">
-                                                            <input type="text" class="form-control" name="CardNumber" placeholder="" value="1234567887654321">
-                                                            <span class="input-group-addon">
-                                                                <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <div class="col-md-8 pd-0">
-                                                            <label class="pay_label col-md-12 pd-0">Expiry</label>
-                                                            <div class="col-md-6 pd-l-0">
-                                                                <input type="text" class="form-control" name="ExpiryMonth" placeholder="MM" value="05">
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <input type="text" class="form-control" name="ExpiryYear" placeholder="YY" value="20">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <label class="pay_label">CVV</label>
-                                                            <input type="text" name="Cvv" class="form-control" value="613">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <button type="submit" class="btn paypal_btn">Subscribe</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>*@
-                                    <div class="tab-pane active" id="paypalpayment_tab" role="tabpanel">
-                                        <p>
-                                            Subscribe using your paypal account.
-                                        </p>
-                                        <div class="col-md-12 col-lg-12 col-sm-12 pd-0">
-                                            <form action="/PayPal/PayPalPayment" method="post">
-                                                <input type="hidden" name="UserCount" id="user_countForm" />
-                                                <input type="hidden" value="@ViewBag.Connections.SolutionInfo.EsolutionId" name="Sid" />
-                                                <button type="submit" class="btn paypal_btn">PayPal</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @await Component.InvokeAsync("Stripe", new { sid = ViewBag.cid })
                 </div>
             </div>
         </div>
@@ -684,7 +544,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary" >Save</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>
@@ -695,119 +555,129 @@
 
 
 
-<div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="margin-top:100px;">
-    <div class="modal-dialog">
+<div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="align-items: center;">
+    <div class="modal-dialog" style="width: 1000px;">
         <div class="modal-content" id="dbConnection_mask">
             <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
                 <div class="modal-header relative">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">DataBase Connection</h4>
+                    <h4 id="dbConnectionheader" class="modal-title">DataBase Connection</h4>
                     <div id="dbConnection_loder" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Database</label>
-                                <input id="dbvendorInput" name="DatabaseVendor" type="text" value="PGSQL" class="form-control Inputclear" readonly />
-                            </div>
-                            <div class="form-group">
-                                <label>DataBase Name</label>
-                                <input id="dbDatabaseNameInput" name="DatabaseName" type="text" class="form-control dbConnectionInput Inputclear" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="dbNickNameInput" name="NickName" type="text" class="form-control dbConnectionInput Inputclear" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Enable SSL</label>
-                                <input id="dbIsSSLInput" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <label>User Name</label>
-                            <div class="col-md-12 pd-0">
-                                <table class="table table-bordered table-form">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:130px;"></th>
-                                            <th>User Name</th>
-                                            <th>Password</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Admin</td>
-                                            <td><input id="dbUserNameInput" name="UserName" type="text" class="form-control dbConnectionInput Inputclear" required /></td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input id="dbPasswordInput" autocomplete="new-password" name="Password" class="form-control Password dbConnectionInput Inputclear" type="password" required />
-                                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="advanced-tr" style="display:none">
-                                            <td>Read-Write User</td>
-                                            <td><input name="ReadWriteUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input autocomplete="new-password" name="ReadWritePassword" class="form-control Password dbConnectionInput Inputclear" type="password" />
-                                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr class="advanced-tr" style="display:none">
-                                            <td>ReadOnly User</td>
-                                            <td><input name="ReadOnlyUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input autocomplete="new-password" name="ReadOnlyPassword" class="form-control Password Inputclear" type="password" />
-                                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="uname-advanced-sec form-inline">
-                                    <label style="margin-right:5px;">Advanced</label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="UserNamesAdvanced">
-                                        <span class="slider round"></span>
-                                    </label>
+                <div class="modal-body" style="display:flex">
+                    <div id="vender-data-holder" class="vender-data-holder"></div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="dbNickNameInput" name="NickName" type="text" class="form-control dbConnectionInput Inputclear" required />
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Server Address</label>
-                                <input id="dbServerInput" name="Server" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>DataBase Name</label>
+                                    <input id="dbDatabaseNameInput" name="DatabaseName" type="text" class="form-control dbConnectionInput Inputclear" required />
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <input id="dbvendorInput" name="DatabaseVendor" type="hidden" value="PGSQL" class="form-control Inputclear Vendor" readonly />
+                                <div class="form-group" style="margin-top: 32px;">
+                                    <label>Enable SSL</label>
+                                    <input id="dbIsSSLInput" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Port</label>
-                                <input id="dbPortInput" name="Port" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Server Address</label>
+                                    <input id="dbServerInput" name="Server" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Port</label>
+                                    <input id="dbPortInput" name="Port" pattern="^[0-9]*$" maxlength="5" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>TimeOut</label>
+                                    <input id="dbTimeoutInput" name="Timeout" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
+                            </div>
+                            <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
+                            <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-10">
+
+                                <div class="col-md-12 pd-0">
+                                    <div class="uname-advanced-sec form-inline">
+                                        <label>Credentials :    </label>
+                                        <label style="margin-left: 16px;margin-right:5px;">Advanced</label>
+                                        <label class="switch">
+                                            <input type="checkbox" id="UserNamesAdvanced">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                    <table class="table table-bordered table-form">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:130px;"></th>
+                                                <th>User Name</th>
+                                                <th>Password</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Admin</td>
+                                                <td><input id="dbUserNameInput" name="UserName" type="text" class="form-control dbConnectionInput Inputclear" required /></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input id="dbPasswordInput" autocomplete="new-password" name="Password" class="form-control Password dbConnectionInput Inputclear" type="password" required />
+                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="advanced-tr" style="display:none">
+                                                <td>Read-Write User</td>
+                                                <td><input name="ReadWriteUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input autocomplete="new-password" name="ReadWritePassword" class="form-control Password dbConnectionInput Inputclear" type="password" />
+                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr class="advanced-tr" style="display:none">
+                                                <td>ReadOnly User</td>
+                                                <td><input name="ReadOnlyUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input autocomplete="new-password" name="ReadOnlyPassword" class="form-control Password Inputclear" type="password" />
+                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>TimeOut</label>
-                                <input id="dbTimeoutInput" name="Timeout" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
-                        <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
-                        <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -827,72 +697,83 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Mongo Files Db Connection</h4>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            @* <input name="MongoId" type="hidden" />*@
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="FilesInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder">
+                        <img class='img-responsive' src='../images/MongodB.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>MongoDB is a cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with schema. MongoDB is licensed under the Server Side Public License.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="FilesInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                </div>
                             </div>
-                            <div class="form-group">
+                            <input name="DatabaseVendor" type="hidden" value="MongoDB" class="form-control Vendor" readonly />
+                            <div class="form-group" style="margin-top: 32px;">
                                 <label>Enable SSL</label>
                                 <input id="FilesInputIsSSL" class=" Inputclear" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
                             </div>
+
                         </div>
-                        <div class="form-group">
-                            <div class="col-md-6">
-                                <label>User Name</label>
-                                <div class="col-md-12 pd-0">
-                                    <table class="table table-bordered table-form">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:130px;"></th>
-                                                <th>User Name</th>
-                                                <th>Password</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Admin</td>
-                                                <td><input id="FilesInputUsername" name="UserName" type="text" class="Inputclear form-control" required /></td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input id="FilesInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
-                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                        <div class="row">
+
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    <label>User Name</label>
+                                    <div class="col-md-12 pd-0">
+                                        <table class="table table-bordered table-form">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width:130px;"></th>
+                                                    <th>User Name</th>
+                                                    <th>Password</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Admin</td>
+                                                    <td><input id="FilesInputUsername" name="UserName" type="text" class="Inputclear form-control" required /></td>
+                                                    <td>
+                                                        <div class="input-group">
+                                                            <input id="FilesInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
+                                                            <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                                <i class="fa fa-eye " aria-hidden="true"></i>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="row" style="margin-top: 15px;">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Host</label>
+                                    <input id="FilesInputServer" name="Server" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
                                 </div>
                             </div>
-
-                        </div>
-
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Host</label>
-                                <input id="FilesInputServer" name="Server" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Port</label>
+                                    <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
+                                    <div class="help-block with-errors"></div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>Port</label>
-                                <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
-                                <div class="help-block with-errors"></div>
-                            </div>
-                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="FilesInputIntConfId" name="Id" value="0" />
                     </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                    <input type="hidden" class="Inputclear IntConfId" id="FilesInputIntConfId" name="Id" value="0" />
                 </div>
-
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary MongoConnection">Save</button>
                 </div>
@@ -910,34 +791,54 @@
                     <h4 class="modal-title">Twilio Accounts</h4>
                     <div id="twilioConnection_loder" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input id="TwilioInputUsername" name="UserName" class="form-control Inputclear" type="text" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="TwilioInputNickname" name="NickName" class="form-control Inputclear" type="text" required />
-                            </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:50%;">
+                        <img class='img-responsive' src='~/images/Twilio.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Twilio is a cloud communications platform as a service (CPaaS). Twilio allows software developers to programmatically make and receive phone calls, send and receive text messages, and perform other communication functions using its web service APIs.</span>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group ">
-                                <label>Password</label>
-                                <div class="input-group">
-                                    <input id="TwilioInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear" type="password" required />
-                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                    </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <input name="DatabaseVendor" value="Twilio" class="form-control Vendor" type="hidden" readonly />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="TwilioInputNickname" name="NickName" class="form-control Inputclear" type="text" required />
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <label>Sender Number</label>
-                                <input id="TwilioInputFrom" name="From" class="form-control Inputclear" type="text" required />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Sender Number</label>
+                                    <input id="TwilioInputFrom" name="From" class="form-control Inputclear" type="text" required />
+                                </div>
                             </div>
-                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                            <input type="hidden" class="Inputclear IntConfId" id="TwilioInputIntConfId" name="Id" value="0" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input id="TwilioInputUsername" name="UserName" class="form-control Inputclear" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group ">
+                                    <label>Password</label>
+                                    <div class="input-group">
+                                        <input id="TwilioInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                                <input type="hidden" class="Inputclear IntConfId" id="TwilioInputIntConfId" name="Id" value="0" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -958,46 +859,61 @@
                     <h4 class="modal-title">Expert Accounts</h4>
                     <div id="expertConnection_loder" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Sender Number</label>
-                                <input id="ExpertInputFrom" name="From" class="form-control Inputclear" type="text" required />
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="ExpertInputNickname" name="NickName" class="form-control Inputclear" type="text" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Api Key</label>
-                                <input id="ExpertInputApi" name="ApiKey" class="form-control Inputclear" type="text" required />
-                            </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:50%;">
+                        <img class='img-responsive' src='~/images/Expert Texting.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>ExpertTexting aims to offer businesses a cost-effective channel that can bring communication too easy with their customers. With the state-of-art API that can even integrate with any leading CRM in the world.</span>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Username</label>
-                                <input id="ExpertInputUsername" name="UserName" class="form-control Inputclear" type="text" required />
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="ExpertInputNickname" name="NickName" class="form-control Inputclear" type="text" required />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Password</label>
-                                <div class="input-group">
-                                    <input id="ExpertInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear" type="password" required />
-                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                        <i class="fa fa-eye " aria-hidden="true"></i>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input name="DatabaseVendor" value="ExpertTexting" class="form-control Vendor " type="hidden" readonly />
+                                <div class="form-group">
+                                    <label>Sender Number</label>
+                                    <input id="ExpertInputFrom" name="From" class="form-control Inputclear" type="text" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Api Key</label>
+                                    <input id="ExpertInputApi" name="ApiKey" class="form-control Inputclear" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input id="ExpertInputUsername" name="UserName" class="form-control Inputclear" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <div class="input-group">
+                                        <input id="ExpertInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="ExpertInputIntConfId" name="Id" value="0" />
                     </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                    <input type="hidden" class="Inputclear IntConfId" id="ExpertInputIntConfId" name="Id" value="0" />
                 </div>
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Save</button>
@@ -1008,7 +924,7 @@
 </div>
 
 <div id="cldnry_conEdit" class="modal fade input-clear" role="dialog">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content" id="cloudnary_mask">
             <form action="" method="post" id="CloudnaryConnectionSubmit" data-toggle="validator">
                 <div class="modal-header relative">
@@ -1016,29 +932,44 @@
                     <h4 class="modal-title">Cloudnary Connection</h4>
                     <div id="cloudnary_loader" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Cloud</label>
-                                <input id="CloudnaryInputCloud" type="text" name="Cloud" class="form-control Inputclear" value="" required />
-                            </div>
-                            <div class="form-group">
-                                <label>Nick Name</label>
-                                <input id="CloudnaryInputNickname" type="text" name="NickName" class="form-control Inputclear" value="" required />
+                <div class="modal-body" style="display:flex;">
+                    <div class="vender-data-holder">
+                        <img class='img-responsive' src='~/images/cloudnary.png' align='middle' style='height: 28px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Cloudinary is a SaaS technology company. The company provides a cloud-based image and video management solution. It enables users to upload, store, manage, manipulate and deliver images and video for websites and apps.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="CloudnaryInputNickname" type="text" name="NickName" class="form-control Inputclear" value="" required />
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Api Key</label>
-                                <input id="CloudnaryInputApikey" type="text" name="ApiKey" class="form-control Inputclear" value="" required />
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <input name="DatabaseVendor" value="Cloudinary" class="form-control Vendor" type="hidden" readonly />
+                                    <label>Cloud</label>
+                                    <input id="CloudnaryInputCloud" type="text" name="Cloud" class="form-control Inputclear" value="" required />
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label>Api Secret</label>
-                                <input id="CloudnaryInputApisecret" type="text" name="ApiSecret" class="form-control Inputclear" value="" required />
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Api Key</label>
+                                    <input id="CloudnaryInputApikey" type="text" name="ApiKey" class="form-control Inputclear" value="" required />
+                                </div>
                             </div>
-                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                            <input type="hidden" class="Inputclear IntConfId" id="CloudnaryInputIntConfId" name="Id" value="0" />
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Api Secret</label>
+                                    <input id="CloudnaryInputApisecret" type="text" name="ApiSecret" class="form-control Inputclear" value="" required />
+                                </div>
+                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                                <input type="hidden" class="Inputclear IntConfId" id="CloudnaryInputIntConfId" name="Id" value="0" />
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1102,65 +1033,80 @@
                     <h4 class="modal-title">Email Connection</h4>
                     <div id="email_loader" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <div class="form-group">
-                                    <label>Provider</label>
-                                    <input id="EmailInputEmailvendor" type="text" name="Emailvendor" class="form-control Inputclear" value="" required />
-                                </div>
-                                <div class="form-group">
-                                    <label style="margin-right:15px;margin-bottom:0;">Enable SSL</label>
-                                    <input type="checkbox" class="Inputclear" name="IsSSL" value="false" />
-                                </div>
+                <div class="modal-body" style="display:flex;">
+                    <div class="vender-data-holder">
+                        <img class='img-responsive' src='~/images/svg/email.svg' align='middle' style='height: 50px; margin:auto; margin-top:15px; margin-bottom:15px;' />
+                        <div class="connection-vender-desp">
+                            <span>SMTP is a push protocol and is used to send the mail whereas POP (post office protocol) or IMAP (internet message access protocol) are used to retrieve those mails at the receiver's side. SMTP Fundamentals. SMTP is an application layer protocol.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label>NickName</label>
                                     <input id="EmailInputNickname" type="text" name="NickName" class="form-control Inputclear" value="" required />
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-8">
-                            <label>Login</label>
-                            <div class="col-md-12 pd-0">
-                                <table class="table table-bordered table-form">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:130px;"></th>
-                                            <th>Email Address</th>
-                                            <th>Password</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Admin</td>
-                                            <td><input id="EmailInputEmail" type="text" name="Email" class="form-control Inputclear" value="" required /></td>
-                                            <td>
-                                                <div class="input-group">
-                                                    <input id="EmailInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
-                                                    <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                        <i class="fa fa-eye " aria-hidden="true"></i>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <input name="DatabaseVendor" value="SMTP" class="form-control Vendor" type="hidden" readonly />
+                                    <label>Provider</label>
+                                    <input id="EmailInputEmailvendor" type="text" name="Emailvendor" class="form-control" value="Gmail" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4" style=" margin-top: 29px;">
+                                <div class="form-group">
+                                    <label style="margin-right:15px;margin-bottom:0;">Enable SSL</label>
+                                    <input type="checkbox" class="Inputclear" name="IsSSL" value="false" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-5">
-                            <div class="form-group">
-                                <label>Host</label>
-                                <input id="EmailInputSMTP" type="text" name="SMTP" class=" Inputclear form-control" value="" required />
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label>Host</label>
+                                    <input id="EmailInputSMTP" type="text" name="SMTP" class=" Inputclear form-control" value="" required />
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-5">
+                            <div class="col-md-5">
 
-                            <div class="form-group">
-                                <label>Port</label>
-                                <input id="EmailInputPort" type="text" name="Port" class="form-control Inputclear" value="" required />
+                                <div class="form-group">
+                                    <label>Port</label>
+                                    <input id="EmailInputPort" type="text" name="Port" class="form-control Inputclear" value="" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label>Login</label>
+                                <div class="col-md-12 pd-0">
+                                    <table class="table table-bordered table-form">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:65px;"></th>
+                                                <th>Email Address</th>
+                                                <th>Password</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Admin</td>
+                                                <td><input id="EmailInputEmail" type="text" name="Email" class="form-control Inputclear" value="" required /></td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input id="EmailInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
+                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1178,13 +1124,65 @@
     </div>
 </div>
 
+<div id="MapConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="Map_mask">
+            <form action="" method="post" id="MapsConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Google Maps</h4>
+                    <div id="Map_loader" class="MapConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:50%">
+                        <img class='img-responsive' src='~/images/maps-google.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Build customized, agile experiences that bring the real world to your users with static and dynamic maps, Street View imagery, and 360° views.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="MapVendor" type="hidden" value="GoogleMap" class="form-control Vendor" readonly />
+                                @* <input name="MongoId" type="hidden" />*@
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="MapInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>ApiKey</label>
+                                        <input id="MapInputApiKey" name="ApiKey" type="text" class="form-control Inputclear" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary MapConnection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 
 <div class="eb-cropie" id="cropsection"></div>
-<script>
-    let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
-	var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
-	$("#no_user").change(function (e) {
-		$("#user_countForm").val(e.target.value);
-    });
-</script>
+@section JsCode{
+    <script>
+        let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
+	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
+	    $("#no_user").change(function (e) {
+		    $("#user_countForm").val(e.target.value);
+        });
+    </script>
+}
+

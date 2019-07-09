@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ExpressBase.Web.Filters;
+@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 @using ExpressBase.Objects;
@@ -46,6 +47,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/js/bootstrap-select.js"></script>
 <script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-locationpicker/0.1.12/locationpicker.jquery.min.js"></script>
+<script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
 
 @{
 
@@ -93,10 +96,6 @@
         border-radius: 2px;*/
     }
 
-    .form-render-table > tbody > tr > td {
-        border: none !important;
-    }
-
     .form-buider-form .Eb-ctrlContainer {
         min-height: 20px;
     }
@@ -104,11 +103,6 @@
     .radiog-cont {
         border: none;
         border-radius: 5px;
-    }
-
-    .form-buider-form .Eb-ctrlContainer table td {
-        /*background: #fff;*/
-        padding: 0px 2px;
     }
 
     .fmode {
@@ -192,7 +186,7 @@
 
 <script>
     @Html.Raw(ViewBag.ControlOperations);
-        
+
     $("body").prepend(`
 <div class="modal fade" id="AuditHistoryModal" role="dialog">
     <div class="modal-dialog" style="width: 100%; margin: 0px;">
@@ -212,7 +206,7 @@
     $("body").prepend(`
 <div class="modal fade" id="iFrameFormModal" role="dialog">
     <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
-        <div class="modal-content"> 
+        <div class="modal-content">
             <div class="modal-body" style="height: 60vh; padding: 0px;">
                 <div>
                     <div id="iFrameFormOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
@@ -229,7 +223,7 @@
     $("body").prepend(`
 <div class="modal fade" id="iFramePdfModal" role="dialog">
     <div class="modal-dialog" style="width: 80%; margin: 4% auto;">
-        <div class="modal-content" style="border-radius: 0; border: none;"> 
+        <div class="modal-content" style="border-radius: 0; border: none;">
             <div class="modal-body" style="height: 80vh; padding: 0px;">
                 <div>
                     <iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" ></iframe>
@@ -237,8 +231,7 @@
             </div>
         </div>
     </div>
-</div>
-`);
+</div>`);
 
     window.closeModal = function (func) {// receives call from iFrame
         //func();
@@ -287,18 +280,17 @@
     header.insertButton(`<button id="webformnew" class="btn" onclick="reloadFormPage();" title="New form"  style="display: none;"><i class="fa fa-plus" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformedit" class='btn' title='Edit' style='display: none;'><i class="fa fa-pencil" aria-hidden="true"></i></button>`);
     header.insertButton(`<div id="webformsave-selbtn"  style='display: none;' class="btn-select btn">
-                            <button id="webformsave" class="savebtn" title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>                        
+                            <button id="webformsave" class="savebtn" title="Save form"><i class="fa fa-save" aria-hidden="true"></i></button>
                             <select class="selectpicker">
-                              <option data-token="new" data-icon="fa-save"> & New</option>
-                              <option data-token="edit" data-icon="fa-save"> & Continue</option>
-                              <option data-token="view" data-icon="fa-save"> & View</option>
-                              <option data-token="close" data-icon="fa-save"> & Close</option>
+                              <option data-token="new" data-title="Save and new" data-icon="fa-save"> & New</option>
+                              <option data-token="edit" data-title="Save and edit" data-icon="fa-save"> & Continue</option>
+                              <option data-token="view" data-title="Save and view" data-icon="fa-save"> & View</option>
+                              <option data-token="close" data-title="Save and close" data-icon="fa-save"> & Close</option>
                             </select>
-                        </div>
+                        </div>`);
 
-`);
-    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`)
-    
+    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
+
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
     let _rowId = @Html.Raw(ViewBag.rowId);
@@ -312,27 +304,27 @@
 
     //to store refids of uploaded files via all fileuploader ctrls
     let uploadedFileRefList = {};
-    
+
     $("#layout_div").addClass("for-modal-blur");
-
-    const renderer = new WebFormRender({
-        formObj: _formObj,
-        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose"},
-        formRefId: _formRefId,
-        mode: _mode,
-        rowId: _rowId,
-        formData: _formData,
-        userObject: _userObject,
-        cid: _cid,
-        env: _env,
-        isPartial: _ispartial,
-        formPermissions: _formPermissions,
-        headerObj: header
-    });
-   
-
     //$("#webformaudittrail").on("click", function () {
     //    $("#iFrameFormModal").modal("show");
     //});
-
 </script>
+@Html.JsCode(
+    @<script>
+         const renderer = new WebFormRender({
+             formObj: _formObj,
+             headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose" },
+             formRefId: _formRefId,
+             mode: _mode,
+             rowId: _rowId,
+             formData: _formData,
+             userObject: _userObject,
+             cid: _cid,
+             env: _env,
+             isPartial: _ispartial,
+             formPermissions: _formPermissions,
+             headerObj: header
+         });
+    </script>
+)

@@ -73,6 +73,7 @@
             font-family: monospace;
             height: 100%;
             color: black;
+            z-index:1;
         }
 
         .ds-cont .CodeMirror-selected {
@@ -265,9 +266,8 @@
             CodeMirror.commands.autocomplete = function (cm) {
                 CodeMirror.showHint(cm, CodeMirror.hint.sql);
             };
-        }
-
-        if ("@readonlyval" === "w" ||'@ViewBag.IsNew'==="True")
+    }
+        if ("@readonlyval" === "w" ||'@ViewBag.IsNew'==="True"||'@ViewBag.versioning'==="False")
             _readonly = false;
         else
          _readonly = true;

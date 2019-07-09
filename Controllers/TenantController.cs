@@ -37,6 +37,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions")]
         public IActionResult TenantDashboard()
         {
+            ViewBag.Title = "MySolutions";
             ViewBag.AppType = TempData["apptype"];
             ViewBag.IsSSO = TempData["SSO"];
             ViewBag.Msg = TempData[Msg];
@@ -95,36 +96,11 @@ namespace ExpressBase.Web.Controllers
         //    return res;
         //}
 
-
-
-
-        [HttpPost]
-        public IActionResult CreateApplication(int i)
-        {
-            var req = this.HttpContext.Request.Form;
-            string apptype = req["AppType"];
-            var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest
-            {
-                AppName = req["AppName"],
-                AppType = Convert.ToInt32(req["AppType"]),
-                Description = req["DescApp"],
-                AppIcon = req["AppIcon"],
-                Sid = req["Sid"]
-            });
-
-            if (resultlist.id > 0)
-            {
-                TempData["SSO"] = "true";
-                TempData["apptype"] = apptype;
-                return RedirectToAction("TenantDashboard", "Tenant");
-            }
-            return View();
-        }
-
+        [HttpGet("NewSolution")]
         [EbBreadCrumbFilter("MySolutions/NewSolution", new string[] { "/MySolutions" })]
         public IActionResult CreateSolution()
         {
-
+            ViewBag.Title = "New Solution";
             return View();
         }
 

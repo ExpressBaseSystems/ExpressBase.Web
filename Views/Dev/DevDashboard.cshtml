@@ -1,5 +1,6 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts
 @using ExpressBase.Common
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
@@ -14,7 +15,7 @@
         appcount = appList.Count;
     }
 }
-<div class="row s-dash-container">
+<div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
@@ -52,29 +53,34 @@
         </div>
     </div>
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
-            <div class="col-md-10 pd-0">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
+            <div class="col-md-7 col-lg-7 col-sm-7 pd-0">
                 <h4 class="mr-t-0 mr-b-0">Applications (@appcount)</h4>
             </div>
-            <div class="col-md-2 pd-0">
-                <a href='@Url.Action("CreateApplication", "Dev")' class="ebbtn eb_btngreen eb_btn-sm pull-right new_sol_lk">New Application</a>
+            <div class="col-md-5 col-lg-5 col-sm-5 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+                <div class="input-group eb-search-box" style="margin-left: 15px;">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    <input type="text" id="appSearch" class="form-control" placeholder="Search Application">
+                </div>
+                <a href='@Url.Action("CreateApplication", "Dev")' class="ebbtn eb_btnblue eb_btn-sm pull-right new_sol_lk">New Application</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <ul class="nav nav-tabs">
+            <ul class="nav nav-tabs eb-styledTab">
                 <li class="nav-item active devdshtab">
                     <a class="nav-link devdshtab" data-toggle="tab" href="#webapps_tab" role="tab">
-                        <img class="apptype_icon_devd" src="/images/svg/grid-world.svg" /> Web <span class="apps_count webcount"></span>
+                        <i class="fa fa-globe"></i> Web <span class="apps_count webcount"></span>
                     </a>
                 </li>
                 <li class="nav-item">
+
                     <a class="nav-link devdshtab" data-toggle="tab" href="#mobapps_tab" role="tab">
-                        <img class="apptype_icon_devd" src="/images/svg/smartphone-call.svg" /> Mobile <span class="apps_count mobcount"></span>
+                        <i class="fa fa-mobile"></i> Mobile <span class="apps_count mobcount"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link devdshtab" data-toggle="tab" href="#botapps_tab" role="tab">
-                        <img class="apptype_icon_devd" src="/images/svg/chat1.svg" /> Bot <span class="apps_count botcount"></span>
+                        <i class="fa fa-android"></i> Bot <span class="apps_count botcount"></span>
                     </a>
                 </li>
             </ul>
@@ -84,76 +90,82 @@
                     if (appList != null)
                     {
                         <div class="tab-pane active" id="webapps_tab" role="tabpanel">
-                            @foreach (AppWrapper aw in appList)
-                            {
-                                var apptype = (EbApplicationTypes)aw.AppType;
-
-                                string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                                if (aw.AppType == 1)
+                            <div class="tabpane-flex">
+                                @foreach (AppWrapper aw in appList)
                                 {
-                                    webcount = webcount + 1;
-                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                                        <a class="appcontainer_inner" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                            <div class="col-md-2 pd-l-0 flex-center">
-                                                <span class="fa @aw.Icon"></span>
-                                            </div>
-                                            <div class="col-md-10 pd-0">
-                                                <h5 class="txtdecor_none">@aw.Name</h5>
-                                                <p class="small txtdecor_none">@desc</p>
-                                                @*<label class="label-success"><span>@apptype</span> Application</label>*@
-                                            </div>
-                                        </a>
-                                    </div>
+                                    var apptype = (EbApplicationTypes)aw.AppType;
+
+                                    string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                    if (aw.AppType == 1)
+                                    {
+                                        webcount = webcount + 1;
+                                        <div class="appcontainer">
+                                            <a class="appcontainer_inner h-100" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                                <div class="appcontainer-icon-container">
+                                                    <span class="fa @aw.Icon appcontainer-icon"></span>
+                                                </div>
+                                                <div class="appcontainer-body">
+                                                    <div name="appname" class="title txtdecor_none">@aw.Name</div>
+                                                    <p class="mr-0 description txtdecor_none">@desc</p>
+                                                </div>
+                                                <i class="fa fa-external-link openinnew"></i>
+                                            </a>
+                                        </div>
+                                    }
                                 }
-                            }
+                            </div>
                         </div>
                         <div class="tab-pane" id="mobapps_tab" role="tabpanel">
-                            @foreach (AppWrapper aw in appList)
-                            {
-                                var apptype = (EbApplicationTypes)aw.AppType;
-
-                                string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                                if (aw.AppType == 2)
+                            <div class="tabpane-flex">
+                                @foreach (AppWrapper aw in appList)
                                 {
-                                    mobcount = mobcount + 1;
-                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                                        <a class="appcontainer_inner" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                            <div class="col-md-2 pd-l-0 flex-center">
-                                                <span class="fa @aw.Icon"></span>
-                                            </div>
-                                            <div class="col-md-10 pd-0">
-                                                <h5 class="txtdecor_none">@aw.Name</h5>
-                                                <p class="small txtdecor_none">@desc</p>
-                                                @*<label class="label-success"><span>@apptype</span> Application</label>*@
-                                            </div>
-                                        </a>
-                                    </div>
+                                    var apptype = (EbApplicationTypes)aw.AppType;
+
+                                    string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                    if (aw.AppType == 2)
+                                    {
+                                        mobcount = mobcount + 1;
+                                        <div class="appcontainer">
+                                            <a class="appcontainer_inner h-100" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                                <div class="appcontainer-icon-container">
+                                                    <span class="fa @aw.Icon appcontainer-icon"></span>
+                                                </div>
+                                                <div class="appcontainer-body">
+                                                    <div name="appname" class="title txtdecor_none">@aw.Name</div>
+                                                    <p class="mr-0 description txtdecor_none">@desc</p>
+                                                </div>
+                                                <i class="fa fa-external-link openinnew"></i>
+                                            </a>
+                                        </div>
+                                    }
                                 }
-                            }
+                            </div>
                         </div>
                         <div class="tab-pane" id="botapps_tab" role="tabpanel">
-                            @foreach (AppWrapper aw in appList)
-                            {
-                                var apptype = (EbApplicationTypes)aw.AppType;
-
-                                string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
-                                if (aw.AppType == 3)
+                            <div class="tabpane-flex">
+                                @foreach (AppWrapper aw in appList)
                                 {
-                                    botcount = botcount + 1;
-                                    <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                                        <a class="appcontainer_inner" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
-                                            <div class="col-md-2 pd-l-0 flex-center">
-                                                <span class="fa @aw.Icon"></span>
-                                            </div>
-                                            <div class="col-md-10 pd-0">
-                                                <h5 class="txtdecor_none">@aw.Name</h5>
-                                                <p class="small txtdecor_none">@desc</p>
-                                                @*<label class="label-success"><span>@apptype</span> Application</label>*@
-                                            </div>
-                                        </a>
-                                    </div>
+                                    var apptype = (EbApplicationTypes)aw.AppType;
+
+                                    string desc = String.IsNullOrEmpty(aw.Description) ? "No Description" : aw.Description;
+                                    if (aw.AppType == 3)
+                                    {
+                                        botcount = botcount + 1;
+                                        <div class="appcontainer">
+                                            <a class="appcontainer_inner h-100" href="@Url.Action("AppDashBoard","Dev",new {Id = aw.Id ,Type = aw.AppType})">
+                                                <div class="appcontainer-icon-container">
+                                                    <span class="fa @aw.Icon appcontainer-icon"></span>
+                                                </div>
+                                                <div class="appcontainer-body">
+                                                    <div name="appname" class="title txtdecor_none">@aw.Name</div>
+                                                    <p class="mr-0 description txtdecor_none">@desc</p>
+                                                </div>
+                                                <i class="fa fa-external-link openinnew"></i>
+                                            </a>
+                                        </div>
+                                    }
                                 }
-                            }
+                            </div>
                         </div>
                     }
                 }
@@ -161,13 +173,28 @@
         </div>
     </div>
 </div>
-<script>
-     if ('@ViewBag.Msg') {
-        EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-    }
-    $(document).ready(function () {
-        $(".mobcount").text('(@mobcount)');
-        $(".webcount").text("(@webcount)");
-        $(".botcount").text("(@botcount)");
-    });
-</script>
+@section JsCode{
+    <script>
+         if ('@ViewBag.Msg') {
+            EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
+        }
+        $(document).ready(function () {
+            $(".mobcount").text('(@mobcount)');
+            $(".webcount").text("(@webcount)");
+            $(".botcount").text("(@botcount)");
+
+            $("#appSearch").off("keyup").on("keyup", function (e) {
+                let curtab = $(".eb-styledTab li.active a").attr("href");
+                var srch = $(e.target).val().toLowerCase();
+                $.each($(curtab).find(".appcontainer"), function (i, obj) {
+                    var cmpstr = $(obj).find('[name="appname"]').text().toLowerCase();
+                    if (cmpstr.indexOf(srch) !== -1) {
+                        $(obj).show();
+                    }
+                    else
+                        $(obj).hide();
+                });
+            });
+        });
+    </script>
+}

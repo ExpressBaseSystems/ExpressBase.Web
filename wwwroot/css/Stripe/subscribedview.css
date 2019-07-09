@@ -1,0 +1,53 @@
+﻿.div-body-main {
+    font-weight: 100;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    height: 350px;
+}
+
+.div-icon {
+    padding: 20px 0px 10px 0px;
+    text-align: center;
+    color: dodgerblue;
+}
+
+.heading {
+    font-family: 'Lucida Console';
+    text-align: center;
+    color: darkblue;
+    font-size: large;
+    padding-bottom: 10px;
+}
+
+.sub-heading {
+    text-align: right;
+}
+
+.div-sub-heading {
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    font-size: small;
+    color: darkslategrey;
+    padding-bottom: 10px;
+}
+
+.div-sub-headings {
+    padding: 0px 0px 20px 0px;
+    height: 90px;
+}
+
+.div-sub-desc {
+    text-align: center;
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    color: dodgerblue;
+    font-size: small;
+    padding: 0px 10px 40px 10px;
+}
+
+.div-footer {
+    text-align: center;
+    font-family: Helvetica Neue, Helvetica, sans-serif;
+    color: darkblue;
+    font-size: 14px;
+    padding: 0px 10px 0px 10px;
+}

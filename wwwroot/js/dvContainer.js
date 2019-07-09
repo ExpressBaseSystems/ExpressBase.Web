@@ -36,17 +36,21 @@ var DvContainerObj = function (settings) {
     this.clickDot = false;
     this.cellData = null;
     this.isExistReport = false;
+    this.googlekey = settings.googlekey
     //this.PGobj = new Eb_PropertyGrid("pp_inner", "uc");
-
+    let _style = {};
+    if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1)
+        _style = { top: "100px" };
+    else
+        _style = { top: "77px" };
 
     this.PGobj = new Eb_PropertyGrid({
         id: "pp_inner",
         wc: "uc",
         cid: this.cid,
         $extCont: $(".ppcont"),
-        style: { top: "100px" }
+        style: _style
     });
-
     //this.stickBtn = new EbStickButton({
     //    $wraper: $(".filterCont"),
     //    $extCont: $(".filterCont"),
@@ -110,6 +114,7 @@ var DvContainerObj = function (settings) {
         }
         else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
             this.dvcol[focusedId] = new eb_chart(
+                googlekey = this.googlekey,
                 refid = this.dvRefid,
                 ver_num = this.ver_num,
                 type = this.type,

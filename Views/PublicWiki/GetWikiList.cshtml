@@ -6,219 +6,220 @@
 
 <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
 <script>
+    let obj;
     $(document).ready(function () {
-        new addwiki();
+       obj = new addwiki();
     });
-
+  
+    $(window).on('popstate', function (event) {
+        let url = window.location.href;
+        //alert(url);
+        let urlSplit = url.split("/");
+        let id = urlSplit[urlSplit.length - 1];
+        if ($.isNumeric(id)) {
+            obj.AjaxCalFetchWikiList(id);
+        }
+    });
+    $(window).on('load', function (event) {
+        let url = window.location.href;
+        //window.location.href = "";
+    });
 </script>
 
-<link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
-<style type="text/css">
- 
-</style>
+    <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+    <style type="text/css">
+    </style>
 
-@{
-    string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
-    if (ViewBag.Env == "Development")
-    {
-        home = "http://localhost:41400";
-        signinurl = "http://myaccount.localhost:41500";
+    @{
+        string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
+        if (ViewBag.Env == "Development")
+        {
+            home = "http://localhost:41400";
+            signinurl = "http://myaccount.localhost:41500";
+        }
+        if (ViewBag.Env == "Staging")
+        {
+            home = "https://eb-test.xyz";
+            signinurl = "https://myaccount.eb-test.xyz";
+        }
+        if (ViewBag.Env == "Production")
+        {
+            home = "https://expressbase.com";
+            signinurl = "https://myaccount.expressbase.com";
+        }
+        bool isLogined = (ViewBag.AvailToken == null) ? false : ViewBag.AvailToken;
     }
-    if (ViewBag.Env == "Staging")
-    {
-        home = "https://eb-test.xyz";
-        signinurl = "https://myaccount.eb-test.xyz";
-    }
-    if (ViewBag.Env == "Production")
-    {
-        home = "https://expressbase.com";
-        signinurl = "https://myaccount.expressbase.com";
-    }
-    bool isLogined = (ViewBag.AvailToken == null) ? false : ViewBag.AvailToken;
-}
 
-
-<div class="container-fluid">
-    <div class=" row ">
-
-        
-
-        <div class="col-sm-2 navbar1 style-4">
-                       <div class="row" style="margin-top: 10px;">
+    <div class="container-fluid" style=" margin-top:105px">
+        <div class="row">
+            <div class="col-sm-3">
                 <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
                 <div class="col-sm-10">
                     <h5 id="home"> Getting Started</h5>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
-                <div class="col-sm-10">
-                    <h5 class="menu" val="form"> Forms </h5>
-                </div>
-            </div>
-            <div id="form" val="hide" show>
-                <ul>
-                    @foreach (Wiki wiki in ViewBag.WikiList)
-                    {
-                        int link = wiki.Id;
-                        if (wiki.Category == "Form")
-                        {
-
-                            <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
-                        }
-                    }
-
-                </ul>
-            </div>
-
-            <div class="row">
-                <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
-                <div class="col-sm-10">
-                    <h5 class="menu" val="Reporting"> Reports </h5>
-                </div>
-            </div>
-
-            <div id="Reporting" val="hide" show>
-                <ul>
-                    @foreach (Wiki wiki in ViewBag.WikiList)
-                    {
-                        int link = wiki.Id;
-                        if (wiki.Category == "Reporting")
-                        {
-
-                            <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
-                        }
-                    }
-
-                </ul>
-            </div>
-            <div class="row">
-                <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
-                <div class="col-sm-10">
-                    <h5 class="menu" val="API"> API </h5>
-                </div>
-            </div>
-
-            <div id="API" val="hide" hidden>
-                <ul>
-                    @foreach (Wiki wiki in ViewBag.WikiList)
-                    {
-                        int link = wiki.Id;
-                        if (wiki.Category == "API")
-                        {
-
-                            <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
-                        }
-                    }
-
-                </ul>
             </div>
 
 
-
-            <div class="row">
-                <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
-                <div class="col-sm-10">
-                    <h5 class="menu" val="Chatbots"> Chatbots </h5>
-                </div>
-            </div>
-
-
-            <div id="Chatbots" val="hide" hidden>
-                <ul>
-                    @foreach (Wiki wiki in ViewBag.WikiList)
-                    {
-                        int link = wiki.Id;
-                        if (wiki.Category == "Chatbots")
-                        {
-
-                            <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
-                        }
-                    }
-
-                </ul>
-            </div>
-
-
-            <div class="row">
-                <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
-                <div class="col-sm-10">
-                    <h5 class="menu" val="Security"> Security </h5>
-                </div>
-            </div>
-            <div id="Security" val="hide" hidden>
-                <ul>
-                    @foreach (Wiki wiki in ViewBag.WikiList)
-                    {
-                        int link = wiki.Id;
-                        if (wiki.Category == "Security")
-                        {
-
-                            <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
-                        }
-                    }
-                </ul>
-            </div>
-
-
-            <div class="row">
-                <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
-                <div class="col-sm-10">
-                    <h5 class="menu" val="AppStore"> App Store </h5>
-                </div>
-            </div>
-            <div id="AppStore" val="hide" hidden>
-                <ul>
-                    @foreach (Wiki wiki in ViewBag.WikiList)
-                    {
-                        int link = wiki.Id;
-                        if (wiki.Category == "AppStore")
-                        {
-
-                            <li> <a id="@link" class="wikilist"> @wiki.Title </a></li>
-                        }
-                    }
-
-                </ul>
-            </div>
-
-
-        </div>
-
-        <div class="col-sm-10" style="padding-left: 0px;">
-
-            <div class="row" style="padding-top:10px;">
+            <div class="col-sm-9">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search.." id="search_wiki" aria-describedby="basic-addon2">
                     <div class="input-group-addon" id="basic-addon2" style=" background-color: #557aff;color: #fff; width: 50px; border: 2px;">  <i class="fa fa-search" aria-hidden="true"></i></div>
                 </div>
+            </div>
 
-                @*<div class="nav-item">
-                    <div style="position:fixed;height:200px;overflow:auto;background-color:white" class="col-sm-10">
+        </div>
+        <div class="row">
+            <div class="col-sm-3" style="height:500px; overflow:auto ;padding-left: 30px;">
+                <div class="row">
+                    <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
+                    <div class="col-sm-10">
+                        <h5 class="menu" val="form"> Forms </h5>
+                    </div>
+                </div>
+                <div id="form" val="hide" show>
+                    <ul>
+                        @foreach (Wiki wiki in ViewBag.WikiList)
+                        {
+                            int link = wiki.Id;
+                            if (wiki.Category == "Form")
+                            {
 
-                </div>*@
-                @*<a class="edit" style="visibility:hidden" id="edit_show" >
-                    edit
-                </a>*@
-                <div id="html" style="height:540px;overflow:auto;" hidden class="container-fluid wiki-align style-4">
+                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                            }
+                        }
 
+                    </ul>
                 </div>
 
-                @*<div id="search_id" style="height:550px;overflow:auto;" hidden class="container-fluid wiki-align style-4"> </div>*@
-
-                <div class="front_page_wiki wiki-align style-4" show style="height:540px;overflow:auto;">
-                    <h1> <center>Documentation</center></h1>
-                    <p> Welcome to ExpressBase! Get familiar with the ExpressBase products and explore their features: </p>
-
-
+                <div class="row">
+                    <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
+                    <div class="col-sm-10">
+                        <h5 class="menu" val="Report"> Report </h5>
+                    </div>
                 </div>
-                <p></p>
+
+                <div id="Report" val="hide" show>
+                    <ul>
+                        @foreach (Wiki wiki in ViewBag.WikiList)
+                        {
+                            int link = wiki.Id;
+                            if (wiki.Category == "Report")
+                            {
+
+                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                            }
+                        }
+
+                    </ul>
+                </div>
+                <div class="row">
+                    <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
+                    <div class="col-sm-10">
+                        <h5 class="menu" val="API"> API </h5>
+                    </div>
+                </div>
+
+                <div id="API" val="hide" hidden>
+                    <ul>
+                        @foreach (Wiki wiki in ViewBag.WikiList)
+                        {
+                            int link = wiki.Id;
+                            if (wiki.Category == "API")
+                            {
+
+                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                            }
+                        }
+
+                    </ul>
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
+                    <div class="col-sm-10">
+                        <h5 class="menu" val="Chatbots"> Chatbots </h5>
+                    </div>
+                </div>
+
+
+                <div id="Chatbots" val="hide" hidden>
+                    <ul>
+                        @foreach (Wiki wiki in ViewBag.WikiList)
+                        {
+                            int link = wiki.Id;
+                            if (wiki.Category == "Chatbots")
+                            {
+
+                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                            }
+                        }
+
+                    </ul>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
+                    <div class="col-sm-10">
+                        <h5 class="menu" val="Security"> Security </h5>
+                    </div>
+                </div>
+                <div id="Security" val="hide" hidden>
+                    <ul>
+                        @foreach (Wiki wiki in ViewBag.WikiList)
+                        {
+                            int link = wiki.Id;
+                            if (wiki.Category == "Security")
+                            {
+
+                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                            }
+                        }
+                    </ul>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-sm-1">  <p class="fa fa-home" style="font-size:20px"> </p> </div>
+                    <div class="col-sm-10">
+                        <h5 class="menu" val="AppStore"> App Store </h5>
+                    </div>
+                </div>
+                <div id="AppStore" val="hide" hidden>
+                    <ul>
+                        @foreach (Wiki wiki in ViewBag.WikiList)
+                        {
+                            int link = wiki.Id;
+                            if (wiki.Category == "AppStore")
+                            {
+
+                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                            }
+                        }
+
+                    </ul>
+                </div>
+
 
             </div>
+            <div class="col-sm-9 wiki_data" id="wiki_data_div" hidden style="height:480px;overflow:auto;">
+
+                <div id="tagspace"> </div>
+            </div>
+            <div class=" col-sm-9 front_page_wiki" show style="height:480px;overflow:auto;">
+                <h1>Documentation</h1>
+                <p> Welcome to ExpressBase! Get familiar with the ExpressBase products and explore their features: </p>
+            </div>
+        </div>
+        <div class="icon-bar">
+            <a href="https://www.facebook.com/share.php?u=http://www.expressbase.com&title=ExpressBase" class="facebook" target="_blank"><i class="fa fa-facebook"></i></a>
+            <a href="#" class="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+            <a href="#" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+            <a href="#" class="whatsapp" target="_blank"><i class="fa fa-whatsapp"></i></a>
         </div>
     </div>
-    </div>
-
 
 

@@ -10,14 +10,14 @@
         bApnd = false;
     }
 }
-<link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" />
-<script src="~/js/EbOnBoarding/TenantDashBoard.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script>
-    $(".solution_logo ").attr("src", "/images/EB_Logo.png");
-    var cm = new EbHeader().setName("My Solutions");
-</script>
-<div class="row s-dash-container bgf2f2">
+@section StyleSheet {
+    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" />
+}
+@section JavaScript{
+    <script src="~/js/EbDashBoards/TenantDashBoard.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>
+}
+<div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
@@ -54,17 +54,17 @@
             </ul>
         </div>
     </div>
-    <div class="s-dash-workplace tenant_workpane">
+    <div class="s-dash-workplace tenant_workpane h-100">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 pd-0">
                 <h4 class="mr-t-0 mr-b-0">Solutions <span class="apps_count">(@sarr.Count)</span></h4>
             </div>
             <div class="col-md-5 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
-                <div class="input-group" style="margin-left: 15px;">
-                    <span class="input-group-addon" id="basic-addon1"><i class="fa fa-search"></i></span>
+                <div class="input-group eb-search-box" style="margin-left: 15px;">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     <input type="text" id="solSearch" class="form-control" placeholder="Search solution">
                 </div>
-                <a href='@Url.Action("CreateSolution","Tenant")' class="ebbtn eb_btngreen eb_btn-sm new_sol_lk">New Solution</a>
+                <a href='/NewSolution' class="ebbtn eb_btnblue eb_btn-sm new_sol_lk">New Solution</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
@@ -76,93 +76,97 @@
 
                         <div class="solution_container">
                             <div class="solution_container_pd w-100">
-                                <div class="w-100 s_info_img text-center">
-                                    <img class="img-responsive" src="/images/your_company_logo.png" />
-                                </div>
+                                @*<div class="w-100 s_info_img text-center">
+                                        <img class="img-responsive" src="/images/your_company_logo.png" />
+                                    </div>*@
                                 <div class="s_info w-100">
                                     <h4 name="SolutionTitle">@s.SolutionName</h4>
                                     <p class="small mr-0">@desc</p>
-                                    <p class="small mr-0">@s.DateCreated</p>
+                                    <p class="small mr-0">Created on @s.DateCreated</p>
                                 </div>
                                 <div class="sso_head text-center">
                                     <input name="WhichConsole" type="hidden" value="" />
-                                    <a sid="@s.IsolutionId" wc="uc" class="btn tdash_btn c-blue single__sso">
-                                        <i class="fa fa-user-o" aria-hidden="true"></i>
+                                    <a sid="@s.IsolutionId" wc="uc" class="sso-btn eb_btnblue single__sso" title="go to user console">
+                                        <i class="fa fa-user-o" aria-hidden="true"></i> User
                                     </a>
-                                    <a sid="@s.IsolutionId" wc="dc" class="btn tdash_btn c-orange single__sso">
-                                        <i class="fa fa-wrench" aria-hidden="true"></i>
+                                    <a sid="@s.IsolutionId" wc="dc" class="sso-btn eb_btnwhite  single__sso" title="go to dev console">
+                                        <i class="fa fa-wrench" aria-hidden="true"></i> Dev
                                     </a>
-                                    <a href="MySolutions/@s.IsolutionId" target="_blank" class="btn c-normal tdash_btn">
-                                        <i class="fa fa-cog" aria-hidden="true"></i>
+                                </div>
+                                <div class="sln-configLink">
+                                    <a href="MySolutions/@s.IsolutionId" target="_blank" class="pull-right" title="configure solution">
+                                        <i class="fa fa-cog" aria-hidden="true"></i> Settings
                                     </a>
                                 </div>
                             </div>
                         </div>
                     }
                 }
-
                 @*<div class="ebTour_bodyWrpr"></div>
-                <div class="ebTour_bodyWrprInner">
-                    <div class="TourTile">
-                        <div class="TourTileInner">
-                            <div class="TilePointer"></div>
-                            <div class="TourTileHead">
-                                <span>Developer</span>
-                            </div>
-                            <div class="TourTileContent">
-                                <p>
-                                    fdsgkljdfkagdf fdghdfagnfd fdlgkjfdgfdklg dfglkdfjglkfdg;
-                                </p>
-                            </div>
-                            <div class="TourTileFooter">
-                                <button class="TourTileBtn TourTilePrevBtn"><i class="fa fa-arrow-left"></i> Prev</button>
-                                <button class="TourTileBtn TourTileNextBtn">Next <i class="fa fa-arrow-right"></i></button>
+                    <div class="ebTour_bodyWrprInner">
+                        <div class="TourTile">
+                            <div class="TourTileInner">
+                                <div class="TilePointer"></div>
+                                <div class="TourTileHead">
+                                    <span>Developer</span>
+                                </div>
+                                <div class="TourTileContent">
+                                    <p>
+                                        fdsgkljdfkagdf fdghdfagnfd fdlgkjfdgfdklg dfglkdfjglkfdg;
+                                    </p>
+                                </div>
+                                <div class="TourTileFooter">
+                                    <button class="TourTileBtn TourTilePrevBtn"><i class="fa fa-arrow-left"></i> Prev</button>
+                                    <button class="TourTileBtn TourTileNextBtn">Next <i class="fa fa-arrow-right"></i></button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <a class="touFtr-skip">Skip <i class="fa fa-step-forward" aria-hidden="true"></i></a>
-                    <a class="touFtr-showAgn">Dont show again <i class="fa fa-power-off" aria-hidden="true"></i></a>
-                </div>*@
+                        <a class="touFtr-skip">Skip <i class="fa fa-step-forward" aria-hidden="true"></i></a>
+                        <a class="touFtr-showAgn">Dont show again <i class="fa fa-power-off" aria-hidden="true"></i></a>
+                    </div>*@
             </div>
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function () {
-         var Tdb = TenantDashBoard();
-    if ('@ViewBag.Msg')
-        EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-    });
 
-    //setTimeout(function () {
-    //    var tour = new Tour(
-    //        {
-    //            Stack: [
-    //                {
-    //                    element: ".c-blue",
-    //                    content: "go to user console",
-    //                    title: "User Console"
-    //                },
-    //                {
-    //                    element: ".c-orange",
-    //                    content: "go developer console",
-    //                    title: "developer"
-    //                },
-    //                {
-    //                    element: ".c-normal",
-    //                    content: "go to solution configuration",
-    //                    title: "Solution Info"
-    //                },
-    //                {
-    //                    element: ".new_sol_lk",
-    //                    content: "create new solution",
-    //                    title:"Create Solution"
-    //                }
-    //            ]
-    //        })
-    //},1000)
+@section JsCode{
+    <script>
+        $(document).ready(function () {
+            var cm = new EbHeader().setName("My Solutions");
+            var Tdb = TenantDashBoard();
+            if ('@ViewBag.Msg')
+                EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
+            });
+        //setTimeout(function () {
+        //    var tour = new Tour(
+        //        {
+        //            Stack: [
+        //                {
+        //                    element: ".c-blue",
+        //                    content: "go to user console",
+        //                    title: "User Console"
+        //                },
+        //                {
+        //                    element: ".c-orange",
+        //                    content: "go developer console",
+        //                    title: "developer"
+        //                },
+        //                {
+        //                    element: ".c-normal",
+        //                    content: "go to solution configuration",
+        //                    title: "Solution Info"
+        //                },
+        //                {
+        //                    element: ".new_sol_lk",
+        //                    content: "create new solution",
+        //                    title:"Create Solution"
+        //                }
+        //            ]
+        //        })
+        //},1000)
+    </script>
+}
 
-</script>
 
 
 

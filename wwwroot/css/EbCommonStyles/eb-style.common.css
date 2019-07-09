@@ -1,5 +1,4 @@
-﻿
-body {
+﻿body {
     --eb-blue: #339bb3;
     --eb-grey: #efefef;
     --eb-font: open sans;
@@ -55,7 +54,6 @@ body {
 .outer-row-profsetup {
     height: 100vh;
     padding-top: 40px;
-    font-family: open sans;
     font-weight: 300;
     background: #efefef;
 }
@@ -112,7 +110,6 @@ body {
     }
 
         .outer-row-profsetup .savebtn .btn {
-            font-family: open sans;
             font-weight: 300;
             color: #fff;
             background-color: #339bb3;
@@ -133,41 +130,57 @@ body {
     display: inline;
 }
 /*ProfileSetup end*/
+
 /*tdashboard*/
 .solution_container {
     width: 25%;
-    float: left;
-    padding: 5px;
+    padding: 10px;
 }
 
 .solution_container_pd {
-    float: left;
-    border-radius: 2px;
+    border-radius: 4px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 1px 1px rgba(0,0,0,.05);
     background-color: white;
+    border: 1px solid #e4e0e0;
+    /* box-shadow: 0px 3px 12px 0px rgba(0,0,0,0.15); */
+    padding:15px;
 }
-
-    .solution_container_pd:hover, .solution_container_pd:focus {
-        color: inherit;
-        text-decoration: none;
-        transform: translateY(-2px) scale(1.01);
-    }
-
 .sso_head {
-    border-top: 1px solid #ebeff6;
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
+    margin: 15px 0;
+    padding: 10px;
 }
-
+.sso-btn {
+    padding: 5px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    border: 1px solid transparent;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+.sln-configLink {
+    margin: 10px 0;
+    cursor: pointer;
+}
+    .sln-configLink a {
+        color: #738db1;
+        font-size: 15px;
+        font-weight: 400;
+    }
+    .sln-configLink:hover a {
+        text-decoration:none;
+        color: #508bf9;
+    }
 .solution_container_pd .s_info {
-    padding: 5px 15px;
-    line-height: 1.3em;
+    line-height: 1.7em;
 }
 
 .s_info p {
-    color: #979797;
+    color: #47495a;
+    font-size: 14px;
 }
 
 .solution_container_pd .s_info_img {
@@ -183,10 +196,10 @@ body {
     }
 
 .s_info h4 {
-    margin: 5px 0;
-    font-size: 16px;
-    color: #737373;
-    font-weight: bold;
+    margin: 0 0 15px;
+    font-size: 19px;
+    color: #333;
+    font-weight: 400;
 }
 
 .tdasboard-sidebar {
@@ -200,14 +213,13 @@ body {
     height: inherit;
     width: 100%;
     padding-top: 30px;
-    font-family: open sans;
     background-color: #031b4d;
     border: 0 solid #e7e7e7;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
 }
 
 .tdash-box-body {
-    padding: 0 12px;
+    padding: 12px 12px;
     display: flex;
     flex-flow: row wrap;
 }
@@ -231,25 +243,37 @@ body {
     display: flex;
     align-items: center;
     background-color: #f2f2f2;
+    border-bottom: 1px solid #d2d2d2;
 }
 
 .s-dash-container {
-    min-height: 100vh;
     padding-top: 37px;
-    background-color: white;
+    background-color:white;
 }
 
 .s-dash-workplace {
-    font-family: open sans;
-    font-weight: 300;
-    width: 82%;
-    float: right;
+    display: flex;
+    display:-webkit-flex;
+    flex-flow: column;
+    margin-left: auto;
+    flex: 1;
+    -webkit-flex:1;
+    padding-left: 100px;
 }
 
-.s-dash-workplace-tabs .nav-tabs {
-    background-color: #f2f2f2;
+.eb-styledTab {
+    background: #f2f2f2;
 }
-
+.s-dash-solution-desc h4 {
+    font-size: 22px;
+    font-weight:400;
+}
+.btn.disabled, .btn[disabled], fieldset[disabled] .btn {
+    opacity: unset;
+    cursor: pointer;
+    box-shadow: inherit;
+    filter: unset;
+}
 .bgf2f2 {
     background-color: #f2f2f2 !important;
 }
@@ -259,12 +283,33 @@ body {
     color: #5d5c5c;
     font-weight: 400;
 }
-
-.s-dash-workplace .nav-tabs > li.active > a {
-    font-weight: bold;
-    color: #528ff0;
+.eb-styledTab .nav > li > a i {
+    margin-right: 2px;
+    color: #717171;
 }
 
+.eb-styledTab > li.active > a, .eb-styledTab > li.active > a:focus{
+    font-weight: 500;
+    color: #508bf9;
+    border: none;
+    background-color: transparent;
+}
+.s-dash-workplace > .nav-tabs li.active > a i, .s-dash-workplace .nav-tabs > li.active > a:focus i {
+    color: #508bf9;
+}
+.border-style-none{
+    border-style:none;
+}
+.eb-styledTab > li.active > a:after {
+    content: "";
+    content: "";
+    width: calc(100% - 30px);
+    height: 3px;
+    background: #508bf9;
+    position: absolute;
+    bottom: -1px;
+    left: 15px;
+}
 .s-dash-workplace .tab-content {
     padding: 12px;
     float: left;
@@ -331,6 +376,9 @@ body {
     display: flex;
 }
 /*tenant add solution*/
+.createAppFrm {
+    padding: 20px 0 0 50px;
+}
 .pd-0 {
     padding: 0;
 }
@@ -390,42 +438,11 @@ body {
     border-radius: 2px;
     box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    font-family: roboto;
 }
 
 #eb-common-price-modal .modal-dialog {
     width: 1000px;
     margin: 30px auto;
-}
-/*cdgfdjhdtjykuflkjyh*/
-.tAddAcc {
-    font-family: open sans;
-    font-weight: 300;
-    background-color: #eee;
-}
-
-    .tAddAcc .btn {
-        border-radius: 0;
-        background: white;
-        border: 1px solid #e1e0e0;
-    }
-
-        .tAddAcc .btn:focus {
-            border: none;
-            outline: none;
-        }
-
-    .tAddAcc .form-control {
-        -webkit-box-shadow: none;
-        box-shadow: none;
-    }
-
-    .tAddAcc .detailsec {
-        margin-top: 50px;
-    }
-
-.detailsec-name {
-    height: inherit;
 }
 
 .btn-upload i {
@@ -438,12 +455,6 @@ body {
 
 .eb-products {
     margin-top: 30px;
-}
-
-.products-head {
-    margin-top: 40px;
-    color: #3ea8dc;
-    font-family: sans-serif;
 }
 
 .detailsec-name-desc {
@@ -537,28 +548,6 @@ body {
         border: none;
     }
 
-.height-100 {
-    height: 100vh;
-}
-
-.card {
-    display: flex;
-    height: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding: 4em 0;
-    font-family: open sans;
-}
-
-.card--content {
-    background: white;
-    min-width: 60%;
-    border-radius: 4px;
-    height: 100%;
-    box-shadow: var(--eb-shadow2);
-    position: relative;
-}
-
 .card--content-large {
     background: white;
     border: 1px solid #ccc;
@@ -567,92 +556,12 @@ body {
     border-radius: 6px;
     height: 100%;
 }
-
-.card--form {
-    height: 100%;
-    padding: 0 30px;
-}
-
-.none {
-    min-width: 20%;
-    margin-top: 50px;
-}
-
-.mr-l-20 {
-    margin-left: 20%;
-}
-
-.mr-l-15 {
-    margin-left: 15%;
-}
-
-.mr-l-10 {
-    margin-left: 10%;
-}
-
-.desc-section {
-    background: #fafafa;
-    height: 100%;
-    padding: 15px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-}
-
-.products-head {
-    margin-top: 0px;
-    padding: 10px 0px;
-    height: 50px;
-}
-
-.card--content-body {
-    height: calc(100% - 100px);
-    padding-top: 20px;
-}
-
-.card--content-footer {
-}
-
-.steps {
-    width: 100%;
-    text-align: center;
-}
-
-.step-no {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 2px solid;
-    border-color: #ccc;
-    margin: 5px;
-    padding: 3px;
-}
-
-.step-no-blue {
-    border-color: #3ea8e2;
-}
-
-.card--content-footer .btn {
-    background: #4aade3;
-    color: white;
-    border-radius: 20px;
-}
-
-.card--content-footer .btn-success {
-    background: #23c523 !important;
-}
-
-.subscript-submit {
-    margin-top: 15px;
-}
-
 .small-desc {
     height: calc(100% - 40px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: open sans;
 }
 
 .flex-center {
@@ -660,35 +569,16 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: open sans;
 }
 
 .flex-center_rowwise {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: open sans;
 }
 
 .tdash_btn {
     font-size: 18px;
-}
-
-.small-desc-last {
-    height: calc(100% - 75px);
-    padding-top: 30px;
-}
-
-.small-desc h4, p {
-    color: #6f6d6d;
-}
-
-.small-desc-img {
-    width: 50px;
-}
-
-.mr-10 {
-    margin-right: 10px;
 }
 
 .sol-name-review {
@@ -751,7 +641,6 @@ body {
 .apps-wrapper {
     padding: 15px;
     cursor: pointer;
-    padding-left: 2px;
 }
 
 .apptype {
@@ -768,7 +657,7 @@ body {
 }
 
 .appselected {
-    outline: 2px solid #4aade3;
+    outline: 2px solid #508bf9;
 }
 
 /*toggle button*/
@@ -829,20 +718,6 @@ body {
     .uname-advanced-sec .slider.round:before {
         border-radius: 50%;
     }
-/*toggle btn end*/
-.log-upload-btn {
-    border-radius: 4px;
-}
-
-.logo_img_cont {
-    height: 58px;
-}
-
-    .logo_img_cont img {
-        height: 100%;
-        width: auto;
-    }
-
 .mr-t-15 {
     margin-top: 15px;
 }
@@ -883,12 +758,12 @@ body {
     padding: 5px 12px;
 }
 /*DevDash*/
-.apptype_icon_devd {
+/*.apptype_icon_devd {
     height: 18px;
     width: auto;
     margin-top: -8px;
     margin-right: .3em;
-}
+}*/
 /*app dash*/
 .appicon_style {
     font-size: 30px;
@@ -905,37 +780,9 @@ body {
     font-size: 16px;
 }
 
-.card--content-body .form-control {
-    height: 40px;
-    border: 1px solid #dedcda;
-    border-radius: 0;
-}
-
-    .card--content-body .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
-        background-color: #fff;
-    }
-
-.card--content-body .input-group .input-group-addon {
-    border-radius: 0;
-}
-
-.card--content-body label {
-    font-weight: 400;
-}
-
 .circ_shadow {
     box-shadow: 0 6px 18px rgba(0,0,0,0.2);
     border-radius: 50%;
     padding: 2px;
     margin: 6px 0;
 }
-
-.row_eblog_t {
-    position: fixed;
-    width: 100%;
-    text-align: center;
-}
-
-    .row_eblog_t img {
-        height: 40px;
-    }

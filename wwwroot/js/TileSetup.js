@@ -200,15 +200,15 @@
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
-        <div class="row" style="padding:6px 0px">
+        <div class="row" style="padding:6px 10px">
             <div class="col-md-7"><div class="subHeading">${this.options.longTitle || ""}</div></div>
             <div class="col-md-3">
-                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:100%" />
-                <span id="spanSrch${t}" class="glyphicon glyphicon-search form-control-feedback" style="top: 0px; right: 16px;"></span>
-                <span id="spanRemv${t}" class="glyphicon glyphicon-remove form-control-feedback" style="top: 0px; right: 16px; display:none;"></span>                
+                <input id="txtDemoSearch${t}" type="search" class="form-control input-custom-style" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:100%" />
+                <span id="spanSrch${t}" class="form-control-feedback" style="top: -3px; right: 16px;"><i class="fa fa-search" aria-hidden="true"></i></span>
+                <span id="spanRemv${t}" class="form-control-feedback" style="top: -3px; right: 16px; display:none;"><i class="fa fa-times" aria-hidden="true"></i></span>                
             </div>
             <div class="col-md-2">
-                <button type="button" class="btn" id="btnAddModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
+                <button type="button" class="input-custom-style" id="btnAddModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
             </div>
         </div>
         <div class="container">`
@@ -631,7 +631,7 @@
             temp += ``;
         else {
             temp += `     <div class="dropdown">
-                            <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 5px"></i>
+                            <i class="fa fa-ellipsis-v dropdown-toggle" aria-hidden="true" data-toggle="dropdown" style="padding:0px 6px"></i>
                             <ul class="dropdown-menu" style="left:-140px; width:160px;">`;
             if (!this.readOnly)
                 temp += `<li><a href="#" class='dropDownViewClass'>View</a></li><li><a href="#" class='dropDownRemoveClass'>Remove</a></li>`;

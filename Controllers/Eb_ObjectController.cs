@@ -37,6 +37,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult Index(string objid, int objtype, bool buildermode = true)
         {
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             dynamic dsobj = null;
             Context2Js _c2js = new Context2Js();
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -46,14 +47,12 @@ namespace ExpressBase.Web.Controllers
             ViewBag.mode = buildermode;
 
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (soln.PricingTier == PricingTiers.FREE)
+            if (soln == null)
             {
-                ViewBag.IsFreeUser = true;
+                this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = ViewBag.cid, UserId = ViewBag.UId });
+                soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             }
-            else
-            {
-                ViewBag.IsFreeUser = false; 
-            }
+            ViewBag.versioning = soln.IsVersioningEnabled;
 
             if (objid != "null")
             {
@@ -649,10 +648,10 @@ namespace ExpressBase.Web.Controllers
             return ServiceClient.Get(new EbObjectAllVersionsRequest { RefId = objid }).Data;
         }
 
-        public string ChangeStatus(string _refid, string _changelog, string _status)
+        public bool ChangeStatus(string _refid, string _changelog, string _status)
         {
             EbObjectChangeStatusResponse res = ServiceClient.Post(new EbObjectChangeStatusRequest { RefId = _refid, Status = (ObjectLifeCycleStatus)Enum.Parse(typeof(ObjectLifeCycleStatus), _status), ChangeLog = _changelog });
-            return (res.Id > 0) ? "success" : "failed";
+            return res.Response;
         }
 
         public string Create_Major_Version(string _refId, int _type)
@@ -671,11 +670,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateObjectDashboard(string refid)
+        public IActionResult UpdateObjectDashboard(string refid, bool versioning)
         {
             List<EbObjectWrapper> objlist = ServiceClient.Get(new EbObjectUpdateDashboardRequest { Refid = refid }).Data;
             EbObjectWrapper w = objlist[0];
-            return ViewComponent("ObjectDashboard", new { refid, objname = w.Name, w.Status, vernum = w.VersionNumber, workcopies = w.Wc_All, _tags = w.Tags, _apps = w.Apps, _dashbord_tiles = w.Dashboard_Tiles });
+            return ViewComponent("ObjectDashboard", new { refid, objname = w.Name, w.Status, vernum = w.VersionNumber, workcopies = w.Wc_All, _tags = w.Tags, _apps = w.Apps, _dashbord_tiles = w.Dashboard_Tiles, _versioning = versioning });
         }
 
         public bool CheckRestricted(string _sql)

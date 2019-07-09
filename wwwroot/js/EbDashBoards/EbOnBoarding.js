@@ -1,51 +1,9 @@
 ﻿
 //js file for EbOnBoarding.cshtml ,Resetpassword.cshtml
 //has 2 main function EbOnboarding for...................   and PasswordValidation
-
-var EbOnBoarding = function (context) {
-
+var EbOnBoarding = function () {
     this.solinfo = {};
     this.seldeploy;
-    this.ajaxTime;
-
-    let _prevId = "#profimage";
-    let _tid = "";
-    let _context = context;
-    this.getSolutionName = function (e) {
-        $('#Hidd-sname').val($(e.target).val());
-        $("#solutionName-app").text($(e.target).val());
-    };
-    this.getClientId = function (e) {
-        $('#Hidd-esid').text($(e.target).val());
-    };
-    this.getDesc = function (e) {
-        $('#description').text($(e.target).val());
-    };
-
-    //this.LogoImageUpload = function () {
-    //    let d = new EbFileUpload({
-    //        Type: "image",
-    //        Toggle: "#log-upload-btn",
-    //        TenantId: "@ViewBag.cid",
-    //        SolutionId: "@ViewBag.SolnId",
-    //        Container: "onboarding_logo",
-    //        Multiple: false,
-    //        ServerEventUrl: 'https://se.eb-test.xyz',
-    //        EnableTag: false,
-    //        EnableCrop: true,
-    //        Context: "logo",//if single and crop
-    //        ResizeViewPort: false //if single and crop
-    //    });
-
-    //    d.uploadSuccess = function (fileid) {
-    //        EbMessage("show", { Message: "Upload done" });
-    //    }
-    //    d.windowClose = function () {
-    //        //EbMessage("show", { Message: "window closed", Background: "red" });
-    //    }
-    //};
-
- 
 
     this.submitProfile = function (e) {
         e.preventDefault();
@@ -54,79 +12,43 @@ var EbOnBoarding = function (context) {
         if (info) {
             $.ajax({
                 type: 'POST',
-                url: "../Ext/ProfileSetup",
+                url: "../Ext/Board",
                 beforeSend: function () {
-                    $(".commonLoader").EbLoader("show");
+                    $("#loaderdiv").EbLoader("show");
+                    //$(".iconspin").addClass("fa fa-spinner fa-pulse")
+                    $("#save-profile").prop('disabled', true);
                 },
                 data: {
-                    email: $("#email").val(),
-                    name: $("#name").val(),
-                    country: $("#country option:selected").text(),
-                    account: $("input[name='account_typ']:checked").val(),
-                    password: $("#inputPassword").val()
-
+                    email: $("#email").val().trim(),
+                    name: $("#name").val().trim(),
+                    country: $("#country option:selected").text().trim(),
+                    account: $("input[name='account_typ']:checked").val().trim(),
+                    password: $("#inputPassword").val().trim()
                 }
-            }).done(function (streturn) {
-                $(".commonLoader").EbLoader("hide");
-                if(streturn==0)
-                {
-                EbMessage("show", { Message: "Profile Saved" });
-                 setTimeout(function () {
-                          location.href = "/MySolutions";
-                     }, 2000);
-                 }
-                if(streturn==1)
-                    {
-                     EbMessage("show", { Message: "Email already exist",Background: "red" });
-            // setTimeout(function () {
-             //             location.href = "../TenantController/TenantDashboard";
-             //           }, 2000);
- 
+            }).done(function (data) {
+                $("#loaderdiv").EbLoader("hide");
+                if (data.id > 0) {
+                    location.href = "/MySolutions";
+                }
+                else {
+                    if (data.isEmailUniq == false) {
+                        EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
+                        //$(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                        $("#save-profile").prop('disabled', false);
+                    }
+                    else {
+                        if (data.AccountCreated == false) {
+                            EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
+                            $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                            $("#save-profile").prop('disabled', false);
                         }
-
-                if(streturn==2)
-                    {
-                     EbMessage("show", { Message: "Cannot create solutions",Background: "red" });
-                        }
-
+                    }
+                }
 
             }.bind(this));
         }
-  
+
     };
-
-    this.scrollProfToLeft = function () {
-        $('.card').animate({
-            scrollLeft: $("#prof-info").width() + 150
-        }, 500);
-    };
-
-
-
-    this.scrollToProfSec = function () {
-        $('.card').animate({
-            scrollLeft: 0
-        }, 500);
-    };
-    this.scrollToLast = function () {
-        $('.card').animate({
-            scrollLeft: 3000
-        }, 500);
-    };
-
-    this.whichAppType = function (e) {
-        let ob = $(e.target).closest(".apps-wrapper-fchiled");
-        ob.addClass("appselected");
-        $.each(ob.parent().siblings(), function (i, obj) {
-            $(obj).children(".apps-wrapper-fchiled").removeClass("appselected");
-        }.bind(this))
-        $("[name='AppType']").val(parseInt(ob.attr("type")));
-    };
-    this.showLoaderOnAppSub = function (e) {
-        $("#loader_app_info").EbLoader("show");
-    };
-
-
 
     this.validate = function () {
         let sts = true
@@ -148,7 +70,7 @@ var EbOnBoarding = function (context) {
             $("#passlbl").focusout();
         } else {
             $('#passlbl').text("Enter strong password");
-            $("#passlbl").css({ 'color': 'red' });
+            $("#passlbl").css({ 'color': '#a94442' });
             $("#inputPassword").focus();
             $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
             sts = false;
@@ -165,12 +87,10 @@ var EbOnBoarding = function (context) {
             $("#countrylbl").css("visibility", "hidden");
 
         }
-        
-       
 
         let name = $("#name").val();
         let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
-        if ((name.length == 0) || (u.test(name)==false)){
+        if ((name.length == 0) || (u.test(name) == false)) {
             $("#namelbl").css("visibility", "visible");
             $("#namelbl").show();
             $("#name").focus();
@@ -178,14 +98,15 @@ var EbOnBoarding = function (context) {
             sts = false;
         }
         else {
+            $('#country').removeClass('txthighlightred').addClass('txthighlight');
             $("#namelbl").css("visibility", "hidden");
         }
 
         let com = $("#email").val();
-       // var re = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        // var re = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        if ((com.length == 0) || (re.test(com) == false) ) {
+        if ((com.length == 0) || (re.test(com) == false)) {
             $("#emaillbl").css("visibility", "visible");
             $("#email").focus();
             $('#email').removeClass('txthighlight').addClass('txthighlightred');
@@ -193,6 +114,7 @@ var EbOnBoarding = function (context) {
         }
         else {
             $("#emaillbl").css("visibility", "hidden");
+            $('#country').removeClass('txthighlightred').addClass('txthighlight');
         }
 
         return sts;
@@ -201,7 +123,7 @@ var EbOnBoarding = function (context) {
     this.Solutionobjfn = function (e) {
         e.preventDefault();
         let tem = 1;
-        let t = new RegExp("[a-zA-Z0-9]"); 
+        let t = new RegExp("[a-zA-Z0-9]");
         if (($("#solutionname").val() === "") || (t.test($("#solutionname").val()) == false)) {
             $("#slnnam").css("visibility", "visible");
             tem = 0;
@@ -237,93 +159,11 @@ var EbOnBoarding = function (context) {
 
     }
 
-    this.Savesolutionfn = function (e) {
-        e.preventDefault();
-        $("#txtsol").empty();
-        $("#txtdb").empty();
-        let st = 0;
-        this.solinfo.isdeploy = $('input[name=selector]:checked').val();
-        $("#txtsol").append("Creating Solution...");
-        if (this.solinfo.isdeploy == "true") {
-            st = 1;
-        }
-        //$("#txtsol").css("visibility", "visible");
-        //$("#txtdb").css("visibility", "visible");
-
-        $.ajax({
-            type: 'POST',
-            url: "../Tenant/EbCreateSolution",
-            beforeSend: function () {
-                $("#loader_product-info").EbLoader("show");
-                this.ajaxTime = new Date().getTime();
-            }.bind(this),
-            data: {
-                Sname: this.solinfo.solname,
-                SolnId: this.solinfo.solurl.toLowerCase(),
-                Desc: this.solinfo.soldesc,
-                DeployDB: this.solinfo.isdeploy
-            },
-            success: function (res) {
-                let totalTime = (new Date().getTime() - this.ajaxTime) / 1000;
-                let tm = 4 - totalTime;
-
-                if (res.errSolMessage != null) {
-                    $("#txtsol").empty();
-                    //$("#txtsol").fadeOut();
-                    $("#txtsol").append(res.errSolMessage);
-                    EbMessage("show", { Message: res.errSolMessage, Background: "red" });
-                }
-                if (st == 1) {
-                    if (tm > 0) {
-                        setTimeout(function () {
-                            $("#txtdb").append("Deploying DataBase...")
-                        }, 2000);
-                    }
-                    else {
-                        $("#txtdb").append("Deploying DataBase...")
-                    }
-                }
-
-                if (res.errDbMessage != null) {
-                    $("#txtdb").empty();
-                    $("#txtdb").append(res.errDbMessage);
-                    EbMessage("show", { Message: res.errDbMessage, Background: "red" });
-                }
-
-                if (res.status != null) {
-                    $("#loader_product-info").EbLoader("hide");
-                    if (_context) {
-                        setTimeout(function () {
-                            window.location.replace("/MySolutions");
-                            $("#btn1").click();
-                        }, 4000);
-                    }
-                    else {
-                        setTimeout(function () {
-                            $("#btn1").click();
-                            EbMessage("show", { Message: "Solution Created" });
-                        }, 4000);
-
-
-                    }
-                }
-
-            }.bind(this)
-        })
-        if (st == 1) {
-            location.href = "../TenantController/SolutionManager";
-        }
-        else {
-            location.href = "../TenantController/SolutionManager";
-        }
-    }
-
-
     this.selradiosecfn = function (e) {
         //let k = $('input[name=selector]:checked').attr("id");
         //let k = e.target.children[0].id;
 
-        $("#rcorners1").css("visibility", "visible");
+        $("#rcorners1").css("display", "block");
         $("#s-option").removeAttr("checked");
         $("#t-option").prop('checked', true);
     }
@@ -333,20 +173,6 @@ var EbOnBoarding = function (context) {
         $("#s-option").prop('checked', true);
 
     }
-
-
-
-    //this.namevalidate = function () {
-    //    let name = $("#name").val();
-    //    if (name.length == 0) {
-    //        $("#namelbl").css("visibility", "visible");
-    //        $("#name").focus();
-    //    }
-    //    else {
-    //        $("#namelbl").css("visibility", "hidden");
-    //        $('#name').removeClass('txthighlightred').addClass('txthighlight');
-    //    }
-    //}
 
     this.Emailvalidate = function () {
         let com = $('#email').val();
@@ -361,72 +187,46 @@ var EbOnBoarding = function (context) {
         }
     }
 
-    this.solutionurlcheck = function () {
-        let solutionurl = $("#ebsid").val;
-        if (solutionurl.length == 0) {
-            $("#slnid").css("visibility", "visible");
-            $("#ebsid").focus();
-        }
-        else {
-            $("#slnid").css("visibility", "hidden");
-            $('#ebsid').removeClass('txthighlightred').addClass('txthighlight');
-
-        }
+    this.Namevalidate = function () {
+    let name = $("#name").val();
+    let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
+    if ((name.length == 0) || (u.test(name) == false)) {
+        $("#namelbl").css("visibility", "visible");
+        $("#namelbl").show();
+        $("#name").focus();
+        $('#name').removeClass('txthighlight').addClass('txthighlightred');
+        sts = false;
+       
+    }
+    else {
+        $("#namelbl").css("visibility", "hidden");
+        $('#name').removeClass('txthighlightred').addClass('txthighlight');
+    }
     }
 
-    this.solutioncheck = function () {
-        let solution_name = $("#solutionname").val;
-        if (solution_name.length == 0) {
-            $("#slnnam").css("visibility", "visible");
-            $("#solutionname").focus();
-        }
-        else {
-            $("#slnnam").css("visibility", "hidden");
-            $('#solutionname').removeClass('txthighlightred').addClass('txthighlight');
-        }
-    }
 
-   
+    //do not delete the commented code
     this.Countryselect = function () {
         if ($("#country option:selected").val() == 0) {
-            $("#countrylbl").css("visibility", "visible");
-            $("#country").focus();
-            $('#country').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
-        else {
+    //        $("#countrylbl").css("visibility", "visible");
+    //        $("#country").focus();
+    //        $('#country').removeClass('txthighlight').addClass('txthighlightred');
+    //        sts = false;
+    //    }
+    //    else {
             $('#country').removeClass('txthighlightred').addClass('txthighlight');
             $("#countrylbl").css("visibility", "hidden");
 
         }
     }
 
-
-
     this.init = function () {
-        //this.LogoImageUpload();
-        $('#solutionname').on("change", this.getSolutionName.bind(this));
-        $('#cid').on("change", this.getClientId.bind(this));
-        $("#Desc").on("change", this.getDesc.bind(this));
         $("#save-profile").on("click", this.submitProfile.bind(this));
-        //$("#sol-form-submit").on("submit", this.submitSolutionInfo.bind(this));
-        $("#prof-info-skip,#prod-prev").on('click', this.scrollProfToLeft.bind(this));
-        //$("#prof-to-prev").on('click', this.scrollToProfSec.bind(this));
-        $("#app-next").on('click', this.scrollToLast.bind(this));
-        $(".apps-wrapper-fchiled").on("focus", this.whichAppType.bind(this));
-        $("#app-form").on("submit", this.showLoaderOnAppSub.bind(this));
-        $("#ebsid").on("change", function (e) { $("#sid_on_appcreation").val($(e.target).val()); });
-        $("#save-subscrip").on("click", this.Solutionobjfn.bind(this));
-        //$("#dbdeployform").off("submit").on("submit", this.Savesolutionfn.bind(this));
-        $("#save-application").off("click").on("click", this.Savesolutionfn.bind(this));
         $("#radio1").on("click", this.selradiofirstfn.bind(this));
         $("#radio2").on("click", this.selradiosecfn.bind(this));
-       // $("#name").on("keyup", this.namevalidate.bind(this));
         $("#email").on("keyup", this.Emailvalidate.bind(this));
-        $("#ebsid").on("keyup", this.solutionurlcheck.bind(this));
-        $("#solutionname").on("keyup", this.solutioncheck.bind(this));
+        $("#name").on("keyup", this.Namevalidate.bind(this));
         $("#country").on("click", this.Countryselect.bind(this));
-
     };
     this.init();
 };
@@ -453,14 +253,14 @@ var PasswordValidation = function () {
     }
 
     this.Psdinfofn = function () {
-        $("#rcorners1").css("visibility", "visible");
+        $("#rcorners1").css("display", "block");
 
     }
     this.hidePasswordInfo = function () {
-        $("#rcorners1").css("visibility", "hidden");
+        $("#rcorners1").css("display", "none");
     }
     this.hidePasswordInfo1 = function () {
-        $("#rcorners1").css("visibility", "hidden");
+        $("#rcorners1").css("display", "none");
     }
     this.repeatpasswordcheck = function () {
         let pass = $('#inputPassword').val();
@@ -537,7 +337,7 @@ var PasswordValidation = function () {
 
         if (pass.length < 8) {
             $('#passlbl').text("Enter Strong password");
-            $("#passlbl").css({ 'color': 'red' });
+            $("#passlbl").css({ 'color': '#a94442' });
             $("#psdinfo1").css({ 'color': '#cf4f4f' });
             $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
             $("#inputPassword").focus();
@@ -552,7 +352,7 @@ var PasswordValidation = function () {
                 $('#inputPassword').removeClass('txthighlightred').addClass('txthighlight');
             } else {
                 $('#passlbl').text("Enter Strong password");
-                $("#passlbl").css({ 'color': 'red' });
+                $("#passlbl").css({ 'color': '#a94442' });
                 $("#psdinfo1").css({ 'color': '#cf4f4f' });
                 $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
                 $("#inputPassword").focus();
@@ -560,9 +360,9 @@ var PasswordValidation = function () {
                 st = false;
             }
         }
-        $("#rcorners1").css("visibility", "visible");
+        $("#rcorners1").css("display", "block");
         if (st == true) {
-            $("#rcorners1").css("visibility", "hidden");
+            $("#rcorners1").css("display", "none");
         }
         return st;
 

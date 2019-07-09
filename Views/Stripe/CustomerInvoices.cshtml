@@ -1,0 +1,196 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<head>
+    <title>Customer Upcoming Stripe Invoice</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+    <script type="text/javascript" src="https://js.stripe.com/v3/"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"> 
+    <link rel="stylesheet" href="~/css/Stripe/cust_invoices.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div id="user-det" class="div-body-main container">
+        <div class="div-label row">
+            <label class="label-font">BILLING DETAILS</label>
+        </div>
+        <div class="div-payment-details-heading row">
+            <div class="div-payment-details-heading-1 col-md-2 ">
+                <p class="content-heading">DATE</p>
+            </div>
+            <div class="div-payment-details-heading-3 col-md-7">
+                <p class="content-heading">DESCRIPTION</p>
+            </div>
+            <div class="div-payment-details-heading-4 col-md-1">
+                <p class="content-heading">DEBIT</p>
+            </div>
+            <div class="div-payment-details-heading-5 col-md-2">
+                <p class="content-heading">CREDIT</p>
+            </div>
+        </div>
+        <div class="div-payment-details-body">
+            @{
+                int debt_tot = 0;
+                int credit_tot = 0;
+                for (int i = 0; i < ViewBag.UpCount; i++)
+                {
+                    <div class="div-payment-details-body-main row" style="border-bottom: 1px solid #ccc;background-color :#e5ebf2">
+                        <div class="div-payment-details-body-1 col-md-2 ">
+                            <p class="payment-content">
+                                @ViewBag.StripeUpcomingInvoice.Invoice.Date.ToString("dd MMM,yyyy")
+                            </p>
+                        </div>
+                        <div class="div-payment-details-body-3 col-md-7">
+                            <p class="payment-content" style="text-align:left">
+                                (@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodEnd.ToString("dd MMM,yyyy"))
+                                @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].Description
+                            </p>
+                        </div>
+                        <div class="div-payment-details-body-4 col-md-1">
+                            <p class="payment-content"></p>
+                        </div>
+                        <div class="div-payment-details-body-5 col-md-2">
+                            <p class="payment-content">$@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].Amount</p>
+                        </div>
+                    </div>
+
+                }
+            }
+
+            @{
+                for (int i = 0; i < ViewBag.Count; i++)
+                {
+                    if (ViewBag.StripeInvoice.Invoices.List[i].Status)
+                    {
+                        <div class="div-payment-details-body-main row">
+                            <div class="div-payment-details-body-1 col-md-2 ">
+                                <p class="payment-content">
+                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy")
+                                </p>
+                            </div>
+                            <div class="div-payment-details-body-3 col-md-7">
+                                <p class="payment-content" style="text-align:left">
+                                    Amount Paid ( Invoice No.
+                                    <a href="@ViewBag.StripeInvoice.Invoices.List[i].Url" class="payment-content">
+                                        @ViewBag.StripeInvoice.Invoices.List[i].InvNumber
+                                        <span class="glyphicon">&#xe164;</span>
+                                    </a>
+                                    )
+                                </p>
+                            </div>
+                            <div class="div-payment-details-body-4 col-md-1">
+                                $@ViewBag.StripeInvoice.Invoices.List[i].Total
+                                @{debt_tot = debt_tot + ViewBag.StripeInvoice.Invoices.List[i].Total;
+                                }
+                            </div>
+                            <div class="div-payment-details-body-5 col-md-2">
+                                <p class="payment-content"></p>
+                            </div>
+                        </div>
+
+                        <div class="div-payment-details-body-main row">
+                            <div class="div-payment-details-body-1 col-md-2 ">
+                                <p class="payment-content">
+                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy")
+                                </p>
+                            </div>
+                            <div class="div-payment-details-body-3 col-md-7">
+                                <p class="payment-content" style="text-align:left">
+                                    (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
+                                    @ViewBag.StripeInvoice.Invoices.List[i].Description
+                                </p>
+                            </div>
+                            <div class="div-payment-details-body-4 col-md-1">
+
+                            </div>
+                            <div class="div-payment-details-body-5 col-md-2">
+                                <p class="payment-content">
+                                    $@ViewBag.StripeInvoice.Invoices.List[i].Total
+                                    @{credit_tot = credit_tot + ViewBag.StripeInvoice.Invoices.List[i].Total;
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="div-payment-details-body-main row">
+                            <div class="div-payment-details-body-1 col-md-2 ">
+                                <p class="payment-content">
+                                    @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy")
+                                </p>
+                            </div>
+                            <div class="div-payment-details-body-3 col-md-7">
+                                <p class="payment-content" style="text-align:left">
+                                    (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
+                                    @ViewBag.StripeInvoice.Invoices.List[i].Description
+                                </p>
+                            </div>
+                            <div class="div-payment-details-body-4 col-md-1">
+
+                            </div>
+                            <div class="div-payment-details-body-5 col-md-2">
+                                <p class="payment-content">
+                                    $@ViewBag.StripeInvoice.Invoices.List[i].Total
+                                    @{credit_tot = credit_tot + ViewBag.StripeInvoice.Invoices.List[i].Total;
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    }
+
+                }
+            }
+        </div>
+        <div class="div-payment-details-body-main row">
+            <div class="div-payment-details-body-1 col-md-9 ">
+                <p class="payment-content" style="text-align:right;">
+                    Total
+                </p>
+            </div>
+            <div class="div-payment-details-body-1 col-md-1 ">
+                <p class="payment-content">
+                    $@debt_tot
+                </p>
+            </div>
+            <div class="div-payment-details-body-1 col-md-2 ">
+                <p class="payment-content">
+                    $@credit_tot
+                </p>
+            </div>
+        </div>
+        <div class="div-payment-details-body-main row">
+            <div class="div-payment-details-body-1 col-md-9 ">
+                <p class="payment-content" style="text-align:right;">
+                    Balance
+                </p>
+            </div>
+            @{
+                int bal = debt_tot - credit_tot;
+                string debtbal = "";
+                string creditbal = "";
+                if (bal < 0)
+                {
+                    creditbal = "-$" + (-1 * bal);
+                }
+                else
+                {
+                    debtbal = "$" + bal;
+                }
+            }
+            <div class="div-payment-details-body-1 col-md-1 ">
+                <p class="payment-content">
+                    @debtbal
+                </p>
+            </div>
+            <div class="div-payment-details-body-1 col-md-2 ">
+                <p class="payment-content">
+                    @creditbal
+                </p>
+            </div>
+        </div>
+    </div>
+</body>

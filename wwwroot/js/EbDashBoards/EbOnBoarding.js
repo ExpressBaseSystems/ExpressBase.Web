@@ -15,7 +15,7 @@ var EbOnBoarding = function () {
                 url: "../Ext/Board",
                 beforeSend: function () {
                     $("#loaderdiv").EbLoader("show");
-                    $(".iconspin").addClass("fa fa-spinner fa-pulse")
+                    //$(".iconspin").addClass("fa fa-spinner fa-pulse")
                     $("#save-profile").prop('disabled', true);
                 },
                 data: {
@@ -33,7 +33,7 @@ var EbOnBoarding = function () {
                 else {
                     if (data.isEmailUniq == false) {
                         EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
-                        $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                        //$(".iconspin").removeClass("fa fa-spinner fa-pulse");
                         $("#save-profile").prop('disabled', false);
                     }
                     else {

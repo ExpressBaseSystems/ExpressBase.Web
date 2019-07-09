@@ -273,8 +273,8 @@
         padding: 2%;
     }
 
-.table-boarder-remover, tr, td, th {
-    border:none!important;
+.table-boarder-remover tr, .table-boarder-remover td, .table-boarder-remover th {
+    border: none !important;
 }
 
 .table-boarder-remover .table-form, .form-control {

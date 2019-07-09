@@ -1399,8 +1399,26 @@ var SolutionDashBoard = function (connections, sid) {
         $("#vender-data-holder").empty().append(venderdec[DatabaseName]);
     }
 
-    this.init = function () {
+    this.VersioningSwitch = function (e) {
+        postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../Tenant/VersioningSwitch",
+            data: postData
+            //beforeSend: function () {
+            //    $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
+            //}
+        }).done(function (data) {
+            //$("#Integration_loder").EbLoader("hide");
+            if (data)
+                EbMessage("show", { Message: "Versioning On" });
+            else
+                EbMessage("show", { Message: "Versioning OFF", Background: "red" });
+        }.bind(this));
+    };
 
+    this.init = function () {
+        $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));

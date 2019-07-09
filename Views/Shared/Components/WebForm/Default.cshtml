@@ -1,4 +1,5 @@
-﻿@{
+﻿@using ExpressBase.Web.Filters;
+@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 @using ExpressBase.Objects;
@@ -230,8 +231,7 @@
             </div>
         </div>
     </div>
-</div>
-`);
+</div>`);
 
     window.closeModal = function (func) {// receives call from iFrame
         //func();
@@ -287,10 +287,9 @@
                               <option data-token="view" data-title="Save and view" data-icon="fa-save"> & View</option>
                               <option data-token="close" data-title="Save and close" data-icon="fa-save"> & Close</option>
                             </select>
-                        </div>
+                        </div>`);
 
-`);
-    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`)
+    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
 
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
@@ -307,25 +306,25 @@
     let uploadedFileRefList = {};
 
     $("#layout_div").addClass("for-modal-blur");
-
-    const renderer = new WebFormRender({
-        formObj: _formObj,
-        headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose"},
-        formRefId: _formRefId,
-        mode: _mode,
-        rowId: _rowId,
-        formData: _formData,
-        userObject: _userObject,
-        cid: _cid,
-        env: _env,
-        isPartial: _ispartial,
-        formPermissions: _formPermissions,
-        headerObj: header
-    });
-
-
     //$("#webformaudittrail").on("click", function () {
     //    $("#iFrameFormModal").modal("show");
     //});
-
 </script>
+@Html.JsCode(
+    @<script>
+         const renderer = new WebFormRender({
+             formObj: _formObj,
+             headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose" },
+             formRefId: _formRefId,
+             mode: _mode,
+             rowId: _rowId,
+             formData: _formData,
+             userObject: _userObject,
+             cid: _cid,
+             env: _env,
+             isPartial: _ispartial,
+             formPermissions: _formPermissions,
+             headerObj: header
+         });
+    </script>
+)

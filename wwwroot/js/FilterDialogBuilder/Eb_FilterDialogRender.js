@@ -6,6 +6,7 @@
 var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
     console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
+    this.userObject = userObj;
     this.submitId = submitId;
     this.formObject = {};
     this.onChangeExeFuncs = {};
@@ -28,7 +29,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     this.init = function () {
         this.initFormObject2();
         this.initFilterDialogCtrls();// order 1
-        this.FRC.setDefaultvalsNC(this.flatControls);// order 2
+        this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
 
         this.FRC.fireInitOnchangeNC();

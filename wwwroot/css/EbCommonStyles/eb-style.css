@@ -223,10 +223,10 @@ body, html,.html-root {
 }
 .eb_login {
     height: 100%;
-    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    /*background: linear-gradient(to right,#eef9fe,#edf7ff);*/
     font-family: Montserrat;
-    background: #508bf9;
-    background-image: linear-gradient(to right bottom, #508bf9, #4177e2, #3264cc, #2151b6, #0a3fa0);
+    /*background: #508bf9;
+    background-image: linear-gradient(to right bottom, #508bf9, #4177e2, #3264cc, #2151b6, #0a3fa0);*/
 }
 .ebtext-lg {
     height: 45px;
@@ -287,10 +287,10 @@ body, html,.html-root {
         font-weight: 300;
         position: relative;
         height: 100%;
-        border-left: 1px solid #dbf1fd;
+        /*border-left: 1px solid #dbf1fd;*/
         display: flex;
         align-items: center;
-        justify-content: center;
+        /*justify-content: center;*/
     }
 .login_container_usr {
     max-width: 450px;
@@ -302,6 +302,7 @@ body, html,.html-root {
     font-weight: 300;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     position: relative;
+    padding:0;
 }
     .login_container label, .login_container_usr label {
         font-weight: 500;
@@ -319,13 +320,25 @@ body, html,.html-root {
             width: 15px;
             height: 15px;
         }
-.login_container form, .login_container_usr form{
+    .login_container form {
+        padding: 30px;
+        width: 100%;
+        max-width: 700px;
+        background: linear-gradient(to right,#eef9fe,#edf7ff);
+        flex: 0 0 85%;
+        border-radius: 6px;
+        border: 1px solid #d3edff;
+        max-width: 90%;
+        position:relative;
+    }
+.login_container_usr form {
+    border: 1px solid #d3edff;
     padding: 30px;
-    width: 100%;
-    max-width: 700px;
+    border-radius:6px;
+    /*background: linear-gradient(to right,#eef9fe,#edf7ff);*/
 }
 
-.login_container h1, .login_container_usr h1{
+.login_container h1, .login_container_usr h1 {
     font-size: 1.8em;
     margin-bottom: 10px;
     font-weight: 400;
@@ -347,7 +360,7 @@ body, html,.html-root {
     .login_container .signin-btn:hover, .login_container_usr .signin-btn:hover {
         background: #3579f7;
     }
-.login_container .log-eblogo {
+    .log-eblogo {
     position: absolute;
     top: 7px;
     height: 40px;
@@ -393,7 +406,7 @@ body, html,.html-root {
 
 .info_sec_log_container {
     position: relative;
-    color: white;
+    /*color: white;*/
     font-family: Montserrat;
     line-height: 2.5em;
 }
@@ -412,10 +425,9 @@ body, html,.html-root {
     width: 93%;
     position: relative;
     left: 0;
-    margin-top: -80px;
 }
     .lg_img img {
-        width: 100%;
+        height:350px;
     }
 .prelative {
     position: relative;
@@ -610,7 +622,8 @@ Navigation bar
         left: -200px;
         width: 200px;
         height: 3px;
-        background-color: #23c523;
+        /*background-color: #23c523;*/
+        background-color: #4987fb;
         animation: loading 2s linear infinite;
     }
 
@@ -1048,18 +1061,10 @@ Navigation bar
     }
 
     .login_container form, .login_container_usr form {
-        padding: 0 !important;
+        flex:1;max-width:100%;
     }
 
     .login_container .log-eblogo {
         left: 0;
-    }
-
-    .eb_login {
-        background: white;
-    }
-
-    .login_container_usr {
-        box-shadow: none;
     }
 }

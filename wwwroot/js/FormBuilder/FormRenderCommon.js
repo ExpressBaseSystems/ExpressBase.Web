@@ -88,7 +88,6 @@
                 if (valExpFnStr) {
                     depCtrl.setValue(new Function("form", "user", `event`, valExpFnStr).bind(ctrl, this.FO.formObject, this.FO.userObject)());
                 }
-
             }.bind(this));
         }.bind(this);
     };

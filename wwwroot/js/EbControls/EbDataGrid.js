@@ -427,7 +427,7 @@
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                     inpCtrl.__onChangeFn = onChangeFn;
                     console.eb_log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
-                    onChangeFn();
+                    inpCtrl.__onChangeFn();
                 }
                 catch (e) {
                     console.eb_log("eb error :");
@@ -761,6 +761,7 @@
 
         if ($tr.attr("is-editing") === "false")
             this.ctrlToSpan_row(rowId);
+        this.updateAggCols(rowId);
     };
 
     this.disableRow = function (rowId) {

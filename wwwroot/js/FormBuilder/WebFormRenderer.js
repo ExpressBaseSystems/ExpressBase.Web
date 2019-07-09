@@ -873,7 +873,7 @@ const WebFormRender = function (option) {
 
     this.saveSelectChange = function () {
         this.saveForm();
-        let val = $(".btn-select .selectpicker").find("option:selected").attr("data-token");
+        let val = $("#webformsave-selbtn .selectpicker").find("option:selected").attr("data-token");
         this.afterSaveAction = this.getAfterSaveActionFn(val);
     }.bind(this);
 
@@ -888,12 +888,28 @@ const WebFormRender = function (option) {
             return this.closeAfterSave;
     };
 
+    this.initPrintMenu = function () {
+        //test data hardcoded
+        $("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
+        $("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
+
+        $("#webformprint-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+        $("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
+        $("#webformprint").on("click", this.printDocument.bind(this));
+    };
+
+    this.printDocument = function () {
+        let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
+        $("#iFramePdf").attr("src", "../WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    };
+
     this.init = function () {
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
-        $(".btn-select").on("click", ".dropdown-menu li", this.saveSelectChange);
-        $(".btn-select .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+        $("#webformsave-selbtn").on("click", ".dropdown-menu li", this.saveSelectChange);
+        $("#webformsave-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
 
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
@@ -904,6 +920,8 @@ const WebFormRender = function (option) {
         $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
+
+        this.initPrintMenu();
 
         this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
 

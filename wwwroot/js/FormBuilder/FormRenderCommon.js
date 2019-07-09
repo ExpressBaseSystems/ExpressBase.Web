@@ -79,11 +79,18 @@
         }
     };
 
+    this.getDepCtrl = function (path) {
+        let form = this.FO.formObject;
+        let pathArr = path.split(".");
+        if (pathArr.length === 3)
+            path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.'+ pathArr[2]; 
+        return eval(path);
+    };
+
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) {
             $.each(curCtrl.DependedValExp.$values, function (i, ctrl) {
-                let form = this.FO.formObject;
-                let depCtrl = eval(ctrl);
+                let depCtrl = this.getDepCtrl(ctrl);
                 let valExpFnStr = atob(depCtrl.ValueExpr.Code);
                 if (valExpFnStr) {
                     depCtrl.setValue(new Function("form", "user", `event`, valExpFnStr).bind(ctrl, this.FO.formObject, this.FO.userObject)());

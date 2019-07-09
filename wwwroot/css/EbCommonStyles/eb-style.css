@@ -75,7 +75,7 @@ body, html,.html-root {
 .eb_blue {
     /*background: #508bf9;*/
     background-color: #4987fb;
-    color:white;
+    color: white;
 }
 
 .eb_btngreen {
@@ -340,7 +340,6 @@ body, html,.html-root {
 }
 
 .login_container .signin-btn, .login_container_usr .signin-btn {
-    background-color: #508bf9;
     color: white;
     height: 45px;
     padding: 6px 30px;

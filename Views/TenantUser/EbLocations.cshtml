@@ -15,7 +15,7 @@
 @{ 
     var locations = ViewBag.LocList;
 }
-<div class="row s-dash-container">
+<div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
@@ -53,16 +53,16 @@
         </div>
     </div>
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-10 pd-0">
                 <h4 class="mr-t-0 mr-b-0">Locations <span class="apps_count">(@locations.Count)</span></h4>
             </div>
             <div class="col-md-2 pd-0">
-                <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btngreen pull-right eb_btn-sm new_sol_lk"> <i class="fa fa-plus"></i> New Location</a>
+                <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue pull-right eb_btn-sm new_sol_lk"> <i class="fa fa-plus"></i> New Location</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <ul class="nav nav-tabs" role="tablist">
+            <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
                     <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
                         <i class="fa fa-list" aria-hidden="true"></i> Locations

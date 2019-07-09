@@ -7,7 +7,7 @@ var SolutionDashBoard = function (connections, sid) {
     var Deleteid;
     var preferancetype = [];
     var Imageurl = {
-        "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:45px' />",
+        "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:50px' />",
         "MSSQL": "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />",
         "MYSQL": "<img class='img-responsive' src='../images/mysql.png' align='middle' style='height:35px' />",
         "ORACLE": "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />",
@@ -465,9 +465,11 @@ var SolutionDashBoard = function (connections, sid) {
         }).done(function (data) {
             $("#dbConnection_loder").EbLoader("hide");
             if (data) {
-                EbMessage("show", { Message: "Test Connection Success" });
-                $("#" + formid + " .saveConnection").show();
-                $("#" + formid + " .testConnection").hide();
+                //EbMessage("show", { Message: "Test Connection Success" });
+                //$("#" + formid + " .saveConnection").show();
+                //$("#" + formid + " .testConnection").hide();
+                $("#" + formid + " .saveConnection").trigger("click");
+               
             }
             else
                 EbMessage("show", { Message: "Test Connection Failed", Background: "red" });
@@ -532,6 +534,7 @@ var SolutionDashBoard = function (connections, sid) {
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#dbvendorInput').val(temp[obj].Type);
+                this.db_modal_show_append(temp[obj].Type);
                 $('#dbNickNameInput').val(temp[obj].NickName);
                 $('#IntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(temp[obj].ConObject);
@@ -541,7 +544,7 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#dbUserNameInput').val(temp1["UserName"]);
                 $('#dbPasswordInput').val(temp1["Password"]);
                 $('#IsSSL').val(temp1["IsSSL"]);
-                $('#dbTimeoutInput').val(temp1["Timeout"]);
+                $('#dbTimeoutInput').val(temp1["Timeout"]);                
                 break;
             }
         }
@@ -1189,7 +1192,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 <div class="integrationContainer_Image">
                                     ${Imageurl[rows.Ctype]}
                                 </div>
-                                <div id="nm" class="integrationContainer_NN">
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                     <span>${rows.NickName}</span>
                                     <span class="PF_span">PRIMARY</span>
                                 </div>
@@ -1214,7 +1217,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
             if (rows.Preference == "1") {
@@ -1241,7 +1244,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
             if (rows.Preference == "1") {
@@ -1271,7 +1274,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 <span  class="PF_span">PRIMARY</span>
                             </div>
@@ -1282,7 +1285,7 @@ var SolutionDashBoard = function (connections, sid) {
             count += 1;
         }.bind(this));
         $('#Cloudinary-all').empty().append(html.join(''));
-        $('#Integration_cloudinary').empty().append("Cloudinary (" + count + ")");
+        $('#Integration_cloudinary').empty().append("Image Processing (" + count + ")");
     }.bind(this);
 
     this.integration_SMS_all = function () {
@@ -1295,7 +1298,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
             if (rows.Preference == "1") {
@@ -1326,7 +1329,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
             if (rows.Preference == "1") {
@@ -1388,6 +1391,14 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_Map_all();
     }.bind(this);
 
+    this.db_modal_show_append = function (DatabaseName) {        
+        this.AllInputClear();
+        $(".IntConfId").val("0");
+        $("#dbvendorInput").val(DatabaseName);
+        $("#dbConnectionheader").text(DatabaseName + " DataBase Connection");
+        $("#vender-data-holder").empty().append(venderdec[DatabaseName]);
+    }
+
     this.init = function () {
 
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
@@ -1410,15 +1421,10 @@ var SolutionDashBoard = function (connections, sid) {
             else
                 $(e.target).val(false);
         });
-        $('.db-type-set').on("click", function (event) {
-            var DatabaseName = $(event.currentTarget).attr("data-whatever")
-            this.AllInputClear();
-            $(".IntConfId").val("0");
-            $("#dbvendorInput").val(DatabaseName);
-            $("#dbConnectionheader").text(DatabaseName + " DataBase Connection");
-            $("#vender-data-holder").empty().append(venderdec[DatabaseName]);
+        $('.db-type-set').on("click", function (e) {
+            var DatabaseName = $(e.currentTarget).attr("data-whatever")
+            this.db_modal_show_append(DatabaseName);
         }.bind(this));
-
         $('.input-clear ').on('show.bs.modal', function (event) {
             this.AllInputClear();
             $(".IntConfId").val("0")

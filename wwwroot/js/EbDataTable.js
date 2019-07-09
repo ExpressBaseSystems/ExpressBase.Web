@@ -3263,7 +3263,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.FlagPresentId) {
             var idpos = $.grep(this.ebSettings.Columns.$values, function (e) { return e.name === "id"; })[0].data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+            if (row[idpos])
+                return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+            else
+                return "<input type='checkbox' class='" + this.tableId + "_select'/>";
         }
         else
             return "<input type='checkbox' class='" + this.tableId + "_select'/>";

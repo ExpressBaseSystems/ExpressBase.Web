@@ -231,8 +231,7 @@
             </div>
         </div>
     </div>
-</div>
-`);
+</div>`);
 
     window.closeModal = function (func) {// receives call from iFrame
         //func();
@@ -288,10 +287,9 @@
                               <option data-token="view" data-title="Save and view" data-icon="fa-save"> & View</option>
                               <option data-token="close" data-title="Save and close" data-icon="fa-save"> & Close</option>
                             </select>
-                        </div>
+                        </div>`);
 
-`);
-    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`)
+    header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`);
 
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
     let _formObj = @Html.Raw(ViewBag.WebFormObj);
@@ -329,4 +327,4 @@
              headerObj: header
          });
     </script>
-        );
+)

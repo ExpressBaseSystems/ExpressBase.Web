@@ -123,12 +123,29 @@ let addwiki = function () {
             $('#wiki_data_div').append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
         }
         $('.front_page_wiki').hide();
+        $WasItHelpFul = `<div class="row"> <div class="col"> 
+                    <h4>Questions?</h4>
+            <p>We're always happy to help with code or other questions you might have. Search our documentation,
+            contact support, or connect with our sales team. You can also chat live with other developers in #stripe on freenode.<p>
+            <div id="Help" show><p> Was This Page Helpfull?? <button val="yes" class="WasItHelp">yes</button><button val="no" class="WasItHelp">No</button></p></div> 
+            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a></p></div>
+        </div></div>`;
+        $('#wiki_data_div').append($WasItHelpFul);
     }
 
     this.WikiSearch = function () {
         let key = $('#search_wiki').val();
         if (key.length == 0) {
-            //$("wiki_data_div").show();
+            let url = window.location.href;
+            //alert(url);
+            let urlSplit = url.split("/");
+            let id = urlSplit[urlSplit.length - 1];
+            if ($.isNumeric(id)) {
+                this.AjaxCalFetchWikiList(id);
+            }
+            else {
+                this.show_home();
+            }
         }
         else if (key.length < 3) {
             $("#wiki_data_div").empty();
@@ -741,15 +758,18 @@ let addwiki = function () {
             this.PublicView();
         }
         else
-            $.ajax({
-                type: 'POST',
-                url: "/Wiki/Admin_Wiki_List",
-                data: {
-                    status: style_val
-                },
-                success: this.ajaxAdminWikiFetch.bind(this)
+            this.selectedHighlightAjax(style_val);
+    }
+    this.selectedHighlightAjax = function (style_val) {
+        $.ajax({
+            type: 'POST',
+            url: "/Wiki/Admin_Wiki_List",
+            data: {
+                status: style_val
+            },
+            success: this.ajaxAdminWikiFetch.bind(this)
 
-            });
+        });
     }
 
     this.SearchWithTagFun = function (e) {
@@ -759,24 +779,17 @@ let addwiki = function () {
         $("#search_wiki").click();
     }
 
+    this.WasItHelp = function (e) {
+        let answer = e.target.getAttribute("val");
+        $("#Help").hide();
+        $("#EbHelp").show();
 
-    this.HandleBackFunctionality = function() {
-        if (window.event) //Internet Explorer
-        {
-            alert("Browser back button is clicked on Internet Explorer...");
-        }
-        else //Other browsers e.g. Chrome
-        {
-            alert("Browser back button is clicked on other browser...");
-        }
     }
 
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
-        $(".wikilist").on("click", this.FetchWikiList.bind(this));
-       
-
+        $(".wikilist").on("click", this.FetchWikiList.bind(this)); 
         $("#wiki_data_div").on("click", ".searchshow", this.FetchWikiList.bind(this));
         $("#text").on("keyup", this.printresult.bind(this));
         $("#text").on("click", this.printresult.bind(this));
@@ -792,51 +805,9 @@ let addwiki = function () {
         $("#public").on("click",".WikiMenu", this.WikiMenuToggle.bind(this));
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".selected").on("click", this.selectedHighlight.bind(this));
+        $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
      
     };
 
     this.init();
 }
-
-$(function () {
-    /**************************************************
-     * Context-Menu with Sub-Menu
-     **************************************************/
-    $.contextMenu({
-        selector: '.context-menu-one',
-        callback: function (key, options) {
-            var m = "clicked: " + key;
-            window.console && console.log(m) || alert(m);
-        },
-        items: {
-            "edit": { "name": "Edit", "icon": "edit" },
-            "cut": { "name": "Cut", "icon": "cut" },
-            "sep1": "---------",
-            "quit": { "name": "Quit", "icon": "quit" },
-            "sep2": "---------",
-            "fold1": {
-                "name": "Sub group",
-                "items": {
-                    "fold1-key1": { "name": "Foo bar" },
-                    "fold2": {
-                        "name": "Sub group 2",
-                        "items": {
-                            "fold2-key1": { "name": "alpha" },
-                            "fold2-key2": { "name": "bravo" },
-                            "fold2-key3": { "name": "charlie" }
-                        }
-                    },
-                    "fold1-key3": { "name": "delta" }
-                }
-            },
-            "fold1a": {
-                "name": "Other group",
-                "items": {
-                    "fold1a-key1": { "name": "echo" },
-                    "fold1a-key2": { "name": "foxtrot" },
-                    "fold1a-key3": { "name": "golf" }
-                }
-            }
-        }
-    });
-});

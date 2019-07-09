@@ -273,7 +273,22 @@
         padding: 2%;
     }
 
-.inteConfContainer {
+.table-boarder-remover, tr, td, th {
+    border:none!important;
+}
+
+.table-boarder-remover .table-form, .form-control {
+    border: 1px solid #ccc!important;
+    border-radius: 4px!important;
+    /* -webkit-box-shadow: none; */
+    /* box-shadow: none; */
+    /* -webkit-transition: none; */
+    -o-transition: none;
+    /* transition: none; */
+}
+
+
+    .inteConfContainer {
     width: 23%;
     height: 73px;
     float: left;
@@ -326,8 +341,8 @@
     font-size: 14px;
 }
 .integrationContainer {
-    width: 23%;
-    height: 73px;
+    width: 35%;
+    height: 80px;
     float: left;
     padding: 7px;
     display: flex;
@@ -352,14 +367,17 @@
     }
 
     .integrationContainer .integrationContainer_Image {
-        width: 32%;
+        width: 14%;
         margin: auto;
     }
 
     .integrationContainer_NN {
-        width: 50%;
+        width: 68%;
         margin: auto;
-        display:grid;
+        display: grid;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .integrationContainer_NN .PF_span {
         font-weight: 100;

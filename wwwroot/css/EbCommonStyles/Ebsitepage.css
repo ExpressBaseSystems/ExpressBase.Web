@@ -105,6 +105,7 @@
     padding: 25px;
     border-radius: 6px;
     border: 1px solid #d3edff;
+    position:relative;
 }
 
 .eb-signup_wrapper .lg_button {

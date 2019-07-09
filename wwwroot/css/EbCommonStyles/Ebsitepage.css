@@ -45,7 +45,7 @@
         width: 100%;
         font-size: 12px;
         font-weight: 500;
-        margin-top:5rem;
+        margin-top:2rem;
     }
     .eb-signup_wrapper .rightpart {
         background: white;
@@ -249,8 +249,8 @@
     bottom: 0;
     position: absolute;
     z-index: 10;
-    left: -320px;
-    width: 320px;
+    left: -300px;
+    width: 300px;
 }
 
     #rcorners1:after {
@@ -258,14 +258,14 @@
         width: 0px;
         height: 0px;
         border-top: 10px solid transparent;
-        border-left: 10px solid #f5f5f5;
+        border-left: 10px solid #ffffff;
         border-bottom: 10px solid transparent;
         border-right: 10px solid transparent;
+     
         position: absolute;
         left: 100%;
         top: 60%;
         margin-left: -2px;
-        
     }
 
 

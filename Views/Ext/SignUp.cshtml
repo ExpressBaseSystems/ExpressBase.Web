@@ -14,13 +14,13 @@
     if (ViewBag.Env == "Staging")
     {
         home = "https://eb-test.xyz";
-        sociallink = "https://eb-test.xyz";
+        sociallink = "https://ss.eb-test.xyz";
         signinLink = "https://eb-test.xyz";
     }
     if (ViewBag.Env == "Production")
     {
         home = "https://expressbase.com";
-        sociallink = "https://myaccount.expressbase.com";
+        sociallink = "https://ss.expressbase.com";
         signinLink = "https://myaccount.expressbase.com";
     }
 }
@@ -30,7 +30,9 @@
 <div class="eb-signup_wrapper h-100">
     <div class="header hidden-xs hidden-sm">
         <div class="callFrAction" style="display: flex;align-items: center;">
-            <img src="~/images/EB_Logo.png" class=" imglogo" />
+            <a href="https://expressbase.com">
+                <img src="~/images/EB_Logo.png" class=" imglogo" />
+            </a>
             <spn style="margin-left: auto;font-size: 13px;">
                 Already signed up?
             </spn>
@@ -55,6 +57,8 @@
             <div class="col-sm-6 col-md-6 col-lg-6 col-xs-12 rightpart">
                 <div class="row-flex right-part-inner">
                     <div class="center_rightpart col-xs-12" id="userdetails">
+                        <div id="loaderdiv" style=" position: relative;">
+                        </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 ">
                             <h1>SIGN UP</h1>
                         </div>
@@ -153,7 +157,7 @@
                         </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 rightcolpadtop ">
                             <button id="save-profile" class="btn save-tenant lg_button">
-                                Create account
+                                Create Account
                                 <i class="iconspin"></i>
                             </button>
                         </div>
@@ -167,7 +171,7 @@
                             <a href="@sociallink/auth/github" class="btn btn-lg">
                                 <i class="fa fa-github text-muted"></i>
                             </a>
-                          @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
+                            @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
                                 <i class="fa fa-twitter text-muted"></i>
                             </a>
                             <a href=" @sociallink/auth/google" class="btn btn-lg">
@@ -179,6 +183,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
         <div class="row">

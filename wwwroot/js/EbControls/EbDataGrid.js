@@ -761,6 +761,7 @@
 
         if ($tr.attr("is-editing") === "false")
             this.ctrlToSpan_row(rowId);
+        this.updateAggCols(rowId);
     };
 
     this.disableRow = function (rowId) {

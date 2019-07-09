@@ -273,11 +273,11 @@
         padding: 2%;
     }
 
-.table-boarder-remover, tr, td, th {
-    border:none!important;
+.table-boarder-remover tr, .table-boarder-remover td, .table-boarder-remover th {
+    border-style: none !important;
 }
 
-.table-boarder-remover .table-form, .form-control {
+.table-boarder-remover .form-control {
     border: 1px solid #ccc!important;
     border-radius: 4px!important;
     /* -webkit-box-shadow: none; */

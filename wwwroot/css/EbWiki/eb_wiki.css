@@ -269,9 +269,9 @@ props.a:focus, a:hover {
     text-align: left;
 }
 
-.container {
+/*.container {
     padding: 20px;
-}
+}*/
 
 .form-control {
     width: 120px;
@@ -372,9 +372,9 @@ props.a:focus, a:hover {
     margin-right: 25px;
     border: 2px solid #73AD21;
 }
-body, html, .html-root {
+/*body, html, .html-root {
     height: 90%;
-}
+}*/
 .docFrontRow {
     padding: 2px;
     margin-left: 40px;

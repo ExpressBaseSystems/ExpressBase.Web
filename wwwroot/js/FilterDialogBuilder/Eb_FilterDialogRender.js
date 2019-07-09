@@ -6,6 +6,7 @@
 var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
     console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
+    this.userObject = userObj;
     this.submitId = submitId;
     this.formObject = {};
     this.onChangeExeFuncs = {};

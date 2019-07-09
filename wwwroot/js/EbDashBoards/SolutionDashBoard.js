@@ -7,7 +7,7 @@ var SolutionDashBoard = function (connections, sid) {
     var Deleteid;
     var preferancetype = [];
     var Imageurl = {
-        "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:45px' />",
+        "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:50px' />",
         "MSSQL": "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />",
         "MYSQL": "<img class='img-responsive' src='../images/mysql.png' align='middle' style='height:35px' />",
         "ORACLE": "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />",
@@ -15,8 +15,20 @@ var SolutionDashBoard = function (connections, sid) {
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
-        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />"
+        "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
+        "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />"
     }
+    var venderdec = {
+        "PGSQL":`<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and technical standards compliance. It is designed to handle a range of workloads, from single machines to data warehouses or Web services with many concurrent users.</span>
+                        </div>`,
+        "MYSQL": `<img class='img-responsive' src='../images/mysql.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>MySQL is an open-source relational database management system. Its name is a combination of "My", the name of co-founder Michael Widenius's daughter, and "SQL", the abbreviation for Structured Query Language.</span>
+                        </div>`
+    }
+
     this.customElementLoader = $("<div>", {
         id: "connecting",
         css: {
@@ -257,6 +269,26 @@ var SolutionDashBoard = function (connections, sid) {
         }.bind(this));
     };
 
+    this.mapOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddGoogleMap",
+            data: postData,
+            beforeSend: function () {
+                $("#Map_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#Map_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Changed Successfully" });
+            $("#MapConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
     this.ftpOnSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -433,9 +465,11 @@ var SolutionDashBoard = function (connections, sid) {
         }).done(function (data) {
             $("#dbConnection_loder").EbLoader("hide");
             if (data) {
-                EbMessage("show", { Message: "Test Connection Success" });
-                $("#" + formid + " .saveConnection").show();
-                $("#" + formid + " .testConnection").hide();
+                //EbMessage("show", { Message: "Test Connection Success" });
+                //$("#" + formid + " .saveConnection").show();
+                //$("#" + formid + " .testConnection").hide();
+                $("#" + formid + " .saveConnection").trigger("click");
+               
             }
             else
                 EbMessage("show", { Message: "Test Connection Failed", Background: "red" });
@@ -500,6 +534,7 @@ var SolutionDashBoard = function (connections, sid) {
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#dbvendorInput').val(temp[obj].Type);
+                this.db_modal_show_append(temp[obj].Type);
                 $('#dbNickNameInput').val(temp[obj].NickName);
                 $('#IntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(temp[obj].ConObject);
@@ -509,7 +544,7 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#dbUserNameInput').val(temp1["UserName"]);
                 $('#dbPasswordInput').val(temp1["Password"]);
                 $('#IsSSL').val(temp1["IsSSL"]);
-                $('#dbTimeoutInput').val(temp1["Timeout"]);
+                $('#dbTimeoutInput').val(temp1["Timeout"]);                
                 break;
             }
         }
@@ -595,6 +630,18 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#ExpertInputApi').val(temp1["ApiKey"]);
                 $('#ExpertInputFrom').val(temp1["From"]);
                 $('#IsSSL').val(temp1["IsSSL"]);
+            }
+        }
+    };
+    this.GoogleMapinteConfEditr = function (INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#MapConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#MapInputNickname').val(temp[obj].NickName);
+                $('#MapInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#MapInputApiKey').val(temp1["ApiKey"]);
             }
         }
     };
@@ -826,7 +873,7 @@ var SolutionDashBoard = function (connections, sid) {
                         var temp = this.Connections.Integrations[key];
                         var id = $(options.$trigger).attr("id");
                         var dt = $(options.$trigger).attr("data-whatever");
-                        var conf_NN = $(options.$trigger).attr("conf_NN");
+                        conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Edit") {
                             if (dt == "PGSQL" || dt == "MYSQL" || dt == "MSSQL" || dt == "ORACLE")
                                 this.DBinteConfEditr(id, dt);
@@ -838,7 +885,7 @@ var SolutionDashBoard = function (connections, sid) {
                         else if (key == "Delete") {
                             EbDialog("show",
                                 {
-                                    Message: "The " + conf_NN +" info will be permanently removed ",
+                                    Message: "The " + conf_NN + " info will be permanently removed ",
                                     Buttons: {
                                         "Confirm": {
                                             Background: "green",
@@ -882,10 +929,10 @@ var SolutionDashBoard = function (connections, sid) {
                                         this.IntegrationSubmit();
                                     }
                                     else {
-                                        EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
+                                        EbMessage("show", { Message: "Please delete existing account and try again", Background: "red" });
                                     }
                                 }
-                                else if (key == "EbFILES") {
+                                else if (key == "EbFILES" || key == "MAPS") {
                                     $.each(temp, function (i) {
                                         if (temp[i].Preference == 1) {
                                             postData.Preference = "OTHER";
@@ -898,7 +945,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 }
 
                             } else {
-                                EbMessage("show", { Message: "This " + conf_NN +" have been already used.", Background: "red" });
+                                EbMessage("show", { Message: "This " + conf_NN + " have been already used as " + key + ".", Background: "red" });
                             }
                         }
 
@@ -961,6 +1008,11 @@ var SolutionDashBoard = function (connections, sid) {
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
+                else if ($trigger.hasClass('GoogleMapedit')) {
+                    options.items.MAPS = { name: "Set as Map" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
                 return options;
             }.bind(this)
         });
@@ -979,7 +1031,7 @@ var SolutionDashBoard = function (connections, sid) {
                         var temp = this.Connections.Integrations[dt];
                         var id = $(options.$trigger).attr("id");
                         var confid = $(options.$trigger).attr("dataConffId");
-                        var conf_NN = $(options.$trigger).attr("conf_NN");
+                        conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Remove") {
                             EbDialog("show", {
                                 Message: "The " + conf_NN + " will be removed !!!",
@@ -1026,7 +1078,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 preferancetype.push(postData)
                             }
                             this.PreferencesChange();
-                        } else if (key == "RemoveFilesD") {
+                        } else if (key == "RemoveDefault") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
                                 if (temp[i].Id == id) {
@@ -1056,7 +1108,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 CallBack: function (name) {
                                     if (name == "Confirm") {
                                         for (var i = 0, n = temp.length; i < n; i++) {
-                                            if (temp[i].Preference == "2") {
+                                            if (temp[i].Preference == "2" || temp[i].Preference == "3") {
                                                 postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                             }
                                             else {
@@ -1077,10 +1129,10 @@ var SolutionDashBoard = function (connections, sid) {
 
                 } else if ($trigger.hasClass('EbFILESedit 3')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.RemoveFilesD = { name: "Set as Default" }
+                        options.items.RemoveDefault = { name: "Set as Default" }
 
                 } else if ($trigger.hasClass('EbFILESedit 1')) {
-                    options.items.Remove = { name: "Unset" },
+                    options.items.RemoveP = { name: "Unset" },
                         options.items.FALLBACK = {
                             name: "Set as FALLBACK", disabled: function (key, opt) {
                                 // this references the trigger element
@@ -1106,6 +1158,19 @@ var SolutionDashBoard = function (connections, sid) {
                 } else if ($trigger.hasClass('SMSedit 2')) {
                     options.items.Remove = { name: "Unset" },
                         options.items.PRIMARY = { name: "Set as PRIMARY" }
+                } else if ($trigger.hasClass('MAPSedit 3')) {
+                    options.items.Remove = { name: "Unset" },
+                        options.items.RemoveDefault = { name: "Set as Default" }
+
+                } else if ($trigger.hasClass('MAPSedit 1')) {
+                    options.items.RemoveP = { name: "Unset" },
+                        options.items.FALLBACK = {
+                            name: "Set as FALLBACK", disabled: function (key, opt) {
+                                // this references the trigger element
+                                return !this.data('cutDisabled');
+                            }
+                        }
+
                 }
 
                 return options;
@@ -1127,7 +1192,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 <div class="integrationContainer_Image">
                                     ${Imageurl[rows.Ctype]}
                                 </div>
-                                <div id="nm" class="integrationContainer_NN">
+                                <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                     <span>${rows.NickName}</span>
                                     <span class="PF_span">PRIMARY</span>
                                 </div>
@@ -1152,7 +1217,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
             if (rows.Preference == "1") {
@@ -1179,7 +1244,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
             if (rows.Preference == "1") {
@@ -1209,7 +1274,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 <span  class="PF_span">PRIMARY</span>
                             </div>
@@ -1220,7 +1285,7 @@ var SolutionDashBoard = function (connections, sid) {
             count += 1;
         }.bind(this));
         $('#Cloudinary-all').empty().append(html.join(''));
-        $('#Integration_cloudinary').empty().append("Cloudinary (" + count + ")");
+        $('#Integration_cloudinary').empty().append("Image Processing (" + count + ")");
     }.bind(this);
 
     this.integration_SMS_all = function () {
@@ -1233,7 +1298,7 @@ var SolutionDashBoard = function (connections, sid) {
                             <div class="integrationContainer_Image">
                                  ${Imageurl[rows.Ctype]}
                             </div>
-                            <div id="nm" class="integrationContainer_NN">
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
             if (rows.Preference == "1") {
@@ -1254,17 +1319,46 @@ var SolutionDashBoard = function (connections, sid) {
         $('#Integration_sms').empty().append("Message (" + count + ")");
     }.bind(this);
 
+    this.integration_Map_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["MAPS"];
+        $.each(Integrations, function (i, rows) {
+            //$.each(rows, function (j, rowss) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                <span>${rows.NickName}</span>
+                                `);
+            if (rows.Preference == "1") {
+                html.push(`<span  class="PF_span">PRIMARY</span>`);
+            }
+
+            html.push(`
+                            </div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`)
+            count += 1;
+        }.bind(this));
+        $('#MAP-all').empty().append(html.join(''));
+        $('#Integration_map').empty().append("Google Maps (" + count + ")");
+    }.bind(this);
+
     this.integration_config_all = function () {
         let html = [];
         var count = 0;
         InteConfig = this.Connections.IntegrationsConfig;
         $.each(InteConfig, function (i, rows) {
             $.each(rows, function (j, rowss) {
-                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rows.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
+                html.push(`<div class="inteConfContainer ${rowss.Type.concat("edit")} " conf_NN="${rowss.NickName}" data-whatever="${rowss.Type}" id="${rowss.Id}">
                                 <div id = "nm" class="inteConfContainer_Image ">
                                     ${Imageurl[rowss.Type]}
                                 </div >
-                                <div id="nm" class="inteConfContainer_NN" data-toggle="tooltip" data-placement="top" title="Updated on : ${rowss.CreatedOn}">
+                                <div id="nm" class="inteConfContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rowss.NickName} \nUpdated on: ${rowss.CreatedOn}">
                                     <span>${rowss.NickName}</span>
                                 </div>
                                 <div id="nm" class="inteConfContainer_caret-down ">
@@ -1294,7 +1388,16 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
     }.bind(this);
+
+    this.db_modal_show_append = function (DatabaseName) {        
+        this.AllInputClear();
+        $(".IntConfId").val("0");
+        $("#dbvendorInput").val(DatabaseName);
+        $("#dbConnectionheader").text(DatabaseName + " DataBase Connection");
+        $("#vender-data-holder").empty().append(venderdec[DatabaseName]);
+    }
 
     this.init = function () {
 
@@ -1306,6 +1409,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
+        $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();
@@ -1317,13 +1421,10 @@ var SolutionDashBoard = function (connections, sid) {
             else
                 $(e.target).val(false);
         });
-        $('.db-type-set').on("click", function (event) {
-            var DatabaseName = $(event.currentTarget).attr("data-whatever")
-            this.AllInputClear();
-            $(".IntConfId").val("0")
-            $("#dbvendorInput").val(DatabaseName)
+        $('.db-type-set').on("click", function (e) {
+            var DatabaseName = $(e.currentTarget).attr("data-whatever")
+            this.db_modal_show_append(DatabaseName);
         }.bind(this));
-
         $('.input-clear ').on('show.bs.modal', function (event) {
             this.AllInputClear();
             $(".IntConfId").val("0")
@@ -1343,6 +1444,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMTP_all();
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
+        this.integration_Map_all();
 
         //$(".inteConfContainer").on("click", ".PGSQLedit", this.PostgreinteConfEditr.bind(this));
         //$(".inteConfContainer").on("click", ".MYSQLedit", this.PostgreinteConfEditr.bind(this));

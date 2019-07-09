@@ -1,170 +1,199 @@
 ﻿@{
     @using ExpressBase.Common.Constants;
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-     string home = string.Empty;
+    string home = string.Empty;
+    string sociallink = string.Empty;
+    string signinLink = string.Empty;
     if (ViewBag.Env == "Development")
     {
-        home = "http://localhost:41600";
+        home = "http://localhost:41400/";
+        sociallink = "http://localhost:41600";
+        signinLink = "http://myaccount.localhost:41500";
+
     }
     if (ViewBag.Env == "Staging")
     {
         home = "https://eb-test.xyz";
+        sociallink = "https://ss.eb-test.xyz";
+        signinLink = "https://myaccount.eb-test.xyz";
     }
     if (ViewBag.Env == "Production")
     {
         home = "https://expressbase.com";
+        sociallink = "https://ss.expressbase.com";
+        signinLink = "https://myaccount.expressbase.com";
     }
 }
 <link rel="stylesheet" href="~/css/EbCommonStyles/Ebsitepage.css">
 <script src="~/js/EbDashBoards/EbOnBoarding.js" type="text/javascript"></script>
 <script src="~/js/EbDashBoards/countrypicker.js" type="text/javascript"></script>
 <div class="eb-signup_wrapper h-100">
-    <div class="header hidden-xs">
-        <div class="callFrAction" style="display: flex;align-items: center;">
-            <div class="goHome" style="margin-left: 40px;"><a href="@home" style="color:white;"><i class="fa fa-chevron-left"></i> Home</a></div>          
+    <div class="header hidden-xs hidden-sm" style="background: white;">
+        <div class="container-fluid">
+            <div class="callFrAction" style="display: flex;align-items: center;">
+                <a href="https://expressbase.com">
+                    <img src="~/images/EB_Logo.png" class=" imglogo" />
+                </a>
+                <spn style="margin-left: auto;font-size: 13px;">
+                    Already signed up?
+                </spn>
+                <a class="callActionBtn signintop" href="@signinLink/Ext/TenantSignIn" role="button">
+                    Sign In
+                </a>
+            </div>
         </div>
     </div>
     <div class="container-fluid h-100">
-        <div class="row h-100">
-            <div class="col-sm-6 col-md-6 col-lg-6 leftpart hidden-xs hidden-sm row-flex">
+        <div class="row">
+            <div class="col-sm-6 col-md-6 col-lg-6 hidden-xs row-flex h-100">
+                <div class=" col-sm-12 col-md-12 col-lg-12 leftpart h-100">
+                    <div class="eb-signup-selltext">
+                        <h2>Are you <b>Struggling?</b></h2>
+                        <h4>with frequent changes</h4>
+                    </div>
+                    <div class="eb-signup-sellimg">
+                        <img src="~/images/developer.jpg" class="leftsideimg">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xs-12 rightpart">
+                <div class="row-flex right-part-inner">
+                    <div class="center_rightpart col-xs-12" id="userdetails">
+                        <div id="loaderdiv" style="left:0;top:0;">
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12 ">
+                            <h1>SIGN UP</h1>
+                        </div>
+                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12 ">
+                            <label>Email</label>
+                            <div class="icon_input">
+                                <input class="form-control sinpt" type="text" name="Email" id="email" placeholder="">
+                                <i class="fa fa-envelope fa-fw" aria-hidden="true"></i>
+                            </div>
+                            <div id="emaillbl" class="ebnotify" style=" visibility:hidden"> Enter a valid Email</div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12  eb_required_group required ">
+                            <label>Name</label>
+                            <div class="icon_input">
+                                <input class="form-control sinpt" type="text" name="Name" id="name">
+                                <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                            </div>
+                            <div id="namelbl" class="ebnotify" style=" visibility :hidden"> Enter a valid name</div>
+                        </div>
+                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  ">
+                            <div class="col-md-6 col-lg-6 rightcolpad" style="padding-left: 0px;">
+                                <label>Country</label>
+                                <div class="icon_input">
+                                    <select class="selectpicker countrypicker custom-select  custom-select-lg selinp" id="country" data-live-search="true" data-flag="true"></select>
+                                    <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
+                                </div>
+                                <div id="countrylbl" class="ebnotify" style=" visibility :hidden"> Select your Country</div>
+                            </div>
+                            <div class="col-md-6 col-lg-6 rightcolpad" style="padding-right: 0px;">
+                                <label>You are</label>
+                                <div class="col-sm-12 col-md-12 col-lg-12 radiodiv rightcolpad rightcol_mar_bot" style=" padding-left: 0px;">
+                                    <div class="col-md-6 col-lg-6 rightcolpad " style=" padding-left: 0px; ">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input radio_cstm" id="developer" name="account_typ" value="@CoreConstants.DEVELOPER" checked>
+                                            <label class="custom-control-label" for="developer">Developer</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-lg-6 rightcolpad">
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input radio_cstm" id="business" value="@CoreConstants.BUSINESS" name="account_typ">
+                                            <label class="custom-control-label" for="business">Business</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="youarelbl" class="ebnotify" style=" visibility :hidden"> </div>
+                            </div>
+                        </div>
+                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  ">
+                            <div id="rcorners1">
+                                <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
+                                    <span> <i id="passcheck_1" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block;padding-right:5px"> </i>  </span>
+                                    <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least eight characters.</p></span>
+                                </div>
+                                <div style="margin-top=0px;margin-bottom:0px; display:inline-block ">
+                                    <span> <i id="passcheck_2" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block; padding-right:5px"> </i>  </span>
+                                    <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one uppercase character.</p></span>
+                                </div>
+                                <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
+                                    <span> <i id="passcheck_3" class="fa fa-times ebnotify  " style="font-size:11px;display:inline-block; padding-right:5px"> </i>  </span>
+                                    <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one lowercase character.</p></span>
+                                </div>
+                                <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
+                                    <span> <i id="passcheck_4" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block ;padding-right:5px"> </i>  </span>
+                                    <span style="display:inline-block"><p style="margin-bottom:0px" class="p_hover">At least one number.</p></span>
+                                </div>
+                                <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
+                                    <span> <i id="passcheck_5" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block;padding-right:5px"> </i>  </span>
+                                    <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one special character</p></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6 rightcolpad " style="padding-left: 0px;">
+                                <label>Password</label>
+                                <div class="icon_input">
+                                    <input class="form-control sinpt " data-minlength="8" type="password" name="Password" id="inputPassword">
+                                    <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
+                                    <span toggle="#inputPassword" style=" padding-right: 30px;" id="psvisible" class="fa fa-fw fa-eye fa-eye-slash  fa-lg fa-fw field-icon toggle-password "></span>
+                                    <span toggle="#inputPassword" style="padding-right: 30px;" hidden id="pshide" class="fa fa-fw fa-eye  fa-lg fa-fw field-icon toggle-password "></span>
+                                </div>
+                                <div style="margin-top:1px;margin-bottom:2px; display:inline-block " id="psdinfo" class="inline_css">
+                                    <span> <i id="psdinfo1" class="fa fa-info-circle" style="color:cornflowerblue;display:inline-block"> </i>  </span>
+                                    <span style="display:inline-block">
+                                        <p id="passlbl" style="color:cornflowerblue;margin-bottom:0px" class="p_hover ">Enter a strong password</p>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-lg-6 rightcolpad" style=" padding-right: 0px;">
+                                <label>Repeat Password</label>
+                                <div class="icon_input">
+                                    <input class="form-control sinpt " type="password" name="Repeat-password" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Password donot match">
+                                    <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
+                                </div>
+                                <div class="help-block with-errors">
+                                    <p id="repeat_passwordlbl" class="ebnotify" style="margin-bottom: 0px; visibility :hidden"> Password Didn't match</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12 rightcolpadtop ">
+                            <button id="save-profile" class="btn save-tenant lg_button">
+                                Create Account
+                                <i class="iconspin"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="eb-signup_socilaWrpr text-center">
+                        <div class="eb-signup_socilaWrpr_inner">
+                            @*<a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg">*@
+                            <a href="@sociallink/auth/facebook" class="btn btn-lg">
+                                <i class="fa fa-facebook text-muted"></i>
+                            </a>
+                            <a href="@sociallink/auth/github" class="btn btn-lg">
+                                <i class="fa fa-github text-muted"></i>
+                            </a>
+                            @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
+                                <i class="fa fa-twitter text-muted"></i>
+                            </a>
+                            <a href=" @sociallink/auth/google" class="btn btn-lg">
+                                 <i class="fa fa-google-plus text-muted"></i>
+                            </a>
+                            <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
+                            <i class="fa fa-linkedin text-muted"></i>
+                            </a>*@
+                        </div>
+                    </div>
+                </div>
 
             </div>
-            <div class="col-sm-6 col-md-6 col-lg-6 rightpart">
-                <div class="center_rightpart" id="userdetails">
-                    <div class="col-sm-12 col-md-12 col-lg-12">
-                        <h1>SIGN UP</h1>
-                    </div>
-                    <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12">
-                        <label>Email</label>
-                        <div class="icon_input">
-                            <input class="form-control sinpt" type="text" name="Email" id="email" placeholder="">
-                            <i class="fa fa-envelope fa-fw" aria-hidden="true"></i>
-                        </div>
-                        <p id="emaillbl" class="ebnotify" style=" visibility:hidden"> Enter a valid Email</p>
-                    </div>
-                    <div class="col-sm-12 col-md-12 col-lg-12  eb_required_group required">
-                        <label>Name</label>
-                        <div class="icon_input">
-                            <input class="form-control sinpt" type="text" name="Name" id="name">
-                            <i class="fa fa-user fa-fw" aria-hidden="true"></i>
-                        </div>
-                        <p id="namelbl" class="ebnotify" style=" visibility :hidden"> Enter a valid name</p>
-                    </div>
-                    <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  ">
-                        <div class="col-md-6 col-lg-6" style="padding-left: 0px;">
-                            <label>Country</label>
-                            <div class="icon_input">
-                                <select class="selectpicker countrypicker custom-select  custom-select-lg selinp" id="country" data-live-search="true" data-flag="true"></select>
-                                <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
-                            </div>
-                            <p id="countrylbl" class="ebnotify" style=" visibility :hidden"> Select your Country</p>
-                        </div>
-                        <div class="col-md-6 col-lg-6" style="padding-right: 0px;">
-                            <label>You are</label>
-                            <div class="col-sm-12 col-md-12 col-lg-12 radiodiv" style=" padding-left: 0px;">
-                                <div class="col-md-6 col-lg-6" style=" padding-left: 0px; ">
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input radio_cstm" id="developer" name="account_typ" value="@CoreConstants.DEVELOPER" checked>
-                                        <label class="custom-control-label" for="developer">Developer</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-lg-6 ">
-                                    <div class="custom-control custom-radio">
-                                        <input type="radio" class="custom-control-input radio_cstm" id="business" value="@CoreConstants.BUSINESS" name="account_typ">
-                                        <label class="custom-control-label" for="business">Business</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  ">
-                        <div id="rcorners1">
-                            <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
-                                <span> <i id="passcheck_1" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block;padding-right:5px"> </i>  </span>
-                                <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least eight characters.</p></span>
-                            </div>
-                            <div style="margin-top=0px;margin-bottom:0px; display:inline-block ">
-                                <span> <i id="passcheck_2" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block; padding-right:5px"> </i>  </span>
-                                <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one uppercase character.</p></span>
-                            </div>
-                            <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
-                                <span> <i id="passcheck_3" class="fa fa-times ebnotify  " style="font-size:11px;display:inline-block; padding-right:5px"> </i>  </span>
-                                <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one lowercase character.</p></span>
-                            </div>
-                            <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
-                                <span> <i id="passcheck_4" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block ;padding-right:5px"> </i>  </span>
-                                <span style="display:inline-block"><p style="margin-bottom:0px" class="p_hover">At least one number.</p></span>
-                            </div>
-                            <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
-                                <span> <i id="passcheck_5" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block;padding-right:5px"> </i>  </span>
-                                <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one special character</p></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6" style="padding-left: 0px;">
-                            <label>Password</label>
-                            <div class="icon_input">
-                                <input class="form-control sinpt " data-minlength="8" type="password" name="Password" id="inputPassword">
-                                <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
-                                <span toggle="#inputPassword" style=" padding-right: 30px;" id="psvisible" class="fa fa-fw fa-eye fa-eye-slash  fa-lg fa-fw field-icon toggle-password "></span>
-                                <span toggle="#inputPassword" style="padding-right: 30px;" hidden id="pshide" class="fa fa-fw fa-eye  fa-lg fa-fw field-icon toggle-password "></span>
-                            </div>
-                            <div style="margin-top:1px;margin-bottom:2px; display:inline-block " id="psdinfo" class="inline_css">
-                                <span> <i id="psdinfo1" class="fa fa-info-circle" style="color:cornflowerblue;display:inline-block"> </i>  </span>
-                                <span style="display:inline-block">
-                                <p id="passlbl" style="color:cornflowerblue;margin-bottom:0px" class="p_hover ">Enter a strong password</p>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-6" style=" padding-right: 0px;">
-                            <label>Repeat Password</label>
-                            <div class="icon_input">
-                                <input class="form-control sinpt " type="password" name="Repeat-password" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Password donot match">
-                                <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
-                            </div>
-                            <div class="help-block with-errors">
-                                <p id="repeat_passwordlbl" class="ebnotify" style="margin-bottom: 0px; visibility :hidden"> Password Didn't match</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-12 col-lg-12 ">
-                        <button id="save-profile" class="btn save-tenant lg_button">
-                            Create account
-                            <i class="iconspin"></i>
-                        </button>
-                      
-                    </div>
-                    @*****social media sign in*****@
-                    <div class="col-sm-12 col-md-12 col-lg-12 socialss_container" style="text-align:center;">
-                        <div class="form-group text-center" style="margin-bottom:7px;">Or Sign In by</div>
-                        <div class="eb-signup_socilaWrpr">
-                            <div class="eb-signup_socilaWrpr_inner">
-                                @*<a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg">*@
-                                <a href="@home/auth/facebook" class="btn btn-lg">
-                                    <i class="fa fa-facebook text-muted"></i>
-                                </a>
-                                <a href="@home/auth/github" class="btn btn-lg">
-                                    <i class="fa fa-github text-muted"></i>
-                                </a>
-                                <a href="@home/auth/twitter" class="btn btn-lg">
-                                    <i class="fa fa-twitter text-muted"></i>
-                                </a>
-                                <a href=""@home/auth/google" class="btn btn-lg">
-                                    <i class="fa fa-google-plus text-muted"></i>
-                                </a>
-                                <a href=""@home/auth/linkedin" class="btn btn-lg">
-                                    <i class="fa fa-linkedin text-muted"></i>
-                                </a>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="eb-signup-tnc text-center">
-                    By proceeding, you agree to our
-                    <a rel="Terms of Service" target="" href="#">Terms of Service</a>
-                    and
-                    <a rel="Privacy Policy" href="#">Privacy Policy</a>
-                </div>
+        </div>
+        <div class="row">
+            <div class="eb-signup-tnc text-center">
+                By proceeding, you agree to our
+                <a rel="Terms of Service" target="" href="#">Terms of Service</a>
+                and
+                <a rel="Privacy Policy" href="#">Privacy Policy</a>
             </div>
         </div>
     </div>

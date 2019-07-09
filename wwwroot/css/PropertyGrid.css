@@ -46,7 +46,7 @@
     display: flex;
     flex-direction: column;
     height: inherit;
-    font-family: Tahoma;
+    /*font-family: Tahoma;*/
     width: 100%;
     /*overflow-x: auto;*/
     overflow-x: hidden;
@@ -160,7 +160,7 @@
     color: #fff;
     padding: 2%;
     font-weight: bold;
-    font-family: arial;
+    /*font-family: arial;*/
     width: 100%;
     font-size: 1.05em;
     letter-spacing: 0.06em;
@@ -332,7 +332,7 @@
     border: solid 1px #d4d4d4;
     color: #111;
     user-select: none;
-    font-family: sans-serif;
+    /*font-family: sans-serif;*/
     letter-spacing: 0.5px;
     transition-duration: 0.3s;
 }
@@ -435,7 +435,7 @@
     color: #333;
     flex-shrink: 0;
     overflow-y: auto;
-    font-size: 10px;
+    font-size: 10.4px;
     margin-top: auto;
     padding: 3px;
     background-color: rgba(204, 204, 204, 0.8);
@@ -486,7 +486,7 @@
     background-color: white;
     font-weight: bold;
     letter-spacing: 0.0835em;
-    font-family: sans-serif;
+    /*font-family: sans-serif;*/
     box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.15), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
 }
 
@@ -775,7 +775,7 @@
     margin-left: 0 !important;
     box-shadow: none !important;
     font-weight: bold;
-    font-family: sans-serif;
+    /*font-family: sans-serif;*/
     letter-spacing: 0.05em;
     color: rgba(51, 51, 94, 0.88);
     border: none !important;
@@ -849,7 +849,7 @@
     padding-bottom: 0.68em;
     padding-left: 1.9em;
     color: rgba(0, 0, 0, 0.65);
-    font-family: sans-serif;
+    /*font-family: sans-serif;*/
     letter-spacing: 0.05em;
 }
 
@@ -893,9 +893,8 @@
     border: 1px solid #e5e5e5;
     background: #edf1f5;
     padding: 5px;
-    font-family: Tahoma, sans-serif;
+    /*font-family: Tahoma, sans-serif;*/
 }
-
     .strE-texarea:focus {
         outline: none;
     }
@@ -903,7 +902,7 @@
 .searchinp {
     float: left;
     width: 50%;
-    font-family: sans-serif;
+    /*font-family: sans-serif;*/
     font-size: 13px;
     padding: 4px;
     border: solid 1px #9a9898;

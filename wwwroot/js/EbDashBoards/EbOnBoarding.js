@@ -14,7 +14,9 @@ var EbOnBoarding = function () {
                 type: 'POST',
                 url: "../Ext/Board",
                 beforeSend: function () {
-                    $(".commonLoader").EbLoader("show");
+                    $("#loaderdiv").EbLoader("show");
+                    //$(".iconspin").addClass("fa fa-spinner fa-pulse")
+                    $("#save-profile").prop('disabled', true);
                 },
                 data: {
                     email: $("#email").val().trim(),
@@ -24,10 +26,25 @@ var EbOnBoarding = function () {
                     password: $("#inputPassword").val().trim()
                 }
             }).done(function (data) {
-                $(".commonLoader").EbLoader("hide");
+                $("#loaderdiv").EbLoader("hide");
                 if (data.id > 0) {
                     location.href = "/MySolutions";
                 }
+                else {
+                    if (data.isEmailUniq == false) {
+                        EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
+                        //$(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                        $("#save-profile").prop('disabled', false);
+                    }
+                    else {
+                        if (data.AccountCreated == false) {
+                            EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
+                            $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                            $("#save-profile").prop('disabled', false);
+                        }
+                    }
+                }
+
             }.bind(this));
         }
 
@@ -53,7 +70,7 @@ var EbOnBoarding = function () {
             $("#passlbl").focusout();
         } else {
             $('#passlbl').text("Enter strong password");
-            $("#passlbl").css({ 'color': 'red' });
+            $("#passlbl").css({ 'color': '#a94442' });
             $("#inputPassword").focus();
             $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
             sts = false;
@@ -81,6 +98,7 @@ var EbOnBoarding = function () {
             sts = false;
         }
         else {
+            $('#country').removeClass('txthighlightred').addClass('txthighlight');
             $("#namelbl").css("visibility", "hidden");
         }
 
@@ -96,6 +114,7 @@ var EbOnBoarding = function () {
         }
         else {
             $("#emaillbl").css("visibility", "hidden");
+            $('#country').removeClass('txthighlightred').addClass('txthighlight');
         }
 
         return sts;
@@ -144,7 +163,7 @@ var EbOnBoarding = function () {
         //let k = $('input[name=selector]:checked').attr("id");
         //let k = e.target.children[0].id;
 
-        $("#rcorners1").css("visibility", "visible");
+        $("#rcorners1").css("display", "block");
         $("#s-option").removeAttr("checked");
         $("#t-option").prop('checked', true);
     }
@@ -168,14 +187,33 @@ var EbOnBoarding = function () {
         }
     }
 
+    this.Namevalidate = function () {
+    let name = $("#name").val();
+    let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
+    if ((name.length == 0) || (u.test(name) == false)) {
+        $("#namelbl").css("visibility", "visible");
+        $("#namelbl").show();
+        $("#name").focus();
+        $('#name').removeClass('txthighlight').addClass('txthighlightred');
+        sts = false;
+       
+    }
+    else {
+        $("#namelbl").css("visibility", "hidden");
+        $('#name').removeClass('txthighlightred').addClass('txthighlight');
+    }
+    }
+
+
+    //do not delete the commented code
     this.Countryselect = function () {
         if ($("#country option:selected").val() == 0) {
-            $("#countrylbl").css("visibility", "visible");
-            $("#country").focus();
-            $('#country').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
-        else {
+    //        $("#countrylbl").css("visibility", "visible");
+    //        $("#country").focus();
+    //        $('#country').removeClass('txthighlight').addClass('txthighlightred');
+    //        sts = false;
+    //    }
+    //    else {
             $('#country').removeClass('txthighlightred').addClass('txthighlight');
             $("#countrylbl").css("visibility", "hidden");
 
@@ -187,6 +225,7 @@ var EbOnBoarding = function () {
         $("#radio1").on("click", this.selradiofirstfn.bind(this));
         $("#radio2").on("click", this.selradiosecfn.bind(this));
         $("#email").on("keyup", this.Emailvalidate.bind(this));
+        $("#name").on("keyup", this.Namevalidate.bind(this));
         $("#country").on("click", this.Countryselect.bind(this));
     };
     this.init();
@@ -214,14 +253,14 @@ var PasswordValidation = function () {
     }
 
     this.Psdinfofn = function () {
-        $("#rcorners1").css("visibility", "visible");
+        $("#rcorners1").css("display", "block");
 
     }
     this.hidePasswordInfo = function () {
-        $("#rcorners1").css("visibility", "hidden");
+        $("#rcorners1").css("display", "none");
     }
     this.hidePasswordInfo1 = function () {
-        $("#rcorners1").css("visibility", "hidden");
+        $("#rcorners1").css("display", "none");
     }
     this.repeatpasswordcheck = function () {
         let pass = $('#inputPassword').val();
@@ -298,8 +337,8 @@ var PasswordValidation = function () {
 
         if (pass.length < 8) {
             $('#passlbl').text("Enter Strong password");
-            $("#passlbl").css({ 'color': 'red' });
-            $("#psdinfo1").css({ 'color': '#cf4f4f' });
+            $("#passlbl").css({ 'color': '#a94442' });
+            $("#psdinfo1").css({ 'color': '#a94442' });
             $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
             $("#inputPassword").focus();
             $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
@@ -313,17 +352,17 @@ var PasswordValidation = function () {
                 $('#inputPassword').removeClass('txthighlightred').addClass('txthighlight');
             } else {
                 $('#passlbl').text("Enter Strong password");
-                $("#passlbl").css({ 'color': 'red' });
-                $("#psdinfo1").css({ 'color': '#cf4f4f' });
+                $("#passlbl").css({ 'color': '#a94442' });
+                $("#psdinfo1").css({ 'color': '#a94442' });
                 $('#psdinfo1').removeClass('fa fa-check').addClass('fa fa-info-circle');
                 $("#inputPassword").focus();
                 $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
                 st = false;
             }
         }
-        $("#rcorners1").css("visibility", "visible");
+        $("#rcorners1").css("display", "block");
         if (st == true) {
-            $("#rcorners1").css("visibility", "hidden");
+            $("#rcorners1").css("display", "none");
         }
         return st;
 

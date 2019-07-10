@@ -1007,6 +1007,48 @@ Navigation bar
         margin-top: 20px;
     }
 /*error page end*/
+
+
+
+
+.eb_login .eb_socilaWrpr {
+    justify-content: center;
+    display: flex;
+    flex: 85%;
+    max-width: 90%;
+    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    margin-top: 50px;
+    border-radius: 6px;
+    border: 1px solid #d3edff;
+    flex-flow: column;
+    position: relative;
+}
+
+    .eb_login .eb_socilaWrpr::before {
+        content: "Or using";
+        position: absolute;
+        top: -35px;
+        width: 100%;
+        font-size: 17px;
+        font-weight: 500;
+    }
+
+    .eb_login .eb_socilaWrpr .eb_socilaWrpr_inner {
+        display: flex;
+        justify-content: center;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 /*Responsive media queries*/
 @media (max-width: 768px) {
 }

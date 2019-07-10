@@ -77,14 +77,14 @@ var EbOnBoarding = function () {
         }
 
         if ($("#country option:selected").val() == 0) {
-            $("#countrylbl").css("visibility", "visible");
+          //  $("#countrylbl").css("visibility", "visible");
             $("#country").focus();
-            $('#country').removeClass('txthighlight').addClass('txthighlightred');
+        $('#country').removeClass('txthighlight').addClass('txthighlightred');
             sts = false;
         }
         else {
             $('#country').removeClass('txthighlightred').addClass('txthighlight');
-            $("#countrylbl").css("visibility", "hidden");
+         //   $("#countrylbl").css("visibility", "hidden");
 
         }
 
@@ -98,7 +98,7 @@ var EbOnBoarding = function () {
             sts = false;
         }
         else {
-            $('#country').removeClass('txthighlightred').addClass('txthighlight');
+            $('#name').removeClass('txthighlightred').addClass('txthighlight');
             $("#namelbl").css("visibility", "hidden");
         }
 
@@ -114,7 +114,7 @@ var EbOnBoarding = function () {
         }
         else {
             $("#emaillbl").css("visibility", "hidden");
-            $('#country').removeClass('txthighlightred').addClass('txthighlight');
+            $('#email').removeClass('txthighlightred').addClass('txthighlight');
         }
 
         return sts;
@@ -186,7 +186,22 @@ var EbOnBoarding = function () {
             $('#email').removeClass('txthighlightred').addClass('txthighlight');
         }
     }
+ this.Emailvalidate1 = function () {
+let com = $("#email").val();
+      
+        var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+        if ((com.length == 0) || (re.test(com) == false)) {
+            $("#emaillbl").css("visibility", "visible");
+            $("#email").focus();
+            $('#email').removeClass('txthighlight').addClass('txthighlightred');
+            sts = false;
+        }
+        else {
+            $("#emaillbl").css("visibility", "hidden");
+            $('#country').removeClass('txthighlightred').addClass('txthighlight');
+}
+}
     this.Namevalidate = function () {
     let name = $("#name").val();
     let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
@@ -207,15 +222,15 @@ var EbOnBoarding = function () {
 
     //do not delete the commented code
     this.Countryselect = function () {
-        if ($("#country option:selected").val() == 0) {
-    //        $("#countrylbl").css("visibility", "visible");
-    //        $("#country").focus();
-    //        $('#country').removeClass('txthighlight').addClass('txthighlightred');
-    //        sts = false;
-    //    }
-    //    else {
-            $('#country').removeClass('txthighlightred').addClass('txthighlight');
-            $("#countrylbl").css("visibility", "hidden");
+       if ($("#country option:selected").val() == 0) {
+         // $("#countrylbl").css("visibility", "visible");
+         $("#country").focus();
+         $('#country').removeClass('txthighlight').addClass('txthighlightred');
+         sts = false;
+     }
+     else {
+           $('#country').removeClass('txthighlightred').addClass('txthighlight');
+       //   $("#countrylbl").css("visibility", "hidden");
 
         }
     }
@@ -227,6 +242,7 @@ var EbOnBoarding = function () {
         $("#email").on("keyup", this.Emailvalidate.bind(this));
         $("#name").on("keyup", this.Namevalidate.bind(this));
         $("#country").on("click", this.Countryselect.bind(this));
+ $("#email").on('focusout', this.Emailvalidate1.bind(this))
     };
     this.init();
 };

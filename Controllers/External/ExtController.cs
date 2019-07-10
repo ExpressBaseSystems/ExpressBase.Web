@@ -51,8 +51,11 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Sid = id;
             return View();
         }
-
         public IActionResult EmailVerifyStructure()
+        {
+            return View();
+        }
+        public IActionResult MailAlreadyVerified()
         {
             return View();
         }
@@ -340,7 +343,7 @@ namespace ExpressBase.Web.Controllers
             { return View(); }
             else
             {
-                return Redirect("/StatusCode/401");
+                return RedirectToAction("MailAlreadyVerified");
             }
         }
 

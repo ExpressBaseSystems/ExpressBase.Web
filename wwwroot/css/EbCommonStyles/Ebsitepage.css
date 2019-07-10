@@ -513,9 +513,31 @@ input {
     -moz-border-radius: 27px;
     -webkit-border-radius: 27px;
 }
-
+.eb_mailverify {
+    font-family: Montserrat;
+}
+.eb_mailverify .veri_content {
+    
+    justify-content: center;
+    display: flex;
+    /*flex: 85%;
+    max-width: 90%;*/
+    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    border-radius: 6px;
+    border: 1px solid #d3edff;
+    flex-flow: column;
+    position: relative;
+    margin-top: 8em;
+}
+    .eb_mailverify .lg_button {
+        color: white;
+        background-color: #4987fb;
+        /*padding: 6px 30px;
+        height: 45px;
+        margin-top: 15px;*/
+        border:none;
+    }
 /*media query*/
-
 @media only screen and (max-width: 600px) {
     .rightcolpad {
         padding-left: 0px;

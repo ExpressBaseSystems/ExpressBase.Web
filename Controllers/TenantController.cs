@@ -64,6 +64,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions/{Sid}")]
         public IActionResult SolutionManager(string Sid)
         {
+            ViewBag.Title = "MySolutions/"+ Sid;
             GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = Sid });
             //ViewBag.intergrationconfig = resp.IntegrationsConfig;
             //ViewBag.integrations = resp.Integrations;

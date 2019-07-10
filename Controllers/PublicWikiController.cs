@@ -10,30 +10,31 @@ using ServiceStack;
 using ServiceStack.Redis;
 namespace ExpressBase.Web.Controllers
 {
-        public class PublicWikiController : EbBaseExtController
+    public class PublicWikiController : EbBaseExtController
+    {
+        public PublicWikiController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis)
         {
-            public PublicWikiController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis)
-            {
-            }
+        }
 
-            [HttpPost]
-            public object GetWiki(string wiki_id)
+        [HttpPost]
+        public object GetWiki(string wiki_id)
+        {
+            GetWikiResponse resp = this.ServiceClient.Get(new GetWikiRequest()
             {
-                GetWikiResponse resp = this.ServiceClient.Get(new GetWikiRequest()
-                {         
-                        Id = Convert.ToInt32(wiki_id)
-                });
-                return resp.Wiki;
-            }
-        
+                Id = Convert.ToInt32(wiki_id)
+            });
+            return resp.Wiki;
+        }
 
-            [HttpGet("/Wiki")]
-            public IActionResult GetWikiList()
-            {
-                GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
-                ViewBag.WikiList = resp.WikiList;
-                return View();
-            }
+
+        [HttpGet("/Wiki")]
+        public IActionResult GetWikiList()
+        {
+            GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
+            Console.WriteLine("Info: GetWikiList Wiki Count: " + resp.WikiList.Count);
+            ViewBag.WikiList = resp.WikiList;
+            return View();
+        }
 
         [HttpGet("/Wiki/{id}")]
         public IActionResult GetWikiList2(string id)
@@ -46,7 +47,7 @@ namespace ExpressBase.Web.Controllers
         {
             GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
             {
-                    Id = Convert.ToInt32(id)
+                Id = Convert.ToInt32(id)
             });
 
             ViewBag.Wiki = resp.Wiki;
@@ -65,11 +66,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         public IActionResult WikiLayout()
-        { 
+        {
             return View();
         }
         public IActionResult Edit()
-        { 
+        {
             return View();
         }
         //public bool UserReviewRate(string userreview)

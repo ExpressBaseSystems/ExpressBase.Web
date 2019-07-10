@@ -116,6 +116,9 @@ namespace ExpressBase.Web.Controllers
         public IActionResult WikiAdmin(int id)
         {
             WikiAdminResponse resp = this.ServiceClient.Get(new WikiAdminRequest());
+
+            Console.WriteLine("Info: WikiAdmin Wiki Count: " + resp.WikiList.Count);
+
             ViewBag.WikiList = resp.WikiList;
             return View();
         }
@@ -127,12 +130,15 @@ namespace ExpressBase.Web.Controllers
             {
                 Status = status
             });
+
+            Console.WriteLine("Info: Admin_Wiki_list Wiki Count: " + resp.WikiList.Count + " Status: " + status);
+
             return resp.WikiList;
         }
 
-        public object Publish_wiki(int wiki_id , string wiki_status)
+        public object Publish_wiki(int wiki_id, string wiki_status)
         {
-            if(wiki_status == "Draft" || wiki_status =="Unpublish")
+            if (wiki_status == "Draft" || wiki_status == "Unpublish")
             {
                 Publish_wikiResponse resp = this.ServiceClient.Post(new Publish_wikiRequest()
                 {
@@ -155,19 +161,21 @@ namespace ExpressBase.Web.Controllers
 
         public object PublicView()
         {
-                PublicViewResponse resp = this.ServiceClient.Get(new PublicViewRequest());
-                return resp;
-           
+            PublicViewResponse resp = this.ServiceClient.Get(new PublicViewRequest());
+
+            Console.WriteLine("Info: PublicView Wiki Count: " + resp.WikiList.Count);
+            return resp;
+
         }
 
-        public bool UpdateOrder (string myList)
+        public bool UpdateOrder(string myList)
         {
-            
-                UpdateOrderResponse resp = this.ServiceClient.Post(new UpdateOrderRequest()
-                {
-                    Wiki_id = myList,
-                });
-               
+
+            UpdateOrderResponse resp = this.ServiceClient.Post(new UpdateOrderRequest()
+            {
+                Wiki_id = myList,
+            });
+
 
             return resp.ResponseStatus;
         }

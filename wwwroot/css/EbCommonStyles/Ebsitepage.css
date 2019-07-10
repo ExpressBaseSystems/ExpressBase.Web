@@ -4,7 +4,10 @@
     position: absolute;
     z-index: 2;
 }
-
+.h-100{
+    height:100vh;
+    max-height:100vh;
+}
 .eb-signup_wrapper {
     font-family: Montserrat;
 }
@@ -45,7 +48,7 @@
         width: 100%;
         font-size: 12px;
         font-weight: 500;
-        margin-top:2rem;
+        /*margin-top:2rem;*/
     }
     .eb-signup_wrapper .rightpart {
         background: white;
@@ -366,13 +369,13 @@
         transform: translate(19px, 0);
     }
 }
-/*.txthighlight:focus {
+.txthighlight:focus {
     border-color: #66afe9;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 }
-*/
+
 .txthighlightred:focus {
     border-color: #a94442;
     outline: 0;
@@ -510,9 +513,31 @@ input {
     -moz-border-radius: 27px;
     -webkit-border-radius: 27px;
 }
-
+.eb_mailverify {
+    font-family: Montserrat;
+}
+.eb_mailverify .veri_content {
+    
+    justify-content: center;
+    display: flex;
+    /*flex: 85%;
+    max-width: 90%;*/
+    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    border-radius: 6px;
+    border: 1px solid #d3edff;
+    flex-flow: column;
+    position: relative;
+    margin-top: 8em;
+}
+    .eb_mailverify .lg_button {
+        color: white;
+        background-color: #4987fb;
+        /*padding: 6px 30px;
+        height: 45px;
+        margin-top: 15px;*/
+        border:none;
+    }
 /*media query*/
-
 @media only screen and (max-width: 600px) {
     .rightcolpad {
         padding-left: 0px;
@@ -549,5 +574,9 @@ input {
     .eb-signup_wrapper .eb-signup_socilaWrpr {
         flex: 0 0 100%;
         max-width: 100%;
+    }
+    .h-100 {
+        height: auto;
+       
     }
 }

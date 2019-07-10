@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    Html.RenderPartial("ExtPageHeader");
+     string home = string.Empty;
+    string sociallink = string.Empty;
+    string signinLink = string.Empty;
+    if (ViewBag.Env == "Development")
+    {
+        home = "http://localhost:41400/";
+        sociallink = "http://localhost:41600";
+        signinLink = "http://myaccount.localhost:41500";
+
+    }
+    if (ViewBag.Env == "Staging")
+    {
+        home = "https://eb-test.xyz";
+        sociallink = "https://ss.eb-test.xyz";
+        signinLink = "https://myaccount.eb-test.xyz";
+    }
+    if (ViewBag.Env == "Production")
+    {
+        home = "https://expressbase.com";
+        sociallink = "https://ss.expressbase.com";
+        signinLink = "https://myaccount.expressbase.com";
+    }
+}
+    <link rel="stylesheet" href="~/css/EbCommonStyles/Ebsitepage.css">
+
+<div class="eb_mailverify ">
+    <div class="veri_content col-md-6 col-lg-6 col-lg-offset-3 col-md-offset-3">
+        <div>
+            <p><h4>WELCOME TO EXPRESSBASE</h4></p>
+            <br />
+            <p>Your account has already verified <br /></p>
+            <p>Please login to continue... <br /></p>
+            <a class="btn btn-primary lg_button " href="@signinLink/Ext/TenantSignIn" role="button">
+                Sign In
+            </a>
+            
+        </div>
+        
+    </div>
+</div>

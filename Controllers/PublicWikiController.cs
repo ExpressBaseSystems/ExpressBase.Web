@@ -27,17 +27,17 @@ namespace ExpressBase.Web.Controllers
             }
         
 
-            [HttpGet("publicwiki/docs")]
+            [HttpGet("docs")]
             public IActionResult GetWikiList()
             {
                 GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
                 ViewBag.WikiList = resp.WikiList;
                 return View();
             }
-        [HttpGet("publicwiki/docs/{id}")]
+        [HttpGet("docs/{id}")]
         public IActionResult GetWikiList2(string id)
         {
-            return Redirect("/publicwiki/docs");
+            return Redirect("/docs");
         }
 
         [HttpGet("publicwiki/view/{id}")]
@@ -71,7 +71,14 @@ namespace ExpressBase.Web.Controllers
         { 
             return View();
         }
+        //public bool UserReviewRate(string userreview)
+        //{
+        //    UserReviewRateResponse = new UserReviewRateRequest()
+        //    {
 
-      
+        //    }
+        //}
+
+
     }
 }

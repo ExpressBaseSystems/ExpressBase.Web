@@ -85,7 +85,7 @@ let addwiki = function () {
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
-        window.history.pushState('obj', 'PageTitle', `/publicwiki/docs/${id}`);
+        window.history.pushState('obj', 'PageTitle', `/docs/${id}`);
         $(".wikilist").removeClass("CurrentSelection");
         $(`#${id}`).addClass("CurrentSelection");
         this.AjaxCalFetchWikiList(id);
@@ -123,7 +123,7 @@ let addwiki = function () {
             $('#wiki_data_div').append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
         }
         $('.front_page_wiki').hide();
-        $WasItHelpFul = `<div class="row"> <div class="col"> 
+        $WasItHelpFul = `<div class="row"> <div class="col-sm-12"> 
                     <h4>Questions?</h4>
             <p>We're always happy to help with code or other questions you might have. Search our documentation,
             contact support, or connect with our sales team. You can also chat live with other developers in #stripe on freenode.<p>
@@ -167,18 +167,18 @@ let addwiki = function () {
                         $("#wiki_data_div").show(300);
                         $('.front_page_wiki').hide();
                         $("#wiki_data_div").append("<div style='height:40px;'> <h1>Result not Found</h1> </div>");
-
                     }
                     else
                         $("#wiki_data_div").empty();
-
                     for (let i = 0; i < ob.length; i++) {
                         $("#wiki_data_div").show(500);
                         $('.front_page_wiki').hide(100);
                         let $Report = $(`<div class="searchDiv"></div>`);
                         $Report.append(`<a class="searchshow" data-id="${ob[i].id}"> ${ob[i].title} </a>`);
-                        $Report.append(` ${ob[i].html}`);      
+                        $Report.append(` ${ob[i].html}`);
+                        let $Tags = $(`<h3>${ob[i].tags}</h3>`);
                         $("#wiki_data_div").append($Report);          
+                        //$("#wiki_data_div").append($Tags);          
                         $('#' + ob[i].id).attr('title', ob[i].category);
                     };
                 }
@@ -783,6 +783,16 @@ let addwiki = function () {
         let answer = e.target.getAttribute("val");
         $("#Help").hide();
         $("#EbHelp").show();
+        $.ajax({
+            type: 'POST',
+            url: "/Wiki/UserReviewRate",
+            data: {
+                answer: answer
+            },
+            success: this.ajaxUserReviewRateSuccess.bind(this)
+        });
+    }
+    this.ajaxUserReviewRateSuccess = function () {
 
     }
 
@@ -794,7 +804,7 @@ let addwiki = function () {
         $("#text").on("keyup", this.printresult.bind(this));
         $("#text").on("click", this.printresult.bind(this));
         $("#home").on("click", this.show_home.bind(this));
-        $("#search_wiki").on("keyup focus", this.WikiSearch.bind(this));
+        $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
         $(".menu").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));

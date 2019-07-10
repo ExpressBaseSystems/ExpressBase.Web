@@ -81,10 +81,10 @@ $(function () {
             "name": "Barbados",
             "code": "BB"
     },
-        {
-            "name": "Belarus",
-            "code": "BY"
-    },
+    //    {
+    //        "name": "Belarus",
+    //        "code": "BY"
+    //},
         {
             "name": "Belgium",
             "code": "BE"
@@ -222,10 +222,10 @@ $(function () {
             "name": "Costa Rica",
             "code": "CR"
     },
-        {
-            "name": "Cote D\"Ivoire",
-            "code": "CI"
-    },
+    //    {
+    //        "name": "Cote D\"Ivoire",
+    //        "code": "CI"
+    //},
         {
             "name": "Croatia",
             "code": "HR"
@@ -505,10 +505,10 @@ $(function () {
             "name": "Lesotho",
             "code": "LS"
     },
-        {
-            "name": "Liberia",
-            "code": "LR"
-    },
+    //    {
+    //        "name": "Liberia",
+    //        "code": "LR"
+    //},
     //    {
     //        "name": "Libyan Arab Jamahiriya",
     //        "code": "LY"
@@ -995,10 +995,10 @@ $(function () {
             "name": "Zambia",
             "code": "ZM"
     },
-        {
-            "name": "Zimbabwe",
-            "code": "ZW"
-    }
+    //    {
+    //        "name": "Zimbabwe",
+    //        "code": "ZW"
+    //}
 ]
 
     var countryInput = $(document).find('.countrypicker');

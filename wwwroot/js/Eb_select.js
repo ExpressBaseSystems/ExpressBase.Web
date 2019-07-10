@@ -435,7 +435,7 @@ const EbSelect = function (ctrl, options) {
 
     this.SelectRow = function (idx, vmValue) {
         if (!this.Vobj.valueMembers.contains(vmValue)) {
-            if (this.maxLimit === 1) {
+            if (this.maxLimit === 1) {// single select
                 this.Vobj.valueMembers = [vmValue];
                 this.Vobj.hideDD();
                 $.each(this.dmNames, this.setDmValues.bind(this));
@@ -444,8 +444,15 @@ const EbSelect = function (ctrl, options) {
                 this.Vobj.valueMembers.push(vmValue);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(this.DTSelector + " tr.selected").find('[type=checkbox]').prop('checked', true);
+                this.clearSearchBox();
             }
         }
+    };
+
+    this.clearSearchBox = function () {
+        setTimeout(function () {
+            this.$searchBoxes.val('');
+        }.bind(this), 10);
     };
 
     this.setColumnvals = function () {
@@ -730,6 +737,7 @@ const EbSelect = function (ctrl, options) {
         $.each(this.dmNames, function (i, name) {
             this.Vobj.displayMembers[name].splice(delid(), 1);
         }.bind(this));
+        this.clearSearchBox();
     };
 
     this.checkBxClickEventHand = function (e) {
@@ -741,6 +749,7 @@ const EbSelect = function (ctrl, options) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(e.target).prop('checked', true);
+                this.clearSearchBox();
             }
             else
                 $(e.target).prop('checked', false);

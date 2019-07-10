@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Controllers
             }
         
 
-            [HttpGet("/docs")]
+            [HttpGet("/Wiki")]
             public IActionResult GetWikiList()
             {
                 GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
@@ -35,10 +35,10 @@ namespace ExpressBase.Web.Controllers
                 return View();
             }
 
-        [HttpGet("/docs/{id}")]
+        [HttpGet("/Wiki/{id}")]
         public IActionResult GetWikiList2(string id)
         {
-            return Redirect("/docs");
+            return Redirect("/Wiki");
         }
 
         [HttpGet("/publicwiki/view/{id}")]

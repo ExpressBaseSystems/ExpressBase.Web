@@ -1,5 +1,4 @@
-﻿
-let addwiki = function () {
+﻿let addwiki = function () {
 
     let historyId = [];
 
@@ -64,7 +63,6 @@ let addwiki = function () {
                 this.insertAtCaret(txt, insertVal);
             }
         }
-      
     }
 
     this.SelectInternalLink = function () {
@@ -85,7 +83,7 @@ let addwiki = function () {
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
-        window.history.pushState('obj', 'PageTitle', `/docs/${id}`);
+        window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
         $(".wikilist").removeClass("CurrentSelection");
         $(`#${id}`).addClass("CurrentSelection");
         this.AjaxCalFetchWikiList(id);
@@ -131,6 +129,8 @@ let addwiki = function () {
             <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a></p></div>
         </div></div>`;
         $('#wiki_data_div').append($WasItHelpFul);
+        if (PR)
+            PR.prettyPrint();
     }
 
     this.WikiSearch = function () {

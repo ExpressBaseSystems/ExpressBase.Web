@@ -57,6 +57,7 @@
 }
     .eb-wiki-sidebar .sidebar-list-wraper ul li:hover a {
         color: #4d86d6;
+        text-decoration:none;
     }
 .eb-wiki-sidebar .sidebar-list-wraper .wikilist {
     color: #2b2b2b;
@@ -69,9 +70,12 @@
 .eb-wiki-pane .eb-wiki-pane-header {
     background-color: #f2f2f2;
     border-bottom: 1px solid #d2d2d2;
+    display: flex;
+    padding: 20px;
+    align-items: center;
+    justify-content: space-between;
 }
 .eb-wiki-pane-brdcrmb {
-    padding: 15px 20px 0px;
     font-size: 18px;
     font-weight: 400;
 }
@@ -80,13 +84,13 @@
         color: #8c8989;
     }
 .eb-wiki-pane .eb-wiki-pane-inner .eb-wiki-searchbox {
-    padding: 15px 20px;
     display: flex;
     align-items: center;
+    width:300px;
 }
         .eb-wiki-pane .eb-wiki-pane-inner .eb-wiki-searchbox input {
             width: 100%;
-            height: 45px;
+            height: 40px;
             padding-left: 35px;
         }
         .eb-wiki-pane .eb-wiki-pane-inner .eb-wiki-searchbox:after {
@@ -186,6 +190,10 @@ div.searchDiv {
 
     div.searchDiv a {
         font-size: 20px;
+        cursor:pointer;
+    }
+    div.searchDiv a:hover {
+       text-decoration:none;
     }
 
 div.searchDiv iframe{
@@ -251,15 +259,6 @@ iframe {
 .style-4::-webkit-scrollbar-thumb {
     background-color: lightgrey #557aff;
 }
-    props.a:focus, a:hover {
-        -webkit-transition-property: font-size; /* Safari */
-        -webkit-transition-duration: .2s; /* Safari */
-        -webkit-transition-delay: .1s;
-        transition-timing-function: linear;
-        color: blue;
-        text-decoration: none;
-    }
-
 .animation {
     -webkit-transition-property: font-size; /* Safari */
     -webkit-transition-duration: .2s; /* Safari */
@@ -463,3 +462,9 @@ iframe {
     margin-right: 25px;
     border: 2px solid #73AD21;
 }
+.search-box-fab{
+    position:absolute;
+}
+    .search-box-fab .fab-icon {
+
+    }

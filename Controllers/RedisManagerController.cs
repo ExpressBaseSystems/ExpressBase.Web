@@ -26,7 +26,7 @@ using System.Net.Mail;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class RedisManagerController : EbBaseIntCommonController
+    public class RedisManagerController : EbBaseIntAdminController
     {
         public RedisManagerController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
@@ -34,10 +34,6 @@ namespace ExpressBase.Web.Controllers
         [EbBreadCrumbFilter("Redis Explorer")]
         public IActionResult Index()
         {
-            if (ViewBag.wc != RoutingConstants.DC)
-            {
-                return Redirect("/StatusCode/401");
-            }
             List<string> cmdlst = new List<string>();
             Type t = typeof(Commands);
             FieldInfo[] fields = t.GetFields(BindingFlags.Static | BindingFlags.Public);

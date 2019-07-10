@@ -848,6 +848,7 @@
         this.rowSLCounter = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
+            col.__DG.AllRowCtrls = this.AllRowCtrls;
             col.getValue = this.ColGetvalueFn;
             col.setValue = this.ColSetvalueFn;
             col.enable = this.EnableFn;

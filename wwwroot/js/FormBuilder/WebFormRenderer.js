@@ -65,6 +65,7 @@ const WebFormRender = function (option) {
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+        this.FRC.setFormObjHelperfns();
         this.setFormObjectMode();
         this.FRC.setUpdateDependentControlsFn();
         

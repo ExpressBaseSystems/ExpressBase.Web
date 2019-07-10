@@ -585,6 +585,23 @@
         $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
     };
 
+    this.appendDecZeros = function (num) {
+        let decCharector = ".";
+        let decLength = 2;
+        let neededNo = decLength;
+        num = num + "";
+        if (num.includes(decCharector)) {
+            let numA = num.split(decCharector);
+            let decStr = numA[1].substr(0, decLength);
+            neededNo = decLength - decStr.length;
+
+                num = num + "0".repeat(neededNo);
+        }
+        else
+            num = num + decCharector + "0".repeat(neededNo);
+        return num;
+    };
+
     this.getAggOfCol = function (colname) {
         let sum = 0;
         $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
@@ -600,7 +617,7 @@
             sum += val || 0;
         }.bind(this));
         this.ctrl[colname + "_sum"] = sum;
-        return sum;
+        return this.appendDecZeros(sum);
     };
 
     this.removeTr = function ($tr) {

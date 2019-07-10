@@ -79,21 +79,39 @@
         }
     };
 
-    this.getDepCtrl = function (path) {
-        let form = this.FO.formObject;
-        let pathArr = path.split(".");
-        if (pathArr.length === 3)
-            path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.'+ pathArr[2]; 
-        return eval(path);
-    };
+
+    this.setFormObjHelperfns = function myfunction() {
+        this.FO.formObject.__getCtrlByPath = function (path) {
+            let form = this.FO.formObject;
+            let ctrl = {};
+            let pathArr = path.split(".");
+            if (pathArr.length === 3) {
+                path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+                ctrl = eval(path);
+                ctrl.IsDGCtrl = true;
+            } else {
+                ctrl = eval(path);
+            }
+            return ctrl;
+        }.bind(this);
+    }.bind(this);
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) {
-            $.each(curCtrl.DependedValExp.$values, function (i, ctrl) {
-                let depCtrl = this.getDepCtrl(ctrl);
+            $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                 let valExpFnStr = atob(depCtrl.ValueExpr.Code);
                 if (valExpFnStr) {
-                    depCtrl.setValue(new Function("form", "user", `event`, valExpFnStr).bind(ctrl, this.FO.formObject, this.FO.userObject)());
+                    if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)()
+                        depCtrl.setValue(val);
+                    }
+                    else {
+                        $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                            row[depCtrl.Name].setValue(val);
+                        }.bind(this));
+                    }
                 }
             }.bind(this));
         }.bind(this);

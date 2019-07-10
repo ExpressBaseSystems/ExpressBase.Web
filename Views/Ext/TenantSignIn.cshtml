@@ -104,63 +104,67 @@
                         </div>
                         @*<div class="form-group text-center">Or Sign In by</div>*@
                         @*<div class="form-group" style="padding-left: 34px;float: left;">
-                <div class="col-xs-2 col-sm-2">
-                    <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
-                        <i class="fa fa-facebook"></i>
-                        <span class="hidden-xs"></span>
-                    </a>
-                </div>
-                <div class="col-xs-2 col-sm-2">
-                    <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-twitter text-info"></i>
-                        <span class="hidden-xs"></span>
-                    </a>
-                </div>
-                <div class="col-xs-2 col-sm-2">
-                    <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-google-plus text-danger"></i>
-                        <span class="hidden-xs"></span>
-                    </a>
-                </div>
-                <div class="col-xs-2 col-sm-2">
-                    <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-linkedin"></i>
-                        <span class="hidden-xs"></span>
-                    </a>
-                </div>
-                <div class="col-xs-2 col-sm-2">
-                    <a href="#" class="btn btn-lg btn-block">
-                        <i class="fa fa-github text-muted"></i>
-                        <span class="hidden-xs"></span>
-                    </a>
-                </div>
-            </div>*@
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg btn-block">
+                                        <i class="fa fa-facebook"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-twitter text-info"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-google-plus text-danger"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-linkedin"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                                <div class="col-xs-2 col-sm-2">
+                                    <a href="#" class="btn btn-lg btn-block">
+                                        <i class="fa fa-github text-muted"></i>
+                                        <span class="hidden-xs"></span>
+                                    </a>
+                                </div>
+                            </div>*@
 
 
                     </form>
-                    <div class="eb_socilaWrpr text-center">
-                        <div class="eb_socilaWrpr_inner">
-                            <a href="@sociallink/auth/facebook" class="btn btn-lg">
-                                <i class="fa fa-facebook text-muted"></i>
-                            </a>
-                            <a href="@sociallink/auth/github" class="btn btn-lg">
-                                <i class="fa fa-github text-muted"></i>
-                            </a>
-                            @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
-                    <i class="fa fa-twitter text-muted"></i>
-                </a>
-                <a href=" @sociallink/auth/google" class="btn btn-lg">
-                     <i class="fa fa-google-plus text-muted"></i>
-                </a>
-                <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
-                <i class="fa fa-linkedin text-muted"></i>
-                </a>*@
-                        </div>
-                    </div>
+                    @{ if (ViewBag.Env != "Production")
+                        {
+                            <div class="eb_socilaWrpr text-center">
+                                <div class="eb_socilaWrpr_inner">
+                                    <a href="@sociallink/auth/facebook" class="btn btn-lg">
+                                        <i class="fa fa-facebook text-muted"></i>
+                                    </a>
+                                    <a href="@sociallink/auth/github" class="btn btn-lg">
+                                        <i class="fa fa-github text-muted"></i>
+                                    </a>
+                                    @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
+                                            <i class="fa fa-twitter text-muted"></i>
+                                        </a>
+                                        <a href=" @sociallink/auth/google" class="btn btn-lg">
+                                             <i class="fa fa-google-plus text-muted"></i>
+                                        </a>
+                                        <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
+                                        <i class="fa fa-linkedin text-muted"></i>
+                                        </a>*@
+                                </div>
+                            </div>
+                        }
+                    }
                 </div>
 
             </div>
-           
+
         </div>
     </div>
 </section>

@@ -64,6 +64,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions/{Sid}")]
         public IActionResult SolutionManager(string Sid)
         {
+            ViewBag.Title = "MySolutions/"+ Sid;
             GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = Sid });
             //ViewBag.intergrationconfig = resp.IntegrationsConfig;
             //ViewBag.integrations = resp.Integrations;
@@ -149,5 +150,21 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
+       
+        public string VersioningSwitch(bool data, string SolnId)
+        {
+            GetVersioning resp = new GetVersioning();
+            try
+            {                
+                resp = this.ServiceClient.Post<GetVersioning>(new SetVersioning { Versioning = data, solution_id = SolnId });
+            }
+            catch (Exception e)
+            {
+                resp.status = new ResponseStatus { Message = e.Message };
+            }
+            return JsonConvert.SerializeObject(resp);
+        }
     }
+
 }

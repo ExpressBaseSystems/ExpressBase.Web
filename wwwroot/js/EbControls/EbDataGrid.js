@@ -419,6 +419,11 @@
                 let val = fun();
                 inpCtrl.setValue(val);
             }
+            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                let val = fun();
+                inpCtrl.setValue(val);
+            }
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
             // run DG onChangeFns initially
@@ -434,6 +439,16 @@
                     console.eb_log(e);
                     alert("  error in 'OnChange function' of : " + inpCtrl.Name + " - " + e.message);
                 }
+            }
+        }.bind(this));
+
+
+        //should fire after default set
+        $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
+            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                let val = fun();
+                inpCtrl.setValue(val);
             }
         }.bind(this));
         return this.AllRowCtrls[rowid];

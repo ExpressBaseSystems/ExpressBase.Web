@@ -100,7 +100,7 @@ body, html,.html-root {
     color: #4987fb;
     box-shadow: none;
     background: white;
-    border: 1px solid #4987fb;
+    border: 1px solid #4987fb !important;
 }
     .eb_btnplain:hover, .eb_btnwhite:hover {
         color: #3876ea;

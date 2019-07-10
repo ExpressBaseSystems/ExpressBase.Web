@@ -269,9 +269,9 @@ props.a:focus, a:hover {
     text-align: left;
 }
 
-.container {
+/*.container {
     padding: 20px;
-}
+}*/
 
 .form-control {
     width: 120px;

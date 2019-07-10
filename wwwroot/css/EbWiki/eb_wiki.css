@@ -269,9 +269,9 @@ props.a:focus, a:hover {
     text-align: left;
 }
 
-.container {
+/*.container {
     padding: 20px;
-}
+}*/
 
 .form-control {
     width: 120px;
@@ -337,7 +337,7 @@ props.a:focus, a:hover {
     margin-left: 135px;
     margin-top: 15px;
 }
-.wiki_btn {
+#CreateWiki {
     font-size: 14px;
     width: 150px;
     height: 35px;
@@ -363,7 +363,7 @@ props.a:focus, a:hover {
 }
 
 .menu_border{
-    border:solid 1px;
+   font-weight : bold;
 }
 
 .render_field {
@@ -372,3 +372,27 @@ props.a:focus, a:hover {
     margin-right: 25px;
     border: 2px solid #73AD21;
 }
+/*body, html, .html-root {
+    height: 90%;
+}*/
+.docFrontRow {
+    padding: 2px;
+    margin-left: 40px;
+    margin-bottom: 10px;
+}
+.docFrontColum {
+    border: solid 1px #EFEEEE;
+    border-radius: 5px;
+    margin-left: 30px;
+    height: 80px;
+    padding-top: 10px;
+    -webkit-box-shadow: 0px 0px 2px 0px rgba(204,204,204,1);
+    -moz-box-shadow: 0px 0px 2px 0px rgba(204,204,204,1);
+    box-shadow: 0px 0px 2px 0px rgba(204,204,204,1);
+}
+    .docFrontColum:hover {
+        cursor: pointer;
+        -webkit-box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.23);
+        -moz-box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.23);
+        box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.23);
+    }

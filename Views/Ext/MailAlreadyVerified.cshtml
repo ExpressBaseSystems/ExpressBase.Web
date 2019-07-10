@@ -1,6 +1,28 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
+     string home = string.Empty;
+    string sociallink = string.Empty;
+    string signinLink = string.Empty;
+    if (ViewBag.Env == "Development")
+    {
+        home = "http://localhost:41400/";
+        sociallink = "http://localhost:41600";
+        signinLink = "http://myaccount.localhost:41500";
+
+    }
+    if (ViewBag.Env == "Staging")
+    {
+        home = "https://eb-test.xyz";
+        sociallink = "https://ss.eb-test.xyz";
+        signinLink = "https://myaccount.eb-test.xyz";
+    }
+    if (ViewBag.Env == "Production")
+    {
+        home = "https://expressbase.com";
+        sociallink = "https://ss.expressbase.com";
+        signinLink = "https://myaccount.expressbase.com";
+    }
 }
 <link rel="stylesheet" href="~/css/Resetpassword.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />

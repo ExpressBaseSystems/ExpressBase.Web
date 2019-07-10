@@ -11,7 +11,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 namespace ExpressBase.Web.Controllers
 {
-    public class WikiController : EbBaseIntCommonController
+    public class WikiController : EbBaseAdminController
     {
         public WikiController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 

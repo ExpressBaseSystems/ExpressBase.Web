@@ -303,7 +303,7 @@ let addwiki = function () {
     }
 
     this.WikiListToggle = function (e) {
-        let id = e.target.getAttribute('val');
+        let id = $(e.target).closest(".wraper-link").attr('val');
         $("#" + id).toggle(200);
     }
 
@@ -805,7 +805,7 @@ let addwiki = function () {
         $("#text").on("click", this.printresult.bind(this));
         $("#home").on("click", this.show_home.bind(this));
         $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
-        $(".menu").on("click", this.WikiListToggle.bind(this));
+        $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".wikilist ", this.FetchWikiList.bind(this));

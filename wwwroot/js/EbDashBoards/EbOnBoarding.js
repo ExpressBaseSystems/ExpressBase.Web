@@ -403,17 +403,21 @@ var PasswordValidation = function () {
     }.bind(this);
 
     this.Pswresetfn = function () {
-        $(".commonLoader").EbLoader("show");
+        
         let sts = this.password_auto_validation();
         psdcode = $("#elink").val();
         if (sts == true) {
             $.ajax({
                 url: "../Ext/ResetPassword",
+                beforeSend: function () {
+                    $("#loaderdiv").EbLoader("show");
+                    $("#btnpswreset").prop('disabled', true);
+                },
                 data: { emcde: psdcode, psw: $("#inputPassword").val() },
                 cache: false,
                 type: "POST",
                 success: function (status) {
-                    $(".commonLoader").EbLoader("hide");
+                    $("#loaderdiv").EbLoader("hide");
                     if (status == 1) {
                         EbMessage("show", { Message: "Please Login using New password" });
                         setTimeout(function () {
@@ -422,6 +426,7 @@ var PasswordValidation = function () {
 
                     }
                     if (status == 0) {
+                        $("#btnpswreset").prop('disabled', false);
                         location.href = "../StatusCode/401";
                     }
                 }

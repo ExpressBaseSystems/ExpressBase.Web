@@ -260,10 +260,10 @@
     this.selectLocaleChangeAction = function (e) {
         var indx = this.selectLocale.prop('selectedIndex');
         this.divLocaleInfo.children().remove();
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Native Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].NativeName}</label>`);
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>Native Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].NativeName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
     };
 
     this.initUserInfo = function () {
@@ -570,7 +570,7 @@
     };
 
     this.resetPassword = function () {
-        if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() && this.pwdResetNew.val().length < 8) {
+        if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() || this.pwdResetNew.val().length < 8) {
             EbMessage("show", { Message: 'Password mismach or length too short', AutoHide: true, Background: '#bf1e1e' });
             return;
         }

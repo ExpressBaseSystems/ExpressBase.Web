@@ -36,6 +36,14 @@
 }
 
 <div class="container-fluid">
+    <div class="search-box-fab">
+        <div class="link-wrapr">
+
+        </div>
+        <div class="fab-icon">
+            <span class="fa fa-search"></span>
+        </div>
+    </div>
     <div class="row row-flex h-100" style="font-family:Montserrat">
         <div class="col-sm-3 col-lg-3 col-md-3 pd-0 eb-wiki-sidebar">
             <div class="sidebar h-100">
@@ -47,7 +55,7 @@
                 </div>
                 <div class="sidebar-item-wraper wraper-link" val="form">
                     <div class="sidebar-item">
-                        <span class="fa fa-home i-con"></span>
+                        <span class="fa fa-list-alt i-con"></span>
                         <span class="menu text"> Forms </span>
                     </div>
                 </div>
@@ -65,8 +73,8 @@
                 </div>
                 <div class="sidebar-item-wraper wraper-link" val="Report">
                     <div class="sidebar-item">
-                        <span class="fa fa-home i-con"></span>
-                        <span class="menu text"> Report </span>
+                        <span class="fa fa-table i-con"></span>
+                        <span class="menu text"> Reporting </span>
                     </div>
                 </div>
                 <div id="Report" class="sidebar-list-wraper" val="hide" show>
@@ -82,13 +90,32 @@
                     </ul>
                 </div>
 
+                <div class="sidebar-item-wraper wraper-link" val="Integrations">
+                    <div class="sidebar-item">
+                        <span class="fa fa-plug i-con"></span>
+                        <span class="menu text"> Integrations </span>
+                    </div>
+                </div>
+                <div id="Integrations" class="sidebar-list-wraper" val="hide" show>
+                    <ul>
+                        @foreach (Wiki wiki in ViewBag.WikiList)
+                        {
+                            int link = wiki.Id;
+                            if (wiki.Category == "Integrations")
+                            {
+                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                            }
+                        }
+                    </ul>
+                </div>
+
                 <div class="sidebar-item-wraper wraper-link" val="API">
                     <div class="sidebar-item">
-                        <span class="fa fa-home i-con"></span>
+                        <span class="fa fa-code i-con"></span>
                         <span class="menu text"> API </span>
                     </div>
                 </div>
-                <div id="API" class="sidebar-list-wraper" val="hide" hidden>
+                <div id="API" class="sidebar-list-wraper" val="hide" show>
                     <ul>
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
@@ -100,32 +127,32 @@
                         }
                     </ul>
                 </div>
-                <div class="sidebar-item-wraper wraper-link" val="Chatbots">
-                    <div class="sidebar-item">
-                        <span class="fa fa-home i-con"> </span>
-                        <span class="menu text"> Chatbots </span>
-                    </div>
-                </div>
-                <div id="Chatbots" class="sidebar-list-wraper" val="hide" hidden>
-                    <ul>
-                        @foreach (Wiki wiki in ViewBag.WikiList)
-                        {
-                            int link = wiki.Id;
-                            if (wiki.Category == "Chatbots")
-                            {
-                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
-                            }
-                        }
-                    </ul>
-                </div>
+                @*<div class="sidebar-item-wraper wraper-link" val="Chatbots">
+            <div class="sidebar-item">
+                <span class="fa fa-commenting i-con"> </span>
+                <span class="menu text"> Chatbots </span>
+            </div>
+        </div>
+        <div id="Chatbots" class="sidebar-list-wraper" val="hide" hidden>
+            <ul>
+                @foreach (Wiki wiki in ViewBag.WikiList)
+                {
+                    int link = wiki.Id;
+                    if (wiki.Category == "Chatbots")
+                    {
+                        <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                    }
+                }
+            </ul>
+        </div>*@
 
                 <div class="sidebar-item-wraper wraper-link" val="Security">
                     <div class="sidebar-item">
-                        <span class="fa fa-home i-con"></span>
+                        <span class="fa fa-lock i-con"></span>
                         <span class="menu text"> Security </span>
                     </div>
                 </div>
-                <div id="Security" class="sidebar-list-wraper" val="hide" hidden>
+                <div id="Security" class="sidebar-list-wraper" val="hide" show>
                     <ul>
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
@@ -138,13 +165,15 @@
                     </ul>
                 </div>
 
+
+
                 <div class="sidebar-item-wraper wraper-link" val="AppStore1">
                     <div class="sidebar-item">
-                        <span class="fa fa-home i-con"></span>
+                        <span class="fa fa-shopping-cart i-con"></span>
                         <span class="menu text"> App Store </span>
                     </div>
                 </div>
-                <div id="AppStore1" class="sidebar-list-wraper" val="hide" hidden>
+                <div id="AppStore1" class="sidebar-list-wraper" val="hide" show>
                     <ul>
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
@@ -162,7 +191,7 @@
             <div class="eb-wiki-pane-inner">
                 <div class="eb-wiki-pane-header">
                     <div class="eb-wiki-pane-brdcrmb">
-                        <span style="font-weight:500">Docs</span>
+                        <span style="font-weight:500">Wiki</span>
                         <span class="slash">/</span>
                         <span id="ebwiki_panebrd">Getting started</span>
                     </div>
@@ -175,30 +204,20 @@
                         <div id="tagspace"> </div>
                     </div>
                     <div class="front_page_wiki">
-                        @*<p> Welcome to ExpressBase! Get familiar with the ExpressBase products and explore their features: </p>
-                            <div class="docFrontRow">
-                                <div class="col-sm-5 docFrontColum"> <img src="/images/svg/forms.svg" style="width: 15%;" /></div>
-                                <div class="col-sm-5 docFrontColum"> <img src="/images/svg/laptop.svg" style="width: 15%;" /></div>
-                            </div>
-                            <div class="docFrontRow">
-                                <div class="col-sm-5 docFrontColum"> <img src="~/images/wiki_icons/api1.png" style="width: 15%;" /></div>
-                                <div class="col-sm-5 docFrontColum"> <img src="/images/svg/chat.svg" style="width: 15%;"></div>
-                            </div>
-                            <div class="docFrontRow">
-                                <div class="col-sm-5 docFrontColum"> <img src="~/images/wiki_icons/security_badge.png" style="width: 15%;" /></div>
-                                <div class="col-sm-5 docFrontColum"> <img src="~/images/wiki_icons/store.png" style="width: 15%;" /></div>
-                            </div>*@
+                        <h2> Welcome to ExpressBase! </h2>
+                        <h4>Get familiar with the ExpressBase products and explore their features:</h4>
+                         
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="icon-bar">
+    @*<div class="icon-bar">
         <a href="https://www.facebook.com/share.php?u=http://www.expressbase.com&title=ExpressBase" class="facebook" target="_blank"><i class="fa fa-facebook"></i></a>
         <a href="#" class="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
         <a href="#" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
         <a href="#" class="whatsapp" target="_blank"><i class="fa fa-whatsapp"></i></a>
-    </div>
+    </div>*@
 </div>
 @section JsCode{
     <script>

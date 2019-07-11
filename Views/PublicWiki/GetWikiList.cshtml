@@ -4,6 +4,23 @@
     Html.RenderPartial("ExtPageHeader");
 }
 @section StyleSheet{
+<meta property="og:title" content="gdf">
+<meta property="og:description" content="">
+<meta property="og:image" content="">
+<meta property="og:url" content="">
+<meta name="twitter:card" content="">    
+
+<!--  Non-Essential, But Recommended -->
+
+<meta property="og:site_name" content="EXPRESSbase Systems">
+<meta name="twitter:image:alt" content="">
+
+
+<!--  Non-Essential, But Required for Analytics -->
+
+<meta property="fb:app_id" content="your_app_id" />
+<meta name="twitter:site" content="">
+
     <style>
         html{
             overflow-y:scroll !important;
@@ -15,6 +32,8 @@
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
 }
+
+
 @{
     string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
     if (ViewBag.Env == "Development")
@@ -47,19 +66,19 @@
     <div class="row row-flex h-100" style="font-family:Montserrat">
         <div class="col-sm-3 col-lg-3 col-md-3 pd-0 eb-wiki-sidebar">
             <div class="sidebar h-100">
-                <div class="sidebar-item-wraper wraper-link" id="home">
+                <div class="sidebar-item-wraper wraper-link" val="home">
                     <div class="sidebar-item">
                         <span class="fa fa-home i-con"></span>
                         <span class="text">Getting Started</span>
                     </div>
                 </div>
-                <div class="sidebar-item-wraper wraper-link" val="form">
+                <div class="sidebar-item-wraper wraper-link" val="Forms">
                     <div class="sidebar-item">
                         <span class="fa fa-list-alt i-con"></span>
                         <span class="menu text"> Forms </span>
                     </div>
                 </div>
-                <div id="form" class="sidebar-list-wraper" val="hide" show>
+                <div id="Forms" class="sidebar-list-wraper" val="hide" show>
                     <ul>
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
@@ -71,13 +90,13 @@
                         }
                     </ul>
                 </div>
-                <div class="sidebar-item-wraper wraper-link" val="Report">
+                <div class="sidebar-item-wraper wraper-link" val="Reporting">
                     <div class="sidebar-item">
                         <span class="fa fa-table i-con"></span>
                         <span class="menu text"> Reporting </span>
                     </div>
                 </div>
-                <div id="Report" class="sidebar-list-wraper" val="hide" show>
+                <div id="Reporting" class="sidebar-list-wraper" val="hide" show>
                     <ul>
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
@@ -191,7 +210,7 @@
             <div class="eb-wiki-pane-inner">
                 <div class="eb-wiki-pane-header">
                     <div class="eb-wiki-pane-brdcrmb">
-                        <span style="font-weight:500">Docs</span>
+                        <span style="font-weight:500">Wiki</span>
                         <span class="slash">/</span>
                         <span id="ebwiki_panebrd">Getting started</span>
                     </div>
@@ -206,7 +225,21 @@
                     <div class="front_page_wiki">
                         <h2> Welcome to ExpressBase! </h2>
                         <h4>Get familiar with the ExpressBase products and explore their features:</h4>
-                         
+
+                        <div class="GettingStartedWrapper">
+                            <div class="GettingStarted" val="Forms">  <div class="divIcon"><span class="fa fa-list-alt i-con"></span></div> <div class="h1Wrap"> Forms</div></div>
+                            <div class="GettingStarted" val="Reporting"><div class="divIcon"> <span class="fa fa-table i-con"></span></div> <div class="h1Wrap"> Reports</div></div>
+                        </div>
+                        <div class="GettingStartedWrapper">
+                            <div class="GettingStarted" val="Integrations"><div class="divIcon"><span class="fa fa-plug i-con"></span></div><div class="h1Wrap"> Integrations</div></div>
+                            <div class="GettingStarted" val="API"><div class="divIcon"><span class="fa fa-code i-con"></span></div> <div class="h1Wrap"> API </div></div>
+                        </div>
+                        <div class="GettingStartedWrapper">
+                            <div class="GettingStarted" val="Security"><div class="divIcon"><span class="fa fa-lock i-con"></span> </div><div class="h1Wrap"> Security</div> </div>
+                            <div class="GettingStarted" val="AppStore1"><div class="divIcon"><span class="fa fa-shopping-cart i-con"></span> </div> <div class="h1Wrap">AppStore </div> </div>
+                        </div>
+                       
+
                     </div>
                 </div>
             </div>

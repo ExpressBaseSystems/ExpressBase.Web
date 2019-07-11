@@ -20,19 +20,19 @@
 <div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
-            <ul class="list-group menuwrapper_ul_outer">
+            <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
+                    <a class="t_a" href="/MySolutions">
                         <span class="material-icons t__sidebar_icon">highlight</span>
-                        <span class="t__sidebar_text">Solutions</span>
+                        <span class="t__sidebar_text">My Solutions</span>
                     </a>
                 </li>
-                <li class="list-group-item outer_li text-center">
+                @*<li class="list-group-item outer_li text-center">
                     <a class="t_a">
                         <span class="material-icons t__sidebar_icon">attach_money</span>
                         <span class="t__sidebar_text">Billing</span>
                     </a>
-                </li>
+                </li>*@
                 <li class="list-group-item outer_li text-center">
                     <a class="t_a" href="/Store">
                         <span class="material-icons t__sidebar_icon">store</span>
@@ -40,7 +40,7 @@
                     </a>
                 </li>
                 <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
+                    <a class="t_a" href="/Wiki">
                         <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
                         <span class="t__sidebar_text">Wiki</span>
                     </a>
@@ -64,7 +64,7 @@
                     <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     <input type="text" id="solSearch" class="form-control" placeholder="Search solution">
                 </div>
-                <a href='/NewSolution' class="ebbtn eb_btnblue eb_btn-sm new_sol_lk">New Solution</a>
+                <button class="ebbtn eb_btnblue eb_btn-sm new_sol_lk" id="eb-new-solution">New Solution</button>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
@@ -87,10 +87,10 @@
                                 <div class="sso_head text-center">
                                     <input name="WhichConsole" type="hidden" value="" />
                                     <a sid="@s.IsolutionId" wc="uc" class="sso-btn eb_btnblue single__sso" title="go to user console">
-                                        <i class="fa fa-user-o" aria-hidden="true"></i> User
+                                        <i class="fa fa-user-o" aria-hidden="true"></i> User Login
                                     </a>
                                     <a sid="@s.IsolutionId" wc="dc" class="sso-btn eb_btnwhite  single__sso" title="go to dev console">
-                                        <i class="fa fa-wrench" aria-hidden="true"></i> Dev
+                                        <i class="fa fa-wrench" aria-hidden="true"></i> Dev Login
                                     </a>
                                 </div>
                                 <div class="sln-configLink">

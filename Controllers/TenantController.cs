@@ -46,6 +46,19 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public CreateSolutionFurtherResponse CreateSolution(int i)
+        {
+            if (ViewBag.wc == RoutingConstants.TC)
+                return this.ServiceClient.Post(new CreateSolutionFurtherRequest());
+            else
+            {
+                var r = new CreateSolutionFurtherResponse();
+                    r.ResponseStatus.Message = "No permission to create solution";
+                return r;
+            }
+        }
+
         //[EbBreadCrumbFilter("MySolutions/Sid")]
         //[HttpGet("MySolutions/{Sid}")]
         //public IActionResult SolutionDashBoard(string Sid)

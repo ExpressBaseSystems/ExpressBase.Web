@@ -12,6 +12,8 @@
     this.show_home = function () {
         $('#wiki_data_div').hide();
         $('.front_page_wiki').show();
+        $("#ebwiki_panebrd").html(`Getting started`)
+
     };
 
 
@@ -106,6 +108,7 @@
         $('.edit').attr('href', '../wiki/add/' + ob.id);
         $('.edit').attr('id', ob.id);
         document.title = ob.title;
+        $("#ebwiki_panebrd").html(`${ob.category} / ${ob.title}`)
         var url = window.location.origin + "/publicwiki/view/" + id;
         let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;
         let twUrl = "https://twitter.com/intent/tweet?status=" + url;
@@ -125,7 +128,7 @@
             contact support, or connect with our sales team. You can also chat live with other developers in #stripe on freenode.<p>
             <div id="Help" show><span> Was this page helpfull?
             <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
-       <span > <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+       <span style="float: right;"> <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
         <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
         <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
         <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></span>
@@ -134,8 +137,12 @@
             <div> 
        
             </div>
-            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a></p></div>
-        </div></div>`;
+            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" > <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+        <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
+        <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
+        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
+        </div></div>
+            `;
         $('#wiki_data_div').append($WasItHelpFul);
         if (PR)
             PR.prettyPrint();
@@ -807,6 +814,7 @@
         else
             this.selectedHighlightAjax(style_val);
     }
+
     this.selectedHighlightAjax = function (style_val) {
         $.ajax({
             type: 'POST',

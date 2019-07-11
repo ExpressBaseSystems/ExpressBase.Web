@@ -595,7 +595,7 @@
             let decStr = numA[1].substr(0, decLength);
             neededNo = decLength - decStr.length;
 
-                num = num + "0".repeat(neededNo);
+            num = num + "0".repeat(neededNo);
         }
         else
             num = num + decCharector + "0".repeat(neededNo);
@@ -685,27 +685,28 @@
         this.$table.on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCol.bind(this));
     };
 
+    this.PScallBFn = function (Row) {
+        setTimeout(function () {
+            let td = $(`#${this.TableId}>tbody>tr[rowid=${Row[0].__rowid}] td:last`)[0];
+            {// experimental code
+                $.each(Row, function (i, col) {
+                    if (col.__onChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '')
+                        col.__onChangeFn();
+                }.bind(this));
+            }
+            this.checkRow_click({ target: td }, false);
+        }.bind(this), 1);
+    }.bind(this);
+
     this.AddRowWithData = function (_rowdata) {
         let addedRowObj = this.addRow({ isAddBeforeLast: true });
         let $addedRow = addedRowObj[0];
         let addedRowCols = addedRowObj[1];
-        let callBFn = function () {
-            setTimeout(function () {
-                let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRowCols[0].__rowid}] td:last`)[0];
-                {// experimental code
-                    $.each(addedRowCols, function (i, col) {
-                        if (col.__onChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '')
-                            col.__onChangeFn();
-                    }.bind(this));
-                }
-                this.checkRow_click({ target: td }, false);
-            }.bind(this), 1);
-        }.bind(this);
         $.each(addedRowCols, function (i, col) {
             let data = _rowdata[col.Name];
             if (data !== null) {
                 if (col.ObjType === "PowerSelect")
-                    col.setValue(data, callBFn);
+                    col.setValue(data, this.PScallBFn.bind(this, addedRowCols));
                 else {
                     col.setValue(data);
                 }
@@ -715,7 +716,7 @@
 
         this.resetRowSlNo($addedRow.index());
         if (!this.isPSInDG)
-            setTimeout(callBFn, 1);// call checkRow_click() pass event.target directly
+            setTimeout(this.PScallBFn.bind(this, addedRowCols), 1);// call checkRow_click() pass event.target directly
     };
     this.resetRowSlNo = function (slno) {
         let rowCount = $(`#${this.TableId}>tbody>tr`).length;
@@ -787,7 +788,12 @@
         $.each(Object.keys(rowData), function (i, key) {
             let obj = getObjByval(this.AllRowCtrls[rowId], "Name", key);
             if (obj) {
-                obj.setValue(rowData[key]);
+                if (obj.ObjType === "PowerSelect" && this.isPSInDG) {
+                    this.editRow_click({ target: $tr.find(".edit-row")[0] });// click edit button if contains PS
+                    obj.setValue(rowData[key], this.PScallBFn.bind(this, this.AllRowCtrls[rowId])); //click check button 
+                }
+                else
+                    obj.setValue(rowData[key]);
             }
         }.bind(this));
 

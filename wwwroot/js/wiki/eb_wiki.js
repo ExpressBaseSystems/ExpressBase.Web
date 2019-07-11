@@ -12,8 +12,6 @@
     this.show_home = function () {
         $('#wiki_data_div').hide();
         $('.front_page_wiki').show();
-        $("#ebwiki_panebrd").html(`Getting started`)
-
     };
 
 
@@ -85,10 +83,12 @@
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
-        window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
+       
         $(".wikilist").removeClass("CurrentSelection");
         $(`#${id}`).addClass("CurrentSelection");
         this.AjaxCalFetchWikiList(id);
+        //let title = $(".wiki_data h1").text();
+        window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
     }
 
     this.AjaxCalFetchWikiList = function (id) {
@@ -102,14 +102,16 @@
         });
     }
 
-    this.FetchWikiListSuccess = function (id,ob) {
+    this.FetchWikiListSuccess = function (id, ob) {
+       
         $('#wiki_data_div').show();
         $("#wiki_data_div").scrollTop(0);
         $('.edit').attr('href', '../wiki/add/' + ob.id);
         $('.edit').attr('id', ob.id);
         document.title = ob.title;
         $("#ebwiki_panebrd").html(`${ob.category} / ${ob.title}`)
-        var url = window.location.origin + "/publicwiki/view/" + id;
+        urlTitle = ob.title.replace(/\s+/g, '-').toLowerCase();
+        var url = window.location.origin + "/Wiki/View/" + id + "/" + urlTitle;
         let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;
         let twUrl = "https://twitter.com/intent/tweet?status=" + url;
         let lnUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" +url +"&title="+ ob.title + "&summary=YourarticleSummary&source=expressbase.com";
@@ -144,10 +146,21 @@
         </div></div>
             `;
         $('#wiki_data_div').append($WasItHelpFul);
+
+        let title = $(".wiki_data h1").text();
+        let desc = $(".wiki_data p").text().substring(0, $(".wiki_data p").text().indexOf("."));
+        $(`meta[property="og:title"]`).attr("content", `${title}`);
+        $(`meta[property="og:description"]`).attr("content", `${desc}`);
+        $(`meta[property="og:image"]`).attr("content", ``);
+        $(`meta[property="og:url"]`).attr("content", `${url}`);
+        $(`meta[name="twitter:card"]`).attr("content", "large image");
+
+        //this.AddMetaTags();
         if (PR)
             PR.prettyPrint();
     }
 
+   
     this.WikiSearch = function () {
         let key = $('#search_wiki').val();
         if (key.length == 0) {
@@ -319,7 +332,15 @@
 
     this.WikiListToggle = function (e) {
         let id = $(e.target).closest(".wraper-link").attr('val');
-        $("#" + id).toggle(200);
+        if (id == "home") {
+            $("#ebwiki_panebrd").html("Getting started");
+            $('#wiki_data_div').hide();
+            $('.front_page_wiki').show();
+        }
+        else {
+            $("#" + id).toggle(200);
+            $("#ebwiki_panebrd").html(`${id}`);
+        }
     }
 
     this.render_page_toggle = function (e) {
@@ -851,6 +872,11 @@
 
     }
 
+    this.GetStartToWikiDocs = function (e) {
+        let value = e.target.getAttribute("val");
+        $(`#${value}>ul>li:first>a`).click();
+    }
+
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
@@ -858,12 +884,12 @@
         $("#wiki_data_div").on("click", ".searchshow", this.FetchWikiList.bind(this));
         $("#text").on("keyup", this.printresult.bind(this));
         $("#text").on("click", this.printresult.bind(this));
-        $("#home").on("click", this.show_home.bind(this));
         $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".wikilist ", this.FetchWikiList.bind(this));
+        $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
 
         //wiki admin
         $(".wikies_list").on("click", this.Admin_Wiki_List.bind(this));

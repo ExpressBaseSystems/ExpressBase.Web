@@ -419,6 +419,11 @@
                 let val = fun();
                 inpCtrl.setValue(val);
             }
+            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                let val = fun();
+                inpCtrl.setValue(val);
+            }
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
             // run DG onChangeFns initially
@@ -434,6 +439,16 @@
                     console.eb_log(e);
                     alert("  error in 'OnChange function' of : " + inpCtrl.Name + " - " + e.message);
                 }
+            }
+        }.bind(this));
+
+
+        //should fire after default set
+        $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
+            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                let val = fun();
+                inpCtrl.setValue(val);
             }
         }.bind(this));
         return this.AllRowCtrls[rowid];
@@ -570,6 +585,23 @@
         $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
     };
 
+    this.appendDecZeros = function (num) {
+        let decCharector = ".";
+        let decLength = 2;
+        let neededNo = decLength;
+        num = num + "";
+        if (num.includes(decCharector)) {
+            let numA = num.split(decCharector);
+            let decStr = numA[1].substr(0, decLength);
+            neededNo = decLength - decStr.length;
+
+                num = num + "0".repeat(neededNo);
+        }
+        else
+            num = num + decCharector + "0".repeat(neededNo);
+        return num;
+    };
+
     this.getAggOfCol = function (colname) {
         let sum = 0;
         $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
@@ -585,7 +617,7 @@
             sum += val || 0;
         }.bind(this));
         this.ctrl[colname + "_sum"] = sum;
-        return sum;
+        return this.appendDecZeros(sum);
     };
 
     this.removeTr = function ($tr) {

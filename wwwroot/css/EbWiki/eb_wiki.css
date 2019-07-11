@@ -270,59 +270,21 @@ iframe {
 }
 
 /*share links*/
-.icon-bar {
-    position: fixed;
-    top: 75%;
-    left: 95%;
-    -webkit-transform: translateY(-50%);
-    -ms-transform: translateY(-50%);
-    transform: translateY(-50%);
+.icon-bar{
+    font-size:20px;
+    padding:4px;
 }
-
-    .icon-bar a {
-        display: block;
-        text-align: center;
-        padding: 16px;
-        transition: all 0.3s ease;
-        color: white;
-        font-size: 20px;
-    }
-
-        .icon-bar a:hover {
-            background-color: #000;
-        }
-
-.facebook {
-    background: #3B5998;
-    color: white;
-}
-
-.twitter {
-    background: #55ACEE;
-    color: white;
-}
-
-.linkedin {
-    background: #007bb5;
-    color: white;
-}
-
-.whatsapp {
-    background: green;
-    color: white;
-}
-
 /*wiki admin*/
-
 .public h1 {
-    font-size: 25px;
+    font-size: 18px;
     padding: 0px;
     margin-bottom: 0px;
     margin-top: 0px;
     text-align: left;
+    font-weight: 200;
 }
 
-.admin_wiki_list {
+/*.admin_wiki_list {
     height: 39px;
     width: 100%;
     overflow: hidden;
@@ -353,7 +315,7 @@ iframe {
         margin-bottom: 0px;
         margin-top: 0px;
         text-align: left;
-    }
+    }*/
 
 /*.container {
     padding: 20px;
@@ -399,17 +361,17 @@ iframe {
 }
 
 .WikiMenu {
-    font-size: 25px;
+    font-size: 20px;
     line-height: 42px;
     color: #2d2d2d;
     font-weight: 400;
-    font-family: Montserrat;
+   
 }
 
 .WikiList {
     width: auto;
     margin-left: 50px;
-    border-bottom: solid 1px #bfbfbf;
+    /*border-bottom: solid 1px #bfbfbf;*/
     margin-bottom: 10px;
     padding-bottom: 5px;
 }
@@ -434,23 +396,22 @@ iframe {
     background: #4d86d6;
     margin-top: 25px;
     color: white;
-    font-family: Montserrat;
+    
 }
 
 .wiki_btn:hover {
     border: 0px;
 }
 
-.wiki_admin_h1 {
-    font-family: Montserrat;
+/*.wiki_admin_h1 {
     letter-spacing: -1.25px;
-    font-size: 44px;
+    font-size: 24px;
     line-height: 48px;
     font-weight: 600;
     text-align: inherit;
     color: rgba(0, 0, 0, 0.84);
     font-style: normal;
-}
+}*/
 
 .menu_border {
     font-weight: bold;

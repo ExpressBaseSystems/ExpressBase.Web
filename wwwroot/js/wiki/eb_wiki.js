@@ -101,18 +101,16 @@
     }
 
     this.FetchWikiListSuccess = function (id,ob) {
-
         $('#wiki_data_div').show();
         $("#wiki_data_div").scrollTop(0);
         $('.edit').attr('href', '../wiki/add/' + ob.id);
         $('.edit').attr('id', ob.id);
-        
-        var url = window.location.href + "/" + id;
-        $(".facebook").removeAttr("href").attr("href", "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title);
-        $(".twitter").removeAttr("href").attr("href", "https://twitter.com/intent/tweet?status=" + url);
-        $(".linkedin").removeAttr("href").attr("href", `https://www.linkedin.com/shareArticle?mini=true&url= ${url}&title= ${ob.title}&summary=YourarticleSummary&source=www.expressbase.com`);
-        $(".whatsapp").removeAttr("href").attr("href", "https://wa.me/?text=" + url);
-
+        document.title = ob.title;
+        var url = window.location.origin + "/publicwiki/view/" + id;
+        let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;
+        let twUrl = "https://twitter.com/intent/tweet?status=" + url;
+        let lnUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" +url +"&title="+ ob.title + "&summary=YourarticleSummary&source=expressbase.com";
+        let whUrl = "https://wa.me/?text=" + url;
         //let $tagDiv = $(`<div class="row"></div>`);
         $('#wiki_data_div').html(ob.html).slideUp(10).slideDown(200).fadeIn(100);
         var res = ob.tags.split(",");
@@ -125,7 +123,17 @@
                     <h4>Questions?</h4>
             <p>We're always happy to help with code or other questions you might have. Search our documentation,
             contact support, or connect with our sales team. You can also chat live with other developers in #stripe on freenode.<p>
-            <div id="Help" show><p> Was This Page Helpfull?? <button val="yes" class="WasItHelp">yes</button><button val="no" class="WasItHelp">No</button></p></div> 
+            <div id="Help" show><span> Was this page helpfull?
+            <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
+       <span > <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+        <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
+        <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
+        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></span>
+      
+     </div> 
+            <div> 
+       
+            </div>
             <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a></p></div>
         </div></div>`;
         $('#wiki_data_div').append($WasItHelpFul);
@@ -382,7 +390,7 @@
                     $Form.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                                
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -391,6 +399,7 @@
                         `);
                 }
             }
+            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
             $("#public").append($Form);
 
             $("#public").append(`<div class="WikiMenu" val="Report">  Report <div>`);
@@ -400,7 +409,7 @@
                     $Report.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                              
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -409,6 +418,7 @@
                         `);
                 }
             }
+            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
             $("#public").append($Report);
 
 
@@ -419,7 +429,7 @@
                     $API.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                               
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -438,7 +448,7 @@
                     $Chatbots.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                               
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -448,6 +458,7 @@
                         `);
                 }
             }
+            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
             $("#public").append($Chatbots);
 
 
@@ -458,7 +469,7 @@
                     $Security.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                            
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -470,6 +481,26 @@
             }
             $("#public").append($Security);
 
+
+            $("#public").append(`<div class="WikiMenu" val="Integrations">  Integrations <div>`);
+            let $Integrations = $(`<div data-val="Integrations"></div>`);
+            for (let i = 0; i < ob.length; i++) {
+                if (ob[i].category == "Integrations") {
+                    $Integrations.append(`
+                                <div class="WikiList">
+                                <h1>  ${ob[i].title}  </h1>
+                            
+                                  <div class="row">
+                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
+                                    Created On  ${ ob[i].createdAt}
+                                   </div>
+                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>
+                                      </div>
+                        `);
+                }
+            }
+            $("#public").append($Integrations);
+
             $("#public").append(`<div class="WikiMenu" val="AppStore">  App Store <div>`);
             let $AppStore = $(`<div data-val="AppStore" ></div>`);
             for (let i = 0; i < ob.length; i++) {
@@ -477,7 +508,7 @@
                     $AppStore.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                              
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -534,6 +565,15 @@
         }
         $("#public").append($Report);
 
+        $("#public").append(`<div class="WikiMenu" val="Integrations">  Integrations <div>`);
+        let $Integrations = $(`<ul data-val="Integrations" class="dragable_wiki_list"  ></ul>`);
+        for (let i = 0; i < ob.wikiList.length; i++) {
+            if (ob.wikiList[i].category == "Integrations") {
+                $Integrations.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
+            }
+        }
+        $("#public").append($Integrations);
+
 
         $("#public").append(`<div class="WikiMenu" val="API">  API <div>`);
         let $API = $(`<ul data-val="API" class="dragable_wiki_list"  ></ul>`);
@@ -578,6 +618,8 @@
     this.draggableChatbots();
     this.draggableSecurity();
     this.draggableAppStore();
+    this.draggableIntegrations();
+    
     $("#eb_common_loader").EbLoader("hide");
 }
 
@@ -612,6 +654,10 @@
     this.draggableAppStore = function () {
         $("[data-val=AppStore]").sortable();
         $("[data-val=AppStore]").disableSelection();
+    }
+    this.draggableIntegrations = function () {
+        $("[data-val=Integrations]").sortable();
+        $("[data-val=Integrations]").disableSelection();
     }
 
     //Context menu Wiki
@@ -667,7 +713,8 @@
 
     this.editWiki = function (key, options) {
         let id = $(options.$trigger).attr("data-id");
-        window.open('http://myaccount.localhost:41500/wiki/add/' + id, '_blank');
+        let url = window.location.origin +"/wiki/add/" +id
+        window.open(window.location.origin + "/wiki/add/" + id, '_blank');
     };
 
     this.PublishWiki = function (key, options) {

@@ -113,13 +113,13 @@ namespace ExpressBase.Web.Controllers
 
 
         [HttpGet("wiki/admin")]
-        public IActionResult WikiAdmin(int id)
+        public IActionResult WikiAdmin()
         {
-            WikiAdminResponse resp = this.ServiceClient.Get(new WikiAdminRequest());
+            //WikiAdminResponse resp = this.ServiceClient.Get(new WikiAdminRequest());
 
-            Console.WriteLine("Info: WikiAdmin Wiki Count: " + resp.WikiList.Count);
+            //Console.WriteLine("Info: WikiAdmin Wiki Count: " + resp.WikiList.Count);
 
-            ViewBag.WikiList = resp.WikiList;
+            //ViewBag.WikiList = resp.WikiList;
             return View();
         }
 

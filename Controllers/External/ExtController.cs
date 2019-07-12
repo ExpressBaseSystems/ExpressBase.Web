@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
 
         //profile setup tenant
         [HttpPost]
-        public CreateAccountResponse Board(string email, string name, string country, string account, string password)
+        public CreateAccountResponse Board(string email, string name, string country,  string password)
         {
             CreateAccountResponse res = new CreateAccountResponse();
             try
@@ -87,7 +87,7 @@ namespace ExpressBase.Web.Controllers
                         Password = password,
                         Country = country,
                         Email = email,
-                        Account_type = account,
+                        Account_type = null,
                         ActivationCode = activationcode,
                         PageUrl = pgurl.ToString(),
                         PagePath = pgpath.ToString()

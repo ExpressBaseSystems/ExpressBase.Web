@@ -78,11 +78,16 @@
 .eb-signup_wrapper .sinpt {
     height: 45px;
 }
-.eb-signup-selltext h2 {
-    font-size: 35px;
-    font-weight: 400;
-    margin-bottom:15px;
-}
+
+
+    .eb-signup_wrapper .tbpad{
+        padding-top:1em;
+    }
+    .eb-signup-selltext h2 {
+        font-size: 35px;
+        font-weight: 400;
+        margin-bottom: 15px;
+    }
 .eb-signup-selltext h4 {
    font-size:25px;
 }

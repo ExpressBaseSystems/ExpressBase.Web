@@ -132,15 +132,33 @@
         display: block;
     }
 
+    .mu-parent-div .bootstrap-tagsinput {
+        width: 100%;
+        min-height: 150px;
+        border-radius: 0px;
+    }
+
+.mu-parent-div .checkbox {
+    padding-left: 25px;
+    font-weight: 300;
+}
+.mu-parent-div .checkbox:hover {
+    cursor: pointer;
+    background-color: #EEE;
+}
+
 
 /*----------------------------------ROLES---------------------------------------*/
-.outer-section-manageroles {
+.mr-parent-div {
+    padding: 4% 0% 0% 1%;
     height: 100vh;
     font-weight: 300;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding-bottom: 15px;
+}
+
+.mr-parent-div .tab-pane {
+    border: 1px solid #ddd;
+    border-top: none;
+    background-color: white;
 }
 
 .searchRsulsItemsDiv:hover {
@@ -229,10 +247,19 @@
 
 /*----------------------------------USER GROUP---------------------------------------*/
 
+.mug-parent-div {
+    padding: 4% 0% 0% 1%;
+    height: 100vh;
+}
+
+.mug-parent-div .tab-pane {
+    border: 1px solid #ddd;
+    border-top: none;
+    background-color: white;
+}
 
 
 /*----------------------------------COMMON LIST---------------------------------------*/
-
 .outer-section-commonlist {
     height: 100vh;
     background: white;

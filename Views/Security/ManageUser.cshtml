@@ -15,6 +15,7 @@
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
 @*<meta name="google-signin-client_id" content="1097281192898-q73cm1h8faa3ksjj2o44jchdlm179m87.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>*@
@@ -34,6 +35,7 @@
     var UInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.U_Info));
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
+    var LocConstraint = (Html.Raw(ViewBag.LocConstraint).ToString() == "") ? "null" : Html.Raw(ViewBag.LocConstraint);
 }
 <div class="mu-parent-div">
     <div class="row" style="height: 100%;">
@@ -170,11 +172,7 @@
                                 </div>
 
                             </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="label-custom-style">Mobile Device ID</label>
-                                    <input id="" class="form-control input-custom-style" type="text" title="Mobile Device ID" autocomplete="off">
-                                </div>
+                            <div class="col-md-4">                                
                                 <label class="label-custom-style">Api Key</label>
                                 <div class="form-group">
                                     <label class="" style="font-weight: 300;">Development</label>
@@ -213,8 +211,24 @@
                     </div>
                     <div id="menu1" class="tab-pane"></div>
 
-                    <div id="menu2" class="tab-pane">
-                        <div style="text-align: center; padding-top: 28%; font-size: 28px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>
+                    <div id="menu2" class="tab-pane" style="padding-top:30px;">
+                        <div class="row home-tab-cont">
+                            <div class="col-md-6">                                
+                                <div class="form-group" id="divLocConstraint">
+                                    <label class="label-custom-style">Locations white list</label>
+                                    <input id="txtLocations" class="form-control input-custom-style" type="text" title="Locations" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="label-custom-style">Mobile Device IDs white list</label>
+                                    <input id="" class="form-control input-custom-style" data-role="tagsinput" type="text" title="Mobile Device ID" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        @*<div style="text-align: center; padding-top: 28%; font-size: 28px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>*@
                     </div>
 
                     <div id="menu3" class="tab-pane"></div>
@@ -347,12 +361,14 @@
   }
 </script>*@
 
-    var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone, '@ViewBag.Env');
+    
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();
     }
     $('document').ready(function () {
+
+        var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone, '@ViewBag.Env', @LocConstraint);
 
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y-m-d" });
 

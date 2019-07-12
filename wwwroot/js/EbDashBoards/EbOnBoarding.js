@@ -22,7 +22,6 @@ var EbOnBoarding = function () {
                     email: $("#email").val().trim(),
                     name: $("#name").val().trim(),
                     country: $("#country option:selected").text().trim(),
-                    account: $("input[name='account_typ']:checked").val().trim(),
                     password: $("#inputPassword").val().trim()
                 }
             }).done(function (data) {
@@ -39,7 +38,7 @@ var EbOnBoarding = function () {
                     else {
                         if (data.AccountCreated == false) {
                             EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
-                            $(".iconspin").removeClass("fa fa-spinner fa-pulse");
+                           // $(".iconspin").removeClass("fa fa-spinner fa-pulse");
                             $("#save-profile").prop('disabled', false);
                         }
                     }
@@ -53,54 +52,31 @@ var EbOnBoarding = function () {
     this.validate = function () {
         let sts = true
         let pass = $('#inputPassword').val();
-        let confpass = $('#inputPasswordConfirm').val();
-        if (pass != confpass) {
-            $("#repeat_passwordlbl").css("visibility", "visible");
-            $("#inputPasswordConfirm").focus();
-            $('#inputPasswordConfirm').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
-        else {
-            $("#repeat_passwordlbl").css("visibility", "hidden");
-        }
-        let strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
-        if (pass.length >= 8 && strongRegex.test(pass)) {
-            $('#passlbl').text("Strong password");
-            $("#passlbl").css({ 'color': 'green' });
-            $("#passlbl").focusout();
-        } else {
-            $('#passlbl').text("Enter strong password");
-            $("#passlbl").css({ 'color': '#a94442' });
-            $("#inputPassword").focus();
-            $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
+
+
+        //let confpass = $('#inputPasswordConfirm').val();
+        //if (pass != confpass) {
+        //    $("#repeat_passwordlbl").css("visibility", "visible");
+        //    $("#inputPasswordConfirm").focus();
+        //    $('#inputPasswordConfirm').removeClass('txthighlight').addClass('txthighlightred');
+        //    sts = false;
+        //}
+        //else {
+        //    $("#repeat_passwordlbl").css("visibility", "hidden");
+        //}
 
         if ($("#country option:selected").val() == 0) {
-          //  $("#countrylbl").css("visibility", "visible");
+            //  $("#countrylbl").css("visibility", "visible");
             $("#country").focus();
-        $('#country').removeClass('txthighlight').addClass('txthighlightred');
+            $('#country').removeClass('txthighlight').addClass('txthighlightred');
             sts = false;
         }
         else {
             $('#country').removeClass('txthighlightred').addClass('txthighlight');
-         //   $("#countrylbl").css("visibility", "hidden");
+            //   $("#countrylbl").css("visibility", "hidden");
 
         }
 
-        let name = $("#name").val();
-        let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
-        if ((name.length == 0) || (u.test(name) == false)) {
-            $("#namelbl").css("visibility", "visible");
-            $("#namelbl").show();
-            $("#name").focus();
-            $('#name').removeClass('txthighlight').addClass('txthighlightred');
-            sts = false;
-        }
-        else {
-            $('#name').removeClass('txthighlightred').addClass('txthighlight');
-            $("#namelbl").css("visibility", "hidden");
-        }
 
         let com = $("#email").val();
         // var re = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
@@ -116,63 +92,54 @@ var EbOnBoarding = function () {
             $("#emaillbl").css("visibility", "hidden");
             $('#email').removeClass('txthighlightred').addClass('txthighlight');
         }
+    
+
+        let name = $("#name").val();
+        let u = new RegExp("^(?![ .'_-])[a-zA-Z .'_-]*$");
+        if ((name.length == 0) || (u.test(name) == false)) {
+            $("#namelbl").css("visibility", "visible");
+            $("#namelbl").show();
+            $("#name").focus();
+            $('#name').removeClass('txthighlight').addClass('txthighlightred');
+            sts = false;
+        }
+        else {
+            $('#name').removeClass('txthighlightred').addClass('txthighlight');
+            $("#namelbl").css("visibility", "hidden");
+        }
+
+        let strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+        if (pass.length >= 8 && strongRegex.test(pass)) {
+            $('#passlbl').text("Strong password");
+            $("#passlbl").css({ 'color': 'green' });
+            $("#passlbl").focusout();
+        } else {
+            $('#passlbl').text("Enter strong password");
+            $("#passlbl").css({ 'color': '#a94442' });
+            $("#inputPassword").focus();
+            $('#inputPassword').removeClass('txthighlight').addClass('txthighlightred');
+            sts = false;
+        }
 
         return sts;
     }
 
-    this.Solutionobjfn = function (e) {
-        e.preventDefault();
-        let tem = 1;
-        let t = new RegExp("[a-zA-Z0-9]");
-        if (($("#solutionname").val() === "") || (t.test($("#solutionname").val()) == false)) {
-            $("#slnnam").css("visibility", "visible");
-            tem = 0;
-            $("#solutionname").focus();
-            $('#solutionname').removeClass('txthighlight').addClass('txthighlightred');
-        }
-        else {
-            $("#slnnam").css("visibility", "hidden");
-            $('#solutionname').removeClass('txthighlightred').addClass('txthighlight');
-        }
-        if ($("#ebsid").val() === "") {
-            $("#slnid").css("visibility", "visible");
-            $("#ebsid").focus();
-            $('#ebsid').removeClass('txthighlight').addClass('txthighlightred');
-            tem = 0;
-        }
-        else {
-            $("#slnid").css("visibility", "hidden");
-            $('#ebsid').removeClass('txthighlightred').addClass('txthighlight');
-        }
 
-        if (tem === 1) {
-            this.solinfo.solurl = $("#ebsid").val().trim();
-            this.solinfo.solname = $("#solutionname").val().trim();
-            this.solinfo.soldesc = $("#Desc").val().trim();
-            $("#basic-info").hide();
-            $("#app-info").show();
-            EbMessage("show", { Message: "Saved" });
-            $("#save-subscrip").hide();
 
-            this.scrollToLast();
-        }
+    //this.selradiosecfn = function (e) {
+    //    //let k = $('input[name=selector]:checked').attr("id");
+    //    //let k = e.target.children[0].id;
 
-    }
+    //    $("#rcorners1").css("display", "block");
+    //    $("#s-option").removeAttr("checked");
+    //    $("#t-option").prop('checked', true);
+    //}
+    //this.selradiofirstfn = function () {
 
-    this.selradiosecfn = function (e) {
-        //let k = $('input[name=selector]:checked').attr("id");
-        //let k = e.target.children[0].id;
+    //    $("#t-option").removeAttr("checked");
+    //    $("#s-option").prop('checked', true);
 
-        $("#rcorners1").css("display", "block");
-        $("#s-option").removeAttr("checked");
-        $("#t-option").prop('checked', true);
-    }
-    this.selradiofirstfn = function () {
-
-        $("#t-option").removeAttr("checked");
-        $("#s-option").prop('checked', true);
-
-    }
+    //}
 
     this.Emailvalidate = function () {
         let com = $('#email').val();
@@ -237,8 +204,8 @@ let com = $("#email").val();
 
     this.init = function () {
         $("#save-profile").on("click", this.submitProfile.bind(this));
-        $("#radio1").on("click", this.selradiofirstfn.bind(this));
-        $("#radio2").on("click", this.selradiosecfn.bind(this));
+        //$("#radio1").on("click", this.selradiofirstfn.bind(this));
+        //$("#radio2").on("click", this.selradiosecfn.bind(this));
         $("#email").on("keyup", this.Emailvalidate.bind(this));
         $("#name").on("keyup", this.Namevalidate.bind(this));
         $("#country").on("click", this.Countryselect.bind(this));

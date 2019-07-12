@@ -42,7 +42,7 @@ namespace ExpressBase.Web.Controllers
             return Redirect("/Wiki");
         }
 
-        [HttpGet("/publicwiki/view/{id}")]
+        [HttpGet("/Wiki/View/{id}/{title}")]
         public IActionResult GetArticleById(string id)
         {
             GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()

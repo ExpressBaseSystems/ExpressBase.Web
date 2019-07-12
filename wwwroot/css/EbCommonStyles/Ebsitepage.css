@@ -709,7 +709,6 @@ input {
     }
     .eb_ext_pge_stl .rightpart {
         /*background: white;*/
-        height: 100%;
         display: flex;
         flex-flow: column;
         background: linear-gradient(to right,#eef9fe,#edf7ff);

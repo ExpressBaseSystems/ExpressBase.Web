@@ -52,6 +52,38 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        [HttpGet("/wiki/images/{quality}/{refid}")]
+        public IActionResult GetWikiImage(string refid, string quality)
+        {
+            DownloadFileResponse dfs = null;
+
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                this.FileClient.Timeout = new TimeSpan(0, 5, 0);
+
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadWikiImgRequest
+                        {
+                            ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(refid.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(quality) },
+
+                            RefId = refid.Split(CharConstants.DOT)[0]
+                        });
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(refid));
+                }
+
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
+
         private string GetMime(string fname)
         {
             return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
@@ -237,7 +269,6 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 dfq.ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(qlty) };
-
 
                 this.FileClient.Timeout = new TimeSpan(0, 5, 0);
 

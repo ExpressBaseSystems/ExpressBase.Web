@@ -206,7 +206,7 @@ namespace ExpressBase.Web.Controllers
         private bool isAvailSolution(string url)
         {
             IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
-            if (resp.Any())
+            if (resp.Any() || ((url.Split(CharConstants.DASH)[0]) == CoreConstants.ADMIN))
                 return true;
             else
                 return false;

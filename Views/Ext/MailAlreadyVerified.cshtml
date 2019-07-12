@@ -1,15 +1,14 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
     Html.RenderPartial("ExtPageHeader");
-     string home = string.Empty;
+    string home = string.Empty;
     string sociallink = string.Empty;
     string signinLink = string.Empty;
     if (ViewBag.Env == "Development")
     {
-        home = "http://localhost:41400/";
+        home = "http://localhost:41400";
         sociallink = "http://localhost:41600";
         signinLink = "http://myaccount.localhost:41500";
-
     }
     if (ViewBag.Env == "Staging")
     {
@@ -24,20 +23,64 @@
         signinLink = "https://myaccount.expressbase.com";
     }
 }
-    <link rel="stylesheet" href="~/css/EbCommonStyles/Ebsitepage.css">
+@*<link rel="stylesheet" href="~/css/Resetpassword.css">*@
+<link rel="stylesheet" href="~/css/EbCommonStyles/Ebsitepage.css">
 
-<div class="eb_mailverify ">
-    <div class="veri_content col-md-6 col-lg-6 col-lg-offset-3 col-md-offset-3">
-        <div>
-            <p><h4>WELCOME TO EXPRESSBASE</h4></p>
-            <br />
-            <p>Your account has already verified <br /></p>
-            <p>Please login to continue... <br /></p>
-            <a class="btn btn-primary lg_button " href="@signinLink/Ext/TenantSignIn" role="button">
-                Sign In
-            </a>
-            
+
+
+
+
+<div class="eb_ext_pge_stl ">
+
+
+    <div class="container-fluid col-sm-8 col-md-8 col-lg-8 col-lg-offset-2 col-md-offset-2 fgshwd">
+        <div class="row row-flex">
+            <div class="col-sm-6 col-md-6 col-lg-6 hidden-xs row-flex ">
+                <div class=" col-sm-12 col-md-12 col-lg-12 fgimgdiv">
+
+                    <img src="~/images/forgot_pswd.png" class="leftsideimg">
+                </div>
+
+            </div>
+            <div class="col-sm-6 col-md-6 col-lg-6 col-xs-12 rightpart">
+                <div id="loaderdiv" style="left:0;top:0;">
+                </div>
+                <div class="row-flex right-part-inner">
+                    <div class="center_rightpart col-xs-12" id="userdetails">
+
+                        <div class=" col-sm-12 col-md-12 col-lg-12">
+                            <h1>Verified Account</h1>
+                        </div>
+
+                        <div class=" col-sm-12 col-md-12 col-lg-12">
+                            <p>Your account has already verified <br /></p>
+                            <p>Please login in to continue.. <br /></p>
+
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12 rightcolpadtop ">
+                            <button id="logintnt" class="btn save-tenant lg_button " type="button">
+                                Login
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
         </div>
-        
     </div>
+
 </div>
+
+<script>
+    console.log("sdf");
+    $(document).ready(function () {
+
+        $("#logintnt").click(function (e) {
+            e.preventDefault();
+            location.href = "/Ext/TenantSignin";
+        });
+
+    });
+</script>
+

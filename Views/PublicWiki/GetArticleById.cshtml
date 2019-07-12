@@ -3,23 +3,64 @@
     Html.RenderPartial("ExtPageHeader");
 }
 @using ExpressBase.Objects.ServiceStack_Artifacts;
-
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
 <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
+
+@section StyleSheet{
+    @*<script>
+        window.___blgc = `@Html.Raw(ViewBag.Wiki.HTML)`;
+        var d = document.createElement("div");
+        d.innerHTML = ___blgc;
+        var p = $(d).text().substring(0, $(d).text().indexOf("."));
+        var _meta = `<meta property="og:description" content="${p}">`;
+        document.write(_meta);
+    </script>*@
+    <meta property="og:title" content="@ViewBag.Wiki.Title">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="">
+    <meta property="og:url" content="@ViewBag.Url">
+    <meta name="twitter:card" content="">
+
+    <!--  Non-Essential, But Recommended -->
+
+    <meta property="og:site_name" content="EXPRESSbase Systems">
+    <meta name="twitter:image:alt" content="">
+
+
+    <!--  Non-Essential, But Required for Analytics -->
+
+    <meta property="fb:app_id" content="your_app_id" />
+    <meta name="twitter:site" content="">
+
+}
 <script>
     $(document).ready(function () {
         new addwiki();
-        document.title = '@ViewBag.Wiki.Title'
+        //document.title = '@ViewBag.Wiki.Title'
     });
 </script>
 <div class="container" style="margin-top:70px">
     <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12 wiki_data_div">
             @{
                 Wiki wiki = ViewBag.Wiki;
 
                 @Html.Raw(wiki.HTML)
             }
         </div>
+        <script>
+            //$(document).ready(function () {
+            let title = $(".wiki_data_div h1").text();
+            //title = title.replace(/(\r\n|\n|\r)/gm, "");
+            let desc = $(".wiki_data_div p").text().substring(0, $(".wiki_data_div p").text().indexOf("."));
+            let url = window.location.href;
+            $(`meta[property="og:title"]`).prop("content", `${title}`);
+            $(`meta[property="og:description"]`).prop("content", `${desc}`);
+            $(`meta[property="og:image"]`).attr("content", ``);
+            $(`meta[property="og:url"]`).attr("content", `${url}`);
+            $(`meta[name="twitter:card"]`).attr("content", "large image");
+            $("title").text(`@ViewBag.Wiki.Title : ${desc}`);
+                    //});
+        </script>
     </div>
 </div>

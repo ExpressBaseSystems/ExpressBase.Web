@@ -83,9 +83,8 @@
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
-       
         $(".wikilist").removeClass("CurrentSelection");
-        $(`#${id}`).addClass("CurrentSelection");
+        $(`[data-id='${id}']`).addClass("CurrentSelection");
         this.AjaxCalFetchWikiList(id);
         //let title = $(".wiki_data h1").text();
         window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
@@ -331,6 +330,7 @@
     }
 
     this.WikiListToggle = function (e) {
+        $(".wikilist").removeClass("CurrentSelection");
         let id = $(e.target).closest(".wraper-link").attr('val');
         if (id == "home") {
             $("#ebwiki_panebrd").html("Getting started");
@@ -873,7 +873,7 @@
     }
 
     this.GetStartToWikiDocs = function (e) {
-        let value = e.target.getAttribute("val");
+        let value = $(e.target).closest(".GettingStarted").attr("val");
         $(`#${value}>ul>li:first>a`).click();
     }
 

@@ -51,6 +51,15 @@ namespace ExpressBase.Web.Controllers
             });
 
             ViewBag.Wiki = resp.Wiki;
+            //if(ViewBag.Env == "Staging")
+            //{
+               
+            var location = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}");
+            ViewBag.Url = location.AbsoluteUri;
+            int si = resp.Wiki.HTML.IndexOf("<h1>");
+            int ei = resp.Wiki.HTML.IndexOf("</h1>");
+            ViewBag.Metatitle = resp.Wiki.HTML.Substring(si, ei-si);
+            //}
 
             return View();
         }

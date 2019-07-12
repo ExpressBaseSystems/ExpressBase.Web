@@ -90,7 +90,7 @@ namespace ExpressBase.Web.Controllers
                     }
                 });
 
-                return Redirect(string.Format("/publicwiki/view/{0}", resp.Wiki.Id));
+                return Redirect(string.Format("/Wiki/View/{0}/wikilist", resp.Wiki.Id));
             }
             else
             {
@@ -107,7 +107,7 @@ namespace ExpressBase.Web.Controllers
                     }
 
                 });
-                return Redirect(string.Format("/publicwiki/view/{0}", resp.Wiki.Id));
+                return Redirect(string.Format("/Wiki/View/{0}/wikilist", resp.Wiki.Id));
             }
         }
 

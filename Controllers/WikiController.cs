@@ -26,23 +26,21 @@ namespace ExpressBase.Web.Controllers
                 {
                     Id = Convert.ToInt32(id)
                 });
-
                 if (resp == null)
-                {
                     return Redirect("0");
-                }
                 else
-                {
                     ViewBag.Wiki = resp.Wiki;
-                    return View();
-                }
             }
             else
-            {
                 ViewBag.Wiki = new Wiki() { Id = 0 };
-                return View();
-            }
 
+            FileRefByContextResponse res = this.ServiceClient.Get<FileRefByContextResponse>(new FileRefByContextRequest
+            {
+                Context = "eb_wiki"
+            });
+
+            ViewBag.Images = JsonConvert.SerializeObject(res.Images);
+            return View();
         }
 
         [HttpGet("/apitest")]

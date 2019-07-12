@@ -64,7 +64,6 @@
     }
     .eb-signup_wrapper .rightpart {
         background: white;
-        height: 100%;
         display: flex;
         flex-flow: column;
     }
@@ -93,7 +92,7 @@
 }
 
 .eb-signup_wrapper .icon_input .sinpt {
-    padding-left: 35px;
+    padding-left: 42px;
 }
     .eb-signup_wrapper .leftpart {
        display:flex;
@@ -438,7 +437,7 @@ input {
         position: absolute;
         left: 0;
         top: 6px;
-        padding: 9px 8px;
+        padding: 10px 15px;
         color: #7da4ec;
         transition: 0.3s;
     }
@@ -636,7 +635,7 @@ input {
         height: 45px;
     }
     .eb_ext_pge_stl .icon_input .sinpt {
-        padding-left: 35px;
+        padding-left: 42px;
     }
     .eb_ext_pge_stl .lg_button {
         color: white;
@@ -659,7 +658,7 @@ input {
             position: absolute;
             left: 0;
             top: 6px;
-            padding: 9px 8px;
+            padding: 10px 15px;
             color: #7da4ec;
             transition: 0.3s;
         }
@@ -722,6 +721,9 @@ input {
         padding-top: 4em;
     }
 
+    .eb_ext_pge_stl .tbpad {
+        padding-top: 1em;
+    }
 
 /*css for emailverify page*/
 

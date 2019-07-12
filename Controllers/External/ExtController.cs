@@ -60,7 +60,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet("Platform/Board")]
+        [HttpGet("Platform/OnBoarding")]
         public IActionResult SignUp()
         {
             return View();

@@ -124,7 +124,8 @@ const WebFormRender = function (option) {
         this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
-        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
+        this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
+        this.ApprovalCtrl = getFlatObjOfType(this.FormObj, "Approval")[0];//Approval in the formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
@@ -247,6 +248,11 @@ const WebFormRender = function (option) {
             let SingleTable = EditModeFormData[DG.TableName];
             DG.setEditModeRows(SingleTable);
         }.bind(this));
+
+        if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
+            let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
+            this.ApprovalCtrl.setEditModeRows(SingleTable);
+        }
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);

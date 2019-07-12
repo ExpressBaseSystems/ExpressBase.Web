@@ -98,6 +98,9 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
+            else if (Obj.ObjType === "Approval") {
+                opt = { formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
+            }
             this.initControls.init(Obj, opt);
         }.bind(this));
     };
@@ -270,6 +273,12 @@ const WebFormRender = function (option) {
     //    });
     //};
 
+    this.getApprovalRow = function () {
+        let FVWTObjColl = {};
+        FVWTObjColl[this.ApprovalCtrl.TableName] = this.ApprovalCtrl.ChangedRowObject();
+        return FVWTObjColl;
+    };
+
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
         $.each(this.DGs, function (i, DG) {
@@ -343,6 +352,7 @@ const WebFormRender = function (option) {
 
         let formTables = this.getFormTables();
         let gridTables = this.getDG_FVWTObjColl();
+        let approvalTable = this.getApprovalRow();
 
         WebformData.MultipleTables = $.extend(formTables, gridTables);
         WebformData.ExtendedTables = this.getExtendedTables();

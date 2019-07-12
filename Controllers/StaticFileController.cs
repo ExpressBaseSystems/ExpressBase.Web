@@ -77,7 +77,7 @@ namespace ExpressBase.Web.Controllers
                 }
 
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message.ToString());
             }
@@ -354,9 +354,9 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                List<string> tags = req["Tags"].ToList<string>();
-
+                List<string> tags = string.IsNullOrEmpty(req["Tags"]) ? new List<string>() : req["Tags"].ToList<string>();
                 List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
+                string context = (req.ContainsKey("Context")) ? context = req["Context"] : StaticFileConstants.CONTEXT_DEFAULT;
 
                 UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
                 uploadImageRequest.ImageInfo = new ImageMeta();
@@ -375,8 +375,8 @@ namespace ExpressBase.Web.Controllers
                         }
                         uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
                         uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tags);
-                        if (catogory.Count>0)
-                            uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Category", catogory);
+                        uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Category", catogory);
+                        uploadImageRequest.ImageInfo.Context = context;
 
                         uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
                         uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
@@ -607,12 +607,13 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public bool ChangeCategory(string Category,string FileRefs)
+        public bool ChangeCategory(string Category, string FileRefs)
         {
-            FileCategoryChangeResponse resp = this.FileClient.Post(new FileCategoryChangeRequest {
+            FileCategoryChangeResponse resp = this.FileClient.Post(new FileCategoryChangeRequest
+            {
                 Category = Category,
                 FileRefId = FileRefs.Split(CharConstants.COMMA).Select(n => int.Parse(n)).ToArray()
-        });
+            });
             return resp.Status;
         }
     }

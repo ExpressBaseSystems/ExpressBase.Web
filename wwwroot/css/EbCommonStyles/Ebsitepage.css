@@ -64,7 +64,6 @@
     }
     .eb-signup_wrapper .rightpart {
         background: white;
-        height: 100%;
         display: flex;
         flex-flow: column;
     }
@@ -78,17 +77,22 @@
 .eb-signup_wrapper .sinpt {
     height: 45px;
 }
-.eb-signup-selltext h2 {
-    font-size: 35px;
-    font-weight: 400;
-    margin-bottom:15px;
-}
+
+
+    .eb-signup_wrapper .tbpad{
+        padding-top:1em;
+    }
+    .eb-signup-selltext h2 {
+        font-size: 35px;
+        font-weight: 400;
+        margin-bottom: 15px;
+    }
 .eb-signup-selltext h4 {
    font-size:25px;
 }
 
 .eb-signup_wrapper .icon_input .sinpt {
-    padding-left: 35px;
+    padding-left: 42px;
 }
     .eb-signup_wrapper .leftpart {
        display:flex;
@@ -433,7 +437,7 @@ input {
         position: absolute;
         left: 0;
         top: 6px;
-        padding: 9px 8px;
+        padding: 10px 15px;
         color: #7da4ec;
         transition: 0.3s;
     }
@@ -631,7 +635,7 @@ input {
         height: 45px;
     }
     .eb_ext_pge_stl .icon_input .sinpt {
-        padding-left: 35px;
+        padding-left: 42px;
     }
     .eb_ext_pge_stl .lg_button {
         color: white;
@@ -654,7 +658,7 @@ input {
             position: absolute;
             left: 0;
             top: 6px;
-            padding: 9px 8px;
+            padding: 10px 15px;
             color: #7da4ec;
             transition: 0.3s;
         }
@@ -704,7 +708,6 @@ input {
     }
     .eb_ext_pge_stl .rightpart {
         /*background: white;*/
-        height: 100%;
         display: flex;
         flex-flow: column;
         background: linear-gradient(to right,#eef9fe,#edf7ff);
@@ -718,6 +721,9 @@ input {
         padding-top: 4em;
     }
 
+    .eb_ext_pge_stl .tbpad {
+        padding-top: 1em;
+    }
 
 /*css for emailverify page*/
 

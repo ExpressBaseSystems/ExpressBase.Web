@@ -390,10 +390,15 @@
         margin-left: 11px;
     }
 
-    .DDdiv tr {
+    .DDdiv table.dataTable > tbody > tr {
         transition-duration: 0.1s;
     }
 
+        .DDdiv table.dataTable > tbody > tr:hover {
+            /*background-color: rgba(73, 102, 117, 0.058);*/
+            cursor: pointer;
+        }
+               
 .ebCombo-loader {
     /*display:none;*/
     position: absolute;
@@ -423,6 +428,7 @@
     background-color: white; /*jovis*/
     display: flex; /*jovis*/
 }
+
     .search-block > .input-group {
         display: flex; /*jovis*/
         align-items: stretch; /*jovis*/
@@ -462,6 +468,7 @@
 [iblock] .close {
     display: none;
 }
+
 [iblock] .selected-tag {
     padding: 0.1em .45em 0.15em 0.45em !important;
 }

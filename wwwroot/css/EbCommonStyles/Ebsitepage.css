@@ -90,6 +90,9 @@
 .eb-signup-selltext h4 {
    font-size:25px;
 }
+.eb-signup_wrapper label{
+    font-weight:500;
+}
 
 .eb-signup_wrapper .icon_input .sinpt {
     padding-left: 42px;

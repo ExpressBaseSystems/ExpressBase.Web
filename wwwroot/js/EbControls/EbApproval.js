@@ -85,7 +85,7 @@
         if (this.editable)
             return this.changedRowWT();
         else
-            return {};
+            return null;
     }.bind(this);
 
     this.changedRowWT = function () {

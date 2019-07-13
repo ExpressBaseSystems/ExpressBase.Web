@@ -156,10 +156,14 @@
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();
         this.$container.find(".fs-submit").show();
         $row.attr("active", "true");
+
+        let url = `url(../images/dp/${this.userObj.UserId}.png)`;
+        $row.find("[col='review-dtls'] .fs-dp").css("background-image", url);
+        $row.find("[col='review-dtls'] .fs-uname").text(this.userObj.FullName);
     };
 
     this.enableAccessibleRow = function (curRole) {
-        this.userObj.Roles.push(curRole); /// TEMP
+        //this.userObj.Roles.push(curRole); /// TEMP
         if (this.userObj.Roles.includes(this.nextRole)) {
             this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
             this.enableRow(this.$AccessibleRow);

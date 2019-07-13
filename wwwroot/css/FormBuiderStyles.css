@@ -311,6 +311,13 @@
     height: 100%;
 }
 
+.fs-tbl tr[active='true'], .fs-tbl tr[active='true'] .fs-textarea {
+    font-weight:bold;
+}
+.fs-tbl tr, .fs-tbl tr .fs-textarea {
+    font-weight: normal;
+}
+
 .fs-tbl .fstd-div {
     width: 100%;
     height: 100%;

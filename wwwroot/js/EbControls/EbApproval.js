@@ -8,10 +8,12 @@
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$container = $(`#cont_${this.ctrl.EbSid_CtxId}`);
     this.$table = $(`#${this.TableId}`);
+    this.Mode = options.Mode;
     this.stages = this.ctrl.FormStages.$values.reverse();
     this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
 
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
+
         return this.setEditModeRows(SingleTable);
     }.bind(this);
 
@@ -148,14 +150,14 @@
         $('.selectpicker').selectpicker();
         this.$table.find(".fstd-div .fs-textarea").attr('disabled', 'disabled').css('pointer-events', 'none');
         this.$table.find("td[col='status'] .dropdown-toggle").attr('disabled', 'disabled').css('pointer-events', 'none').find(".bs-caret").hide();
-        this.$container.find(".fs-submit").hide();
+        this.$submit.hide();
         this.$container.find("tr").attr("active", "false");
     };
 
     this.enableRow = function ($row) {
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();
-        this.$container.find(".fs-submit").show();
+        this.$submit.show();
         $row.attr("active", "true");
 
         let url = `url(../images/dp/${this.userObj.UserId}.png)`;
@@ -164,7 +166,7 @@
     };
 
     this.enableAccessibleRow = function (curRole) {
-        //this.userObj.Roles.push("NHG_President"); /// TEMP
+        //this.userObj.Roles.push("test_role"); /// TEMP
         if (this.userObj.Roles.includes(this.nextRole)) {
             this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
             this.enableRow(this.$AccessibleRow);
@@ -177,6 +179,7 @@
     this.init = function () {
         this.disableAllCtrls();
         this.enableAccessibleRow(this.nextRole);
+        this.$submit = this.$container.find(".fs-submit");
         this.$container.on("click", ".fs-submit", this.submit);
     };
 

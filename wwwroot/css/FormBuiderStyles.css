@@ -302,8 +302,12 @@
         vertical-align: middle;
     }
 
+.fs-submit {
+    display:none;
+}
+
 .fs-tbl > tbody > tr > td.fs-ctrl-td {
-    padding:0;
+    padding: 0;
 }
 
 .fs-tbl .fs-textarea {
@@ -353,7 +357,7 @@
     width: 47px;
     border: solid 1px #eee;
     border-radius: 50%;
-    background-image: url(../images/demobotdp4.png);
+    background-image: url(../images/nulldp.png);
 }
 
 .fs-tbl .dropdown-toggle[data-toggle="dropdown"]:focus {

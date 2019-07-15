@@ -393,7 +393,7 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if (this.ApprovalCtrl) {
+        if (el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({
                 id: "reviewCtrl",

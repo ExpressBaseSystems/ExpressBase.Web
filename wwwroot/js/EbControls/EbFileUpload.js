@@ -612,7 +612,7 @@ class EbFileUpload extends EbFupStaticData {
     }
 
     readCategory(file) {
-        if (this.Options.Categories.Length > 0) {
+        if (this.Options.Categories.length > 0) {
             let f = this.replceSpl(file.name);
             return $(`#${f}-category`).val().split();
         }

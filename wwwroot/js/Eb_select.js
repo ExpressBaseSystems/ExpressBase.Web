@@ -649,12 +649,19 @@ const EbSelect = function (ctrl, options) {
         return val;
     };
 
-    this.V_showDD = function () {
+    this.V_showDD = function (e) {
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
             EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+            //if ($(e.target).val() !== "") {
+            //    this.delayedSearchFN(e);
+            //}
+            //else {
+            //    this.datatable.columnSearch = [];
+            //    this.datatable.Api.ajax.reload();
+            //}
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');

@@ -69,8 +69,6 @@ class DvBuilder {
             objid = this.EbObject.RefId.split("-")[3];
         $("#obj_icons ").empty();
         $("#obj_icons").append(`<a class='btn' id="preview" ><i class="fa fa-eye" aria-hidden="true"></i></a>`);
-        $("#obj_icons").prepend(`<a class='btn' id="oldbuilder" href='../Eb_Object/index?objid=${objid}&objtype=16&buildermode=false'>
-            <i class="fa fa-external-link" aria-hidden="true"></i></a>`);
         $("#preview").off("click").on("click", this.previewClick.bind(this));
     }
 
@@ -119,6 +117,7 @@ class DvBuilder {
     }
 
     PropertyChanged(obj, pname, newval, oldval) {
+
         if (pname === "DataSourceRefId") {
             this.OldDataSourceRefid = oldval;
             this.check4Customcolumn();
@@ -385,13 +384,13 @@ class DvBuilder {
             $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "' class='tablecolumns'></ul></li>");
             $.each(columnCollection.$values, function (j, obj) {
                 type = this.getType(obj.Type); icon = this.getIcon(obj.Type);
-                $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
+                $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
             }.bind(this));
         }.bind(this));
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsCustomColumn) {
                 $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-                    class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+                    class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
             }
         }.bind(this));
         $('#data-table-list').killTree();
@@ -524,6 +523,7 @@ class DvBuilder {
         else if ($(target).attr("id") === "columns-list-body") {
             let name = $(el).attr("eb-name");
             $(el).attr("eb-keyname", name);
+            $(el).addClass("column");
             $(el).find("span").wrap(`<div id="${name}_elemsCont" class="columnelemsCont"><div id="${name}_spanCont" class="columnspanCont"></div></div>`);
             $(el).find(`#${name}_spanCont`).after(`<input class="columntitle" type="text" id="${name}_columntitle"/>`);
             this.ColumnDropRelated(el);
@@ -559,6 +559,7 @@ class DvBuilder {
     }
 
     elementOnFocus(e) {
+        $(e.target).closest("li").focusin();
         $("#page-outer-cont").find(".columnelemsCont").removeClass("focused focusedColumn");
         let key = $(e.target).closest("li").attr("eb-keyname");
         var obj = this.objCollection[key];
@@ -614,7 +615,7 @@ class DvBuilder {
         $("#columns-list-body").empty();
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.bVisible) {
-                let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
+                let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='column' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
                 this.ColumnDropRelated(element);
                 $("#columns-list-body").append(element);
                 $(element).off("click").on("click", this.elementOnFocus.bind(this));
@@ -1185,7 +1186,7 @@ class DvBuilder {
             return "DVNumericColumn";
         }
         else if (type === 3) {
-            return "DVbooleanColumn";
+            return "DVBooleanColumn";
         }
         else if (type === 5 || type === 6 || type === 17 || type === 26) {
             return "DVDateTimeColumn";

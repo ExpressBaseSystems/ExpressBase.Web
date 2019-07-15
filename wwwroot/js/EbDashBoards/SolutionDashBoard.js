@@ -6,6 +6,7 @@ var SolutionDashBoard = function (connections, sid) {
     var postData;
     var Deleteid;
     var preferancetype = [];
+    var preventContextMenu = 0;
     var Imageurl = {
         "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:50px' />",
         "MSSQL": "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />",
@@ -46,6 +47,7 @@ var SolutionDashBoard = function (connections, sid) {
             }
         });
     };
+        
 
     this.editconnection = function (i, obj) {
         var input = $(obj).attr("field");
@@ -60,10 +62,12 @@ var SolutionDashBoard = function (connections, sid) {
             url: "../ConnectionManager/Integrate",
             data: postData,
             beforeSend: function () {
+                preventContextMenu = 1;
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
             $("#Integration_loder").EbLoader("hide");
+            preventContextMenu = 0;
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
                 EbMessage("show", { Message: "Integreation Changed Successfully" });
@@ -79,10 +83,12 @@ var SolutionDashBoard = function (connections, sid) {
             url: "../ConnectionManager/IntegrationSwitch",
             data: { preferancetype: JSON.stringify(preferancetype), sid },
             beforeSend: function () {
+                preventContextMenu = 1;
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
             $("#Integration_loder").EbLoader("hide");
+            preventContextMenu = 0;
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
                 EbMessage("show", { Message: "Integreation Changed Successfully" });
@@ -98,9 +104,11 @@ var SolutionDashBoard = function (connections, sid) {
             url: "../ConnectionManager/PrimaryDelete",
             data: { preferancetype: JSON.stringify(postData), sid, Deleteid },
             beforeSend: function () {
+                preventContextMenu = 1;
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            preventContextMenu = 0;
             $("#Integration_loder").EbLoader("hide");
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
@@ -117,9 +125,11 @@ var SolutionDashBoard = function (connections, sid) {
             url: "../ConnectionManager/IntegrateConfDelete",
             data: { Id, sid },
             beforeSend: function () {
+                preventContextMenu = 1;
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            preventContextMenu = 0;
             $("#Integration_loder").EbLoader("hide");
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
@@ -136,9 +146,11 @@ var SolutionDashBoard = function (connections, sid) {
             url: "../ConnectionManager/IntegrateDelete",
             data: { Id, sid },
             beforeSend: function () {
+                preventContextMenu = 1;
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
+            preventContextMenu = 0;
             $("#Integration_loder").EbLoader("hide");
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
@@ -1013,7 +1025,8 @@ var SolutionDashBoard = function (connections, sid) {
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
-                return options;
+                if (preventContextMenu == 0)
+                    return options;
             }.bind(this)
         });
         $('.context-menu-one').on('click', function (e) {
@@ -1172,8 +1185,8 @@ var SolutionDashBoard = function (connections, sid) {
                         }
 
                 }
-
-                return options;
+                if (preventContextMenu == 0)
+                    return options;
             }.bind(this)
         });
         $('.context-menu-one').on('click', function (e) {

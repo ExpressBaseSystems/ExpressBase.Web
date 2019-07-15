@@ -68,7 +68,7 @@ const WebFormRender = function (option) {
         this.FRC.setFormObjHelperfns();
         this.setFormObjectMode();
         this.FRC.setUpdateDependentControlsFn();
-        
+
 
         return this.formObject;
     };
@@ -98,11 +98,12 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-            else if (Obj.ObjType === "Approval") {
-                opt = { formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
-            }
             this.initControls.init(Obj, opt);
         }.bind(this));
+        if (this.ApprovalCtrl) {
+            opt = { formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
+            this.initControls.init(this.ApprovalCtrl, opt);
+        }
     };
 
     this.SetWatchers = function () {
@@ -125,7 +126,7 @@ const WebFormRender = function (option) {
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
-        this.ApprovalCtrl = getFlatObjOfType(this.FormObj, "Approval")[0];//Approval in the formObject
+        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
@@ -249,10 +250,12 @@ const WebFormRender = function (option) {
             DG.setEditModeRows(SingleTable);
         }.bind(this));
 
-        if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-            let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
-            this.ApprovalCtrl.setEditModeRows(SingleTable);
-        }
+        if (this.ApprovalCtrl) {
+            if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
+                let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
+                this.ApprovalCtrl.setEditModeRows(SingleTable);
+            }
+        }       
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
@@ -281,7 +284,11 @@ const WebFormRender = function (option) {
 
     this.getApprovalRow = function () {
         let FVWTObjColl = {};
-        FVWTObjColl[this.ApprovalCtrl.TableName] = this.ApprovalCtrl.ChangedRowObject();
+        if (this.ApprovalCtrl) {
+            let tOb = this.ApprovalCtrl.ChangedRowObject();
+            if (tOb)
+                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        }        
         return FVWTObjColl;
     };
 
@@ -354,13 +361,15 @@ const WebFormRender = function (option) {
 
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
+        let approvalTable = {};
         WebformData.MasterTable = this.FormObj.TableName;
 
         let formTables = this.getFormTables();
         let gridTables = this.getDG_FVWTObjColl();
-        let approvalTable = this.getApprovalRow();
+        if (this.ApprovalCtrl)
+            approvalTable = this.getApprovalRow();
 
-        WebformData.MultipleTables = $.extend(formTables, gridTables);
+        WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.ExtendedTables = this.getExtendedTables();
         return JSON.stringify(WebformData);
     };
@@ -969,7 +978,7 @@ const WebFormRender = function (option) {
             }
 
         }
-        
+
         ebcontext.locations.Listener.ChangeLocation = function (o) {
             if (this.rowId > 0) {
                 EbDialog("show", {

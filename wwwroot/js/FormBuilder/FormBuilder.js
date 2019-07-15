@@ -487,6 +487,10 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
+        if (this.rootContainerObj.TableName.trim() === "")
+            this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
+        if (this.rootContainerObj.DisplayName.trim() === "")
+            this.rootContainerObj.DisplayName = this.rootContainerObj.Name;
         this.$form.focus();
         if (this.isEditMode) {
             this.makeTdsDropable_Resizable();

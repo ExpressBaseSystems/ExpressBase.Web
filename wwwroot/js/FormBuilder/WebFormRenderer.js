@@ -101,7 +101,7 @@ const WebFormRender = function (option) {
             this.initControls.init(Obj, opt);
         }.bind(this));
         if (this.ApprovalCtrl) {
-            opt = { formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
+            opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
             this.initControls.init(this.ApprovalCtrl, opt);
         }
     };
@@ -126,7 +126,7 @@ const WebFormRender = function (option) {
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
-        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval");//Approval in the formObject
+        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
@@ -255,7 +255,7 @@ const WebFormRender = function (option) {
                 let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
                 this.ApprovalCtrl.setEditModeRows(SingleTable);
             }
-        }       
+        }
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
@@ -288,7 +288,7 @@ const WebFormRender = function (option) {
             let tOb = this.ApprovalCtrl.ChangedRowObject();
             if (tOb)
                 FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
-        }        
+        }
         return FVWTObjColl;
     };
 

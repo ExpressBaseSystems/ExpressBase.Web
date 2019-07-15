@@ -126,7 +126,7 @@ const WebFormRender = function (option) {
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
-        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval");//Approval in the formObject
+        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1

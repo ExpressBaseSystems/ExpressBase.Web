@@ -56,12 +56,15 @@ namespace ExpressBase.Web.Controllers
                
             var location = new Uri($"{Request.Scheme}s://{Request.Host}{Request.Path}{Request.QueryString}");
             ViewBag.Url = location.AbsoluteUri;
+              object TagObject;
+            TagObject = resp.Wiki.Tags.Split(',');
+            ViewBag.TagObject = TagObject;
+            ViewBag.Title = resp.Wiki.Title + " | EXPRESSbase Systems";
 
+            int si = resp.Wiki.HTML.IndexOf("<p>");
 
-            int si = resp.Wiki.HTML.IndexOf("<h1>");
-            int ei = resp.Wiki.HTML.IndexOf("</h1>");
-            ViewBag.Metatitle = resp.Wiki.HTML.Substring(si, ei-si);
-            //}
+            int ei = resp.Wiki.HTML.IndexOf("</p>");
+            ViewBag.Metatitle = resp.Wiki.HTML.Substring(si, ei - si);
 
             return View();
         }

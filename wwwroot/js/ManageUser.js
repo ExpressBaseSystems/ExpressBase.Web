@@ -1,4 +1,4 @@
-﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone, env) {
+﻿var UserJs = function (mode, userinfo, cusroles, usergroup, uroles, ugroups, r2rList, userstatusList, culture, timeZone, env, locCons) {
     this.whichMode = mode;
     //CreateEdit = 1, View = 2, MyProfileView = 3
     this.Environment = env;
@@ -11,6 +11,7 @@
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
+    this.LocCntr = locCons;
     this.r2rList = r2rList;
     this.statusList = userstatusList;
     this.itemId = parseInt($("#userid").val());
@@ -66,13 +67,16 @@
     this.rolesTile = null;
     this.userGroupTile = null;
 
+    //CONSTRAINTS
+    this.divLocCnstr = $("#divLocConstraint");
+    this.txtLocations = $("#txtLocations");
+
     this.selectLocale = $("#sellocale");
     this.divLocaleInfo = $("#divLocaleInfo");
     this.selectTimeZone = $("#seltimezone");
 
     this.init = function () {
-
-        
+                
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
         this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
@@ -104,6 +108,7 @@
         if (this.whichMode === 2)
             this.setReadOnly();
         //this.DpImageUpload();
+        this.setLocConstraintDiv();
     };
 
 
@@ -124,6 +129,40 @@
     //    }.bind(this);
     //};
 
+    this.setLocConstraintDiv = function () {
+        var _locArr = new Bloodhound({
+            datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            local: $.map(ebcontext.locations.Locations, function (loc) { return { id: loc.LocId, name: loc.ShortName + ' - ' + loc.LongName }; })
+        });
+        _locArr.initialize();
+                
+        this.txtLocations.tagsinput({
+            typeaheadjs: [
+                {
+                    highlight: false
+                },
+                {
+                    name: 'Locations',
+                    displayKey: 'name',
+                    valueKey: 'id',
+                    source: _locArr.ttAdapter()
+                }
+            ],
+            itemValue: 'name',
+            freeInput: false
+        });
+
+        this.txtLocations.on('itemAdded', function (event) {
+            console.log(event.item);
+        });
+
+        $('input').on('itemRemoved', function (event) {
+            console.log(event.item);
+        });
+
+        //$('#txtLocations').tagsinput('add', { id: 100, name: 'AERE - AL EID REAL ESTATE.DUBAI.' });
+    };
 
     this.onKeyUpPwdInModal = function (pwdThis) {
         if (this.validateInfo(pwdThis, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/)) {
@@ -260,10 +299,10 @@
     this.selectLocaleChangeAction = function (e) {
         var indx = this.selectLocale.prop('selectedIndex');
         this.divLocaleInfo.children().remove();
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Native Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].NativeName}</label>`);
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
-        this.divLocaleInfo.append(`<label style="font-family: open sans; font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>Native Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].NativeName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>English Name: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].EnglishName}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>Currency Format: </b>${this.culture[indx].NumberFormat}</label>`);
+        this.divLocaleInfo.append(`<label style="font-weight: 300;width:100%;"><b>Date Format: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</b>${this.culture[indx].DateFormat}</label>`);
     };
 
     this.initUserInfo = function () {
@@ -570,7 +609,7 @@
     };
 
     this.resetPassword = function () {
-        if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() && this.pwdResetNew.val().length < 8) {
+        if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() || this.pwdResetNew.val().length < 8) {
             EbMessage("show", { Message: 'Password mismach or length too short', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
@@ -750,11 +789,11 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
                
         var metadata3 = ['Id','Title','Description','_simpleClose'];
         if (this.ipAddTile === null) {
-            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "200px" };
+            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "calc((100vh - 210px)/2) !important" };
             this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", this.ipconsList, null, metadata3, null, null, null, options);
         }
         if (this.timeAddTile === null) {
-            let options = { longTitle: "DateTime Whitelist", tileDivHeight: "200px" };
+            let options = { longTitle: "DateTime Whitelist", tileDivHeight: "calc((100vh - 210px)/2) !important" };
             this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", this.dtconsList, null, metadata3, null, null, null, options);
         }
 

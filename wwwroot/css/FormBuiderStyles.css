@@ -302,15 +302,77 @@
         vertical-align: middle;
     }
 
-    .dgtbl > tbody > tr:nth-child(odd) {
-        background-color: rgb(249, 249, 249) !important;
+.fs-tbl > tbody > tr > td.fs-ctrl-td {
+    padding:0;
+}
+
+.fs-tbl .fs-textarea {
+    width: 100%;
+    height: 100%;
+}
+
+.fs-tbl tr[active='true'], .fs-tbl tr[active='true'] .fs-textarea {
+    font-weight:bold;
+}
+.fs-tbl tr, .fs-tbl tr .fs-textarea {
+    font-weight: normal;
+}
+
+.fs-tbl .fstd-div {
+    width: 100%;
+    height: 100%;
+}
+.fs-tbl .dropdown-toggle[data-toggle="dropdown"] {
+    height: 35px !important;
+    margin-top: 10px;
+    background-color: transparent !important;
+    border: none;
+}
+.fs-uname {
+    font-weight: bold;
+    margin-top: auto;
+}
+.fs-grid-cont {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+.fs-user-cont {
+    display: flex;
+    padding: 3px 3px 3px 8px;
+}
+.fs-udtls-cont {
+    display: flex;
+    flex-direction: column;
+    padding-left: 3px;
+}
+
+.fs-dp {
+    height: 47px;
+    background-size: cover;
+    width: 47px;
+    border: solid 1px #eee;
+    border-radius: 50%;
+    background-image: url(../images/demobotdp4.png);
+}
+
+.fs-tbl .dropdown-toggle[data-toggle="dropdown"]:focus {
+    outline: none !important;
+}
+
+    .fs-tbl > tbody > tr > td, .fs-tbl > tbody > tr > td > .fstd-div {
+        vertical-align: middle;
     }
+
+.dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {
+    background-color: rgb(249, 249, 249) !important;
+}
 
     .dgtbl > tbody > tr:nth-child(even) {
         background-color: white;
     }
 
-    .dgtbl > tbody > tr th:last-child {
+    .dgtbl > tbody > tr th:last-child, .fs-tbl > tbody > tr th:last-child {
         text-align: center;
     }
 
@@ -1056,7 +1118,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     height: 23px;
 }
 
-.webform-cont .eb-textarea {
+.webform-cont .eb-textarea, .webform-cont .fs-textarea {
     border: none;
     resize: none;
     background-attachment: local;

@@ -124,7 +124,12 @@
                                 this.chkboxAnonymous.bootstrapToggle('off');
                         }.bind(this)
                     });
-            }            
+            }
+            else {
+                $($("#ulTabOnMngRole").children()[1]).hide();
+                $($("#ulTabOnMngRole").children()[2]).hide();
+                $('.nav-tabs a[href="#divObjList"]').tab('show');
+            }
         }
         else {
             $($("#ulTabOnMngRole").children()[1]).show();
@@ -475,7 +480,7 @@
             //}
         }.bind(this));
         if ($('#divObjList').children().length === 0)
-            $('#divObjList').append(`<div style="text-align: center; margin-top: 20%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
+            $('#divObjList').append(`<div style="text-align: center; margin-top: 28%; font-size: 28px; color: #bbb; "> Nothing to Display </div>`);
 
 
 

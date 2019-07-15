@@ -6,11 +6,15 @@
 
         },
         ButtonStyle: {
+            Text:"Close",
             Color: "white",
             Background: "#508bf9",
             Callback: function () {}
         },
-        Title:"Message"
+        Title: "Message",
+        Html: function ($selector) {
+
+        }
     }, o);
 
     function popBoxHtml() {
@@ -38,7 +42,7 @@
                                                     color: ${settings.ButtonStyle.Color};
                                                     border-style: none;
                                                     border-radius: 4px;
-                                                    padding: 5px 10px;">Close
+                                                    padding: 5px 10px;">${settings.ButtonStyle.Text}
                                                 </button>
                                             </div>
                                         </div>
@@ -50,6 +54,7 @@
             $("#eb-popbox-container .eb-popbox-container-head").text(settings.Title);
             $("#eb-popbox-container .eb-popbox-container-bdy").text(settings.Message);
         }
+        settings.Html($("#eb-popbox-container .eb-popbox-container-bdy"));
     }
 
     function showBox() {

@@ -397,9 +397,19 @@ function isNaNOrEmpty(val) {
     return (typeof val === "number" && isNaN(val)) || (typeof val === "string" && val.trim() === "");
 };
 
-function getFlatObjOfType(ContObj, type) {
+function getFlatContObjsOfType(ContObj, type) {
     let ctrls = [];
     let flat = getFlatContControls(ContObj);
+    $.each(flat, function (i, ctrl) {
+        if (ctrl.ObjType === type)
+            ctrls.push(ctrl);
+    });
+    return ctrls;
+}
+
+function getFlatObjOfType(ContObj, type) {
+    let ctrls = [];
+    let flat = getFlatControls(ContObj);
     $.each(flat, function (i, ctrl) {
         if (ctrl.ObjType === type)
             ctrls.push(ctrl);

@@ -46,6 +46,19 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public CreateSolutionFurtherResponse CreateSolution(int i)
+        {
+            if (ViewBag.wc == RoutingConstants.TC)
+                return this.ServiceClient.Post(new CreateSolutionFurtherRequest());
+            else
+            {
+                var r = new CreateSolutionFurtherResponse();
+                    r.ResponseStatus.Message = "No permission to create solution";
+                return r;
+            }
+        }
+
         //[EbBreadCrumbFilter("MySolutions/Sid")]
         //[HttpGet("MySolutions/{Sid}")]
         //public IActionResult SolutionDashBoard(string Sid)
@@ -64,6 +77,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions/{Sid}")]
         public IActionResult SolutionManager(string Sid)
         {
+            ViewBag.Title = "MySolutions/"+ Sid;
             GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = Sid });
             //ViewBag.intergrationconfig = resp.IntegrationsConfig;
             //ViewBag.integrations = resp.Integrations;
@@ -149,5 +163,21 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
+       
+        public string VersioningSwitch(bool data, string SolnId)
+        {
+            GetVersioning resp = new GetVersioning();
+            try
+            {                
+                resp = this.ServiceClient.Post<GetVersioning>(new SetVersioning { Versioning = data, solution_id = SolnId });
+            }
+            catch (Exception e)
+            {
+                resp.status = new ResponseStatus { Message = e.Message };
+            }
+            return JsonConvert.SerializeObject(resp);
+        }
     }
+
 }

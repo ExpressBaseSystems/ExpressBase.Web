@@ -60,17 +60,17 @@
 
 
 
-<div class="" style="padding: 4% 0% 0% 1%; height: 100vh; background: white;font-family: open sans;font-weight: 300;">
+<div class="mug-parent-div">
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-3" style="padding-top: 80px;">
             <form id="formManageUserGroups" data-toggle="validator" method="POST" action="">
                 <div class="form-group">
-                    <label style="font-family: open sans; font-weight: 300; display:inline-block">User Group Name</label>
-                    <input type="text" class="form-control" id="txtUserGroupName" title="User Group Name" required />
+                    <label class="label-custom-style">User Group Name</label>
+                    <input type="text" class="form-control input-custom-style" id="txtUserGroupName" title="User Group Name" required />
                 </div>
                 <div class="form-group">
-                    <label style="font-family: open sans; font-weight: 300; display:inline-block">User Group Description</label>
-                    <input type="text" class="form-control" id="txtUserGroupDescription" title="User Group Description" required>
+                    <label class="label-custom-style">User Group Description</label>
+                    <textarea type="text" class="form-control input-custom-style" id="txtUserGroupDescription" title="User Group Description" style="height: 100px; resize:none;" required></textarea>
                 </div>
                 <input type="submit" id="hiddenSubmitUserGroup" style="display:none;" />
             </form>
@@ -92,7 +92,7 @@
                 </div>
             </div>
             @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
-            @*<label id="lblMessage" style="color:red;padding-left: 36px;font-family: open sans; font-weight: 500;"> Sorry, Unable to Continue! </label>*@
+            @*<label id="lblMessage" style="color:red;padding-left: 36px; font-weight: 500;"> Sorry, Unable to Continue! </label>*@
         </div>
     </div>
 </div>

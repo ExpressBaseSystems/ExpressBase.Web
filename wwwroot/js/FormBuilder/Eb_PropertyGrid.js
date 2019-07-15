@@ -770,7 +770,7 @@
                 this.EbAlert.clearAlert(alerId);
                 this.EbAlert.alert({
                     id: alerId,
-                    head: "This property is set as Unique.",
+                    head: "This property is should be Unique.",
                     body: iterObj.Name + "'s " + this.CurProp + " property has the same value.",
                     type: "info",
                     delay: 5000
@@ -791,7 +791,7 @@
         if ($e.val().trim() === "") {
             this.EbAlert.alert({
                 id: alerId,
-                head: "This property is set as Required!",
+                head: "This property is Required!",
                 body: "This field cannot left blank.",
                 type: "danger",
                 delay: 3000

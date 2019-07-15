@@ -1,7 +1,6 @@
 ﻿.upl-container-outer .eb-upl-dbywraper {
     flex-direction: column;
     min-height: 300px;
-    font-family: open sans;
     width: 100%;
 }
 
@@ -212,7 +211,6 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    font-family: open sans;
 }
 
 .upl-fullscreen .modal-header .img-info {
@@ -322,8 +320,7 @@
         .ebFupGalleryOt .ClpsGalItem_Sgl .Col_head {
             padding: 10px;
             font-size: 14px;
-            font-family: open sans;
-            font-weight: 600;
+            font-weight: 500;
             background: #e4e4e4;
             cursor: pointer;
             border-radius: 4px;
@@ -376,7 +373,6 @@
 .fnamethumb {
     margin-top: 10px;
     margin-bottom: 0;
-    font-family: open sans;
     font-weight: 500;
     overflow: hidden;
     text-overflow: ellipsis;

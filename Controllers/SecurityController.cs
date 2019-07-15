@@ -218,7 +218,8 @@ namespace ExpressBase.Web.Controllers
 				ViewBag.U_Info = fr.UserData;
 				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
 				ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
-			}
+                //ViewBag.LocConstraint = JsonConvert.SerializeObject(fr.LocConstraint);
+            }
 			else
 			{
 				ViewBag.U_Roles = "";

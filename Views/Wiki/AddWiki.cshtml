@@ -9,6 +9,8 @@
 <script>
     $(document).ready(function () {
         new addwiki();
+        $("#category").val("@ViewBag.Wiki.Category");
+        $("#status").val("@ViewBag.Wiki.Status");
     });
 </script>
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
@@ -26,18 +28,19 @@
                 <div class="col-sm-4">Title <input type="text" name="title" id="title" value="@ViewBag.Wiki.Title" class="title1" style="height: 27px; width: 87%;" /></div>
                 <div class="col-sm-4">
                     category
-                    <select name="category" class="title1" style="height: 25px; width: 77%;">
+                    <select name="category" id="category" class="title1" style="height: 25px; width: 77%;">
                         <option>Form</option>
                         <option>Report</option>
                         <option>API</option>
                         <option>Chatbots</option>
                         <option>Security</option>
+                        <option>Integrations</option>
                         <option>AppStore</option>
                     </select>
                 </div>
                 <div class="col-sm-4">
                     Status
-                    <select name="status" class="title1" style="height: 25px; width: 77%;">
+                    <select name="status" id="status" class="title1" style="height: 25px; width: 77%;">
                         <option>Draft</option>
                         <option>Publish</option>
                         <option>Unpublish</option>
@@ -45,7 +48,7 @@
                 </div>
             </div>
 
-            <div class="row" style="padding:10px;padding-top:20px;padding-right:30px">
+            <div class="row" style="padding:8px;padding-top:10px;padding-right:30px">
                 <div class="col-sm-6">
                     <table class="table" style="margin-bottom: 0px;">
                         <tbody>
@@ -62,13 +65,13 @@
                             <tr>
                                 <td><input type="button" value="YouTube" class="props fa fa-youtube-play" val="iframe"></td>
                                 <td><input type="button" value="Image" class="props" val="img"></td>
-                                <td><input type="button" value="code" class="props" val="code"></td>
+                                <td><input type="button" value="code" class="props" val="pre class='prettyprint'"></td>
                                 <td><input type="button" value="p" class="props" val="p"></td>
                                 <td><input type="button" value="ul" class="props" val="ul"> </td>
                                 <td><input type="button" value="ol" class="props" val="ol"> </td>
                                 <td><input type="button" value="li" class="props" val="li"> </td>
                                 <td><input type="button" value="Links" class="props" val="a"> </td>
-                                
+
                             </tr>
                         </tbody>
                     </table>
@@ -78,6 +81,9 @@
                         <div class="col-sm-8">        <input type="text" value="@ViewBag.Wiki.Tags" data-role="tagsinput" name="tagbox" class="form-control" placeholder="Add tags" /> </div>
                         <div class="col-sm-1"> </div>
                         <div class="col-sm-1"><input type="button" id="render_page_toggle" value="hide page view" val="show"></div>
+                    </div>
+                    <div class="row">
+                        <input id="btnUploadImg" type="button" value="Upload Image"/>
                     </div>
                 </div>
             </div>
@@ -90,15 +96,14 @@
                     </div>
                 </div>
             </div>
-
-            <div class="row" style="padding:10px">
-                <div class="col-sm-10" style="align-content:center">
-                    <input type="submit" value="submit" name="submit" />
-                </div>
-                <div class="col-sm-2"><input type="hidden" name="id" value="@ViewBag.Id" /></div>
+            <div style="display: flex;justify-content: center;">
+                <input type="submit" value="Save" name="submit" style="width: 213px;height: 35px;background-color: #ffffff;font-size: 22px;border: solid 1px #528ff2;" />
             </div>
+            <div class="col-sm-2"><input type="hidden" name="id" value="@ViewBag.Id" /></div>
         </form>
+        <div class="imageGallery" id="ImageGallery">
 
+        </div>
     </div>
 </div>
 
@@ -106,4 +111,43 @@
     let abc = $('#text').val();
     $('#render').html(abc);
     $('#new1').append('');
+
+     var imgup = new EbFileUpload({
+        Type: "image",
+        PreviewWraper: "#ImageGallery",
+        FilesUrl: @Html.Raw(ViewBag.Images),
+        Context:"eb_wiki",
+        Toggle: "#btnUploadImg",
+        Container: "eb-wiki-uploader",
+        Multiple: true,
+        ServerEventUrl: 'https://se.eb-test.xyz',
+        EnableCrop: true,
+        MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes
+        CustomMenu: [{ name: "Copy link", icon: "fa-user" }]
+    });
+
+    imgup.uploadSuccess = function (fileid) {
+       
+    }
+    imgup.windowClose = function () {
+        
+    }
+    imgup.customTrigger = function (name, refids) {
+        let imgtag = "";
+        for (let i = 0; i < refids.length; i++) {
+            imgtag += `<img src="/wiki/images/original/${refids[i]}.jpg"/>`;
+        }
+        copyStringToClipboard(imgtag);
+    }
+
+    function copyStringToClipboard(str) {
+        var el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style = { position: 'absolute', left: '-9999px' };
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    }
 </script>

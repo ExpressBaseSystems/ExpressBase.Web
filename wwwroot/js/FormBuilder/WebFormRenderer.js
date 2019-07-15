@@ -282,9 +282,11 @@ const WebFormRender = function (option) {
 
     this.getApprovalRow = function () {
         let FVWTObjColl = {};
-        let tOb = this.ApprovalCtrl.ChangedRowObject();
-        if (tOb)
-            FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        if (this.ApprovalCtrl) {
+            let tOb = this.ApprovalCtrl.ChangedRowObject();
+            if (tOb)
+                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        }        
         return FVWTObjColl;
     };
 

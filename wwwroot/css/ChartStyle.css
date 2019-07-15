@@ -67,17 +67,21 @@
     font-size: 20px;
 }
 
-#obj_icons .btn{
+/*#obj_icons .btn{
     padding:1px!important;
-}
+}*/
 
 .canvasstyle {
-    height: calc(100% - 67px);
     box-shadow: var(--eb-shadow);
-    margin-top: 10px;
+    height: inherit;
 }
 
-.map_inner{
+.canvasParentDiv {
+    height: inherit;
+    padding: 10px 0px;
+}
+
+.map_inner {
     display: flex;
     justify-content: center;
     align-items: center;

@@ -264,7 +264,10 @@ namespace ExpressBase.Web.Controllers
             ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>() };
             UploadAsyncResponse res = new UploadAsyncResponse();
             var req = this.HttpContext.Request.Form;
-            string fname = string.Empty;
+            string fname = string.Empty,_context = string.Empty;
+
+            if (req.ContainsKey("Context") && !string.IsNullOrEmpty(req["Context"]))
+                _context = req["Context"];
             try
             {
                 UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
@@ -287,6 +290,7 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
                         uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
+                        uploadFileRequest.FileDetails.Context = _context;
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
 
                         (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData

@@ -504,7 +504,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 </div></div>
                 </div>
                 </div>
-                <div class='col-md-10' id='canvasParentDiv${this.tableId}' style='height:inherit;'>
+                <div class='col-md-10 canvasParentDiv' id='canvasParentDiv${this.tableId}'>
                 <div id='xy${this.tableId}' style='vertical-align: top;'> 
                 <div class='input-group' >
                 <span class='input-group-addon' id='basic-addon3'> X - Axis</span> 

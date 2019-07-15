@@ -152,6 +152,9 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
 .dt-right {
     text-align: right;
 }
+.dt-left {
+    text-align: left;
+}
 
 .dt-buttons {
     display: none;

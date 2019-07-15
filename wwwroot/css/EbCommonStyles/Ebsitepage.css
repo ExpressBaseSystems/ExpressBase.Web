@@ -678,8 +678,11 @@ input {
         font-size: 1.8em;
         font-weight: 400;
     }
-    .eb_ext_pge_stl .leftsideimg {
+    .eb_ext_pge_stl .malvrfypg .leftsideimg {
         /*height: 350px;*/
+        /*padding-bottom: 30px;
+        padding-top: 0px;
+        padding-left: 30px;*/
     }
     .eb_ext_pge_stl .h-100 {
         height: 100vh;

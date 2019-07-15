@@ -3586,12 +3586,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings.Columns.$values[i].sClass = "";
         this.ebSettings.Columns.$values[i].className = "";
 
-        if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+        if (col.Type === parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
 
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
-        if (col.Type == parseInt(gettypefromString("Boolean"))) {
+        if (col.Type === parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
@@ -3613,7 +3613,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight text-center";
         }
-        if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
+        if (col.Type === parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
@@ -3630,11 +3630,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
-        if (col.Type == parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
+        if (col.Type === parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
-
+        if (col.name === "eb_created_by" || col.name === "eb_lastmodified_by")
+            col.className += " dt-left";
         if (col.Font !== null) {
             var style = document.createElement('style');
             style.type = 'text/css';

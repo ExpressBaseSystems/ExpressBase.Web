@@ -16,7 +16,7 @@ var EbOnBoarding = function () {
                 beforeSend: function () {
                     $("#loaderdiv").EbLoader("show");
                     //$(".iconspin").addClass("fa fa-spinner fa-pulse")
-                    $("#save-profile").prop('disabled', true);
+                    $('#save-profile').prop('disabled', true).css('opacity', 0.5);
                 },
                 data: {
                     email: $("#email").val().trim(),
@@ -33,13 +33,13 @@ var EbOnBoarding = function () {
                     if (data.isEmailUniq == false) {
                         EbMessage("show", { Message: "Mail id already exists", Background: 'red' });
                         //$(".iconspin").removeClass("fa fa-spinner fa-pulse");
-                        $("#save-profile").prop('disabled', false);
+                        $('#save-profile').prop('disabled', false).css('opacity', 1);
                     }
                     else {
                         if (data.AccountCreated == false) {
                             EbMessage("show", { Message: "Cannot Create Account ", Background: 'red' });
                            // $(".iconspin").removeClass("fa fa-spinner fa-pulse");
-                            $("#save-profile").prop('disabled', false);
+                            $('#save-profile').prop('disabled', false).css('opacity', 1);
                         }
                     }
                 }
@@ -378,7 +378,7 @@ var PasswordValidation = function () {
                 url: "../Ext/ResetPassword",
                 beforeSend: function () {
                     $("#loaderdiv").EbLoader("show");
-                    $("#btnpswreset").prop('disabled', true);
+                    $('"#btnpswreset').prop('disabled', true).css('opacity', 0.5);
                 },
                 data: { emcde: psdcode, psw: $("#inputPassword").val() },
                 cache: false,
@@ -393,7 +393,7 @@ var PasswordValidation = function () {
 
                     }
                     if (status == 0) {
-                        $("#btnpswreset").prop('disabled', false);
+                        $('"#btnpswreset').prop('disabled', true).css('opacity',1);
                         location.href = "../StatusCode/401";
                     }
                 }

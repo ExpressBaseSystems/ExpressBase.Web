@@ -250,10 +250,12 @@ const WebFormRender = function (option) {
             DG.setEditModeRows(SingleTable);
         }.bind(this));
 
-        if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-            let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
-            this.ApprovalCtrl.setEditModeRows(SingleTable);
-        }
+        if (this.ApprovalCtrl) {
+            if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
+                let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
+                this.ApprovalCtrl.setEditModeRows(SingleTable);
+            }
+        }       
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
@@ -282,9 +284,11 @@ const WebFormRender = function (option) {
 
     this.getApprovalRow = function () {
         let FVWTObjColl = {};
-        let tOb = this.ApprovalCtrl.ChangedRowObject();
-        if (tOb)
-            FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        if (this.ApprovalCtrl) {
+            let tOb = this.ApprovalCtrl.ChangedRowObject();
+            if (tOb)
+                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        }        
         return FVWTObjColl;
     };
 

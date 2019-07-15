@@ -374,6 +374,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getColumnsSuccess = function (e) {
+        $("#objname").text(this.EbObject.DisplayName);
         if (this.isContextual) {
             if (this.isSecondTime) {
                 if (!this.validateFD())
@@ -549,7 +550,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
-        this.table_jQO.children("tfoot").hide();
+        //this.table_jQO.children("tfoot").hide();
         this.table_jQO.children().find("tr").addClass("addedbyeb");
 
         //this.table_jQO.on('pre-row-reorder.dt', function (e, node, index) {
@@ -689,19 +690,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.fixedColumnCount(), rightColumns: this.ebSettings.RightFixedColumn };
         o.pagingType = "full";
-        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
-        //}
-        //else if (this.dtsettings.directLoad) {
-        //    o.paging = false;
-        //    //o.lengthMenu = [[-1], ["All"]];
-        //    o.dom = "rti";
-        //}
-        //o.rowGroup = {
-        //    dataSrc: 4
-        //};
-        //o.paging = false;
-        //o.rowReorder = true;
-        //o.order = [[8, "asc"]];
+        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];        
         o.bAutoWidth = false;
         o.autowidth = false;
         o.serverSide = true;
@@ -794,6 +783,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.ajaxData = function (dq) {
+        if (!this.isSecondTime) {
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").hide();
+            $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").hide();
+            $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").hide();
+        }
+
         this.matchColumnSearchAndVisible();
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.EbObject.DataSourceRefId;
@@ -1224,9 +1219,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterDisplay();
         this.createFooter();
         this.arrangeWindowHeight();
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
-        $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
-        $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
+        $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
+        $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top","100px","important");
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top","-100px","important");
 
         this.addFilterEventListeners();
         this.arrangeFooterWidth();
@@ -1528,6 +1525,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.arrangeWindowHeight = function () {
         var filterId = "#filterdisplayrowtd_" + this.tableId;
         if (this.login === "uc") {
+            $(".dv-body2").style("height", "calc(100vh - 58px)", "important");
             if (this.IsTree) {
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 27px)", "important");
             }
@@ -1556,9 +1554,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
                 }
             }
-            this.stickBtn.$stickBtn.css("top", "46px");
+            //this.stickBtn.$stickBtn.css("top", "46px");
         }
         else {
+           
             if (this.tabNum !== 0) {
                 $("#sub_window_" + this.tableId).style("height", "calc(100vh - 40px)", "important");
                 if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)

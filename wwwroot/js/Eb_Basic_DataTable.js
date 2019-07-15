@@ -172,7 +172,7 @@ var EbBasicDataTable = function (Option) {
 
             return sum / data.length;
         });
-        //this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
         //this.table_jQO.off('order.dt').on('order.dt', this.doSerial.bind(this));
         ////this.table_jQO.off('init.dt').on('init.dt', this.doSerial.bind(this));
 

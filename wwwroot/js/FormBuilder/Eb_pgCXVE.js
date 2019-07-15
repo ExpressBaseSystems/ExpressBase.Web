@@ -270,7 +270,7 @@
         let hierarchyLevel = (sourceProp.match(/Parent./g) || []).length;
         if (hierarchyLevel > 0) {
             for (var i = 0; i < hierarchyLevel; i++) {
-                CurlevelObj = CurlevelObj.ParentPG
+                CurlevelObj = CurlevelObj.ParentPG;
             }
         }
         let _CElistFromSrc = CurlevelObj.PropsObj[sourceProp.replace(/Parent./g, "")].$values;
@@ -1016,7 +1016,10 @@
         if ($items.length === 0)
             tempArr.push(0);
         $.each($items, function (i, el) {
-            let numStr = el.getAttribute("ebsid").replace(/[^0-9]/g, '');
+            let ebsid = el.getAttribute("ebsid");
+            if (!ebsid)
+                console.warn(">> no EbSid found");
+            let numStr = ebsid.replace(/[^0-9]/g, '');
             numStr = numStr.substr(numStr.length - 3);
             let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);

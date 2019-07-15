@@ -8,7 +8,7 @@
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$container = $(`#cont_${this.ctrl.EbSid_CtxId}`);
     this.$table = $(`#${this.TableId}`);
-    this.stages = this.ctrl.FormStages.$values;
+    this.stages = this.ctrl.FormStages.$values.reverse();
     this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
 
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
@@ -164,7 +164,7 @@
     };
 
     this.enableAccessibleRow = function (curRole) {
-        //this.userObj.Roles.push(curRole); /// TEMP
+        //this.userObj.Roles.push("NHG_President"); /// TEMP
         if (this.userObj.Roles.includes(this.nextRole)) {
             this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
             this.enableRow(this.$AccessibleRow);

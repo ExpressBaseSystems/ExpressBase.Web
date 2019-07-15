@@ -151,6 +151,7 @@
         this.$container.find(".fs-submit").hide();
         this.$container.find("tr").attr("active", "false");
     };
+
     this.enableRow = function ($row) {
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();

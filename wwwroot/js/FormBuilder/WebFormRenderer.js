@@ -359,11 +359,13 @@ const WebFormRender = function (option) {
 
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
+        let approvalTable = {};
         WebformData.MasterTable = this.FormObj.TableName;
 
         let formTables = this.getFormTables();
         let gridTables = this.getDG_FVWTObjColl();
-        let approvalTable = this.getApprovalRow();
+        if (this.ApprovalCtrl)
+            approvalTable = this.getApprovalRow();
 
         WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.ExtendedTables = this.getExtendedTables();

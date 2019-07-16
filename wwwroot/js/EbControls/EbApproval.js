@@ -26,19 +26,23 @@
         let pevStatusInt = getObjByval(prevRowData, "Name", "status").Value;
 
         let prevStageObj = getObjByval(this.stages, "Name", prevStageName);
-        let nextStageIdx = this.stages.indexOf(prevStageObj) + 1;
-
-        if (pevStatusInt === "1")
-            this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, nextStageIdx + "");
-        else
-            this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, (nextStageIdx - 1) + "");
-
-        this.disableAllCtrls();
-        let curRole = this.nextRole;
+        let prevStageIdx = this.stages.indexOf(prevStageObj);
+        let nextStageIdx = prevStageIdx + 1;
         this.setPrevStageData(sortedSingleTable, nextStageIdx);
-        this.enableAccessibleRow(curRole);
-        if (this.nextRole === null)// if all staged completed
+
+        if (nextStageIdx > this.stages.length - 1)// if all staged completed
+        {
             this.disableAllCtrls();
+        }
+        else {
+            if (pevStatusInt === "1")
+                this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[nextStageIdx].ApproverRole + "");
+            else
+                this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[prevStageIdx].ApproverRole + "");
+
+            this.disableAllCtrls();
+            this.enableAccessibleRow(this.nextRole);
+        }
     };
 
     this.setPrevStageData = function (sortedSingleTable, nextStageIdx) {
@@ -181,7 +185,8 @@
         this.$container.on("click", ".fs-submit", this.submit);
 
         this.disableAllCtrls();
-        this.enableAccessibleRow(this.nextRole);
+        if (this.Mode.isEdit)
+            this.enableAccessibleRow(this.nextRole);
     };
 
     this.init();

@@ -118,7 +118,10 @@ namespace ExpressBase.Web.Controllers
             //Console.WriteLine("Info: WikiAdmin Wiki Count: " + resp.WikiList.Count);
 
             //ViewBag.WikiList = resp.WikiList;
+            var location = new Uri($"{Request.Scheme}s://{Request.Host}");
+            ViewBag.Url = location.AbsoluteUri +"wiki/add/0";
             return View();
+          
         }
 
 

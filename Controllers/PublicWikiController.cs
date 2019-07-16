@@ -61,10 +61,10 @@ namespace ExpressBase.Web.Controllers
             ViewBag.TagObject = TagObject;
             ViewBag.Title = resp.Wiki.Title + " | EXPRESSbase Systems";
 
-            int si = resp.Wiki.HTML.IndexOf("<p>");
+           //int si = resp.Wiki.HTML.IndexOf("<p>");
 
-            int ei = resp.Wiki.HTML.IndexOf("</p>");
-            ViewBag.Metatitle = resp.Wiki.HTML.Substring(si, ei - si);
+            //int ei = resp.Wiki.HTML.IndexOf("</p>");
+            //ViewBag.Metatitle = resp.Wiki.HTML.Substring(si, ei - si);
 
             return View();
         }

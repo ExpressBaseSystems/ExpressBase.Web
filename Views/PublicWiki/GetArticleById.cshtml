@@ -4,6 +4,7 @@
 }
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
 <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
 
 @section StyleSheet{
@@ -50,7 +51,7 @@
     <meta property="og:image:width" content="820" />
     <meta property="og:image:height" content="450" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:description" content="" />
+    <meta name="twitter:description" content="EXPRESSbase Systems Documentation - Fast growing Small & Midsize Businesses deserve rapidly evolving software." />
     <meta name="twitter:title" content=" @ViewBag.Wiki.Title |EXPRESSbase Systems" />
     <meta name="twitter:site" content="" />
     <meta name="twitter:image" content="" />
@@ -61,6 +62,8 @@
 <script>
     $(document).ready(function () {
         new addwiki();
+        if(PR)
+        PR.prettyPrint();
         //document.title = '@ViewBag.Wiki.Title'
     });
 </script>
@@ -78,7 +81,7 @@
             let title = $(".wiki_data_div h1").text();
             title = title.replace(/(\r\n|\n|\r)/gm, "");
             let desc = $(".wiki_data_div p").text().substring(0, $(".wiki_data_div p").text().indexOf("."));
-            $(`meta[property="og:title"]`).prop("content", `${title}`);          
+            $(`meta[property="og:title"]`).prop("content", `${title} -  ${desc} `);          
             $(`meta[property="og:description"]`).prop("content", `${desc}`);
             $(`meta[property="twitter:description"]`).prop("content", `${desc}`);
             $(`meta[property="twitter:title"]`).prop("content", `${title}`);

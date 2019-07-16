@@ -51,6 +51,20 @@ namespace ExpressBase.Web.Controllers
             });
 
             ViewBag.Wiki = resp.Wiki;
+            //if(ViewBag.Env == "Staging")
+            //{
+               
+            var location = new Uri($"{Request.Scheme}s://{Request.Host}{Request.Path}{Request.QueryString}");
+            ViewBag.Url = location.AbsoluteUri;
+              object TagObject;
+            TagObject = resp.Wiki.Tags.Split(',');
+            ViewBag.TagObject = TagObject;
+            ViewBag.Title = resp.Wiki.Title + " | EXPRESSbase Systems";
+
+            int si = resp.Wiki.HTML.IndexOf("<p>");
+
+            int ei = resp.Wiki.HTML.IndexOf("</p>");
+            ViewBag.Metatitle = resp.Wiki.HTML.Substring(si, ei - si);
 
             return View();
         }

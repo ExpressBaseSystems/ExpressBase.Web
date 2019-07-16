@@ -364,9 +364,11 @@
     };
 
     this.DataGrid = function (ctrl, ctrlOpts) {
-        let ebsid = ctrl.EbSid_CtxId;
-        let DataGrid = new EbDataGrid(ctrl, ctrlOpts);
-        return DataGrid;
+        return new EbDataGrid(ctrl, ctrlOpts);
+    };
+
+    this.Approval = function (ctrl, ctrlOpts) {
+        return new EbApproval(ctrl, ctrlOpts);
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {

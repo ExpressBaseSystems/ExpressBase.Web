@@ -866,6 +866,29 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
+        public string AddSendGrid()
+        {
+            AddSendGridResponse res = new AddSendGridResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbSendGridConfig con = new EbSendGridConfig
+                {
+                    ApiKey = req["ApiKey"],
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    Type = EbIntegrations.SendGrid,
+            };
+                res = this.ServiceClient.Post<AddSendGridResponse>(new AddSendGridRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
 
         //[HttpGet("SolutionManager/{Sid}")]
         //public IActionResult GetIntegrationConfigs(string Sid)

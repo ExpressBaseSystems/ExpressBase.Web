@@ -60,7 +60,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [HttpGet("Platform/Board")]
+        [HttpGet("Platform/OnBoarding")]
         public IActionResult SignUp()
         {
             return View();
@@ -68,7 +68,7 @@ namespace ExpressBase.Web.Controllers
 
         //profile setup tenant
         [HttpPost]
-        public CreateAccountResponse Board(string email, string name, string country, string account, string password)
+        public CreateAccountResponse Board(string email, string name, string country,  string password)
         {
             CreateAccountResponse res = new CreateAccountResponse();
             try
@@ -87,7 +87,7 @@ namespace ExpressBase.Web.Controllers
                         Password = password,
                         Country = country,
                         Email = email,
-                        Account_type = account,
+                        Account_type = null,
                         ActivationCode = activationcode,
                         PageUrl = pgurl.ToString(),
                         PagePath = pgpath.ToString()
@@ -293,6 +293,65 @@ namespace ExpressBase.Web.Controllers
                 return Redirect(RoutingConstants.MYSOLUTIONS);
             }
             else
+			if (!Social.Forsignup)
+			{
+
+				var lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
+				{
+					Email = Social.Email,
+					Social_id = Social.Social_id
+				});
+
+				{
+					MyAuthenticateResponse authResponse = null;
+					try
+					{
+						string tenantid = lgid.Id.ToString();
+						var authClient = this.ServiceClient;
+						authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+						{
+							provider = CredentialsAuthProvider.Name,
+							UserName = Social.Email,
+							Password = lgid.psw,
+							Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE/* tenantid*/ } },
+							RememberMe = true
+							//UseTokenCookie = true
+						});
+
+					}
+					catch (WebServiceException wse)
+					{
+						Console.WriteLine("Exception:" + wse.ToString());
+						TempData["ErrorMessage"] = wse.Message;
+						return Redirect("/");
+					}
+					catch (Exception wse)
+					{
+						Console.WriteLine("Exception:" + wse.ToString());
+						TempData["ErrorMessage"] = wse.Message;
+						return Redirect("/");
+					}
+					if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+					{
+						TempData["ErrorMessage"] = "EbUnauthorized";
+						return Redirect("/");
+					}
+					else //AUTH SUCCESS
+					{
+						CookieOptions options = new CookieOptions();
+						Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+						Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+						Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+						Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+						//if (req.ContainsKey("remember"))
+						//	Response.Cookies.Append("UserName", req["uname"], options);
+
+						//_redirectUrl = this.RouteToDashboard(whichconsole);
+					}
+				}
+				return Redirect(RoutingConstants.MYSOLUTIONS);
+			}
+				
                 return RedirectToAction(RoutingConstants.TENANTSIGNIN);
         }
 

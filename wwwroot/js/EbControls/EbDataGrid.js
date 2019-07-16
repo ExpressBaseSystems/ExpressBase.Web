@@ -24,7 +24,6 @@
     }.bind(this);
     this.resetBuffers();
 
-
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         return this.setEditModeRows(SingleTable);
     }.bind(this);

@@ -439,6 +439,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
+        font-weight: 500;
     }
 
     .grid-cont input[type=checkbox] {
@@ -626,8 +627,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .gb-border {
-    border: dashed 1px rgba(0, 0, 0, 0.19);
-    border-radius: 2px;
+    border: dashed 1px rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
 }
 
 .gb-label {
@@ -1086,7 +1087,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .form-buider-form .nav-tabs > li {
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .filter-box .input-group-addon, .form-buider-form .input-group-addon {

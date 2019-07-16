@@ -171,6 +171,11 @@ namespace ExpressBase.Web.Controllers
             try
             {                
                 resp = this.ServiceClient.Post<GetVersioning>(new SetVersioning { Versioning = data, solution_id = SolnId });
+                 this.MqClient.Post<RefreshSolutionConnectionsAsyncResponse>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+                {
+                    SolutionId = SolnId
+                 });
+
             }
             catch (Exception e)
             {

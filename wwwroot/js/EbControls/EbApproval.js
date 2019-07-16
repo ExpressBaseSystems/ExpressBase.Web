@@ -166,7 +166,7 @@
     };
 
     this.enableAccessibleRow = function (curRole) {
-        //this.userObj.Roles.push("test_role"); /// TEMP
+        //this.userObj.Roles.push("ADS_Committee"); /// TEMP
         if (this.userObj.Roles.includes(this.nextRole)) {
             this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
             this.enableRow(this.$AccessibleRow);
@@ -177,10 +177,11 @@
     };
 
     this.init = function () {
-        this.disableAllCtrls();
-        this.enableAccessibleRow(this.nextRole);
         this.$submit = this.$container.find(".fs-submit");
         this.$container.on("click", ".fs-submit", this.submit);
+
+        this.disableAllCtrls();
+        this.enableAccessibleRow(this.nextRole);
     };
 
     this.init();

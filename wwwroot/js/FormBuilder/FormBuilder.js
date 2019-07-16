@@ -393,12 +393,12 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if (el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
+        if (source.id === this.primitiveToolsId && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({
                 id: "reviewCtrl",
                 head: "Form already contains a Review control.",
-                body:  "You cannot add more than one approval control into the form",
+                body: "You cannot add more than one approval control into the form",
                 type: "warning",
                 delay: 3000
             });
@@ -510,7 +510,7 @@
             this.makeTdsDropable_Resizable();
             this.makeTabsDropable();
         }
-        this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval");
+        this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
 
 
         this.EbAlert = new EbAlert({

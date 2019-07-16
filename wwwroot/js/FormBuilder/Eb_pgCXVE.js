@@ -598,10 +598,10 @@
             this.getOSElist();
     };
 
-    this.getOSElist = function () {
+    this.getOSElist = function (isRefresh) {
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]) {
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType] || isRefresh) {
             $.LoadingOverlay("show");
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
@@ -782,7 +782,7 @@
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
         this.OSEList = null;
-        this.getOSElist();
+        this.getOSElist("refresh");
     };
 
     this.set9ColTiles = function (containerId, values) {

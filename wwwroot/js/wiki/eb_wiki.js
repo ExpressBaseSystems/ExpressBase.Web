@@ -1,5 +1,4 @@
 ﻿let addwiki = function () {
-
     let historyId = [];
 
     this.printresult = function () {
@@ -83,26 +82,26 @@
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
+        let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
         $(`[data-id='${id}']`).addClass("CurrentSelection");
-        this.AjaxCalFetchWikiList(id);
+        this.AjaxCalFetchWikiList(id, orderId);
         //let title = $(".wiki_data h1").text();
         window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
     }
 
-    this.AjaxCalFetchWikiList = function (id) {
+    this.AjaxCalFetchWikiList = function (id, orderId) {
         $.ajax({
             type: 'POST',
             url: "/PublicWiki/GetWiki",
             data: {
                 wiki_id: id
             },
-            success: this.FetchWikiListSuccess.bind(this, id)
+            success: this.FetchWikiListSuccess.bind(this, id, orderId)
         });
     }
 
-    this.FetchWikiListSuccess = function (id, ob) {
-       
+    this.FetchWikiListSuccess = function (id, orderId, ob) {
         $('#wiki_data_div').show();
         $("#wiki_data_div").scrollTop(0);
         $('.edit').attr('href', '../wiki/add/' + ob.id);
@@ -145,7 +144,17 @@
         </div></div>
             `;
         $('#wiki_data_div').append($WasItHelpFul);
-
+        let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
+        let Pre = $(`[order-id="${orderId}"]`).prev().attr("order-id");
+        let $nextPre = $(`<div></div>`);
+        if (next) {
+            $nextPre.append(`<span Next-id="${next}" class="NextPreWiki" style="float:right;">Next</span>`);
+        }
+        if (Pre) {
+            $nextPre.append(`<span Next-id="${Pre}" class="NextPreWiki" style="float:left;"> Previous</span>`);
+        }
+       
+        $('#wiki_data_div').append($nextPre);
         let title = $(".wiki_data h1").text();
         let desc = $(".wiki_data p").text().substring(0, $(".wiki_data p").text().indexOf("."));
         $(`meta[property="og:title"]`).attr("content", `${title}`);
@@ -153,7 +162,7 @@
         $(`meta[property="og:image"]`).attr("content", ``);
         $(`meta[property="og:url"]`).attr("content", `${url}`);
         $(`meta[name="twitter:card"]`).attr("content", "large image");
-
+   
         //this.AddMetaTags();
         if (PR)
             PR.prettyPrint();
@@ -877,6 +886,15 @@
         $(`#${value}>ul>li:first>a`).click();
     }
 
+    this.NextAndPreWiki = function (e) {
+        let OrderId = e.target.getAttribute("Next-id");
+        let dataId= $(`[order-id="${OrderId}"]`).children().attr("data-id");
+        $(`[data-id="${dataId}"]`).click();
+    }
+    //this.CreateNewWikiTrigger = function () {
+    //    let host = $(location).attr('host');
+    //    window.location.replace(`${host}/wiki/add/0`);
+    //}
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
@@ -888,7 +906,8 @@
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
-        $(".wiki_data").on("click", ".wikilist ", this.FetchWikiList.bind(this));
+        $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
+        $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
         $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
 
         //wiki admin
@@ -897,6 +916,7 @@
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".selected").on("click", this.selectedHighlight.bind(this));
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
+        //$("#CreateWiki").on("click", this.CreateNewWikiTrigger.bind(this));
      
     };
 

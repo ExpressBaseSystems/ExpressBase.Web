@@ -4,11 +4,17 @@
     {
         bApnd = false;
     }
+    string t = "EXPRESSbase: Rapid Application Development & Delivery Platform for SMBs.";
+    if (!string.IsNullOrEmpty(ViewBag.Title))
+    {
+        t = ViewBag.Title;
+    }
 }
+
 <!DOCTYPE html>
 <html>
 <head>
-    <title>EXPRESSbase: Rapid Application Development & Delivery Platform for SMBs.</title>
+    <title>@t</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">

@@ -8,14 +8,14 @@
 
 @section StyleSheet{
     @*<script>
-        window.___blgc = `@Html.Raw(ViewBag.Wiki.HTML)`;
-        var d = document.createElement("div");
-        d.innerHTML = ___blgc;
-        var p = $(d).text().substring(0, $(d).text().indexOf("."));
-        var _meta = `<meta property="og:description" content="${p}">`;
-        document.write(_meta);
-    </script>*@
-    <meta property="og:title" content="@ViewBag.Wiki.Title">
+            window.___blgc = `@Html.Raw(ViewBag.Wiki.HTML)`;
+            var d = document.createElement("div");
+            d.innerHTML = ___blgc;
+            var p = $(d).text().substring(0, $(d).text().indexOf("."));
+            var _meta = `<meta property="og:description" content="${p}">`;
+            document.write(_meta);
+        </script>*@
+    @*<meta property="og:title" content="@ViewBag.Wiki.Title">
     <meta property="og:description" content="">
     <meta property="og:image" content="">
     <meta property="og:url" content="@ViewBag.Url">
@@ -30,7 +30,32 @@
     <!--  Non-Essential, But Required for Analytics -->
 
     <meta property="fb:app_id" content="your_app_id" />
-    <meta name="twitter:site" content="">
+    <meta name="twitter:site" content="">*@
+
+    <link rel="canonical" href="@ViewBag.Url" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="@ViewBag.Wiki.Title" />
+    <meta property="og:description" content="" />
+    <meta property="og:url" content="@ViewBag.Url" />
+    <meta property="og:site_name" content="EXPRESSbase Systems - Fast growing Small & Midsize Businesses deserve rapidly evolving software." />
+    <meta property="article:publisher" content="https://www.facebook.com/expressbase" />
+    @foreach (Object ob in ViewBag.TagObject)
+    {
+    <meta property="article:tag" content="@ob" />
+    }
+    <meta property="article:section" content="National" />
+    <meta property="og:image" content="" />
+    <meta property="og:image:secure_url" content="" />
+    <meta property="og:image:width" content="820" />
+    <meta property="og:image:height" content="450" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:description" content="" />
+    <meta name="twitter:title" content=" @ViewBag.Wiki.Title |EXPRESSbase Systems" />
+    <meta name="twitter:site" content="" />
+    <meta name="twitter:image" content="" />
+    <meta name="twitter:creator" content="" />
+
 
 }
 <script>
@@ -51,14 +76,13 @@
         <script>
             //$(document).ready(function () {
             let title = $(".wiki_data_div h1").text();
-            //title = title.replace(/(\r\n|\n|\r)/gm, "");
+            title = title.replace(/(\r\n|\n|\r)/gm, "");
             let desc = $(".wiki_data_div p").text().substring(0, $(".wiki_data_div p").text().indexOf("."));
-            let url = window.location.href;
-            $(`meta[property="og:title"]`).prop("content", `${title}`);
+            $(`meta[property="og:title"]`).prop("content", `${title}`);          
             $(`meta[property="og:description"]`).prop("content", `${desc}`);
+            $(`meta[property="twitter:description"]`).prop("content", `${desc}`);
+            $(`meta[property="twitter:title"]`).prop("content", `${title}`);
             $(`meta[property="og:image"]`).attr("content", ``);
-            $(`meta[property="og:url"]`).attr("content", `${url}`);
-            $(`meta[name="twitter:card"]`).attr("content", "large image");
             $("title").text(`@ViewBag.Wiki.Title : ${desc}`);
                     //});
         </script>

@@ -3561,7 +3561,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.openColumnTooltip = function (e, i) {
-        $(e.currentTarget).siblings(".popover").find(".popover-content").text(atob($(e.currentTarget).attr("data-content")));
+        $(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-content")));
         $(e.currentTarget).siblings(".popover").find(".arrow").remove();
     };
 

@@ -253,6 +253,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#SentGridConnectionEdit" data-whatever="SendGrid">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/SendGrid.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
                                     <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit" *@ data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
@@ -268,16 +278,6 @@
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
-                                                <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/SendGrid.png" style="width:100%" />
                                                 <div class="image-add">
                                                     <div class="text fa-coming-soon">Coming Soon</div>
                                                 </div>
@@ -345,25 +345,25 @@
                                         </div>
                                     </div>
                                     @*<div id="quickbooks" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                <div class="connection_wrap w-100">
-                                    <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
-                                        <img class="img-responsive image-vender" src="~/images/QuickBooks_logo.png" style="width:100%" />
-                                        <div class="image-add">
-                                            <div class="text fa-coming-soon">Coming Soon</div>
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/QuickBooks_logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>*@
+                                    </div>*@
                                     @*<div id="shopify" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                <div class="connection_wrap w-100">
-                                    <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
-                                        <img class="img-responsive image-vender" src="~/images/shopify-logo.png" style="width:100%" />
-                                        <div class="image-add">
-                                            <div class="text fa-coming-soon">Coming Soon</div>
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/shopify-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>*@
+                                    </div>*@
 
                                 </div>
                             </div>
@@ -1164,6 +1164,56 @@
                         </div>
                         <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary MapConnection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="SentGridConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="Map_mask">
+            <form action="" method="post" id="SendGridConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Send Grid</h4>
+                    <div id="SendGrid_loader" class="MapConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:50%">
+                        <img class='img-responsive' src='~/images/SendGrid.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Delivering your transactional and marketing emails through the world's largest cloud-based email delivery platform. Send with confidence.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="SendGridVendor" type="hidden" value="SendGrid" class="form-control Vendor" readonly />
+                                @* <input name="MongoId" type="hidden" />*@
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="SendGridInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>ApiKey</label>
+                                        <input id="SendGridInputApiKey" name="ApiKey" type="text" class="form-control Inputclear" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="SendGridInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
 

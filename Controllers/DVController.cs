@@ -117,7 +117,7 @@ namespace ExpressBase.Web.Controllers
                 int _pos = __columns.Count + 100;
 
                 var Columns = new DVColumnCollection();
-                dvobj.IsPaged = columnresp.IsPaged.ToString();
+                //dvobj.IsPaged = columnresp.IsPaged.ToString();
 
                 var indx = -1;
                 foreach (EbDataColumn column in __columns)

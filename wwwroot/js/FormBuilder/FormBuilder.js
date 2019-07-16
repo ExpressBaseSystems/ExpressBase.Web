@@ -35,7 +35,7 @@
                 else
                     window.open("../WebForm/Index?refid=" + this.EbObject.RefId, '_blank');
             }.bind(this));
-        }        
+        }
     }.bind(this);
 
     this.del = function (eType, selector, action, originalEvent) {
@@ -296,6 +296,9 @@
                     ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');
                     this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]);
                 }
+                else if (type === "Approval") {
+                    ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
+                }
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
@@ -390,6 +393,17 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
+        if (el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
+            this.EbAlert.clearAlert("reviewCtrl");
+            this.EbAlert.alert({
+                id: "reviewCtrl",
+                head: "Form already contains a Review control.",
+                body:  "You cannot add more than one approval control into the form",
+                type: "warning",
+                delay: 3000
+            });
+            return false;
+        }
 
         let _id = $(target).attr("id");
         if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
@@ -489,14 +503,24 @@
         this.$form.on("focus", this.controlOnFocus.bind(this));
         if (this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
+        if (this.rootContainerObj.DisplayName.trim() === "")
+            this.rootContainerObj.DisplayName = this.rootContainerObj.Name;
         this.$form.focus();
         if (this.isEditMode) {
             this.makeTdsDropable_Resizable();
             this.makeTabsDropable();
         }
+        this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval");
+
+
+        this.EbAlert = new EbAlert({
+            id: this.toolBoxid + "ToolBoxAlertCont",
+            top: 24,
+            left: 24
+        });
 
         this.GenerateButtons();
-        
+
     };
 
     this.DSchangeCallBack = function () {

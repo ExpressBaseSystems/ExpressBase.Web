@@ -374,6 +374,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getColumnsSuccess = function (e) {
+        $("#objname").text(this.EbObject.DisplayName);
         if (this.isContextual) {
             if (this.isSecondTime) {
                 if (!this.validateFD())
@@ -549,7 +550,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         this.table_jQO.append($(this.getFooterFromSettingsTbl()));
 
-        this.table_jQO.children("tfoot").hide();
+        //this.table_jQO.children("tfoot").hide();
         this.table_jQO.children().find("tr").addClass("addedbyeb");
 
         //this.table_jQO.on('pre-row-reorder.dt', function (e, node, index) {
@@ -689,19 +690,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.fixedColumnCount(), rightColumns: this.ebSettings.RightFixedColumn };
         o.pagingType = "full";
-        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
-        //}
-        //else if (this.dtsettings.directLoad) {
-        //    o.paging = false;
-        //    //o.lengthMenu = [[-1], ["All"]];
-        //    o.dom = "rti";
-        //}
-        //o.rowGroup = {
-        //    dataSrc: 4
-        //};
-        //o.paging = false;
-        //o.rowReorder = true;
-        //o.order = [[8, "asc"]];
+        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];        
         o.bAutoWidth = false;
         o.autowidth = false;
         o.serverSide = true;
@@ -794,6 +783,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     }
 
     this.ajaxData = function (dq) {
+        if (!this.isSecondTime) {
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").hide();
+            $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").hide();
+            $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").hide();
+        }
+
         this.matchColumnSearchAndVisible();
         delete dq.columns; delete dq.order; delete dq.search;
         dq.RefId = this.EbObject.DataSourceRefId;
@@ -1224,9 +1219,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.filterDisplay();
         this.createFooter();
         this.arrangeWindowHeight();
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").children().find("tfoot").show();
-        $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").children().find("tfoot").show();
-        $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").children().find("tfoot").show();
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
+        $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
+        $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top","100px","important");
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top","-100px","important");
 
         this.addFilterEventListeners();
         this.arrangeFooterWidth();
@@ -1528,6 +1525,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.arrangeWindowHeight = function () {
         var filterId = "#filterdisplayrowtd_" + this.tableId;
         if (this.login === "uc") {
+            $(".dv-body2").style("height", "calc(100vh - 58px)", "important");
             if (this.IsTree) {
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 27px)", "important");
             }
@@ -1556,9 +1554,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
                 }
             }
-            this.stickBtn.$stickBtn.css("top", "46px");
+            //this.stickBtn.$stickBtn.css("top", "46px");
         }
         else {
+           
             if (this.tabNum !== 0) {
                 $("#sub_window_" + this.tableId).style("height", "calc(100vh - 40px)", "important");
                 if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
@@ -3562,7 +3561,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.openColumnTooltip = function (e, i) {
-        $(e.currentTarget).siblings(".popover").find(".popover-content").text(atob($(e.currentTarget).attr("data-content")));
+        $(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-content")));
         $(e.currentTarget).siblings(".popover").find(".arrow").remove();
     };
 
@@ -3587,12 +3586,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings.Columns.$values[i].sClass = "";
         this.ebSettings.Columns.$values[i].className = "";
 
-        if (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+        if (col.Type === parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
 
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
-        if (col.Type == parseInt(gettypefromString("Boolean"))) {
+        if (col.Type === parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
@@ -3614,7 +3613,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight text-center";
         }
-        if (col.Type == parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
+        if (col.Type === parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
@@ -3631,11 +3630,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
-        if (col.Type == parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
+        if (col.Type === parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
-
+        if (col.name === "eb_created_by" || col.name === "eb_lastmodified_by")
+            col.className += " dt-left";
         if (col.Font !== null) {
             var style = document.createElement('style');
             style.type = 'text/css';

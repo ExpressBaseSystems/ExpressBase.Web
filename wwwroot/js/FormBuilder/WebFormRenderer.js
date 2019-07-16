@@ -101,7 +101,7 @@ const WebFormRender = function (option) {
             this.initControls.init(Obj, opt);
         }.bind(this));
         if (this.ApprovalCtrl) {
-            opt = { formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
+            opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
             this.initControls.init(this.ApprovalCtrl, opt);
         }
     };
@@ -250,9 +250,11 @@ const WebFormRender = function (option) {
             DG.setEditModeRows(SingleTable);
         }.bind(this));
 
-        if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-            let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
-            this.ApprovalCtrl.setEditModeRows(SingleTable);
+        if (this.ApprovalCtrl) {
+            if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
+                let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
+                this.ApprovalCtrl.setEditModeRows(SingleTable);
+            }
         }
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
@@ -282,9 +284,11 @@ const WebFormRender = function (option) {
 
     this.getApprovalRow = function () {
         let FVWTObjColl = {};
-        let tOb = this.ApprovalCtrl.ChangedRowObject();
-        if (tOb)
-            FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        if (this.ApprovalCtrl) {
+            let tOb = this.ApprovalCtrl.ChangedRowObject();
+            if (tOb)
+                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        }
         return FVWTObjColl;
     };
 
@@ -357,11 +361,13 @@ const WebFormRender = function (option) {
 
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
+        let approvalTable = {};
         WebformData.MasterTable = this.FormObj.TableName;
 
         let formTables = this.getFormTables();
         let gridTables = this.getDG_FVWTObjColl();
-        let approvalTable = this.getApprovalRow();
+        if (this.ApprovalCtrl)
+            approvalTable = this.getApprovalRow();
 
         WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.ExtendedTables = this.getExtendedTables();

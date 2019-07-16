@@ -438,7 +438,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         position: relative;
         display: block;
         overflow: hidden;
-        white-space: nowrap;
         text-overflow: ellipsis;
     }
 
@@ -976,6 +975,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .Dg_head .dgtbl > thead > tr > th {
     padding: 5px;
+    vertical-align: middle;
 }
 
     .Dg_head .dgtbl > thead > tr > th:first-child {

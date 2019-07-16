@@ -17,7 +17,8 @@ var SolutionDashBoard = function (connections, sid) {
         "ExpertTexting": "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
-        "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />"
+        "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
+        "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />"
     }
     var venderdec = {
         "PGSQL":`<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -281,6 +282,26 @@ var SolutionDashBoard = function (connections, sid) {
         }.bind(this));
     };
 
+    this.SendGridOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddSendGrid",
+            data: postData,
+            beforeSend: function () {
+                $("#SendGrid_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#SendGrid_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#SentGridConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
     this.mapOnSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -294,7 +315,7 @@ var SolutionDashBoard = function (connections, sid) {
         }).done(function (data) {
             this.Conf_obj_update(JSON.parse(data));
             $("#Map_loader").EbLoader("hide");
-            EbMessage("show", { Message: "Connection Changed Successfully" });
+            EbMessage("show", { Message: "Connection Added Successfully" });
             $("#MapConnectionEdit").modal("toggle");
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
@@ -319,130 +340,7 @@ var SolutionDashBoard = function (connections, sid) {
         }.bind(this));
     };
 
-    this.appendDataDb = function (object) {
-        var Server = "";
-        var DatabaseName = "";
-        let vendersrc = "";
-        if (object.IsDefault) { Server = "xxx.xxx.xxx.xxx"; DatabaseName = "Default DB"; }
-        else { Server = object.Server; DatabaseName = object.DatabaseName; object.NickName = "not_set" }
 
-        if (object.DatabaseVendor == 0) {
-            vendersrc = `<img src="${location.protocol}//${location.host}/images/POSTGRES.png" />`;
-        }
-        else if (object.DatabaseVendor == 1) {
-            vendersrc = `<img src="${location.protocol}//${location.host}/images/mysql.png" />`;
-        }
-        else if (object.DatabaseVendor == 2) {
-            vendersrc = `<img src="${location.protocol}//${location.host}/images/sqlserver.png" />`;
-        }
-        else if (object.DatabaseVendor == 3) {
-            vendersrc = `<img src="${location.protocol}//${location.host}/images/oracle.png" />`;
-        }
-        $("#DbConnection_config .VendorImage").empty().append(vendersrc);
-        $("#DbConnection_config .DatabaseName").text(DatabaseName);
-        $("#DbConnection_config .NickName").text(object.NickName);
-        $("#DbConnection_config .Server").text(Server + ":" + object.Port);
-    };
-
-    this.appendFilesDb = function (object) {
-        let o = {};
-        let img = "";
-        if (object === null || object.IsDefault) {
-            o.FilesDB_url = "Default URL: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-            o.NickName = "Default";
-            img = `<img src="${location.protocol}//${location.host}/images/MongodB.png" />`;
-        }
-        else {
-            o = object;
-            if (object.FilesDbVendor == 0)
-                img = `<img src="${location.protocol}//${location.host}/images/MongodB.png" />`;
-            else if (object.FilesDbVendor == 1)
-                img = `<img src="${location.protocol}//${location.host}/images/mysql.png" />`;
-            else if (object.FilesDbVendor == 2)
-                img = `<img src="${location.protocol}//${location.host}/images/sqlserver.png" />`;
-        }
-        $("#FilesConnection_config .VendorImage").empty().append(img);
-        $("#FilesConnection_config .NickName").text(o.NickName);
-        $("#FilesConnection_config .FilesUrI").text(o.FilesDB_url);
-    };
-
-    this.appendEmailConnection = function (object) {
-        let o = {};
-        if ($.isEmptyObject(object)) {
-            o.ProviderName = "Not Set";
-            o.Host = "xxxxxxxxxxx";
-            o.Port = "00000000000";
-            o.NickName = "Not Set";
-            o.EmailAddress = "xxx xxx xxx xxx";
-        }
-        else
-            o = object;
-
-        $("#EmailConnection_config .Provider").text(o.ProviderName);
-        $("#EmailConnection_config .EmailAddress").text(o.EmailAddress);
-        $("#EmailConnection_config .NickName").text(o.NickName);
-
-    };
-    this.appendTwilioConnection = function (object) {
-        let o = {};
-        if ($.isEmptyObject(object)) {
-            o.ProviderName = "Not Set";
-            o.UserName = "xxxxxxxxxxx";
-            o.From = "00000000000";
-            o.NickName = "Not Set";
-        }
-        else
-            o = object;
-        $("#TwilioConnection_config .UserName").text(o.UserName);
-        $("#TwilioConnection_config .SendNo").text(o.From);
-        $("#TwilioConnection_config .NickName").text(o.NickName);
-    };
-
-    this.appendExpertConnection = function (object) {
-        let o = {};
-        if ($.isEmptyObject(object)) {
-            o.ProviderName = "Not Set";
-            o.UserName = "xxxxxxxxxxx";
-            o.From = "00000000000";
-            o.NickName = "Not Set";
-        }
-        else
-            o = object;
-        $("#ExpertTextingConnection_config .UserName").text(o.UserName);
-        $("#ExpertTextingConnection_config .SendNo").text(o.From);
-        $("#ExpertTextingConnection_config .NickName").text(o.NickName);
-    };
-
-    this.appendCloudnaryConnection = function (object) {
-        let o = {};
-        if (object === null || object === undefined || $.isEmptyObject(object)) {
-            o.Cloud = "xxxxxxx";
-            o.ApiKey = "xxxxxxx";
-            o.ApiSecret = "xxxxxx";
-        }
-        else {
-            o = object;
-        }
-
-        $("#Cloudnary_Connection_config .Cloud").text(o.Cloud);
-        $("#Cloudnary_Connection_config .ApiKey").text(o.ApiKey);
-        $("#Cloudnary_Connection_config .SecretKey").text(o.ApiSecret);
-    };
-
-    this.appendFtpConnection = function (object) {
-        let o = {};
-        if (object === null || object === undefined) {
-            o.Username = "xxxxxxx";
-            o.Password = "xxxxxxx";
-            o.Host = "xxxxxx";
-        }
-        else {
-            o = object;
-        }
-        $("#Ftp_Connection_config .UserName").text(o.Username);
-        $("#Ftp_Connection_config .Password").text(o.Password);
-        $("#Ftp_Connection_config .IpAddress").text(o.Host);
-    };
 
     this.testConnection = function (e) {
         var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
@@ -487,6 +385,7 @@ var SolutionDashBoard = function (connections, sid) {
                 EbMessage("show", { Message: "Test Connection Failed", Background: "red" });
         }.bind(this));
     };
+
 
     this.objectifyForm = function (formArray) {//serialize data function
         var returnArray = {};
@@ -654,6 +553,18 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#MapInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(temp[obj].ConObject);
                 $('#MapInputApiKey').val(temp1["ApiKey"]);
+            }
+        }
+    };
+    this.SendGridinteConfEditr = function (INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#SentGridConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#SendGridInputNickname').val(temp[obj].NickName);
+                $('#SendGridInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(temp[obj].ConObject);
+                $('#SendGridInputApiKey').val(temp1["ApiKey"]);
             }
         }
     };
@@ -1022,6 +933,11 @@ var SolutionDashBoard = function (connections, sid) {
                 }
                 else if ($trigger.hasClass('GoogleMapedit')) {
                     options.items.MAPS = { name: "Set as Map" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('SendGridedit')) {
+                    options.items.SMTP = { name: "Set as Email" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
@@ -1479,6 +1395,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
+        $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();

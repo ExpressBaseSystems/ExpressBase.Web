@@ -272,6 +272,8 @@
             //alert(url);
             let urlSplit = url.split("/");
             let id = urlSplit[urlSplit.length - 1];
+            $(".wikilist").removeClass("CurrentSelection");
+            $(`[data-id='${id}']`).addClass("CurrentSelection");
             if ($.isNumeric(id)) {
                 obj.AjaxCalFetchWikiList(id);
             }

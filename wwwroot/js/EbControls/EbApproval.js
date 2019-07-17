@@ -13,7 +13,8 @@
     this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
 
     ctrl.enableAccessibleRow = function (SingleTable) {/////////// need change
-        return this.enableAccessibleRow(this.nextRole);
+        if (this.editable !== false)// allow undefined
+            this.enableAccessibleRow(this.nextRole);
     }.bind(this);
 
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
@@ -35,6 +36,7 @@
 
         if (nextStageIdx > this.stages.length - 1)// if all staged completed
         {
+            this.editable = false;
             this.disableAllCtrls();
         }
         else {

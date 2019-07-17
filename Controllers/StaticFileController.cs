@@ -455,7 +455,12 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+                if (!req.ContainsKey("UserId"))
+                    throw new Exception("Userid must be set");
+
+                int _userid = Convert.ToInt32(req["UserId"]);
+
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest { UserIntId=_userid};
                 uploadImageRequest.ImageInfo = new ImageMeta();
                 foreach (var formFile in req.Files)
                 {
@@ -475,6 +480,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Dp;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+                        uploadImageRequest.ImageInfo.Context = StaticFileConstants.CONTEXT_DP;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
 
@@ -521,6 +527,7 @@ namespace ExpressBase.Web.Controllers
                         uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
                         uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.SolLogo;
                         uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+                        uploadImageRequest.ImageInfo.Context = StaticFileConstants.CONTEXT_LOGO;
 
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
 

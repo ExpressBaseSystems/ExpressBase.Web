@@ -94,7 +94,7 @@
         <div class="col-md-3">
             <div class="profpic-out">
                 <div class="profpic-in">
-                    <img id="imgprofimage" src="~/images/proimg.jpg" style="border-radius: 50%;height: 135px; max-width: 135px; opacity: 0.3;" data-id="0" onerror="this.src = '/images/imagenotfound.svg';" />
+                    <img id="imgprofimage" src="~/images/dp/@ViewBag.UId .jpg" style="border-radius: 50%;height: 135px; max-width: 135px; opacity: 0.3;" data-id="0" onerror="this.src = '/images/imagenotfound.svg';" />
                 </div>
             </div>
             <div style="margin-bottom: 25px; text-align: right;">
@@ -1403,6 +1403,7 @@
         EnableTag: false,
         EnableCrop: true,
         Context: "dp",//if single and crop
+        UserId: @ViewBag.UId,
         ResizeViewPort: false //if single and crop
     });
 

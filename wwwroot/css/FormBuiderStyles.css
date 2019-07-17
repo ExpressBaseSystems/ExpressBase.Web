@@ -315,9 +315,6 @@
     height: 100%;
 }
 
-.fs-tbl tr[active='true'], .fs-tbl tr[active='true'] .fs-textarea {
-    font-weight:bold;
-}
 .fs-tbl tr, .fs-tbl tr .fs-textarea {
     font-weight: normal;
 }
@@ -333,9 +330,29 @@
     border: none;
 }
 .fs-uname {
-    font-weight: bold;
+    font-weight: 500;
     margin-top: auto;
+    font-size: 13px;
 }
+
+.fs-tbl tr[active='true'], .fs-tbl tr[active='true'] .filter-option, .fs-tbl tr[active='true'] .fs-uname, .fs-tbl tr[active='true'] .fs-textarea {
+    font-weight: bold;
+}
+
+.fs-grid-cont .fs-time {
+    font-size: 11px;
+    color: #6d6d6d;
+}
+
+.fs-grid-cont .fs-submit-cont {
+    display:flex;
+    justify-content:center;
+}
+
+.fs-grid-cont .fs-submit {
+    width: 175px;
+}
+
 .fs-grid-cont {
     display: flex;
     flex-direction: column;

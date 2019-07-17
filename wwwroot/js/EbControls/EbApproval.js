@@ -34,7 +34,7 @@
         let nextStageIdx = prevStageIdx + 1;
         this.setPrevStageData(sortedSingleTable, nextStageIdx);
 
-        if (nextStageIdx > this.stages.length - 1)// if all staged completed
+        if (nextStageIdx > this.stages.length - 1 && pevStatusInt === "1")// if all staged completed
         {
             this.isStagesCompleted = true;
             this.disableAllCtrls();

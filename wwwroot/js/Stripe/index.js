@@ -20,14 +20,17 @@ function calculateAmt() {
     document.getElementById('total').innerHTML = tott;
     document.getElementById('tot').value = tot;
     document.getElementById('usrno').value = users;
-    
     document.getElementById('pay').innerHTML = button;
 }
 
 function showpayment() {
     var users = document.getElementById('usr').value;
+    var minuser = document.getElementById('minusr').value;
     if (users <= 5) {
-
+    }
+    if (users < minuser)
+    {
+        EbMessage("show", { Message: "You have " + minuser + " active users. Please delete users and proceed!!!", Background: "#aa0000" })
     }
     else {
         document.getElementById("users-form").style.display = "block";
@@ -46,7 +49,7 @@ function showusr() {
 }
 
 
-function calculateAmount1() {
+function calculateAmt1() {
     var users = document.getElementById('usr1').value;
     var tot;
     if (users <= 5) {
@@ -72,8 +75,11 @@ function calculateAmount1() {
 
 function showpayment1() {
     var users = document.getElementById('usr1').value;
+    var minuser = document.getElementById('minusr').value;
     if (users <= 5) {
-
+    }
+    if (users < minuser) {
+        EbMessage("show", { Message: "You have " + minuser + " active users. Please delete users and proceed!!!", Background: "#aa0000" })
     }
     else {
         document.getElementById("users-form1").style.display = "block";

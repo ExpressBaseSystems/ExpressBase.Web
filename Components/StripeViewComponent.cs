@@ -25,13 +25,15 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(string sid)
         {
             ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
-           Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", sid));
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", sid));
+            ViewBag.MinUsers = soln.NumberOfUsers;
             string cust_id = "";
             if (soln == null)
             {
                 
                 this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = sid});
                 soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}",sid));
+                ViewBag.MinUsers = soln.NumberOfUsers;
             }
             if (soln.PricingTier == 0)
             {

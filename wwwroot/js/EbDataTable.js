@@ -48,8 +48,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(rowData)) : null;
-    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(decodeURIComponent(escape(window.atob(rowData)))) : null;
+    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(decodeURIComponent(escape(window.atob(filterValues)))) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
@@ -177,12 +177,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#filterWindow_" + this.tableId).append("<div class='pgHead'> Param window <div class='icon-cont  pull-right' id='close_paramdiv_" + this.tableId + "'><i class='fa fa-thumb-tack' style='transform: rotate(90deg);'></i></div></div>");//
         $("#filterWindow_" + this.tableId).children().find('#close_paramdiv').off('click').on('click', this.CloseParamDiv.bind(this));
         $("#filterWindow_" + this.tableId).children().find("#close_paramdiv_" + this.tableId).off('click').on('click', this.CloseParamDiv.bind(this));
+
         $("#filterWindow_" + this.tableId).append(text);
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
-
-
 
         if (text !== "") {
             if (typeof commonO !== "undefined")
@@ -214,8 +213,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.placefiltervalues();
                 this.$submit.trigger("click");
             }
-            else if (this.FilterDialog.FormObj.AutoRun) {
-                this.$submit.trigger("click");
+            if (this.FilterDialog.FormObj.AutoRun) {
+                setTimeout(function () {
+                    this.$submit.trigger("click");
+                }.bind(this), 2000);
             }
             else {
                 this.FDCont.show();
@@ -399,21 +400,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.initCompleteflag = false;
 
         this.propGrid.ClosePG();
-
-        if (this.login === "dc") {
-            if (this.FD)
-                this.stickBtn.minimise();
-            else
-                this.stickBtn.hide();
-        }
-        else {
-            if (this.FD) {
-                this.stickBtn.minimise();
-            }
-
-            else
-                this.stickBtn.hide();
-        }
+        if (this.FD)
+            this.stickBtn.minimise();
+        else
+            this.stickBtn.hide();
         this.check4Customcolumn();
         this.CheckforTree();
         this.addSerialAndCheckboxColumns();
@@ -428,7 +418,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (CurR_RowG === null) {
 
                 $.each(rowG_coll, function (i, obj) {
-                    if (obj.RowGrouping.$values.length > 0) { 
+                    if (obj.RowGrouping.$values.length > 0) {
                         this.CurrentRowGroup = JSON.parse(JSON.stringify(obj));
                         this.visibilityCheck();
                         return false;
@@ -690,7 +680,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.fixedColumnCount(), rightColumns: this.ebSettings.RightFixedColumn };
         o.pagingType = "full";
-        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];        
+        o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         o.bAutoWidth = false;
         o.autowidth = false;
         o.serverSide = true;
@@ -1214,7 +1204,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");            
         }
 
-        if(!this.IsTree)
+        if (!this.IsTree)
             this.createFilterRowHeader();
         this.filterDisplay();
         this.createFooter();
@@ -1222,8 +1212,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
         $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
         $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top","100px","important");
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top","-100px","important");
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
+        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
 
         this.addFilterEventListeners();
         this.arrangeFooterWidth();
@@ -1317,7 +1307,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                         </div>
-                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}'></iframe>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}'></iframe>
             </div>
                     </div>
                 </div>
@@ -1340,7 +1330,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_params";
-            input.value = btoa(JSON.stringify(this.filterValues));
+            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -1371,13 +1361,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             let input = document.createElement('input');
             input.type = 'hidden';
             input.name = "rowData";
-            input.value = btoa(JSON.stringify(this.rowData));
+
+            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData))));
             _form.appendChild(input);
 
             let input1 = document.createElement('input');
             input1.type = 'hidden';
             input1.name = "filterValues";
-            input1.value = btoa(JSON.stringify(this.filterValues));
+            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
             _form.appendChild(input1);
 
             let input2 = document.createElement('input');
@@ -1557,7 +1548,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.stickBtn.$stickBtn.css("top", "46px");
         }
         else {
-           
+
             if (this.tabNum !== 0) {
                 $("#sub_window_" + this.tableId).style("height", "calc(100vh - 40px)", "important");
                 if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
@@ -2285,7 +2276,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
         $('.columntooltip').popover({
             trigger: 'hover',
-            placement:'right'
+            placement: 'right'
         });
         $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
@@ -2298,7 +2289,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
-        $("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
+        //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         this.Api.columns.adjust();
     };
 
@@ -2632,7 +2623,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.AppendTreeModal = function () {
         $("#treemodal").remove();
-        let modal1 =`<div class="modal fade" id="treemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        let modal1 = `<div class="modal fade" id="treemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="treemodal-container">
             <h4 class="treemodal-header">Move <span id="itemorgroup"></span></h4>
@@ -3366,12 +3357,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else if (this.popup) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
             if (this.login === "uc")
-                dvcontainerObj.drawdvFromTable(btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+                dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
             else
                 this.OpeninNewTab(idx, cData);
         }

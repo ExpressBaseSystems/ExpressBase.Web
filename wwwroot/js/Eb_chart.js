@@ -144,8 +144,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     this.MainData = (data === undefined) ? null : data;
     this.isPipped = false;
     this.isContextual = false;
-    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
-    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(rowData)) : null;
+    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(decodeURIComponent(escape(window.atob(filterValues)))) : [];
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(decodeURIComponent(escape(window.atob(rowData)))) : null;
     this.isTagged = false;
     //this.filterChanged = false;
     this.bot = false;

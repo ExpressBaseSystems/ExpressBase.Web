@@ -48,8 +48,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(atob(rowData)) : null;
-    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(atob(filterValues)) : [];
+    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(decodeURIComponent(escape(window.atob(rowData)))) : null; 
+    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(decodeURIComponent(escape(window.atob(filterValues)))) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
@@ -140,6 +140,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.ajaxSucc = function (text) {
+        this.FD = null;
         var flag = false;
         if (this.MainData !== null) {
             this.isPipped = true;
@@ -181,9 +182,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.getColumnsSuccess.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
-
-
-
         if (text !== "") {
             if (typeof commonO !== "undefined")
                 this.EbObject = commonO.Current_obj;
@@ -215,7 +213,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.$submit.trigger("click");
             }
             else if (this.FilterDialog.FormObj.AutoRun) {
-                this.$submit.trigger("click");
+                this.stickBtn.minimise();
             }
             else {
                 this.FDCont.show();
@@ -399,18 +397,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.initCompleteflag = false;
 
         this.propGrid.ClosePG();
-
-        if (this.login === "dc") {
+        if (this.FD !== null) {
             if (this.FD)
                 this.stickBtn.minimise();
-            else
-                this.stickBtn.hide();
-        }
-        else {
-            if (this.FD) {
-                this.stickBtn.minimise();
-            }
-
             else
                 this.stickBtn.hide();
         }
@@ -1317,7 +1306,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>                              
                         </div>
-                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}'></iframe>
+                        <div class="modal-body"> <iframe id="reportIframe${copycelldata}" class="reportIframe" src='../ReportRender/Renderlink?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}'></iframe>
             </div>
                     </div>
                 </div>
@@ -1340,7 +1329,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_params";
-            input.value = btoa(JSON.stringify(this.filterValues));
+            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -1371,13 +1360,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             let input = document.createElement('input');
             input.type = 'hidden';
             input.name = "rowData";
-            input.value = btoa(JSON.stringify(this.rowData));
+            
+            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData))));
             _form.appendChild(input);
 
             let input1 = document.createElement('input');
             input1.type = 'hidden';
             input1.name = "filterValues";
-            input1.value = btoa(JSON.stringify(this.filterValues));
+            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
             _form.appendChild(input1);
 
             let input2 = document.createElement('input');
@@ -2298,7 +2288,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
-        $("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
+        //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         this.Api.columns.adjust();
     };
 
@@ -3366,12 +3356,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else if (this.popup) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(JSON.stringify(this.filterValues))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
-            if (this.login === "uc")
-                dvcontainerObj.drawdvFromTable(btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+            if (this.login === "uc") 
+                dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
             else
                 this.OpeninNewTab(idx, cData);
         }

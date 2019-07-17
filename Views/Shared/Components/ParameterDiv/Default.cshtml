@@ -58,9 +58,5 @@
     $(document).ready(function () {
         self.FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc', '@ViewBag.curloc', @Html.Raw(ViewBag.userObj), '@ViewBag.submitId');
         console.log("Eb_FilterDialogRender");
-        
-        if (self.FilterDialog.FormObj.AutoRun) {
-            $("#" + '@ViewBag.submitId').trigger("click");
-        }
     })
 </script>

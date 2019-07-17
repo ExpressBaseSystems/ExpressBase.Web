@@ -15,6 +15,7 @@
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 
 @*<meta name="google-signin-client_id" content="1097281192898-q73cm1h8faa3ksjj2o44jchdlm179m87.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>*@
@@ -34,6 +35,7 @@
     var UInfo = Html.Raw(JsonConvert.SerializeObject(ViewBag.U_Info));
     var URoles = (Html.Raw(ViewBag.U_Roles).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Roles);
     var UGroups = (Html.Raw(ViewBag.U_Groups).ToString() == "") ? "null" : Html.Raw(ViewBag.U_Groups);
+    var LocConstraint = (Html.Raw(ViewBag.LocConstraint).ToString() == "") ? "null" : Html.Raw(ViewBag.LocConstraint);
 }
 <div class="mu-parent-div">
     <div class="row" style="height: 100%;">
@@ -61,7 +63,7 @@
             <div class="form-group">
                 <label class="label-custom-style">Email ID</label>
                 <div class="input-group">
-                    <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;"><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                    <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
                     <input style="padding-right: 25px;" class="form-control input-custom-style txtEmail" type="text" title="Email ID" autocomplete="off">
                     <span class="input-group-addon form-control-feedback" id="spanEmail" style="border: none; background-color: transparent; padding: 0px; right: 26px;top: -1px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>
                 </div>
@@ -71,35 +73,35 @@
                     <div style="margin-bottom: 15px;">
                         <label class="label-custom-style">Password</label>
                         <div class="input-group">
-                            <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;"><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <span class="input-group-addon span-custom-style"><i class="fa fa-key" aria-hidden="true"></i></span>
                             <input id="pwdPassword" type="password" class="form-control input-custom-style" title="Password" autocomplete="off">
                         </div>
                     </div>
                     <div style="margin-bottom: 15px;">
                         <label class="label-custom-style">Confirm Password</label>
                         <div class="input-group">
-                            <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;"><i class="fa fa-key" aria-hidden="true"></i></span>
+                            <span class="input-group-addon span-custom-style"><i class="fa fa-key" aria-hidden="true"></i></span>
                             <input id="pwdPasswordCon" type="password" class="form-control input-custom-style" title="Confirm Password" autocomplete="off">                            
                         </div>
                     </div>
                 </div>
-                <div id="divChangePassword" style="padding-top: 28px; display:none;">
+                <div id="divChangePassword" style="padding: 8px 0; display:none;">
                     <button id="btnChangePassword" class="" title="Change Password">Change Password</button>
                 </div>
-                <div id="divResetPassword" style="padding-top: 28px; display:none;">
+                <div id="divResetPassword" style="padding: 8px 0; display:none;">
                     <button id="btnResetPassword" class="" title="Reset Password">Reset Password</button>
                 </div>
             </div>
             <div class="form-group">
                 <div class="form-group" id="divStatus" style="display: none;">
-                    <label style="font-family: open sans; font-weight: 300;">User Status</label>
+                    <label class="label-custom-style">User Status</label>
                     <br />
                     <label class="radio-inline"><input type="radio" name="status" value="0" checked>Active</label>
                     <label class="radio-inline"><input type="radio" name="status" value="1">Suspend</label>
                     <label class="radio-inline"><input type="radio" name="status" value="2">Terminate</label>
                 </div>
                 <div class="form-group" id="divVisibility">
-                    <label style="font-family: open sans; font-weight: 300;">Visibility </label>
+                    <label class="label-custom-style">Visibility </label>
                     <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed" >
                 </div>
             </div>
@@ -125,7 +127,7 @@
                                 <div class="form-group">
                                     <label class="label-custom-style">Alternate Email ID</label>
                                     <div class="input-group">
-                                        <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;"><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                                        <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
                                         <input class="form-control txtAlternateEmail input-custom-style" type="text" title="Alternate Email ID" autocomplete="off">
                                     </div>
                                 </div>
@@ -140,42 +142,51 @@
                                     <label class="label-custom-style">Date of Birth</label>
                                     <div class="input-group">
                                         <input class="form-control input-custom-style" type="text" id="txtDateOfBirth" title="Date of Birth" autocomplete="off">
-                                        <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                        <span class="input-group-addon span-custom-style" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="label-custom-style">Primary Phone Number</label>
                                     <div class="input-group">
-                                        <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                        <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
                                         <input id="txtPhPrimary" class="form-control input-custom-style" type="text" title="Primary Phone Number" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="label-custom-style">Secondary Phone Number</label>
                                     <div class="input-group">
-                                        <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                        <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
                                         <input id="txtPhSecondary" class="form-control input-custom-style" type="text" title="Secondary Phone Number" autocomplete="off">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="label-custom-style">Land Phone Number</label>
                                     <div class="input-group">
-                                        <span class="input-group-addon" style="border-radius: 0px; padding: 0 8px;"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                        <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
                                         <input id="txtLandPhone" class="form-control input-custom-style" type="text" title="Land Phone Number" autocomplete="off">
                                     </div>
                                     <div class="form-group">
-                                        <label style="font-family: open sans; font-weight: 300; width: 100px;">Extension :</label>
+                                        <label class="label-custom-style" style="width: 100px;">Extension :</label>
                                         <input id="txtExtension" class="form-control input-custom-style" type="text" title="Extension" style="display: inline;width: calc(100% - 104px);margin-top: 10px;" autocomplete="off">
                                     </div>
                                 </div>
 
                             </div>
-                            <div class="col-md-4">
-                                
+                            <div class="col-md-4">                                
+                                <label class="label-custom-style">Api Key</label>
+                                <div class="form-group">
+                                    <label class="" style="font-weight: 300;">Development</label>
+                                    <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label class="" style="font-weight: 300;">Live</label>
+                                    <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
+                                </div>
+                                <button id="" class="" title="" style="" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Api key generation was temporarily suspended'); $(event.target).prop('disabled', false);}, 2000, event);">Generate</button>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label id="lblFbId" style="font-family: open sans; font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
+                                    <label id="lblFbId" style="font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
                                     <br />
                                     <img id="imgUserFbProfPic" src="" alt="Prof Pic" height="42" width="42" style="display:none;">
                                     <a id="userFbLink" href="#" target="_blank" style="display:none;"></a>
@@ -191,7 +202,7 @@
                                 </div>
 
                                 @*<div class="input-group">
-                                        <label id="" style="font-family: open sans; font-weight: 300;">API Key</label>
+                                        <label id="" style="font-weight: 300;">API Key</label>
                                         <button class="form-control" title="Generate API Key">Generate JWT Key</button>
                                     </div>*@
                             </div>
@@ -200,8 +211,24 @@
                     </div>
                     <div id="menu1" class="tab-pane"></div>
 
-                    <div id="menu2" class="tab-pane">
-                        <div style="text-align: center; padding-top: 28%; font-size: 28px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>
+                    <div id="menu2" class="tab-pane" style="padding-top:30px;">
+                        <div class="row home-tab-cont">
+                            <div class="col-md-6">                                
+                                <div class="form-group" id="divLocConstraint">
+                                    <label class="label-custom-style">Locations white list</label>
+                                    <input id="txtLocations" class="form-control input-custom-style" type="text" title="Locations" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="label-custom-style">Mobile Device IDs white list</label>
+                                    <input id="" class="form-control input-custom-style" data-role="tagsinput" type="text" title="Mobile Device ID" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        
+
+                        @*<div style="text-align: center; padding-top: 28%; font-size: 28px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>*@
                     </div>
 
                     <div id="menu3" class="tab-pane"></div>
@@ -210,19 +237,19 @@
                         <div class="row home-tab-cont">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label style="font-family: open sans; font-weight: 300;">Select Locale:</label>
-                                    <select class="form-control" id="sellocale" name="locale"></select>
+                                    <label class="label-custom-style">Select Locale:</label>
+                                    <select class="form-control input-custom-style" id="sellocale" name="locale"></select>
                                 </div>
                                 <div class="form-group" id="divLocaleInfo"></div>
                                 <div class="form-group">
-                                    <label style="font-family: open sans; font-weight: 300;">Select Time Zone:</label>
-                                    <select id="seltimezone" name="timezone" class="form-control"></select>
+                                    <label class="label-custom-style">Select Time Zone:</label>
+                                    <select id="seltimezone" name="timezone" class="form-control input-custom-style"></select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label style="font-family: open sans; font-weight: 300;">Default Location:</label>
-                                    <select id="selDefaultLocation" name="DefaultLocation" class="form-control"></select>
+                                    <label class="label-custom-style">Default Location:</label>
+                                    <select id="selDefaultLocation" name="DefaultLocation" class="form-control input-custom-style"></select>
                                 </div>
                             </div>
                         </div>
@@ -232,14 +259,14 @@
             </div>
             <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
             @*<button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>*@
-            <label id="lblMessage" style="color:red;padding-left: 36px;display:none;font-family: open sans; font-weight: 500;">  </label>         
+            <label id="lblMessage" style="color:red;padding-left: 36px;display:none; font-weight: 500;">  </label>         
         </div>
     </div>
 </div>
 
 <div id="MU_ChangePwdModal" class="modal fade" role="dialog">
     <div class="modal-dialog" style="width:445px">
-        <div class="modal-content">
+        <div class="modal-content" style="border-radius: 0px;">
             <div class="modal-header" style="">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <div>
@@ -250,25 +277,25 @@
                 <input type="hidden" id="itemid" />
                 <div id="modalBodyDiv">
                     <div class="form-group">
-                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Old Password :</label>
+                        <label style="font-weight: 300; width: 38%;">Old Password :</label>
                         <input id="pwdOld" class="form-control" type="password" title="Enter Old Password" style="width:60%; display: inline-block;">
                     </div>
                     <div class="form-group">
-                        <label style="font-family: open sans; font-weight: 300; width: 38%;">New Password :</label>
+                        <label style="font-weight: 300; width: 38%;">New Password :</label>
                         <input id="pwdNew" class="form-control" type="password" title="Enter New Password" style="width:60%; display: inline-block;">
                     </div>
                     <div class="form-group">
-                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
+                        <label style="font-weight: 300; width: 38%;">Confirm New Password :</label>
                         <div style="position: relative; width:60%; display: inline-block;">
                             <input id="pwdNewConfirm" class="form-control" type="password" title="ReEnter New Password">
                         </div>
                     </div>
-                    <label id="lblPwdChngMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);"></label>
+                    <label id="lblPwdChngMsg" style="font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);"></label>
                 </div>
             </div>
             <div class="modal-footer" style="">
-                <button id="btnUpdatePwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Update</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="btnUpdatePwd" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Update</button>
+                <button type="button" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
@@ -276,7 +303,7 @@
 
 <div id="MU_ResetPwdModal" class="modal fade" role="dialog">
     <div class="modal-dialog" style="width:445px">
-        <div class="modal-content">
+        <div class="modal-content" style="border-radius: 0px;">
             <div class="modal-header" style="">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <div>
@@ -287,21 +314,21 @@
                 <input type="hidden" id="itemid" />
                 <div id="">
                     <div class="form-group">
-                        <label style="font-family: open sans; font-weight: 300; width: 38%;">New Password :</label>
-                        <input id="pwdResetNew" class="form-control" type="password" title="Enter New Password" style="width:60%; display: inline-block;">
+                        <label class="label-custom-style" style="width: 38%;">New Password :</label>
+                        <input id="pwdResetNew" class="form-control input-custom-style" type="password" title="Enter New Password" style="width:60%; display: inline-block;">
                     </div>
                     <div class="form-group">
-                        <label style="font-family: open sans; font-weight: 300; width: 38%;">Confirm New Password :</label>
+                        <label class="label-custom-style" style="width: 38%;">Confirm New Password :</label>
                         <div style="position: relative; width:60%; display: inline-block;">
-                            <input id="pwdResetNewConfirm" class="form-control" type="password" title="ReEnter New Password">
+                            <input id="pwdResetNewConfirm" class="form-control input-custom-style" type="password" title="ReEnter New Password">
                         </div>
                     </div>
-                    <label id="lblPwdResetMsg" style="font-family: open sans; font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);">Minimum Pasword length should be 8</label>
+                    <label id="lblPwdResetMsg" style="font-weight: 300; padding-left: 38%; color: rgb(204, 0, 0);">Minimum Pasword length should be 8</label>
                 </div>
             </div>
             <div class="modal-footer" style="">
-                <button id="btnResetPwd" type="button" class="btn btn-default" style=""><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Reset</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button id="btnResetPwd" type="button"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Reset</button>
+                <button type="button" data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
@@ -334,12 +361,14 @@
   }
 </script>*@
 
-    var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone, '@ViewBag.Env');
+    
     function OnClickRemove(e) {
         if(confirm("Click OK to Remove"))
             $(e).parents("div.col-md-4").remove();
     }
     $('document').ready(function () {
+
+        var userobj = new UserJs(@ViewBag.MU_Mode, @UInfo, @RoleObj, @UserGroupObj, @URoles, @UGroups, @Role2RoleList, @StatusList, @Culture, @TimeZone, '@ViewBag.Env', @LocConstraint);
 
         $("#txtDateOfBirth").datetimepicker({ timepicker: false, format: "Y-m-d" });
 

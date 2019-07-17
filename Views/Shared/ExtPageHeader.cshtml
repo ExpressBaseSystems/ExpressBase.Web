@@ -72,12 +72,21 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="@home/Products/Documents" class="drop-link">
+                                                     <a href="@home/Products/Documents" class="drop-link">
                                                         <span class="ico">
                                                             <img src="~/images/docs.png" class="attachment-full" alt="media-entertainment" width="16">
                                                         </span>
                                                         <strong class="dl-title">Documents</strong>
                                                         <span class="dl-sub">Manage your Files</span>
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="@home/Products/Api" class="drop-link">
+                                                        <span class="ico">
+                                                            <img src="~/images/svg/api.svg" class="attachment-full" alt="media-entertainment" width="16">
+                                                        </span>
+                                                        <strong class="dl-title">Api</strong>
+                                                        <span class="dl-sub">Api for enterprise</span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -133,7 +142,7 @@
                     <li><a class="hvr-underline-from-center" href="@home/Blog" id="Blog">Blog</a></li>
                     @if (!isLogined)
                     {
-                        <li id="signIn"><a class="hvr-underline-from-center" href=@signinurl>Sign in &#8594;</a></li>
+                        <li id="signIn"><a class="eb_btnplain" href=@signinurl>Sign in &#8594;</a></li>
                     }
                 </ul>
             </div><!-- /.navbar-collapse -->

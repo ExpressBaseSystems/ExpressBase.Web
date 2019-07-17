@@ -113,8 +113,8 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
 .dataTables_scrollFoot {
     /*padding-bottom: 1px;
     margin-bottom: -1px;*/
-    padding-top: 100px !important;
-    margin-top: -100px !important;
+    /*padding-top: 100px !important;
+    margin-top: -100px !important;*/
     /*width: 98.65% !important;*/
     /*border-right: 1px solid #ccc !important;*/
 }
@@ -151,6 +151,9 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
 
 .dt-right {
     text-align: right;
+}
+.dt-left {
+    text-align: left;
 }
 
 .dt-buttons {
@@ -414,13 +417,13 @@ table.dataTable tbody td.dt-body-right {
 }
 
 .div.dataTables_wrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {
-    height: 30px;
-    padding: 2px 3px;
+    height: 30px !important;
+    padding: 2px 3px !important;
     font-size: 12px;
     line-height: 1.5;
-    border-radius: 0px;
-    border-right: solid 1px #ddd;
-    border: none;
+    border-radius: 0px !important;
+    border-right: solid 1px #ddd !important;
+    border: none !important;
 }
 
 
@@ -598,6 +601,16 @@ table.dataTable tr.group td {
 .footerli, .filterli {
     display: flex;
 }
+.footerli a:hover, .filterli a:hover {
+    background-color: #ddd!important;
+}
+.footerli:hover, .filterli:hover {
+    background-color: #ddd!important;
+}
 .filterdisplayrow td{
     border-bottom:1px solid #ddd !important;
+}
+.conditionformat {
+    border-radius: 5px;
+    text-align: center;
 }

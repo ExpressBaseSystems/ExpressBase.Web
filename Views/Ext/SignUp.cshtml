@@ -6,21 +6,21 @@
     string signinLink = string.Empty;
     if (ViewBag.Env == "Development")
     {
-        home = "http://myaccount.localhost:41500/";
+        home = "http://localhost:41400/";
         sociallink = "http://localhost:41600";
-        signinLink = "http://localhost:41500";
+        signinLink = "http://myaccount.localhost:41500";
 
     }
     if (ViewBag.Env == "Staging")
     {
         home = "https://eb-test.xyz";
-        sociallink = "https://eb-test.xyz";
-        signinLink = "https://eb-test.xyz";
+        sociallink = "https://ss.eb-test.xyz";
+        signinLink = "https://myaccount.eb-test.xyz";
     }
     if (ViewBag.Env == "Production")
     {
         home = "https://expressbase.com";
-        sociallink = "https://myaccount.expressbase.com";
+        sociallink = "https://ss.expressbase.com";
         signinLink = "https://myaccount.expressbase.com";
     }
 }
@@ -28,37 +28,43 @@
 <script src="~/js/EbDashBoards/EbOnBoarding.js" type="text/javascript"></script>
 <script src="~/js/EbDashBoards/countrypicker.js" type="text/javascript"></script>
 <div class="eb-signup_wrapper h-100">
-    <div class="header hidden-xs hidden-sm">
-        <div class="callFrAction" style="display: flex;align-items: center;">
-            <img src="~/images/EB_Logo.png" class=" imglogo" />
-            <spn style="margin-left: auto;font-size: 13px;">
-                Already signed up?
-            </spn>
-            <a class="callActionBtn signintop" href="@signinLink/Ext/TenantSignIn" role="button">
-                Sign In
-            </a>
+    <div class="header hidden-xs hidden-sm" style="background: white;">
+        <div class="container-fluid">
+            <div class="callFrAction" style="display: flex;align-items: center;">
+                <a href="@home">
+                    <img src="~/images/EB_Logo.png" class=" imglogo" />
+                </a>
+                <spn style="margin-left: auto;font-size: 13px;">
+                    Already an User?
+                </spn>
+                <a class="callActionBtn signintop" href="@signinLink/Ext/TenantSignIn" role="button">
+                    Sign In
+                </a>
+            </div>
         </div>
     </div>
-    <div class="container-fluid h-100">
+    <div class="container-fluid ">
         <div class="row">
-            <div class="col-sm-6 col-md-6 col-lg-6 hidden-xs row-flex h-100">
-                <div class=" col-sm-12 col-md-12 col-lg-12 leftpart h-100">
+            <div class="col-sm-6 col-md-6 col-lg-6 hidden-xs row-flex ">
+                <div class=" col-sm-12 col-md-12 col-lg-12 leftpart ">
                     <div class="eb-signup-selltext">
                         <h2>Are you <b>Struggling?</b></h2>
                         <h4>with frequent changes</h4>
                     </div>
                     <div class="eb-signup-sellimg">
-                        <img src="~/images/register-wall.jpg" class="leftsideimg">
+                        <img src="~/images/developer.jpg" class="leftsideimg">
                     </div>
                 </div>
             </div>
             <div class="col-sm-6 col-md-6 col-lg-6 col-xs-12 rightpart">
                 <div class="row-flex right-part-inner">
                     <div class="center_rightpart col-xs-12" id="userdetails">
+                        <div id="loaderdiv" style="left:0;top:0;">
+                        </div>
                         <div class="col-sm-12 col-md-12 col-lg-12 ">
                             <h1>SIGN UP</h1>
                         </div>
-                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12 ">
+                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12 tbpad">
                             <label>Email</label>
                             <div class="icon_input">
                                 <input class="form-control sinpt" type="text" name="Email" id="email" placeholder="">
@@ -66,43 +72,7 @@
                             </div>
                             <div id="emaillbl" class="ebnotify" style=" visibility:hidden"> Enter a valid Email</div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12  eb_required_group required ">
-                            <label>Name</label>
-                            <div class="icon_input">
-                                <input class="form-control sinpt" type="text" name="Name" id="name">
-                                <i class="fa fa-user fa-fw" aria-hidden="true"></i>
-                            </div>
-                            <div id="namelbl" class="ebnotify" style=" visibility :hidden"> Enter a valid name</div>
-                        </div>
-                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  ">
-                            <div class="col-md-6 col-lg-6 rightcolpad" style="padding-left: 0px;">
-                                <label>Country</label>
-                                <div class="icon_input">
-                                    <select class="selectpicker countrypicker custom-select  custom-select-lg selinp" id="country" data-live-search="true" data-flag="true"></select>
-                                    <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
-                                </div>
-                                <div id="countrylbl" class="ebnotify" style=" visibility :hidden"> Select your Country</div>
-                            </div>
-                            <div class="col-md-6 col-lg-6 rightcolpad" style="padding-right: 0px;">
-                                <label>You are</label>
-                                <div class="col-sm-12 col-md-12 col-lg-12 radiodiv rightcolpad rightcol_mar_bot" style=" padding-left: 0px;">
-                                    <div class="col-md-6 col-lg-6 rightcolpad " style=" padding-left: 0px; ">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input radio_cstm" id="developer" name="account_typ" value="@CoreConstants.DEVELOPER" checked>
-                                            <label class="custom-control-label" for="developer">Developer</label>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6 col-lg-6 rightcolpad">
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" class="custom-control-input radio_cstm" id="business" value="@CoreConstants.BUSINESS" name="account_typ">
-                                            <label class="custom-control-label" for="business">Business</label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="youarelbl" class="ebnotify" style=" visibility :hidden"> </div>
-                            </div>
-                        </div>
-                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  ">
+                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  tbpad">
                             <div id="rcorners1">
                                 <div style="margin-top:0px;margin-bottom:0px; display:inline-block ">
                                     <span> <i id="passcheck_1" class="fa fa-times ebnotify" style="font-size:11px;display:inline-block;padding-right:5px"> </i>  </span>
@@ -125,7 +95,7 @@
                                     <span style="display:inline-block"> <p style="margin-bottom:0px" class="p_hover">At least one special character</p></span>
                                 </div>
                             </div>
-                            <div class="col-md-6 col-lg-6 rightcolpad " style="padding-left: 0px;">
+                            <div class="col-md-12 col-lg-12 rightcolpad " style="padding-left: 0px;padding-right: 0px;">
                                 <label>Password</label>
                                 <div class="icon_input">
                                     <input class="form-control sinpt " data-minlength="8" type="password" name="Password" id="inputPassword">
@@ -140,55 +110,77 @@
                                     </span>
                                 </div>
                             </div>
+                         
+                        </div>
+                        
+                        <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  tbpad">
+                            <div class="col-md-6 col-lg-6 rightcolpad" style="padding-left: 0px;">
+                                
+                                    <label>Name</label>
+                                    <div class="icon_input">
+                                        <input class="form-control sinpt" type="text" name="Name" id="name">
+                                        <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                                    </div>
+                                    <div id="namelbl" class="ebnotify" style=" visibility :hidden"> Enter a valid name</div>
+                               
+                            </div>
+
                             <div class="col-md-6 col-lg-6 rightcolpad" style=" padding-right: 0px;">
-                                <label>Repeat Password</label>
+                                <label>Country</label>
                                 <div class="icon_input">
-                                    <input class="form-control sinpt " type="password" name="Repeat-password" id="inputPasswordConfirm" data-match="#inputPassword" data-match-error="Password donot match">
-                                    <i class="fa fa-lock fa-fw" aria-hidden="true"></i>
+                                    <select class="selectpicker countrypicker custom-select  custom-select-lg selinp" id="country" data-live-search="true" data-flag="true"></select>
+                                    <i class="fa fa-globe fa-fw" aria-hidden="true"></i>
                                 </div>
-                                <div class="help-block with-errors">
-                                    <p id="repeat_passwordlbl" class="ebnotify" style="margin-bottom: 0px; visibility :hidden"> Password Didn't match</p>
-                                </div>
+                                <div id="countrylbl" class="ebnotify" style=" visibility :hidden"> Select your Country</div>
+                            </div>
+
+                        </div>
+
+                        <div class="row tbpad">
+                            <div class="eb-signup-tnc text-center">
+                                By proceeding, you agree to our
+                                <a rel="Terms of Service" target="" href="#">Terms of Service</a>
+                                and
+                                <a rel="Privacy Policy" href="#">Privacy Policy</a>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12 rightcolpadtop ">
-                            <button id="save-profile" class="btn save-tenant lg_button">
-                                Create account
+                        <div class="col-sm-12 col-md-12 col-lg-12 rightcolpadtop tbpad ">
+                            <button id="save-profile" class="btn save-tenant lg_button g-recaptcha"  data-sitekey=@ViewBag.ReCaptchaKey disabled>
+                                Join Now
                                 <i class="iconspin"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="eb-signup_socilaWrpr text-center">
-                        <div class="eb-signup_socilaWrpr_inner">
-                            @*<a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg">*@
-                            <a href="@sociallink/auth/facebook" class="btn btn-lg">
-                                <i class="fa fa-facebook text-muted"></i>
-                            </a>
-                            <a href="@sociallink/auth/github" class="btn btn-lg">
-                                <i class="fa fa-github text-muted"></i>
-                            </a>
-                          @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
-                                <i class="fa fa-twitter text-muted"></i>
-                            </a>
-                            <a href=" @sociallink/auth/google" class="btn btn-lg">
-                                 <i class="fa fa-google-plus text-muted"></i>
-                            </a>
-                            <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
-                            <i class="fa fa-linkedin text-muted"></i>
-                            </a>*@
+                    @{ if (ViewBag.Env != "Production")
+                        {
+
+                        <div class="eb-signup_socilaWrpr text-center">
+                            <div class="eb-signup_socilaWrpr_inner">
+                                @*<a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg">*@
+                                <a href="@sociallink/auth/facebook" class="btn btn-lg">
+                                    <i class="fa fa-facebook text-muted"></i>
+                                </a>
+                                <a href="@sociallink/auth/github" class="btn btn-lg">
+                                    <i class="fa fa-github text-muted"></i>
+                                </a>
+                                @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
+                                        <i class="fa fa-twitter text-muted"></i>
+                                    </a>
+                                    <a href=" @sociallink/auth/google" class="btn btn-lg">
+                                         <i class="fa fa-google-plus text-muted"></i>
+                                    </a>
+                                    <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
+                                    <i class="fa fa-linkedin text-muted"></i>
+                                    </a>*@
+                            </div>
                         </div>
-                    </div>
+                            }
+                        }
                 </div>
+
             </div>
         </div>
-        <div class="row">
-            <div class="eb-signup-tnc text-center">
-                By proceeding, you agree to our
-                <a rel="Terms of Service" target="" href="#">Terms of Service</a>
-                and
-                <a rel="Privacy Policy" href="#">Privacy Policy</a>
-            </div>
-        </div>
+
     </div>
 </div>
 
@@ -202,11 +194,7 @@
         var psd = new PasswordValidation();
     });
     //$("#AppIcon").iconpicker({ placement: 'top', iconset: 'fontawesome', icon: 'fa-home' }).on('change', function (e) { $("input[name='AppIcon']").val(e.icon); });
-    $("#rcorners1").position({
-        my: "right-20px",
-        at: "top-20px",
-        of: "#psdinfo1",
-    });
+    
 </script>
 
 

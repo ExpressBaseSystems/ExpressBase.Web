@@ -117,7 +117,7 @@ namespace ExpressBase.Web.Controllers
                 int _pos = __columns.Count + 100;
 
                 var Columns = new DVColumnCollection();
-                dvobj.IsPaged = columnresp.IsPaged.ToString();
+                //dvobj.IsPaged = columnresp.IsPaged.ToString();
 
                 var indx = -1;
                 foreach (EbDataColumn column in __columns)
@@ -255,6 +255,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                request.ReplaceEbColumns = true;
                 if (request.DataVizObjString != null)
                     request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
                 if (request.CurrentRowGroup != null)
@@ -297,6 +298,7 @@ namespace ExpressBase.Web.Controllers
             InlineTableDataRequest request = new InlineTableDataRequest();
             request = _request;
             request.eb_solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            request.ReplaceEbColumns = true;
             if (request.DataVizObjString != null)
                 request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
             request.DataVizObjString = null;
@@ -312,6 +314,49 @@ namespace ExpressBase.Web.Controllers
             }
             return resultlist1;
         }
+
+        public DataSourceDataResponse getData4PowerSelect(TableDataRequest request)
+        {
+            try
+            {
+                request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                request.ReplaceEbColumns = false;
+                if (request.DataVizObjString != null)
+                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+                if (request.CurrentRowGroup != null)
+                    (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
+                request.DataVizObjString = null;
+                request.UserInfo = this.LoggedInUser;
+                if (request.TFilters != null)
+                {
+                    foreach (TFilters para in request.TFilters)
+                    {
+
+                        if (para.Type == "date")
+                        {
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                        }
+                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                    }
+                }
+                DataSourceDataResponse resultlist1 = null;
+                try
+                {
+                    this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                    resultlist1 = this.ServiceClient.Post(request);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.ToString());
+                }
+                return resultlist1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
+            }
+            return null;
+        }        
 
         public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(int type)
         {

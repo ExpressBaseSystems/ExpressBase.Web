@@ -1,10 +1,25 @@
-﻿.field-icon {
+﻿/*css page for tenant 
+1 signup 
+2 resetpasword
+3 forgotpassword
+4 mailalreadyverified
+5 emailverify*/
+
+
+
+
+/*css for signup page*/
+
+.field-icon {
     right: 0;
     top: 15px;
     position: absolute;
     z-index: 2;
 }
-
+.h-100{
+    height:100vh;
+    max-height:100vh;
+}
 .eb-signup_wrapper {
     font-family: Montserrat;
 }
@@ -45,35 +60,42 @@
         width: 100%;
         font-size: 12px;
         font-weight: 500;
-        margin-top:5rem;
+        /*margin-top:2rem;*/
     }
     .eb-signup_wrapper .rightpart {
         background: white;
-        height: 100%;
         display: flex;
         flex-flow: column;
     }
-.right-part-inner {
-    justify-content: center;
-    padding-top: 6rem;
-    flex-flow: column;
-    max-width:700px;
-}
+    .eb-signup_wrapper .right-part-inner {
+        justify-content: center;
+        padding-top: 6rem;
+        flex-flow: column;
+        max-width: 700px;
+    }
 
 .eb-signup_wrapper .sinpt {
     height: 45px;
 }
-.eb-signup-selltext h2 {
-    font-size: 35px;
-    font-weight: 400;
-    margin-bottom:15px;
-}
+
+
+    .eb-signup_wrapper .tbpad{
+        padding-top:1em;
+    }
+    .eb-signup-selltext h2 {
+        font-size: 35px;
+        font-weight: 400;
+        margin-bottom: 15px;
+    }
 .eb-signup-selltext h4 {
    font-size:25px;
 }
+.eb-signup_wrapper label{
+    font-weight:500;
+}
 
 .eb-signup_wrapper .icon_input .sinpt {
-    padding-left: 35px;
+    padding-left: 42px;
 }
     .eb-signup_wrapper .leftpart {
        display:flex;
@@ -95,7 +117,7 @@
 .signintop:hover{
     text-decoration:none;
 }
-.center_rightpart {
+.eb-signup_wrapper .center_rightpart {
     display: flex;
     height: 100%;
     flex-flow: column;
@@ -105,6 +127,7 @@
     padding: 25px;
     border-radius: 6px;
     border: 1px solid #d3edff;
+    position: relative;
 }
 
 .eb-signup_wrapper .lg_button {
@@ -249,8 +272,8 @@
     bottom: 0;
     position: absolute;
     z-index: 10;
-    left: -320px;
-    width: 320px;
+    left: -300px;
+    width: 300px;
 }
 
     #rcorners1:after {
@@ -258,14 +281,14 @@
         width: 0px;
         height: 0px;
         border-top: 10px solid transparent;
-        border-left: 10px solid #f5f5f5;
+        border-left: 10px solid #ffffff;
         border-bottom: 10px solid transparent;
         border-right: 10px solid transparent;
+     
         position: absolute;
         left: 100%;
         top: 60%;
         margin-left: -2px;
-        
     }
 
 
@@ -365,13 +388,13 @@
         transform: translate(19px, 0);
     }
 }
-/*.txthighlight:focus {
+.txthighlight:focus {
     border-color: #66afe9;
     outline: 0;
     -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
     box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 }
-*/
+
 .txthighlightred:focus {
     border-color: #a94442;
     outline: 0;
@@ -417,7 +440,7 @@ input {
         position: absolute;
         left: 0;
         top: 6px;
-        padding: 9px 8px;
+        padding: 10px 15px;
         color: #7da4ec;
         transition: 0.3s;
     }
@@ -510,8 +533,8 @@ input {
     -webkit-border-radius: 27px;
 }
 
-/*media query*/
 
+/*media query*/
 @media only screen and (max-width: 600px) {
     .rightcolpad {
         padding-left: 0px;
@@ -535,6 +558,7 @@ input {
 
     .rcorners1 {
         visibility: hidden;
+        display:none;
     }
 
     .rightpart {
@@ -549,4 +573,164 @@ input {
         flex: 0 0 100%;
         max-width: 100%;
     }
+    .h-100 {
+        height: auto;
+       
+    }
 }
+
+
+
+
+/*css for mailalreadyverified page*/
+
+
+.eb_mailverify {
+    font-family: Montserrat;
+}
+
+    .eb_mailverify .veri_content {
+        justify-content: center;
+        display: flex;
+        /*flex: 85%;
+    max-width: 90%;*/
+        background: linear-gradient(to right,#eef9fe,#edf7ff);
+        border-radius: 6px;
+        border: 1px solid #d3edff;
+        flex-flow: column;
+        position: relative;
+        margin-top: 8em;
+    }
+
+    .eb_mailverify .lg_button {
+        color: white;
+        background-color: #4987fb;
+        /*padding: 6px 30px;
+        height: 45px;
+        margin-top: 15px;*/
+        border: none;
+    }
+
+
+
+
+/*css for resetpasword page*/
+
+
+
+
+/*css for forgotpassword page*/
+.eb_ext_pge_stl {
+    font-family: Montserrat;
+}
+    .eb_ext_pge_stl .frgtpswdiv {
+        justify-content: center;
+        display: flex;
+        /*flex: 85%;
+    max-width: 90%;*/
+        background: linear-gradient(to right,#eef9fe,#edf7ff);
+        border-radius: 6px;
+        border: 1px solid #d3edff;
+        flex-flow: column;
+        position: relative;
+    }
+    .eb_ext_pge_stl .sinpt {
+        height: 45px;
+    }
+    .eb_ext_pge_stl .icon_input .sinpt {
+        padding-left: 42px;
+    }
+    .eb_ext_pge_stl .lg_button {
+        color: white;
+        background-color: #4987fb;
+        padding: 6px 30px;
+        height: 45px;
+        margin-bottom: 2em;
+        margin-top: 1em;
+    }
+
+        .eb_ext_pge_stl .lg_button:hover {
+            background-color: #4382f7;
+            color: white;
+        }
+    .eb_ext_pge_stl.icon_input {
+        position: relative;
+    }
+
+        .eb_ext_pge_stl .icon_input i {
+            position: absolute;
+            left: 0;
+            top: 6px;
+            padding: 10px 15px;
+            color: #7da4ec;
+            transition: 0.3s;
+        }
+    .eb_ext_pge_stl .infopara p {
+        margin: 0px;
+        line-height: 2;
+        color: #838282;
+    }
+    .eb_ext_pge_stl .infopara {
+        margin-bottom: 1em;
+    }
+    .eb_ext_pge_stl h1 {
+        margin-top: 2em;
+        font-size: 1.8em;
+        font-weight: 400;
+    }
+    .eb_ext_pge_stl .malvrfypg .leftsideimg {
+        /*height: 350px;*/
+        /*padding-bottom: 30px;
+        padding-top: 0px;
+        padding-left: 30px;*/
+    }
+    .eb_ext_pge_stl .h-100 {
+        height: 100vh;
+        max-height: 100vh;
+    }
+    .eb_ext_pge_stl .fgshwd {
+        -webkit-box-shadow: 1px 1px 8px 0px rgba(0,0,0,0.1);
+        -moz-box-shadow: 1px 1px 8px 0px rgba(0,0,0,0.1);
+        box-shadow: 1px 1px 8px 0px rgba(0,0,0,0.1);
+        margin-top: 8em;
+    }
+/*.eb_ext_pge_stl .center_rightpart {
+        display: flex;
+        height: 100%;
+        flex-flow: column;
+        flex: 0 0 85%;
+        background: linear-gradient(to right,#eef9fe,#edf7ff);
+        padding: 25px;
+        border-radius: 6px;
+        border: 1px solid #d3edff;
+        position: relative;
+    }*/
+    .eb_ext_pge_stl .right-part-inner {
+        justify-content: center;
+        padding-top: 6rem;
+        padding-bottom: 6rem;
+        flex-flow: column;
+        max-width: 700px;
+    }
+    .eb_ext_pge_stl .rightpart {
+        /*background: white;*/
+        display: flex;
+        flex-flow: column;
+        background: linear-gradient(to right,#eef9fe,#edf7ff);
+    }
+    .eb_ext_pge_stl img {
+        padding-top: 3em;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .eb_ext_pge_stl .fgimgdiv {
+        padding-top: 4em;
+    }
+
+    .eb_ext_pge_stl .tbpad {
+        padding-top: 1em;
+    }
+
+/*css for emailverify page*/
+
+

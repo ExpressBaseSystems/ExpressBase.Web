@@ -172,7 +172,7 @@ var EbBasicDataTable = function (Option) {
 
             return sum / data.length;
         });
-        //this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+        this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
         //this.table_jQO.off('order.dt').on('order.dt', this.doSerial.bind(this));
         ////this.table_jQO.off('init.dt').on('init.dt', this.doSerial.bind(this));
 
@@ -233,8 +233,8 @@ var EbBasicDataTable = function (Option) {
             url = "../Eb_Object/getData";
         else if (this.source === "datareader")
             url = "../CE/getDataCollcetion";
-        else
-            url = "../dv/getData";
+        else if (this.source === "powerselect")
+            url = "../dv/getData4PowerSelect";
         var o = new Object();
         o.scrollY = this.scrollHeight;
         o.scrollX = "100%";

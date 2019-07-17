@@ -270,7 +270,7 @@
         let hierarchyLevel = (sourceProp.match(/Parent./g) || []).length;
         if (hierarchyLevel > 0) {
             for (var i = 0; i < hierarchyLevel; i++) {
-                CurlevelObj = CurlevelObj.ParentPG
+                CurlevelObj = CurlevelObj.ParentPG;
             }
         }
         let _CElistFromSrc = CurlevelObj.PropsObj[sourceProp.replace(/Parent./g, "")].$values;
@@ -598,10 +598,10 @@
             this.getOSElist();
     };
 
-    this.getOSElist = function () {
+    this.getOSElist = function (isRefresh) {
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
-        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]) {
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType] || isRefresh) {
             $.LoadingOverlay("show");
             $.ajax({
                 url: "../DV/FetchAllDataVisualizations",
@@ -782,7 +782,7 @@
         let $selectedOpt = $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .selectpicker").find("option:selected");
         let ObjType = $selectedOpt.attr("obj-type");
         this.OSEList = null;
-        this.getOSElist();
+        this.getOSElist("refresh");
     };
 
     this.set9ColTiles = function (containerId, values) {
@@ -1016,7 +1016,10 @@
         if ($items.length === 0)
             tempArr.push(0);
         $.each($items, function (i, el) {
-            let numStr = el.getAttribute("ebsid").replace(/[^0-9]/g, '');
+            let ebsid = el.getAttribute("ebsid");
+            if (!ebsid)
+                console.warn(">> no EbSid found");
+            let numStr = ebsid.replace(/[^0-9]/g, '');
             numStr = numStr.substr(numStr.length - 3);
             let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);

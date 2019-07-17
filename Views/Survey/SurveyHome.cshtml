@@ -7,7 +7,7 @@
 <script>
     var cm = new EbHeader().setName("Surveys");
 </script>
-<div class="row s-dash-container">
+<div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group menuwrapper_ul_outer">
@@ -48,10 +48,10 @@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 s-dash-solution-desc">
             <div class="col-md-10 pd-0">
-                <h4 class="mr-t-0 mr-b-0">Surveys</h4>
+                <h4 class="mr-t-0 mr-b-0">Surveys (@ViewBag.Surveys.Count)</h4>
             </div>
-            <div class="col-md-2 pd-0">
-                <a href="/Survey/ManageSurvey" class="ebbtn eb_btn-sm eb_btngreen pull-right" id="NewSurvey">New Survey</a>
+            <div class="col-md-2 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+                <a href="/Survey/ManageSurvey" class="ebbtn eb_btnblue eb_btn-sm" id="NewSurvey">New Survey</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">

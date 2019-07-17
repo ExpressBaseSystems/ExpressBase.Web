@@ -332,7 +332,7 @@ const EbSelect = function (ctrl, options) {
         o.columnSearch = this.filterArray;
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rt";
-
+        o.source = "powerselect";
         o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
@@ -435,7 +435,7 @@ const EbSelect = function (ctrl, options) {
 
     this.SelectRow = function (idx, vmValue) {
         if (!this.Vobj.valueMembers.contains(vmValue)) {
-            if (this.maxLimit === 1) {
+            if (this.maxLimit === 1) {// single select
                 this.Vobj.valueMembers = [vmValue];
                 this.Vobj.hideDD();
                 $.each(this.dmNames, this.setDmValues.bind(this));
@@ -444,8 +444,15 @@ const EbSelect = function (ctrl, options) {
                 this.Vobj.valueMembers.push(vmValue);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(this.DTSelector + " tr.selected").find('[type=checkbox]').prop('checked', true);
+                this.clearSearchBox();
             }
         }
+    };
+
+    this.clearSearchBox = function () {
+        setTimeout(function () {
+            this.$searchBoxes.val('');
+        }.bind(this), 10);
     };
 
     this.setColumnvals = function () {
@@ -649,12 +656,19 @@ const EbSelect = function (ctrl, options) {
         return val;
     };
 
-    this.V_showDD = function () {
+    this.V_showDD = function (e) {
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit)
             this.InitDT();
         else {
             EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+            //if ($(e.target).val() !== "") {
+            //    this.delayedSearchFN(e);
+            //}
+            //else {
+            //    this.datatable.columnSearch = [];
+            //    this.datatable.Api.ajax.reload();
+            //}
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
@@ -730,6 +744,7 @@ const EbSelect = function (ctrl, options) {
         $.each(this.dmNames, function (i, name) {
             this.Vobj.displayMembers[name].splice(delid(), 1);
         }.bind(this));
+        this.clearSearchBox();
     };
 
     this.checkBxClickEventHand = function (e) {
@@ -741,6 +756,7 @@ const EbSelect = function (ctrl, options) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
                 $.each(this.dmNames, this.setDmValues.bind(this));
                 $(e.target).prop('checked', true);
+                this.clearSearchBox();
             }
             else
                 $(e.target).prop('checked', false);

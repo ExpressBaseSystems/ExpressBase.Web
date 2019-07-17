@@ -474,7 +474,7 @@
         try {
             oldVal = this.PropsObj.__oldValues[this.CurProp];
         }
-        catch(e){
+        catch (e) {
             alert(e);
             console.log(e);
         }
@@ -609,7 +609,7 @@
                 this.$fitCornerBtn.insertAfter(this.$wraper.find(".pgpin"));
                 this.$fitCornerBtn.on("click", function () {
                     this.$extCont.attr("style", "");
-                    this.$extCont.attr("dragging","false");
+                    this.$extCont.attr("dragging", "false");
                     this.$fitCornerBtn.hide();
                 }.bind(this));
             }
@@ -770,7 +770,7 @@
                 this.EbAlert.clearAlert(alerId);
                 this.EbAlert.alert({
                     id: alerId,
-                    head: "This property is set as Unique.",
+                    head: "This property is should be Unique.",
                     body: iterObj.Name + "'s " + this.CurProp + " property has the same value.",
                     type: "info",
                     delay: 5000
@@ -791,7 +791,7 @@
         if ($e.val().trim() === "") {
             this.EbAlert.alert({
                 id: alerId,
-                head: "This property is set as Required!",
+                head: "This property is Required!",
                 body: "This field cannot left blank.",
                 type: "danger",
                 delay: 3000
@@ -816,9 +816,12 @@
     // fires when a prop row is focused To show help text
     this.rowFocus = function (e) {
         let $e = $(e.target);
-        let prop = $e.attr("name").slice(0, -2);
-        let ht = prop + " : &nbsp;&nbsp;" + ($e.closest("tr").attr("tr-for") === "23") ? "" : getObjByval(this.Metas, "name", prop).helpText;
-        $("#" + this.wraperId + "_HelpBox").html(ht);
+        let prop = $e.attr("name").slice(0, -2); let helpText = getObjByval(this.Metas, "name", prop).helpText;
+        if (helpText) {
+            let ht = prop + " : &nbsp;&nbsp;" + (($e.closest("tr").attr("tr-for") === "23") ? "" : helpText);
+            $("#" + this.wraperId + "_HelpBox").html(ht);
+        } else
+            $("#" + this.wraperId + "_HelpBox").html("");
     }.bind(this);
 
     //toggles a propGroup and set necessory flags as attribute

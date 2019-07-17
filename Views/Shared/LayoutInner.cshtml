@@ -83,10 +83,15 @@
     {
         @RenderSection("StyleSheet")
     }
+
+    @Html.RenderStyles()
+
     @if (IsSectionDefined("JavaScript"))
     {
         @RenderSection("JavaScript")
     }
+
+    @Html.RenderScripts()
     <script>
         var _uo = @Html.Raw(@ViewBag.UserObject);
         window.ebcontext = {

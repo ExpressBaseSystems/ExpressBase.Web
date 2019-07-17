@@ -1,4 +1,4 @@
-﻿var TenantDashBoard = function () {        
+﻿var TenantDashBoard = function () {
     this.goToSolutionWindow = function (e) {
         var console = $(e.target).closest(".sso-btn").attr("wc");
         var sid = $(e.target).closest(".sso-btn").attr("sid");
@@ -39,11 +39,49 @@
                 $(obj).hide();
         });
     }
-    
+
+    this.ns = function (e) {
+        let po = {
+            Message: "Creating solution...",
+            Html: function ($selector) {
+                $selector.html(`<span>Creating solution...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
+            },
+            ButtonStyle: {
+                Text:"Continue",
+                Color: "white",
+                Background: "#508bf9",
+                Callback: function () {
+                    location.reload();
+                }
+            }
+        };
+        self.EbPopBox("show", po);
+        this.cs(function (res) {
+            if (res.status)
+                self.EbPopBox("show", { Message: "Solution created :)" });
+            else
+                self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
+        });
+    };
+
+    this.cs = function (fn) {
+        $.ajax({
+            url: "/Tenant/CreateSolution",
+            type: "POST",
+            success: function (data) {
+                fn(data);
+            },
+            error: function () {
+                fn({ status: false });
+            }
+        })
+    };
+
     this.init = function () {
         $("body").off("click").on("click", ".single__sso", this.goToSolutionWindow.bind(this));
         $("#solSearch").off("keyup").on("keyup", this.searchSolution.bind(this));
+        $("#eb-new-solution").off("click").on("click", this.ns.bind(this))
     };
-  
+
     this.init();
 };

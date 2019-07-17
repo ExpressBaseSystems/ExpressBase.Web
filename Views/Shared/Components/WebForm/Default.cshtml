@@ -38,6 +38,7 @@
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/EbControls/EbApproval.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/DGUCcolumn.js" asp-append-version=@bApnd></script>@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>@*jith*@
@@ -231,8 +232,7 @@
             </div>
         </div>
     </div>
-</div>
-`);
+</div>`);
 
     window.closeModal = function (func) {// receives call from iFrame
         //func();
@@ -247,10 +247,11 @@
             $("#iFrameFormOverlay").hide();
     });
 
-    $("#webformprint").on('click', function () {
-        $("#iFramePdf").attr("src", "../WebForm/GetPdfReport");
-        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
-    });
+    //$("#webformprint").on('click', function () {
+    //    $("#iFramePdf").attr("src", "../WebForm/GetPdfReport");
+    //    $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    //});
+
     $("#iFramePdf").on('load', function (evt) {
         try {
             if ($(evt.target).attr("src") !== undefined) {
@@ -261,7 +262,9 @@
                 else {
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                 }
-                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                setTimeout(function () {
+                    $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                }, 1000);
             }
         }
         catch (e) {
@@ -289,8 +292,13 @@
                               <option data-token="close" data-title="Save and close" data-icon="fa-save"> & Close</option>
                             </select>
                         </div>
+    `);
+    header.insertButton(`<div id="webformprint-selbtn" style='display: none;' class="btn-select btn">
+                            <button id="webformprint" class="savebtn" title="Print"><i class="fa fa-print" aria-hidden="true"></i></button>
+                            <select class="selectpicker"></select>
+                        </div>
+    `);
 
-`);
     header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`)
 
     let _formRefId = "@Html.Raw(ViewBag.formRefId)";
@@ -329,4 +337,4 @@
              headerObj: header
          });
     </script>
-        );
+)

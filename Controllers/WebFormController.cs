@@ -186,6 +186,18 @@ namespace ExpressBase.Web.Controllers
             return (Resp.NoRowsWithSameValue == 0);
         }
 
+        public IActionResult GetPdfReport(string refId, string rowId)
+        {
+            if (!this.HasPermission(refId, OperationConstants.PRINT, -1))//////
+                return Redirect("/StatusCode/401");
+            List<Param> p = new List<Param>();
+            p.Add(new Param { Name = "id", Value = rowId, Type = "7" });
+            string s = JsonConvert.SerializeObject(p);
+            s = s.ToBase64();
+            return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
+        }
+
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try

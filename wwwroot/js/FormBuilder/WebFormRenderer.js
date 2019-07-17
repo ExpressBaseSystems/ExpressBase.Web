@@ -65,9 +65,10 @@ const WebFormRender = function (option) {
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+        this.FRC.setFormObjHelperfns();
         this.setFormObjectMode();
         this.FRC.setUpdateDependentControlsFn();
-        
+
 
         return this.formObject;
     };
@@ -99,6 +100,10 @@ const WebFormRender = function (option) {
             }
             this.initControls.init(Obj, opt);
         }.bind(this));
+        if (this.ApprovalCtrl) {
+            opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
+            this.initControls.init(this.ApprovalCtrl, opt);
+        }
     };
 
     this.SetWatchers = function () {
@@ -120,7 +125,8 @@ const WebFormRender = function (option) {
         this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
-        this.DGs = getFlatObjOfType(this.FormObj, "DataGrid");// all DGs in the formObject
+        this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
+        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
@@ -244,6 +250,13 @@ const WebFormRender = function (option) {
             DG.setEditModeRows(SingleTable);
         }.bind(this));
 
+        if (this.ApprovalCtrl) {
+            if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
+                let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
+                this.ApprovalCtrl.setEditModeRows(SingleTable);
+            }
+        }
+
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
         this.isEditModeCtrlsSet = true;
@@ -268,6 +281,16 @@ const WebFormRender = function (option) {
     //        }.bind(this),
     //    });
     //};
+
+    this.getApprovalRow = function () {
+        let FVWTObjColl = {};
+        if (this.ApprovalCtrl) {
+            let tOb = this.ApprovalCtrl.ChangedRowObject();
+            if (tOb)
+                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        }
+        return FVWTObjColl;
+    };
 
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
@@ -338,12 +361,15 @@ const WebFormRender = function (option) {
 
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
+        let approvalTable = {};
         WebformData.MasterTable = this.FormObj.TableName;
 
         let formTables = this.getFormTables();
         let gridTables = this.getDG_FVWTObjColl();
+        if (this.ApprovalCtrl)
+            approvalTable = this.getApprovalRow();
 
-        WebformData.MultipleTables = $.extend(formTables, gridTables);
+        WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.ExtendedTables = this.getExtendedTables();
         return JSON.stringify(WebformData);
     };
@@ -873,7 +899,7 @@ const WebFormRender = function (option) {
 
     this.saveSelectChange = function () {
         this.saveForm();
-        let val = $(".btn-select .selectpicker").find("option:selected").attr("data-token");
+        let val = $("#webformsave-selbtn .selectpicker").find("option:selected").attr("data-token");
         this.afterSaveAction = this.getAfterSaveActionFn(val);
     }.bind(this);
 
@@ -888,12 +914,28 @@ const WebFormRender = function (option) {
             return this.closeAfterSave;
     };
 
+    this.initPrintMenu = function () {
+        //test data hardcoded
+        $("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
+        $("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
+
+        $("#webformprint-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+        $("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
+        $("#webformprint").on("click", this.printDocument.bind(this));
+    };
+
+    this.printDocument = function () {
+        let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
+        $("#iFramePdf").attr("src", "../WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    };
+
     this.init = function () {
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
-        $(".btn-select").on("click", ".dropdown-menu li", this.saveSelectChange);
-        $(".btn-select .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+        $("#webformsave-selbtn").on("click", ".dropdown-menu li", this.saveSelectChange);
+        $("#webformsave-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
 
         this.$saveBtn.on("click", this.saveForm.bind(this));
         this.$deleteBtn.on("click", this.deleteForm.bind(this));
@@ -904,6 +946,8 @@ const WebFormRender = function (option) {
         $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
+
+        this.initPrintMenu();
 
         this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
 
@@ -934,7 +978,7 @@ const WebFormRender = function (option) {
             }
 
         }
-        
+
         ebcontext.locations.Listener.ChangeLocation = function (o) {
             if (this.rowId > 0) {
                 EbDialog("show", {

@@ -9,18 +9,20 @@
         bApnd = false;
     }
 }
-<link href="~/css/LeadManagement.css" rel="stylesheet" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
-<link href="~/css/Survey/EbSurvey.css" rel="stylesheet" />
-
-<script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
-<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
-<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/Survey/ManageSurvey.js" asp-append-version=@bApnd></script>
-<script src="~/js/Survey/EbSurvey.js" type="text/javascript" asp-append-version=@bApnd></script>
-
+@section StyleSheet{
+    <link href="~/css/LeadManagement.css" rel="stylesheet" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+    <link href="~/css/Survey/EbSurvey.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+}
+@section JavaScript{
+    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Survey/ManageSurvey.js" asp-append-version=@bApnd></script>
+    <script src="~/js/Survey/EbSurvey.js" type="text/javascript" asp-append-version=@bApnd></script>
+}
 <script>
     var cm = new EbHeader().setName("Developer Console");
 </script>
@@ -63,9 +65,9 @@
         </div>
     </div>
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-10 pd-0">
-                @if (ViewBag.SurveyId <=0)
+                @if (ViewBag.SurveyId <= 0)
                 {
                     <h4 class="mr-t-0 mr-b-0">New Survey</h4>
                 }
@@ -74,13 +76,13 @@
                     <h4 class="mr-t-0 mr-b-0">Edit Survey</h4>
                 }
             </div>
-    
-                <div class="col-md-2 pd-0">
-                <button sid="@ViewBag.SurveyId" class="ebbtn eb_btn-sm eb_btngreen pull-right" id="getPUrl">Public URL</button> 
+
+            <div class="col-md-2 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+                <button sid="@ViewBag.SurveyId" class="ebbtn eb_btnblue eb_btn-sm pull-right" id="getPUrl">Public URL</button>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <ul class="nav nav-tabs">
+            <ul class="nav nav-tabs eb-styledTab">
                 <li class="nav-item active devdshtab">
                     <a class="nav-link" data-toggle="tab" href="#home" role="tab">Survey Info</a>
                 </li>
@@ -135,7 +137,7 @@
                     </div>
                 </div>
                 <div class="tab-pane appdash_obj_container display-flex" id="survey_resp" role="tabpanel">
-                    
+
                 </div>
             </div>
         </div>
@@ -143,7 +145,7 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade open-sans" id="questionModal" role="dialog">
+<div class="modal fade" id="questionModal" role="dialog">
     <div class="modal-dialog modal-lg" style="width:70%">
         <div class="modal-content">
             <div class="modal-header eb_modalheader relative">
@@ -232,7 +234,7 @@
     </div>
 </div>
 
-<div class="modal fade open-sans" id="AddFromBank" role="dialog">
+<div class="modal fade" id="AddFromBank" role="dialog">
     <div class="modal-dialog modal-lg" style="width:70%">
         <div class="modal-content">
             <div class="modal-header eb_modalheader relative">
@@ -276,7 +278,7 @@
                 <button type="button" class="close" data-dismiss="modal" style="position: absolute;top: 15px;right: 10px;">&times;</button>
             </div>
             <div class="modal-body">
-                <input type="text" class="w-100" style="border:none;font-size:15px;" id="url_tag"/>
+                <input type="text" class="w-100" style="border:none;font-size:15px;" id="url_tag" />
             </div>
             <div class="modal-footer">
                 <button type="button" id="cpy_puburl" class="ebbtn eb_btn-sm eb_btngreen">Copy</button>
@@ -284,8 +286,9 @@
         </div>
     </div>
 </div>
-
-<script>
-    new ManageSurveyObj(`@Html.Raw(ViewBag.SurveyData)`, `@Html.Raw(JsonConvert.SerializeObject(ViewBag.QuestionList))`);
-    new SurveyObj('{}',"Manager");
-</script>
+@section JsCode {
+    <script>
+        new ManageSurveyObj(`@Html.Raw(ViewBag.SurveyData)`, `@Html.Raw(JsonConvert.SerializeObject(ViewBag.QuestionList))`);
+        new SurveyObj('{}',"Manager");
+    </script>
+}

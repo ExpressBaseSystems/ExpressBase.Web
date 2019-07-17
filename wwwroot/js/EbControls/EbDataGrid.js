@@ -24,7 +24,6 @@
     }.bind(this);
     this.resetBuffers();
 
-
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         return this.setEditModeRows(SingleTable);
     }.bind(this);
@@ -419,6 +418,11 @@
                 let val = fun();
                 inpCtrl.setValue(val);
             }
+            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                let val = fun();
+                inpCtrl.setValue(val);
+            }
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
             // run DG onChangeFns initially
@@ -427,13 +431,23 @@
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                     inpCtrl.__onChangeFn = onChangeFn;
                     console.eb_log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
-                    onChangeFn();
+                    inpCtrl.__onChangeFn();
                 }
                 catch (e) {
                     console.eb_log("eb error :");
                     console.eb_log(e);
                     alert("  error in 'OnChange function' of : " + inpCtrl.Name + " - " + e.message);
                 }
+            }
+        }.bind(this));
+
+
+        //should fire after default set
+        $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
+            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                let val = fun();
+                inpCtrl.setValue(val);
             }
         }.bind(this));
         return this.AllRowCtrls[rowid];
@@ -570,6 +584,23 @@
         $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
     };
 
+    this.appendDecZeros = function (num) {
+        let decCharector = ".";
+        let decLength = 2;
+        let neededNo = decLength;
+        num = num + "";
+        if (num.includes(decCharector)) {
+            let numA = num.split(decCharector);
+            let decStr = numA[1].substr(0, decLength);
+            neededNo = decLength - decStr.length;
+
+            num = num + "0".repeat(neededNo);
+        }
+        else
+            num = num + decCharector + "0".repeat(neededNo);
+        return num;
+    };
+
     this.getAggOfCol = function (colname) {
         let sum = 0;
         $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
@@ -585,7 +616,7 @@
             sum += val || 0;
         }.bind(this));
         this.ctrl[colname + "_sum"] = sum;
-        return sum;
+        return this.appendDecZeros(sum);
     };
 
     this.removeTr = function ($tr) {
@@ -653,27 +684,28 @@
         this.$table.on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCol.bind(this));
     };
 
+    this.PScallBFn = function (Row) {
+        setTimeout(function () {
+            let td = $(`#${this.TableId}>tbody>tr[rowid=${Row[0].__rowid}] td:last`)[0];
+            {// experimental code
+                $.each(Row, function (i, col) {
+                    if (col.__onChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '')
+                        col.__onChangeFn();
+                }.bind(this));
+            }
+            this.checkRow_click({ target: td }, false);
+        }.bind(this), 1);
+    }.bind(this);
+
     this.AddRowWithData = function (_rowdata) {
         let addedRowObj = this.addRow({ isAddBeforeLast: true });
         let $addedRow = addedRowObj[0];
         let addedRowCols = addedRowObj[1];
-        let callBFn = function () {
-            setTimeout(function () {
-                let td = $(`#${this.TableId}>tbody>tr[rowid=${addedRowCols[0].__rowid}] td:last`)[0];
-                {// experimental code
-                    $.each(addedRowCols, function (i, col) {
-                        if (col.__onChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '')
-                            col.__onChangeFn();
-                    }.bind(this));
-                }
-                this.checkRow_click({ target: td }, false);
-            }.bind(this), 1);
-        }.bind(this);
         $.each(addedRowCols, function (i, col) {
             let data = _rowdata[col.Name];
             if (data !== null) {
                 if (col.ObjType === "PowerSelect")
-                    col.setValue(data, callBFn);
+                    col.setValue(data, this.PScallBFn.bind(this, addedRowCols));
                 else {
                     col.setValue(data);
                 }
@@ -683,7 +715,7 @@
 
         this.resetRowSlNo($addedRow.index());
         if (!this.isPSInDG)
-            setTimeout(callBFn, 1);// call checkRow_click() pass event.target directly
+            setTimeout(this.PScallBFn.bind(this, addedRowCols), 1);// call checkRow_click() pass event.target directly
     };
     this.resetRowSlNo = function (slno) {
         let rowCount = $(`#${this.TableId}>tbody>tr`).length;
@@ -755,12 +787,18 @@
         $.each(Object.keys(rowData), function (i, key) {
             let obj = getObjByval(this.AllRowCtrls[rowId], "Name", key);
             if (obj) {
-                obj.setValue(rowData[key]);
+                if (obj.ObjType === "PowerSelect" && this.isPSInDG) {
+                    this.editRow_click({ target: $tr.find(".edit-row")[0] });// click edit button if contains PS
+                    obj.setValue(rowData[key], this.PScallBFn.bind(this, this.AllRowCtrls[rowId])); //click check button 
+                }
+                else
+                    obj.setValue(rowData[key]);
             }
         }.bind(this));
 
         if ($tr.attr("is-editing") === "false")
             this.ctrlToSpan_row(rowId);
+        this.updateAggCols(rowId);
     };
 
     this.disableRow = function (rowId) {
@@ -847,6 +885,7 @@
         this.rowSLCounter = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
+            col.__DG.AllRowCtrls = this.AllRowCtrls;
             col.getValue = this.ColGetvalueFn;
             col.setValue = this.ColSetvalueFn;
             col.enable = this.EnableFn;

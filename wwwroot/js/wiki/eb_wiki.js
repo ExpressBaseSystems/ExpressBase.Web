@@ -1,6 +1,4 @@
-﻿
-let addwiki = function () {
-
+﻿let addwiki = function () {
     let historyId = [];
 
     this.printresult = function () {
@@ -64,7 +62,6 @@ let addwiki = function () {
                 this.insertAtCaret(txt, insertVal);
             }
         }
-      
     }
 
     this.SelectInternalLink = function () {
@@ -85,36 +82,38 @@ let addwiki = function () {
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
-        window.history.pushState('obj', 'PageTitle', `/publicwiki/docs/${id}`);
+        let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
-        $(`#${id}`).addClass("CurrentSelection");
-        this.AjaxCalFetchWikiList(id);
+        $(`[data-id='${id}']`).addClass("CurrentSelection");
+        this.AjaxCalFetchWikiList(id, orderId);
+        //let title = $(".wiki_data h1").text();
+        window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
     }
 
-    this.AjaxCalFetchWikiList = function (id) {
+    this.AjaxCalFetchWikiList = function (id, orderId) {
         $.ajax({
             type: 'POST',
             url: "/PublicWiki/GetWiki",
             data: {
                 wiki_id: id
             },
-            success: this.FetchWikiListSuccess.bind(this, id)
+            success: this.FetchWikiListSuccess.bind(this, id, orderId)
         });
     }
 
-    this.FetchWikiListSuccess = function (id,ob) {
-
+    this.FetchWikiListSuccess = function (id, orderId, ob) {
         $('#wiki_data_div').show();
         $("#wiki_data_div").scrollTop(0);
         $('.edit').attr('href', '../wiki/add/' + ob.id);
         $('.edit').attr('id', ob.id);
-        
-        var url = window.location.href + "/" + id;
-        $(".facebook").removeAttr("href").attr("href", "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title);
-        $(".twitter").removeAttr("href").attr("href", "https://twitter.com/intent/tweet?status=" + url);
-        $(".linkedin").removeAttr("href").attr("href", `https://www.linkedin.com/shareArticle?mini=true&url= ${url}&title= ${ob.title}&summary=YourarticleSummary&source=www.expressbase.com`);
-        $(".whatsapp").removeAttr("href").attr("href", "https://wa.me/?text=" + url);
-
+        document.title = ob.title;
+        $("#ebwiki_panebrd").html(`${ob.category} / ${ob.title}`)
+        urlTitle = ob.title.replace(/\s+/g, '-').toLowerCase();
+        var url = window.location.origin + "/Wiki/View/" + id + "/" + urlTitle;
+        let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;
+        let twUrl = "https://twitter.com/intent/tweet?status=" + url;
+        let lnUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" +url +"&title="+ ob.title + "&summary=YourarticleSummary&source=expressbase.com";
+        let whUrl = "https://wa.me/?text=" + url;
         //let $tagDiv = $(`<div class="row"></div>`);
         $('#wiki_data_div').html(ob.html).slideUp(10).slideDown(200).fadeIn(100);
         var res = ob.tags.split(",");
@@ -123,12 +122,66 @@ let addwiki = function () {
             $('#wiki_data_div').append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
         }
         $('.front_page_wiki').hide();
+        $WasItHelpFul = `<div class="row"> <div class="col-sm-12"> 
+                    <h4>Questions?</h4>
+            <p>We're always happy to help with code or other questions you might have. Search our documentation,
+            contact support, or connect with our sales team. You can also chat live with other developers in #stripe on freenode.<p>
+            <div id="Help" show><span> Was this page helpfull?
+            <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
+       <span style="float: right;"> <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+        <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
+        <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
+        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></span>
+      
+     </div> 
+            <div> 
+       
+            </div>
+            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" > <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+        <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
+        <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
+        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
+        </div></div>
+            `;
+        $('#wiki_data_div').append($WasItHelpFul);
+        let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
+        let Pre = $(`[order-id="${orderId}"]`).prev().attr("order-id");
+        let $nextPre = $(`<div></div>`);
+        if (next) {
+            $nextPre.append(`<span Next-id="${next}" class="NextPreWiki" style="float:right;">Next</span>`);
+        }
+        if (Pre) {
+            $nextPre.append(`<span Next-id="${Pre}" class="NextPreWiki" style="float:left;"> Previous</span>`);
+        }
+       
+        $('#wiki_data_div').append($nextPre);
+        let title = $(".wiki_data h1").text();
+        let desc = $(".wiki_data p").text().substring(0, $(".wiki_data p").text().indexOf("."));
+        $(`meta[property="og:title"]`).attr("content", `${title}`);
+        $(`meta[property="og:description"]`).attr("content", `${desc}`);
+        $(`meta[property="og:image"]`).attr("content", ``);
+        $(`meta[property="og:url"]`).attr("content", `${url}`);
+        $(`meta[name="twitter:card"]`).attr("content", "large image");
+   
+        //this.AddMetaTags();
+        if (PR)
+            PR.prettyPrint();
     }
 
+   
     this.WikiSearch = function () {
         let key = $('#search_wiki').val();
         if (key.length == 0) {
-            //$("wiki_data_div").show();
+            let url = window.location.href;
+            //alert(url);
+            let urlSplit = url.split("/");
+            let id = urlSplit[urlSplit.length - 1];
+            if ($.isNumeric(id)) {
+                this.AjaxCalFetchWikiList(id);
+            }
+            else {
+                this.show_home();
+            }
         }
         else if (key.length < 3) {
             $("#wiki_data_div").empty();
@@ -150,18 +203,18 @@ let addwiki = function () {
                         $("#wiki_data_div").show(300);
                         $('.front_page_wiki').hide();
                         $("#wiki_data_div").append("<div style='height:40px;'> <h1>Result not Found</h1> </div>");
-
                     }
                     else
                         $("#wiki_data_div").empty();
-
                     for (let i = 0; i < ob.length; i++) {
                         $("#wiki_data_div").show(500);
                         $('.front_page_wiki').hide(100);
                         let $Report = $(`<div class="searchDiv"></div>`);
                         $Report.append(`<a class="searchshow" data-id="${ob[i].id}"> ${ob[i].title} </a>`);
-                        $Report.append(` ${ob[i].html}`);      
+                        $Report.append(` ${ob[i].html}`);
+                        let $Tags = $(`<h3>${ob[i].tags}</h3>`);
                         $("#wiki_data_div").append($Report);          
+                        //$("#wiki_data_div").append($Tags);          
                         $('#' + ob[i].id).attr('title', ob[i].category);
                     };
                 }
@@ -286,8 +339,17 @@ let addwiki = function () {
     }
 
     this.WikiListToggle = function (e) {
-        let id = e.target.getAttribute('val');
-        $("#" + id).toggle(200);
+        $(".wikilist").removeClass("CurrentSelection");
+        let id = $(e.target).closest(".wraper-link").attr('val');
+        if (id == "home") {
+            $("#ebwiki_panebrd").html("Getting started");
+            $('#wiki_data_div').hide();
+            $('.front_page_wiki').show();
+        }
+        else {
+            $("#" + id).toggle(200);
+            $("#ebwiki_panebrd").html(`${id}`);
+        }
     }
 
     this.render_page_toggle = function (e) {
@@ -365,7 +427,7 @@ let addwiki = function () {
                     $Form.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                                
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -374,6 +436,7 @@ let addwiki = function () {
                         `);
                 }
             }
+            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
             $("#public").append($Form);
 
             $("#public").append(`<div class="WikiMenu" val="Report">  Report <div>`);
@@ -383,7 +446,7 @@ let addwiki = function () {
                     $Report.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                              
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -392,6 +455,7 @@ let addwiki = function () {
                         `);
                 }
             }
+            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
             $("#public").append($Report);
 
 
@@ -402,7 +466,7 @@ let addwiki = function () {
                     $API.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                               
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -421,7 +485,7 @@ let addwiki = function () {
                     $Chatbots.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                               
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -431,6 +495,7 @@ let addwiki = function () {
                         `);
                 }
             }
+            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
             $("#public").append($Chatbots);
 
 
@@ -441,7 +506,7 @@ let addwiki = function () {
                     $Security.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                            
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -453,6 +518,26 @@ let addwiki = function () {
             }
             $("#public").append($Security);
 
+
+            $("#public").append(`<div class="WikiMenu" val="Integrations">  Integrations <div>`);
+            let $Integrations = $(`<div data-val="Integrations"></div>`);
+            for (let i = 0; i < ob.length; i++) {
+                if (ob[i].category == "Integrations") {
+                    $Integrations.append(`
+                                <div class="WikiList">
+                                <h1>  ${ob[i].title}  </h1>
+                            
+                                  <div class="row">
+                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
+                                    Created On  ${ ob[i].createdAt}
+                                   </div>
+                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>
+                                      </div>
+                        `);
+                }
+            }
+            $("#public").append($Integrations);
+
             $("#public").append(`<div class="WikiMenu" val="AppStore">  App Store <div>`);
             let $AppStore = $(`<div data-val="AppStore" ></div>`);
             for (let i = 0; i < ob.length; i++) {
@@ -460,7 +545,7 @@ let addwiki = function () {
                     $AppStore.append(`
                                 <div class="WikiList">
                                 <h1>  ${ob[i].title}  </h1>
-                                <div class='col admin_wiki_list'> ${ ob[i].html}</div>
+                              
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
                                     Created On  ${ ob[i].createdAt}
@@ -517,6 +602,15 @@ let addwiki = function () {
         }
         $("#public").append($Report);
 
+        $("#public").append(`<div class="WikiMenu" val="Integrations">  Integrations <div>`);
+        let $Integrations = $(`<ul data-val="Integrations" class="dragable_wiki_list"  ></ul>`);
+        for (let i = 0; i < ob.wikiList.length; i++) {
+            if (ob.wikiList[i].category == "Integrations") {
+                $Integrations.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
+            }
+        }
+        $("#public").append($Integrations);
+
 
         $("#public").append(`<div class="WikiMenu" val="API">  API <div>`);
         let $API = $(`<ul data-val="API" class="dragable_wiki_list"  ></ul>`);
@@ -561,6 +655,8 @@ let addwiki = function () {
     this.draggableChatbots();
     this.draggableSecurity();
     this.draggableAppStore();
+    this.draggableIntegrations();
+    
     $("#eb_common_loader").EbLoader("hide");
 }
 
@@ -595,6 +691,10 @@ let addwiki = function () {
     this.draggableAppStore = function () {
         $("[data-val=AppStore]").sortable();
         $("[data-val=AppStore]").disableSelection();
+    }
+    this.draggableIntegrations = function () {
+        $("[data-val=Integrations]").sortable();
+        $("[data-val=Integrations]").disableSelection();
     }
 
     //Context menu Wiki
@@ -650,7 +750,8 @@ let addwiki = function () {
 
     this.editWiki = function (key, options) {
         let id = $(options.$trigger).attr("data-id");
-        window.open('http://myaccount.localhost:41500/wiki/add/' + id, '_blank');
+        let url = window.location.origin +"/wiki/add/" +id
+        window.open(window.location.origin + "/wiki/add/" + id, '_blank');
     };
 
     this.PublishWiki = function (key, options) {
@@ -741,15 +842,19 @@ let addwiki = function () {
             this.PublicView();
         }
         else
-            $.ajax({
-                type: 'POST',
-                url: "/Wiki/Admin_Wiki_List",
-                data: {
-                    status: style_val
-                },
-                success: this.ajaxAdminWikiFetch.bind(this)
+            this.selectedHighlightAjax(style_val);
+    }
 
-            });
+    this.selectedHighlightAjax = function (style_val) {
+        $.ajax({
+            type: 'POST',
+            url: "/Wiki/Admin_Wiki_List",
+            data: {
+                status: style_val
+            },
+            success: this.ajaxAdminWikiFetch.bind(this)
+
+        });
     }
 
     this.SearchWithTagFun = function (e) {
@@ -759,84 +864,61 @@ let addwiki = function () {
         $("#search_wiki").click();
     }
 
+    this.WasItHelp = function (e) {
+        let answer = e.target.getAttribute("val");
+        $("#Help").hide();
+        $("#EbHelp").show();
+        $.ajax({
+            type: 'POST',
+            url: "/Wiki/UserReviewRate",
+            data: {
+                answer: answer
+            },
+            success: this.ajaxUserReviewRateSuccess.bind(this)
+        });
+    }
+    this.ajaxUserReviewRateSuccess = function () {
 
-    this.HandleBackFunctionality = function() {
-        if (window.event) //Internet Explorer
-        {
-            alert("Browser back button is clicked on Internet Explorer...");
-        }
-        else //Other browsers e.g. Chrome
-        {
-            alert("Browser back button is clicked on other browser...");
-        }
     }
 
+    this.GetStartToWikiDocs = function (e) {
+        let value = $(e.target).closest(".GettingStarted").attr("val");
+        $(`#${value}>ul>li:first>a`).click();
+    }
+
+    this.NextAndPreWiki = function (e) {
+        let OrderId = e.target.getAttribute("Next-id");
+        let dataId= $(`[order-id="${OrderId}"]`).children().attr("data-id");
+        $(`[data-id="${dataId}"]`).click();
+    }
+    //this.CreateNewWikiTrigger = function () {
+    //    let host = $(location).attr('host');
+    //    window.location.replace(`${host}/wiki/add/0`);
+    //}
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
-        $(".wikilist").on("click", this.FetchWikiList.bind(this));
-       
-
+        $(".wikilist").on("click", this.FetchWikiList.bind(this)); 
         $("#wiki_data_div").on("click", ".searchshow", this.FetchWikiList.bind(this));
         $("#text").on("keyup", this.printresult.bind(this));
         $("#text").on("click", this.printresult.bind(this));
-        $("#home").on("click", this.show_home.bind(this));
-        $("#search_wiki").on("keyup focus", this.WikiSearch.bind(this));
-        $(".menu").on("click", this.WikiListToggle.bind(this));
+        $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
+        $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
-        $(".wiki_data").on("click", ".wikilist ", this.FetchWikiList.bind(this));
+        $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
+        $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
+        $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
 
         //wiki admin
         $(".wikies_list").on("click", this.Admin_Wiki_List.bind(this));
         $("#public").on("click",".WikiMenu", this.WikiMenuToggle.bind(this));
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".selected").on("click", this.selectedHighlight.bind(this));
+        $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
+        //$("#CreateWiki").on("click", this.CreateNewWikiTrigger.bind(this));
      
     };
 
     this.init();
 }
-
-$(function () {
-    /**************************************************
-     * Context-Menu with Sub-Menu
-     **************************************************/
-    $.contextMenu({
-        selector: '.context-menu-one',
-        callback: function (key, options) {
-            var m = "clicked: " + key;
-            window.console && console.log(m) || alert(m);
-        },
-        items: {
-            "edit": { "name": "Edit", "icon": "edit" },
-            "cut": { "name": "Cut", "icon": "cut" },
-            "sep1": "---------",
-            "quit": { "name": "Quit", "icon": "quit" },
-            "sep2": "---------",
-            "fold1": {
-                "name": "Sub group",
-                "items": {
-                    "fold1-key1": { "name": "Foo bar" },
-                    "fold2": {
-                        "name": "Sub group 2",
-                        "items": {
-                            "fold2-key1": { "name": "alpha" },
-                            "fold2-key2": { "name": "bravo" },
-                            "fold2-key3": { "name": "charlie" }
-                        }
-                    },
-                    "fold1-key3": { "name": "delta" }
-                }
-            },
-            "fold1a": {
-                "name": "Other group",
-                "items": {
-                    "fold1a-key1": { "name": "echo" },
-                    "fold1a-key2": { "name": "foxtrot" },
-                    "fold1a-key3": { "name": "golf" }
-                }
-            }
-        }
-    });
-});

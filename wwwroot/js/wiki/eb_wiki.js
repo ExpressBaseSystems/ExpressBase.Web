@@ -82,15 +82,16 @@
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
-        let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
+        //let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
         $(`[data-id='${id}']`).addClass("CurrentSelection");
-        this.AjaxCalFetchWikiList(id, orderId);
+        this.AjaxCalFetchWikiList(id);
         //let title = $(".wiki_data h1").text();
         window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
     }
 
-    this.AjaxCalFetchWikiList = function (id, orderId) {
+    this.AjaxCalFetchWikiList = function (id) {
+        let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $.ajax({
             type: 'POST',
             url: "/PublicWiki/GetWiki",
@@ -354,18 +355,18 @@
 
     this.render_page_toggle = function (e) {
         let val = e.target.getAttribute("val");
-
+        $(".fullViewtoggle").toggle();
         if (val == "show") {
             $("#render_field").hide();
             $("#render_page_toggle").removeAttr("val").attr("val", "hide");
-            $("#render_page_toggle").removeAttr("value").attr("value", "show page view");
+            $("#render_page_toggle").removeAttr("value").attr("value", "Normal Screen");
             $("#edit_field").removeClass("col-sm-6").addClass("col-sm-12");
         }
         else {
             $("#render_field").show();
             $("#render_page_toggle").removeAttr("val").attr("val", "show");
             $("#edit_field").removeClass("col-sm-12").addClass("col-sm-6");
-            $("#render_page_toggle").removeAttr("value").attr("value", "hide page view");
+            $("#render_page_toggle").removeAttr("value").attr("value", "Full Screen");
         }
     }
 
@@ -895,6 +896,12 @@
     //    let host = $(location).attr('host');
     //    window.location.replace(`${host}/wiki/add/0`);
     //}
+    //this.WikiGaleryToggle = function () {
+    //    $(".Col_head").click();
+    //    onclick = "location.href='#DEFAULT_ColBdy'";
+    //    onclick = "location.href='#bottomAnchor'";
+    //}
+
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
@@ -909,6 +916,7 @@
         $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
         $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
+        //$("#galleryToggle").on("click", this.WikiGaleryToggle.bind(this));
 
         //wiki admin
         $(".wikies_list").on("click", this.Admin_Wiki_List.bind(this));

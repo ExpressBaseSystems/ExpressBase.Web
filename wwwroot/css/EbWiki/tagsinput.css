@@ -3,18 +3,19 @@
 
 
 .bootstrap-tagsinput {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  display: inline-block;
-  padding: 4px 6px;
-  color: #555;
-  vertical-align: middle;
-  width: 100%;
-  line-height: 22px;
-  cursor: text;
-  border-radius:0px;
-  height:35px;
-  width:700px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 4px 6px;
+    color: #555;
+    vertical-align: middle;
+    width: 100%;
+    line-height: 22px;
+    cursor: text;
+    border-radius: 0px;
+    height: 35px;
+    width: 700px;
+    width: 100%;
 }
 .bootstrap-tagsinput input {
   border: none;

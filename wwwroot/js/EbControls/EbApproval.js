@@ -12,8 +12,12 @@
     this.stages = this.ctrl.FormStages.$values.reverse();
     this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
 
-    ctrl.setEditModeRows = function (SingleTable) {/////////// need change
+    ctrl.enableAccessibleRow = function (SingleTable) {/////////// need change
+        if (this.editable !== false)// allow undefined
+            this.enableAccessibleRow(this.nextRole);
+    }.bind(this);
 
+    ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         return this.setEditModeRows(SingleTable);
     }.bind(this);
 
@@ -32,6 +36,7 @@
 
         if (nextStageIdx > this.stages.length - 1)// if all staged completed
         {
+            this.editable = false;
             this.disableAllCtrls();
         }
         else {

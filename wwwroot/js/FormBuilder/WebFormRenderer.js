@@ -504,6 +504,8 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isNew = false;
         this.setEditModeCtrls();
+        if (this.ApprovalCtrl && this.Mode.isEdit)
+            this.ApprovalCtrl.enableAccessibleRow();
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions

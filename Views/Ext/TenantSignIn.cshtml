@@ -169,6 +169,7 @@
     </div>
 </section>
 
+
 @section JsCode{
     <script>
         if ('@ViewBag.ErrorMsg')
@@ -177,5 +178,7 @@
             EbMessage("show", { Message: "@ViewBag.UniqTest", Background: "#d83535" });
         if ('@ViewBag.mailmsg')
             EbMessage("show", { Message: "@ViewBag.mailmsg" });
+         if (@TempData["scl_signin_msg"]!=null)
+            EbMessage("show", { Message: "@TempData["scl_signin_msg"]", Background: "#d83535" });
     </script>
 }

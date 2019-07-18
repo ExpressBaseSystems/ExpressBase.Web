@@ -351,6 +351,14 @@ namespace ExpressBase.Web.Controllers
 				}
 				return Redirect(RoutingConstants.MYSOLUTIONS);
 			}
+			else
+			{
+				if (Social.AuthProvider =="github")
+				{
+					TempData["scl_signin_msg"] = "You have already created an accout with Github";
+				}
+				
+			}
 				
                 return RedirectToAction(RoutingConstants.TENANTSIGNIN);
         }

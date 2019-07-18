@@ -16,7 +16,8 @@
 
     $(document).ready(function () {
         commonObj.init();
-    $('title').text('@ViewBag.ObjectName');
+        let Obj = @Html.Raw(ViewBag.ObjectName);// view bag do not support local languages
+    $('title').text(Obj.Name);
     });
 
     var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl', versioning = '@_versioning');

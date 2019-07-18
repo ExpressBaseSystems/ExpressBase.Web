@@ -351,6 +351,14 @@ namespace ExpressBase.Web.Controllers
 				}
 				return Redirect(RoutingConstants.MYSOLUTIONS);
 			}
+			else
+			{
+				if (Social.AuthProvider =="github")
+				{
+					TempData["scl_signin_msg"] = "You have already created an accout with Github";
+				}
+				
+			}
 				
                 return RedirectToAction(RoutingConstants.TENANTSIGNIN);
         }
@@ -387,7 +395,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("em")]
         public IActionResult EmailVerify(string emv)
         {
-            var base64Encoded = System.Convert.FromBase64String(emv);
+			var base64Encoded = System.Convert.FromBase64String(emv);
             var emailcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
             string[] emcode = emailcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
 

@@ -63,7 +63,7 @@ namespace ExpressBase.Web.Controllers
                     foreach (EbObjectWrapper element in objectlist)
                     {
                         ViewBag.IsNew = "false";
-                        ViewBag.ObjectName = element.DisplayName;
+                        ViewBag.ObjectName = EbSerializers.Json_Serialize(new { Name = element.DisplayName });
                         ViewBag.ObjectDesc = element.Description;
                         ViewBag.Status = element.Status;
                         ViewBag.VersionNumber = element.VersionNumber;

@@ -282,6 +282,16 @@
         box-shadow: 0px 1px 2px 0 #0000082;
     }
 
+.dgtbl[is-disabled='true'] {
+    filter: grayscale(60%);
+    pointer-events: none;
+}
+
+.dgtbl[is-disabled='true'] .rowc {
+    color: gray;
+    pointer-events: none;
+}
+
 .ctrlstd[mode='view'] .rowc {
     color: gray;
     pointer-events: none;
@@ -303,7 +313,7 @@
     }
 
 .fs-submit {
-    display:none;
+    display: none;
 }
 
 .fs-tbl > tbody > tr > td.fs-ctrl-td {
@@ -323,12 +333,14 @@
     width: 100%;
     height: 100%;
 }
+
 .fs-tbl .dropdown-toggle[data-toggle="dropdown"] {
     height: 35px !important;
     margin-top: 10px;
     background-color: transparent !important;
     border: none;
 }
+
 .fs-uname {
     font-weight: 500;
     margin-top: auto;
@@ -345,8 +357,8 @@
 }
 
 .fs-grid-cont .fs-submit-cont {
-    display:flex;
-    justify-content:center;
+    display: flex;
+    justify-content: center;
 }
 
 .fs-grid-cont .fs-submit {
@@ -358,10 +370,12 @@
     flex-direction: column;
     padding: 10px;
 }
+
 .fs-user-cont {
     display: flex;
     padding: 3px 3px 3px 8px;
 }
+
 .fs-udtls-cont {
     display: flex;
     flex-direction: column;
@@ -381,30 +395,30 @@
     outline: none !important;
 }
 
-    .fs-tbl > tbody > tr > td, .fs-tbl > tbody > tr > td > .fstd-div {
-        vertical-align: middle;
-    }
+.fs-tbl > tbody > tr > td, .fs-tbl > tbody > tr > td > .fstd-div {
+    vertical-align: middle;
+}
 
 .dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {
     background-color: rgb(249, 249, 249) !important;
 }
 
-    .dgtbl > tbody > tr:nth-child(even) {
-        background-color: white;
-    }
+.dgtbl > tbody > tr:nth-child(even) {
+    background-color: white;
+}
 
-    .dgtbl > tbody > tr th:last-child, .fs-tbl > tbody > tr th:last-child {
-        text-align: center;
-    }
+.dgtbl > tbody > tr th:last-child, .fs-tbl > tbody > tr th:last-child {
+    text-align: center;
+}
 
-    .dgtbl > tbody > tr td:last-child {
-        width: 50px;
-    }
+.dgtbl > tbody > tr td:last-child {
+    width: 50px;
+}
 
-    .dgtbl > tbody > tr[agg='true'] {
-        border: solid 1px #dededf;
-        background-color: #ffffff !important;
-    }
+.dgtbl > tbody > tr[agg='true'] {
+    border: solid 1px #dededf;
+    background-color: #ffffff !important;
+}
 
 .tdtxt-agg {
     font-weight: bold;

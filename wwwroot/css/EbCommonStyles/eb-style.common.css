@@ -239,7 +239,7 @@
 /*solution dashboard */
 .s-dash-solution-desc {
     padding: 15px 15px;
-    line-height: 1.5em;
+    /*line-height: 1.5em;*/
     display: flex;
     align-items: center;
     background-color: #f2f2f2;

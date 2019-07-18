@@ -18,18 +18,6 @@
         <div class="t-container">
             <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/MySolutions">
-                        <span class="material-icons t__sidebar_icon">highlight</span>
-                        <span class="t__sidebar_text">My Solutions</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">attach_money</span>
-                        <span class="t__sidebar_text">Billing</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
                     <a class="t_a">
                         <span class="material-icons t__sidebar_icon">store</span>
                         <span class="t__sidebar_text">App Store</span>
@@ -82,17 +70,30 @@
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
-                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">General</a>
+                    <a class="nav-link" data-toggle="tab" href="#Objects" role="tab">
+                        <i class="fa fa-list"></i> Objects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#Objects" role="tab">Objects</a>
+                    <a class="nav-link" data-toggle="tab" href="#Appearance" role="tab">
+                        <i class="fa fa-picture-o"></i> Appearance</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#Appearance" role="tab">Appearance</a>
+                    <a class="nav-link" data-toggle="tab" href="#home" role="tab">
+                    <i class="fa fa-cog"></i> Settings
+                    </a>
                 </li>
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="home" role="tabpanel">
+                <div class="tab-pane active appdash_obj_container" id="Objects" role="tabpanel">
+                    <div class="raw">
+                        <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="ExportBtn">Export</button>
+                    </div>
+                    <div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>
+                </div>
+                <div class="tab-pane" id="Appearance" role="tabpanel">
+
+                </div>
+                <div class="tab-pane" id="home" role="tabpanel">
                     @if (appinfo.AppType == 3)
                     {
                         var bot_name_txt = appinfo.Name;
@@ -167,15 +168,6 @@
                         </div>
 
                     }
-                </div>
-                <div class="tab-pane appdash_obj_container" id="Objects" role="tabpanel">
-                    <div class="raw">
-                        <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="ExportBtn">Export</button>
-                    </div>
-                    <div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>
-                </div>
-                <div class="tab-pane" id="Appearance" role="tabpanel">
-
                 </div>
             </div>
         </div>

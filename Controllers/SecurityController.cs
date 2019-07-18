@@ -116,14 +116,16 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
-		[HttpGet("MyProfile")]
+        [EbBreadCrumbFilter("My Profile")]
+        [HttpGet("MyProfile")]
 		public IActionResult MyProfile_Tenant()
 		{
 			if (ViewBag.wc == RoutingConstants.TC)
 			{
 				var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
 				ViewBag.UserData = fr.UserData;
-				return View();
+                ViewBag.Title = "My Profile";
+                return View();
 			}
 			return Redirect("/StatusCode/404");
 		}

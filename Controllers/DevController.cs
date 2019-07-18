@@ -34,8 +34,6 @@ using ExpressBase.Common.Data;
 using ExpressBase.Objects.Helpers;
 using Newtonsoft.Json.Linq;
 
-// For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
     public class DevController : EbBaseIntCommonController
@@ -50,6 +48,7 @@ namespace ExpressBase.Web.Controllers
             GetAllApplicationResponse apps = this.ServiceClient.Get(new GetAllApplicationRequest());
             ViewBag.apps = apps.Data;
             ViewBag.Msg = TempData[Msg];
+            ViewBag.Title = "Developer Home";
             return View();
         }
 
@@ -71,6 +70,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
             ViewBag.AppInfo = _objects.AppInfo;
             this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
+            ViewBag.Title = _objects.AppInfo.Name;
             return View();
         }
 

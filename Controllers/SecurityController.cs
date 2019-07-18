@@ -215,10 +215,19 @@ namespace ExpressBase.Web.Controllers
 			}
 			else if (itemid > 1)
 			{
-				ViewBag.U_Info = fr.UserData;
-				ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
-				ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
-                //ViewBag.LocConstraint = JsonConvert.SerializeObject(fr.LocConstraint);
+                if (fr.UserData.Count > 0)
+                {
+                    ViewBag.U_Info = fr.UserData;
+                    ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
+                    ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
+                    //ViewBag.LocConstraint = JsonConvert.SerializeObject(fr.LocConstraint);
+                }
+                else
+                {
+                    ViewBag.U_Roles = "";
+                    ViewBag.U_Groups = "";
+                    itemid = 0;
+                }
             }
 			else
 			{
@@ -293,6 +302,17 @@ namespace ExpressBase.Web.Controllers
 				return resp.isSuccess;
 			}
 		}
+
+        public int DeleteUser(int userid)
+        {
+            if (!HasPemissionToSecurity())
+                return 0;
+            else
+            {
+                DeleteUserResponse resp = this.ServiceClient.Post<DeleteUserResponse>(new DeleteUserRequest { Id = userid });
+                return resp.Status;
+            }
+        }
 
 
         //--------------MANAGE ANONYMOUS USER START------------------------------------

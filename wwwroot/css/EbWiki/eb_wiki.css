@@ -223,9 +223,12 @@ div.searchDiv iframe{
     }
 
 .props {
-    width: 63px;
+    background: #efefef;
+    width: 65px;
     height: 25px;
     align-content: center;
+    margin: 0px;
+    border: solid 1px #e6e6e6;
 }
 
     .props:hover {
@@ -424,14 +427,15 @@ iframe {
 }
 
 #CreateWiki {
-    font-size: 14px;
+    font-size: 18px;
     width: 150px;
     height: 35px;
     border: 0px;
-    background: #4d86d6;
     margin-top: 25px;
-    color: white;
-    
+    border: solid 1px #bdbaba;
+    padding: 6px;
+    text-decoration: none;
+}
 }
 
 .wiki_btn:hover {
@@ -464,3 +468,68 @@ iframe {
     .search-box-fab .fab-icon {
 
     }
+.NextPreWiki {
+    background: #ffffff;
+    border: 1px solid #adadad;
+    border-radius: 4px;
+    padding: 3px 10px;
+    margin: 10px 3px;
+    width: 100px;
+    text-align: center;
+    margin-top: 40px;
+    cursor :pointer;
+}
+    .NextPreWiki:hover {
+        background: #dcf0ff;
+        
+    }
+    .NextPreWiki:active {
+        background-color: white;
+    }
+.GrpAddSel {
+    width: 30%;
+    padding: 5px;
+    margin-right: 40px;
+}
+.btnGrp2 {
+    margin: 10px;
+    width: 30%;
+    padding: 5px;
+    margin-right: 10px;
+    border: solid 1px #cecece;
+    background: #efefef;
+}
+
+    .btnGrp2:hover {
+        background-color: #8AB6F7
+    }
+
+    .btnGrp2:active {
+        background-color: cornflowerblue;
+    }
+#galleryToggle {
+    border: solid 1px;
+    margin: 10px;
+    width: 30%;
+    padding: 5px;
+    margin-right: 10px;
+    border: solid 1px #cecece;
+    background: #efefef;
+    width: 30%;
+    text-decoration: none;
+    color: black;
+    padding-left: 10%;
+}
+    #galleryToggle:hover {
+        background-color: #8AB6F7
+    }
+
+    #galleryToggle:active {
+        background-color: cornflowerblue;
+    }
+
+.WikiDefaultImage {
+    height: 400px;
+   
+    align-items: center;
+}

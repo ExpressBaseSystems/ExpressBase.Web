@@ -83,9 +83,10 @@
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
                             int link = wiki.Id;
+                            int order = wiki.Order;
                             if (wiki.Category == "Form")
                             {
-                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
                             }
                         }
                     </ul>
@@ -101,9 +102,10 @@
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
                             int link = wiki.Id;
+                            int order = wiki.Order;
                             if (wiki.Category == "Report")
                             {
-                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
                             }
                         }
                     </ul>
@@ -120,9 +122,10 @@
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
                             int link = wiki.Id;
+                            int order = wiki.Order;
                             if (wiki.Category == "Integrations")
                             {
-                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
                             }
                         }
                     </ul>
@@ -139,9 +142,10 @@
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
                             int link = wiki.Id;
+                            int order = wiki.Order;
                             if (wiki.Category == "API")
                             {
-                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
                             }
                         }
                     </ul>
@@ -157,9 +161,10 @@
                 @foreach (Wiki wiki in ViewBag.WikiList)
                 {
                     int link = wiki.Id;
+                    int order = wiki.Order;
                     if (wiki.Category == "Chatbots")
                     {
-                        <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                        <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
                     }
                 }
             </ul>
@@ -176,9 +181,10 @@
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
                             int link = wiki.Id;
+                            int order = wiki.Order;
                             if (wiki.Category == "Security")
                             {
-                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
                             }
                         }
                     </ul>
@@ -197,9 +203,10 @@
                         @foreach (Wiki wiki in ViewBag.WikiList)
                         {
                             int link = wiki.Id;
+                            int order = wiki.Order;
                             if (wiki.Category == "AppStore")
                             {
-                                <li> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
                             }
                         }
                     </ul>
@@ -265,6 +272,8 @@
             //alert(url);
             let urlSplit = url.split("/");
             let id = urlSplit[urlSplit.length - 1];
+            $(".wikilist").removeClass("CurrentSelection");
+            $(`[data-id='${id}']`).addClass("CurrentSelection");
             if ($.isNumeric(id)) {
                 obj.AjaxCalFetchWikiList(id);
             }

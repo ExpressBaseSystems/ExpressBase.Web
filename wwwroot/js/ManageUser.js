@@ -3,7 +3,6 @@
     //CreateEdit = 1, View = 2, MyProfileView = 3
     this.Environment = env;
     this.menuBarObj = new EbHeader();
-    this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);
     this.userinfo = userinfo;
     this.customRoles = cusroles;
     this.culture = culture;
@@ -52,11 +51,9 @@
     this.pwdResetNewConfirm = $("#pwdResetNewConfirm");
     this.lblPwdResetMsg = $("#lblPwdResetMsg");
     this.btnResetPwd = $("#btnResetPwd");
-
-
+    
     this.divPassword = $("#divPassword");
     this.btnFbConnect = $("#btnFbConnect");
-    this.btnCreateUser = $("#btnCreateUser");
     this.FB = null;
     this.fbId = null;
     this.fbName = null;
@@ -76,7 +73,13 @@
     this.selectTimeZone = $("#seltimezone");
 
     this.init = function () {
-                
+        if (this.itemId > 1) {
+            this.menuBarObj.insertButton(`<button id="btnDeleteUser" class='btn' title='Delete'><i class="fa fa-trash-o" aria-hidden="true"></i></button>`);
+            $("#btnDeleteUser").on('click', this.clickbtnDeleteUser.bind(this));
+        }
+        this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);       
+        this.btnCreateUser = $("#btnCreateUser");
+
         this.txtEmail.on('keyup', this.validateEmail.bind(this));
         this.txtEmail.on('change', this.validateEmail.bind(this));
         this.pwdPassword.on('keyup', function (e) { this.validateInfo(this.pwdPassword, /^([a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]){8,}$/); }.bind(this));
@@ -717,6 +720,63 @@
                 $("#eb_common_loader").EbLoader("hide");
             }
         });
+    };
+
+    this.clickbtnDeleteUser = function () {
+        EbDialog("show",
+            {
+                Message: "Are you sure you want to permanently delete this user?",
+                Buttons: {
+                    "Yes": {
+                        Background: "green",
+                        Align: "left",
+                        FontColor: "white;"
+                    },
+                    "No": {
+                        Background: "violet",
+                        Align: "right",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (name) {
+                    $("#btnDeleteUser").attr("disabled", true);
+                    $("#eb_common_loader").EbLoader("show");
+                    if (name === "Yes") {
+                        $.ajax({
+                            type: "POST",
+                            url: "../Security/DeleteUser",
+                            data: { userid: this.itemId },
+                            error: function (xhr, ajaxOptions, thrownError) {
+                                EbMessage("show", { Message: 'Something unexpected occurred', AutoHide: true, Background: '#bf1e1e' });
+                                $("#btnDeleteUser").removeAttr("disabled");
+                                $("#eb_common_loader").EbLoader("hide");
+                            }.bind(this),
+                            success: function (result) {
+                                if (result > 0) {
+                                    EbDialog("show",
+                                        {
+                                            Message: "Deleted Successfully",
+                                            Buttons: {
+                                                "Ok": {
+                                                    Background: "green",
+                                                    Align: "right",
+                                                    FontColor: "white;"
+                                                }
+                                            },
+                                            CallBack: function (name) {
+                                                window.top.close();
+                                            }
+                                        });
+                                }
+                                else
+                                    EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
+                                $("#btnDeleteUser").removeAttr("disabled");
+                                $("#eb_common_loader").EbLoader("hide");
+                            }
+                        });
+                    }
+                }.bind(this)
+            });
     };
 
     this.makeAsShowPwdField = function ($pwdField) {

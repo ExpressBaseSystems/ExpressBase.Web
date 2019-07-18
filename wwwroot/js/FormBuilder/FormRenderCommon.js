@@ -26,6 +26,7 @@
         if (Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
             let fun = new Function("form", "user", `event`, atob(Obj.DefaultValueExpression.Code)).bind(Obj, this.FO.formObject, this.FO.userObject);
             let val = fun();
+            console.log(val + "==set");
             Obj.setValue(val);
         }
     };

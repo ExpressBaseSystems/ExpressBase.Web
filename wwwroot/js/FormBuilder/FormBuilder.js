@@ -44,6 +44,8 @@
         let ControlTile = $(`#cont_${ebsid}`).closest(".Eb-ctrlContainer");
         this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(ebsid).EbSid);
         let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
+        if (ctrl.ObjType === "Approval")
+            this.ApprovalCtrl = null;
         ControlTile.parent().focus();
         ControlTile.remove();
         this.PGobj.removeFromDD(ebsid);
@@ -298,6 +300,7 @@
                 }
                 else if (type === "Approval") {
                     ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
+                    this.ApprovalCtrl = ctrlObj;
                 }
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
@@ -393,12 +396,12 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if (el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
+        if (source.id === this.primitiveToolsId && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({
                 id: "reviewCtrl",
                 head: "Form already contains a Review control.",
-                body:  "You cannot add more than one approval control into the form",
+                body: "You cannot add more than one approval control into the form",
                 type: "warning",
                 delay: 3000
             });

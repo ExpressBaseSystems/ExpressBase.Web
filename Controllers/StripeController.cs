@@ -291,16 +291,26 @@ namespace StripeApp.Controllers
 
         }
         
-        public Object UpdateCustomerSubscription(int user_no, string sid)
+        public Object UpdateCustomerSubscription(int user_no,string cust_id, string sid)
         {
             string planId = "TestPlan-01";
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             UpgradeSubscriptionResponse res = this.ServiceClient.Post<UpgradeSubscriptionResponse>(new UpgradeSubscriptionRequest
             {
+                CustId = cust_id,
                 Total = user_no,
                 PlanId = planId,
                 SolnId = sid
             });
+
+            GetCustomerUpcomingInvoiceResponse stripeupcominginvoice = this.ServiceClient.Post<GetCustomerUpcomingInvoiceResponse>(new GetCustomerUpcomingInvoiceRequest
+            {
+                CustId = cust_id
+            });
+
+            res.Invoice = stripeupcominginvoice.Invoice;
+            res.Count = stripeupcominginvoice.Invoice.Data.Count;
+
             return res;
         }
 
@@ -334,6 +344,40 @@ namespace StripeApp.Controllers
             });
             res.Email = email;
             return res;
+        }
+
+        public Object RemoveCustomerCard(string cust_id, string card_id, string sid)
+        {
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            RemoveCustomerCardResponse res = this.ServiceClient.Post<RemoveCustomerCardResponse>(new RemoveCustomerCardRequest
+            {
+                CustId = cust_id,
+                CardId = card_id,
+                SolnId = sid
+            });
+            return res;
+        }
+
+        public Object ChangeCardSource(string cust_id, string card_id, string sid)
+        {
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            ChangeCardSourceResponse res = this.ServiceClient.Post<ChangeCardSourceResponse>(new ChangeCardSourceRequest
+            {
+                CustId = cust_id,
+                CardId = card_id,
+                SolnId = sid
+            });
+            return res;
+        }
+
+        public Object GetCustomer(string cust_id, string sid)
+        {
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            GetCustomerResponse cust = this.ServiceClient.Post<GetCustomerResponse>(new GetCustomerRequest
+            {
+                CustId = cust_id
+            });
+            return cust;
         }
 
         public IActionResult ViewPlans(object ob)

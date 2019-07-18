@@ -1,5 +1,4 @@
 ﻿let addwiki = function () {
-
     let historyId = [];
 
     this.printresult = function () {
@@ -83,6 +82,7 @@
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
+        //let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
         $(`[data-id='${id}']`).addClass("CurrentSelection");
         this.AjaxCalFetchWikiList(id);
@@ -91,18 +91,18 @@
     }
 
     this.AjaxCalFetchWikiList = function (id) {
+        let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $.ajax({
             type: 'POST',
             url: "/PublicWiki/GetWiki",
             data: {
                 wiki_id: id
             },
-            success: this.FetchWikiListSuccess.bind(this, id)
+            success: this.FetchWikiListSuccess.bind(this, id, orderId)
         });
     }
 
-    this.FetchWikiListSuccess = function (id, ob) {
-       
+    this.FetchWikiListSuccess = function (id, orderId, ob) {
         $('#wiki_data_div').show();
         $("#wiki_data_div").scrollTop(0);
         $('.edit').attr('href', '../wiki/add/' + ob.id);
@@ -145,7 +145,17 @@
         </div></div>
             `;
         $('#wiki_data_div').append($WasItHelpFul);
-
+        let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
+        let Pre = $(`[order-id="${orderId}"]`).prev().attr("order-id");
+        let $nextPre = $(`<div></div>`);
+        if (next) {
+            $nextPre.append(`<span Next-id="${next}" class="NextPreWiki" style="float:right;">Next</span>`);
+        }
+        if (Pre) {
+            $nextPre.append(`<span Next-id="${Pre}" class="NextPreWiki" style="float:left;"> Previous</span>`);
+        }
+       
+        $('#wiki_data_div').append($nextPre);
         let title = $(".wiki_data h1").text();
         let desc = $(".wiki_data p").text().substring(0, $(".wiki_data p").text().indexOf("."));
         $(`meta[property="og:title"]`).attr("content", `${title}`);
@@ -153,7 +163,7 @@
         $(`meta[property="og:image"]`).attr("content", ``);
         $(`meta[property="og:url"]`).attr("content", `${url}`);
         $(`meta[name="twitter:card"]`).attr("content", "large image");
-
+   
         //this.AddMetaTags();
         if (PR)
             PR.prettyPrint();
@@ -345,18 +355,18 @@
 
     this.render_page_toggle = function (e) {
         let val = e.target.getAttribute("val");
-
+        $(".fullViewtoggle").toggle();
         if (val == "show") {
             $("#render_field").hide();
             $("#render_page_toggle").removeAttr("val").attr("val", "hide");
-            $("#render_page_toggle").removeAttr("value").attr("value", "show page view");
+            $("#render_page_toggle").removeAttr("value").attr("value", "Normal Screen");
             $("#edit_field").removeClass("col-sm-6").addClass("col-sm-12");
         }
         else {
             $("#render_field").show();
             $("#render_page_toggle").removeAttr("val").attr("val", "show");
             $("#edit_field").removeClass("col-sm-12").addClass("col-sm-6");
-            $("#render_page_toggle").removeAttr("value").attr("value", "hide page view");
+            $("#render_page_toggle").removeAttr("value").attr("value", "Full Screen");
         }
     }
 
@@ -877,6 +887,21 @@
         $(`#${value}>ul>li:first>a`).click();
     }
 
+    this.NextAndPreWiki = function (e) {
+        let OrderId = e.target.getAttribute("Next-id");
+        let dataId= $(`[order-id="${OrderId}"]`).children().attr("data-id");
+        $(`[data-id="${dataId}"]`).click();
+    }
+    //this.CreateNewWikiTrigger = function () {
+    //    let host = $(location).attr('host');
+    //    window.location.replace(`${host}/wiki/add/0`);
+    //}
+    //this.WikiGaleryToggle = function () {
+    //    $(".Col_head").click();
+    //    onclick = "location.href='#DEFAULT_ColBdy'";
+    //    onclick = "location.href='#bottomAnchor'";
+    //}
+
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
@@ -888,8 +913,10 @@
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
-        $(".wiki_data").on("click", ".wikilist ", this.FetchWikiList.bind(this));
+        $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
+        $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
         $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
+        //$("#galleryToggle").on("click", this.WikiGaleryToggle.bind(this));
 
         //wiki admin
         $(".wikies_list").on("click", this.Admin_Wiki_List.bind(this));
@@ -897,6 +924,7 @@
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".selected").on("click", this.selectedHighlight.bind(this));
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
+        //$("#CreateWiki").on("click", this.CreateNewWikiTrigger.bind(this));
      
     };
 

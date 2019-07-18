@@ -12,8 +12,12 @@
     this.stages = this.ctrl.FormStages.$values.reverse();
     this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
 
-    ctrl.setEditModeRows = function (SingleTable) {/////////// need change
+    ctrl.enableAccessibleRow = function (SingleTable) {/////////// need change
+        if (this.isEditable())
+            this.enableAccessibleRow(this.nextRole);
+    }.bind(this);
 
+    ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         return this.setEditModeRows(SingleTable);
     }.bind(this);
 
@@ -26,19 +30,25 @@
         let pevStatusInt = getObjByval(prevRowData, "Name", "status").Value;
 
         let prevStageObj = getObjByval(this.stages, "Name", prevStageName);
-        let nextStageIdx = this.stages.indexOf(prevStageObj) + 1;
-
-        if (pevStatusInt === "1")
-            this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, nextStageIdx + "");
-        else
-            this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, (nextStageIdx - 1) + "");
-
-        this.disableAllCtrls();
-        let curRole = this.nextRole;
+        let prevStageIdx = this.stages.indexOf(prevStageObj);
+        let nextStageIdx = prevStageIdx + 1;
         this.setPrevStageData(sortedSingleTable, nextStageIdx);
-        this.enableAccessibleRow(curRole);
-        if (this.nextRole === null)// if all staged completed
+
+        if (nextStageIdx > this.stages.length - 1 && pevStatusInt === "1")// if all staged completed
+        {
+            this.isStagesCompleted = true;
             this.disableAllCtrls();
+        }
+        else {
+            if (pevStatusInt === "1")
+                this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[nextStageIdx].ApproverRole + "");
+            else
+                this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[prevStageIdx].ApproverRole + "");
+
+            this.disableAllCtrls();
+            this.isStagesCompleted = false;
+            this.enableAccessibleRow(this.nextRole);
+        }
     };
 
     this.setPrevStageData = function (sortedSingleTable, nextStageIdx) {
@@ -84,7 +94,7 @@
     };
 
     this.ctrl.ChangedRowObject = function () {
-        if (this.editable)
+        if (this.isEditable())
             return this.changedRowWT();
         else
             return null;
@@ -165,18 +175,24 @@
         $row.find("[col='review-dtls'] .fs-uname").text(this.userObj.FullName);
     };
 
-    this.enableAccessibleRow = function (curRole) {
-        //this.userObj.Roles.push("ADS_Committee"); /// TEMP
-        if (this.userObj.Roles.includes(this.nextRole)) {
-            this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
-            this.enableRow(this.$AccessibleRow);
+    this.isEditable = function () {
+        if (this.userObj.Roles.includes(this.nextRole) && this.Mode.isEdit && !this.isStagesCompleted)
             this.editable = true;
-        }
         else
             this.editable = false;
+
+        return this.editable;
+    };
+
+    this.enableAccessibleRow = function (curRole) {
+        if (this.isEditable()) {
+            this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
+            this.enableRow(this.$AccessibleRow);
+        }
     };
 
     this.init = function () {
+        this.isStagesCompleted = false;
         this.$submit = this.$container.find(".fs-submit");
         this.$container.on("click", ".fs-submit", this.submit);
 

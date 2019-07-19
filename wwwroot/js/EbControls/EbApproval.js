@@ -9,7 +9,7 @@
     this.$container = $(`#cont_${this.ctrl.EbSid_CtxId}`);
     this.$table = $(`#${this.TableId}`);
     this.Mode = options.Mode;
-    this.stages = this.ctrl.FormStages.$values.reverse();
+    this.stages = this.ctrl.FormStages.$values;
     this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
 
     ctrl.enableAccessibleRow = function (SingleTable) {/////////// need change
@@ -167,7 +167,7 @@
     this.enableRow = function ($row) {
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();
-        this.$submit.show();
+        this.$submit.show(300);
         $row.attr("active", "true");
 
         let url = `url(../images/dp/${this.userObj.UserId}.png)`;

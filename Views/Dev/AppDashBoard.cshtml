@@ -5,13 +5,27 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
+
+@section StyleSheet{
+    <style>
+        .demodpdiv {
+            width: 75px;
+            height: 75px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+            .demodpdiv:hover {
+                box-shadow: 1px 1px 2px 2px #ccc;
+            }
+    </style>
+}
+
+@section JavaScript{
+    <script src="~/js/EbDashBoards/AppDashBoard.js" type="text/javascript"></script>
+}
 <script>
-    var cm = new EbHeader().setName("Application Configuration");
-</script>
-<script src="~/js/EbDashBoards/AppDashBoard.js" type="text/javascript"></script>
-<script>
-    var Object_type = @Html.Raw(ViewBag.Types);
-    var Obj_Collection = @Html.Raw(ViewBag.Objects);
+    new EbHeader().setName("Application Configuration");
 </script>
 <div class="row s-dash-container h-100">
     <div class="pd-0 tdasboard-sidebar tenant_sidebar">
@@ -39,6 +53,7 @@
         </div>
     </div>
     @{
+        Dictionary<int, TypeWrap> list = ViewBag.ObjectCollection;
         var appinfo = ViewBag.AppInfo;
         var apptype = (EbApplicationTypes)appinfo.AppType;
         string typeIcon = null;
@@ -48,47 +63,103 @@
         else if (appinfo.AppType == 2) { typeIcon = "/images/svg/smartphone-call.svg"; }
 
         else if (appinfo.AppType == 3) { typeIcon = "/images/svg/chat1.svg"; }
-
     }
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 s-dash-solution-desc border-style-none">
             <div class="col-md-10 pd-0">
-                <h4 class=""><span class="fa @appinfo.Icon appicon_style"></span> @appinfo.Name </h4>
+                <h4 class="mr-t-0"><span class="fa @appinfo.Icon appicon_style"></span> @appinfo.Name </h4>
                 <p class="small">@appinfo.Description</p>
-                <p class="small"><img class="apptype_icon" src="@typeIcon" /><span>@apptype</span> Application</p>
+                <p class="small mr-b-0"><img class="apptype_icon" src="@typeIcon" /><span>@apptype</span> Application</p>
             </div>
             <div class="col-md-2 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
-                @*<div class="btn-group pull-right">*@
-                @*@*<ul class="dropdown-menu" id="object_types_drd"></ul>
-        </div>*@
-                <button type="button" class="ebbtn eb_btnblue eb_btn-sm" data-toggle="modal" data-target="#newObjectmdl">
-                    New Object
-                </button>
-                <a href='@Url.Action("CreateApplication", "Dev",new { Id = appinfo.Id,Type = appinfo.AppType})' class="ebbtn eb_btn-sm eb_btnplain" style="margin-right:10px;"><i class="fa fa-edit"></i> Edit</a>
+                <a href='@Url.Action("CreateApplication", "Dev",new { Id = appinfo.Id,Type = appinfo.AppType})' class="ebbtn eb_btn-sm eb_btnblue"><i class="fa fa-edit"></i> Edit Application</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
                     <a class="nav-link" data-toggle="tab" href="#Objects" role="tab">
-                        <i class="fa fa-list"></i> Objects</a>
+                        <i class="fa fa-list"></i> Objects
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#Appearance" role="tab">
-                        <i class="fa fa-picture-o"></i> Appearance</a>
+                        <i class="fa fa-picture-o"></i> Appearance
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#home" role="tab">
-                    <i class="fa fa-cog"></i> Settings
+                        <i class="fa fa-cog"></i> Settings
                     </a>
                 </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active appdash_obj_container" id="Objects" role="tabpanel">
                     <div class="raw">
-                        <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="ExportBtn">Export</button>
+                        <button type="button" class="ebbtn eb_btnblue eb_btn-sm" data-toggle="modal" data-target="#newObjectmdl">
+                            New Object
+                        </button>
+                        <button class="ebbtn eb_btn-sm eb_btnplain" style="margin-right:10px" id="ExportBtn">Export</button>
+                        <div class="input-group eb-search-box" style="margin-right: 10px;">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input type="text" id="obj_search_input" class="form-control" placeholder="Search object">
+                        </div>
                     </div>
-                    <div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>
+                    @*<div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>*@
+                    <div class="raw-obj-container">
+                        <div class="col-md-2 pd-0 sidebar-objtypes">
+                            <ul style="list-style:none;" class="pd-0">
+                                @{
+                                    int _k = (list.Keys.Count > 0) ? list.Keys.First() : 0;
+
+                                    foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+                                    {
+                                        string active = (_k == objectType.IntCode) ? "active_type" : "";
+                                        int o_c = list.ContainsKey(objectType.IntCode) ? list[objectType.IntCode].Objects.Count : 0;
+
+                                        <li class="sidebar-objtypes-listitem @active">
+                                            <a class="raw-obj-type" id="ebobject_type_@objectType.IntCode" link-id="ebobject_type_wrapper_@objectType.IntCode">
+                                                <span class="fa @objectType.Icon raw-obj-type-icon"></span>
+                                                <span class="name">@(objectType.Alias + "s") (@o_c)</span>
+                                            </a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-md-10 pd-r-0 raw-object-pane">
+                            @{
+                                foreach (KeyValuePair<int, TypeWrap> kp in list)
+                                {
+                                    <div class="raw-objectTypeWrprBlk" id="ebobject_type_wrapper_@kp.Key">
+                                        <div class="raw-objectTypeWrpr">
+                                            @{
+                                                foreach (ObjWrap ob in kp.Value.Objects)
+                                                {
+                                                    <div class="objitems obj_linkthumb">
+                                                        <a class="object_container obj_link" href='../Eb_Object/Index?objid=@ob.Id&objtype=@ob.EbObjectType'>
+                                                            <div class='col-md-11 col-lg-11 col-sm-11 pd-0'>
+                                                                <h4 class='head4'>@ob.DisplayName</h4>
+                                                                <p class='text-justify'>@(string.IsNullOrEmpty(ob.Description) ? "no description" : ob.Description)</p>
+                                                                <div class="label_container">
+                                                                    <span class="label">@ob.EbType</span>
+                                                                </div>
+                                                            </div>
+                                                            <input type="checkbox" objid="@ob.Id" name="ExportMark" class="ExportMark" />
+                                                        </a>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                if (list.Keys.Count <= 0)
+                                {
+                                    <div class="empty-objects">Objects list empty.</div>
+                                }
+                            }
+                        </div>
+                    </div>
                 </div>
                 <div class="tab-pane" id="Appearance" role="tabpanel">
 
@@ -100,8 +171,6 @@
                         var bot_wc_msg = "";
                         var bot_tm_color = "";
                         var bot_dp_url = "";
-
-
 
                         @if (appinfo.AppSettings != null)
                         {
@@ -128,21 +197,20 @@
                             <button id="btnSelectDpClipart" class="" title="Select from Clipart" onclick="$('#AppDB_BotDemoDp').modal('show');">Select from clipart</button>
                         </div>
                         <button onclick="UpdateBotSettings()">Update</button>
-
                         <div>
-                            <textarea id="txtemdscript" style="margin: 0px; width: 638px; height: 212px;"><script type="text/javascript">
-    (function () {
-        d = document;
-        s = d.createElement("script");
-        s.src = "https://expressbase.com/Bote/Js?id=@ViewBag.cid-@appinfo.Id&mode=s";
-        s.async = 1;
-        d.getElementsByTagName("head")[0].appendChild(s);
-    })();
-</script></textarea>
+                            <textarea id="txtemdscript" style="margin: 0px; width: 638px; height: 212px;">
+                            <script type="text/javascript">
+                                (function () {
+                                    d = document;
+                                    s = d.createElement("script");
+                                    s.src = "https://expressbase.com/Bote/Js?id=@ViewBag.cid-@appinfo.Id&mode=s";
+                                    s.async = 1;
+                                    d.getElementsByTagName("head")[0].appendChild(s);
+                                })();
+                                </script>
+                            </textarea>
                             <button onclick="$('#txtemdscript').select(); document.execCommand('copy');">Copy to Clipboard</button>
                         </div>
-
-
                         <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
                             <div class="modal-dialog" style="width:445px">
                                 <div class="modal-content">
@@ -207,21 +275,10 @@
         </div>
     </div>
 </div>
-<style>
-    .demodpdiv {
-        width: 75px;
-        height: 75px;
-        cursor: pointer;
-        display: inline-block;
-    }
-
-        .demodpdiv:hover {
-            box-shadow: 1px 1px 2px 2px #ccc;
-        }
-</style>
 @section JsCode{
     <script>
-    var adash = new AppDashBoard(Object_type, Obj_Collection,'@appinfo.Id');
+    var adash = new AppDashBoard('@appinfo.Id');
+
     function UpdateBotSettings() {
         var appSettings = {};
         appSettings["Name"] = $("#bot_name_txt").val();

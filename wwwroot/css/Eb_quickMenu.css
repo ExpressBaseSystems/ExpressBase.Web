@@ -332,3 +332,6 @@
     .EbQuickMoverlaySideWRpr .objListContainer [klink='true']:focus .favourited {
         color: #f35353;
     }
+    .EbQuickMoverlaySideWRpr .obj_count {
+        margin-left: 0.4em;
+    }

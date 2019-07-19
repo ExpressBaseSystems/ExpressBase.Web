@@ -167,6 +167,23 @@ let com = $("#email").val();
         else {
             $("#emaillbl").css("visibility", "hidden");
             $('#country').removeClass('txthighlightred').addClass('txthighlight');
+
+
+            $.ajax({
+                url: "../Ext/EmailCheck",
+                data: { email: $("#email").val().trim(), },
+                cache: false,
+                type: "POST",
+                success: function (status) {
+                    if (status == 0) {
+                        EbMessage("show", { Message: "You have already registered. Please login ", Background: 'red' });
+                        
+
+                    }
+                    
+                }
+            });
+
 }
 }
     this.Namevalidate = function () {

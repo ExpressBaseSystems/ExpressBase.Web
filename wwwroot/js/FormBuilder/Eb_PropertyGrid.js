@@ -370,14 +370,13 @@
     };
 
     this.HideGroup = function (groupName) {
-        let $groupRows = $("#" + this.wraperId + " [group=" + groupName + "]");
-        let props = $groupRows.filter(function (item) {
-            return item.getAttribute("name").slice(-2) === groupName;
-        });
+        $("#" + this.wraperId + " [group=" + groupName + "]").hide(300);
+        $(`#${this.wraperId} .pgGroupRow[group-h=${groupName}]`).hide(300);
+    };
 
-        $.each(props, function (i, prop) {
-            this.HideProperty(prop);
-        });
+    this.ShowGroup = function (groupName) {
+        $("#" + this.wraperId + " [group=" + groupName + "]").show(300);
+        $(`#${this.wraperId} .pgGroupRow[group-h=${groupName}]`).show(300);
     };
 
     //makes a property row hidden

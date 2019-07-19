@@ -529,7 +529,19 @@ namespace ExpressBase.Web.Controllers
             this.DecideConsole(hostParts[0], out whichconsole);
 
             string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+            Recaptcha data = null;
+            try
+            {
+                data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("RECAPTCHA EXCEPTION");
+                Console.WriteLine(e.Message);
+                TempData["ErrorMessage"] = "Recaptcha error, try again";
+                return Redirect("/");
+            }
+            
             if (!data.Success)
             {
                 if (data.ErrorCodes.Count <= 0)

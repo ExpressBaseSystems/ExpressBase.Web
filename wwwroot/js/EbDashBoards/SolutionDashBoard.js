@@ -55,13 +55,13 @@ var SolutionDashBoard = function (connections, sid) {
         $("#" + this.whichModal + " [name='" + input + "']").val($(obj).text());
     }
 
-    this.IntegrationSubmit = function () {
+    this.IntegrationSubmit = function (e) {
         //e.preventDefault();
         //var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/Integrate",
-            data: postData,
+            data: { preferancetype: JSON.stringify(postData), deploy:e, sid},
             beforeSend: function () {
                 preventContextMenu = 1;
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
@@ -835,9 +835,34 @@ var SolutionDashBoard = function (connections, sid) {
                                 }
                             }.bind(this));
                             if (flag == 0) {
-                                postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfId": id }
-                                if (temp == undefined) {
-                                    this.IntegrationSubmit();
+                                postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id }
+                                if (key == "EbDATA") {
+                                    EbDialog("show",
+                                        {
+                                            Message: "Do you wanna deploy in " + conf_NN ,
+                                            Buttons: {
+                                                "Confirm": {
+                                                    Background: "green",
+                                                    Align: "right",
+                                                    FontColor: "white;"
+                                                },
+                                                "Cancel": {
+                                                    Background: "red",
+                                                    Align: "left",
+                                                    FontColor: "white;"
+                                                }
+                                            },
+                                            CallBack: function (name) {
+                                                if (name == "Confirm")
+                                                    this.IntegrationSubmit(true);
+                                                else {
+                                                    this.IntegrationSubmit(false);
+                                                }
+                                            }.bind(this)
+                                        });
+                                }
+                                else if(temp == undefined) {
+                                    this.IntegrationSubmit(false);
                                 }
                                 else if (key == "SMS" || key == "SMTP") {
                                     if (temp.length == 1) {

@@ -4,6 +4,7 @@
     @using ExpressBase.Common.Objects;
     @using ExpressBase.Common.Structures;
     @using Newtonsoft.Json;
+    @using ExpressBase.Common.Helpers;
     var versionObj = EbSerializers.Json_Serialize(ViewBag.dsObj);
     bool _versioning = ViewBag.versioning;
 }
@@ -16,12 +17,14 @@
 
     $(document).ready(function () {
         commonObj.init();
-    $('title').text('@ViewBag.ObjectName');
+
+        let NameObj4Title = @Html.Raw(ViewBag.NameObj4Title);// view bag do not support local languages
+        $('title').text(NameObj4Title.Value);
     });
 
-    var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl', versioning = '@_versioning');
+            var commonObj = new Eb_ObjectCommon('@ViewBag.Refid', @Html.Raw(versionObj), '@ViewBag.Status', '@ViewBag.VersionNumber', tabnum = 0, type = @ViewBag.ObjType, major = @ViewBag.Majorv, ssurl = '@ViewBag.ServiceUrl', versioning = '@_versioning');
     $("#layout_div").data("commonObj", commonObj);
-    console.log("Index   " + $("#layout_div").data("commonObj"));
+            console.log("Index   " + $("#layout_div").data("commonObj"));
 
 </script>
 <div id="object_Dashboard_main">

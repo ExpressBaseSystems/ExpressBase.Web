@@ -1,11 +1,10 @@
-﻿@using ExpressBase.Objects.ServiceStack_Artifacts
-@using ExpressBase.Common
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <script>
-    var cm = new EbHeader().setName("Developer Console");
+    var cm = new EbHeader().setName("Developer Home");
 </script>
 @{
     List<AppWrapper> appList = ViewBag.apps;

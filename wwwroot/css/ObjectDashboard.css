@@ -213,17 +213,18 @@
         right: 4px;
         left: unset;
         padding: 0;
-        top: -5px;
+        border-radius:6px;
     }
 
 .drp_ul {
     list-style: none;
-    padding: 5px;
-    background-color: #fafafa;
+    padding: 10px;
+    background-color: white;
     min-width: 270px;
-    width: 270px;
+    width: 290px;
     margin: 0;
     z-index: 100;
+    border-radius: 6px;
 }
 
 .drp_item a {
@@ -238,20 +239,23 @@
     color: #333;
     align-items: center;
 }
-
-.border_b {
-    border-bottom: 1px solid #ccc;
+.drp_item:hover {
+    background: #f1f1f1;
+    border-radius: 6px;
 }
+    .drp_item:hover a{
+        text-decoration:none;
+    }
 
-.drp_item a i {
-    margin-right: 3rem;
-}
+    .drp_item a i {
+        margin-right: 3rem;
+    }
 
 .drp_item .user_info {
     min-width: 80%;
     height: 100%;
     float: left;
-    padding: 5px 5px 5px 12px;
+    padding: 5px 5px 5px 10px;
 }
 
     .drp_item .user_info h4 {

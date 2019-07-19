@@ -152,7 +152,7 @@ const EbSelect = function (ctrl, options) {
             return;
 
         if (this.ComboObj.MinSeachLength > MaxSearchVal.length) {
-            EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
+            EbMakeInvalid(`#${this.ComboObj.EbSid}Container`, `#${this.ComboObj.EbSid}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
             return;
         }
         else {
@@ -177,8 +177,16 @@ const EbSelect = function (ctrl, options) {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
             EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
-            if (searchVal.trim() === "" || this.ComboObj.MinSeachLength > searchVal.length)
+            if (this.ComboObj.MinSeachLength > searchVal.length)
                 return;
+
+            if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
+                this.datatable.columnSearch = [];
+                this.datatable.Api.ajax.reload();
+                return;
+            }
+
+
             this.datatable.columnSearch = [];
             this.datatable.columnSearch.push(new filter_obj(mapedField, searchBy, searchVal, mapedFieldType));
             this.datatable.Api.ajax.reload();

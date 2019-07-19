@@ -123,11 +123,21 @@
             $('#wiki_data_div').append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
         }
         $('.front_page_wiki').hide();
+
+        let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
+        let Pre = $(`[order-id="${orderId}"]`).prev().attr("order-id");
+        let $nextPre = $(`<div></div>`);
+        if (next) {
+            $nextPre.append(`<span Next-id="${next}" class="NextPreWiki" style="float:right;">Next</span>`);
+        }
+        if (Pre) {
+            $nextPre.append(`<span Next-id="${Pre}" class="NextPreWiki" style="float:left;"> Previous</span>`);
+        }
+
+        $('#wiki_data_div').append($nextPre);
+
         $WasItHelpFul = `<div class="row"> <div class="col-sm-12"> 
-                    <h4>Questions?</h4>
-            <p>We're always happy to help with code or other questions you might have. Search our documentation,
-            contact support, or connect with our sales team. You can also chat live with other developers in #stripe on freenode.<p>
-            <div id="Help" show><span> Was this page helpfull?
+                               <div id="Help" show><span> Was this page helpfull?
             <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
        <span style="float: right;"> <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
         <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
@@ -143,19 +153,15 @@
         <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
         <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
         </div></div>
+
+             <h4>Questions?</h4>
+            <p>We're always happy to help with code or other questions you might have. Search our documentation,
+            contact support, or connect <a>team</a> .<p>
+
             `;
         $('#wiki_data_div').append($WasItHelpFul);
-        let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
-        let Pre = $(`[order-id="${orderId}"]`).prev().attr("order-id");
-        let $nextPre = $(`<div></div>`);
-        if (next) {
-            $nextPre.append(`<span Next-id="${next}" class="NextPreWiki" style="float:right;">Next</span>`);
-        }
-        if (Pre) {
-            $nextPre.append(`<span Next-id="${Pre}" class="NextPreWiki" style="float:left;"> Previous</span>`);
-        }
-       
-        $('#wiki_data_div').append($nextPre);
+
+    
         let title = $(".wiki_data h1").text();
         let desc = $(".wiki_data p").text().substring(0, $(".wiki_data p").text().indexOf("."));
         $(`meta[property="og:title"]`).attr("content", `${title}`);
@@ -361,12 +367,14 @@
             $("#render_page_toggle").removeAttr("val").attr("val", "hide");
             $("#render_page_toggle").removeAttr("value").attr("value", "Normal Screen");
             $("#edit_field").removeClass("col-sm-6").addClass("col-sm-12");
+            $("#text").css("height", "100%");
         }
         else {
             $("#render_field").show();
             $("#render_page_toggle").removeAttr("val").attr("val", "show");
             $("#edit_field").removeClass("col-sm-12").addClass("col-sm-6");
             $("#render_page_toggle").removeAttr("value").attr("value", "Full Screen");
+            $("#text").css("height", "480px");
         }
     }
 
@@ -421,143 +429,31 @@
 
             $("#public").empty();
 
-            $("#public").append(`<div class="WikiMenu" val="Form">  Form <div>`);
-            let $Form = $(`<div data-val="Form"></div>`);
-            for (let i = 0; i < ob.length; i++) {
-                if (ob[i].category == "Form") {
-                    $Form.append(`
+            for (let j = 0; j < ob.wikiCat.length; j++) {
+                let temp = 0;
+                $("#public").append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}">  ${ob.wikiCat[j].wikiCategory} <div>`);
+                let $Form = $(`<div data-val="${ob.wikiCat[j].wikiCategory}"></div>`);
+                for (let i = 0; i < ob.wikiList.length; i++) {
+                    if (ob.wikiList[i].category == `${ob.wikiCat[j].wikiCategory}`) {
+                        $Form.append(`
                                 <div class="WikiList">
-                                <h1>  ${ob[i].title}  </h1>
+                                <h1>  ${ob.wikiList[i].title}  </h1>
                                 
                                   <div class="row">
                                   <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ ob[i].createdAt}
+                                    Created On  ${ob.wikiList[i].createdAt}
                                    </div>
-                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>   </div>
+                                  <i class="${ ob.wikiList[i].status} fa fa-pencil-square-o" data-id= ${ob.wikiList[i].id} val=${ob.wikiList[i].status}></i>   </div>
                         `);
+                        temp++;
+                    }
                 }
-            }
-            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
-            $("#public").append($Form);
-
-            $("#public").append(`<div class="WikiMenu" val="Report">  Report <div>`);
-            let $Report = $(`<div data-val="Report"></div>`);
-            for (let i = 0; i < ob.length; i++) {
-                if (ob[i].category == "Report") {
-                    $Report.append(`
-                                <div class="WikiList">
-                                <h1>  ${ob[i].title}  </h1>
-                              
-                                  <div class="row">
-                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ ob[i].createdAt}
-                                   </div>
-                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>   </div>
-                        `);
+                if (temp == 0) {
+                    $Form.append(`<h6 style="padding-left:100px;"> Empty List</h6> `);
                 }
+
+                $("#public").append($Form);
             }
-            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
-            $("#public").append($Report);
-
-
-            $("#public").append(`<div class="WikiMenu" val="API">  API <div>`);
-            let $API = $(`<div data-val="API"></div>`);
-            for (let i = 0; i < ob.length; i++) {
-                if (ob[i].category == "API") {
-                    $API.append(`
-                                <div class="WikiList">
-                                <h1>  ${ob[i].title}  </h1>
-                               
-                                  <div class="row">
-                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ ob[i].createdAt}
-                                   </div>
-                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>   
-                                </div>
-                        `);
-                }
-            }
-            $("#public").append($API);
-
-            $("#public").append(`<div class="WikiMenu" val="Chatbots">  Chatbots <div>`);
-            let $Chatbots = $(`<div data-val="Chatbots"></div>`);
-            for (let i = 0; i < ob.length; i++) {
-                if (ob[i].category == "Chatbots") {
-                    $Chatbots.append(`
-                                <div class="WikiList">
-                                <h1>  ${ob[i].title}  </h1>
-                               
-                                  <div class="row">
-                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ ob[i].createdAt}
-                                   </div>
-                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>   
-                                </div>
-                        `);
-                }
-            }
-            //<div class='col admin_wiki_list'> ${ob[i].html}</div>
-            $("#public").append($Chatbots);
-
-
-            $("#public").append(`<div class="WikiMenu" val="Security">  Security <div>`);
-            let $Security = $(`<div data-val="Security"></div>`);
-            for (let i = 0; i < ob.length; i++) {
-                if (ob[i].category == "Security") {
-                    $Security.append(`
-                                <div class="WikiList">
-                                <h1>  ${ob[i].title}  </h1>
-                            
-                                  <div class="row">
-                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ ob[i].createdAt}
-                                   </div>
-                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>
-                                      </div>
-                        `);
-                }
-            }
-            $("#public").append($Security);
-
-
-            $("#public").append(`<div class="WikiMenu" val="Integrations">  Integrations <div>`);
-            let $Integrations = $(`<div data-val="Integrations"></div>`);
-            for (let i = 0; i < ob.length; i++) {
-                if (ob[i].category == "Integrations") {
-                    $Integrations.append(`
-                                <div class="WikiList">
-                                <h1>  ${ob[i].title}  </h1>
-                            
-                                  <div class="row">
-                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ ob[i].createdAt}
-                                   </div>
-                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>
-                                      </div>
-                        `);
-                }
-            }
-            $("#public").append($Integrations);
-
-            $("#public").append(`<div class="WikiMenu" val="AppStore">  App Store <div>`);
-            let $AppStore = $(`<div data-val="AppStore" ></div>`);
-            for (let i = 0; i < ob.length; i++) {
-                if (ob[i].category == "AppStore") {
-                    $AppStore.append(`
-                                <div class="WikiList">
-                                <h1>  ${ob[i].title}  </h1>
-                              
-                                  <div class="row">
-                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ ob[i].createdAt}
-                                   </div>
-                                  <i class="${ ob[i].status} fa fa-pencil-square-o" data-id= ${ob[i].id} val=${ob[i].status}></i>  
-                                   <div>
-                        `);
-                }
-            }
-            $("#public").append($AppStore);
-
            
         }
 
@@ -584,118 +480,37 @@
     }
 
     this.ajaxPublicViewSuccess = function (ob) {
+
         $("#public").empty();
-        $("#public").append(`<div class="WikiMenu" val="Form">  Form <div>`);
-        let $Form = $(`<ul data-val="Form" class="dragable_wiki_list" show></ul>`);
-        for (let i = 0; i < ob.wikiList.length; i++) {
-            if (ob.wikiList[i].category == "Form") {
-                $Form.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
-            }
-        }
-        $("#public").append($Form);
 
-        $("#public").append(`<div class="WikiMenu" val="Report">  Report <div>`);
-        let $Report = $(`<ul data-val="Report" class="dragable_wiki_list" ></ul>`);
-        for (let i = 0; i < ob.wikiList.length; i++) {
-            if (ob.wikiList[i].category == "Report") {
-                $Report.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
+        for (let j = 0; j < ob.wikiCat.length; j++) {
+            let temp = 0;
+            $("#public").append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}">  ${ob.wikiCat[j].wikiCategory} <div>`);
+            let $Form = $(`<ul data-val="${ob.wikiCat[j].wikiCategory}" class="dragable_wiki_list" show></ul>`);
+            for (let i = 0; i < ob.wikiList.length; i++) {
+                if (ob.wikiList[i].category == `${ob.wikiCat[j].wikiCategory}`) {
+                    $Form.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
+                    temp++;
+                }
             }
-        }
-        $("#public").append($Report);
-
-        $("#public").append(`<div class="WikiMenu" val="Integrations">  Integrations <div>`);
-        let $Integrations = $(`<ul data-val="Integrations" class="dragable_wiki_list"  ></ul>`);
-        for (let i = 0; i < ob.wikiList.length; i++) {
-            if (ob.wikiList[i].category == "Integrations") {
-                $Integrations.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
+           
+            if (temp == 0) {
+                $Form.append(`<h6 style="padding-left:100px;"> Empty List</h6> `);
             }
+            $("#public").append($Form);
+            let dataVal = ob.wikiCat[j].wikiCategory;
+            this.draggableFun(dataVal);
         }
-        $("#public").append($Integrations);
-
-
-        $("#public").append(`<div class="WikiMenu" val="API">  API <div>`);
-        let $API = $(`<ul data-val="API" class="dragable_wiki_list"  ></ul>`);
-        for (let i = 0; i < ob.wikiList.length; i++) {
-            if (ob.wikiList[i].category == "API") {
-                $API.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title}  </li>`);
-            }
-        }
-        $("#public").append($API);
-
-        $("#public").append(`<div class="WikiMenu" val="Chatbots">  Chatbots <div>`);
-        let $Chatbots = $(`<ul data-val="Chatbots" class="dragable_wiki_list"></ul>`);
-        for (let i = 0; i < ob.wikiList.length; i++) {
-            if (ob.wikiList[i].category == "Chatbots") {
-                $Chatbots.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title} </li>`);
-            }
-        }
-        $("#public").append($Chatbots);
-
-        $("#public").append(`<div class="WikiMenu" val="Security">  Security <div>`);
-        let $Security = $(`<ul data-val="Security" class="dragable_wiki_list" ></ul>`);
-        for (let i = 0; i < ob.wikiList.length; i++) {
-            if (ob.wikiList[i].category == "Security") {
-                $Security.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title} </li>`);
-            }
-        }
-        $("#public").append($Security);
-
-        $("#public").append(`<div class="WikiMenu" update-val="AppStore">  App Store <div>`);
-        let $AppStore = $(`<ul data-val="AppStore" class="dragable_wiki_list" ></ul>`);
-        for (let i = 0; i < ob.wikiList.length; i++) {
-            if (ob.wikiList[i].category == "AppStore") {
-                $AppStore.append(`<li class="ui-state-default"  wiki-id=${ob.wikiList[i].id}> ${ob.wikiList[i].title} </li>`);
-            }
-        }
-        $("#public").append($AppStore);
 
         $("#public").append(`<button class="UpdateOrder" update-val="AppStore"> update </button>`);
-    this.draggableForm();
-    this.draggableReport();
-    this.draggableAPI();
-    this.draggableChatbots();
-    this.draggableSecurity();
-    this.draggableAppStore();
-    this.draggableIntegrations();
+   
     
     $("#eb_common_loader").EbLoader("hide");
 }
 
-
-
-
-    this.draggableForm = function () {
-        $("[data-val=Form]").sortable();
-        $("[data-val=Form]").disableSelection();
-    }
-
-    this.draggableReport = function () {
-        $("[data-val=Report]").sortable();
-        $("[data-val=Report]").disableSelection();
-    }
-
-    this.draggableAPI = function () {
-        $("[data-val=API]").sortable();
-        $("[data-val=API]").disableSelection();
-    }
-
-    this.draggableChatbots = function () {
-        $("[data-val=Chatbots]").sortable();
-        $("[data-val=Chatbots]").disableSelection();
-    }
-
-    this.draggableSecurity = function () {
-        $("[data-val=Security]").sortable();
-        $("[data-val=Security]").disableSelection();
-    }
-
-    this.draggableAppStore = function () {
-        $("[data-val=AppStore]").sortable();
-        $("[data-val=AppStore]").disableSelection();
-    }
-    this.draggableIntegrations = function () {
-        $("[data-val=Integrations]").sortable();
-        $("[data-val=Integrations]").disableSelection();
+    this.draggableFun = function (dataVal) {
+        $(`[data-val="${dataVal}"]`).sortable();
+        $(`[data-val="${dataVal}"]`).disableSelection();
     }
 
     //Context menu Wiki

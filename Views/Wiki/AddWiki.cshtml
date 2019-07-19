@@ -29,15 +29,16 @@
                     <div style="display:flex">
                         <input type="text" placeholder="Title" name="title" id="title" value="@ViewBag.Wiki.Title" class="GrpAddSel" />
                         <select name="category" id="category" class="GrpAddSel">
-                            <option value="" disabled selected>Select category</option>
-                            <option>Form</option>
-                            <option>Report</option>
-                            <option>API</option>
-                            <option>Chatbots</option>
-                            <option>Security</option>
-                            <option>Integrations</option>
-                            <option>AppStore</option>
+                            <option disabled selected>Select category</option>
+                            @foreach (WikiCat categ in ViewBag.WikiCat)
+                            {
+                                <option>@categ.WikiCategory</option>
+                            }
+                            
                         </select>
+                        <script> 
+                            $("#category").attr("value" ,"@ViewBag.Wiki.Category");
+                        </script>
                         <select name="status" id="status" value="@ViewBag.Wiki.Status" class="GrpAddSel">
                             <option value="" disabled selected>Select Status</option>
                             <option>Draft</option>

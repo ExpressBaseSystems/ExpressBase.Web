@@ -9,6 +9,7 @@ using ServiceStack;
 using ServiceStack.Redis;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using Stripe;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -25,6 +26,9 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        [Microsoft.AspNetCore.Mvc.Route("Stripewebhook")]
         public void Stripewebhook()
         {
             string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();

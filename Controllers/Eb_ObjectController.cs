@@ -25,6 +25,7 @@ using ExpressBase.Common.Extensions;
 using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Helpers;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -64,6 +65,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         ViewBag.IsNew = "false";
                         ViewBag.ObjectName = element.DisplayName;
+                        ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = element.DisplayName });//regional languages not support in ViewBag
                         ViewBag.ObjectDesc = element.Description;
                         ViewBag.Status = element.Status;
                         ViewBag.VersionNumber = element.VersionNumber;
@@ -104,6 +106,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.IsNew = "true";
                 ViewBag.Refid = string.Empty;
                 ViewBag.ObjectName = "*Untitled";
+                ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj (){ Value = "*Untitled" });//regional languages not support in ViewBag
                 ViewBag.Status = string.Empty;
                 ViewBag.ObjectDesc = string.Empty;
                 ViewBag.ReadOnly = false;

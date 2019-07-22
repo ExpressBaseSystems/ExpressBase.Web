@@ -59,12 +59,17 @@
                 else {
                     this.LoadApps();
                 }
+                this.setCaretOnSearch();
             }.bind(this));
         }
         else {
             $("#ebm-overlayfade").hide();
             $("#ebquickmsideoverlay").hide();
         }
+    };
+
+    this.setCaretOnSearch = function () {
+        $("#ebm-objsearch").focus();
     };
 
     this.closeMenuOverlay = function () {

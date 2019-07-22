@@ -9,11 +9,11 @@
     this.$container = $(`#cont_${this.ctrl.EbSid_CtxId}`);
     this.$table = $(`#${this.TableId}`);
     this.Mode = options.Mode;
-    this.stages = this.ctrl.FormStages.$values.reverse();
+    this.stages = this.ctrl.FormStages.$values;
     this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
 
     ctrl.enableAccessibleRow = function (SingleTable) {/////////// need change
-        if (this.editable !== false)// allow undefined
+        if (this.isEditable())
             this.enableAccessibleRow(this.nextRole);
     }.bind(this);
 
@@ -34,9 +34,9 @@
         let nextStageIdx = prevStageIdx + 1;
         this.setPrevStageData(sortedSingleTable, nextStageIdx);
 
-        if (nextStageIdx > this.stages.length - 1)// if all staged completed
+        if (nextStageIdx > this.stages.length - 1 && pevStatusInt === "1")// if all staged completed
         {
-            this.editable = false;
+            this.isStagesCompleted = true;
             this.disableAllCtrls();
         }
         else {
@@ -46,6 +46,7 @@
                 this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[prevStageIdx].ApproverRole + "");
 
             this.disableAllCtrls();
+            this.isStagesCompleted = false;
             this.enableAccessibleRow(this.nextRole);
         }
     };
@@ -93,7 +94,7 @@
     };
 
     this.ctrl.ChangedRowObject = function () {
-        if (this.editable)
+        if (this.isEditable())
             return this.changedRowWT();
         else
             return null;
@@ -166,7 +167,7 @@
     this.enableRow = function ($row) {
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();
-        this.$submit.show();
+        this.$submit.show(300);
         $row.attr("active", "true");
 
         let url = `url(../images/dp/${this.userObj.UserId}.png)`;
@@ -174,24 +175,29 @@
         $row.find("[col='review-dtls'] .fs-uname").text(this.userObj.FullName);
     };
 
-    this.enableAccessibleRow = function (curRole) {
-        //this.userObj.Roles.push("ADS_Committee"); /// TEMP
-        if (this.userObj.Roles.includes(this.nextRole)) {
-            this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
-            this.enableRow(this.$AccessibleRow);
+    this.isEditable = function () {
+        if (this.userObj.Roles.includes(this.nextRole) && this.Mode.isEdit && !this.isStagesCompleted)
             this.editable = true;
-        }
         else
             this.editable = false;
+
+        return this.editable;
+    };
+
+    this.enableAccessibleRow = function (curRole) {
+        if (this.isEditable()) {
+            this.$AccessibleRow = this.$table.find(`tr[role='${this.nextRole}']`);
+            this.enableRow(this.$AccessibleRow);
+        }
     };
 
     this.init = function () {
+        this.isStagesCompleted = false;
         this.$submit = this.$container.find(".fs-submit");
         this.$container.on("click", ".fs-submit", this.submit);
 
         this.disableAllCtrls();
-        if (this.Mode.isEdit)
-            this.enableAccessibleRow(this.nextRole);
+        this.enableAccessibleRow(this.nextRole);
     };
 
     this.init();

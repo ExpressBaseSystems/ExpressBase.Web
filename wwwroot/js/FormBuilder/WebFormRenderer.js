@@ -504,7 +504,7 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isNew = false;
         this.setEditModeCtrls();
-        if (this.ApprovalCtrl && this.Mode.isEdit)
+        if (this.ApprovalCtrl)
             this.ApprovalCtrl.enableAccessibleRow();
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");

@@ -72,7 +72,34 @@
                         <span class="text">Getting Started</span>
                     </div>
                 </div>
-                <div class="sidebar-item-wraper wraper-link" val="Forms">
+                @foreach (WikiCat cat in ViewBag.WikiCat)
+                {
+                    string WikiCategory = cat.WikiCategory;
+                    string WikiIconClass = cat.WikiIconClass;
+
+                    <div class="sidebar-item-wraper wraper-link" val="@WikiCategory">
+                        <div class="sidebar-item">
+                            <span class="@WikiIconClass i-con"></span>
+                            <span class="menu text"> @WikiCategory </span>
+                        </div>
+                    </div>
+                    <div id="@WikiCategory" class="sidebar-list-wraper" val="hide" show>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
+                            {
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == WikiCategory)
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                }
+
+
+                @*<div class="sidebar-item-wraper wraper-link" val="Forms">
                     <div class="sidebar-item">
                         <span class="fa fa-list-alt i-con"></span>
                         <span class="menu text"> Forms </span>
@@ -86,12 +113,12 @@
                             int order = wiki.Order;
                             if (wiki.Category == "Form")
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
                             }
                         }
                     </ul>
-                </div>
-                <div class="sidebar-item-wraper wraper-link" val="Reporting">
+                </div>*@
+                @*<div class="sidebar-item-wraper wraper-link" val="Reporting">
                     <div class="sidebar-item">
                         <span class="fa fa-table i-con"></span>
                         <span class="menu text"> Reporting </span>
@@ -105,13 +132,13 @@
                             int order = wiki.Order;
                             if (wiki.Category == "Report")
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
                             }
                         }
                     </ul>
-                </div>
+                </div>*@
 
-                <div class="sidebar-item-wraper wraper-link" val="Integrations">
+                @*<div class="sidebar-item-wraper wraper-link" val="Integrations">
                     <div class="sidebar-item">
                         <span class="fa fa-plug i-con"></span>
                         <span class="menu text"> Integrations </span>
@@ -125,13 +152,13 @@
                             int order = wiki.Order;
                             if (wiki.Category == "Integrations")
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
                             }
                         }
                     </ul>
-                </div>
+                </div>*@
 
-                <div class="sidebar-item-wraper wraper-link" val="API">
+                @*<div class="sidebar-item-wraper wraper-link" val="API">
                     <div class="sidebar-item">
                         <span class="fa fa-code i-con"></span>
                         <span class="menu text"> API </span>
@@ -145,11 +172,11 @@
                             int order = wiki.Order;
                             if (wiki.Category == "API")
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
+                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
                             }
                         }
                     </ul>
-                </div>
+                </div>*@
                 @*<div class="sidebar-item-wraper wraper-link" val="Chatbots">
             <div class="sidebar-item">
                 <span class="fa fa-commenting i-con"> </span>
@@ -170,7 +197,7 @@
             </ul>
         </div>*@
 
-                <div class="sidebar-item-wraper wraper-link" val="Security">
+                @*<div class="sidebar-item-wraper wraper-link" val="Security">
                     <div class="sidebar-item">
                         <span class="fa fa-lock i-con"></span>
                         <span class="menu text"> Security </span>
@@ -188,11 +215,11 @@
                             }
                         }
                     </ul>
-                </div>
+                </div>*@
 
 
 
-                <div class="sidebar-item-wraper wraper-link" val="AppStore1">
+                @*<div class="sidebar-item-wraper wraper-link" val="AppStore1">
                     <div class="sidebar-item">
                         <span class="fa fa-shopping-cart i-con"></span>
                         <span class="menu text"> App Store </span>
@@ -210,7 +237,7 @@
                             }
                         }
                     </ul>
-                </div>
+                </div>*@
             </div>
         </div>
         <div class="col-sm-9 col-md-9 col-lg-9 pd-0 eb-wiki-pane">
@@ -233,7 +260,40 @@
                         <h2> Welcome to ExpressBase! </h2>
                         <h4>Get familiar with the ExpressBase products and explore their features:</h4>
 
-                        <div class="GettingStartedWrapper">
+
+                     
+                            @for (var i = 0; i < ViewBag.WikiCat.Count; i = i+2)
+                            {
+                                string WikiCategory = ViewBag.WikiCat[i].WikiCategory;
+                                string WikiIconClass = ViewBag.WikiCat[i].WikiIconClass;
+                                string WikiDescription = ViewBag.WikiCat[i].WikiDescription;
+                                string WikiCategory1 = "";
+                                string WikiIconClass1 = "";
+                                string WikiDescription1 = "";
+                                if ((i+1)< ViewBag.WikiCat.Count)
+                                {
+                                    WikiCategory1 = ViewBag.WikiCat[i + 1].WikiCategory;
+                                    WikiIconClass1 = ViewBag.WikiCat[i + 1].WikiIconClass;
+                                    WikiDescription1 = ViewBag.WikiCat[i + 1].WikiDescription;
+                                }
+                                <div class="GettingStartedWrapper">
+                                    <div class="GettingStarted" val="@WikiCategory">
+                                        <div class="divIcon"> <span class="@WikiIconClass i-con"></span></div>
+                                        <div><div class="h1Wrap"> @WikiCategory</div>
+                                        <div class="PWrap"> @WikiDescription</div></div>
+                                    </div>
+                                       @if(WikiCategory1 != "") {
+                                    <div class="GettingStarted" val="@WikiCategory1">
+                                        <div class="divIcon"> <span class="@WikiIconClass1 i-con"></span></div>
+                                        <div>
+                                            <div class="h1Wrap"> @WikiCategory1</div>
+                                            <div  class="PWrap"> @WikiDescription1</div>
+                                        </div>
+                                    </div>}
+                                     </div>                                       
+                            }
+
+                        @*<div class="GettingStartedWrapper">
                             <div class="GettingStarted" val="Forms">  <div class="divIcon"><span class="fa fa-list-alt i-con"></span></div> <div class="h1Wrap"> Forms</div></div>
                             <div class="GettingStarted" val="Reporting"><div class="divIcon"> <span class="fa fa-table i-con"></span></div> <div class="h1Wrap"> Reports</div></div>
                         </div>
@@ -244,8 +304,8 @@
                         <div class="GettingStartedWrapper">
                             <div class="GettingStarted" val="Security"><div class="divIcon"><span class="fa fa-lock i-con"></span> </div><div class="h1Wrap"> Security</div> </div>
                             <div class="GettingStarted" val="AppStore1"><div class="divIcon"><span class="fa fa-shopping-cart i-con"></span> </div> <div class="h1Wrap">AppStore </div> </div>
-                        </div>
-                       
+                        </div>*@
+
 
                     </div>
                 </div>
@@ -272,6 +332,8 @@
             //alert(url);
             let urlSplit = url.split("/");
             let id = urlSplit[urlSplit.length - 1];
+            $(".wikilist").removeClass("CurrentSelection");
+            $(`[data-id='${id}']`).addClass("CurrentSelection");
             if ($.isNumeric(id)) {
                 obj.AjaxCalFetchWikiList(id);
             }

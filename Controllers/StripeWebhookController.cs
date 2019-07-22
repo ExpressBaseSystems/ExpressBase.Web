@@ -32,6 +32,7 @@ namespace ExpressBase.Web.Controllers
         public void Stripewebhook()
         {
             string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+            Console.WriteLine("Web Hook Json in web:  " + json);
             this.ServiceClient.Post<StripewebhookResponse>(new StripewebhookRequest
             {
                 Json = json

@@ -11,6 +11,8 @@
 <link href="~/css/QueryExplain/query_explain.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
+@*<script src="~/js/DataSource/data-source.js"></script>*@@*amal*@
+
 @*<link href="~/css/SqlBuilder/Home.css" rel="stylesheet" />
 <link href="~/css/SqlBuilder/QBuilder.css" rel="stylesheet" />
 <link href="~/css/SqlBuilder/whereClause.css" rel="stylesheet" />
@@ -325,5 +327,15 @@
         commonO.ObjCollection["#vernav@(ViewBag.tabnum)"].Explain(); //to add explain tab
         evaluator.refresh(commonO.tabNum, code, code_tnum );
     });
+
+    //edited by amal
+    @*var reader = new DataReader({
+        Object: @Html.Raw(ViewBag.dsObj),
+        Version: "",
+        RefId: "",
+        Status: "",
+        TabNumber: 0,
+        SSUrl: ""
+    });*@
 
 </script>

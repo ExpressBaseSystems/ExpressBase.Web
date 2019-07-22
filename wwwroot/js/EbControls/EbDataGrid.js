@@ -53,7 +53,7 @@
     };
 
     this.tryAddRow = function () {
-        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable)
+        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable)
             this.addRow();
         if (this.Mode.isEdit)
             $(`.ctrlstd[mode] `).attr("mode", "edit");

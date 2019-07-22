@@ -164,7 +164,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dir: "left",
                 label: "Parameters",
                 //btnTop: 42,
-                style: { top: "44px" }
+                //style: { top: "44px" }
             });
         }
         $("#obj_icons").empty();
@@ -213,10 +213,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.placefiltervalues();
                 this.$submit.trigger("click");
             }
-            if (this.FilterDialog.FormObj.AutoRun) {
-                setTimeout(function () {
+            else if (this.FilterDialog.FormObj.AutoRun) {
                     this.$submit.trigger("click");
-                }.bind(this), 2000);
             }
             else {
                 this.FDCont.show();
@@ -3356,6 +3354,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
         }
         else if (this.popup) {
+            this.popup = false;
             $("#iFrameFormPopupModal").modal("show");
             let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);

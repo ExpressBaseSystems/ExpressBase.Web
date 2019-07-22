@@ -65,9 +65,8 @@ namespace ExpressBase.Web.Controllers
                     _dict.Add(objectType.IntCode, objectType.Name);
                 }
             }
-            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });
-            ViewBag.Types = JsonConvert.SerializeObject(_dict);
-            ViewBag.Objects = JsonConvert.SerializeObject(_objects.Data);
+            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });            
+            ViewBag.ObjectCollection = _objects.Data;
             ViewBag.AppInfo = _objects.AppInfo;
             this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
             ViewBag.Title = _objects.AppInfo.Name;

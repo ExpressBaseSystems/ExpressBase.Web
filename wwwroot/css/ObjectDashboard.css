@@ -261,6 +261,7 @@
     .drp_item .user_info h4 {
         margin: 0;
         font-size: 16px;
+        font-weight: 400;
     }
 
     .drp_item .user_info p {

@@ -30,18 +30,26 @@ namespace ExpressBase.Web.Controllers
                     return Redirect("0");
                 else
                     ViewBag.Wiki = resp.Wiki;
+                ViewBag.WikiCat = resp.WikiCat;
             }
-            else
+            else 
+            {
+                AddNewWikiResponse resp = this.ServiceClient.Get(new AddNewWikiRequest());
+                ViewBag.WikiCat = resp.WikiCat;
                 ViewBag.Wiki = new Wiki() { Id = 0 };
 
-            FileRefByContextResponse res = this.ServiceClient.Get<FileRefByContextResponse>(new FileRefByContextRequest
-            {
-                Context = "eb_wiki"
-            });
+                FileRefByContextResponse res = this.ServiceClient.Get<FileRefByContextResponse>(new FileRefByContextRequest
+                {
+                    Context = "eb_wiki"
+                });
 
-            ViewBag.Images = JsonConvert.SerializeObject(res.Images);
+                ViewBag.Images = JsonConvert.SerializeObject(res.Images);
+
+            }
             return View();
         }
+   
+
 
         [HttpGet("/apitest")]
         public IActionResult Test()
@@ -134,7 +142,8 @@ namespace ExpressBase.Web.Controllers
 
             Console.WriteLine("Info: Admin_Wiki_list Wiki Count: " + resp.WikiList.Count + " Status: " + status);
 
-            return resp.WikiList;
+            return resp;
+
         }
 
         public object Publish_wiki(int wiki_id, string wiki_status)

@@ -195,7 +195,7 @@
         if ($notOk1stCtrl)
             $notOk1stCtrl.select();
         return required_valid_flag;
-    };
+    }.bind(this);
 
     //this.AllUnique_Check = function () {
     //    let unique_flag = true;

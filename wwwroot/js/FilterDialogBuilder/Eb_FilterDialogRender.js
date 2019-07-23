@@ -14,10 +14,14 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     this.$submitBtn = $("#" + this.submitId);
     JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
     this.flatControls = getFlatCtrlObjs(this.FormObj);// objectcoll with functions
+    this.flatControlsWithDG = this.flatControls;
+
     this.onSubmitFn = onSubmitFn;
     this.FRC = new FormRenderCommon({
         FO: this
     });
+
+    this.IsFDValidationOK = this.FRC.AllRequired_valid_Check.bind(this.FRC);
 
     this.submit = function () {
         if (!this.FRC.AllRequired_valid_Check())

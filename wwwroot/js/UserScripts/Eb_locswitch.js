@@ -61,7 +61,7 @@
         $(container + " .locs_bdy").append(`<div class="loc-item">
                                     <div class="loc-item-inner" LocId="${obj.LocId}" title="${obj.LongName}">
                                         <div class="loc-item-imgsec">
-                                            <img src="../images/your-logo.png" />
+                                            <img src="/images/your-logo.png" />
                                         </div>
                                         <div class="loc-item-content">
                                             ${obj.LongName}

@@ -32,10 +32,12 @@ namespace ExpressBase.Web.Controllers
         public void Stripewebhook()
         {
             string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+            string header = Request.Headers["Stripe-Signature"];
             Console.WriteLine("Web Hook Json in web:  " + json);
             this.ServiceClient.Post<StripewebhookResponse>(new StripewebhookRequest
             {
-                Json = json
+                Json = json,
+                Header = header
             });
         }
     }

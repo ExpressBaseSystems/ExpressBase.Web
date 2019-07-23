@@ -454,7 +454,7 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#dbPortInput').val(temp1["Port"]);
                 $('#dbUserNameInput').val(temp1["UserName"]);
                 $('#dbPasswordInput').val(temp1["Password"]);
-                $('#IsSSL').val(temp1["IsSSL"]);
+                $('#dbIsSSLInput').attr('checked', temp1["EnableSsl"]);
                 $('#dbTimeoutInput').val(temp1["Timeout"]);                
                 break;
             }
@@ -503,13 +503,13 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#EmailInputNickname').val(temp[obj].NickName);
                 $('#SMTPInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(temp[obj].ConObject);
-                $('#EmailInputEmailvendor').val(temp1["ProviderName"]);
+                $('#InputEmailvendor').val(temp1["ProviderName"]);
                 $('#EmailInputEmail').val(temp1["EmailAddress"]);
                 $('#EmailInputPassword').val(temp1["Password"]);
                 $('#EmailInputSMTP').val(temp1["Host"]);
                 $('#EmailInputPort').val(temp1["Port"]);
                 //$('#SMTPInputIntConfId').val(temp1["Id"]);
-                $('#IsSSL').val(temp1["IsSSL"]);
+                $('#EmailIsSSL').prop('checked', temp1["EnableSsl"]);
             }
         }
     };
@@ -565,6 +565,8 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#SendGridInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(temp[obj].ConObject);
                 $('#SendGridInputApiKey').val(temp1["ApiKey"]);
+                $('#SendGridInputFrom').val(temp1["EmailAddress"]);
+                $('#SendGridInputFromName').val(temp1["Name"]);
             }
         }
     };
@@ -588,6 +590,7 @@ var SolutionDashBoard = function (connections, sid) {
     this.AllInputClear = function (e) {
         $(".Inputclear").val("")
         $(".IntConfId").val("0")
+        //$(".InputclearIsSSL").attr('checked', false);
     };
 
     this.ModalDataEntry = function (e) {
@@ -1437,8 +1440,7 @@ var SolutionDashBoard = function (connections, sid) {
             this.db_modal_show_append(DatabaseName);
         }.bind(this));
         $('.input-clear ').on('show.bs.modal', function (event) {
-            this.AllInputClear();
-            $(".IntConfId").val("0")
+            this.AllInputClear();           
         }.bind(this));
 
         //  $('.DisplayAllModal').on('click', this.AllInterationConfigDisp.bind(this));

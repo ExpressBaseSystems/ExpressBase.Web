@@ -53,7 +53,7 @@
     };
 
     this.tryAddRow = function () {
-        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable)
+        if ((this.Mode.isEdit || this.Mode.isNew) && this.ctrl.IsAddable && !this.ctrl.IsDisable)
             this.addRow();
         if (this.Mode.isEdit)
             $(`.ctrlstd[mode] `).attr("mode", "edit");
@@ -430,7 +430,7 @@
                 try {
                     let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                     inpCtrl.__onChangeFn = onChangeFn;
-                    console.eb_log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
+                    console.log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
                     inpCtrl.__onChangeFn();
                 }
                 catch (e) {
@@ -837,6 +837,18 @@
         }.bind(this));
     };
 
+    this.enable = function () {
+        $(`#${this.TableId}`).attr("is-disabled", "false");
+        if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
+            $(`#${this.TableId}>tbody>tr.dgtr:last`).show(300);
+    };
+
+    this.disable = function () {
+        $(`#${this.TableId}`).attr("is-disabled", "true");
+        if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
+            $(`#${this.TableId}>tbody>tr.dgtr:last`).hide(300);
+    };
+
     this.setCurRow = function (rowId) {
         this.ctrl.currentRow = [];
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -869,6 +881,9 @@
 
         this.ctrl.disableRow = this.disableRow.bind(this);
         this.ctrl.enableRow = this.enableRow.bind(this);
+
+        this.ctrl.disable = this.disable.bind(this);
+        this.ctrl.enable = this.enable.bind(this);
 
         this.ctrl.showRow = this.showRow.bind(this);//  + showRows
         this.ctrl.hideRow = this.hideRow.bind(this);

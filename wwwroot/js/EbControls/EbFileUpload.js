@@ -46,7 +46,8 @@ class EbFileUpload extends EbFupStaticData {
         super();
         this.Options = $.extend({
             EnableTag: false,
-            Categories: []
+            Categories: [],
+            UserId:0
         }, options);
         this.MaxSize = this.Options.MaxSize || 5;
         this.Files = [];
@@ -541,6 +542,16 @@ class EbFileUpload extends EbFupStaticData {
             let formData = new FormData();
             formData.append("File", this.Files[k]);
             formData.append("SolnId", this.Options.SolutionId || "");
+
+            if (this.Options.Context === "dp") {
+                formData.append("UserId", this.Options.UserId);
+                if (this.Options.UserId === 0) {
+                    $(`#${this.Options.Container}-loader`).EbLoader("hide");
+                    this.toggleM();
+                    console.error("Userid must be set");
+                    return false;
+                }
+            }
 
             $.ajax({
                 url: url,

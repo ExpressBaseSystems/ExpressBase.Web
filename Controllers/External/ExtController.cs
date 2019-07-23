@@ -28,106 +28,132 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-    [EnableCors("AllowSpecificOrigin")]
-    public class ExtController : EbBaseExtController
-    {
-        public const string RequestEmail = "reqEmail";
-        //public const string Email = "email";
+	[EnableCors("AllowSpecificOrigin")]
+	public class ExtController : EbBaseExtController
+	{
+		public const string RequestEmail = "reqEmail";
+		//public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc) : base(_client, _redis, _cxtacc) { }
+		public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc) : base(_client, _redis, _cxtacc) { }
 
-        [HttpPost]
-        [EnableCors("AllowSpecificOrigin")]
-        public bool JoinBeta()
-        {
-            string Email = this.HttpContext.Request.Form["Email"];
-            JoinbetaResponse f = this.ServiceClient.Post<JoinbetaResponse>(new JoinbetaReq { Email = Email });
-            return f.Status;
-        }
+		[HttpPost]
+		[EnableCors("AllowSpecificOrigin")]
+		public bool JoinBeta()
+		{
+			string Email = this.HttpContext.Request.Form["Email"];
+			JoinbetaResponse f = this.ServiceClient.Post<JoinbetaResponse>(new JoinbetaReq { Email = Email });
+			return f.Status;
+		}
 
-        [HttpGet]
-        public IActionResult QuestionNaire(int id)
-        {
-            ViewBag.Sid = id;
-            return View();
-        }
-        public IActionResult EmailVerifyStructure()
-        {
-            return View();
-        }
-        public IActionResult MailAlreadyVerified()
-        {
-            return View();
-        }
+		[HttpGet]
+		public IActionResult QuestionNaire(int id)
+		{
+			ViewBag.Sid = id;
+			return View();
+		}
+		public IActionResult EmailVerifyStructure()
+		{
+			return View();
+		}
+		public IActionResult MailAlreadyVerified()
+		{
+			return View();
+		}
 
-        [HttpGet("Platform/OnBoarding")]
-        public IActionResult SignUp()
-        {
-            return View();
-        }
+		[HttpGet("Platform/OnBoarding")]
+		public IActionResult SignUp()
+		{
+			return View();
+		}
 
-        //profile setup tenant
-        [HttpPost]
-        public CreateAccountResponse Board(string email, string name, string country,  string password)
-        {
-            CreateAccountResponse res = new CreateAccountResponse();
-            try
-            {
-                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
-                if (result.Unique)
-                {
-                    res.IsEmailUniq = true;
-                    string activationcode = Guid.NewGuid().ToString();
-                    var pgurl = this.HttpContext.Request.Host;
-                    var pgpath = this.HttpContext.Request.Path;
+		//profile setup tenant
+		[HttpPost]
+		public CreateAccountResponse Board(string email, string name, string country, string password)
+		{
+			CreateAccountResponse res = new CreateAccountResponse();
+			try
+			{
+				UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+				if (result.Unique)
+				{
+					res.IsEmailUniq = true;
+					string activationcode = Guid.NewGuid().ToString();
+					var pgurl = this.HttpContext.Request.Host;
+					var pgpath = this.HttpContext.Request.Path;
 
-                    res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
-                    {
-                        Name = name,
-                        Password = password,
-                        Country = country,
-                        Email = email,
-                        Account_type = null,
-                        ActivationCode = activationcode,
-                        PageUrl = pgurl.ToString(),
-                        PagePath = pgpath.ToString()
-                    });
+					res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
+					{
+						Name = name,
+						Password = password,
+						Country = country,
+						Email = email,
+						Account_type = null,
+						ActivationCode = activationcode,
+						PageUrl = pgurl.ToString(),
+						PagePath = pgpath.ToString()
+					});
 
-                    if (res.Id > 0)
-                    {
+					if (res.Id > 0)
+					{
 
-                        MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
-                        {
-                            provider = CredentialsAuthProvider.Name,
-                            UserName = email,
-                            Password = (password + email).ToMD5Hash(),
-                            Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
-                            //UseTokenCookie = true
-                        });
-                        if (authResponse != null)
-                        {
-                            CookieOptions options = new CookieOptions();
-                            Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                            Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                            this.ServiceClient.BearerToken = authResponse.BearerToken;
-                            this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                        }
-                    }
-                }
-                else
-                {
-                    res.IsEmailUniq = false;
-                }
+						MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+						{
+							provider = CredentialsAuthProvider.Name,
+							UserName = email,
+							Password = (password + email).ToMD5Hash(),
+							Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
+							//UseTokenCookie = true
+						});
+						if (authResponse != null)
+						{
+							CookieOptions options = new CookieOptions();
+							Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+							Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+							this.ServiceClient.BearerToken = authResponse.BearerToken;
+							this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+						}
+					}
+				}
+				else
+				{
+					res.IsEmailUniq = false;
+				}
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception: " + e.Message + e.StackTrace);
-            }
-            return res;
-        }
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+			}
+			return res;
+		}
 
-        [HttpGet("ForgotPassword")]
+
+		public int EmailCheck(string email)
+		{
+			try
+			{
+				UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+				if (result.Unique)
+				{
+					return 1;
+				}
+				else
+				{
+					return 0;
+				}
+
+				
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+			}
+			return 0;
+		}
+		
+
+
+		[HttpGet("ForgotPassword")]
         public IActionResult ForgotPassword()
         {
             ViewBag.message = TempData["Message"];
@@ -351,6 +377,14 @@ namespace ExpressBase.Web.Controllers
 				}
 				return Redirect(RoutingConstants.MYSOLUTIONS);
 			}
+			else
+			{
+				if (Social.AuthProvider =="github")
+				{
+					TempData["scl_signin_msg"] = "You have already created an accout with Github";
+				}
+				
+			}
 				
                 return RedirectToAction(RoutingConstants.TENANTSIGNIN);
         }
@@ -387,7 +421,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("em")]
         public IActionResult EmailVerify(string emv)
         {
-            var base64Encoded = System.Convert.FromBase64String(emv);
+			var base64Encoded = System.Convert.FromBase64String(emv);
             var emailcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
             string[] emcode = emailcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -495,7 +529,19 @@ namespace ExpressBase.Web.Controllers
             this.DecideConsole(hostParts[0], out whichconsole);
 
             string token = req["g-recaptcha-response"];
-            Recaptcha data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+            Recaptcha data = null;
+            try
+            {
+                data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("RECAPTCHA EXCEPTION");
+                Console.WriteLine(e.Message);
+                TempData["ErrorMessage"] = "Recaptcha error, try again";
+                return Redirect("/");
+            }
+            
             if (!data.Success)
             {
                 if (data.ErrorCodes.Count <= 0)

@@ -223,9 +223,12 @@ div.searchDiv iframe{
     }
 
 .props {
-    width: 63px;
+    background: #efefef;
+    width: 65px;
     height: 25px;
     align-content: center;
+    margin: 0px;
+    border: solid 1px #e6e6e6;
 }
 
     .props:hover {
@@ -277,23 +280,27 @@ iframe {
 
     .GettingStarted {
         display: flex;
-        height: 70px;
+        height: 80px;
         border-radius: 10px;
         border: solid 1px #d2d2d2;
         width: 100%;
         margin: 5px 15px 15px 5px;
     }
         .GettingStarted .divIcon {
-            width: 60px;
-            font-size: 30px;
-            padding: 15px;
+            width: 56px;
+            font-size: 35px;
+            padding: 16px 10px 15px 10px;
             color: #7f7f80;
         }
     .GettingStarted .h1Wrap {
-        font-size: 15px;
-        font-weight: 400;
+        font-size: 14px;
+        font-weight:500;
         padding: 10px 0px 0px 10px;
     }
+        .GettingStarted .PWrap {
+            padding: 0px 5px 5px 10px;
+            font-size:15px;
+        }
         .GettingStarted:hover {
             -webkit-box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
             -moz-box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
@@ -470,8 +477,62 @@ iframe {
     border: 1px solid #adadad;
     border-radius: 4px;
     padding: 3px 10px;
-    margin: 10px 3px;
+    margin: 0px 3px 15px 0px;
     width: 100px;
     text-align: center;
-    margin-top: 40px;
+    cursor: pointer;
+}
+    .NextPreWiki:hover {
+        background: #dcf0ff;
+        
+    }
+    .NextPreWiki:active {
+        background-color: white;
+    }
+.GrpAddSel {
+    width: 30%;
+    padding: 5px;
+    margin-right: 40px;
+}
+.btnGrp2 {
+    margin: 10px;
+    width: 30%;
+    padding: 5px;
+    margin-right: 10px;
+    border: solid 1px #cecece;
+    background: #efefef;
+}
+
+    .btnGrp2:hover {
+        background-color: #8AB6F7
+    }
+
+    .btnGrp2:active {
+        background-color: cornflowerblue;
+    }
+#galleryToggle {
+    border: solid 1px;
+    margin: 10px;
+    width: 30%;
+    padding: 5px;
+    margin-right: 10px;
+    border: solid 1px #cecece;
+    background: #efefef;
+    width: 30%;
+    text-decoration: none;
+    color: black;
+    padding-left: 10%;
+}
+    #galleryToggle:hover {
+        background-color: #8AB6F7
+    }
+
+    #galleryToggle:active {
+        background-color: cornflowerblue;
+    }
+
+.WikiDefaultImage {
+    height: 400px;
+   
+    align-items: center;
 }

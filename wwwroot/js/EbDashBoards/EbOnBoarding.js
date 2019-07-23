@@ -155,7 +155,7 @@ var EbOnBoarding = function () {
     }
  this.Emailvalidate1 = function () {
 let com = $("#email").val();
-      
+     $("#emaillbl2").css("visibility", "hidden");
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if ((com.length == 0) || (re.test(com) == false)) {
@@ -166,7 +166,25 @@ let com = $("#email").val();
         }
         else {
             $("#emaillbl").css("visibility", "hidden");
-            $('#country').removeClass('txthighlightred').addClass('txthighlight');
+            $('#email').removeClass('txthighlightred').addClass('txthighlight');
+
+
+            $.ajax({
+                url: "../Ext/EmailCheck",
+                data: { email: $("#email").val().trim(), },
+                cache: false,
+                type: "POST",
+                success: function (status) {
+                    if (status == 0) {
+                        $("#emaillbl2").css("visibility", "visible");
+                    }
+                    else {
+                        $("#emaillbl2").css("visibility", "hidden");
+                    }
+                    
+                }
+            });
+
 }
 }
     this.Namevalidate = function () {

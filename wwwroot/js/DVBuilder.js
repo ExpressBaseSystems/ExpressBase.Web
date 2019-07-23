@@ -32,6 +32,8 @@ class DvBuilder {
         this.isPreview = false;
         this.MisMatchedColumns = [];
         this.returnobj = null;
+        this.__OSElist = [];
+        this.__oldValues = [];
 
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
@@ -255,7 +257,7 @@ class DvBuilder {
     RemoveOldColumnsFromDependentObjects() {
         this.RemoveFromOrderbyObject();
         this.RemoveFromRowgroupObject();
-        this.RemoveFromFormRelatedObjects();
+        this.RemoveFromColumnObjects();
     }
 
     RemoveFromOrderbyObject() {
@@ -287,7 +289,7 @@ class DvBuilder {
         }.bind(this));
     }
 
-    RemoveFromFormRelatedObjects() {
+    RemoveFromColumnObjects() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsTree) {
                 this.RemoveOldColumnFromTreeColumn(obj);
@@ -296,6 +298,9 @@ class DvBuilder {
                 if (parseInt(obj.LinkRefId.split("-")[2]) === EbObjectTypes.WebForm) {
                     this.RemoveOldColumnFromFormLink(obj);
                 }
+            }
+            if (obj.InfoWindow.$values.length > 0) {
+                this.RemoveFromInfoWindowObjects(obj);
             }
         }.bind(this));
     }
@@ -362,6 +367,16 @@ class DvBuilder {
         }.bind(this));
     }
 
+    RemoveFromInfoWindowObjects(infocol) {
+        $.each(infocol.InfoWindow.$values, function (i, obj) {
+            let temp = $.grep(this.EbObject.Columns.$values, function (ob) { return ob.name === obj.name; });
+            if (temp.length === 0)
+                infocol.InfoWindow.$values = infocol.InfoWindow.$values.filter(function (ob) { return ob.name !== obj.name; });
+            else
+                obj.data = temp[0].data;
+        }.bind(this));
+    }
+
     RemoveDuplicateMismatchedColumns() {
         this.MisMatchedColumns = this.MisMatchedColumns.filter((thing, index, self) =>
             index === self.findIndex((t) => (
@@ -375,6 +390,8 @@ class DvBuilder {
     SetColumnRef() {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             obj.ColumnsRef = this.EbObject.Columns;
+            obj.__OSElist = this.__OSElist[i];
+            obj.__oldValues = this.__oldValues[i];
         }.bind(this));
     }
 
@@ -1162,9 +1179,13 @@ class DvBuilder {
     }
 
     RemoveColumnRef() {
+        this.__OSElist = [];
+        this.__oldValues = [];
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             obj.ColumnsRef = null;
-            obj.__OSElist = null;
+            this.__OSElist.push($.extend({}, obj.__OSElist));
+             obj.__OSElist = null;
+            this.__oldValues.push($.extend({}, obj.__oldValues));
             obj.__oldValues = null;
         }.bind(this));
     }

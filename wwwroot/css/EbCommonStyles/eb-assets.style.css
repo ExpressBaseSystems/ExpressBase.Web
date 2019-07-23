@@ -127,9 +127,6 @@
 .tenant_sidebar {
     width: 100px;
 }
-    /*.tenant_workpane {
-    width: calc(100% - 100px);
-}*/
     .tenant_sidebar .t-container {
         padding-top: 0 !important;
     }
@@ -844,67 +841,67 @@ pd-10 {
             background: #4987fb;
         }
 /*dashboras sidebar end*/
-/*for app dashboard*/
-.appdash_obj_container .obType_wrapper_head {
-    padding: 5px;
-    float: left;
-    width: 100%;
-    background-color: white;
-    border-radius: 6px;
+
+/*appdashboard style*/
+.raw-obj-container {
+    display: flex;
+    padding: 0 3px;
 }
-
-    .appdash_obj_container .obType_wrapper_head .btn {
-        padding: 0;
-        margin-right: 5px;
-    }
-
-.appdash_obj_container .collapse_headBG {
-    background-color: #ffffff;
-    color: #191717;
-    border-bottom: 1px solid #ccc;
-    border-radius: 0;
+.raw-objectTypeWrprBlk{
+    display:none;
 }
-
-    .appdash_obj_container .collapse_headBG .btn {
-        color: #262729 !important;
-    }
-
-.appdash_obj_container .brd {
-    border: 1px solid #cccaca;
+.raw-objectTypeWrprBlk:first-child {
+    display: block;
+}
+.raw-obj-container .sidebar-objtypes {
+    padding-right: 10px;
+}
+.raw-objectTypeWrpr {
+    display: flex;
+    flex-flow: row wrap;
+}
+.raw-object-pane {
+    border: 1px solid #ccc;
     padding: 0;
+    border-radius: 4px;
+    background: #f2f2f2;
 }
-
-.appdash_obj_container .btn_container {
-    display: inline-block;
+.active_type {
+    background: #4987fb;
 }
-
-.appdash_obj_container .drp_menuitems {
-    padding: 5px;
+    .active_type a {
+        color: white !important;
+    }
+        .active_type a:after {
+            font-family: FontAwesome;
+            content: "\f178";
+            float: right;
+        }
+    .obj_linkthumb {
+        width: 33.3%;
+        position: relative;
+    }
+    .obj_linkthumb .obj_link {
+       
+    }
+.sidebar-objtypes-listitem {
+    padding: 5px 5px;
+    font-size: 15px;
+    border-radius: 4px;
 }
-
-.drp_menuitems {
-    padding: 5px 0;
-}
-
-.appdash_obj_container .objContainer_f_app {
-    width: 100%;
-    float: left;
-    margin-bottom: 10px;
-    padding: 5px;
-}
-
-.appdash_obj_container .objContainer2 {
-    width: 100%;
-    float: left;
-    box-shadow: var(--eb-shadow);
-    border-radius: 2px;
-}
-
-.appdash_obj_container .obtype_container {
-    width: 100%;
-    float: left;
-    padding: 5px;
-    background-color: white;
+    .sidebar-objtypes-listitem .raw-obj-type {
+        color: #333;
+        text-decoration:none;
+        cursor:pointer;
+    }
+        .sidebar-objtypes-listitem .raw-obj-type .raw-obj-type-icon {
+            width:25px;
+        }
+.raw-object-pane .empty-objects {
+    position:absolute;
+    width:100%;
+    top:49%;
+    text-align:center;
 }
 
 .appdash_obj_container .label_container {
@@ -912,7 +909,6 @@ pd-10 {
 }
 
     .appdash_obj_container .label_container span {
-        background-color: #eaeaea;
         color: #369;
     }
 
@@ -947,16 +943,9 @@ pd-10 {
         border-radius: 2px;
         border: 1px solid #e8e6e6;
     }
-
-.appdash_obj_container .objContainer2 {
-    width: 100%;
-    float: left;
-    box-shadow: none;
-}
-
-.appdash_obj_container .obj_count, .Eb_quick_menu .obj_count {
-    margin-left: 0.4em;
-}
+        .appdash_obj_container .objitems .object_container:hover {
+            background-color: #eef9fe;
+        }
 
 .shrtcurt_info {
     position: absolute;
@@ -964,41 +953,7 @@ pd-10 {
     color: white;
 }
 
-.appdash_obj_container .objContainer2 .obType_wrapper_head {
-    box-shadow: 0 1px 1px rgba(0,0,0,.05);
-    border-radius: 2px;
-    border: 1px solid #e8e8e8;
-    display: flex;
-    align-items: center;
-}
-
-.appdash_obj_container .btn_container {
-    margin-left: auto;
-}
-
-.appdash_obj_container .collapse_headBG {
-    box-shadow: none !important;
-    border-radius: 0 !important;
-}
-
-.appdash_obj_container .objContainer2 .btn_container .form-control {
-    height: 28px !important;
-}
-
-.appdash_obj_container .objitems .object_container {
-    width: 100%;
-    height: 100%;
-    float: left;
-    background-color: #f2f2f2;
-    padding: 6px;
-    border-radius: 2px;
-    border: 1px solid #e8e6e6;
-}
-
-    .appdash_obj_container .objitems .object_container:hover {
-        background-color: #f3f8ff;
-    }
-
+/*app dashboard new object modal*/
 .newObjectmdl .eb-newobj-mdlbdy {
     display: flex;
     flex-flow: row wrap;
@@ -1040,6 +995,8 @@ pd-10 {
             flex-flow: row wrap;
             justify-content: center;
         }
+/*app dashboard new object modal*/
+
 /*marker for export*/
 .ExportMark {
     position: absolute;
@@ -1059,10 +1016,10 @@ pd-10 {
 }
 
 .appdash_obj_container .raw {
-    width: 100%;
-    float: left;
     padding-bottom: 10px;
-    padding-right: 5px;
+    padding-right: 3px;
+    display: flex;
+    flex-flow: row-reverse;
 }
 
 .obtypeic {

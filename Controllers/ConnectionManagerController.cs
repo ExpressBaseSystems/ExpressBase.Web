@@ -922,21 +922,21 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
 
-        public string Integrate()
+        public string Integrate(string preferancetype, bool deploy, string sid)
         {
             EbIntegrationResponse res = new EbIntegrationResponse();
-            var req = this.HttpContext.Request.Form;
+            var req = JsonConvert.DeserializeObject<EbIntegration>(preferancetype);
             try
             {
-                EbIntegration _obj = new EbIntegration
-                {
-                    Id = Convert.ToInt32(req["Id"]),
-                    ConfigId = Convert.ToInt32(req["ConfId"]),
-                    Preference = Enum.Parse<ConPreferences>(req["Preference"].ToString()),
-                    Type = Enum.Parse<EbConnectionTypes>(req["Type"].ToString())
-                };
-                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = _obj, SolnId = req["SolutionId"] });
-                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                //EbIntegration _obj = new EbIntegration
+                //{
+                //    Id = Convert.ToInt32(req["Id"]),
+                //    ConfigId = Convert.ToInt32(req["ConfId"]),
+                //    Preference = Enum.Parse<ConPreferences>(req["Preference"].ToString()),
+                //    Type = Enum.Parse<EbConnectionTypes>(req["Type"].ToString())
+                //};
+                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, deploy = deploy, SolnId = sid });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
                 return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)

@@ -33,6 +33,7 @@ namespace ExpressBase.Web.Controllers
             GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
             Console.WriteLine("Info: GetWikiList Wiki Count: " + resp.WikiList.Count);
             ViewBag.WikiList = resp.WikiList;
+            ViewBag.WikiCat = resp.WikiCat;
             return View();
         }
 

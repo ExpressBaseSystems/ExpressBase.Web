@@ -1,5 +1,5 @@
 ﻿.api_body {
-    font-family: open sans;
+    
 }
 
 .eb_apiWrper {
@@ -155,7 +155,7 @@
     background: white;
     height: 250px;
     bottom: 0;
-    z-index: 1000;
+    z-index: 5;
     border-top: 1px solid #ccc;
     left: 0;
     /*display: none;*/

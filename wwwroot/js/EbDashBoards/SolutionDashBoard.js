@@ -1081,6 +1081,7 @@ var SolutionDashBoard = function (connections, sid) {
                                                 postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                             }
                                             else {
+                                                postData = {}
                                                 Deleteid = id;
                                             }
                                         }

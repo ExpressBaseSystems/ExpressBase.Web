@@ -587,7 +587,7 @@
                                 <input id="dbvendorInput" name="DatabaseVendor" type="hidden" value="PGSQL" class="form-control Inputclear Vendor" readonly />
                                 <div class="form-group" style="margin-top: 32px;">
                                     <label>Enable SSL</label>
-                                    <input id="dbIsSSLInput" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
+                                    <input id="dbIsSSLInput" class="InputclearIsSSL" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
                                 </div>
                             </div>
                         </div>
@@ -1055,13 +1055,17 @@
                                 <div class="form-group">
                                     <input name="DatabaseVendor" value="SMTP" class="form-control Vendor" type="hidden" readonly />
                                     <label>Provider</label>
-                                    <input id="EmailInputEmailvendor" type="text" name="Emailvendor" class="form-control" value="Gmail" required />
+                                    <select id="InputEmailvendor" name="Emailvendor" class="form-control Inputclear">
+                                        <option value="1">Gmail</option>
+                                        <option value="2">Yahoo</option>
+                                    </select>
+                                    @*<input id="InputEmailvendor" type="text" name="Emailvendor" class="form-control Inputclear" value="Gmail" required />*@
                                 </div>
                             </div>
                             <div class="col-md-4" style=" margin-top: 29px;">
                                 <div class="form-group">
                                     <label style="margin-right:15px;margin-bottom:0;">Enable SSL</label>
-                                    <input type="checkbox" class="Inputclear" name="IsSSL" value="false" />
+                                    <input id="EmailIsSSL" type="checkbox" class="InputclearIsSSL" name="IsSSL" />
                                 </div>
                             </div>
                         </div>
@@ -1199,6 +1203,20 @@
                                 <div class="form-group">
                                     <label>Nick Name</label>
                                     <input id="SendGridInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group">
+                                    <label>From</label>
+                                    <input id="SendGridInputFrom" name="EmailAddress" type="email" class=" Inputclear form-control" required />
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label>Name</label>
+                                    <input id="SendGridInputFromName" name="Name" type="text" class=" Inputclear form-control" required />
                                 </div>
                             </div>
                         </div>

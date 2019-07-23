@@ -1313,7 +1313,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             var input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_params";
-            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+            input.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))));
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -3298,16 +3298,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.linkDV = $(e.target).closest("a").attr("data-link");
         var idx = this.Api.row($(e.target).parents().closest("td")).index();
         if (typeof (idx) !== "undefined")
-            //this.rowData = this.Api.row(idx).data();
             this.rowData = this.unformatedData[idx];
         else {//incomplete...
             this.rowData = [];
         }
         var x = this.getStaticParameter(colindex);
+        this.filterValuesforForm = [];
         if (parseInt(this.linkDV.split("-")[2]) !== EbObjectTypes.WebForm)
             this.filterValues = this.getFilterValues().concat(this.getfilterFromRowdata()).concat(x);
         else
-            this.filterValues = this.getfilterFromRowdata();
+            this.filterValuesforForm = this.getfilterFromRowdata();
 
         if ($(e.target).parent("b").attr("data-rowgroup") !== undefined) {
 
@@ -3341,15 +3341,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else if (this.popup) {
             this.popup = false;
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
             if (this.login === "uc")
-                dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+                dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.rowData)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues)))), btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
             else
                 this.OpeninNewTab(idx, cData);
         }
+        //this.filterValues = [];
     };
 
     this.drawInlinedv = function (rows, e, idx, colindex) {

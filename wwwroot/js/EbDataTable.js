@@ -374,15 +374,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.getColumnsSuccess = function (e) {
         $("#objname").text(this.EbObject.DisplayName);
+        this.validateFD = this.FilterDialog.IsFDValidationOK;
         if (this.isContextual) {
             if (this.isSecondTime) {
-                if (!this.validateFD())
+                if (this.validateFD && !this.validateFD())
                     return;
                 this.filterValues = this.getFilterValues("filter");
             }
         }
         else {
-            if (!this.validateFD())
+            if (this.validateFD && !this.validateFD())
                 return;
             this.filterValues = this.getFilterValues("filter");
         }
@@ -504,23 +505,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }.bind(this));
     };
 
-    this.validateFD = function () {
-        var isValid = true;
-        var FdCont = "#" + this.ContextId;
-        var $ctrls = $(FdCont + "  #filterBox").find("[required]");
-        $.each($ctrls, function (idx, ctrl) {
-            if ($(ctrl).val().trim() === "") {
-                EbMessage("show", { Message: ctrl.id + " is empty" });
-                //alert(ctrl.id + " is empty");
-                isValid = false;
-                $(ctrl).focus();
-                $(ctrl).css("border-color", "red");
-            }
-            else
-                $(ctrl).css("border-color", "rgba(34, 36, 38, .15)");
-        });
-        return isValid;
-    }
+    this.validateFD = function () {}
 
     this.Init = function () {
         //this.MainData = null;

@@ -3,21 +3,25 @@
 * to Render FilterDialogForm
 * EXPRESSbase Systems Pvt. Ltd, author: Jith Job
 */
-var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
+var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn, initCompleteCallback) {
     console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
     this.userObject = userObj;
     this.submitId = submitId;
     this.formObject = {};
+    this.initCompleteCallback = initCompleteCallback;
     this.onChangeExeFuncs = {};
     this.initControls = new InitControls();
     this.$submitBtn = $("#" + this.submitId);
     JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
     this.flatControls = getFlatCtrlObjs(this.FormObj);// objectcoll with functions
+    this.flatControlsWithDG = this.flatControls;
+    this.IsPSsInitComplete = {};
+
     this.onSubmitFn = onSubmitFn;
-    this.FRC = new FormRenderCommon({
-        FO: this
-    });
+    this.FRC = new FormRenderCommon({ FO: this });
+
+    this.IsFDValidationOK = this.FRC.AllRequired_valid_Check.bind(this.FRC);
 
     this.submit = function () {
         if (!this.FRC.AllRequired_valid_Check())
@@ -26,16 +30,66 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.onSubmitFn();
     }.bind(this);
 
+    this.checkAllCtrlsInit_FireInitComplete = function () {
+        let psFlag = true;
+        let O_ctrls_Flag = this._all_OctrlsInit;
+
+        if (this.PSs.length !== 0)
+            psFlag = this._allPSsInit;
+
+        if (psFlag && O_ctrls_Flag) {
+            setTimeout(function () {
+                this.initCompleteCallback();
+            }.bind(this), 10);
+        }
+    };
+
+    this.SetWatchers = function () {
+        //this
+        Object.defineProperty(this, "_allPSsInit", {
+            set: function (value) {
+                console.log("set : _allPSsInit");
+                this._old_allPSsInit = value;
+
+                if (value === true)
+                    this.checkAllCtrlsInit_FireInitComplete();
+            }.bind(this),
+
+            get: function () {
+                console.log("get : _allPSsInit");
+                return this._old_allPSsInit;
+            }.bind(this)
+        });
+        
+        Object.defineProperty(this, "_all_OctrlsInit", {
+            set: function (value) {
+                this._old_all_OctrlsInit = value;
+                if (value === true)
+                    this.checkAllCtrlsInit_FireInitComplete();
+            }.bind(this),
+
+            get: function () {
+                return this._old_all_OctrlsInit;
+            }.bind(this)
+        });
+    };
+
     this.init = function () {
+        this._all_OctrlsInit = false;
+        this._allPSsInit = false;
         this.initFormObject2();
         this.initFilterDialogCtrls();// order 1
         this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        this.SetWatchers();
+        $.each(this.PSs, function (i, ps) { this.IsPSsInitComplete[ps.EbSid_CtxId] = false; }.bind(this));
 
-        this.FRC.fireInitOnchangeNC();
+        this.FRC.fireInitOnchangeNC(this.flatControls);
+        this._all_OctrlsInit = true;
         //this.bindFuncsToDom();
-
     };
+
     this.initFilterDialogCtrls = function () {
         $('.selectpicker').selectpicker();
         JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
@@ -54,7 +108,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         }.bind(this));
 
         $.each(this.FormObj.Controls.$values, function (k, Obj) {
-           this.FRC.fireInitOnchange(Obj);
+            this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 
@@ -92,85 +146,6 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     this.setValue = function (ctrlObj, val) {
         ctrlObj.setValue(val);
     };
-
-    //this.bindFuncsToDom = function () {
-    //    this.onChangeExeFlag = false;
-    //    this.$submitBtn.on("click", this.submit);
-    //    $.each(this.FormObj.Controls.$values, function (k, cObj) {
-    //        //creating onChangeExeFuncs and binding to dom elements
-    //        if (cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
-    //            this.onChangeExeFuncs[cObj.Name] = new Function("form", "User", atob(cObj.OnChangeFn.Code));
-    //            if (cObj.ObjType === 'TextBox' || cObj.ObjType === 'Date') {
-    //                this.onChangeExeFlag = true;
-    //                $("body #" + cObj.EbSid_CtxId).on("change", this.ctrlValueChanged.bind(this, cObj.Name));
-    //            }
-    //            else if (cObj.ObjType === 'RadioGroup') {
-    //                this.onChangeExeFlag = true;
-    //                $("body").on("change", "input[name='" + cObj.EbSid_CtxId + "']", this.ctrlValueChanged.bind(this, cObj.Name));
-    //            }
-    //            else if (cObj.ObjType === 'UserLocation') {
-    //                this.onChangeExeFlag = true;
-    //                $("body").on("change", "#" + cObj.EbSid_CtxId, this.ctrlValueChanged.bind(this, cObj.Name));
-    //                //$("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
-    //            }
-    //        }
-    //        else {
-    //            //if (cObj.ObjType === 'UserLocation') {
-    //            //    $("body").on("click", "#" + cObj.EbSid_CtxId + "_checkbox", this.UserLocationCheckboxChanged.bind(this, cObj));
-    //            //}
-    //        }
-    //    }.bind(this));
-
-    //    //if (this.onChangeExeFlag)
-    //    this.initialLoad();
-
-    //};
-
-    //this.ctrlValueChanged = function (name) {
-    //    this.onChangeExeFuncs[name](this.formObject, userObj);
-    //};
-
-    //this.initialLoad = function () {
-    //    $.each(this.FormObj.Controls.$values, function (k, cObj) {
-    //        if (cObj.ObjType === 'RadioGroup' && cObj.OnChangeFn && cObj.OnChangeFn.Code && cObj.OnChangeFn.Code !== '') {
-    //            if (cObj.DefaultValue !== "")
-    //                $("body input[name='" + cObj.EbSid_CtxId + "'][value='" + cObj.DefaultValue + "']").prop("checked", true).trigger("change");
-    //            else
-    //                $("body input[name='" + cObj.EbSid_CtxId + "']:eq(0)").prop("checked", true).trigger("change");
-    //        }
-    //        else if (cObj.ObjType === 'UserLocation') {
-    //            if (userObj.Roles.$values.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
-    //                $('#' + cObj.EbSid_CtxId + "_checkbox").trigger('click');
-    //            }
-    //            else {
-    //                $('#' + cObj.EbSid_CtxId + "_checkbox_div").hide();
-    //                if (wc === "dc")
-    //                    $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-    //                else if (wc === "uc") {
-    //                    if (cObj.LoadCurrentLocation)
-    //                        $('#' + this.EbSid_CtxId).next('div').children().find('[value=' + curloc + ']').trigger('click');
-    //                    else
-    //                        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
-    //                }
-    //            }
-    //        }
-    //    });
-    //    //if (this.FormObj.Width > 150)
-    //    //    this.$filterBox.parent().css("width", this.FormObj.Width + "px");
-    //};
-
-    //this.UserLocationCheckboxChanged = function (cObj) {
-    //    if ($(event.target).prop("checked")) {
-    //        $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
-    //        $('#' + cObj.EbSid_CtxId).next('div').find("*").attr("disabled", "disabled").off('click');
-    //    }
-    //    else {
-    //        $('#' + cObj.EbSid_CtxId).next('div').find("*").removeAttr('disabled').on('click');
-    //        if ($('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").prop("checked"))
-    //            $('#' + cObj.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
-
-    //    }
-    //};
 
     this.init();
 };

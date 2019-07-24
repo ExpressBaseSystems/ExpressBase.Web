@@ -4,19 +4,24 @@
 var EbOnBoarding = function () {
     this.solinfo = {};
     this.seldeploy;
+    this.recaptchadata;
+
+    window.RecaptchaCallback = function (rtoken) {
+        this.recaptchadata = rtoken;
+    }.bind(this)
 
     this.submitProfile = function (e) {
         e.preventDefault();
         let info = this.validate();
-
         if (info) {
+            //recaptcha
             $.ajax({
                 type: 'POST',
                 url: "../Ext/Board",
                 beforeSend: function () {
                     $("#loaderdiv").EbLoader("show");
                     //$(".iconspin").addClass("fa fa-spinner fa-pulse")
-                    $('#save-profile').prop('disabled', true).css('opacity', 0.5);
+                    $('#save-profile').prop('disabled', true);
                 },
                 data: {
                     email: $("#email").val().trim(),
@@ -155,7 +160,7 @@ var EbOnBoarding = function () {
     }
  this.Emailvalidate1 = function () {
 let com = $("#email").val();
-      
+     $("#emaillbl2").css("visibility", "hidden");
         var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if ((com.length == 0) || (re.test(com) == false)) {
@@ -166,7 +171,7 @@ let com = $("#email").val();
         }
         else {
             $("#emaillbl").css("visibility", "hidden");
-            $('#country').removeClass('txthighlightred').addClass('txthighlight');
+            $('#email').removeClass('txthighlightred').addClass('txthighlight');
 
 
             $.ajax({
@@ -176,9 +181,10 @@ let com = $("#email").val();
                 type: "POST",
                 success: function (status) {
                     if (status == 0) {
-                        EbMessage("show", { Message: "You have already registered. Please login ", Background: 'red' });
-                        
-
+                        $("#emaillbl2").css("visibility", "visible");
+                    }
+                    else {
+                        $("#emaillbl2").css("visibility", "hidden");
                     }
                     
                 }

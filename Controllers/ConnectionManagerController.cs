@@ -796,7 +796,7 @@ namespace ExpressBase.Web.Controllers
                 //};
                 EbSmtpConfig con = new EbSmtpConfig
                 {
-                    // ProviderName = (SmtpProviders)Convert.ToInt32(req["Emailvendor"]),
+                    ProviderName = (SmtpProviders)Convert.ToInt32(req["Emailvendor"]),
                     NickName = req["NickName"],
                     Host = req["SMTP"],
                     Port = Convert.ToInt32(req["Port"]),
@@ -805,9 +805,9 @@ namespace ExpressBase.Web.Controllers
                     EnableSsl = Convert.ToBoolean(req["IsSSL"]),
                     Id = Convert.ToInt32(req["Id"])
                 };
-                con.ProviderName = (SmtpProviders)Enum.Parse(typeof(SmtpProviders), req["Emailvendor"]);
+                
                 res = this.ServiceClient.Post<AddSmtpResponse>(new AddSmtpRequest { Config = con, /*IsNew = true,*/ SolnId = req["SolnId"] });
-                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolnId"] });
                 return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
@@ -878,7 +878,9 @@ namespace ExpressBase.Web.Controllers
                     NickName = req["NickName"],
                     Id = Convert.ToInt32(req["Id"]),
                     Type = EbIntegrations.SendGrid,
-            };
+                    EmailAddress = req["EmailAddress"],
+                    Name = req["Name"] 
+                };
                 res = this.ServiceClient.Post<AddSendGridResponse>(new AddSendGridRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
@@ -920,6 +922,20 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
 
+        public string credientialBot(int Cid, string sid){
+
+            CredientialBotResponse response = new CredientialBotResponse();
+            try
+            {
+                response = this.ServiceClient.Get<CredientialBotResponse>(new CredientialBotRequest { ConfId = Cid, SolnId = sid });
+            }
+            catch(Exception e)
+            {
+                response.ResponseStatus = new ResponseStatus { Message = e.Message };
+                return JsonConvert.SerializeObject(response);
+            }
+            return JsonConvert.SerializeObject(response);
+        }
         public string Integrate(string preferancetype, bool deploy, string sid)
         {
             EbIntegrationResponse res = new EbIntegrationResponse();

@@ -40,6 +40,10 @@
     this.$SubCategory = $("#txtSubCategory");
     this.$Consultation = $("#selConsultation");
     this.$PicReceived = $("#selPicReceived");
+    this.$BaldnessGrade = $("#selBaldnessGrade");
+    this.$DiffusePattern = $("#selDiffusePattern");
+    this.$HfCurrently = $("#selHfCurrently");
+    this.$HtPreviously = $("#selHtPreviously");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -839,6 +843,10 @@
         this.$SubCategory.val(this.CustomerInfo["subcategory"]);
         this.$Consultation.val(this.CustomerInfo["consultation"]);
         this.$PicReceived.val(this.CustomerInfo["picsrcvd"]);
+        this.$BaldnessGrade.val(this.CustomerInfo["baldnessgrade"]);
+        this.$DiffusePattern.val(this.CustomerInfo["diffusepattern"]);
+        this.$HfCurrently.val(this.CustomerInfo["hfcurrently"]);
+        this.$HtPreviously.val(this.CustomerInfo["htpreviously"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
             $("#divCustomerDp").children().remove();
@@ -926,6 +934,10 @@
         this.pushToList("subcategory", this.$SubCategory.val());
         this.pushToList("consultation", this.$Consultation.val());
         this.pushToList("picsrcvd", this.$PicReceived.val());
+        this.pushToList("baldnessgrade", this.$BaldnessGrade.val());
+        this.pushToList("diffusepattern", this.$DiffusePattern.val());
+        this.pushToList("hfcurrently", this.$HfCurrently.val());
+        this.pushToList("htpreviously", this.$HtPreviously.val());
 
         this.pushToList("consdate", this.$ConsultedDate.val());
         this.pushToList("consultingdoctor", this.$Doctor.val());

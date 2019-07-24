@@ -36,6 +36,7 @@ const WebFormRender = function (option) {
     this.isEditModeCtrlsSet = false;
     this.DGBuilderObjs = {};
     this.uniqCtrlsInitialVals = {};
+    this.PSsIsInit = {};
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -107,10 +108,10 @@ const WebFormRender = function (option) {
     };
 
     this.SetWatchers = function () {
+        //this.formObject
         Object.defineProperty(this.formObject, "__mode", {
             set: function (value) {
                 this.$form.attr("mode", value);
-
             }.bind(this),
             get: function () {
                 return this.$form.attr("mode");
@@ -125,6 +126,9 @@ const WebFormRender = function (option) {
         this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        this._allPSsInit = false;
+
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject
         this.setFormObject();
@@ -135,7 +139,7 @@ const WebFormRender = function (option) {
         this.initDGs();
 
 
-        this.FRC.fireInitOnchangeNC();
+        this.FRC.fireInitOnchangeNC(this.flatControls);
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
@@ -266,7 +270,7 @@ const WebFormRender = function (option) {
     //    this.showLoader();
     //    $.ajax({
     //        type: "POST",
-    //        url: "../WebForm/getRowdata",
+    //        url: "/WebForm/getRowdata",
     //        data: {
     //            refid: this.formRefId, rowid: parseInt(rowId)
     //        },
@@ -449,7 +453,7 @@ const WebFormRender = function (option) {
             $.ajax({
                 type: "POST",
                 //url: this.ssurl + "/bots",
-                url: "../WebForm/InsertWebformData",
+                url: "/WebForm/InsertWebformData",
                 data: {
                     TableName: this.FormObj.TableName,
                     ValObj: this.getFormValuesObjWithTypeColl(),
@@ -583,7 +587,7 @@ const WebFormRender = function (option) {
                         this.showLoader();
                         $.ajax({
                             type: "POST",
-                            url: "../WebForm/DeleteWebformData",
+                            url: "/WebForm/DeleteWebformData",
                             data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
@@ -634,7 +638,7 @@ const WebFormRender = function (option) {
                         this.showLoader();
                         $.ajax({
                             type: "POST",
-                            url: "../WebForm/CancelWebformData",
+                            url: "/WebForm/CancelWebformData",
                             data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
@@ -671,7 +675,7 @@ const WebFormRender = function (option) {
         $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
-            url: "../WebForm/GetAuditTrail",
+            url: "/WebForm/GetAuditTrail",
             data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: currentLoc },
             error: function () {
                 $("#divAuditTrail").children().remove();
@@ -928,7 +932,7 @@ const WebFormRender = function (option) {
 
     this.printDocument = function () {
         let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
-        $("#iFramePdf").attr("src", "../WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
+        $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
 

@@ -14,10 +14,10 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using Stripe;
 using ExpressBase.Common;
 using ExpressBase.Common.LocationNSolution;
+using Newtonsoft.Json.Linq;
 
 namespace StripeApp.Controllers
 {
-    enum Month { Jan = 1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec };
     public class StripeController : EbBaseIntCommonController
     {
         public StripeController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
@@ -40,31 +40,6 @@ namespace StripeApp.Controllers
                 ViewBag.Users = cust.Users;
             }
             return View("Index");
-        }
-
-        public IActionResult CustomerInvoices()
-        {
-            string cust_id = "cus_FHCU2qwKlkSp3g";
-            GetCustomerResponse cust = this.ServiceClient.Post<GetCustomerResponse>(new GetCustomerRequest
-            {
-                CustId = cust_id
-            });
-            ViewBag.EmailId = cust.Email;
-            GetCustomerInvoiceResponse stripeinvoice = this.ServiceClient.Post<GetCustomerInvoiceResponse>(new GetCustomerInvoiceRequest
-            {
-                CustId = cust_id,
-            });
-            ViewBag.Count = stripeinvoice.Invoices.List.Count;
-            ViewBag.StripeInvoice = stripeinvoice;
-
-            GetCustomerUpcomingInvoiceResponse stripeupcominginvoice = this.ServiceClient.Post<GetCustomerUpcomingInvoiceResponse>(new GetCustomerUpcomingInvoiceRequest
-            {
-                CustId = cust_id
-            });
-            ViewBag.UpCount = stripeupcominginvoice.Invoice.Data.Count;
-            ViewBag.StripeUpcomingInvoice = stripeupcominginvoice;
-
-            return View();
         }
 
         public IActionResult Payment2()
@@ -254,42 +229,6 @@ namespace StripeApp.Controllers
             });
             return res;
         }
-
-        public IActionResult GetCustomerInvoice()
-        {
-            string custid = "cus_FFHCXlsSeXVYZJ";
-            GetCustomerInvoiceResponse stripeinvoice = this.ServiceClient.Post<GetCustomerInvoiceResponse>(new GetCustomerInvoiceRequest
-            {
-                CustId = custid,
-            });
-            ViewBag.Count = stripeinvoice.Invoices.List.Count;
-            string[] MonthStart = new string[stripeinvoice.Invoices.List.Count];
-            string[] MonthEnd = new string[stripeinvoice.Invoices.List.Count];
-            for (int i = 0; i < stripeinvoice.Invoices.List.Count; i++)
-            {
-                MonthStart[i] = Enum.GetName(typeof(Month), stripeinvoice.Invoices.List[i].PeriodStart.Month);
-                MonthEnd[i] = Enum.GetName(typeof(Month), stripeinvoice.Invoices.List[i].PeriodEnd.Month);
-            }
-            ViewData["MonthStart"] = MonthStart;
-            ViewData["MonthEnd"] = MonthEnd;
-            ViewBag.StripeInvoice = stripeinvoice;
-            return View();
-
-        }
-
-        public IActionResult GetCustomerUpcomingInvoice()
-        {
-            string custid = "cus_F2ZzkAQbINHXbc";
-            GetCustomerUpcomingInvoiceResponse stripeupcominginvoice = this.ServiceClient.Post<GetCustomerUpcomingInvoiceResponse>(new GetCustomerUpcomingInvoiceRequest
-            {
-                CustId = custid
-            });
-            ViewBag.Count = stripeupcominginvoice.Invoice.Data.Count;
-            ViewBag.Month = Enum.GetName(typeof(Month), stripeupcominginvoice.Invoice.Date.Month);
-            ViewBag.StripeUpcomingInvoice = stripeupcominginvoice;
-            return View();
-
-        }
         
         public Object UpdateCustomerSubscription(int user_no,string cust_id, string sid)
         {
@@ -358,6 +297,20 @@ namespace StripeApp.Controllers
             return res;
         }
 
+        public Object EditCardExp(string cust_id, string card_id, int expmonth, int expyear, string sid)
+        {
+            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            EditCardExpResponse res = this.ServiceClient.Post<EditCardExpResponse>(new EditCardExpRequest
+            {
+                CustId = cust_id,
+                CardId = card_id,
+                ExpMonth = expmonth,
+                ExpYear = expyear,
+                SolnId = sid
+            });
+            return res;
+        }
+
         public Object ChangeCardSource(string cust_id, string card_id, string sid)
         {
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
@@ -389,6 +342,6 @@ namespace StripeApp.Controllers
             ViewBag.Plans = stripeplans;
             return View();
         }
-
+        
     }
 }

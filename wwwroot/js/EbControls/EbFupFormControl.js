@@ -178,13 +178,23 @@
         let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
         this.GalleryFS.show();
         let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
+        let urls = "",urll = "";
 
-        if (is_cached(location.origin + `/images/large/${fileref}.jpg`)) {
-            this.GalleryFS.eq(1).find('img').attr("src", `/images/large/${fileref}.jpg`);
+        if (o.FileCategory === 0) {
+            urls = `/files/${fileref}.jpg`;
+            urll = urls;
         }
         else {
-            this.GalleryFS.eq(1).find('img').attr("src", `/images/small/${fileref}.jpg`);
-            this.GalleryFS.eq(1).find('img').attr("data-src", `/images/large/${fileref}.jpg`);
+            urls = `/images/small/${fileref}.jpg`;
+            urll = `/images/large/${fileref}.jpg`;
+        }
+
+        if (is_cached(location.origin + urll)) {
+            this.GalleryFS.eq(1).find('img').attr("src", urll);
+        }
+        else {
+            this.GalleryFS.eq(1).find('img').attr("src", urls);
+            this.GalleryFS.eq(1).find('img').attr("data-src", urll);
             this.GalleryFS.eq(1).find('img').Lazy({
                 onError: function (element) { }
             });
@@ -196,9 +206,11 @@
 
     getTagsHtml(o) {
         let html = new Array();
-        if ("Tags" in o.Meta) {
-            for (let i = 0; i < o.Meta.Tags.length; i++) {
-                html.push(`<span class="tagno-t">${o.Meta.Tags[i]}</span>`);
+        if (o.Meta !== null) {
+            if ("Tags" in o.Meta) {
+                for (let i = 0; i < o.Meta.Tags.length; i++) {
+                    html.push(`<span class="tagno-t">${o.Meta.Tags[i]}</span>`);
+                }
             }
         }
         return html.join("");
@@ -452,7 +464,7 @@
     outerHtml() {
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
                                                      <div class="FUP_Head_W">
-                                                        <button id="${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btngreen pull-right"><i class="fa fa-upload"></i> Upload</button>
+                                                        <button id="${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right"><i class="fa fa-upload"></i> Upload</button>
                                                      </div>
                                                      <div class="FUP_Bdy_W">
                                                      </div>

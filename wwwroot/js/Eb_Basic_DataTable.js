@@ -340,10 +340,7 @@ var EbBasicDataTable = function (Option) {
 
     this.receiveAjaxData = function (dd) {
         this.isRun = true;
-        if (this.login === "uc") {
-            dvcontainerObj.currentObj.data = dd;
-            this.MainData = dd;
-        }
+        this.MainData = dd;
         this.data = dd.data;
         return dd.data;
     };
@@ -905,6 +902,11 @@ var EbBasicDataTable = function (Option) {
         $('[data-toggle="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        $('.columntooltip').popover({
+            trigger: 'hover',
+            placement: 'right'
+        });
+        $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
         this.filterDisplay();
     };
 
@@ -1408,6 +1410,11 @@ var EbBasicDataTable = function (Option) {
                 this.ebSettings.Columns.$values[i].mRender = this.renderDateformat.bind(this);
             }
         }
+    };
+
+    this.openColumnTooltip = function (e, i) {
+        $(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-content")));
+        $(e.currentTarget).siblings(".popover").find(".arrow").remove();
     };
 
     this.renderProgressCol = function (deci, data, type, row, meta) {

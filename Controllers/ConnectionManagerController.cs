@@ -922,6 +922,20 @@ namespace ExpressBase.Web.Controllers
         //    return View();
         //}
 
+        public string credientialBot(int Cid, string sid){
+
+            CredientialBotResponse response = new CredientialBotResponse();
+            try
+            {
+                response = this.ServiceClient.Get<CredientialBotResponse>(new CredientialBotRequest { ConfId = Cid, SolnId = sid });
+            }
+            catch(Exception e)
+            {
+                response.ResponseStatus = new ResponseStatus { Message = e.Message };
+                return JsonConvert.SerializeObject(response);
+            }
+            return JsonConvert.SerializeObject(response);
+        }
         public string Integrate(string preferancetype, bool deploy, string sid)
         {
             EbIntegrationResponse res = new EbIntegrationResponse();

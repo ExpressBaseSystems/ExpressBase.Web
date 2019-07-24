@@ -266,7 +266,7 @@ const WebFormRender = function (option) {
     //    this.showLoader();
     //    $.ajax({
     //        type: "POST",
-    //        url: "../WebForm/getRowdata",
+    //        url: "/WebForm/getRowdata",
     //        data: {
     //            refid: this.formRefId, rowid: parseInt(rowId)
     //        },
@@ -449,7 +449,7 @@ const WebFormRender = function (option) {
             $.ajax({
                 type: "POST",
                 //url: this.ssurl + "/bots",
-                url: "../WebForm/InsertWebformData",
+                url: "/WebForm/InsertWebformData",
                 data: {
                     TableName: this.FormObj.TableName,
                     ValObj: this.getFormValuesObjWithTypeColl(),
@@ -583,7 +583,7 @@ const WebFormRender = function (option) {
                         this.showLoader();
                         $.ajax({
                             type: "POST",
-                            url: "../WebForm/DeleteWebformData",
+                            url: "/WebForm/DeleteWebformData",
                             data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
@@ -634,7 +634,7 @@ const WebFormRender = function (option) {
                         this.showLoader();
                         $.ajax({
                             type: "POST",
-                            url: "../WebForm/CancelWebformData",
+                            url: "/WebForm/CancelWebformData",
                             data: { RefId: this.formRefId, RowId: this.rowId, CurrentLoc: currentLoc },
                             error: function (xhr, ajaxOptions, thrownError) {
                                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
@@ -671,7 +671,7 @@ const WebFormRender = function (option) {
         $("#divAuditTrail").append(`<div style="text-align: center;  position: relative; top: 45%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>`);
         $.ajax({
             type: "POST",
-            url: "../WebForm/GetAuditTrail",
+            url: "/WebForm/GetAuditTrail",
             data: { refid: this.formRefId, rowid: this.rowId, CurrentLoc: currentLoc },
             error: function () {
                 $("#divAuditTrail").children().remove();
@@ -928,7 +928,7 @@ const WebFormRender = function (option) {
 
     this.printDocument = function () {
         let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
-        $("#iFramePdf").attr("src", "../WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
+        $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
 

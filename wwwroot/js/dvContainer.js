@@ -214,7 +214,7 @@ var DvContainerObj = function (settings) {
 
     }.bind(this);
 
-    this.drawdvFromTable = function (row, filter, celldata, dvformMode) {
+    this.drawdvFromTable = function (row, filter, filterforform, celldata, dvformMode) {
         this.isContextual = true;
         this.rowData = row;
         this.filterValues = filter;
@@ -289,7 +289,7 @@ var DvContainerObj = function (settings) {
                 var input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = "_params";
-                input.value = this.filterValues;
+                input.value = filterforform;
                 _form.appendChild(input);
 
                 input = document.createElement('input');

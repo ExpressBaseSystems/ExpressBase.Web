@@ -962,37 +962,26 @@ Navigation bar
 */
 /*error page*/
 .error_cont {
-    height: 100vh;
-    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
     .error_cont .error_wrapper {
-        width: 600px;
-        margin: 90px auto;
-        text-align: center;
-        font-family: Montserrat;
-        color: #737272;
+        display: flex;
+        flex-flow: column;
     }
 
     .error_cont .errorcode_img {
-        padding: 0 50px;
+        min-width: 30%;
+        max-width: 40%;
+        margin: 0 auto;
     }
-
-        .error_cont .errorcode_img img {
-            width: 100%;
-            height: auto;
-        }
 
     .error_cont .backto_home {
         margin: 0 auto;
-        width: 260px;
-        margin-top: 20px;
     }
 /*error page end*/
-
-
-
-
 .eb_login .eb_socilaWrpr {
     justify-content: center;
     display: flex;

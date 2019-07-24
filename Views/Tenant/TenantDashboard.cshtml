@@ -88,7 +88,7 @@
                                     </a>
                                 </div>
                                 <div class="sln-configLink">
-                                    <a href="MySolutions/@s.IsolutionId" target="_blank" class="pull-right" title="configure solution">
+                                    <a href="MySolutions/@s.IsolutionId" class="pull-right sln_settings_link" title="configure solution">
                                         <i class="fa fa-cog" aria-hidden="true"></i> Settings
                                     </a>
                                 </div>
@@ -96,28 +96,6 @@
                         </div>
                     }
                 }
-                @*<div class="ebTour_bodyWrpr"></div>
-                    <div class="ebTour_bodyWrprInner">
-                        <div class="TourTile">
-                            <div class="TourTileInner">
-                                <div class="TilePointer"></div>
-                                <div class="TourTileHead">
-                                    <span>Developer</span>
-                                </div>
-                                <div class="TourTileContent">
-                                    <p>
-                                        fdsgkljdfkagdf fdghdfagnfd fdlgkjfdgfdklg dfglkdfjglkfdg;
-                                    </p>
-                                </div>
-                                <div class="TourTileFooter">
-                                    <button class="TourTileBtn TourTilePrevBtn"><i class="fa fa-arrow-left"></i> Prev</button>
-                                    <button class="TourTileBtn TourTileNextBtn">Next <i class="fa fa-arrow-right"></i></button>
-                                </div>
-                        </div>
-                    </div>
-                    <a class="touFtr-skip">Skip <i class="fa fa-step-forward" aria-hidden="true"></i></a>
-                    <a class="touFtr-showAgn">Dont show again <i class="fa fa-power-off" aria-hidden="true"></i></a>
-               </div>*@
             </div>
         </div>
     </div>
@@ -130,32 +108,35 @@
             var Tdb = TenantDashBoard();
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-            });
+        });
+
         //setTimeout(function () {
-        //    var tour = new Tour(
+        //    window.tour = new Tour(
         //        {
         //            Stack: [
         //                {
-        //                    element: ".c-blue",
-        //                    content: "go to user console",
-        //                    title: "User Console"
+        //                    element: ".eb_btnblue ",
+        //                    content: "go to user home",
+        //                    title: "User home",
         //                },
         //                {
-        //                    element: ".c-orange",
-        //                    content: "go developer console",
-        //                    title: "developer"
-        //                },
-        //                {
-        //                    element: ".c-normal",
-        //                    content: "go to solution configuration",
-        //                    title: "Solution Info"
+        //                    element: ".eb_btnwhite",
+        //                    content: "go to developer home",
+        //                    title: "developer home",
+        //                    click: true
         //                },
         //                {
         //                    element: ".new_sol_lk",
         //                    content: "create new solution",
         //                    title:"Create Solution"
+        //                },
+        //                {
+        //                    element: ".sln_settings_link",
+        //                    content: "configure solution",
+        //                    title: "Configure Solution"
         //                }
-        //            ]
+        //            ],
+        //            AutoStart:false
         //        })
         //},1000)
     </script>

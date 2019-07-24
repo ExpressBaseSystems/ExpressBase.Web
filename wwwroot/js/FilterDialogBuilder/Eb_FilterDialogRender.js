@@ -3,18 +3,20 @@
 * to Render FilterDialogForm
 * EXPRESSbase Systems Pvt. Ltd, author: Jith Job
 */
-var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
+var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn, initCompleteCallback) {
     console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
     this.userObject = userObj;
     this.submitId = submitId;
     this.formObject = {};
+    this.initCompleteCallback = initCompleteCallback;
     this.onChangeExeFuncs = {};
     this.initControls = new InitControls();
     this.$submitBtn = $("#" + this.submitId);
     JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
     this.flatControls = getFlatCtrlObjs(this.FormObj);// objectcoll with functions
     this.flatControlsWithDG = this.flatControls;
+    this.IsPSsInitComplete = {};
 
     this.onSubmitFn = onSubmitFn;
     this.FRC = new FormRenderCommon({
@@ -30,13 +32,70 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.onSubmitFn();
     }.bind(this);
 
+    this.checkAllCtrlsInit_FireInitComplete = function () {
+        let psFlag = true;
+        let O_ctrls_Flag = this._all_OctrlsInit;
+
+        if (this.PSs.length !== 0)
+            psFlag = this._allPSsInit;
+
+        if (psFlag && O_ctrls_Flag) {
+            setTimeout(function () {
+                this.initCompleteCallback();
+            }.bind(this), 10);
+        }
+    };
+
+    this.SetWatchers = function () {
+        //this
+        Object.defineProperty(this, "_allPSsInit", {
+
+            set: function (value) {
+                console.log("set : _allPSsInit");
+                this._old_allPSsInit = value;
+
+                if (value === true)
+                    this.checkAllCtrlsInit_FireInitComplete();
+            }.bind(this),
+
+            get: function () {
+                console.log("get : _allPSsInit");
+                return this._old_allPSsInit;
+            }.bind(this)
+
+        });
+        
+        Object.defineProperty(this, "_all_OctrlsInit", {
+
+            set: function (value) {
+                console.log("set : _all_OctrlsInit");
+                this._old_all_OctrlsInit = value;
+
+                if (value === true)
+                    this.checkAllCtrlsInit_FireInitComplete();
+            }.bind(this),
+
+            get: function () {
+                console.log("get : _all_OctrlsInit");
+                return this._old_all_OctrlsInit;
+            }.bind(this)
+
+        });
+    };
+
     this.init = function () {
+        this._all_OctrlsInit = false;
+        this._allPSsInit = false;
         this.initFormObject2();
         this.initFilterDialogCtrls();// order 1
         this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        this.SetWatchers();
+        $.each(this.PSs, function (i, ps) { this.IsPSsInitComplete[ps.EbSid_CtxId] = false; }.bind(this));
 
-        this.FRC.fireInitOnchangeNC();
+        this.FRC.fireInitOnchangeNC(this.flatControls);
+        this._all_OctrlsInit = true;
         //this.bindFuncsToDom();
 
     };
@@ -58,7 +117,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         }.bind(this));
 
         $.each(this.FormObj.Controls.$values, function (k, Obj) {
-           this.FRC.fireInitOnchange(Obj);
+            this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 

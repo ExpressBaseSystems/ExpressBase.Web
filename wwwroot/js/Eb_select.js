@@ -202,7 +202,7 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.setValues = function (StrValues, callBFn) {
+    this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -211,7 +211,7 @@ const EbSelect = function (ctrl, options) {
             //$.each(this.setvaluesColl, function (i, val) {
             this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
-            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this, callBFn, StrValues));
+            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
         }
         else {
             this.filterArray = [];
@@ -219,7 +219,7 @@ const EbSelect = function (ctrl, options) {
             this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
             if (this.setvaluesColl.length > 0) {
-                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn, StrValues);
+                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues);
                 this.InitDT();
                 this.V_showDD();
             }

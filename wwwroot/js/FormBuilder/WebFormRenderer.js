@@ -36,6 +36,7 @@ const WebFormRender = function (option) {
     this.isEditModeCtrlsSet = false;
     this.DGBuilderObjs = {};
     this.uniqCtrlsInitialVals = {};
+    this.PSsIsInit = {};
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -135,7 +136,7 @@ const WebFormRender = function (option) {
         this.initDGs();
 
 
-        this.FRC.fireInitOnchangeNC();
+        this.FRC.fireInitOnchangeNC(this.flatControls);
 
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);

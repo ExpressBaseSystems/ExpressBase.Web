@@ -16,8 +16,7 @@
                 alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
             }
         }
-    };
-
+    };    
 
     ////////////
     this.setDefaultValues = function (Obj) {
@@ -26,8 +25,21 @@
         if (Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
             let fun = new Function("form", "user", `event`, atob(Obj.DefaultValueExpression.Code)).bind(Obj, this.FO.formObject, this.FO.userObject);
             let val = fun();
-            console.log(val + "==set");
-            Obj.setValue(val);
+
+            let PSInitCompleteCallBFn = function (select) {
+                console.log("default == ps callb");
+                this.FO.IsPSsInitComplete[select.EbSid_CtxId] = true;
+                if (isAllValuesTrue(this.FO.IsPSsInitComplete)) {
+                    setTimeout(function () {
+                        this.FO.initCompleteCallback();
+                    }.bind(this),10);
+                }
+            }.bind(this);
+
+            if (Obj.ObjType === "PowerSelect")
+                Obj.setValue(val, PSInitCompleteCallBFn.bind(this));
+            else
+                Obj.setValue(val);
         }
     };
 

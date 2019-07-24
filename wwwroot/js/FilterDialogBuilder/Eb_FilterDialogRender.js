@@ -3,18 +3,20 @@
 * to Render FilterDialogForm
 * EXPRESSbase Systems Pvt. Ltd, author: Jith Job
 */
-var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn) {
+var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn, initCompleteCallback) {
     console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
     this.userObject = userObj;
     this.submitId = submitId;
     this.formObject = {};
+    this.initCompleteCallback = initCompleteCallback;
     this.onChangeExeFuncs = {};
     this.initControls = new InitControls();
     this.$submitBtn = $("#" + this.submitId);
     JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
     this.flatControls = getFlatCtrlObjs(this.FormObj);// objectcoll with functions
     this.flatControlsWithDG = this.flatControls;
+    this.IsPSsInitComplete = {};
 
     this.onSubmitFn = onSubmitFn;
     this.FRC = new FormRenderCommon({
@@ -36,7 +38,10 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
 
-        this.FRC.fireInitOnchangeNC();
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        $.each(this.PSs, function (i, ps) { this.IsPSsInitComplete[ps.EbSid_CtxId] = false; }.bind(this));
+
+        this.FRC.fireInitOnchangeNC(this.flatControls);
         //this.bindFuncsToDom();
 
     };
@@ -58,7 +63,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         }.bind(this));
 
         $.each(this.FormObj.Controls.$values, function (k, Obj) {
-           this.FRC.fireInitOnchange(Obj);
+            this.FRC.fireInitOnchange(Obj);
         }.bind(this));
     };
 

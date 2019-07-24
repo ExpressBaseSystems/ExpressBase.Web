@@ -4,19 +4,24 @@
 var EbOnBoarding = function () {
     this.solinfo = {};
     this.seldeploy;
+    this.recaptchadata;
+
+    window.RecaptchaCallback = function (rtoken) {
+        this.recaptchadata = rtoken;
+    }.bind(this)
 
     this.submitProfile = function (e) {
         e.preventDefault();
         let info = this.validate();
-
         if (info) {
+            //recaptcha
             $.ajax({
                 type: 'POST',
                 url: "../Ext/Board",
                 beforeSend: function () {
                     $("#loaderdiv").EbLoader("show");
                     //$(".iconspin").addClass("fa fa-spinner fa-pulse")
-                    $('#save-profile').prop('disabled', true).css('opacity', 0.5);
+                    $('#save-profile').prop('disabled', true);
                 },
                 data: {
                     email: $("#email").val().trim(),

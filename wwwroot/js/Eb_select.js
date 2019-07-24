@@ -106,6 +106,7 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
             this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
+            this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
 
             //set id for searchBox
             $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
@@ -142,21 +143,29 @@ const EbSelect = function (ctrl, options) {
         this.RemoveRowFocusStyle();
     }.bind(this);
 
+    this.searchBoxBlur = function () {
+        this.IsSearchBoxFocused = false;
+        let _name = this.ComboObj.EbSid_CtxId;
+        EbHideCtrlMsg(`#${_name}Container`, `#${_name}Wraper`);
+    }.bind(this);
+
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
         let $e = $(e.target);
         let searchVal = $e.val();
+        let _name = this.ComboObj.EbSid_CtxId;
         let MaxSearchVal = this.getMaxLenVal();
 
         if (!isPrintable(e) && e.which !== 8)
             return;
 
         if (this.ComboObj.MinSeachLength > MaxSearchVal.length) {
-            EbMakeInvalid(`#${this.ComboObj.EbSid}Container`, `#${this.ComboObj.EbSid}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
+            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+            this.V_hideDD();
             return;
         }
         else {
-            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+            EbHideCtrlMsg(`#${_name}Container`, `#${_name}Wraper`);
         }
 
         let mapedField = $e.closest(".searchable").attr("maped-column");
@@ -193,7 +202,7 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.setValues = function (StrValues, callBFn) {
+    this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -202,7 +211,7 @@ const EbSelect = function (ctrl, options) {
             //$.each(this.setvaluesColl, function (i, val) {
             this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
-            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this, callBFn, StrValues));
+            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
         }
         else {
             this.filterArray = [];
@@ -210,7 +219,7 @@ const EbSelect = function (ctrl, options) {
             this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
             if (this.setvaluesColl.length > 0) {
-                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn, StrValues);
+                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues);
                 this.InitDT();
                 this.V_showDD();
             }
@@ -317,7 +326,7 @@ const EbSelect = function (ctrl, options) {
         let _name = this.ComboObj.EbSid_CtxId;
         if (this.ComboObj.MinSeachLength > searchVal.length) {
             //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
-            EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} character(s) to search`);
+            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
             return;
         }
 
@@ -481,11 +490,20 @@ const EbSelect = function (ctrl, options) {
 
     this.addColVals = function () {
         $.each(this.ColNames, function (i, name) {
-            let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
+            let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
+            let type = obj.Type;
+            let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[obj.data];
             //if (this.maxLimit === 1)
             //    this.columnVals[name] = cellData;
-            this.columnVals[name].push(cellData);
+
+            this.columnVals[name].push(this.convertValue(cellData, type));
         }.bind(this));
+    };
+
+    this.convertValue = function (val, type) {
+        if (type === 11)
+            return parseInt(val);
+        return val;
     };
 
     this.removeColVals = function (vmValue) {
@@ -665,6 +683,11 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.V_showDD = function (e) {
+        let searchVal = this.getMaxLenVal();
+        if (this.ComboObj.MinSeachLength > searchVal.length) {
+            return;
+        }
+
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit)
             this.InitDT();

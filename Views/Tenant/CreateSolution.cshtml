@@ -1,24 +1,57 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<div class="row tAddAcc height-100">
-    <section class="card">
-        <div class="card--content mr-l-20 sol-info" id="basic-info" style="display:block;">
-            <div class="loader_top" id="loader_product-info"></div>
-            <div class="col-md-8 card--form">
-                <div class="products-head">
-                    <h4>Solution Info</h4>
-                </div>
-                <div class="card--content-body">
-                    <form class="subscript-submit" method="post" id="sol-form-submit">
+<div class="row s-dash-container h-100">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group eb-dashbord-sidebar">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/MySolutions">
+                        <span class="material-icons t__sidebar_icon">highlight</span>
+                        <span class="t__sidebar_text">My Solutions</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Store">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Wiki">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-7 pd-0">
+                <h4 class="mr-t-0 mr-b-0">New Solution <span class="apps_count"></span></h4>
+            </div>
+            <div class="col-md-5 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+            </div>
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <div class="tdash-box-body">
+                <div class="eb-nesol-wraper col-md-5 col-sm-6 col-xs-12 col-lg-5">
+                    <form class="subscript-submit w-100" method="post" id="sol-form-submit">
                         <label>Solution URL</label>
                         <div class="client-id-sec">
-                            <input type="text" id="ebsid" name="SolnId" class="form-control input-clientId" required />
+                            <input type="text" id="ebsid" name="SolnId" class="form-control input-clientId" required style="height:45px"/>
                             <div class="clientId-auto">.expressbase.com</div>
                         </div>
                         <div class="form-group">
                             <label>Solution Name</label>
-                            <input type="text" id="solutionname" name="Sname" class="form-control" required />
+                            <input type="text" id="solutionname" name="Sname" class="form-control" required style="height:45px"/>
                         </div>
                         <div class="form-group">
                             <label>Description</label>
@@ -27,35 +60,14 @@
                         <input type="submit" id="sol-form-sub" style="display:none;" />
                     </form>
                     <div class="form-group">
-                        <div class="col-md-4 pd-0">
-                            <label>Upload Logo</label>
-                            <button id="log-upload-btn" class="btn log-upload-b">Upload Logo <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
-                        </div>
-                        <div class="col-md-8 pd-0 logo_img_cont">
-                            <img src="" class="img-responsive pull-right" id="oB_logo-prev" />
-                        </div>
+                        <a id="save-subscrip" onclick="$('#sol-form-sub').click();" class="ebbtn eb_btnblue eb_btn_md pull-right">Create</a>
                     </div>
-                </div>
-                <div class="card--content-footer">
-                    <div class="form-inline">
-                        <a id="save-subscrip" onclick="$('#sol-form-sub').click();" class="ebbtn eb_btngreen eb_btn_md pull-right">Create</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 desc-section">
-                <div class="steps">
-
-                </div>
-                <div class="small-desc-last flex-center">
-                    <img class="small-desc-img"/>
-                    <h4>Your Basic Info</h4>
-                    <p class="text-center">Select atleast one paid plan for custom Solution Id</p>
                 </div>
             </div>
         </div>
-        <div class="none"></div>
-    </section>
+    </div>
 </div>
+
 @section JsCode{
     <script>
         $(document).ready(function () {

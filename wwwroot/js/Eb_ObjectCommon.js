@@ -142,9 +142,9 @@
                 else {
                     icon = "fa-lock";
                 }
-                $(`#versionNav [href='${target}']`).html( "<i class='fa " + icon + "'  aria-hidden='true' ></i > v. "+ this.Current_obj.VersionNumber);
+                $(`#versionNav [href='${target}']`).html("<i class='fa " + icon + "'  aria-hidden='true' ></i > v. " + this.Current_obj.VersionNumber);
             } else {
-                $(`#versionNav [href='${target}']`).html("<i class='fa fa-pencil' aria - hidden='true' ></i >" + ((this.Current_obj.DisplayName.length > 8 )? this.Current_obj.DisplayName.substring(0, 8)+"...": this.Current_obj.DisplayName.length));
+                $(`#versionNav [href='${target}']`).html("<i class='fa fa-pencil' aria - hidden='true' ></i >" + ((this.Current_obj.DisplayName.length > 8) ? this.Current_obj.DisplayName.substring(0, 8) + "..." : this.Current_obj.DisplayName.length));
             }
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
@@ -415,7 +415,7 @@
         }
     };
 
-    this.Save = function () {
+    this.Save = function (callback) {
         this.FlagSave = true;
         $("#eb_common_loader").EbLoader("show");
         var tagvalues = $('#tags').val();
@@ -430,7 +430,7 @@
                 $("#eb_common_loader").EbLoader("hide");
         }
         else
-            this.ajaxSave(tagvalues, apps, getNav);
+            this.ajaxSave(tagvalues, apps, getNav, callback);
     };
 
     this.Commit = function (event, callback) {
@@ -465,7 +465,11 @@
                 _rel_obj: this.ObjCollection[getNav].relatedObjects,
                 _tags: tagvalues,
                 _apps: apps
-            }, this.UpdateTab.bind(this));
+            }, function (result) {
+                if (callback)
+                    callback(result);
+                this.UpdateTab(result);
+            }.bind(this));
         }
         else
             EbMessage("show", { Message: "Validation faild! save uncompleted.", Background: this.RedColor });

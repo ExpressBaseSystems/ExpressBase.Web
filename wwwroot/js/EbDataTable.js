@@ -213,6 +213,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.placefiltervalues();
                 this.$submit.trigger("click");
             }
+            else if (this.FilterDialog.FormObj.AutoRun)
+                this.$submit.trigger("click");
             else {
                 this.FDCont.show();
                 this.FDCont.css("visibility", "visible");

@@ -32,16 +32,70 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.onSubmitFn();
     }.bind(this);
 
+    this.checkAllCtrlsInit_FireInitComplete = function () {
+        let psFlag = true;
+        let O_ctrls_Flag = this._all_OctrlsInit;
+
+        if (this.PSs.length !== 0)
+            psFlag = this._allPSsInit;
+
+        if (psFlag && O_ctrls_Flag) {
+            setTimeout(function () {
+                this.initCompleteCallback();
+            }.bind(this), 10);
+        }
+    };
+
+    this.SetWatchers = function () {
+        //this
+        Object.defineProperty(this, "_allPSsInit", {
+
+            set: function (value) {
+                console.log("set : _allPSsInit");
+                this._old_allPSsInit = value;
+
+                if (value === true)
+                    this.checkAllCtrlsInit_FireInitComplete();
+            }.bind(this),
+
+            get: function () {
+                console.log("get : _allPSsInit");
+                return this._old_allPSsInit;
+            }.bind(this)
+
+        });
+        
+        Object.defineProperty(this, "_all_OctrlsInit", {
+
+            set: function (value) {
+                console.log("set : _all_OctrlsInit");
+                this._old_all_OctrlsInit = value;
+
+                if (value === true)
+                    this.checkAllCtrlsInit_FireInitComplete();
+            }.bind(this),
+
+            get: function () {
+                console.log("get : _all_OctrlsInit");
+                return this._old_all_OctrlsInit;
+            }.bind(this)
+
+        });
+    };
+
     this.init = function () {
+        this._all_OctrlsInit = false;
+        this._allPSsInit = false;
         this.initFormObject2();
         this.initFilterDialogCtrls();// order 1
         this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
-
         this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        this.SetWatchers();
         $.each(this.PSs, function (i, ps) { this.IsPSsInitComplete[ps.EbSid_CtxId] = false; }.bind(this));
 
         this.FRC.fireInitOnchangeNC(this.flatControls);
+        this._all_OctrlsInit = true;
         //this.bindFuncsToDom();
 
     };

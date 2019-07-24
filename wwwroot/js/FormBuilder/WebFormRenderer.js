@@ -108,10 +108,10 @@ const WebFormRender = function (option) {
     };
 
     this.SetWatchers = function () {
+        //this.formObject
         Object.defineProperty(this.formObject, "__mode", {
             set: function (value) {
                 this.$form.attr("mode", value);
-
             }.bind(this),
             get: function () {
                 return this.$form.attr("mode");
@@ -125,6 +125,9 @@ const WebFormRender = function (option) {
         this.formObject = {};// for passing to user defined functions
         this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
+
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject

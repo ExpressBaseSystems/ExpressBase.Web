@@ -105,7 +105,8 @@
             margin-left: 10px;
         }
 .eb-wiki-pane .eb-wiki-contentdynamic {
-    padding:20px;
+    padding: 20px;
+    text-align: justify;
 }
 .eb-wiki-pane h1 {
     font-size: 31px;
@@ -122,6 +123,7 @@
 .eb-wiki-pane p {
     font-size: 15px;
     line-height: 1.8em;
+    text-align: justify;
 }
 .eb-wiki-pane .SearchWithTag {
     background: #dcf0ff;
@@ -153,11 +155,57 @@
     margin-bottom:20px;
 }
 /*new style end*/
+.wiki_data_div {
+    color: #2b2b2b;
+    font-family: Montserrat;
+    text-align: justify;
+    font-weight: 400;
+    padding: 0% 10% 0% 10%;
+}
+.wiki_data_div h1 {
+    font-size: 31px;
+    font-weight: 400;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+.wiki_data_div p{
+    font-size: 15px;
+    line-height: 1.8em;
+}
+.wiki_data_div a{
+    font-size: 15px;
+    line-height: 1.8em;
+}
+.wiki_data_div li{
+    font-size: 15px;
+    line-height: 1.8em;
+}
+.wiki_data_div h2 {
+    font-size: 27px;
+    font-weight: 400;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.wiki_data_div h3 {
+    font-size: 22px;
+    font-weight: 400;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+.wiki_data_div img {
+    min-height : 300px;
+}
+    .wiki_data_div iframe {
+        min-height: 315px;
+        min-width: 560px;
+        margin-left: 25%;
+    }
+
 .render {
-    background-color: #f8f8f8;
-    max-width: 644px;
-    height: 405px;
-    border: 2px solid blue;
+    background-color: #fff;
+    min-width: 100%;
+    height: 44.4rem;
+    border: 1px solid #b5b5b5;
     padding: 20px;
     margin: 0px;
     overflow: auto;
@@ -223,21 +271,75 @@ div.searchDiv iframe{
     }
 
 .props {
-    background: #efefef;
-    width: 65px;
-    height: 25px;
+    background: #fff;
+    min-width: 52px;
+    min-height: 22px;
+    font-size: 12px;
     align-content: center;
     margin: 0px;
-    border: solid 1px #e6e6e6;
+    font-weight: 500;
 }
-
     .props:hover {
-        background-color: #8AB6F7
+        background-color: #d3e5ff;
     }
 
     .props:active {
         background-color: cornflowerblue;
     }
+
+ .Btn1stRow .props {
+    border-right: solid 1px #e6e6e6;
+    border-bottom: solid 1px #e6e6e6;
+    border-left:solid 0px;
+    border-top:solid 0px;
+}
+    .Btn1stRow .props:first-child {
+        border-left: none;
+    }
+    .Btn1stRow .props:last-child {
+        border-right: solid 1px #828282;
+    }
+
+.Btn2ndRow .props {
+    border-right: solid 1px #e6e6e6;
+    border-bottom: solid 0px;
+    border-left: solid 0px;
+    border-top: solid 0px;
+}
+   
+.Btn2ndRow .props2 {
+    border-right: solid 1px #e6e6e6;
+    border-bottom: solid 0px;
+    border-left: solid 0px;
+    border-top: solid 0px;
+}
+
+    .Btn2ndRow .props2:last-child {
+        border-right: none;
+    }
+   
+    
+.props2 {
+    text-align: center;
+    padding: 3px;
+    min-width: 50px;
+    background: #fff;
+    width: 52px;
+    height: 22px;
+    font-size: 12px;
+    align-content: center;
+    margin: 0px;
+    font-weight: 500;
+    color: black;
+}
+    .props2:hover {
+        background-color: #d3e5ff;
+        color: black;
+    }
+
+    .props2:active {
+        background-color: cornflowerblue;
+            }
 
 iframe {
     width: 470px;
@@ -490,17 +592,26 @@ iframe {
         background-color: white;
     }
 .GrpAddSel {
-    width: 30%;
-    padding: 5px;
-    margin-right: 40px;
+    width: 100%;
+    padding: 1px;
+    border-radius: 4px;
+    border: solid 1px #bfbfbf;
+    font-size: 13px;
+    outline: none;
+    padding-left: 7px;
 }
 .btnGrp2 {
     margin: 10px;
-    width: 30%;
-    padding: 5px;
+    font-size: 12px;
+    font-weight: 500;
+    width: 20%;
+    height: 25px;
+    padding: 2px;
     margin-right: 10px;
     border: solid 1px #cecece;
     background: #efefef;
+    border-radius: 4px;
+    outline: none;
 }
 
     .btnGrp2:hover {
@@ -510,18 +621,21 @@ iframe {
     .btnGrp2:active {
         background-color: cornflowerblue;
     }
-#galleryToggle {
-    border: solid 1px;
+/*#galleryToggle {
+    font-size: 12px;
+    font-weight: 500;
     margin: 10px;
-    width: 30%;
-    padding: 5px;
+    height: 25px;
+    padding: 3px;
     margin-right: 10px;
     border: solid 1px #cecece;
     background: #efefef;
-    width: 30%;
+    width: 20%;
     text-decoration: none;
     color: black;
-    padding-left: 10%;
+    padding-left: 6%;
+    border-radius: 4px;
+    outline: none;
 }
     #galleryToggle:hover {
         background-color: #8AB6F7
@@ -529,10 +643,41 @@ iframe {
 
     #galleryToggle:active {
         background-color: cornflowerblue;
-    }
+    }*/
 
 .WikiDefaultImage {
     height: 400px;
    
     align-items: center;
 }
+
+.readtext {
+    outline: none;
+    border: solid 1px #9a9a9a;
+    border-radius: 0px 0px 4px 4px;
+}
+.ButtonBox {
+    border-top: solid 1px #9a9a9a;
+    border-left: solid 1px #9a9a9a;
+    border-right: solid 1px #9a9a9a;
+    border-bottom: solid 1px #fff;
+    border-radius:4px 4px 0px 0px;
+}
+.FullScreenDiv1 {
+    display: flex;
+    padding-left: 10%;
+    border-bottom: solid 1px;
+}
+.Save_Btn {
+    color: white;
+    background-color: #2f82fd;
+    width: 100%;
+    min-height: 23px;
+    font-size: 12px;
+    border: solid 1px;
+    border-radius: 4px;
+}
+
+
+/*padding-right: 15px;*/
+/* padding-left: 15px; *//**/

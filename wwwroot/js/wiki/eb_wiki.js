@@ -361,20 +361,22 @@
 
     this.render_page_toggle = function (e) {
         let val = e.target.getAttribute("val");
-        $(".fullViewtoggle").toggle();
         if (val == "show") {
             $("#render_field").hide();
             $("#render_page_toggle").removeAttr("val").attr("val", "hide");
+            $("#render_page_toggle").removeClass("fa-arrows-alt").addClass("fa-compress");
             $("#render_page_toggle").removeAttr("value").attr("value", "Normal Screen");
             $("#edit_field").removeClass("col-sm-6").addClass("col-sm-12");
             $("#text").css("height", "100%");
+            //$("#text").attr("rows", "23");
         }
         else {
             $("#render_field").show();
             $("#render_page_toggle").removeAttr("val").attr("val", "show");
             $("#edit_field").removeClass("col-sm-12").addClass("col-sm-6");
             $("#render_page_toggle").removeAttr("value").attr("value", "Full Screen");
-            $("#text").css("height", "480px");
+            //$("#text").attr("rows", "21");
+            $("#render_page_toggle").removeClass("fa-compress").addClass("fa-arrows-alt");
         }
     }
 

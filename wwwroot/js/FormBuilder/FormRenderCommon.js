@@ -29,11 +29,8 @@
             let PSInitCompleteCallBFn = function (select) {
                 console.log("default == ps callb");
                 this.FO.IsPSsInitComplete[select.EbSid_CtxId] = true;
-                if (isAllValuesTrue(this.FO.IsPSsInitComplete)) {
-                    setTimeout(function () {
-                        this.FO.initCompleteCallback();
-                    }.bind(this),10);
-                }
+                if (isAllValuesTrue(this.FO.IsPSsInitComplete))
+                    this.FO._allPSsInit = true;
             }.bind(this);
 
             if (Obj.ObjType === "PowerSelect")

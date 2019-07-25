@@ -11,7 +11,7 @@
 <link href="~/css/QueryExplain/query_explain.css" rel="stylesheet" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
 
-@*<script src="~/js/DataSource/data-source.js"></script>*@@*amal*@
+@*<script src="~/js/DataSource/data-source.js"></script>@*amal*@
 
 @*<link href="~/css/SqlBuilder/Home.css" rel="stylesheet" />
 <link href="~/css/SqlBuilder/QBuilder.css" rel="stylesheet" />
@@ -137,8 +137,17 @@
         font-size: 15px;
     }
 </style>
-<script>
-        $("body").prepend(`
+
+<section class="ds-page ds-cont adv-dsb-cont" id="ds-page@(ViewBag.tabnum)">
+    <div class='code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
+        <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
+    </div>
+    <div class='ds-prop'>
+        <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
+    </div>
+</section>
+
+@*parameter window*@
 <div id="paramsModal-toggle" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content" style="margin-top: 120px;">
@@ -164,20 +173,11 @@
             </div>
         </div>
     </div>
-</div>`);
-</script>
-<section class="ds-page ds-cont adv-dsb-cont" id="ds-page@(ViewBag.tabnum)">
-    <div class='code-window' id='codewindow@(ViewBag.tabnum)' style='padding: 0;'>
-        <textarea id='code@(ViewBag.tabnum)' name='code' class='code'></textarea>
-    </div>
-    <div class='ds-prop'>
-        <div id='dspropgrid@(ViewBag.tabnum)' class='pull-right' style='padding:0px'></div>
-    </div>
-</section>
+</div>
 
-@*qUERY bUILDER*@
+@*qUERY bUILDER
 <section class="simple-dsb-cont">
-    @*<section class="topbar">
+    <section class="topbar">
         <div class="container-fluid">
             <div class="row h_toolbar">
                 <a type="button" class="btn" href="~/QB/outerQueryBuilder"><i class="glyphicon glyphicon-backward"></i></a>
@@ -185,7 +185,7 @@
                 <button type="button" class="btn pull-right" data-target="#myModal" data-toggle="modal"><i class="glyphicon glyphicon-floppy-saved"></i></button>
             </div>
         </div>
-    </section>*@
+    </section>
     <div class="container-fluid builder-window">
         <div class="row builder-window-row">
             <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12 Builder-toolbox">
@@ -199,7 +199,7 @@
                     <li class="active"><a href="#Design" aria-controls="home" role="tab" data-toggle="tab">Design</a></li>
                     <li><a href="#Condition" aria-controls="Condition" role="tab" data-toggle="tab">Condition</a></li>
                     @*
-                    <li><a href="#Query" aria-controls="Query" role="tab" data-toggle="tab">Query</a></li>*@
+                    <li><a href="#Query" aria-controls="Query" role="tab" data-toggle="tab">Query</a></li>
                 </ul>
                 <!-- Tab panes -->
                 <div class="tab-content tabs">
@@ -228,7 +228,7 @@
                     </div>
                     @*<div class="tab-pane QueryPane" id="Query">
                         <textarea id="QueryPane"></textarea>
-                    </div>*@
+                    </div>
                 </div>
             </div>
         </div>
@@ -253,9 +253,9 @@
                 </div>
 
             </div>
-        </div>*@
+        </div>
     </div>
-</section>
+</section>*@
 
 <script>
 
@@ -316,6 +316,21 @@
     var EbDbType = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.EbDbType));
 
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataSourceWrapper('@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ssurl');
+    @*var object_type = @ViewBag.ObjType;
+    var o = {
+        Object: @Html.Raw(ViewBag.dsObj),
+        Version: '@ViewBag.VersionNumber',
+        RefId: '@ViewBag.Refid',
+        Status: '@ViewBag.Status',
+        TabNumber: @ViewBag.tabnum,
+        SSUrl: '@ViewBag.ssurl'
+    }
+    if (object_type == 2)
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataReader(o);
+    else if (object_type == 4)
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new DataWriter(o);
+    else if (object_type == 5)
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new SqlFunction(o);*@
 
     let is_datasource = true;
     var evaluator = new SqlEval(is_datasource);
@@ -327,15 +342,4 @@
         commonO.ObjCollection["#vernav@(ViewBag.tabnum)"].Explain(); //to add explain tab
         evaluator.refresh(commonO.tabNum, code, code_tnum );
     });
-
-    //edited by amal
-    @*var reader = new DataReader({
-        Object: @Html.Raw(ViewBag.dsObj),
-        Version: "",
-        RefId: "",
-        Status: "",
-        TabNumber: 0,
-        SSUrl: ""
-    });*@
-
 </script>

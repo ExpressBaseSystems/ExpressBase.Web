@@ -936,7 +936,7 @@ namespace ExpressBase.Web.Controllers
             }
             return JsonConvert.SerializeObject(response);
         }
-        public string Integrate(string preferancetype, bool deploy, string sid)
+        public string Integrate(string preferancetype, bool deploy, string sid, bool drop)
         {
             EbIntegrationResponse res = new EbIntegrationResponse();
             var req = JsonConvert.DeserializeObject<EbIntegration>(preferancetype);
@@ -949,7 +949,11 @@ namespace ExpressBase.Web.Controllers
                 //    Preference = Enum.Parse<ConPreferences>(req["Preference"].ToString()),
                 //    Type = Enum.Parse<EbConnectionTypes>(req["Type"].ToString())
                 //};
-                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, deploy = deploy, SolnId = sid });
+                res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, deploy = deploy, SolnId = sid, drop =drop });
+                if(res.ResponseStatus != null)
+                {
+                    return JsonConvert.SerializeObject(res);
+                }
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = sid });
                 return JsonConvert.SerializeObject(resp);
             }

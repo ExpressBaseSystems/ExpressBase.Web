@@ -24,75 +24,71 @@
 
 <style>
 </style>
-<div class="row">
-    <div class="col-md-3" style="padding-right:0px; padding-top: 20px;">
-        <form id="formManageRoles" data-toggle="validator" method="POST" action="">
-            <div class="form-group">
-                <label class="label-custom-style">Role Name</label>
-                <div class="from-group has-feedback">
-                    <input type="text" class="form-control input-custom-style" id="txtRoleName" data-id=@ViewBag.RoleId title="Role Name" required />
-                    <span class="input-group-addon form-control-feedback" id="spanRoleName" style="background-color: transparent; border: none; padding: 0px; right: 26px;top: 0px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="label-custom-style">Role Description</label>
-                <textarea class="form-control input-custom-style" id="txtRoleDescription" style="height:70px; resize:none;" title="Role Description" required></textarea>
-            </div>
-            <div class="form-group">
-                <label class="label-custom-style">Application</label>
-                <select class="form-control input-custom-style" id="selectApp" title="Application"></select>
-            </div>
-            <div class="form-group">
-                <label class="label-custom-style" style="display:inline-block">Role Type</label>
-                <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Anonymous" data-off="Normal">
-            </div>
-            <div class="form-group">
-                <label class="label-custom-style" style="display:inline-block">Role Locations</label>
-                <input id="chkboxLocations" type="checkbox" data-toggle="toggle" data-on="Limited Access" data-off="Global Access">
-            </div>
-            <div class="form-group" id="divLocation" style="position: relative;">
-                <div id="divLocationOverlay" style="position: absolute; z-index: 10; height:100%; width:100%; opacity: 0.6; background-color: #fff;"></div>
-                <div class="locListHead-wraper">
-                    <div class="locListHead">Select Locations</div>
-                    <div class="loc-all-select" tabindex="1" onclick="if ($(event.target).text() === 'Select All') { $('#divLocationList input:checkbox[name=cboxGrpLoc]').prop('checked', true); $(event.target).text('Deselect All'); } else { $('#divLocationList input:checkbox[name=cboxGrpLoc]').prop('checked', false); $(event.target).text('Select All'); }">Select All</div>
-                </div>
-                <div id="divLocationList" style="height: 150px; overflow: auto;">
-                    @*<label style="font-weight: 300;"><input type="checkbox" name="cboxGrpLoc" value="value">Text</label><br>*@
-                </div>                
-            </div>
-            @*<input type="submit" id="hiddenSubmitRole" style="display:none;" />*@
-        </form>
-    </div>
-    <div class="col-md-9">
-        <div style="padding: 0px 15px;">
-            <ul id="ulTabOnMngRole" class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#divObjList">Permissions</a></li>
-                <li><a data-toggle="tab" href="#divroles">Sub Roles</a></li>
-                <li><a data-toggle="tab" href="#divusers">Users</a></li>
-                <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
-            </ul>
-            <div class="tab-content" style="padding: 0px 0px;">
-                <div id="divObjList" class="row tab-pane in active" style="margin:0px; height: calc(100vh - 120px); overflow-x: auto; overflow-y:auto; padding: 10px 30px 0 30px;"></div>
-                <div id="divroles" class="tab-pane"></div>
-                <div id="divusers" class="tab-pane"></div>
-                <div id="divconstraints" class="tab-pane">
-                    <div style="text-align: center; padding-top: 28%; font-size: 32px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>
-                </div>
+<div class="col-md-3">
+    <form id="formManageRoles" data-toggle="validator" method="POST" action="">
+        <div class="form-group">
+            <label class="label-custom-style">Role Name</label>
+            <div class="from-group has-feedback">
+                <input type="text" class="form-control input-custom-style" id="txtRoleName" data-id=@ViewBag.RoleId title="Role Name" required />
+                <span class="input-group-addon form-control-feedback" id="spanRoleName" style="background-color: transparent; border: none; padding: 0px; right: 26px;top: 0px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>
             </div>
         </div>
-        @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
-        @*onclick="$('#hiddenSubmitRole').click()"*@
+        <div class="form-group">
+            <label class="label-custom-style">Role Description</label>
+            <textarea class="form-control input-custom-style" id="txtRoleDescription" style="height:70px; resize:none;" title="Role Description" required></textarea>
+        </div>
+        <div class="form-group">
+            <label class="label-custom-style">Application</label>
+            <select class="form-control input-custom-style" id="selectApp" title="Application"></select>
+        </div>
+        @*<input type="submit" id="hiddenSubmitRole" style="display:none;" />*@
+    </form>
+</div>
+<div class="col-md-9 col-lg-9 pd-r-0">
+    <div class="role-tab-pane h-100">
+        <ul id="ulTabOnMngRole" class="nav nav-tabs eb-styledTab">
+            <li class="active"><a data-toggle="tab" href="#settings">Settings</a></li>
+            <li><a data-toggle="tab" href="#divObjList">Permissions</a></li>
+            <li><a data-toggle="tab" href="#divroles">Sub Roles</a></li>
+            <li><a data-toggle="tab" href="#divusers">Users</a></li>
+            <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="settings" class="tab-pane in active">
+                <div class="form-group">
+                    <label class="label-custom-style" style="display:inline-block">Role Type</label>
+                    <input id="chkboxAnonymous" type="checkbox" data-toggle="toggle" data-on="Anonymous" data-off="Normal">
+                </div>
+                <div class="form-group">
+                    <label class="label-custom-style" style="display:inline-block">Role Locations</label>
+                    <input id="chkboxLocations" type="checkbox" data-toggle="toggle" data-on="Limited Access" data-off="Global Access">
+                </div>
+                <div class="form-group" id="divLocation" style="position: relative;">
+                    <div id="divLocationOverlay" style="position: absolute; z-index: 10; height:100%; width:100%; opacity: 0.6; background-color: #fff;"></div>
+                    <div class="locListHead-wraper">
+                        <div class="locListHead">Select Locations</div>
+                        <div class="loc-all-select" tabindex="1" onclick="if ($(event.target).text() === 'Select All') { $('#divLocationList input:checkbox[name=cboxGrpLoc]').prop('checked', true); $(event.target).text('Deselect All'); } else { $('#divLocationList input:checkbox[name=cboxGrpLoc]').prop('checked', false); $(event.target).text('Select All'); }">Select All</div>
+                    </div>
+                    <div id="divLocationList" style="overflow: auto;">
+                        @*<label style="font-weight: 300;"><input type="checkbox" name="cboxGrpLoc" value="value">Text</label><br>*@
+                    </div>
+                </div>
+            </div>
+            <div id="divObjList" class="tab-pane"></div>
+            <div id="divroles" class="tab-pane"></div>
+            <div id="divusers" class="tab-pane"></div>
+            <div id="divconstraints" class="tab-pane">
+                <div style="text-align: center; padding-top: 28%; font-size: 32px; color: #bbb;"> Coming Soon </div>
+            </div>
+        </div>
     </div>
+    @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
+    @*onclick="$('#hiddenSubmitRole').click()"*@
 </div>
 
-
-
 <script>
-
     $('document').ready(function () {
-
         var _dict = @Html.Raw(TempData.Peek("_dict"));
-
         var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList, @_usersList, @_locationList);
     });
 </script>

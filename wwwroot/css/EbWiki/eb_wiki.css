@@ -163,7 +163,7 @@
     padding: 0% 10% 0% 10%;
 }
 .wiki_data_div h1 {
-    font-size: 31px;
+    font-size: 32px;
     font-weight: 400;
     margin-top: 0;
     margin-bottom: 15px;
@@ -400,17 +400,14 @@ iframe {
         padding: 10px 0px 0px 10px;
     }
         .GettingStarted .PWrap {
-            padding: 0px 5px 5px 10px;
-            font-size:15px;
+            padding: 1px 5px 5px 10px;
+            font-size: 13px;
         }
         .GettingStarted:hover {
             -webkit-box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
             -moz-box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
             box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
         }
-
- 
-
 
 
     /*share links*/
@@ -482,17 +479,19 @@ iframe {
     list-style-type: none;
     margin: 0;
     padding: 0;
-    width: 60%;
-    margin-left: 50px;
+    margin-left: 7%;
 }
-
+.dragable_wiki_list:last-child{
+    margin-bottom:10px;
+}
     .dragable_wiki_list li {
-        margin: 0 3px 3px 3px;
-        padding: 0.4em;
+        margin: 0 0px 2px 0px;
+        padding: 0.2em;
         padding-left: 1.5em;
-        font-size: 13px;
-        height: 28px;
-        width: 400px;
+        font-size: 12px;
+        font-weight: 400;
+        height: 23px;
+        width: 300px;
     }
 
         .dragable_wiki_list li span {
@@ -505,49 +504,98 @@ iframe {
 }
 
 .WikiMenu {
-    font-size: 20px;
-    line-height: 42px;
-    color: #2d2d2d;
+    font-size: 16px;
+    line-height: 30px;
+    color: #ffffff;
     font-weight: 400;
-   
+    padding-left: 2em;
+    background: #5c95e4;
+    margin-bottom: 10px;
+    border: solid 1px #5c92de;
 }
+    .WikiMenu i {
+        font-size: 14px;
+    }
+.BoxView {
+    width: 30%;
+    border: solid 1px #ccc;
+    margin: 15px;
+    border-radius: 4px;
+}
+
 
 .WikiList {
     width: auto;
-    margin-left: 50px;
-    /*border-bottom: solid 1px #bfbfbf;*/
+    margin-left: 7%;
+    margin-right: 7%;
+    border-radius: 4px;
     margin-bottom: 10px;
-    padding-bottom: 5px;
+    /* padding-bottom: 5px; */
+    border: solid 1px #d4d4d4;
+    padding: 6px;
 }
-
+    .WikiList h1 {
+        font-size: 18px;
+        padding: 0px;
+        margin-bottom: 0px;
+        margin-top: 0px;
+        text-align: left;
+        font-weight: 200;
+    }
+    .WikiList p {
+        font-size: 12px;
+        padding: 0px;
+        margin-bottom: 0px;
+        margin-top: 0px;
+        text-align: left;
+        font-weight: 200;
+    }
+    .WikiList:hover {
+        cursor:pointer;
+        -webkit-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.13);
+        -moz-box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.13);
+        box-shadow: 1px 1px 3px 0px rgba(0,0,0,0.13);
+    }
+    .wikilist:active {
+        background-color: #f5f5f5;
+    }
 .UpdateOrder {
-    width: 211px;
-    height: 35px;
-    font-size: 20px;
-    font-family: sans-serif;
+    width: 133px;
+    height: 25px;
+    font-size: 14px;
     color: white;
     background: #4d86d6;
     border: 0px;
-    margin-left: 135px;
-    margin-top: 15px;
+    margin: 1% 1% 1% 43%;
+    border-radius: 4px;
 }
 
 #CreateWiki {
-    font-size: 18px;
+    font-size: 12px;
     width: 150px;
-    height: 35px;
-    border: 0px;
     margin-top: 25px;
-    border: solid 1px #bdbaba;
-    padding: 6px;
+    padding: 2px 15px 3px 15px;
+    border: solid 1px #4d86d6;
+    border-radius: 4px;
+    background: #4d86d6;
+    color: #fff;
     text-decoration: none;
-}
 }
 
 .wiki_btn:hover {
     border: 0px;
 }
 
+
+/*ADmin Wiki*/
+
+
+.wiki_admin{
+        font-size: 30px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-weight: 300;
+}
 /*.wiki_admin_h1 {
     letter-spacing: -1.25px;
     font-size: 24px;
@@ -557,7 +605,6 @@ iframe {
     color: rgba(0, 0, 0, 0.84);
     font-style: normal;
 }*/
-
 .menu_border {
     font-weight: bold;
 }
@@ -647,8 +694,8 @@ iframe {
 
 .WikiDefaultImage {
     height: 400px;
-   
     align-items: center;
+    border-radius :2px;
 }
 
 .readtext {

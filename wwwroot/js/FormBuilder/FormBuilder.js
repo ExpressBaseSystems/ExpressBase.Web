@@ -5,9 +5,9 @@
     this.Name = this.formId;
     this.toolBoxid = options.toolBoxId;
     this.primitiveToolsId = options.primitiveToolsId;
-    this.customToolsId = options.customToolsId;
     this.rootContainerObj = null;
     this.builderType = options.builderType;
+    this.toolContClass = "tool-sec-cont";
     this.$propGrid = $("#" + options.PGId);
     this.BeforeSave = function () { this.PGobj.getvaluesFromPG(); return true; }.bind(this);
 
@@ -24,7 +24,9 @@
     this.CurColCount = 2;
     this.movingObj = {};
 
-    this.GenerateButtons = function () {
+    this.DraggableConts = [...(document.getElementsByClassName("tool-sec-cont")), document.getElementById(this.formId)];
+
+        this.GenerateButtons = function () {
         if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
             $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
                                             <i class='fa fa-eye' aria-hidden='true'></i>
@@ -253,7 +255,7 @@
         //if drag start within the form
         let id = $(el).closest(".Eb-ctrlContainer").attr("ebsid");
         let $source = $(source);
-        if ($source.attr("id") !== this.primitiveToolsId && $source.attr("id") !== this.customToolsId) {
+        if ($source.attr("class") !== this.toolContClass) {
             this.movingObj = this.rootContainerObj.Controls.PopByName(id);
             if ($source.closest(".ebcont-ctrl").attr("ctype") === "TabPane")
                 this.adjustPanesHeight($source);
@@ -267,7 +269,7 @@
         let $target = $(el).parent();
         if (this.movingObj) {
             //Drag end with in the form
-            if ($target.attr("id") !== this.primitiveToolsId && $target.attr("id") !== this.customToolsId) {
+            if ($target.attr("class") !== this.toolContClass) {
                 if ($sibling.attr("id")) {
                     let idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
@@ -285,7 +287,7 @@
         let $target = $(target);
         if (target) {
             //drop from toolbox to form
-            if ($(source).attr("id") === this.primitiveToolsId || $(source).attr("id") === this.customToolsId) {
+            if ($(source).attr("class") === this.toolContClass) {
                 let $el = $(el);
                 let type = $el.attr("eb-type").trim();
                 let ebsid = type + ++(this.controlCounters[type + "Counter"]);
@@ -396,7 +398,7 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if (source.id === this.primitiveToolsId && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
+        if ($(source).attr("class") !== this.toolContClass && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({
                 id: "reviewCtrl",
@@ -408,8 +410,8 @@
             return false;
         }
 
-        let _id = $(target).attr("id");
-        if (_id !== this.primitiveToolsId && _id !== this.customToolsId)
+        let _class = $(target).attr("class");
+        if (_class !== this.toolContClass)
             return true;
         else
             return false;
@@ -431,7 +433,7 @@
 
     };
 
-    this.drake = new dragula([document.getElementById(this.primitiveToolsId), document.getElementById(this.customToolsId), document.getElementById(this.formId)], {
+    this.drake = new dragula(this.DraggableConts, {
         revertOnSpill: true,
         copy: function (el, source) { return (source.className.includes('div-primitive-tools') || source.className.includes('div-custom-tools')); },
         copySortSource: true,

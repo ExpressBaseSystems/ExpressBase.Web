@@ -61,20 +61,58 @@ var SolutionDashBoard = function (connections, sid) {
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/Integrate",
-            data: { preferancetype: JSON.stringify(postData), deploy: e, sid },
+            data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: false },
             beforeSend: function () {
                 preventContextMenu = 1;
                 $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $("#Integration_loder").EbLoader("hide");
-            preventContextMenu = 0;
-            if (data) {
+            var temp = JSON.parse(data);
+            if (temp.ResponseStatus) {
+                EbMessage("show", { Message: "Integreation Change Not Complete", Background: "red" });
+                EbDialog("show",
+                    {
+                        Message: "DataBase Already Exist. Do you wanna complete the Connection ",
+                        Buttons: {
+                            "Confirm": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            },
+                            "Cancel": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            if (name == "Confirm") {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../ConnectionManager/Integrate",
+                                    data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: true },
+                                }).done(function (data) {
+                                    preventContextMenu = 0;
+                                    $("#Integration_loder").EbLoader("hide");
+                                    if (data) {
+                                        this.Conf_obj_update(JSON.parse(data));
+                                        EbMessage("show", { Message: "Integreation Changed Successfully" });
+                                    }
+                                }.bind(this));
+                            } else if (name == "Cancel")
+                            {
+                                preventContextMenu = 0;
+                                EbMessage("show", { Message: "Integreation Failed", Background: "red" });
+                            }
+                                
+                        }.bind(this)
+                    });
+            }
+            else {
+                preventContextMenu = 0;
                 this.Conf_obj_update(JSON.parse(data));
                 EbMessage("show", { Message: "Integreation Changed Successfully" });
             }
-            else
-                EbMessage("show", { Message: "Integreation Change Failed", Background: "red" });
         }.bind(this));
     };
 

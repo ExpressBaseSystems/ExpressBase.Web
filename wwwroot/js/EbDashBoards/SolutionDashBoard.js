@@ -64,7 +64,7 @@ var SolutionDashBoard = function (connections, sid) {
             data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: false },
             beforeSend: function () {
                 preventContextMenu = 1;
-                $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
+                //$("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
             var temp = JSON.parse(data);
@@ -93,7 +93,7 @@ var SolutionDashBoard = function (connections, sid) {
                                     data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: true },
                                 }).done(function (data) {
                                     preventContextMenu = 0;
-                                    $("#Integration_loder").EbLoader("hide");
+                                    //$("#Integration_loder").EbLoader("hide");
                                     if (data) {
                                         this.Conf_obj_update(JSON.parse(data));
                                         EbMessage("show", { Message: "Integreation Changed Successfully" });
@@ -438,7 +438,7 @@ var SolutionDashBoard = function (connections, sid) {
                 //$("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }.bind(this)
         }).done(function (data) {
-            $("#dbConnection_loder").EbLoader("hide");
+ 
             if (data) {
                 //EbMessage("show", { Message: "Test Connection Success" });
                 //$("#" + formid + " .saveConnection").show();

@@ -58,58 +58,73 @@
         </div>
     }*@
 
-
-
-<div class="mug-parent-div">
-    <div class="row">
-        <div class="col-md-3" style="padding-top: 80px;">
-            <form id="formManageUserGroups" data-toggle="validator" method="POST" action="">
-                <div class="form-group">
-                    <label class="label-custom-style">User Group Name</label>
-                    <input type="text" class="form-control input-custom-style" id="txtUserGroupName" title="User Group Name" required />
-                </div>
-                <div class="form-group">
-                    <label class="label-custom-style">User Group Description</label>
-                    <textarea type="text" class="form-control input-custom-style" id="txtUserGroupDescription" title="User Group Description" style="height: 100px; resize:none;" required></textarea>
-                </div>
-                <input type="submit" id="hiddenSubmitUserGroup" style="display:none;" />
-            </form>
+<div class="row s-dash-container h-100">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group eb-dashbord-sidebar">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Wiki">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        <div class="col-md-9">
-            <div style="padding: 0px 15px;">
-                <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#divusers">Users</a></li>
-                    <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
-                </ul>
-                <div class="tab-content">
-                    <div id="divusers" class="tab-pane fade in active"></div>
-                    <div id="divconstraints" class="tab-pane fade">
+    </div>
+    <div class="s-dash-workplace tenant_workpane h-100">
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs h-100">
+            <div class="tdash-box-body h-100">
+                <div class="mr-parent-div w-100">
+                    <div class="mug-parent-div">
+                        <div class="col-md-3 col-lg-3 pd-l-0">
+                            <form id="formManageUserGroups" data-toggle="validator" method="POST" action="">
+                                <div class="form-group">
+                                    <label class="label-custom-style">User Group Name</label>
+                                    <input type="text" class="form-control input-custom-style" id="txtUserGroupName" title="User Group Name" required />
+                                </div>
+                                <div class="form-group">
+                                    <label class="label-custom-style">User Group Description</label>
+                                    <textarea type="text" class="form-control input-custom-style" id="txtUserGroupDescription" title="User Group Description" style="height: 100px; resize:none;" required></textarea>
+                                </div>
+                                <input type="submit" id="hiddenSubmitUserGroup" style="display:none;" />
+                            </form>
+                        </div>
+                        <div class="col-md-9 col-lg-9 pd-r-0 h-100">
+                            <div class="eb-usrgrp-pane h-100">
+                                <ul class="nav nav-tabs eb-styledTab">
+                                    <li class="active"><a data-toggle="tab" href="#divusers">Users</a></li>
+                                    <li><a data-toggle="tab" href="#divconstraints">Constraints</a></li>
+                                </ul>
+                                <div class="tab-content" style="margin:0;">
+                                    <div id="divusers" class="tab-pane fade in active"></div>
+                                    <div id="divconstraints" class="tab-pane fade">
 
-                        <div id="divIp"></div>
-                        <div id="divTime"></div>
+                                        <div id="divIp"></div>
+                                        <div id="divTime"></div>
 
+                                    </div>
+                                </div>
+                            </div>
+                            @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
+                            @*<label id="lblMessage" style="color:red;padding-left: 36px; font-weight: 500;"> Sorry, Unable to Continue! </label>*@
+                        </div>
                     </div>
                 </div>
             </div>
-            @*<button class="btn btn-info" id="btnSaveAll" style="float:right; margin-right:15px">Submit</button>*@
-            @*<label id="lblMessage" style="color:red;padding-left: 36px; font-weight: 500;"> Sorry, Unable to Continue! </label>*@
         </div>
     </div>
 </div>
-
-<style>
-</style>
-
 <script>
     $('document').ready(function () {
-
         var obj = new UserGroupJs(@_infoDict, @_userList, @_ipConsList, @_dtConsList);
-
         //function newIpAddress(e) {
         //    $("#ulIpAddress").append(`<li class="list-group-item">${$("#txtIpAddress").val();}<i class="fa fa-times" aria-hidden="true" style="float: right;"></i></li>`);
-
         //}
-
     });
-
 </script>

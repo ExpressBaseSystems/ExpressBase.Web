@@ -216,7 +216,7 @@
         <div class="container">`
             + this.getPresetModalBody() +
             `</div>
-        <div id="divSelectedDisplay${t}" class="row tilediv1" style="Height: ${this.options.tileDivHeight || 'auto'}"> </div>`);
+        <div id="divSelectedDisplay${t}" class="tilediv1" style="Height: ${this.options.tileDivHeight || 'auto'}"> </div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.spanSrch = $('#spanSrch' + t);

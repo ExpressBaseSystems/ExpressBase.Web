@@ -155,7 +155,7 @@
     this.loadLocationsToDom = function () {
         this.divLocationList.children().remove();
         $.each(this.locationList, function (i, obj) {
-            this.divLocationList.append(`<label style="font-family: open sans; font-weight: 300; cursor: pointer;"><input type="checkbox" name="cboxGrpLoc" value="${obj.Id}">${obj.ShortName} - ${obj.LongName}</label><br>`);
+            this.divLocationList.append(`<label style="padding-left:10px;font-weight: 300; cursor: pointer;"><input type="checkbox" name="cboxGrpLoc" value="${obj.Id}">${obj.ShortName} - ${obj.LongName}</label><br>`);
         }.bind(this));
     };
 
@@ -428,15 +428,15 @@
             var tblColumn = [];
             var tblData = [];
 
-            var shtml = `<div>   
-                            <a class="objactiveclass list-group-item list-group-item-action collapse in collapsed" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:100%; margin-top:20px; cursor: pointer; background-color: #eee;" id='a${value.Op_Name}'>${value.Op_Name}</a>
-                            <div class="form-group has-feedback" style="width:15%; display:none;">
+            var shtml = `<div class="eb-perm-wrapper">   
+                            <a class="objactiveclass list-group-item list-group-item-action collapse in collapsed" data-toggle="collapse" data-target="#div${value.Op_Name}" style="padding:5px; font-weight:500; display:inline-block; width:100%; cursor: pointer; background-color: #eee;" id='a${value.Op_Name}'>${value.Op_Name}</a>
+                            <div class="form-group has-feedback" style="width:15%; display:none;margin-bottom:0">
                                 <input type="text" class="form-control" id="txtSrch${value.Op_Name}" placeholder="Search" style="height: 32px; background-color: #EEE;" title="Search"/>
                                 <span id="spanSrch${value.Op_Name}" class="glyphicon glyphicon-search form-control-feedback" style="top:0px;"></span>
                                 <span id="spanRemv${value.Op_Name}" class="glyphicon glyphicon-remove form-control-feedback" style="top:0px; display:none;"></span>
                             </div>
                             <div id='div${value.Op_Name}' class='collapsed collapse' style='width:inherit;'>
-                                <table style='width:inherit;' class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>
+                                <table style='width:100%;margin-bottom:0;' class="objtype table table-responsive sub-menu table-striped" data-id= "${value.Op_Id}" id='tbl${value.Op_Name}'></table>
                             </div>
                         </div>`;
             $("#divObjList").append(shtml);

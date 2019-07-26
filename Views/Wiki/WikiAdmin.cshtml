@@ -17,34 +17,39 @@
 <style type="text/css">
 </style>
 
-<div class="container " style="padding-top:25px;padding-left:20px; ">
-                <div class="row edit_wiki">
-                    <div class="col-sm-8">
-                        <h1 class="wiki_admin_h1"> Wiki Admin page</h1>
-                    </div>
-                    <div class="col-sm-2" style="    padding-top: 30px;">
-                        <a id="CreateWiki" href="@ViewBag.Url" target="_blank">Create New Wiki</a>
-                    </div>
-                   
-                </div>
-                <div class="row wiki_admin_border" style="margin-bottom:5px">
-                    <div class="col-sm-1 selected" style-val="Draft" id="Drafts" style="width:65px">
-                        Drafts
-                    </div>
-                    <div class="col-sm-1 selected" style-val="Publish" id ="" style="width:93px">
-                       Published
-                    </div>
-                    <div class="col-sm-1 selected" style-val="Unpublish" style="width:112px">
-                       UnPublished
-                    </div>
-                    <div class="col-sm-1 selected"  style-val="PublicView" style="width:101px">
-                       PublicView
-                    </div>
-                </div>
-    <div class="row">
-        <div class="col-sm-12 public style-4" id="public">
-            
+
+
+
+
+<div class="container-fluid" style="padding-top:25px;padding-left:20px;">
+
+    <div class="row edit_wiki">
+        <div class="col-sm-8">
+            <h1 class="wiki_admin"> Wiki Admin page</h1>
+        </div>
+        <div class="col-sm-2" style="    padding-top: 30px;">
+            <a id="CreateWiki" href="@ViewBag.Url" target="_blank">Create New Wiki</a>
+        </div>
+
+    </div>
+    <div class="row wiki_admin_border" style="margin-bottom:5px">
+        <div class="col-sm-1 selected" style-val="Draft" id="Drafts" style="width:65px">
+            Drafts
+        </div>
+        <div class="col-sm-1 selected" style-val="Publish" id="" style="width:93px">
+            Published
+        </div>
+        <div class="col-sm-1 selected" style-val="Unpublish" style="width:112px">
+            UnPublished
+        </div>
+        <div class="col-sm-1 selected" style-val="PublicView" style="width:101px">
+            PublicView
         </div>
     </div>
- </div>
+    <div class="row">
+        <div class="col-sm-12 public style-4" id="public" style=" display:flex; flex-flow:row wrap;">
+
+        </div>
+    </div>
+</div>
 @*<div class=" public wiki-align style-4" style="overflow:auto;height:500px; padding-left:15px;  margin-left: 102px;"></div>*@

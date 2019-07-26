@@ -73,25 +73,31 @@
 }
 
 .tilediv1 {
-    /*padding: 10px;
-    margin: 0px;
-    height: calc(100vh - 170px) !important;
-    overflow: auto;*/
+    display: flex;
+    flex-flow: row wrap;
 }
 .roles-tab-header{
     display:flex;
 }
 .subHeading {
-    font-size: 22px;
-    color: #ccc;
+    font-size: 18px;
+    color: #585555;
+}
+.eb-usrgrp-pane #divIp, .eb-usrgrp-pane #divTime {
+    display: flex;
+    flex-flow: column;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    background: #f2f2f2;
 }
 /*---------------------------------CREATE USER-------------------------------------*/
-
 .mu-parent-div {
     padding-bottom: 30px;
     display: flex;
     padding-top: 30px;
-    min-height:100%;
+    min-height: 100%;
 }
 .btn-resetpw {
     background: #e65f66;
@@ -162,7 +168,20 @@
 }
 .mr-parent-div .tab-pane {
 }
-
+.eb-perm-wrapper{
+    margin-bottom:15px;
+}
+.eb-perm-wrapper .dataTable tr {
+    border: 1px solid #ccc;
+    border-top: none;
+    border-bottom: none;
+}
+    .eb-perm-wrapper .dataTable th{
+        font-weight:500;
+    }
+    .eb-perm-wrapper .dataTable tr:last-child {
+        border-bottom: 1px solid #ccc;
+    }
 .searchRsulsItemsDiv:hover {
     background-color: #eee;
 }
@@ -250,14 +269,17 @@
 /*----------------------------------USER GROUP---------------------------------------*/
 
 .mug-parent-div {
-    padding: 4% 0% 0% 1%;
-    height: 100vh;
+   
+}
+.eb-usrgrp-pane {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    flex-flow: column;
 }
 
 .mug-parent-div .tab-pane {
-    border: 1px solid #ddd;
-    border-top: none;
-    background-color: white;
+    
 }
 .eb-user-listview {
     border: 1px solid #ccc;

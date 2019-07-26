@@ -127,6 +127,7 @@ namespace ExpressBase.Web.Controllers
             //ViewBag.WikiList = resp.WikiList;
             var location = new Uri($"{Request.Scheme}s://{Request.Host}");
             ViewBag.Url = location.AbsoluteUri +"wiki/add/0";
+            ViewBag.Title = "Manage Wikies";
             return View();
           
         }

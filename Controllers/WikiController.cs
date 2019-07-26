@@ -19,6 +19,13 @@ namespace ExpressBase.Web.Controllers
         public IActionResult AddWiki(int id)
 
         {
+            FileRefByContextResponse res = this.ServiceClient.Get<FileRefByContextResponse>(new FileRefByContextRequest
+            {
+                Context = "eb_wiki"
+            });
+
+            ViewBag.Images = JsonConvert.SerializeObject(res.Images);
+
             ViewBag.id = id;
             if (id > 0)
             {
@@ -37,14 +44,6 @@ namespace ExpressBase.Web.Controllers
                 AddNewWikiResponse resp = this.ServiceClient.Get(new AddNewWikiRequest());
                 ViewBag.WikiCat = resp.WikiCat;
                 ViewBag.Wiki = new Wiki() { Id = 0 };
-
-                FileRefByContextResponse res = this.ServiceClient.Get<FileRefByContextResponse>(new FileRefByContextRequest
-                {
-                    Context = "eb_wiki"
-                });
-
-                ViewBag.Images = JsonConvert.SerializeObject(res.Images);
-
             }
             return View();
         }
@@ -141,7 +140,7 @@ namespace ExpressBase.Web.Controllers
             });
 
             Console.WriteLine("Info: Admin_Wiki_list Wiki Count: " + resp.WikiList.Count + " Status: " + status);
-
+            
             return resp;
 
         }

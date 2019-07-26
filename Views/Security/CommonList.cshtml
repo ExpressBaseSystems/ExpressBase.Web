@@ -7,10 +7,78 @@
 
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
-<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/CommonList.js" asp-append-version=@bApnd></script>
+@section StyleSheet{
+    <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
+}
+@section JavaScript{
+    <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/CommonList.js" asp-append-version=@bApnd></script>
+}
+
+<div class="row s-dash-container h-100">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group eb-dashbord-sidebar">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Wiki">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="s-dash-workplace tenant_workpane h-100">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-7 pd-0">
+                @{ 
+                    string name = string.Empty;
+                    if(ViewBag.ListType== "users")
+                    {
+                        name = "Users";
+                    }
+                    else if(ViewBag.ListType == "anonymoususers")
+                    {
+                        name = "Anonymous Users";
+                    }
+                    else if (ViewBag.ListType == "usergroups")
+                    {
+                        name = "User Groups";
+                    }
+                    else if(ViewBag.ListType == "roles") {
+                        name = "Roles";
+                    }
+                }
+                <h4 class="mr-t-0 mr-b-0">@name<span class="apps_count"></span></h4>
+            </div>
+            <div class="col-md-5 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+                <div class="input-group eb-search-box" style="margin-left: 15px;">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    <input type="text" id="" class="form-control" placeholder="Search...">
+                </div>
+                <button class="ebbtn eb_btnblue eb_btn-sm new_sol_lk" id="">New </button>
+            </div>
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <div class="tdash-box-body">
+                <div class="center eb-user-listview">
+                    <section class="outer-section-commonlist">
+                        <div id="divCommonList">
+                            <table id="tblCommonList" class="table-striped"></table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="ManageAnonymUserModal" class="modal fade" role="dialog">
     <div class="modal-dialog" style="width:750px">
@@ -95,15 +163,6 @@
         </div>
     </div>
 </div>
-
-<div class="center" style="margin-left: -15px; margin-right: -15px; height: 100vh;">
-    <section class="outer-section-commonlist">
-        <div id="divCommonList" style="height: 100%;">
-            <table id="tblCommonList" class="table-striped"></table>
-        </div>
-    </section>
-</div>
-
 
 <script>
         $(document).ready(function () {

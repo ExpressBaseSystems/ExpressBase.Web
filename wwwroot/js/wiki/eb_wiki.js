@@ -361,24 +361,27 @@
 
     this.render_page_toggle = function (e) {
         let val = e.target.getAttribute("val");
-        $(".fullViewtoggle").toggle();
         if (val == "show") {
             $("#render_field").hide();
             $("#render_page_toggle").removeAttr("val").attr("val", "hide");
+            $("#render_page_toggle").removeClass("fa-arrows-alt").addClass("fa-compress");
             $("#render_page_toggle").removeAttr("value").attr("value", "Normal Screen");
             $("#edit_field").removeClass("col-sm-6").addClass("col-sm-12");
             $("#text").css("height", "100%");
+            //$("#text").attr("rows", "23");
         }
         else {
             $("#render_field").show();
             $("#render_page_toggle").removeAttr("val").attr("val", "show");
             $("#edit_field").removeClass("col-sm-12").addClass("col-sm-6");
             $("#render_page_toggle").removeAttr("value").attr("value", "Full Screen");
-            $("#text").css("height", "480px");
+            //$("#text").attr("rows", "21");
+            $("#render_page_toggle").removeClass("fa-compress").addClass("fa-arrows-alt");
         }
     }
 
     //wiki admin page
+
     this.show_draft_items = function (e) {
         let key = e.target.getAttribute('val');
 
@@ -431,19 +434,21 @@
 
             for (let j = 0; j < ob.wikiCat.length; j++) {
                 let temp = 0;
-                $("#public").append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}">  ${ob.wikiCat[j].wikiCategory} <div>`);
+                let $divObj = $(`<div class="BoxView"></div>`);
+                $divObj.append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}" toggleval="show">  ${ob.wikiCat[j].wikiCategory} 
+                       <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
+                <div>`);
                 let $Form = $(`<div data-val="${ob.wikiCat[j].wikiCategory}"></div>`);
                 for (let i = 0; i < ob.wikiList.length; i++) {
                     if (ob.wikiList[i].category == `${ob.wikiCat[j].wikiCategory}`) {
+                       // var date = new Date(ob.wikiList[i].createdAt);
+                        var date = ob.wikiList[i].createdAt.split("T");
+                       
                         $Form.append(`
-                                <div class="WikiList">
+                                <div class="WikiList ${ ob.wikiList[i].status}" data-id= ${ob.wikiList[i].id} val=${ob.wikiList[i].status}>
                                 <h1>  ${ob.wikiList[i].title}  </h1>
-                                
-                                  <div class="row">
-                                  <div class="col-sm-3" style="width: 320px;padding-right:0px;">
-                                    Created On  ${ob.wikiList[i].createdAt}
+                                   <p> Created On  ${date[0]}</p>
                                    </div>
-                                  <i class="${ ob.wikiList[i].status} fa fa-pencil-square-o" data-id= ${ob.wikiList[i].id} val=${ob.wikiList[i].status}></i>   </div>
                         `);
                         temp++;
                     }
@@ -452,7 +457,8 @@
                     $Form.append(`<h6 style="padding-left:100px;"> Empty List</h6> `);
                 }
 
-                $("#public").append($Form);
+                $divObj.append($Form);
+                $("#public").append($divObj);
             }
            
         }
@@ -485,7 +491,10 @@
 
         for (let j = 0; j < ob.wikiCat.length; j++) {
             let temp = 0;
-            $("#public").append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}">  ${ob.wikiCat[j].wikiCategory} <div>`);
+            let $divObj = $(`<div class="BoxView"></div>`);
+            $divObj.append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}" toggleval="show">  ${ob.wikiCat[j].wikiCategory} 
+                 <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
+            <div>`);
             let $Form = $(`<ul data-val="${ob.wikiCat[j].wikiCategory}" class="dragable_wiki_list" show></ul>`);
             for (let i = 0; i < ob.wikiList.length; i++) {
                 if (ob.wikiList[i].category == `${ob.wikiCat[j].wikiCategory}`) {
@@ -497,7 +506,9 @@
             if (temp == 0) {
                 $Form.append(`<h6 style="padding-left:100px;"> Empty List</h6> `);
             }
-            $("#public").append($Form);
+
+            $divObj.append($Form);
+            $("#public").append($divObj);
             let dataVal = ob.wikiCat[j].wikiCategory;
             this.draggableFun(dataVal);
         }
@@ -517,7 +528,7 @@
     this.Draftcontextmenu = function() {
         $.contextMenu({
             selector: '.Draft',
-            trigger: 'left',
+            trigger: 'right',
             items: {
                 "edit": {
                     name: "edit", icon: "edit", callback: this.editWiki.bind(this)
@@ -533,7 +544,7 @@
     this.Publishcontextmenu = function () {
         $.contextMenu({
             selector: '.Publish',
-            trigger: 'left',
+            trigger: 'right',
             items: {
                 "edit": {
                     name: "edit", icon: "edit", callback: this.editWiki.bind(this)
@@ -550,7 +561,7 @@
     this.Unpublishcontextmenu = function () {
         $.contextMenu({
             selector: '.Unpublish',
-            trigger: 'left',
+            trigger: 'right',
             items: {
                 "edit": {
                     name: "edit", icon: "edit", callback: this.editWiki.bind(this)
@@ -618,7 +629,18 @@
     };
 
     this.WikiMenuToggle = function (e) {
+        let togVal = e.target.getAttribute("toggleval");
         let val = e.target.getAttribute('val');
+        if (togVal == "show") {
+            $(`[val="${val}"]`).removeAttr("toggleval").attr("toggleval", "hide");
+            $(`[val="${val}"] i`).removeClass("fa-chevron-circle-down").addClass("fa-chevron-circle-right");
+        }
+        else {
+            $(`[val="${val}"]`).removeAttr("toggleval").attr("toggleval", "show");
+            $(`[val="${val}"] i`).removeClass("fa-chevron-circle-right").addClass("fa-chevron-circle-down");
+           
+        }
+       
         $(`[data-val=${val}]`).toggle(300);
     }
     this.UpdateOrder = function (e) {

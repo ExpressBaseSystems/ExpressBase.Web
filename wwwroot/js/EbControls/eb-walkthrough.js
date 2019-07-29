@@ -2,16 +2,30 @@
 //    element: ".class/#id",
 //    content: "string",
 //    title: "string",
-//    timeout: 1000
+//    timeout: 1000,
 //}
 
 class Tour {
     constructor(o) {
         this.tour = null;
         this.tc = 0;
-        this.s = $.extend({}, o);
-        this.i();
+        this.s = $.extend({
+            Stack:[],
+            AutoStart:true
+        }, o);
+        if (this.s.AutoStart)
+            this.i();
     };
+
+    start() {
+        this.i();
+        return "Tour started";
+    }
+
+    close() {
+        this.skipTour();
+        return "Tour closed";
+    }
 
     setWraper() {
         $("body").append(`<div class="ebTour_bodyWrpr"></div>

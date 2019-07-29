@@ -1,4 +1,14 @@
 ﻿/*----------------------------------USERS---------------------------------------*/
+#divVisibility .toggle {
+    width: 100px !important;
+    height: 32px !important;
+}
+.user-tab-paneInner {
+    display: flex;
+    flex-flow: column;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 .outer-section-createuser {
     height: 100vh;
     font-weight: 300;
@@ -7,7 +17,13 @@
     border-radius: 4px;
     padding-bottom: 15px;
 }
-
+.md-search-box button {
+    background: white;
+    border: 1px solid #ccc;
+}
+.md-search-box input{
+    border-left:none;
+}
 .searchRsulsItemsDiv:hover {
     background-color: #eee;
 }
@@ -15,24 +31,26 @@
 .mydiv1 {
     border: 1px solid #ccc;
     background-color: #fdfdfd;
-    /*border-radius: 6px;*/
-    align-items: center;
-    height: 75px;
+    border-radius: 4px;
     overflow: hidden;
     padding: 10px 13px;
     margin-top: 15px;
 }
+    .mydiv1 b{
+        font-weight:400;
+    }
 
     .mydiv1:hover {
         background-color: #f5f5f5;
-        /*border: none;*/
     }
 
     .mydiv1 .dropdown-toggle:hover {
         font-size: 16px;
         color: blue;
     }
-
+.user-status-div {
+    margin-top:20px;
+}
 .icondiv1 {
     display: inline-block;
     font-size: xx-large;
@@ -55,70 +73,60 @@
 }
 
 .tilediv1 {
-    padding: 10px;
-    margin: 0px;
-    height: calc(100vh - 170px) !important;
-    overflow: auto;
+    display: flex;
+    flex-flow: row wrap;
 }
-
+.roles-tab-header{
+    display:flex;
+}
 .subHeading {
-    font-size: 22px;
-    color: #ccc;
+    font-size: 18px;
+    color: #585555;
 }
-
-.nav-tabs > li.active {
-    border-top: 3px solid #339bb3;
+.eb-usrgrp-pane #divIp, .eb-usrgrp-pane #divTime {
+    display: flex;
+    flex-flow: column;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    background: #f2f2f2;
 }
-
-    /*for remove flickering https://stackoverflow.com/questions/26595481/bootstrap-3-tabs-active-tab-flicker-on-hover-only-in-firefox?rq=1&utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa*/
-    .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-        border: 1px solid #ddd !important;
-        border-bottom: none !important;
-        margin: 0px;
-        border-radius: 0px;
-    }
-
-.nav-tabs > li:hover {
-    background-color: #eee;
-}
-
 /*---------------------------------CREATE USER-------------------------------------*/
-
 .mu-parent-div {
-    padding: 60px 0% 0% 0%;
-    height: 100vh;
-    font-weight: 300;
+    padding-bottom: 30px;
+    display: flex;
+    padding-top: 30px;
+    min-height: 100%;
+}
+.btn-resetpw {
+    background: #e65f66;
+    color:white;
 }
 
     .mu-parent-div .tab-pane {
-        border: 1px solid #ddd;
-        border-top: none;
-        background-color: white;
+       
     }
 
     .mu-parent-div .home-tab-cont {
-        padding: 10px;
-        margin: 0px;
-        height: calc(100vh - 150px);
-        overflow: auto;
+       
     }
 
 
 .label-custom-style {
-    font-weight: 400;
-    color: #339bb3;
+    font-weight: 500;
 }
 
 .input-custom-style {
-    height: 28px;
-    border-radius: 0px !important;
-    padding: 2px 12px;
+    height:45px;
+}
+.input-group .input-custom-style {
+    border-left:none;
 }
 
-    .mu-parent-div .span-custom-style {
-        border-radius: 0px !important;
-        padding: 0 8px;
-    }
+.mu-parent-div .span-custom-style {
+    background: white;
+}
 
     .mu-parent-div .btn-custom-style {
         height: 28px;
@@ -150,17 +158,30 @@
 
 /*----------------------------------ROLES---------------------------------------*/
 .mr-parent-div {
-    padding: 4% 0% 0% 1%;
-    height: 100vh;
-    font-weight: 300;
+    display: flex;
 }
-
+.role-tab-pane {
+    display: flex;
+    flex-flow: column;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 .mr-parent-div .tab-pane {
-    border: 1px solid #ddd;
-    border-top: none;
-    background-color: white;
 }
-
+.eb-perm-wrapper{
+    margin-bottom:15px;
+}
+.eb-perm-wrapper .dataTable tr {
+    border: 1px solid #ccc;
+    border-top: none;
+    border-bottom: none;
+}
+    .eb-perm-wrapper .dataTable th{
+        font-weight:500;
+    }
+    .eb-perm-wrapper .dataTable tr:last-child {
+        border-bottom: 1px solid #ccc;
+    }
 .searchRsulsItemsDiv:hover {
     background-color: #eee;
 }
@@ -248,22 +269,31 @@
 /*----------------------------------USER GROUP---------------------------------------*/
 
 .mug-parent-div {
-    padding: 4% 0% 0% 1%;
-    height: 100vh;
+   
+}
+.eb-usrgrp-pane {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    display: flex;
+    flex-flow: column;
 }
 
 .mug-parent-div .tab-pane {
-    border: 1px solid #ddd;
-    border-top: none;
-    background-color: white;
+    
 }
-
-
+.eb-user-listview {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding-bottom: 25px;
+}
+    .eb-user-listview .dataTables_scrollHead {
+        background: #eae9e9;
+    }
 /*----------------------------------COMMON LIST---------------------------------------*/
 .outer-section-commonlist {
-    height: 100vh;
+    /*height: 100vh;
     background: white;
-    padding: 38px 6% 0 6%;
+    padding: 38px 6% 0 6%;*/
 }
 
 /*.dataTables_scrollHead {
@@ -297,7 +327,7 @@
 
 .editviewclass {
     cursor: pointer;
-    color: blue;
+    color: #245cd0;
 }
 
     .editviewclass:hover {

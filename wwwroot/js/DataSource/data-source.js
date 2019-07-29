@@ -2,7 +2,7 @@
     explain() { }
     run() { }
     SaveSuccess() { }
-    GenerateButtons() { this.setToolbar();}
+    GenerateButtons() { this.setToolbar(); }
 
     constructor(o) {
         this.Mode;
@@ -29,12 +29,10 @@
             Json: null,
             String: null,
         }
-
         this.BuilderMode = {
             NEW: "new",
             EDIT: "edit"
         };
-
         this.Refid = null;
         this.BuilderType;
         this.Settings = $.extend(Default, o);
@@ -65,6 +63,64 @@
             $extCont: $(".ds-prop"),
             $scope: $(".adv-dsb-cont")
         });
+    }
+
+    renderQueryResult(params) {
+        this.loader("show");
+        commonO.Save(function (res) {
+            this.RefId = res.refid;
+            this.openTab("Result(" + this.EbObject.VersionNumber + ")");
+            $.post('../CE/GetColumnsCollection', {
+                ds_refid: this.RefId,
+                parameter: params
+            }, function (result) {
+                this.renderDataTable(result, params);
+            }.bind(this));
+
+            $("#obj_icons,#save,#commit_outer,#create_button").hide();
+            $('#compare,#status,#ver_his').show();
+        }.bind(this))
+    }
+
+    renderDataTable(ds, params) {
+        if (ds !== null) {
+            if (ds.message !== null)
+                EbMessage("show", { Message: result.message, Background: "#aa0000", AutoHide: false, Delay: 8000 });
+            else {
+                var colscollection = JSON.parse(ds.data);
+                $.each(colscollection.$values, function (i, columns) {
+                    var ariastring = "aria-expanded='true'";
+                    var showstring = "in";
+                    $('#vernav' + commonO.tabNum + ' .accordion').append(`<div class="card">
+                        <div class="card-header" id="card-header${commonO.tabNum}_${i}">
+                          <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#TableParent${commonO.tabNum}_${i}" ${ariastring} aria-controls="TableParent${commonO.tabNum}_${i}">
+                              Table${i}
+                            </button>
+                          </h5>
+                        </div>`);
+                    $('#vernav' + commonO.tabNum + ' .accordion').append(`<div id='TableParent${commonO.tabNum}_${i}' class="collapse ${showstring}" aria-labelledby="card-header${commonO.tabNum}_${i}" data-parent="#accordion${commonO.tabNum}"> 
+                    <div class="card-body"><table class='table table-striped table-bordered' id='Table${commonO.tabNum}_${i}'></table></div></div>`);
+                    var o = {};
+                    o.tableId = "Table" + commonO.tabNum + "_" + i;
+                    o.dsid = this.RefId;
+                    o.columns = columns;
+                    o.showFilterRow = (i === 0) ? true : false;
+                    o.showSerialColumn = true;
+                    o.showCheckboxColumn = false;
+                    o.getFilterValuesFn = function () { return params };
+                    o.source = "datareader";
+                    o.IsPaging = (i === 0) ? true : false;
+                    o.scrollHeight = "250";
+                    o.QueryIndex = i;
+                    o.datetimeformat = true;
+                    let res = new EbBasicDataTable(o);
+                    res.Api.columns.adjust();
+                }.bind(this));
+                //$("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
+            }
+        }
+        this.loader("hide");
     }
 
     closeParamDiv() {
@@ -112,14 +168,19 @@
     }
 
     openTab(title) {
+        commonO.tabNum++; //increment tab num
         $('#versionNav').append(`<li>
                                     <a data-toggle='tab' tnum ="${commonO.tabNum}" href='#vernav${commonO.tabNum}'>${title}
                                         <button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button>
                                     </a>
                                 </li>`);
         $('#versionTab').append(`<div id='vernav${commonO.tabNum}' class='tab-pane fade'>`);
+        $('#vernav' + commonO.tabNum).append(`<div class='filter_modal_body'>
+                                                <div class="accordion" id="accordion${commonO.tabNum}"></div>
+                                            </div>`);
         $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
         $('.closeTab').off("click").on("click", this.delTab.bind(this));
+        $('a[data-toggle="tab"]').off('click').on('click', commonO.TabChangeSuccess.bind(commonO));
     }
 
     delTab(e) {
@@ -130,12 +191,13 @@
     }
 
     pwFlow() {
-        this.EbObject.Sql = this.getQuery().trim();
+        var sql = this.getQuery().trim();
+        this.EbObject.Sql = btoa(sql);
         $.ajax({
             type: 'POST',
             url: "../CE/GetSqlParams",
             data: {
-                "sql": this.EbObject.Sql,
+                "sql": sql,
                 "obj_type": this.BuilderType
             }
         }).done(function (data) {
@@ -147,7 +209,7 @@
                 this.setPValues();
             }
             else {
-                //this.;
+                this.renderQueryResult([]);
             }
         }.bind(this));
     }
@@ -192,7 +254,7 @@
 
     executeDs() {
         this.EbObject.InputParams.$values = this.getParamValues(this.Parameters);
-        commonO.Save();
+        this.renderQueryResult(this.EbObject.InputParams.$values);
     }
 }
 
@@ -241,7 +303,7 @@ class DataReader extends DataSource {
                     <div id='paramdiv${this.Settings.TabNumber}' class='param-div fd'>
                         <div class='pgHead'>
                             <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6>
-                            <div class="icon-cont  pull-right" id='close_paramdiv${tabNum}'>
+                            <div class="icon-cont  pull-right" id='close_paramdiv${this.Settings.TabNumber}'>
                                 <i class="fa fa-times" aria-hidden="true"></i>
                             </div>
                         </div>
@@ -272,69 +334,8 @@ class DataReader extends DataSource {
 
     filterFlow() {
         commonO.flagRun = true;
-        this.loader("show");
-        var _fv = null;
-        if (this.EbObject.FilterDialogRefId)
-            _fv = getValsForViz(this.FilterDialog.FormObj);
-        else
-            _fv = this.EbObject.InputParams.$values;
-
-        commonO.Save(function (res) {
-            this.RefId = res.refid;
-            commonO.tabNum++; //increment tab num
-
-            this.openTab("Result" + this.EbObject.VersionNumber);
-            $.post('../CE/GetColumnsCollection', {
-                ds_refid: this.RefId,
-                parameter: _fv
-            }, function (result) {
-                this.renderTable(result, _fv);
-            }.bind(this));
-
-            $("#obj_icons,#save,#commit_outer,#create_button").hide();
-            $('#compare,#status,#ver_his').show();
-        }.bind(this));
-    }
-
-    renderTable(result, filter) {
-        if (result !== null) {
-            if (result.message !== null)
-                EbMessage("show", { Message: result.message, Background: "#aa0000", AutoHide: false, Delay: 8000 });
-            else {
-                var colscollection = JSON.parse(result.data);
-                $.each(colscollection.$values, function (i, columns) {
-                    var ariastring = "aria-expanded='true'";
-                    var showstring = "in";
-                    $('#vernav' + commonO.tabNum + ' .accordion').append(`<div class="card">
-                        <div class="card-header" id="card-header${commonO.tabNum}_${i}">
-                          <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#TableParent${commonO.tabNum}_${i}" ${ariastring} aria-controls="TableParent${commonO.tabNum}_${i}">
-                              Table${i}
-                            </button>
-                          </h5>
-                        </div>`);
-                    $('#vernav' + commonO.tabNum + ' .accordion').append(`<div id='TableParent${commonO.tabNum}_${i}' class="collapse ${showstring}" aria-labelledby="card-header${commonO.tabNum}_${i}" data-parent="#accordion${commonO.tabNum}"> 
-                    <div class="card-body"><table class='table table-striped table-bordered' id='Table${commonO.tabNum}_${i}'></table></div></div>`);
-                    var o = {};
-                    o.tableId = "Table" + commonO.tabNum + "_" + i;
-                    o.dsid = this.RefId;
-                    o.columns = columns;
-                    o.showFilterRow = (i === 0) ? true : false;
-                    o.showSerialColumn = true;
-                    o.showCheckboxColumn = false;
-                    o.getFilterValuesFn = function () { return filter };
-                    o.source = "datareader";
-                    o.IsPaging = (i === 0) ? true : false;
-                    o.scrollHeight = "250";
-                    o.QueryIndex = i;
-                    o.datetimeformat = true;
-                    let res = new EbBasicDataTable(o);
-                    res.Api.columns.adjust();
-                }.bind(this));
-                $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
-            }
-        }
-        this.loader("hide");
+        var params = getValsForViz(this.FilterDialog.FormObj);
+        this.renderQueryResult(params);//super method
     }
 
     getFilterValues() {
@@ -352,11 +353,6 @@ class DataReader extends DataSource {
             _filterParams.sort();
         }
         return _filterParams;
-    }   
-
-    executeDs() {
-        this.EbObject.InputParams.$values = this.getParamValues(this.Parameters);
-        this.filterFlow();
     }
 }
 

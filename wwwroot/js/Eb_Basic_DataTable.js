@@ -340,10 +340,7 @@ var EbBasicDataTable = function (Option) {
 
     this.receiveAjaxData = function (dd) {
         this.isRun = true;
-        if (this.login === "uc") {
-            dvcontainerObj.currentObj.data = dd;
-            this.MainData = dd;
-        }
+        this.MainData = dd;
         this.data = dd.data;
         return dd.data;
     };

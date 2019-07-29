@@ -293,9 +293,18 @@
                                                     <div class="div-payment-details-body-3 col-md-7">
                                                         <div class="payment-content" style="text-align:left;display:flex;">
                                                             (@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodEnd.ToString("dd MMM,yyyy"))
-                                                            <div id="up_inv_desc">
+                                                            <p id="up_inv_desc" style="text-align:left;display:flex;">
                                                                 @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].Description
-                                                            </div>
+                                                            </p>
+                                                            @{
+                                                                if (ViewBag.StripeUpcomingInvoice.Invoice.PercentOff > 0)
+                                                                {
+                                                                    <span>(@ViewBag.StripeUpcomingInvoice.Invoice.PercentOff% Off for @ViewBag.StripeUpcomingInvoice.Invoice.Duration)</span>
+                                                                }
+                                                            }
+
+                                                        </div>
+                                                        <div style="text-align:center;display:flex;">
                                                             (Upcoming Invoice)
                                                         </div>
                                                     </div>
@@ -303,7 +312,7 @@
                                                         <p class="payment-content"></p>
                                                     </div>
                                                     <div class="div-payment-details-body-5 col-md-2" id="up_inv_amt">
-                                                        <p class="payment-content">$@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].Amount</p>
+                                                        <p class="payment-content">$@ViewBag.StripeUpcomingInvoice.Invoice.Total</p>
                                                     </div>
                                                 </div>
                                             }
@@ -353,6 +362,12 @@
                                                         <p class="payment-content" style="text-align:left">
                                                             (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
                                                             @ViewBag.StripeInvoice.Invoices.List[i].Description
+                                                            @{
+                                                                if ((ViewBag.StripeInvoice.Invoices.List[i].PercentOff) > 0)
+                                                                {
+                                                                    <span> (@ViewBag.StripeInvoice.Invoices.List[i].PercentOff% Off for @ViewBag.StripeInvoice.Invoices.List[i].Duration)</span>
+                                                                }
+                                                            }
                                                         </p>
                                                     </div>
                                                     <div class="div-payment-details-body-4 col-md-1">
@@ -379,6 +394,12 @@
                                                         <p class="payment-content" style="text-align:left">
                                                             (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
                                                             @ViewBag.StripeInvoice.Invoices.List[i].Description
+                                                            @{
+                                                                if ((ViewBag.StripeInvoice.Invoices.List[i].PercentOff) > 0)
+                                                                {
+                                                                    <span> (@ViewBag.StripeInvoice.Invoices.List[i].PercentOff% Off for @ViewBag.StripeInvoice.Invoices.List[i].Duration)</span>
+                                                                }
+                                                            }
                                                         </p>
                                                     </div>
                                                     <div class="div-payment-details-body-4 col-md-1">
@@ -895,7 +916,7 @@
         });
     }.bind(this));
 
-    
+
 
     this.updatecardcontent = function (data) {
         var html = ``;
@@ -971,7 +992,7 @@
     function cardedit(e) {
         let val = $(e.target).parent().siblings("input").val();
         $(`#modal1`).empty();
-        $(`#modal1`).append(` 
+        $(`#modal1`).append(`
                              <div id="modal-card-edit" style="margin: 23px 75px;">
                                 <div id="modal-cardedit">
                                     <input type="hidden" id="card_id" name="card_id" value = "${val}" />

@@ -27,7 +27,6 @@
     flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 526px;
     background-color: white;
     width: 100%;
     /*min-width: 250px;*/
@@ -45,13 +44,15 @@
 .pg-wraper {
     display: flex;
     flex-direction: column;
-    height: inherit;
     /*font-family: Tahoma;*/
     width: 100%;
+    height: 100%;
+    color: rgba(17, 17, 68, 0.86);
     /*overflow-x: auto;*/
     overflow-x: hidden;
     position: relative;
     z-index: 1;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
     .pg-wraper .pg-inp, .pgTdval .dropdown-toggle, .pgTdval .cxv-inp {
@@ -833,11 +834,6 @@
 /*.propgrid-table-cont .pg-table tr:hover td {
     border: solid 1px #ddf;
 }*/
-
-.pg-wraper {
-    color: rgba(17, 17, 68, 0.86);
-    height: 100%;
-}
 
 .form-buider-cont {
     color: #114;

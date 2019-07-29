@@ -45,18 +45,20 @@
         .filter-box .filter-run:hover {
             background-color: #247;
         }
-
-    .filter-box .search-wraper {
-        border: solid 1px #ddd;
-    }
 </style>
 
 
 <script>
     @Html.Raw(ViewBag.ControlOperations);
     var fobj = @Html.Raw(ViewBag.FilterObj);
+    let initCompleteCallback = function () { };
+
     $(document).ready(function () {
-        self.FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc', '@ViewBag.curloc', @Html.Raw(ViewBag.userObj), '@ViewBag.submitId');
+        let _this = {$submit:$("#btnGo")}
+        if (fobj.AutoRun)
+            initCompleteCallback = function () { this.$submit.trigger("click"); }.bind(_this);
+
+        self.FilterDialog = new Eb_FilterDialogRender(fobj, '@ViewBag.wc', '@ViewBag.curloc', @Html.Raw(ViewBag.userObj), '@ViewBag.submitId',null,initCompleteCallback);
         console.log("Eb_FilterDialogRender");
-    })
+    });
 </script>

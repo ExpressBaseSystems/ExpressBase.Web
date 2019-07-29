@@ -68,61 +68,78 @@ namespace ExpressBase.Web.Controllers
 
 		//profile setup tenant
 		[HttpPost]
-		public CreateAccountResponse Board(string email, string name, string country, string password)
+		public async Task<CreateAccountResponse> BoardAsync(string email, string name, string country, string password,string token)
 		{
+			var grecap=false;
 			CreateAccountResponse res = new CreateAccountResponse();
+			Recaptcha cap = null;
 			try
 			{
-				UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
-				if (result.Unique)
-				{
-					res.IsEmailUniq = true;
-					string activationcode = Guid.NewGuid().ToString();
-					var pgurl = this.HttpContext.Request.Host;
-					var pgpath = this.HttpContext.Request.Path;
-
-					res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
-					{
-						Name = name,
-						Password = password,
-						Country = country,
-						Email = email,
-						Account_type = null,
-						ActivationCode = activationcode,
-						PageUrl = pgurl.ToString(),
-						PagePath = pgpath.ToString()
-					});
-
-					if (res.Id > 0)
-					{
-
-						MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
-						{
-							provider = CredentialsAuthProvider.Name,
-							UserName = email,
-							Password = (password + email).ToMD5Hash(),
-							Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
-							//UseTokenCookie = true
-						});
-						if (authResponse != null)
-						{
-							CookieOptions options = new CookieOptions();
-							Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-							Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-							this.ServiceClient.BearerToken = authResponse.BearerToken;
-							this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-						}
-					}
-				}
-				else
-				{
-					res.IsEmailUniq = false;
-				}
-
+				cap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+				grecap = cap.Success;
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+				Console.WriteLine("RECAPTCHA EXCEPTION");
+				Console.WriteLine(e.Message);
+				TempData["ErrorMessage"] = "Recaptcha error, try again";
+			}
+			if (grecap == true)
+			{
+				try
+				{
+					UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+					if (result.Unique)
+					{
+						res.IsEmailUniq = true;
+						string activationcode = Guid.NewGuid().ToString();
+						var pgurl = this.HttpContext.Request.Host;
+						var pgpath = this.HttpContext.Request.Path;
+
+						res = this.ServiceClient.Post<CreateAccountResponse>(new CreateAccountRequest
+						{
+							Name = name,
+							Password = password,
+							Country = country,
+							Email = email,
+							Account_type = null,
+							ActivationCode = activationcode,
+							PageUrl = pgurl.ToString(),
+							PagePath = pgpath.ToString()
+						});
+
+						if (res.Id > 0)
+						{
+
+							MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+							{
+								provider = CredentialsAuthProvider.Name,
+								UserName = email,
+								Password = (password + email).ToMD5Hash(),
+								Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
+								//UseTokenCookie = true
+							});
+							if (authResponse != null)
+							{
+								CookieOptions options = new CookieOptions();
+								Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+								Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+								this.ServiceClient.BearerToken = authResponse.BearerToken;
+								this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+							}
+						}
+					}
+					else
+					{
+						res.IsEmailUniq = false;
+					}
+
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+				}
+				
 			}
 			return res;
 		}
@@ -200,10 +217,27 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public int ResetPassword(string emcde, string psw)
+        public async Task<int> ResetPasswordAsync(string emcde,string tkn, string psw,string token)
         {
-            try
+			bool grecap = false;
+			int stts = 0;
+
+			Recaptcha cap = null;
+			try
+			{
+				cap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+				grecap = cap.Success;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("RECAPTCHA EXCEPTION");
+				Console.WriteLine(e.Message);
+				TempData["ErrorMessage"] = "Recaptcha error, try again";
+			}
+			try
             {
+				if (grecap == true)
+				{
                 byte[] base64Encoded = System.Convert.FromBase64String(emcde);
                 string resetcd = System.Text.Encoding.UTF8.GetString(base64Encoded);
                 string[] resetcode = resetcd.Split(new Char[] { '$' }, StringSplitOptions.RemoveEmptyEntries);
@@ -215,13 +249,15 @@ namespace ExpressBase.Web.Controllers
                     Password = psw
                 });
                 if (sts.VerifyStatus == true)
-                { return 1; }
+                { stts= 1; }
                 else
                 {
-                    return 0;
+						stts= 0;
                 }
+				}
+				return stts;
 
-            }
+			}
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.Message + e.StackTrace);

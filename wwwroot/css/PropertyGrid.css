@@ -846,8 +846,13 @@
     color: #114;
     background-color: white;
 }
+.pgTdval .bootstrap-select.btn-group .dropdown-toggle .filter-option {
+    text-overflow: ellipsis;
+    padding-right: 8px;
+}
 
 .pgRow .pgTdName {
+    width: 60%;
     padding-top: 0.68em;
     padding-bottom: 0.68em;
     padding-left: 1.9em;

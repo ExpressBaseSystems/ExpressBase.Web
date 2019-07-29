@@ -24,9 +24,9 @@
     this.CurColCount = 2;
     this.movingObj = {};
 
-    this.DraggableConts = [...(document.getElementsByClassName("tool-sec-cont")), document.getElementById(this.formId)];
+    this.DraggableConts = [...(document.querySelectorAll("[ebclass=tool-sec-cont]")), document.getElementById(this.formId)];
 
-        this.GenerateButtons = function () {
+    this.GenerateButtons = function () {
         if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
             $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
                                             <i class='fa fa-eye' aria-hidden='true'></i>
@@ -252,10 +252,10 @@
     };
 
     this.onDragFn = function (el, source) {
-        //if drag start within the form
-        let id = $(el).closest(".Eb-ctrlContainer").attr("ebsid");
         let $source = $(source);
-        if ($source.attr("class") !== this.toolContClass) {
+        //if drag start within the form
+        if ($source.attr("ebclass") !== this.toolContClass) {
+            let id = $(el).closest(".Eb-ctrlContainer").attr("ebsid");
             this.movingObj = this.rootContainerObj.Controls.PopByName(id);
             if ($source.closest(".ebcont-ctrl").attr("ctype") === "TabPane")
                 this.adjustPanesHeight($source);
@@ -269,7 +269,7 @@
         let $target = $(el).parent();
         if (this.movingObj) {
             //Drag end with in the form
-            if ($target.attr("class") !== this.toolContClass) {
+            if ($target.attr("ebclass") !== this.toolContClass) {
                 if ($sibling.attr("id")) {
                     let idx = $sibling.index() - 1;
                     this.rootContainerObj.Controls.InsertAt(idx, this.movingObj);
@@ -287,7 +287,7 @@
         let $target = $(target);
         if (target) {
             //drop from toolbox to form
-            if ($(source).attr("class") === this.toolContClass) {
+            if ($(source).attr("ebclass") === this.toolContClass) {
                 let $el = $(el);
                 let type = $el.attr("eb-type").trim();
                 let ebsid = type + ++(this.controlCounters[type + "Counter"]);
@@ -410,7 +410,7 @@
             return false;
         }
 
-        let _class = $(target).attr("class");
+        let _class = $(target).attr("ebclass");
         if (_class !== this.toolContClass)
             return true;
         else

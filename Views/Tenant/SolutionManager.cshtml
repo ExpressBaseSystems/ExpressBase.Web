@@ -481,7 +481,7 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="billing" role="tabpanel">
-                    @await Component.InvokeAsync("Stripe", new { sid = ViewBag.cid })
+                    @*@await Component.InvokeAsync("Stripe", new { sid = ViewBag.cid })*@
                 </div>
                 <div class="tab-pane" id="home" role="tabpanel">
                     <div class="form-group">
@@ -602,7 +602,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>Port</label>
-                                    <input id="dbPortInput" name="Port" pattern="^[0-9]*$" maxlength="5" type="text" class="form-control Inputclear" required />
+                                    <input id="dbPortInput" name="Port" pattern="^[0-9]*$" maxlength="5" type="number" class="form-control Inputclear" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
@@ -766,7 +766,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label>Port</label>
-                                    <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
+                                    <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" maxlength="5" type="number" class="form-control Inputclear" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
@@ -1080,7 +1080,7 @@
 
                                 <div class="form-group">
                                     <label>Port</label>
-                                    <input id="EmailInputPort" type="text" name="Port" class="form-control Inputclear" value="" required />
+                                    <input id="EmailInputPort" type="number" name="Port" pattern="^[0-9]*$" maxlength="5" class="form-control Inputclear" value="" required />
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,32 @@
 ﻿@{ 
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-   
-<div class="center mr-parent-div">
-    @await Component.InvokeAsync("ManageRoles", new { itemid = ViewBag.itemid })
+<div class="row s-dash-container h-100">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group eb-dashbord-sidebar">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Wiki">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="s-dash-workplace tenant_workpane h-100">
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs h-100">
+            <div class="tdash-box-body h-100">
+                <div class="mr-parent-div w-100">
+                    @await Component.InvokeAsync("ManageRoles", new { itemid = ViewBag.itemid })
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

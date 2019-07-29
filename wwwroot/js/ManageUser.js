@@ -849,11 +849,11 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
                
         var metadata3 = ['Id','Title','Description','_simpleClose'];
         if (this.ipAddTile === null) {
-            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "calc((100vh - 210px)/2) !important" };
+            let options = { longTitle: "IP Address Whitelist", tileDivHeight: "auto" };
             this.ipAddTile = new TileSetupJs($("#divIp"), "New IP", this.ipconsList, null, metadata3, null, null, null, options);
         }
         if (this.timeAddTile === null) {
-            let options = { longTitle: "DateTime Whitelist", tileDivHeight: "calc((100vh - 210px)/2) !important" };
+            let options = { longTitle: "DateTime Whitelist", tileDivHeight: "auto" };
             this.timeAddTile = new TileSetupJs($("#divTime"), "New DateTime", this.dtconsList, null, metadata3, null, null, null, options);
         }
 

@@ -27,6 +27,9 @@
 <link rel="stylesheet" href="~/css/EbCommonStyles/Ebsitepage.css">
 <script src="~/js/EbDashBoards/EbOnBoarding.js" type="text/javascript"></script>
 <script src="~/js/EbDashBoards/countrypicker.js" type="text/javascript"></script>
+
+
+
 <div class="eb-signup_wrapper h-100">
     <div class="header hidden-xs hidden-sm" style="background: white;">
         <div class="container-fluid">
@@ -111,19 +114,19 @@
                                     </span>
                                 </div>
                             </div>
-                         
+
                         </div>
-                        
+
                         <div class="eb_required_group required col-sm-12 col-md-12 col-lg-12  tbpad">
                             <div class="col-md-6 col-lg-6 rightcolpad" style="padding-left: 0px;">
-                                
-                                    <label>Name</label>
-                                    <div class="icon_input">
-                                        <input class="form-control sinpt" type="text" name="Name" id="name">
-                                        <i class="fa fa-user fa-fw" aria-hidden="true"></i>
-                                    </div>
-                                    <div id="namelbl" class="ebnotify" style=" visibility :hidden"> Enter a valid name</div>
-                               
+
+                                <label>Name</label>
+                                <div class="icon_input">
+                                    <input class="form-control sinpt" type="text" name="Name" id="name">
+                                    <i class="fa fa-user fa-fw" aria-hidden="true"></i>
+                                </div>
+                                <div id="namelbl" class="ebnotify" style=" visibility :hidden"> Enter a valid name</div>
+
                             </div>
 
                             <div class="col-md-6 col-lg-6 rightcolpad" style=" padding-right: 0px;">
@@ -145,8 +148,8 @@
                                 <a rel="Privacy Policy" href="#">Privacy Policy</a>
                             </div>
                         </div>
-                        <div class="col-sm-12 col-md-12 col-lg-12 rightcolpadtop tbpad ">
-                            <button id="save-profile" class="btn save-tenant lg_button g-recaptcha"  data-sitekey=@ViewBag.ReCaptchaKey disabled>
+                        <div class="col-sm-12 col-md-12 col-lg-12 rightcolpadtop tbpad text-center">
+                            <button id="save-profile" class="btn save-tenant lg_button  g-recaptcha" data-sitekey="@ViewBag.ReCaptchaKey" data-callback='RecaptchaCallback'>
                                 Join Now
                                 <i class="iconspin"></i>
                             </button>
@@ -155,28 +158,28 @@
                     @{ if (ViewBag.Env != "Production")
                         {
 
-                        <div class="eb-signup_socilaWrpr text-center">
-                            <div class="eb-signup_socilaWrpr_inner">
-                                @*<a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg">*@
-                                <a href="@sociallink/auth/facebook" class="btn btn-lg">
-                                    <i class="fa fa-facebook text-muted"></i>
-                                </a>
-                                <a href="@sociallink/auth/github" class="btn btn-lg">
-                                    <i class="fa fa-github text-muted"></i>
-                                </a>
-                                @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
-                                        <i class="fa fa-twitter text-muted"></i>
+                            <div class="eb-signup_socilaWrpr text-center">
+                                <div class="eb-signup_socilaWrpr_inner">
+                                    @*<a href="@ViewBag.ServiceUrl/auth/facebook" class="btn btn-lg">*@
+                                    <a href="@sociallink/auth/facebook" class="btn btn-lg">
+                                        <i class="fa fa-facebook text-muted"></i>
                                     </a>
-                                    <a href=" @sociallink/auth/google" class="btn btn-lg">
-                                         <i class="fa fa-google-plus text-muted"></i>
+                                    <a href="@sociallink/auth/github" class="btn btn-lg">
+                                        <i class="fa fa-github text-muted"></i>
                                     </a>
-                                    <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
-                                    <i class="fa fa-linkedin text-muted"></i>
-                                    </a>*@
+                                    @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
+                                            <i class="fa fa-twitter text-muted"></i>
+                                        </a>
+                                        <a href=" @sociallink/auth/google" class="btn btn-lg">
+                                             <i class="fa fa-google-plus text-muted"></i>
+                                        </a>
+                                        <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
+                                        <i class="fa fa-linkedin text-muted"></i>
+                                        </a>*@
+                                </div>
                             </div>
-                        </div>
-                            }
                         }
+                    }
                 </div>
 
             </div>
@@ -195,7 +198,7 @@
         var psd = new PasswordValidation();
     });
     //$("#AppIcon").iconpicker({ placement: 'top', iconset: 'fontawesome', icon: 'fa-home' }).on('change', function (e) { $("input[name='AppIcon']").val(e.icon); });
-    
+
 </script>
 
 

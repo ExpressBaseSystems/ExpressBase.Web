@@ -38,7 +38,7 @@
 
 [dragging=true] .outer-pg > .pgHead {
     background: none;
-    background-color: rgba(3, 38, 74, 0.73);
+    background-color: rgba(0, 0, 0, 0.73);
 }
 
 .pg-wraper {
@@ -153,20 +153,25 @@
     padding-bottom: 0.30em;
 }
 
+.outer-pg > .pgHead {
+    font-size: 13px;
+}
+
+
 
 .pgHead {
-    background-color: rgba(3, 1, 45, 0.53);
-    background-color: rgb(71, 97, 123);
-    /*background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));*/
-    color: #fff;
-    padding: 2%;
-    font-weight: bold;
+    /*background-color: rgba(3, 1, 45, 0.53);*/
+    /*background-color: rgb(71, 97, 123);*/
+    /*/*background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));*/*/
+    /*color: #fff;*/
+    /*padding: 2%;*/
+    /*font-weight: bold;*/
     /*font-family: arial;*/
-    width: 100%;
-    font-size: 1.05em;
-    letter-spacing: 0.06em;
-    font-weight: bold;
-    border-radius: 1px 1px 0px 0px;
+    /*width: 100%;*/
+    /*font-size: 1.05em;*/
+    /*letter-spacing: 0.06em;*/
+    /*font-weight: bold;*/
+    /*border-radius: 1px 1px 0px 0px;*/
 }
 
 [dragging=true] .pgHead {
@@ -485,10 +490,11 @@
 
 .pgGroupRow {
     background-color: white;
-    font-weight: bold;
     letter-spacing: 0.0835em;
     /*font-family: sans-serif;*/
     box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.15), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+    font-size: 12px;
 }
 
     .pgGroupRow > td:hover {
@@ -775,13 +781,14 @@
 .controls-dd-cont .dropdown-toggle {
     margin-left: 0 !important;
     box-shadow: none !important;
-    font-weight: bold;
     /*font-family: sans-serif;*/
     letter-spacing: 0.05em;
-    color: rgba(51, 51, 94, 0.88);
     border: none !important;
     border-radius: 0px !important;
-    border-bottom: var(--pgTdBorder) !important
+    border-bottom: var(--pgTdBorder) !important;
+    padding: 3px 12px;
+    font-weight: bold;
+    font-size: 13px;
 }
 
 .pgCXEditor-Cont div.controls-dd-cont > div > button > span.filter-option.pull-left {

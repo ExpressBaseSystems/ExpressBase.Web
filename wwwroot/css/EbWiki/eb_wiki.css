@@ -38,8 +38,10 @@
         .sidebar-item-wraper .sidebar-item .text {
 
         }
+.sidebar-item:hover{
+    cursor:pointer;
+}
 .eb-wiki-sidebar .sidebar-list-wraper {
-
 }
 .eb-wiki-sidebar .wraper-link {
     font-size: 15px;
@@ -404,6 +406,7 @@ iframe {
             font-size: 13px;
         }
         .GettingStarted:hover {
+            cursor:pointer;
             -webkit-box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
             -moz-box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
             box-shadow: 1px 0px 5px 1px rgba(158,158,158,0.4);
@@ -759,6 +762,17 @@ iframe {
     border-radius: 4px;
 }
 
+.nav > li > a {
+    padding: 2px 14px 2px 14px;
+}
+.eb-styledTab {
+    margin-right: -30px;
+    margin-left: -30px;
+    padding-left: 13px;
+    margin-bottom: 10px;
+}
+
+}
 
 /*padding-right: 15px;*/
 /* padding-left: 15px; *//**/

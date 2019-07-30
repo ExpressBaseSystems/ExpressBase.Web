@@ -1,4 +1,10 @@
-﻿.tag-cont {
+﻿.dv {
+    height: calc(100vh - 72px);
+    width: inherit;
+    overflow: hidden;
+}
+
+.tag-cont {
     height: inherit;
     background-color: white;
 }
@@ -11,7 +17,8 @@
 
 .tag-scroll {
     overflow-y: auto;
-    height: inherit;
+    height: calc( 100% - 30px );
+    background-color: white;
 }
 
 .tag-wraper:nth-child(2) {
@@ -78,7 +85,6 @@
 
 .canvasParentDiv {
     height: inherit;
-    padding: 10px 0px;
 }
 
 .map_inner {
@@ -87,4 +93,7 @@
     align-items: center;
     font-size: 20px;
     background: white;
+}
+.toolicons .btn {
+    margin-right:2px !important;
 }

@@ -1,11 +1,10 @@
 ﻿let addwiki = function () {
     let historyId = [];
 
-    this.printresult = function () {
+    this.AppendHtml = function () {
         let abc = $('#text').val();
         $('#render').html(abc);
         $('#new1').append('');
-
     };
 
     this.show_home = function () {
@@ -595,15 +594,12 @@
             },
             success: function (ob) {
                 if (ob.id != null) {
-                    alert("Success")
-
                     if (status == "Draft") {
                         $("[style-val=Draft]").click();
                     }
                     else {
                         $("[style-val=Unpublish]").click();
                     }
-                   
                 }
             }
         });
@@ -621,7 +617,7 @@
             },
             success: function (ob) {
                 if (ob.id != null) {
-                    alert("Success");
+                   
                         $("[style-val=Publish]").click();                 
                 }
             }
@@ -643,6 +639,7 @@
        
         $(`[data-val=${val}]`).toggle(300);
     }
+
     this.UpdateOrder = function (e) {
         $("#eb_common_loader").EbLoader("show");
         var myList = [];
@@ -658,11 +655,29 @@
                 data: { myList: JSON.stringify(myList) },
                 success: function (data) {
                     if (data == true) {
-                        alert("Success")
+                        EbPopBox("show", {
+                            Message: "Success...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }});
                         $("#eb_common_loader").EbLoader("hide");
                     }
                     else {
-                        alert("Un fSuccess")
+                        EbPopBox("show", {
+                            Message: "Failed to update the order...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
+                       
                         $("#eb_common_loader").EbLoader("hide");
                     }
 
@@ -670,20 +685,17 @@
             });
     }
 
-    this.selectedHighlight = function (e) {
+    this.WikiAdminMenuBarHighlight = function (e) {
         $("#eb_common_loader").EbLoader("show");
         let style_val = e.target.getAttribute("style-val");
-        $(".selected").removeClass("menu_border");
-        $(`[style-val="${style_val}"]`).addClass("menu_border");
-
         if (style_val == "PublicView") {
             this.PublicView();
         }
         else
-            this.selectedHighlightAjax(style_val);
+            this.WikiAdminMenuBarHighlightAjax(style_val);
     }
 
-    this.selectedHighlightAjax = function (style_val) {
+    this.WikiAdminMenuBarHighlightAjax = function (style_val) {
         $.ajax({
             type: 'POST',
             url: "/Wiki/Admin_Wiki_List",
@@ -691,7 +703,6 @@
                 status: style_val
             },
             success: this.ajaxAdminWikiFetch.bind(this)
-
         });
     }
 
@@ -715,6 +726,7 @@
             success: this.ajaxUserReviewRateSuccess.bind(this)
         });
     }
+
     this.ajaxUserReviewRateSuccess = function () {
 
     }
@@ -729,23 +741,15 @@
         let dataId= $(`[order-id="${OrderId}"]`).children().attr("data-id");
         $(`[data-id="${dataId}"]`).click();
     }
-    //this.CreateNewWikiTrigger = function () {
-    //    let host = $(location).attr('host');
-    //    window.location.replace(`${host}/wiki/add/0`);
-    //}
-    //this.WikiGaleryToggle = function () {
-    //    $(".Col_head").click();
-    //    onclick = "location.href='#DEFAULT_ColBdy'";
-    //    onclick = "location.href='#bottomAnchor'";
-    //}
+   
 
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
         $(".wikilist").on("click", this.FetchWikiList.bind(this)); 
         $("#wiki_data_div").on("click", ".searchshow", this.FetchWikiList.bind(this));
-        $("#text").on("keyup", this.printresult.bind(this));
-        $("#text").on("click", this.printresult.bind(this));
+        $("#text").on("keyup", this.AppendHtml.bind(this));
+        $("#text").on("click", this.AppendHtml.bind(this));
         $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
@@ -753,13 +757,12 @@
         $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
         $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
-        //$("#galleryToggle").on("click", this.WikiGaleryToggle.bind(this));
 
         //wiki admin
         $(".wikies_list").on("click", this.Admin_Wiki_List.bind(this));
         $("#public").on("click",".WikiMenu", this.WikiMenuToggle.bind(this));
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
-        $(".selected").on("click", this.selectedHighlight.bind(this));
+        $(".WikiAdminMenuBar").on("click", this.WikiAdminMenuBarHighlight.bind(this));
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
         //$("#CreateWiki").on("click", this.CreateNewWikiTrigger.bind(this));
      

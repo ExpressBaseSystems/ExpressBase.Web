@@ -35,6 +35,12 @@ body, html,.html-root {
     -webkit-flex-wrap: wrap;
     flex-wrap: wrap;
 }
+.eb_input-h{
+    height:45px;
+}
+.border-style-none{
+    border-style:none;
+}
 .ebbtn {
     border: 0;
     border-radius: 3px;

@@ -327,36 +327,42 @@ namespace ExpressBase.Web.Controllers
         {
 
             SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
-            if (Social.UniqueEmail)
-            {
-                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
-                {
-                    provider = CredentialsAuthProvider.Name,
-                    UserName = Social.Email,
-                    Password = Social.Pauto,
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
-                    //UseTokenCookie = true
-                });
-                if (authResponse != null)
-                {
-                    CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                    this.ServiceClient.BearerToken = authResponse.BearerToken;
-                    this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                }
+			if (Social.UniqueEmail)
+			{
+				MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+				{
+					provider = CredentialsAuthProvider.Name,
+					UserName = Social.Email,
+					Password = Social.Pauto,
+					Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE } },
+					//UseTokenCookie = true
+				});
+				if (authResponse != null)
+				{
+					CookieOptions options = new CookieOptions();
+					Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+					Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+					this.ServiceClient.BearerToken = authResponse.BearerToken;
+					this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+				}
 
-                var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
-                {
-                    SolutionName = "My First solution",
-                    Description = "This is my first solution",
-                    DeployDB = true,
-                });
-                return Redirect(RoutingConstants.MYSOLUTIONS);
-            }
-            else
+				var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
+				{
+					SolutionName = "My First solution",
+					Description = "This is my first solution",
+					DeployDB = true,
+				});
+				return Redirect(RoutingConstants.MYSOLUTIONS);
+			}
+			else
 			if (!Social.Forsignup)
 			{
+				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == ""))
+				{
+					TempData["scl_signin_msg"] = "You have already completed Signin. Please login using your mailid";
+				}
+				else
+				{
 
 				var lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
 				{
@@ -413,13 +419,20 @@ namespace ExpressBase.Web.Controllers
 				}
 				return Redirect(RoutingConstants.MYSOLUTIONS);
 			}
+				return RedirectToAction(RoutingConstants.TENANTSIGNIN);
+			}
 			else
 			{
 				if (Social.AuthProvider =="github")
 				{
 					TempData["scl_signin_msg"] = "You have already created an accout with Github";
 				}
-				
+
+				if (Social.AuthProvider == "facebook")
+				{
+					TempData["scl_signin_msg"] = "You have already created an accout with Facebook";
+				}
+
 			}
 				
                 return RedirectToAction(RoutingConstants.TENANTSIGNIN);

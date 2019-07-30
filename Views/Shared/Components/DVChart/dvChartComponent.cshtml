@@ -86,6 +86,7 @@
 <script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
 <script type="text/javascript" src="~/js/Eb_chart.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/dvContainer.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/GoogleMap/Googlemap.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
 <link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" asp-append-version=@bApnd/>
 <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd/>
@@ -99,7 +100,24 @@
         var commonO = $("#layout_div").data("commonObj");
     }
 
-    @*if('@ViewBag.Refid' == )*@
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new eb_chart('@ViewBag.al_arz_map_key','@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc', @ViewBag.counter, null, null, null, null, null, '@ViewBag.cid', '@ViewBag.uid');
+    let tempobj = {
+        googlekey : '@ViewBag.al_arz_map_key',
+        refid: '@ViewBag.Refid',
+        ver_num: '@ViewBag.VersionNumber',
+        type : @ViewBag.ObjType,
+        dsobj: @Html.Raw(ViewBag.dsObj),
+        cur_status: '@ViewBag.Status',
+        tabNum: @ViewBag.tabnum,
+        ssurl: '@ViewBag.ServiceUrl',
+        login: '@ViewBag.wc',
+        counter: @ViewBag.counter,
+        TenantId: '@ViewBag.cid',
+        UserId : '@ViewBag.uid'
+    }
+
+    if (@Html.Raw(ViewBag.dsObj).$type.indexOf("EbGoogleMap") !== -1)
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EbGoogleMap(tempobj);
+    else
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new eb_chart('@ViewBag.al_arz_map_key','@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc', @ViewBag.counter, null, null, null, null, null, '@ViewBag.cid', '@ViewBag.uid');
 
 </script>

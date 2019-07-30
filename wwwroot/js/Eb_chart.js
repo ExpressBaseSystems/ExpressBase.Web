@@ -85,8 +85,8 @@ var datasetObj4Pie = function (label, data, backgroundColor, borderColor, fill) 
 };
 
 var ChartColor = function (name, color) {
-    this.name = name;
-    this.color = color;
+    this.Name = name;
+    this.Color = color;
 };
 
 var animateObj = function (duration) {
@@ -108,8 +108,6 @@ var animateObj = function (duration) {
         });
     };
 }
-
-var Xlabel, Ylabel, showRoute, markLabel = [], Inform = [], TableId, zoomlevel, MarkerLink, markerParams = [], Te_id, Usr_id, AutoZoom;
 
 var informaion = function (nam, val) {
     this.name = nam;
@@ -159,6 +157,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         "area": "fa fa-area-chart",
         "horizontalBar": "fa fa-bar-chart"
     };
+
     var split = new splitWindow("parent-div0", "contBox");
 
     split.windowOnFocus = function (ev) {
@@ -206,7 +205,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
     this.ajaxSucc = function (text) {
         var flag = false;
-        if (this.login == "uc") {
+        if (this.login === "uc") {
             $("#ppcont").hide();
         }
         if (this.MainData !== null) {
@@ -226,7 +225,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         $("#btnGo" + this.tabNum).click(this.init.bind(this));
         var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter).empty();
-        this.filterHtml = text;        
+        this.filterHtml = text;
 
         this.FDCont = $("#filterWindow_" + this.tableId);
         $("#filterWindow_" + this.tableId).empty();
@@ -236,7 +235,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         $("#filterWindow_" + this.tableId).children().find("#btnGo").click(this.init.bind(this));
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
-
         if (this.login === "uc") {
             this.stickBtn = new EbStickButton({
                 $wraper: $(".dv-body"),
@@ -249,6 +247,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 style: { position: "absolute", top: "41px" }
             });
         }
+
         if (typeof commonO !== "undefined")
             this.EbObject = commonO.Current_obj;
         else
@@ -279,13 +278,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#eb_common_loader").EbLoader("hide");
         }
         $(subDivId).focus();
-
-        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
-            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-        else {
-            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-            this.type = "googlemap";
-        }
         this.PcFlag = false;
     }.bind(this);
 
@@ -294,8 +286,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
             if (this.login === "dc") {
-                //this.propGrid = new Eb_PropertyGrid("pp_inner");
-
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
                     wc: "dc",
@@ -323,44 +313,14 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 });
             }
             this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-            if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1)
-                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-            else
-                this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             this.startRelated();
             this.call2FD();
         }
-    }
+    };
 
     this.tmpPropertyChanged = function (obj, Pname) {
-        this.EbObject = obj;
-        if (this.login == "dc")
-            commonO.Current_obj = obj;
-        else
-            dvcontainerObj.currentObj = obj;
-        if (Pname == "Charttype") {
-            this.prevObj = this.EbObject;
-            if (obj.Charttype == 1) {
-                this.EbObject = new EbObjects["EbGoogleMap"](this.EbObject.EbSid);
-                commonO.Current_obj = this.EbObject;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-            }
-            else {
-                this.EbObject = new EbObjects["EbChartVisualization"](this.EbObject.EbSid);
-                commonO.Current_obj = this.EbObject;
-                this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-                this.type = "bar";
-            }
-            this.EbObject.Charttype = obj.Charttype;
-            this.rearrangeObjects();
-            $("#canvasDiv" + this.tableId).children("iframe").remove();
-            $("#myChart" + this.tableId).remove();
-            $("#map" + this.tableId).remove();
-
-            this.updateDragula("Changed");
-
-        }
-        if (Pname == "DataSourceRefId") {
+        if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = true;
                 this.EbObject.Columns.$values = [];
@@ -371,7 +331,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             }
         }
         else if (Pname == "Name") {
-			$("#objname").text(obj.DisplayName);
+            $("#objname").text(obj.DisplayName);
         }
     }.bind(this);
 
@@ -379,35 +339,22 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.EbObject = this.EbObject;
         if (this.EbObject.Type !== "")
             this.type = this.EbObject.Type;
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
         $.event.props.push('dataTransfer');
-        this.createChartDivs();
+            this.createChartDivs();
         this.appendColumns();
         if (!this.bot) {
-            this.appendXandYAxis();
-            if (this.login === "uc" && this.EbObject.Xaxis.$values.length >= 1 && this.EbObject.Yaxis.$values.length >= 1) {
+                this.appendXandYAxis();
+            if (this.login === "uc") {
                 this.collapseGraph();
             }
             this.propGrid.ClosePG();
-            if (this.login === "dc") {
-                if (this.FD)
-                    this.stickBtn.minimise();
-                else
-                    this.stickBtn.hide();
-            }
-            else {
-                if (this.FD) {
-                    this.stickBtn.minimise();
-                }
-                else
-                    this.stickBtn.hide();
-            }
-            
+            if (this.FD)
+                this.stickBtn.minimise();
+            else
+                this.stickBtn.hide();
+
             filterChanged = false;
-            //if (!this.isTagged)
-            //    f = this.compareFilterValues();
-            if (this.MainData !== null ) {
-                //dvcontainerObj.currentObj.data = this.MainData;
+            if (this.MainData !== null) {
                 this.drawGraphHelper(this.MainData.data);
             }
             else {
@@ -418,13 +365,13 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 }
                 if (this.isContextual) {
                     if (this.isSecondTime) {
-                        if (!this.validateFD())
+                        if (this.FilterDialog.IsFDValidationOK && !this.FilterDialog.IsFDValidationOK())
                             return;
                         this.filterValues = this.getFilterValues();
                     }
                 }
                 else {
-                    if (!this.validateFD())
+                    if (this.FilterDialog.IsFDValidationOK && !this.FilterDialog.IsFDValidationOK())
                         return;
                     this.filterValues = this.getFilterValues();
                 }
@@ -440,20 +387,14 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                     success: this.getDataSuccess.bind(this),
                     error: function () { }
                 });
-                //$.post(this.ssurl + '/ds/data/' + this.EbObject.DataSourceRefId, { draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Token: getToken(), rToken: getrToken(), Params: JSON.stringify(getFilterValues()) }, this.getDataSuccess.bind(this));
             }
         }
+
         this.GenerateButtons();
 
     };
 
     this.CloseParamDiv = function () {
-        //if (this.login === "dc") {
-        //    this.stickBtn.minimise();
-        //}
-        //else {
-        //    dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
-        //}
         this.stickBtn.minimise();
     };
 
@@ -476,7 +417,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.placefiltervalues = function () {
-       
+
         $.each(getFlatControls(this.FilterDialog.FormObj), function (i, obj) {
             let val = getObjByval(this.filterValues, "Name", obj.Name).Value;
             obj.setValue(val);
@@ -484,7 +425,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     }
 
     this.createChartDivs = function () {
-        //if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
         $("#content_" + this.tableId).empty();
         $("#content_" + this.tableId).append(
             `<div id='graphcontainer_tab${this.tableId}' style='height:inherit;' class='chartCont'>
@@ -493,12 +433,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                   <div class='tag-wraper'><div class='pgHead'>Data</div><div class='tag-scroll'><div id='ColumnCont${this.tableId}'></div>
                     <ul id="data-table-list_${this.tableId}" class="tool-box-items">
                         <li>
-                            <a>Diamensions</a>
-                            <ul id="diamension${this.tableId}"></ul>
-                        </li>
-                        <li>
-                            <a>Measures</a>
-                            <ul id="measure${this.tableId}"></ul>
+                            <a>Columns</a>
+                            <ul id="Columns${this.tableId}"></ul>
                         </li>
                     </ul>
                 </div></div>
@@ -522,13 +458,13 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.GenerateButtons = function () {
-		$("#objname").text(this.EbObject.DisplayName);
+        $("#objname").text(this.EbObject.DisplayName);
         $("#obj_icons").empty();
         //$("#obj_icons").children().not("#btnGo"+this.tabNum).remove();
         $("#obj_icons").append("<button id='btnGo" + this.tableId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
         $("#btnGo" + this.tableId).click(this.init.bind(this));
         //if (this.login === "dc") {
-            $("#obj_icons").append(`<div style='display: inline;'>
+        $("#obj_icons").append(`<div style='display: inline;'>
             <div class='dropdown' id='graphDropdown_tab${ this.tableId}' style='display: inline-block;padding-top: 1px;'>
             <button class='btn dropdown-toggle' type='button' data-toggle='dropdown'>
             <span class='caret'></span>
@@ -590,16 +526,9 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
         if (this.login === "uc") {
             dvcontainerObj.modifyNavigation();
-            if (this.EbObject.Charttype === 1)
-                $(`#btnColumnCollapse${this.tableId}`).hide();
         }
         //$("#obj_icons").append("<button id='switch" + this.tableId + "' class='btn commonControl'>S</button>");
         this.bindEvents();
-
-        if (this.type !== "googlemap")
-            $("#graphDropdown_tab" + this.tableId).show();
-        else
-            $("#graphDropdown_tab" + this.tableId).hide();
         if (this.bot) {
             $("#columnsDisplay" + this.tableId).empty();
             $("#columnsDisplay" + this.tableId).append(`<div class="pgHead">User:<label></label></div>`);
@@ -621,50 +550,50 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     this.appendColumns = function () {
         var colsAll_XY = [], Xcol = [], Ycol = [], colsAll_X = [];
         var tid = this.tableId;
-        $.each(this.EbObject.Columns.$values, function (i, obj) {
-            if (obj.RenderAs.toString() === EbEnums.StringRenderType.Marker) {
-                this.type = "googlemap";
-                this.bot = true;
-                var arr = this.cellData.split(",");
-                if (arr.length == 2) {
-                    this.XLabel.push(this.cellData.split(",")[1]);
-                    this.YLabel.push(this.cellData.split(",")[0]);
-                    this.drawGeneralGraph();
-                }
-                return false;
-            }
-        }.bind(this));
-        if (!this.bot) {
+        //$.each(this.EbObject.Columns.$values, function (i, obj) {
+        //    if (obj.RenderAs.toString() === EbEnums.StringRenderType.Marker) {
+        //        this.type = "googlemap";
+        //        this.bot = true;
+        //        var arr = this.cellData.split(",");
+        //        if (arr.length == 2) {
+        //            this.XLabel.push(this.cellData.split(",")[1]);
+        //            this.YLabel.push(this.cellData.split(",")[0]);
+        //            this.drawGeneralGraph();
+        //        }
+        //        return false;
+        //    }
+        //}.bind(this));
+        if (!this.bot ) {
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0) {
                 $.each(this.EbObject.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
                 $.each(this.EbObject.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
                 $.each(this.EbObject.Yaxis.$values, this.AddYcolumns.bind(this, Ycol));
                 $.each(colsAll_X, this.RemoveYcolumns.bind(this, colsAll_XY, Ycol));
-                $("#diamension" + tid).empty();
-                $("#measure" + tid).empty();
+                $("#Columns" + tid).empty();
             }
             else {
                 colsAll_XY = this.EbObject.Columns.$values;
-                $("#diamension" + tid).empty();
-                $("#measure" + tid).empty();
+                $("#Columns" + tid).empty();
             }
             $.each(colsAll_XY, function (i, obj) {
-                if (obj.data !== undefined) {
-                    if (gettypefromNumber(obj.Type) === "String" || gettypefromNumber(obj.Type) === "DateTime") {
-                        if (gettypefromNumber(obj.Type) === "String")
-                            $("#diamension" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-font'></i></span>${obj.name}</li>`);
-                        else
-                            $("#diamension" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-calendar'></i></span>${obj.name}</li>`);
-                    }
-                    else if (gettypefromNumber(obj.Type) === "Numeric")
-                        $("#measure" + tid).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa fa-sort-numeric-asc'></i></span>${obj.name}</li>`);
-                }
-            });
-            $('#data-table-list_'+this.tableId).killTree();
-            $('#data-table-list_' + this.tableId).treed();
-            $('#data-table-list_' + this.tableId+' .branch a').trigger("click");
-            this.updateDragula();
+                this.AppendColumnInsideFn(obj);
+            }.bind(this));
         }
+        $('#data-table-list_' + this.tableId).killTree();
+        $('#data-table-list_' + this.tableId).treed();
+        $('#data-table-list_' + this.tableId + ' .branch a').trigger("click");
+        this.updateDragula();
+    };
+
+    this.AppendColumnInsideFn = function (obj) {
+        if (obj.Type === 16)
+            _classname = "fa-font";
+        else if (obj.Type === 5 || obj.Type === 6)
+            _classname = "fa-calendar";
+        else if (obj.Type === 8 || obj.Type === 7 || obj.Type === 11 || obj.Type === 12)
+            _classname = "fa-sort-numeric-asc";
+
+        $("#Columns" + this.tableId).append(`<li class='colTiles' style='display: list-item;' id='li${obj.name}' data-id='${obj.data}' data-type=${obj.Type}><span><i class='fa ${_classname}'></i></span>${obj.name}</li>`);
     };
 
     this.AddXcolumns = function (Xcol, i, obj) {
@@ -695,9 +624,13 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 //this.Xindx.push(obj.data);
             });
             $.each(this.EbObject.Yaxis.$values, function (i, obj) {
-                $("#Y_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "' data-type='" + obj.Type +"'>" + obj.name + "<button class='close' type='button'>x</button></li>");
-                //this.Yindx.push(obj.data);
-            });
+                $("#Y_col_name" + tid).append("<li class='colTiles columnDrag' id='li" + obj.name + "' data-id='" + obj.data + "' data-type='" + obj.Type + "'>" + obj.name + "<button class='close' type='button'>x</button></li>");
+                if (this.EbObject.LegendColor.$values[i].Name === null) {
+                    this.EbObject.LegendColor.$values[i].Name = obj.name;
+                    this.EbObject.LegendColor.$values[i].Color = default_colors[i];
+                }
+
+            }.bind(this));
         }
         $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
@@ -706,20 +639,12 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.acceptDrop = function (el, target, source, sibling) {
-        if ($(source).attr("id") === "diamension" + this.tableId && $(target).attr("id") === "X_col_name" + this.tableId) {
+        if ($(source).attr("id") === "Columns" + this.tableId && $(target).attr("id") === "X_col_name" + this.tableId) {
             return true;
         }
-        else if ($(source).attr("id") === "measure" + this.tableId && $(target).attr("id") === "Y_col_name" + this.tableId) {
+        else if ($(source).attr("id") === "Columns" + this.tableId && $(target).attr("id") === "Y_col_name" + this.tableId) {
             return true;
         }
-        else if ($(source).attr("id") === "diamension" + this.tableId && $(target).attr("id") === "measure" + this.tableId) {
-            return true;
-        }
-        else if ($(source).attr("id") === "measure" + this.tableId && $(target).attr("id") === "diamension" + this.tableId) {
-            return true;
-        }
-        else if (source === target)
-            return true;
         else {
             return false;
         }
@@ -792,57 +717,16 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
                     this.YLabel.push(this.data[j][ydx[k]]);
-                if (this.type !== "googlemap") {
                     if (this.type !== "pie") {
                         this.piedataFlag = false;
-                        this.dataset.push(new datasetObj(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].color, this.EbObject.LegendColor.$values[k].color, false));
+                        this.dataset.push(new datasetObj(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
                     }
                     else {
-                        this.dataset.push(new datasetObj4Pie(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].color, this.EbObject.LegendColor.$values[k].color, false));
+                        this.dataset.push(new datasetObj4Pie(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
                         this.piedataFlag = true;
                     }
-                }
             }
-
-            if (this.type === "googlemap") {
-                if (this.EbObject.MarkerLabel) {
-                    $.each(this.EbObject.MarkerLabel.$values, function (i, obj) {
-                        if (i === 0)
-                            ml.push(obj.data);
-                    });
-
-                    if (ml.length > 0) {
-                        $.each(this.data, function (i, value) {
-                            markLabel.push(value[ml[0]].charAt(0));
-                        });
-                    }
-                }
-                Inform = [];
-                if (this.EbObject.InfoWindow) {
-                    $.each(this.EbObject.InfoWindow.$values, function (i, obj) {
-                        info = [];
-                        $.each(this.data, function (k, value) {
-                            info.push(value[obj.data]);
-                        });
-                        Inform.push(new informaion(obj.name, info));
-                    }.bind(this));
-                }
-                if (this.EbObject.Zoomlevel)
-                    zoomlevel = this.EbObject.Zoomlevel;
-                else
-                    zoomlevel = 10;
-                AutoZoom = this.EbObject.AutoZoom;
-                MarkerLink = this.EbObject.MarkerLink;
-                if (this.EbObject.FormParameter.$values.length > 0) {
-                    let obj = this.EbObject.FormParameter.$values[0];
-                    $.each(this.data, function (k, value) {
-                        markerParams.push(new fltr_obj(obj.Type, obj.name, value[obj.data]));
-                    }.bind(this));
-                    Te_id = TenantId;
-                    Usr_id = UserId;
-                }
-            }
-
+            
         }
     };
 
@@ -856,119 +740,88 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             $("#eb_common_loader").EbLoader("show");
             this.getBarData();
         }
-        if (this.type === "googlemap") {
-            //this.getData4GoogleMap();
-            TableId = this.tableId;
-            $("#canvasDiv" + this.tableId).children("iframe").remove();
-            $("#myChart" + this.tableId).remove();
-            if ($("#map" + this.tableId).children().length === 0)
-                $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:100%;width:100%;'></div>");
-            Xlabel = this.XLabel;
-            Ylabel = this.YLabel;
-            showRoute = this.EbObject.ShowRoute;
-            if (!this.isMyScriptLoaded("https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js")) {
-                $("#layout_div").prepend(`
-                <script src= 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js' ></script>
-                <script async defer
-                    src='https://maps.googleapis.com/maps/api/js?key=${googlekey}&callback=initMap'>
-                </script>`);
-            }
-            else {
-                $("#map" + this.tableId).empty();
-                initMap();
-            }
-
-            $("#eb_common_loader").EbLoader("hide");
-            if (this.bot) {
-                $("#map" + this.tableId).css("height", "inherit");
-                $("#map" + this.tableId).css("margin-top", "10px");
-            }
-            return false;
-        }
-        else {
-            this.gdata = {
-                labels: this.XLabel,
-                datasets: this.dataset,
-            };
-            //this.animateOPtions = (this.EbObject.ShowValue) ? new animateObj(0) : false;
-            this.goptions = {
-                scales: {
-                    yAxes: [{
-                        scaleLabel: {
-                            display: (this.type !== "pie") ? true : false,
-                            labelString: (this.EbObject.YaxisTitle !== "") ? this.EbObject.YaxisTitle : "YLabel",
-                            fontColor: (this.EbObject.YaxisTitleColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.YaxisTitleColor : "#000000"
-                        },
-                        stacked: false,
-                        gridLines: {
-                            display: (this.type !== "pie") ? true : false
-                        },
-                        ticks: {
-                            fontSize: 10,
-                            fontColor: (this.EbObject.YaxisLabelColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.YaxisLabelColor : "#000000"
-                        },
+        this.gdata = {
+            labels: this.XLabel,
+            datasets: this.dataset,
+        };
+        //this.animateOPtions = (this.EbObject.ShowValue) ? new animateObj(0) : false;
+        this.goptions = {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.EbObject.YaxisTitle !== "") ? this.EbObject.YaxisTitle : "YLabel",
+                        fontColor: (this.EbObject.YaxisTitleColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.YaxisTitleColor : "#000000"
+                    },
+                    stacked: false,
+                    gridLines: {
                         display: (this.type !== "pie") ? true : false
-                    }],
-                    xAxes: [{
-                        scaleLabel: {
-                            display: (this.type !== "pie") ? true : false,
-                            labelString: (this.EbObject.XaxisTitle !== "") ? this.EbObject.XaxisTitle : "XLabel",
-                            fontColor: (this.EbObject.XaxisTitleColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.XaxisTitleColor : "#000000"
-                        },
-                        gridLines: {
-                            display: (this.type !== "pie") ? true : false
-                        },
-                        ticks: {
-                            fontSize: 10,
-                            fontColor: (this.EbObject.XaxisLabelColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.XaxisLabelColor : "#000000"
-                        },
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.EbObject.YaxisLabelColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.YaxisLabelColor : "#000000"
+                    },
+                    display: (this.type !== "pie") ? true : false
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.EbObject.XaxisTitle !== "") ? this.EbObject.XaxisTitle : "XLabel",
+                        fontColor: (this.EbObject.XaxisTitleColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.XaxisTitleColor : "#000000"
+                    },
+                    gridLines: {
                         display: (this.type !== "pie") ? true : false
-                    }]
-                },
-                zoom: {
-                    // Boolean to enable zooming
-                    enabled: true,
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.EbObject.XaxisLabelColor !== null && this.EbObject.YaxisTitleColor !== "#ffffff") ? this.EbObject.XaxisLabelColor : "#000000"
+                    },
+                    display: (this.type !== "pie") ? true : false
+                }]
+            },
+            zoom: {
+                // Boolean to enable zooming
+                enabled: true,
 
-                    // Zooming directions. Remove the appropriate direction to disable 
-                    // Eg. 'y' would only allow zooming in the y direction
-                    mode: 'x',
-                },
-                pan: {
-                    enabled: true,
-                    mode: 'x',
-                },
-                legend: {
-                    onClick: this.legendClick.bind(this),
-                    //position: "left"
-                },
-                //legend:false,
-                //legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
+                // Zooming directions. Remove the appropriate direction to disable 
+                // Eg. 'y' would only allow zooming in the y direction
+                mode: 'x',
+            },
+            pan: {
+                enabled: true,
+                mode: 'x',
+            },
+            legend: {
+                onClick: this.legendClick.bind(this),
+                //position: "left"
+            },
+            //legend:false,
+            //legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){%><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span><%if(segments[i].label){%><%=segments[i].label%><%}%></li><%}%></ul>",
 
-                tooltips: {
-                    enabled: this.EbObject.ShowTooltip,
-                    callbacks: {
-                        label: this.toolTipCallback
-                    }
-                },
-                segmentShowStroke: this.EbObject.ShowValue && this.type === "pie",
-                segmentStrokeWidth: 2,
-                animation: {
-                    animateRotate :true,
-                    duration: 1,
-                    //onProgress: (this.EbObject.ShowValue && this.type === "pie") ? this.animationOnProgress : null,
-                    onComplete: (this.EbObject.ShowValue && this.type !== "pie") ? this.animationOnComplete : null
-                },
-            };
-            if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
-                this.RemoveCanvasandCheckButton();
+            tooltips: {
+                enabled: this.EbObject.ShowTooltip,
+                callbacks: {
+                    label: this.toolTipCallback
+                }
+            },
+            segmentShowStroke: this.EbObject.ShowValue && this.type === "pie",
+            segmentStrokeWidth: 2,
+            animation: {
+                animateRotate: true,
+                duration: 1,
+                //onProgress: (this.EbObject.ShowValue && this.type === "pie") ? this.animationOnProgress : null,
+                onComplete: (this.EbObject.ShowValue && this.type !== "pie") ? this.animationOnComplete : null
+            },
+        };
+        if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
+            this.RemoveCanvasandCheckButton();
 
-            $("#eb_common_loader").EbLoader("hide");
-        }
+        $("#eb_common_loader").EbLoader("hide");
 
     };
 
     this.RemoveCanvasandCheckButton = function () {
-        if (this.type == null) {
+        if (this.type === null) {
             this.type = "bar";
             //$("#graphDropdown_tab" + this.tableId + " button:first-child").html("<i class='"+_icons["bar"]+"'></i>" + "&nbsp;<span class = 'caret'></span>")
         }
@@ -1010,25 +863,6 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.type = "horizontalBar"
             $("#graphDropdown_tab" + this.tableId + " button:first-child").html(`<i class='${_icons["horizontalBar"]}'></i>&nbsp;<span class = 'caret'></span>`);
         }
-
-        //else if (ty == "bar")
-        //    this.type = "bar";
-        //else if (ty == "pie") {
-        //    //this.goptions = null;
-        //    this.type = "pie";
-        //}
-        //else if (ty == "doughnut") {
-        //    this.goptions = null;
-        //    this.type = "doughnut";
-        //}
-        //if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0) {
-        //    if (this.EbObject.Type == null || this.EbObject.Type == "") {
-        //        $("#graphDropdown_tab" + this.tableId + " button:first-child").html("Bar" + "&nbsp;<span class = 'caret'></span>")
-        //        this.EbObject.Type = "bar";
-        //    }
-        //    else
-        //        this.EbObject.Type = this.type;
-        //}
 
         $("#canvasDiv" + this.tableId).children("iframe").remove();
         $("#myChart" + this.tableId).remove();
@@ -1116,21 +950,16 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         e.preventDefault();
     };
 
-    this.colDrag = function (e) {
-        //e.dataTransfer.setData("text", e.target.id);
-        //this.sourceElement = e.target.parentNode.tagName;
-        //this.sourceElementId = e.target.parentElement.id;
-    };
-
     this.colDrop = function (el, target, source, sibling) {
+        $(el).addClass("columnDrag");
+        $(el).children("span").remove();
+        $(el).children(".close").remove();
+        var temp;
+        $(el).css("display", "inline-block");
+        var name = $(el).text();
+        $(el).append("<button class='close' type='button'>x</button>");
+
         if ($(target).attr("id") === "X_col_name" + this.tableId || $(target).attr("id") === "Y_col_name" + this.tableId) {
-            $(el).addClass("columnDrag");
-            $(el).children("span").remove();
-            $(el).children(".close").remove();
-            var temp;
-            $(el).css("display", "inline-block");
-            var name = $(el).text();
-            $(el).append("<button class='close' type='button'>x</button>");
             if ($(target).attr("id") === "X_col_name" + this.tableId) {
                 temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
                 let index = this.EbObject.Xaxis.$values.findIndex(x => x.name === temp[0].name);
@@ -1138,18 +967,17 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                     this.EbObject.Xaxis.$values.splice(index, 1);
                 this.EbObject.Xaxis.$values.push(temp[0]);
             }
-            else if($(target).attr("id") === "Y_col_name" + this.tableId) {
+            else if ($(target).attr("id") === "Y_col_name" + this.tableId) {
                 temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name === name; });
                 let index = this.EbObject.Yaxis.$values.findIndex(x => x.name === temp[0].name);
                 if (index > -1)
                     this.EbObject.Yaxis.$values.splice(index, 1);
                 this.EbObject.Yaxis.$values.push(temp[0]);
-                if (this.type !== "googlemap") {
-                    index = this.EbObject.LegendColor.$values.findIndex(x => x.name === temp[0].name);
-                    if (index > -1)
-                        this.EbObject.LegendColor.$values.splice(index, 1);
-                    this.EbObject.LegendColor.$values.push(new ChartColor(name, randomColor()));
-                }
+
+                index = this.EbObject.LegendColor.$values.findIndex(x => x.Name === temp[0].name);
+                if (index > -1)
+                    this.EbObject.LegendColor.$values.splice(index, 1);
+                this.EbObject.LegendColor.$values.push(new ChartColor(name, randomColor()));
             }
 
             if ($("#X_col_name" + this.tableId + " li").length === 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
@@ -1160,10 +988,11 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
             }
             console.log(this.EbObject.Xaxis); console.log(this.EbObject.Yaxis);
-            $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
-            $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
         }
 
+
+        $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
+        $("#Y_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
     };
 
     this.colDropRef = function (el, target, source, sibling) {
@@ -1197,32 +1026,17 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
     this.RemoveAndAddToColumns = function (e) {
         var str = $(e.target).parent().text();
-        var index = parseInt($(e.target).parent().attr("data-id"));
-        if ($(e.target).parent().parent().attr("id") === "X_col_name" + this.tableId) {
-            if (gettypefromNumber($(e.target).parent().attr("data-type")) === "String")
-                $("#diamension" + this.tableId).append(`<li class='colTiles' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-font'></i></span>${str.substr(0, str.length - 1)}</li>`);
-            else if (gettypefromNumber($(e.target).parent().attr("data-type")) === "DateTime")
-                $("#diamension" + this.tableId).append(`<li class='colTiles' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-calendar'></i></span>${str.substr(0, str.length - 1)}</li>`);
-            //index = this.Xindx.indexOf($(e.target).parent().attr("data-id"));
-            //this.Xindx.pop(index);
-        }
-        else if ($(e.target).parent().parent().attr("id") === "Y_col_name" + this.tableId) {
-            $("#measure" + this.tableId).append(`<li class='colTiles' style='display: list-item;' id='li${str.substr(0, str.length - 1)}' data-id='${$(e.target).parent().attr("data-id")}' data-type='${$(e.target).parent().attr("data-type")}'><span><i class='fa fa-sort-numeric-asc'></i></span>${str.substr(0, str.length - 1)}</li>`);
-            //index = this.Yindx.indexOf($(e.target).parent().attr("data-id"));
-            //this.Yindx.pop(index);
-        }
-        //$("#columns4Drag" + this.tableId + " .list-group").append("<li class='alert alert-success columnDrag' id='" + $(e.target).parent().attr("id") + "' draggable='true' data-id='" + $(e.target).parent().attr("data-id") + "'>" + str.substring(0, str.length - 1).trim() + "</li>");
-        $(e.target).parent().remove();
-        //$("#columns4Drag" + this.tableId + " .columnDrag").off("dragstart").on("dragstart", this.colDrag.bind(this));
-        this.EbObject.Xaxis.$values = $.grep(this.EbObject.Xaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
-        this.EbObject.Yaxis.$values = $.grep(this.EbObject.Yaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
-        if (this.type !== "googlemap")
-            this.EbObject.LegendColor.$values = $.grep(this.EbObject.LegendColor.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim() });
-        //this.EbObject.Xaxis = this.
-        //this.Xindx = $.grep(this.Xindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
-        //this.Yindx = $.grep(this.Yindx, function (obj) { return obj.name !== str.substring(0, str.length - 1).trim() });
+        let tempObj = new Object();
+        tempObj.Type = parseInt( $(e.target).parent().attr("data-type"));
+        tempObj.name = str.substr(0, str.length - 1).trim();
+        tempObj.data = $(e.target).parent().attr("data-id");
 
-        if ($("#X_col_name" + this.tableId + " li").length == 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
+        this.AppendColumnInsideFn(tempObj);
+        $(e.target).parent().remove();
+        this.EbObject.Xaxis.$values = $.grep(this.EbObject.Xaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim(); });
+        this.EbObject.Yaxis.$values = $.grep(this.EbObject.Yaxis.$values, function (vobj) { return vobj.name !== str.substring(0, str.length - 1).trim(); });
+        this.EbObject.LegendColor.$values = $.grep(this.EbObject.LegendColor.$values, function (vobj) { return vobj.Name !== str.substring(0, str.length - 1).trim(); });
+        if ($("#X_col_name" + this.tableId + " li").length === 1 && $("#Y_col_name" + this.tableId + " li").length >= 1) {
             this.drawGeneralGraph();
         }
         else {
@@ -1257,8 +1071,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
     this.reloadChart = function (legendItem) {
         $.each(this.EbObject.LegendColor.$values, function (i, obj) {
-            if (legendItem.text === obj.name)
-                this.EbObject.LegendColor.$values[i].color = $("#fontSel").val();
+            if (legendItem.text === obj.Name)
+                this.EbObject.LegendColor.$values[i].Color = $("#fontSel").val();
         }.bind(this));
         if (this.type !== "pie") {
             if (this.gdata.datasets[0].fill === true)
@@ -1331,90 +1145,25 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     }.bind(this);
 
     this.updateDragula = function (status) {
-        if (this.EbObject.$type.indexOf("EbChartVisualization") !== -1) {
-            if (this.drake)
-                this.drake.destroy();
-            this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
-                accepts: this.acceptDrop.bind(this),
-                drop: function (el, source) {
-                }
-            });
-            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
-            if (this.type === "")
-                this.type = "bar";
-            this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
-        }
-        else {
-            this.type = "googlemap";
-            if (this.drake)
-                this.drake.destroy();
-            this.drake = new dragula([document.getElementById("diamension" + this.tableId), document.getElementById("measure" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
-                accepts: this.acceptDrop1.bind(this)
-            });
-            this.drake.off("drop").on("drop", this.colDropRef.bind(this));
-            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-        }
-
-        if (this.type !== "googlemap") {
-            $("#X_col_name" + this.tableId).siblings("span").text("X-Axis");
-            $("#Y_col_name" + this.tableId).siblings("span").text("Y-Axis");
-            $("#graphDropdown_tab" + this.tableId).show();
-        }
-        else {
-            $("#X_col_name" + this.tableId).siblings("span").text("Longitude");
-            $("#Y_col_name" + this.tableId).siblings("span").text("Lattitude");
-            $("#graphDropdown_tab" + this.tableId).hide();
-        }
-
-        if (status !== undefined) {
-            if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0) {
-                if (this.type !== "googlemap") {
-                    $.each(this.EbObject.Yaxis.$values, function (i, obj) {
-                        this.EbObject.LegendColor.$values.push(new ChartColor(obj.name, randomColor()));
-                    }.bind(this));
-                }
-                if (this.data)
-                    this.drawGeneralGraph();
+        if (this.drake)
+            this.drake.destroy();
+        this.drake = new dragula([document.getElementById("Columns" + this.tableId), document.getElementById("X_col_name" + this.tableId), document.getElementById("Y_col_name" + this.tableId)], {
+            accepts: this.acceptDrop.bind(this),
+            drop: function (el, source) {
             }
-
-        }
+        });
+        this.drake.off("drop").on("drop", this.colDropRef.bind(this));
+        if (this.type === "")
+            this.type = "bar";
+        this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
+        $("#graphDropdown_tab" + this.tableId).show();
+        
     };
-
-    this.acceptDrop1 = function (el, target, source, sibling) {
-        if ($(source).attr("id") === "X_col_name" + this.tableId && $(target).attr("id") === "Y_col_name" + this.tableId) {
-            return false;
-        }
-        else if ($(source).attr("id") === "Y_col_name" + this.tableId && $(target).attr("id") === "X_col_name" + this.tableId) {
-            return false;
-        }
-        else if ($(target).children().length == 1) {
-            return false;
-        }
-        return true;
-    };
-
-    this.isMyScriptLoaded = function (url) {
-        var scripts = document.getElementsByTagName('script');
-        for (var i = scripts.length; i--;) {
-            if (scripts[i].src == url) return true;
-        }
-        return false;
-    };
-
-    this.rearrangeObjects = function () {
-        this.EbObject.DataSourceRefId = this.prevObj.DataSourceRefId;
-        this.EbObject.DSColumns = this.prevObj.DSColumns;
-        this.EbObject.Columns = this.prevObj.Columns;
-        this.EbObject.Xaxis = this.prevObj.Xaxis;
-        this.EbObject.Yaxis = this.prevObj.Yaxis;
-        this.EbObject.Pippedfrom = this.prevObj.Pippedfrom;
-        this.EbObject.DisplayName = this.prevObj.DisplayName;
-    }
 
     this.toolTipCallback = function (item, data) {
         if (this.type === "pie")
             return data.datasets[item.datasetIndex].label + ": " + data.labels[item.index] + ": " + data.datasets[item.datasetIndex].data[item.index];
-	}.bind(this);
+    }.bind(this);
 
     this.CreateRelationString = function () { };
 
@@ -1425,95 +1174,4 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     this.start();
 };
 
-var EbGoogleMap = function (option) {
-    this.propGrid = null;
-    this.EbObject = null;
-};
 
-function initMap() {
-    if (Xlabel.length > 0) {
-        var infowindow = new google.maps.InfoWindow();
-        var directionsService = new google.maps.DirectionsService();
-        var directionsDisplay = new google.maps.DirectionsRenderer();
-        var bounds = new google.maps.LatLngBounds();
-        var mid = Math.floor(Xlabel.length / 2);
-        var map = new google.maps.Map(document.getElementById('map' + TableId), {
-            center: new google.maps.LatLng(Ylabel[mid], Xlabel[mid]),
-            gestureHandling: 'greedy'
-            // mapTypeId: google.maps.MapTypeId.ROADMAP
-        });
-        if (!AutoZoom)
-            map.setZoom(zoomlevel);
-        directionsDisplay.setMap(map);
-        var request = {
-            travelMode: google.maps.TravelMode.DRIVING
-        };
-        var marker, i;
-        for (i = 0; i < Xlabel.length; i++) {
-            var latlng = new google.maps.LatLng(Ylabel[i], Xlabel[i]);
-
-            marker = new google.maps.Marker({
-                position: latlng,
-                map: map,
-                //label: markLabel[i]
-            });
-
-            if (i == 0) request.origin = marker.getPosition();
-            else if (i == Xlabel.length - 1) request.destination = marker.getPosition();
-            else {
-                if (!request.waypoints) request.waypoints = [];
-                request.waypoints.push({
-                    location: marker.getPosition(),
-                    stopover: true
-                });
-            }
-
-            var content = "", url ="";
-            $.each(Inform, function (k, obj) {
-                content += obj.value[i] + "</br>";
-            });
-            if (MarkerLink) {
-                url = `../webform/index?refid=${MarkerLink}&_params=${btoa(JSON.stringify([markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
-                content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
-            }
-            if (content === "")
-                content = "no details";
-            infowindow.setContent(content);
-            infowindow.setOptions({ maxWidth: 200 });
-
-            google.maps.event.addListener(marker, 'mouseover', (function (marker, content, infowindow) {
-                return function () {
-                    infowindow.setContent(content);
-                    infowindow.open(map, marker);
-                };
-            })(marker, content, infowindow));  
-
-            marker.addListener('click', function () {
-                if (url !== "")
-                    window.open(url, "_blank");
-            });
-            map.addListener('click', function () {
-                infowindow.close(map, marker);
-            });
-            if (AutoZoom)
-                bounds.extend(latlng);
-        }
-        if (showRoute) {
-            directionsService.route(request, function (result, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
-                    directionsDisplay.setDirections(result);
-                }
-            });
-        }
-        if (AutoZoom)
-            map.fitBounds(bounds);
-    }
-    else {
-        $(`#map${TableId}`).append("<div class='map_inner'>No Data Available</div>");
-    }
-    
-}
-
-function someFunction(e){
-    alert("hhhhhh");
-}

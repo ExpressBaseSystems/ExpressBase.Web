@@ -67,13 +67,11 @@
     let FBid = editModeFormObj ? editModeFormObj.EbSid : "WebForm_" + Date.now().toString(36);
     let ToolBoxId = "form-buider-toolBox";
     const PrimitiveToolsId = "div-primitive-tools";
-    const CustomToolsId = "div-custom-tools";
     let PGid = "form-buider-propGrid";
     let PGformId = "form-buider-propGrid";
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new formBuilder({
         toolBoxId: ToolBoxId,
         primitiveToolsId: PrimitiveToolsId,
-        customToolsId: CustomToolsId,
         formId: FBid,
         PGId: PGid,
         builderType: BuilderType,

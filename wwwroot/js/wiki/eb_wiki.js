@@ -1,11 +1,10 @@
 ﻿let addwiki = function () {
     let historyId = [];
 
-    this.printresult = function () {
+    this.AppendHtml = function () {
         let abc = $('#text').val();
         $('#render').html(abc);
         $('#new1').append('');
-
     };
 
     this.show_home = function () {
@@ -656,11 +655,29 @@
                 data: { myList: JSON.stringify(myList) },
                 success: function (data) {
                     if (data == true) {
-                        alert("Success")
+                        EbPopBox("show", {
+                            Message: "Success...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }});
                         $("#eb_common_loader").EbLoader("hide");
                     }
                     else {
-                        alert("Un fSuccess")
+                        EbPopBox("show", {
+                            Message: "Failed to update the order...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
+                       
                         $("#eb_common_loader").EbLoader("hide");
                     }
 
@@ -731,8 +748,8 @@
         $(".props").on("click", this.appendVal.bind(this));
         $(".wikilist").on("click", this.FetchWikiList.bind(this)); 
         $("#wiki_data_div").on("click", ".searchshow", this.FetchWikiList.bind(this));
-        $("#text").on("keyup", this.printresult.bind(this));
-        $("#text").on("click", this.printresult.bind(this));
+        $("#text").on("keyup", this.AppendHtml.bind(this));
+        $("#text").on("click", this.AppendHtml.bind(this));
         $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));

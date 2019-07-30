@@ -284,37 +284,38 @@
                                         @{
                                             for (int i = 0; i < ViewBag.UpCount; i++)
                                             {
-                                                <div class="div-payment-details-body-main row" style="border-bottom: 1px solid #ccc;background-color :#e5ebf2">
-                                                    <div class="div-payment-details-body-1 col-md-2 ">
-                                                        <p class="payment-content">
-                                                            @ViewBag.StripeUpcomingInvoice.Invoice.Date.ToString("dd MMM,yyyy")
-                                                        </p>
-                                                    </div>
-                                                    <div class="div-payment-details-body-3 col-md-7">
-                                                        <div class="payment-content" style="text-align:left;display:flex;">
-                                                            (@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodEnd.ToString("dd MMM,yyyy"))
-                                                            <p id="up_inv_desc" style="text-align:left;display:flex;">
-                                                                @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].Description
+                                                if (ViewBag.StripeUpcomingInvoice.Invoice.Total > 0)
+                                                {
+                                                    <div class="div-payment-details-body-main row" style="border-bottom: 1px solid #ccc;background-color :#e5ebf2">
+                                                        <div class="div-payment-details-body-1 col-md-2 ">
+                                                            <p class="payment-content">
+                                                                @ViewBag.StripeUpcomingInvoice.Invoice.Date.ToString("dd MMM,yyyy")
                                                             </p>
-                                                            @{
-                                                                if (ViewBag.StripeUpcomingInvoice.Invoice.PercentOff > 0)
-                                                                {
-                                                                    <span>(@ViewBag.StripeUpcomingInvoice.Invoice.PercentOff% Off for @ViewBag.StripeUpcomingInvoice.Invoice.Duration)</span>
+                                                        </div>
+                                                        <div class="div-payment-details-body-3 col-md-7">
+                                                            <div class="payment-content" style="text-align:left;display:flex;">
+                                                                (@ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodStart.ToString("dd MMM,yyyy") - @ViewBag.StripeUpcomingInvoice.Invoice.Data[i].PeriodEnd.ToString("dd MMM,yyyy")) &nbsp;
+                                                                <p id="up_inv_desc" style="text-align:left;display:flex;">
+                                                                    @ViewBag.StripeUpcomingInvoice.Invoice.Data[0].Quantity users @@ @(ViewBag.StripeUpcomingInvoice.Invoice.Data[0].Amount / ViewBag.StripeUpcomingInvoice.Invoice.Data[0].Quantity) USD
+                                                                </p>
+                                                                @{
+                                                                    if (ViewBag.StripeUpcomingInvoice.Invoice.PercentOff > 0)
+                                                                    {
+                                                                        <span>&nbsp;- @ViewBag.StripeUpcomingInvoice.Invoice.PercentOff% Off  &nbsp;</span>
+                                                                    }
                                                                 }
-                                                            }
-
+                                                                    (Upcoming Invoice)
+                                                            </div>
+                                                            
                                                         </div>
-                                                        <div style="text-align:center;display:flex;">
-                                                            (Upcoming Invoice)
+                                                        <div class="div-payment-details-body-4 col-md-1">
+                                                            <p class="payment-content"></p>
+                                                        </div>
+                                                        <div class="div-payment-details-body-5 col-md-2" id="up_inv_amt">
+                                                            <p class="payment-content">$@ViewBag.StripeUpcomingInvoice.Invoice.Total</p>
                                                         </div>
                                                     </div>
-                                                    <div class="div-payment-details-body-4 col-md-1">
-                                                        <p class="payment-content"></p>
-                                                    </div>
-                                                    <div class="div-payment-details-body-5 col-md-2" id="up_inv_amt">
-                                                        <p class="payment-content">$@ViewBag.StripeUpcomingInvoice.Invoice.Total</p>
-                                                    </div>
-                                                </div>
+                                                }
                                             }
                                         }
                                     </div>
@@ -324,7 +325,7 @@
                                         int credit_tot = 0;
                                         for (int i = 0; i < ViewBag.Count; i++)
                                         {
-                                            if (ViewBag.StripeInvoice.Invoices.List[i].Status)
+                                            if (ViewBag.StripeInvoice.Invoices.List[i].Status & ViewBag.StripeInvoice.Invoices.List[i].Total > 0)
                                             {
                                                 <div class="div-payment-details-body-main row">
                                                     <div class="div-payment-details-body-1 col-md-2 ">
@@ -360,12 +361,12 @@
                                                     </div>
                                                     <div class="div-payment-details-body-3 col-md-7">
                                                         <p class="payment-content" style="text-align:left">
-                                                            (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
-                                                            @ViewBag.StripeInvoice.Invoices.List[i].Description
+                                                            (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM,yyyy") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy")) 
+                                                            @ViewBag.StripeInvoice.Invoices.List[i].SubList[0].Quantity users @@ @(ViewBag.StripeInvoice.Invoices.List[i].SubList[0].Total / ViewBag.StripeInvoice.Invoices.List[i].SubList[0].Quantity) USD 
                                                             @{
                                                                 if ((ViewBag.StripeInvoice.Invoices.List[i].PercentOff) > 0)
                                                                 {
-                                                                    <span> (@ViewBag.StripeInvoice.Invoices.List[i].PercentOff% Off for @ViewBag.StripeInvoice.Invoices.List[i].Duration)</span>
+                                                                    <span>- @ViewBag.StripeInvoice.Invoices.List[i].PercentOff% Off </span>
                                                                 }
                                                             }
                                                         </p>
@@ -382,7 +383,7 @@
                                                     </div>
                                                 </div>
                                             }
-                                            else
+                                            else if (ViewBag.StripeInvoice.Invoices.List[i].Status == false & ViewBag.StripeInvoice.Invoices.List[i].Total > 0)
                                             {
                                                 <div class="div-payment-details-body-main row">
                                                     <div class="div-payment-details-body-1 col-md-2 ">
@@ -392,12 +393,12 @@
                                                     </div>
                                                     <div class="div-payment-details-body-3 col-md-7">
                                                         <p class="payment-content" style="text-align:left">
-                                                            (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
-                                                            @ViewBag.StripeInvoice.Invoices.List[i].Description
+                                                            (@ViewBag.StripeInvoice.Invoices.List[i].PeriodStart.ToString("dd MMM,yyyy") - @ViewBag.StripeInvoice.Invoices.List[i].PeriodEnd.ToString("dd MMM,yyyy"))
+                                                            @ViewBag.StripeInvoice.Invoices.List[i].SubList[0].Quantity users @@ @(ViewBag.StripeInvoice.Invoices.List[i].SubList[0].Total / ViewBag.StripeInvoice.Invoices.List[i].SubList[0].Quantity) USD 
                                                             @{
                                                                 if ((ViewBag.StripeInvoice.Invoices.List[i].PercentOff) > 0)
                                                                 {
-                                                                    <span> (@ViewBag.StripeInvoice.Invoices.List[i].PercentOff% Off for @ViewBag.StripeInvoice.Invoices.List[i].Duration)</span>
+                                                                    <span>- @ViewBag.StripeInvoice.Invoices.List[i].PercentOff% Off </span>
                                                                 }
                                                             }
                                                         </p>
@@ -414,7 +415,6 @@
                                                     </div>
                                                 </div>
                                             }
-
                                         }
                                     }
                                 </div>

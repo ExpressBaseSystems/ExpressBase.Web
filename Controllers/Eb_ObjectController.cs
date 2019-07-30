@@ -152,7 +152,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
-            else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization))
+            else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization) || type.Equals(EbObjectTypes.GoogleMap))
             {
                 Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
@@ -514,6 +514,8 @@ namespace ExpressBase.Web.Controllers
                 VCName = "ReportBuilder";
             else if (Objtype == (int)EbObjectTypes.EmailBuilder)
                 VCName = "Emailbuilder";
+            else if (Objtype == (int)EbObjectTypes.Api)
+                VCName = "ApiBuilder";
             return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });
 
         }

@@ -222,7 +222,7 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.U_Info = fr.UserData;
                     ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
                     ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
-                    //ViewBag.LocConstraint = JsonConvert.SerializeObject(fr.LocConstraint);
+                    ViewBag.LocConstraint = JsonConvert.SerializeObject(fr.LocConstraint);
                 }
                 else
                 {
@@ -283,7 +283,9 @@ namespace ExpressBase.Web.Controllers
 				StatusId = Dict["statusid"],
 				Hide = Dict["hide"],
                 AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
-				Preference = Dict["preference"]
+				Preference = Dict["preference"],
+                LocationAdd = Dict["loc_add"],
+                LocationDelete = Dict["loc_delete"]
 			});
 			return res.id;
 		}

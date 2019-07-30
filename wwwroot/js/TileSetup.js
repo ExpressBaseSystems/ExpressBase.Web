@@ -67,11 +67,11 @@
                         </div>
                         <div class="modal-body" style="height:180px">
                             <div class="form-group">
-                                <label style="font-family: open sans; font-weight: 300;">IP Address</label>
+                                <label style="font-weight: 300;">IP Address</label>
                                 <input id="txtIpAddress${t}" class="form-control" placeholder="Type IP Address Here" title="IP Address">
                             </div>
                             <div class="form-group">
-                                <label style="font-family: open sans; font-weight: 300;">Description</label>
+                                <label style="font-weight: 300;">Description</label>
                                 <input id="txtIpDescription${t}" class="form-control" placeholder="Type Description Here" title="Description">
                             </div>
                         </div>
@@ -146,13 +146,13 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label style="font-family: open sans; font-weight: 300;">Start Time</label>
+                                                <label style="font-weight: 300;">Start Time</label>
                                                 <input id="txtStartTime${t}" type="text" class="form-control" title="Start Time">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <label style="font-family: open sans; font-weight: 300;">End Time</label>
+                                                <label style="font-weight: 300;">End Time</label>
                                                 <input id="txtEndTime${t}" type="text" class="form-control" title="End Time">
                                             </div>
                                         </div>

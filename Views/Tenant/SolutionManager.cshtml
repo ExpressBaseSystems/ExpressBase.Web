@@ -76,11 +76,11 @@
                     </a>
                 </li>
                 @*<li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">attach_money</span>
-                        <span class="t__sidebar_text">Billing</span>
-                    </a>
-                </li>*@
+                        <a class="t_a">
+                            <span class="material-icons t__sidebar_icon">attach_money</span>
+                            <span class="t__sidebar_text">Billing</span>
+                        </a>
+                    </li>*@
                 <li class="list-group-item outer_li text-center">
                     <a class="t_a" href="/AppStore" target="_blank">
                         <span class="material-icons t__sidebar_icon">store</span>
@@ -490,144 +490,140 @@
 
 
 <div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="align-items: center;">
-    <div class="modal-dialog" style="width: 1000px;">
+    <div class="modal-dialog" style="min-width: 70%;max-width:100%;">
         <div class="modal-content" id="dbConnection_mask">
             <form action="" method="post" id="dbConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 id="dbConnectionheader" class="modal-title">DataBase Connection</h4>
                     <div id="dbConnection_loder" class="dbConnection_loder"></div>
                 </div>
-                <div class="modal-body" style="display:flex">
+                <div class="modal-body" style="display:flex;">
                     <div id="vender-data-holder" class="vender-data-holder"></div>
                     <div class="connection-data-holder">
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="col-md-12 col-lg-12 pd-0">
+                            <div class="col-md-6 pd-l-0">
                                 <div class="form-group">
                                     <label>Nick Name</label>
-                                    <input id="dbNickNameInput" name="NickName" type="text" class="form-control dbConnectionInput Inputclear" required />
+                                    <input id="dbNickNameInput" name="NickName" type="text" class="form-control dbConnectionInput Inputclear eb_input-h" required />
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6">
+                        <div class="col-md-12 col-lg-12 pd-0">
+                            <div class="col-md-6 pd-l-0">
                                 <div class="form-group">
                                     <label>DataBase Name</label>
-                                    <input id="dbDatabaseNameInput" name="DatabaseName" type="text" class="form-control dbConnectionInput Inputclear" required />
+                                    <input id="dbDatabaseNameInput" name="DatabaseName" type="text" class="form-control dbConnectionInput Inputclear eb_input-h" required />
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <input id="dbvendorInput" name="DatabaseVendor" type="hidden" value="PGSQL" class="form-control Inputclear Vendor" readonly />
+                            <div class="col-md-4 col-lg-4">
+                                <input id="dbvendorInput" name="DatabaseVendor" type="hidden" value="PGSQL" class="form-control Inputclear Vendor eb_input-h" readonly />
                                 <div class="form-group" style="margin-top: 32px;">
                                     <label>Enable SSL</label>
                                     <input id="dbIsSSLInput" class="InputclearIsSSL" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4">
+                        <div class="col-md-12 col-lg-12 pd-0">
+                            <div class="col-md-4 pd-l-0">
                                 <div class="form-group">
                                     <label>Server Address</label>
-                                    <input id="dbServerInput" name="Server" type="text" class="form-control Inputclear" required />
+                                    <input id="dbServerInput" name="Server" type="text" class="form-control Inputclear eb_input-h" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4 col-lg-4">
                                 <div class="form-group">
                                     <label>Port</label>
-                                    <input id="dbPortInput" name="Port" pattern="^[0-9]*$" maxlength="5" type="number" class="form-control Inputclear" required />
+                                    <input id="dbPortInput" name="Port" pattern="^[0-9]*$" maxlength="5" type="number" class="form-control Inputclear eb_input-h" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4 col-lg-4 pd-r-0">
                                 <div class="form-group">
                                     <label>TimeOut</label>
-                                    <input id="dbTimeoutInput" name="Timeout" pattern="^[0-9]*$" type="text" class="form-control Inputclear" required />
+                                    <input id="dbTimeoutInput" name="Timeout" pattern="^[0-9]*$" type="text" class="form-control Inputclear eb_input-h" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
                             <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
                             <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
                         </div>
-                        <div class="row">
-                            <div class="col-md-10">
-
-                                <div class="col-md-12 pd-0">
-                                    <div class="uname-advanced-sec form-inline">
-                                        <label>Credentials :    </label>
-                                        <label style="margin-left: 16px;margin-right:5px;">Advanced</label>
-                                        <label class="switch">
-                                            <input type="checkbox" id="UserNamesAdvanced">
-                                            <span class="slider round"></span>
-                                        </label>
-                                    </div>
-                                    <table class="table table-form table-boarder-remover">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:130px;"></th>
-                                                <th>User Name</th>
-                                                <th>Password</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Admin</td>
-                                                <td><input id="dbUserNameInput" name="UserName" type="text" class="form-control dbConnectionInput Inputclear" required /></td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input id="dbPasswordInput" autocomplete="new-password" name="Password" class="form-control Password dbConnectionInput Inputclear" type="password" required />
-                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                            <i class="fa fa-eye " aria-hidden="true"></i>
-                                                        </div>
+                        <div class="col-md-12 pd-0">
+                            <div class="uname-advanced-sec">
+                                <label>Credentials</label>
+                                <label style="margin-left: auto;margin-right:5px;">Advanced</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="UserNamesAdvanced">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                            <div class="eb-db-cred-sec">
+                                <table class="table table-form table-boarder-remover">
+                                    <thead>
+                                        <tr>
+                                            <th style="width:130px;"></th>
+                                            <th>User Name</th>
+                                            <th style="padding-left:15px;">Password</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Admin</td>
+                                            <td><input id="dbUserNameInput" name="UserName" type="text" class="form-control dbConnectionInput Inputclear" required /></td>
+                                            <td>
+                                                <div class="input-group eb-inputWicon">
+                                                    <input id="dbPasswordInput" autocomplete="new-password" name="Password" class="form-control Password dbConnectionInput Inputclear" type="password" required />
+                                                    <span class='input-group-addon' id="ShowPasswordd">
+                                                        <i class="fa fa-eye " aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="advanced-tr" style="display:none">
+                                            <td>Read-Write User</td>
+                                            <td><input id="dbReadWriteUserName" name="ReadWriteUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
+                                            <td>
+                                                <div class="input-group eb-inputWicon">
+                                                    <input id="dbReadWritePassword" autocomplete="new-password" name="ReadWritePassword" class="form-control Password dbConnectionInput Inputclear" type="password" />
+                                                    <div class='input-group-addon' id="ShowPasswordd">
+                                                        <i class="fa fa-eye " aria-hidden="true"></i>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="advanced-tr" style="display:none">
-                                                <td>Read-Write User</td>
-                                                <td><input id="dbReadWriteUserName" name="ReadWriteUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input id="dbReadWritePassword" autocomplete="new-password" name="ReadWritePassword" class="form-control Password dbConnectionInput Inputclear" type="password" />
-                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                            <i class="fa fa-eye " aria-hidden="true"></i>
-                                                        </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr class="advanced-tr" style="display:none">
+                                            <td>ReadOnly User</td>
+                                            <td><input id="dbReadOnlyUserName" name="ReadOnlyUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
+                                            <td>
+                                                <div class="input-group eb-inputWicon" style="padding-bottom:0;">
+                                                    <input id="dbReadOnlyPassword" autocomplete="new-password" name="ReadOnlyPassword" class="form-control Password Inputclear" type="password" />
+                                                    <div class='input-group-addon' id="ShowPasswordd">
+                                                        <i class="fa fa-eye " aria-hidden="true"></i>
                                                     </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="advanced-tr" style="display:none">
-                                                <td>ReadOnly User</td>
-                                                <td><input id="dbReadOnlyUserName" name="ReadOnlyUserName" type="text" class="form-control dbConnectionInput Inputclear" /></td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input id="dbReadOnlyPassword" autocomplete="new-password" name="ReadOnlyPassword" class="form-control Password Inputclear" type="password" />
-                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                            <i class="fa fa-eye " aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
-
                     </div>
                 </div>
-                <div class="modal-footer">
+                <div class="modal-footer border-style-none">
                     <button type="submit" class="btn btn-primary saveConnection" style="display:none">Save</button>
-                    <a whichform="dbConnectionSubmit" url="DataDbTest" class="ebbtn eb_btnblue testConnection">Save Connection</a>
+                    <a whichform="dbConnectionSubmit" url="DataDbTest" class="ebbtn eb_btnblue eb_btn-sm testConnection">Save Connection</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<div id="filesDbConnectEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+<div id="filesDbConnectEdit" class="modal fade s-dash-modal input-clear" role="dialog">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form action="" method="post" id="filesDbConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Mongo Files Db Connection</h4>
                 </div>
@@ -643,63 +639,48 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Nick Name</label>
-                                    <input id="FilesInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                    <input id="FilesInputNickname" name="NickName" type="text" class="Inputclear form-control eb_input-h" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group" style="margin-top: 32px;">
+                                    <label>Enable SSL</label>
+                                    <input id="FilesInputIsSSL" class=" Inputclear" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
                                 </div>
                             </div>
                             <input name="DatabaseVendor" type="hidden" value="MongoDB" class="form-control Vendor" readonly />
-                            <div class="form-group" style="margin-top: 32px;">
-                                <label>Enable SSL</label>
-                                <input id="FilesInputIsSSL" class=" Inputclear" name="IsSSL" type="checkbox" style="margin-left: 15px;width: 16px;height: 16px;" />
-                            </div>
-
                         </div>
                         <div class="row">
-
-                            <div class="form-group">
-                                <div class="col-md-10">
-                                    <label>Credentials :</label>
-                                    <div class="col-md-12 pd-0">
-                                        <table class="table table-bordered table-form table-boarder-remover">
-                                            <thead>
-                                                <tr>
-                                                    <th style="width:130px;"></th>
-                                                    <th>User Name</th>
-                                                    <th>Password</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>Admin</td>
-                                                    <td><input id="FilesInputUsername" name="UserName" type="text" class="Inputclear form-control" required /></td>
-                                                    <td>
-                                                        <div class="input-group">
-                                                            <input id="FilesInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
-                                                            <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                                <i class="fa fa-eye " aria-hidden="true"></i>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>User Name</label>
+                                    <input id="FilesInputUsername" name="UserName" type="text" class="Inputclear form-control eb_input-h" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <div class="input-group eb-inputWicon" style="padding:0;">
+                                        <input id="FilesInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password eb_input-h" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd">
+                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
-
                         </div>
                         <div class="row" style="margin-top: 15px;">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Host</label>
-                                    <input id="FilesInputServer" name="Server" type="text" class="form-control Inputclear" required />
+                                    <input id="FilesInputServer" name="Server" type="text" class="form-control Inputclear eb_input-h" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Port</label>
-                                    <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" maxlength="5" type="number" class="form-control Inputclear" required />
+                                    <input id="FilesInputPort" name="Port" pattern="^[0-9]*$" maxlength="5" type="number" class="form-control Inputclear eb_input-h" required />
                                     <div class="help-block with-errors"></div>
                                 </div>
                             </div>
@@ -708,8 +689,8 @@
                         <input type="hidden" class="Inputclear IntConfId" id="FilesInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary MongoConnection">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm MongoConnection">Save</button>
                 </div>
             </form>
         </div>
@@ -720,13 +701,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="twilio_mask">
             <form id="TwilioConnectionSubmit" method="post" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Twilio Accounts</h4>
                     <div id="twilioConnection_loder" class="dbConnection_loder"></div>
                 </div>
                 <div class="modal-body" style="display:flex">
-                    <div class="vender-data-holder" style="width:50%;">
+                    <div class="vender-data-holder" style="width:25%;">
                         <img class='img-responsive' src='~/images/Twilio.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>Twilio is a cloud communications platform as a service (CPaaS). Twilio allows software developers to programmatically make and receive phone calls, send and receive text messages, and perform other communication functions using its web service APIs.</span>
@@ -738,7 +719,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Nick Name</label>
-                                    <input id="TwilioInputNickname" name="NickName" class="form-control Inputclear" type="text" required />
+                                    <input id="TwilioInputNickname" name="NickName" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                         </div>
@@ -746,7 +727,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Sender Number</label>
-                                    <input id="TwilioInputFrom" name="From" class="form-control Inputclear" type="text" required />
+                                    <input id="TwilioInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                         </div>
@@ -754,7 +735,7 @@
                             <div class="col-md-9">
                                 <div class="form-group">
                                     <label>Username</label>
-                                    <input id="TwilioInputUsername" name="UserName" class="form-control Inputclear" type="text" required />
+                                    <input id="TwilioInputUsername" name="UserName" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                         </div>
@@ -762,9 +743,9 @@
                             <div class="col-md-9">
                                 <div class="form-group ">
                                     <label>Password</label>
-                                    <div class="input-group">
-                                        <input id="TwilioInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear" type="password" required />
-                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                    <div class="input-group eb-inputWicon" style="padding:0;">
+                                        <input id="TwilioInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear eb_input-h" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd">
                                             <i class="fa fa-eye " aria-hidden="true"></i>
                                         </div>
                                     </div>
@@ -776,8 +757,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
                 </div>
             </form>
         </div>
@@ -788,13 +769,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="expert_mask">
             <form id="ExpertConnectionSubmit" method="post" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Expert Accounts</h4>
                     <div id="expertConnection_loder" class="dbConnection_loder"></div>
                 </div>
                 <div class="modal-body" style="display:flex">
-                    <div class="vender-data-holder" style="width:40%;">
+                    <div class="vender-data-holder" style="width:25%;">
                         <img class='img-responsive' src='~/images/Expert Texting.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>ExpertTexting aims to offer businesses a cost-effective channel that can bring communication too easy with their customers. With the state-of-art API that can even integrate with any leading CRM in the world.</span>
@@ -805,7 +786,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Nick Name</label>
-                                    <input id="ExpertInputNickname" name="NickName" class="form-control Inputclear" type="text" required />
+                                    <input id="ExpertInputNickname" name="NickName" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                         </div>
@@ -814,13 +795,13 @@
                                 <input name="DatabaseVendor" value="ExpertTexting" class="form-control Vendor " type="hidden" readonly />
                                 <div class="form-group">
                                     <label>Sender Number</label>
-                                    <input id="ExpertInputFrom" name="From" class="form-control Inputclear" type="text" required />
+                                    <input id="ExpertInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Api Key</label>
-                                    <input id="ExpertInputApi" name="ApiKey" class="form-control Inputclear" type="text" required />
+                                    <input id="ExpertInputApi" name="ApiKey" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                         </div>
@@ -828,7 +809,7 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label>Username</label>
-                                    <input id="ExpertInputUsername" name="UserName" class="form-control Inputclear" type="text" required />
+                                    <input id="ExpertInputUsername" name="UserName" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
                         </div>
@@ -836,9 +817,9 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <label>Password</label>
-                                    <div class="input-group">
-                                        <input id="ExpertInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear" type="password" required />
-                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                    <div class="input-group eb-inputWicon" style="padding:0;">
+                                        <input id="ExpertInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear eb_input-h" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd">
                                             <i class="fa fa-eye " aria-hidden="true"></i>
                                         </div>
                                     </div>
@@ -849,8 +830,8 @@
                         <input type="hidden" class="Inputclear IntConfId" id="ExpertInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
                 </div>
             </form>
         </div>
@@ -858,10 +839,10 @@
 </div>
 
 <div id="cldnry_conEdit" class="modal fade input-clear" role="dialog">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog" style="min-width:60%;max-width:100%">
         <div class="modal-content" id="cloudnary_mask">
             <form action="" method="post" id="CloudnaryConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Cloudnary Connection</h4>
                     <div id="cloudnary_loader" class="dbConnection_loder"></div>
@@ -875,31 +856,31 @@
                     </div>
                     <div class="connection-data-holder">
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Nick Name</label>
-                                    <input id="CloudnaryInputNickname" type="text" name="NickName" class="form-control Inputclear" value="" required />
+                                    <input id="CloudnaryInputNickname" type="text" name="NickName" class="form-control Inputclear eb_input-h" value="" required />
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <input name="DatabaseVendor" value="Cloudinary" class="form-control Vendor" type="hidden" readonly />
                                     <label>Cloud</label>
-                                    <input id="CloudnaryInputCloud" type="text" name="Cloud" class="form-control Inputclear" value="" required />
+                                    <input id="CloudnaryInputCloud" type="text" name="Cloud" class="form-control Inputclear eb_input-h" value="" required />
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Api Key</label>
-                                    <input id="CloudnaryInputApikey" type="text" name="ApiKey" class="form-control Inputclear" value="" required />
+                                    <input id="CloudnaryInputApikey" type="text" name="ApiKey" class="form-control Inputclear eb_input-h" value="" required />
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Api Secret</label>
-                                    <input id="CloudnaryInputApisecret" type="text" name="ApiSecret" class="form-control Inputclear" value="" required />
+                                    <input id="CloudnaryInputApisecret" type="text" name="ApiSecret" class="form-control Inputclear eb_input-h" value="" required />
                                 </div>
                                 <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
                                 <input type="hidden" class="Inputclear IntConfId" id="CloudnaryInputIntConfId" name="Id" value="0" />
@@ -907,8 +888,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
                     @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
                 </div>
             </form>
@@ -920,7 +901,7 @@
     <div class="modal-dialog">
         <div class="modal-content" id="ftp_mask">
             <form action="" method="post" id="FtpConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">FTP Connection</h4>
                     <div id="ftp_loader" class="dbConnection_loder"></div>
@@ -949,8 +930,8 @@
                     </div>
                     <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
                 </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
                     @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
                 </div>
             </form>
@@ -962,7 +943,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="email_mask">
             <form action="" method="post" id="emailConnectionSubmit">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Email Connection</h4>
                     <div id="email_loader" class="dbConnection_loder"></div>
@@ -979,23 +960,23 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label>NickName</label>
-                                    <input id="EmailInputNickname" type="text" name="NickName" class="form-control Inputclear" value="" required />
+                                    <input id="EmailInputNickname" type="text" name="NickName" class="form-control Inputclear eb_input-h" value="" required />
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-7">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <input name="DatabaseVendor" value="SMTP" class="form-control Vendor" type="hidden" readonly />
                                     <label>Provider</label>
-                                    <select id="InputEmailvendor" name="Emailvendor" class="form-control Inputclear">
+                                    <select id="InputEmailvendor" name="Emailvendor" class="form-control Inputclear eb_input-h">
                                         <option value="1">Gmail</option>
                                         <option value="2">Yahoo</option>
                                     </select>
                                     @*<input id="InputEmailvendor" type="text" name="Emailvendor" class="form-control Inputclear" value="Gmail" required />*@
                                 </div>
                             </div>
-                            <div class="col-md-4" style=" margin-top: 29px;">
+                            <div class="col-md-6" style="margin-top: 30px;">
                                 <div class="form-group">
                                     <label style="margin-right:15px;margin-bottom:0;">Enable SSL</label>
                                     <input id="EmailIsSSL" type="checkbox" class="InputclearIsSSL" name="IsSSL" />
@@ -1003,58 +984,44 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-7">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Host</label>
-                                    <input id="EmailInputSMTP" type="text" name="SMTP" class=" Inputclear form-control" value="" required />
+                                    <input id="EmailInputSMTP" type="text" name="SMTP" class=" Inputclear form-control eb_input-h" value="" required />
                                 </div>
                             </div>
-                            <div class="col-md-5">
-
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Port</label>
-                                    <input id="EmailInputPort" type="number" name="Port" pattern="^[0-9]*$" maxlength="5" class="form-control Inputclear" value="" required />
+                                    <input id="EmailInputPort" type="number" name="Port" pattern="^[0-9]*$" maxlength="5" class="form-control Inputclear eb_input-h" value="" required />
                                 </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <label>Credentials :</label>
-                                <div class="col-md-12 pd-0">
-                                    <table class="table table-bordered table-form table-boarder-remover">
-                                        <thead>
-                                            <tr>
-                                                <th style="width:65px;"></th>
-                                                <th>Email Address</th>
-                                                <th>Password</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Admin</td>
-                                                <td><input id="EmailInputEmail" type="text" name="Email" class="form-control Inputclear" value="" required /></td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input id="EmailInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password" type="password" required />
-                                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
-                                                            <i class="fa fa-eye " aria-hidden="true"></i>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                            <div class="col-md-12 pd-0">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email Address</label>
+                                        <input id="EmailInputEmail" type="text" name="Email" class="form-control Inputclear eb_input-h" value="" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Password</label>
+                                    <div class="input-group eb-inputWicon" style="padding:0;">
+                                        <input id="EmailInputPassword" autocomplete="new-password" name="Password" class="Inputclear form-control Password eb_input-h" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd" style='padding: 3px; '>
+                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
                 <input type="hidden" name="SolnId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
                 <input type="hidden" class="Inputclear IntConfId" id="SMTPInputIntConfId" name="Id" value="0" />
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
                     @*<a whichform="CloudnaryConnectionSubmit" url="FilesDbTest" class="btn btn-primary testConnection">Test Connection</a>*@
                 </div>
             </form>
@@ -1066,14 +1033,14 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="Map_mask">
             <form action="" method="post" id="MapsConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Google Maps</h4>
                     <div id="Map_loader" class="MapConnection_loder"></div>
                 </div>
                 <div class="modal-body" style="display:flex">
-                    <div class="vender-data-holder" style="width:50%">
-                        <img class='img-responsive' src='~/images/maps-google.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                    <div class="vender-data-holder" style="width:25%">
+                        <img class='img-responsive' src='~/images/maps-google.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>Build customized, agile experiences that bring the real world to your users with static and dynamic maps, Street View imagery, and 360° views.</span>
                         </div>
@@ -1085,7 +1052,7 @@
                                 @* <input name="MongoId" type="hidden" />*@
                                 <div class="form-group">
                                     <label>Nick Name</label>
-                                    <input id="MapInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                    <input id="MapInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
                                 </div>
                             </div>
                         </div>
@@ -1094,7 +1061,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>ApiKey</label>
-                                        <input id="MapInputApiKey" name="ApiKey" type="text" class="form-control Inputclear" required />
+                                        <input id="MapInputApiKey" name="ApiKey" type="text" class="form-control Inputclear eb_input-h" required />
                                     </div>
                                 </div>
                             </div>
@@ -1104,8 +1071,8 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary MapConnection">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm MapConnection">Save</button>
                 </div>
             </form>
         </div>
@@ -1172,13 +1139,13 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content" id="Map_mask">
             <form action="" method="post" id="SendGridConnectionSubmit" data-toggle="validator">
-                <div class="modal-header relative">
+                <div class="modal-header relative border-style-none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Send Grid</h4>
                     <div id="SendGrid_loader" class="MapConnection_loder"></div>
                 </div>
                 <div class="modal-body" style="display:flex">
-                    <div class="vender-data-holder" style="width:50%">
+                    <div class="vender-data-holder" style="width:25%">
                         <img class='img-responsive' src='~/images/SendGrid.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>Delivering your transactional and marketing emails through the world's largest cloud-based email delivery platform. Send with confidence.</span>
@@ -1191,7 +1158,7 @@
                                 @* <input name="MongoId" type="hidden" />*@
                                 <div class="form-group">
                                     <label>Nick Name</label>
-                                    <input id="SendGridInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                    <input id="SendGridInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
                                 </div>
                             </div>
                         </div>
@@ -1199,13 +1166,13 @@
                             <div class="col-md-7">
                                 <div class="form-group">
                                     <label>From</label>
-                                    <input id="SendGridInputFrom" name="EmailAddress" type="email" class=" Inputclear form-control" required />
+                                    <input id="SendGridInputFrom" name="EmailAddress" type="email" class=" Inputclear form-control eb_input-h" required />
                                 </div>
                             </div>
                             <div class="col-md-5">
                                 <div class="form-group">
                                     <label>Name</label>
-                                    <input id="SendGridInputFromName" name="Name" type="text" class=" Inputclear form-control" required />
+                                    <input id="SendGridInputFromName" name="Name" type="text" class=" Inputclear form-control eb_input-h" required />
                                 </div>
                             </div>
                         </div>
@@ -1214,7 +1181,7 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <label>ApiKey</label>
-                                        <input id="SendGridInputApiKey" name="ApiKey" type="text" class="form-control Inputclear" required />
+                                        <input id="SendGridInputApiKey" name="ApiKey" type="text" class="form-control Inputclear eb_input-h" required />
                                     </div>
                                 </div>
                             </div>
@@ -1224,14 +1191,13 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary MapConnection">Save</button>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btn-sm eb_btnblue MapConnection">Save</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 
 <div class="eb-cropie" id="cropsection"></div>
 @section JsCode{

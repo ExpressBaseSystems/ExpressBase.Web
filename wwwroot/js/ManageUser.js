@@ -10,7 +10,9 @@
     this.userGroup = usergroup;
     this.U_Roles = uroles;
     this.U_Groups = ugroups;
-    this.LocCntr = locCons;
+    this.LocCntr = {
+        curItems: locCons || {}, options: { added: [], deleted: []}
+    };
     this.r2rList = r2rList;
     this.statusList = userstatusList;
     this.itemId = parseInt($("#userid").val());
@@ -157,13 +159,29 @@
         });
 
         this.txtLocations.on('itemAdded', function (event) {
-            console.log(event.item);
-        });
+            //console.log(event.item);
+            if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
+                this.LocCntr.options.deleted.splice(this.LocCntr.options.deleted.indexOf(this.LocCntr.curItems[event.item.id]), 1);
+            }
+            else {
+                this.LocCntr.options.added.push(event.item.id);
+            }
+        }.bind(this));
 
-        $('input').on('itemRemoved', function (event) {
-            console.log(event.item);
-        });
+        this.txtLocations.on('itemRemoved', function (event) {
+            //console.log(event.item);
+            if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
+                this.LocCntr.options.deleted.push(getKeyByVal(this.LocCntr.curItems, event.item.id));
+            }
+            else {
+                this.LocCntr.options.added.splice(this.LocCntr.options.added.indexOf(event.item.id), 1);
+            }
+        }.bind(this));
 
+        $.each(this.LocCntr.curItems, function (i, ob) {
+            let o = getObjByval(ebcontext.locations.Locations, 'LocId', ob);
+            $('#txtLocations').tagsinput('add', { id: o.LocId, name: o.ShortName + ' - ' + o.LongName });
+        }.bind(this));
         //$('#txtLocations').tagsinput('add', { id: 100, name: 'AERE - AL EID REAL ESTATE.DUBAI.' });
     };
 
@@ -687,6 +705,8 @@
         dict["statusid"] = newstus;
         dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
         dict["preference"] = JSON.stringify({ Locale: this.selectLocale.val(), TimeZone: this.selectTimeZone.val() });
+        dict["loc_add"] = this.LocCntr.options.added.join();
+        dict["loc_delete"] = this.LocCntr.options.deleted.join();
 
         $.ajax({
             type: "POST",

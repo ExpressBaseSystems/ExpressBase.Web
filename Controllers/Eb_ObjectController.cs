@@ -265,6 +265,7 @@ namespace ExpressBase.Web.Controllers
             {
                 EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode });
                 string UserControlsHtml = string.Empty;
+
                 foreach (KeyValuePair<string, List<EbObjectWrapper>> _object in result.Data)
                 {
                     EbObjectWrapper _objverL = null;
@@ -277,7 +278,8 @@ namespace ExpressBase.Web.Controllers
                     versionHtml += "</select>";
                     UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName, versionHtml, "</div>");
                 }
-                ViewBag.UserControlHtml = UserControlsHtml;
+
+                ViewBag.UserControlHtml = string.Concat(HtmlConstants.TOOL_HTML.Replace("@id@", "toolb_user_ctrls").Replace("@label@", "User Controls"), UserControlsHtml, "</div>");
 
                 if (dsobj is EbWebForm)
                 {

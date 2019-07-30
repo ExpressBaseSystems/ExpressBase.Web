@@ -194,6 +194,22 @@ function EbMakeValid(contSel, _ctrlCont) {
     //},400);
 }
 
+
+function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
+    if ($(`${contSel} .msg-cont`).length !== 0)
+        return;
+    //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
+    let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
+    $ctrlCont.after(`<div class="msg-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
+    $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
+}
+
+function EbHideCtrlMsg(contSel, _ctrlCont) {
+    //setTimeout(function () {
+    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    //},400);
+}
+
 function sortByProp(arr, prop) {
 
     arr.sort(function (a, b) {

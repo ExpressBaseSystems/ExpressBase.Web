@@ -21,7 +21,7 @@ var SolutionDashBoard = function (connections, sid) {
         "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />"
     }
     var venderdec = {
-        "PGSQL":`<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+        "PGSQL": `<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and technical standards compliance. It is designed to handle a range of workloads, from single machines to data warehouses or Web services with many concurrent users.</span>
                         </div>`,
@@ -48,7 +48,7 @@ var SolutionDashBoard = function (connections, sid) {
             }
         });
     };
-        
+
 
     this.editconnection = function (i, obj) {
         var input = $(obj).attr("field");
@@ -61,20 +61,58 @@ var SolutionDashBoard = function (connections, sid) {
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/Integrate",
-            data: { preferancetype: JSON.stringify(postData), deploy:e, sid},
+            data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: false },
             beforeSend: function () {
                 preventContextMenu = 1;
-                $("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
+                //$("#Integration_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
-            $("#Integration_loder").EbLoader("hide");
-            preventContextMenu = 0;
-            if (data) {
+            var temp = JSON.parse(data);
+            if (temp.ResponseStatus) {
+                EbMessage("show", { Message: "Integreation Change Not Complete", Background: "red" });
+                EbDialog("show",
+                    {
+                        Message: "DataBase Already Exist. Do you wanna complete the Connection ",
+                        Buttons: {
+                            "Confirm": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            },
+                            "Cancel": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            if (name == "Confirm") {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "../ConnectionManager/Integrate",
+                                    data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: true },
+                                }).done(function (data) {
+                                    preventContextMenu = 0;
+                                    //$("#Integration_loder").EbLoader("hide");
+                                    if (data) {
+                                        this.Conf_obj_update(JSON.parse(data));
+                                        EbMessage("show", { Message: "Integreation Changed Successfully" });
+                                    }
+                                }.bind(this));
+                            } else if (name == "Cancel")
+                            {
+                                preventContextMenu = 0;
+                                EbMessage("show", { Message: "Integreation Failed", Background: "red" });
+                            }
+                                
+                        }.bind(this)
+                    });
+            }
+            else {
+                preventContextMenu = 0;
                 this.Conf_obj_update(JSON.parse(data));
                 EbMessage("show", { Message: "Integreation Changed Successfully" });
             }
-            else
-                EbMessage("show", { Message: "Integreation Change Failed", Background: "red" });
         }.bind(this));
     };
 
@@ -156,6 +194,33 @@ var SolutionDashBoard = function (connections, sid) {
             if (data) {
                 this.Conf_obj_update(JSON.parse(data));
                 EbMessage("show", { Message: "Data Removed Successfully" });
+            }
+            else
+                EbMessage("show", { Message: "Data Removing Failed", Background: "red" });
+        }.bind(this));
+    };
+    this.credientialBot = function (CId, dt) {
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/credientialBot",
+            data: { CId, sid },
+            beforeSend: function () {
+                preventContextMenu = 1;
+            }
+        }).done(function (data) {
+            preventContextMenu = 0;
+            if (data) {
+                if (JSON.parse(data).ResponseStatus == null) {
+                    if (dt == "PGSQL" || dt == "MYSQL" || dt == "MSSQL" || dt == "ORACLE")
+                        this.DBinteConfEditr(data, CId, dt);
+                    else {
+                        var name = dt.concat("inteConfEditr");
+                        this[name](data, CId, dt)
+                    }
+                }
+                else {
+                    EbMessage("show", { Message: "Cannot Edit Default Database", Background: "red" });
+                }
             }
             else
                 EbMessage("show", { Message: "Data Removing Failed", Background: "red" });
@@ -373,13 +438,13 @@ var SolutionDashBoard = function (connections, sid) {
                 //$("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }.bind(this)
         }).done(function (data) {
-            $("#dbConnection_loder").EbLoader("hide");
+ 
             if (data) {
                 //EbMessage("show", { Message: "Test Connection Success" });
                 //$("#" + formid + " .saveConnection").show();
                 //$("#" + formid + " .testConnection").hide();
                 $("#" + formid + " .saveConnection").trigger("click");
-               
+
             }
             else
                 EbMessage("show", { Message: "Test Connection Failed", Background: "red" });
@@ -439,28 +504,32 @@ var SolutionDashBoard = function (connections, sid) {
         //$('.MongoConnection').removeAttr("disabled");
     };
 
-    this.DBinteConfEditr = function (INt_conf_id, dt) {
+    this.DBinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
-        $('#dbConnectionEdit').modal('toggle');
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#dbConnectionEdit').modal('toggle');
                 $('#dbvendorInput').val(temp[obj].Type);
                 this.db_modal_show_append(temp[obj].Type);
                 $('#dbNickNameInput').val(temp[obj].NickName);
                 $('#IntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
                 $('#dbDatabaseNameInput').val(temp1["DatabaseName"]);
                 $('#dbServerInput').val(temp1["Server"]);
                 $('#dbPortInput').val(temp1["Port"]);
                 $('#dbUserNameInput').val(temp1["UserName"]);
                 $('#dbPasswordInput').val(temp1["Password"]);
-                $('#dbIsSSLInput').attr('checked', temp1["EnableSsl"]);
-                $('#dbTimeoutInput').val(temp1["Timeout"]);                
+                $('#dbReadWriteUserName').val(temp1["ReadWriteUserName"]);
+                $('#dbReadWritePassword').val(temp1["ReadWritePassword"]);
+                $('#dbReadOnlyUserName').val(temp1["ReadOnlyUserName"]);
+                $('#dbReadOnlyPassword').val(temp1["ReadOnlyPassword"]);
+                $('#dbIsSSLInput    ').prop('checked', temp1["IsSSL"]);
+                $('#dbTimeoutInput').val(temp1["Timeout"]);
                 break;
             }
         }
     };
-    this.MongoDBinteConfEditr = function (INt_conf_id, dt) {
+    this.MongoDBinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#filesDbConnectEdit').modal('toggle');
         for (var obj in temp) {
@@ -468,41 +537,41 @@ var SolutionDashBoard = function (connections, sid) {
                 //$('#dbvendorInput').val(temp[obj].DatabaseVendor);
                 $('#FilesInputNickname').val(temp[obj].NickName);
                 $('#FilesInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 // $('#dbDatabaseNameInput').val(temp1["DatabaseName"]);
                 $('#FilesInputServer').val(temp1["Host"]);
                 $('#FilesInputPort').val(temp1["Port"]);
                 $('#FilesInputUsername').val(temp1["UserName"]);
                 $('#FilesInputPassword').val(temp1["Password"]);
-                $('#FilesInputIsSSL').val(temp1["IsSSL"]);
+                $('#FilesInputIsSSL').prop('checked', temp1["IsSSL"]);
                 //  $('#dbTimeoutInput').val(temp1["Timeout"]);
             }
         }
     };
-    this.CloudinaryinteConfEditr = function (INt_conf_id, dt) {
+    this.CloudinaryinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#cldnry_conEdit').modal('toggle');
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#CloudnaryInputNickname').val(temp[obj].NickName);
                 $('#CloudnaryInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#CloudnaryInputCloud').val(temp1["Cloud"]);
                 $('#CloudnaryInputApikey').val(temp1["ApiKey"]);
                 $('#CloudnaryInputApisecret').val(temp1["ApiSecret"]);
-                $('#IsSSL').val(temp1["IsSSL"]);
+                $('#IsSSL').prop('checked', temp1["IsSSL"]);
                 break;
             }
         }
     };
-    this.SMTPinteConfEditr = function (INt_conf_id, dt) {
+    this.SMTPinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#EmailconnectionEdit').modal('toggle');
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#EmailInputNickname').val(temp[obj].NickName);
                 $('#SMTPInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#InputEmailvendor').val(temp1["ProviderName"]);
                 $('#EmailInputEmail').val(temp1["EmailAddress"]);
                 $('#EmailInputPassword').val(temp1["Password"]);
@@ -513,50 +582,50 @@ var SolutionDashBoard = function (connections, sid) {
             }
         }
     };
-    this.TwiliointeConfEditr = function (INt_conf_id, dt) {
+    this.TwiliointeConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TwilioConnectionEdit').modal('toggle');
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#TwilioInputNickname').val(temp[obj].NickName);
                 $('#TwilioInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#TwilioInputUsername').val(temp1["UserName"]);
                 $('#TwilioInputPassword').val(temp1["Password"]);
                 $('#TwilioInputFrom').val(temp1["From"]);
-                $('#IsSSL').val(temp1["IsSSL"]);
+                $('#IsSSL').prop('checked', temp1["IsSSL"]);
             }
         }
     };
-    this.ExpertTextinginteConfEditr = function (INt_conf_id, dt) {
+    this.ExpertTextinginteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#ExpertTextingConnectionEdit').modal('toggle');
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#ExpertInputNickname').val(temp[obj].NickName);
                 $('#ExpertInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#ExpertInputUsername').val(temp1["UserName"]);
                 $('#ExpertInputPassword').val(temp1["Password"]);
                 $('#ExpertInputApi').val(temp1["ApiKey"]);
                 $('#ExpertInputFrom').val(temp1["From"]);
-                $('#IsSSL').val(temp1["IsSSL"]);
+                $('#IsSSL').prop('checked', temp1["IsSSL"]);
             }
         }
     };
-    this.GoogleMapinteConfEditr = function (INt_conf_id, dt) {
+    this.GoogleMapinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#MapConnectionEdit').modal('toggle');
         for (var obj in temp) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#MapInputNickname').val(temp[obj].NickName);
                 $('#MapInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#MapInputApiKey').val(temp1["ApiKey"]);
             }
         }
     };
-    this.SendGridinteConfEditr = function (INt_conf_id, dt) {
+    this.SendGridinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SentGridConnectionEdit').modal('toggle');
         for (var obj in temp) {
@@ -801,12 +870,7 @@ var SolutionDashBoard = function (connections, sid) {
                         var dt = $(options.$trigger).attr("data-whatever");
                         conf_NN = $(options.$trigger).attr("conf_NN");
                         if (key == "Edit") {
-                            if (dt == "PGSQL" || dt == "MYSQL" || dt == "MSSQL" || dt == "ORACLE")
-                                this.DBinteConfEditr(id, dt);
-                            else {
-                                var name = dt.concat("inteConfEditr");
-                                this[name](id, dt)
-                            }
+                            this.credientialBot(id, dt);
                         }
                         else if (key == "Delete") {
                             EbDialog("show",
@@ -839,10 +903,10 @@ var SolutionDashBoard = function (connections, sid) {
                             }.bind(this));
                             if (flag == 0) {
                                 postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id }
-                                if (key == "EbDATA") {
+                                if (key == "EbDATA" && temp == undefined) {
                                     EbDialog("show",
                                         {
-                                            Message: "Do you wanna deploy in " + conf_NN ,
+                                            Message: "Do you wanna deploy in " + conf_NN,
                                             Buttons: {
                                                 "Confirm": {
                                                     Background: "green",
@@ -864,7 +928,7 @@ var SolutionDashBoard = function (connections, sid) {
                                             }.bind(this)
                                         });
                                 }
-                                else if(temp == undefined) {
+                                else if (temp == undefined) {
                                     this.IntegrationSubmit(false);
                                 }
                                 else if (key == "SMS" || key == "SMTP") {
@@ -1011,7 +1075,8 @@ var SolutionDashBoard = function (connections, sid) {
 
                                 }.bind(this)
                             });
-                        } else if (key == "PRIMARY") {
+                        }
+                        else if (key == "PRIMARY") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
                                 if (temp[i].Preference == "2") {
@@ -1023,7 +1088,8 @@ var SolutionDashBoard = function (connections, sid) {
                                 preferancetype.push(postData)
                             }
                             this.PreferencesChange();
-                        } else if (key == "FALLBACK") {
+                        }
+                        else if (key == "FALLBACK") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
                                 if (temp[i].Preference == "1") {
@@ -1035,7 +1101,8 @@ var SolutionDashBoard = function (connections, sid) {
                                 preferancetype.push(postData)
                             }
                             this.PreferencesChange();
-                        } else if (key == "RemoveDefault") {
+                        }
+                        else if (key == "RemoveDefault") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
                                 if (temp[i].Id == id) {
@@ -1047,7 +1114,8 @@ var SolutionDashBoard = function (connections, sid) {
                                 preferancetype.push(postData)
                             }
                             this.PreferencesChange();
-                        } else if (key == "RemoveP") {
+                        }
+                        else if (key == "RemoveP") {
                             EbDialog("show", {
                                 Message: "The " + conf_NN + " will be removed. Fallback will be set as PRIMARY !!! ",
                                 Buttons: {
@@ -1069,11 +1137,12 @@ var SolutionDashBoard = function (connections, sid) {
                                                 postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                             }
                                             else {
+                                                postData = {}
                                                 Deleteid = id;
                                             }
                                         }
+                                        this.PrimaryChange();
                                     }
-                                    this.PrimaryChange();
                                 }.bind(this)
                             });
                         }
@@ -1151,7 +1220,6 @@ var SolutionDashBoard = function (connections, sid) {
                                 </div>
                                 <div id="nm" class="integrationContainer_NN data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                     <span>${rows.NickName}</span>
-                                    <span class="PF_span">PRIMARY</span>
                                 </div>
                                 <div id="nm" class="integrationContainer_caret-down">
                                     <i class="fa fa-caret-down" aria-hidden="true"></i>
@@ -1348,7 +1416,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_Map_all();
     }.bind(this);
 
-    this.db_modal_show_append = function (DatabaseName) {        
+    this.db_modal_show_append = function (DatabaseName) {
         this.AllInputClear();
         $(".IntConfId").val("0");
         $("#dbvendorInput").val(DatabaseName);
@@ -1369,7 +1437,7 @@ var SolutionDashBoard = function (connections, sid) {
                             Align: "left",
                             FontColor: "white;"
                         }
-                    }                    
+                    }
                 });
         }
         else {
@@ -1400,13 +1468,13 @@ var SolutionDashBoard = function (connections, sid) {
                             }).done(function (data) {
                                 //$("#Integration_loder").EbLoader("hide");
                                 if (data)
-                                    EbMessage("show", { Message: "Versioning : On" });                                
+                                    EbMessage("show", { Message: "Versioning : On" });
                             }.bind(this));
                         else
                             $("#VersioningSwitch").prop("checked", false);
                     }.bind(this)
-                });            
-        }        
+                });
+        }
     };
 
     this.init = function () {
@@ -1440,7 +1508,7 @@ var SolutionDashBoard = function (connections, sid) {
             this.db_modal_show_append(DatabaseName);
         }.bind(this));
         $('.input-clear ').on('show.bs.modal', function (event) {
-            this.AllInputClear();           
+            this.AllInputClear();
         }.bind(this));
 
         //  $('.DisplayAllModal').on('click', this.AllInterationConfigDisp.bind(this));

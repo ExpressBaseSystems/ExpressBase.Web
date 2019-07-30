@@ -27,7 +27,6 @@
     flex: 1 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 526px;
     background-color: white;
     width: 100%;
     /*min-width: 250px;*/
@@ -39,19 +38,21 @@
 
 [dragging=true] .outer-pg > .pgHead {
     background: none;
-    background-color: rgba(3, 38, 74, 0.73);
+    background-color: rgba(0, 0, 0, 0.73);
 }
 
 .pg-wraper {
     display: flex;
     flex-direction: column;
-    height: inherit;
     /*font-family: Tahoma;*/
     width: 100%;
+    height: 100%;
+    color: rgba(17, 17, 68, 0.86);
     /*overflow-x: auto;*/
     overflow-x: hidden;
     position: relative;
     z-index: 1;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
     .pg-wraper .pg-inp, .pgTdval .dropdown-toggle, .pgTdval .cxv-inp {
@@ -152,20 +153,25 @@
     padding-bottom: 0.30em;
 }
 
+.outer-pg > .pgHead {
+    font-size: 13px;
+}
+
+
 
 .pgHead {
-    background-color: rgba(3, 1, 45, 0.53);
-    background-color: rgb(71, 97, 123);
-    /*background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));*/
-    color: #fff;
-    padding: 2%;
-    font-weight: bold;
+    /*background-color: rgba(3, 1, 45, 0.53);*/
+    /*background-color: rgb(71, 97, 123);*/
+    /*/*background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));*/*/
+    /*color: #fff;*/
+    /*padding: 2%;*/
+    /*font-weight: bold;*/
     /*font-family: arial;*/
-    width: 100%;
-    font-size: 1.05em;
-    letter-spacing: 0.06em;
-    font-weight: bold;
-    border-radius: 1px 1px 0px 0px;
+    /*width: 100%;*/
+    /*font-size: 1.05em;*/
+    /*letter-spacing: 0.06em;*/
+    /*font-weight: bold;*/
+    /*border-radius: 1px 1px 0px 0px;*/
 }
 
 [dragging=true] .pgHead {
@@ -484,10 +490,11 @@
 
 .pgGroupRow {
     background-color: white;
-    font-weight: bold;
     letter-spacing: 0.0835em;
     /*font-family: sans-serif;*/
     box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.15), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
+    font-weight: 500;
+    font-size: 12px;
 }
 
     .pgGroupRow > td:hover {
@@ -774,13 +781,14 @@
 .controls-dd-cont .dropdown-toggle {
     margin-left: 0 !important;
     box-shadow: none !important;
-    font-weight: bold;
     /*font-family: sans-serif;*/
     letter-spacing: 0.05em;
-    color: rgba(51, 51, 94, 0.88);
     border: none !important;
     border-radius: 0px !important;
-    border-bottom: var(--pgTdBorder) !important
+    border-bottom: var(--pgTdBorder) !important;
+    padding: 3px 12px;
+    font-weight: bold;
+    font-size: 13px;
 }
 
 .pgCXEditor-Cont div.controls-dd-cont > div > button > span.filter-option.pull-left {
@@ -834,17 +842,17 @@
     border: solid 1px #ddf;
 }*/
 
-.pg-wraper {
-    color: rgba(17, 17, 68, 0.86);
-    height: 100%;
-}
-
 .form-buider-cont {
     color: #114;
     background-color: white;
 }
+.pgTdval .bootstrap-select.btn-group .dropdown-toggle .filter-option {
+    text-overflow: ellipsis;
+    padding-right: 8px;
+}
 
 .pgRow .pgTdName {
+    width: 60%;
     padding-top: 0.68em;
     padding-bottom: 0.68em;
     padding-left: 1.9em;

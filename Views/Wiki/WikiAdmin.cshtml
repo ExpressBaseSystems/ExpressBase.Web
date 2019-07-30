@@ -9,42 +9,86 @@
     $(document).ready(function () {
         let obj = new addwiki();
         $("#Drafts").click();
+        new EbHeader().setName("Manage Wikies");
     });
 </script>
-
 
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
 <style type="text/css">
 </style>
 
-<div class="container " style="padding-top:25px;padding-left:20px; ">
-                <div class="row edit_wiki">
-                    <div class="col-sm-8">
-                        <h1 class="wiki_admin_h1"> Wiki Admin page</h1>
-                    </div>
-                    <div class="col-sm-2" style="    padding-top: 30px;">
-                        <a id="CreateWiki" href="@ViewBag.Url" target="_blank">Create New Wiki</a>
-                    </div>
-                   
-                </div>
-                <div class="row wiki_admin_border" style="margin-bottom:5px">
-                    <div class="col-sm-1 selected" style-val="Draft" id="Drafts" style="width:65px">
-                        Drafts
-                    </div>
-                    <div class="col-sm-1 selected" style-val="Publish" id ="" style="width:93px">
-                       Published
-                    </div>
-                    <div class="col-sm-1 selected" style-val="Unpublish" style="width:112px">
-                       UnPublished
-                    </div>
-                    <div class="col-sm-1 selected"  style-val="PublicView" style="width:101px">
-                       PublicView
-                    </div>
-                </div>
-    <div class="row">
-        <div class="col-sm-12 public style-4" id="public">
-            
+<div class="row s-dash-container h-100">
+    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+        <div class="t-container">
+            <ul class="list-group eb-dashbord-sidebar">
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Store">
+                        <span class="material-icons t__sidebar_icon">store</span>
+                        <span class="t__sidebar_text">App Store</span>
+                        @*<a id="CreateWiki" href="@ViewBag.Url" target="_blank">
+                                Create New Wiki
+                                <i class="fa fa-external-link-square" aria-hidden="true"></i>
+                            </a>*@
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Wiki">
+                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                        <span class="t__sidebar_text">Wiki</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a">
+                        <span class="material-icons t__sidebar_icon">contact_support</span>
+                        <span class="t__sidebar_text">Support</span>
+                    </a>
+                </li>
+            </ul>
         </div>
     </div>
- </div>
-@*<div class=" public wiki-align style-4" style="overflow:auto;height:500px; padding-left:15px;  margin-left: 102px;"></div>*@
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc" style="border-style:none;">
+            <div class="col-md-7 pd-0">
+                <h4 class="mr-t-0 mr-b-0">Wiki Admin <span class="apps_count"></span></h4>
+            </div>
+            <div class="col-md-5 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+                <a class="ebbtn eb_btnblue eb_btn-sm new_sol_lk" href="@ViewBag.Url" target="_blank" id="eb-new-solution" style="text-decoration: none;">Add Wiki</a>
+            </div>
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <div class="w-100 manage-wiki-nav">
+                <ul class="nav nav-tabs eb-styledTab">
+                    <li class="active"><a data-toggle="tab" href="#home" class="WikiAdminMenuBar" style-val="Draft" id="Drafts">Drafts</a></li>
+                    <li><a data-toggle="tab" href="#menu1" class="WikiAdminMenuBar" style-val="Publish">Published</a></li>
+                    <li><a data-toggle="tab" href="#menu2" class="WikiAdminMenuBar" style-val="Unpublish">UnPublished</a></li>
+                    <li><a data-toggle="tab" href="#menu3" class="WikiAdminMenuBar" style-val="PublicView">Ordering</a></li>
+
+                </ul>
+
+            </div>
+            <div class="container-fluid">
+                @*<div class="row WikiAdminNavBar">
+                        <div class="col-sm-12" style="display:flex">
+                            <p class="WikiAdminMenuBar" style-val="Draft" id="Drafts">Drafts</p>
+                            <p class="WikiAdminMenuBar" style-val="Publish" id=""> Published</p>
+                            <p class="WikiAdminMenuBar" style-val="Unpublish">  UnPublished</p>
+                            <p class="WikiAdminMenuBar" style-val="PublicView"> Ordering </p>
+
+                        </div>
+                    </div>*@
+                <div class="row wiki_admin_border" style="margin-bottom:5px">
+
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 public style-4" id="public" style=" display:flex; flex-flow:row wrap;padding-right: 0px;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

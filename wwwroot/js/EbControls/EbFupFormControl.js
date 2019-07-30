@@ -464,7 +464,7 @@
     outerHtml() {
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
                                                      <div class="FUP_Head_W">
-                                                        <button id="${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btngreen pull-right"><i class="fa fa-upload"></i> Upload</button>
+                                                        <button id="${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right"><i class="fa fa-upload"></i> Upload</button>
                                                      </div>
                                                      <div class="FUP_Bdy_W">
                                                      </div>

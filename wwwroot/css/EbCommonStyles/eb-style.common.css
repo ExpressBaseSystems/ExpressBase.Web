@@ -346,7 +346,7 @@
     .table-form td {
         padding: 0 !important;
         vertical-align: middle !important;
-        text-align: center;
+        text-align: left;
     }
 
 .table-btn {
@@ -391,8 +391,9 @@
 
 .client-id-sec {
     width: 100%;
-    text-align: left;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
 }
 
     .client-id-sec p {
@@ -401,8 +402,7 @@
     }
 
 .input-clientId {
-    width: 69%;
-    display: inline-block;
+    margin-right: 5px;
 }
 
 .clientId-auto {

@@ -1,12 +1,24 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPageHeader");
+    if (ViewBag.SolutionId == "myaccount")
+    {
+        await Html.RenderPartialAsync("ExtPageHeader");
+    }
+    else if (ViewBag.WhichConsole == "dc" || ViewBag.WhichConsole == "uc")
+    {
+        await Html.RenderPartialAsync("ScontextHeader");
+    }
+    else
+    {
+        await Html.RenderPartialAsync("ExtPageHeader");
+    }
 }
 
 @{
     var statusCode = Model;
     var statusmessage = "";
     switch (statusCode)
+
     {
         case 400:
             statusmessage = "Bad request: The request cannot be fulfilled due to bad syntax";
@@ -34,23 +46,23 @@
             break;
     }
 }
-<div class="error_cont">
+<div class="error_cont h-100">
     <div class="error_wrapper">
         <div class="errorcode_img">
             @{
                 if (Model == 401)
                 {
-                    <img src="~/images/eb_401.svg" />
+                    <img src="~/images/eb_401.svg" class="w-100"/>
 
                 }
                 else if (Model == 404)
                 {
-                    <img src="~/images/eb_404.jpg" />
+                    <img src="~/images/eb_404.jpg" class="w-100"/>
 
                 }
                 else if (Model == 700)
                 {
-                    <img src="~/images/eb_404.jpg" />
+                    <img src="~/images/eb_404.jpg" class="w-100"/>
                 }
             }
         </div>

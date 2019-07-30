@@ -157,7 +157,6 @@
     float: left;
     width: 100%;
     display: flex;
-    /*overflow-x:auto;*/
     flex-flow: wrap;
 }
 
@@ -290,20 +289,37 @@
 
 .vender-data-holder {
     width: 25%;
-    border-right: 1px solid #e8e8e8;
 }
 
 .connection-vender-desp {
-    padding: 2%;
+    padding: 15px;
+    text-align:center;
 }
-
-    .connection-vender-desp > span {
-        padding: 22%;
+.eb-db-cred-sec {
+    background: #ffffff;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 5px;
+}
+.eb-inputWicon {
+    padding-left: 15px;
+    padding-bottom: 5px;
+}
+.eb-inputWicon input{
+    border-right:none !important;
+}
+    .eb-inputWicon .input-group-addon {
+        background: white;
     }
-
 .connection-data-holder {
     width: 75%;
-    padding: 2%;
+    padding: 15px;
+    background: #f2f2f2;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+.connection-data-holder label{
+    font-weight:500;
 }
 
 .table-boarder-remover tr, .table-boarder-remover td, .table-boarder-remover th {
@@ -311,16 +327,10 @@
 }
 
 .table-boarder-remover .form-control {
-    border: 1px solid #ccc !important;
-    border-radius: 4px !important;
-    /* -webkit-box-shadow: none; */
-    /* box-shadow: none; */
-    /* -webkit-transition: none; */
+    border: 1px solid #ccc;
+    border-radius: 4px;
     -o-transition: none;
-    /* transition: none; */
 }
-
-
 .inteConfContainer {
     width: 23%;
     height: 73px;
@@ -329,16 +339,14 @@
     display: flex;
     color: black;
     font-size: 17px;
-    font-weight: bolder;
     padding: 5px;
     transition: all 0.5s;
     cursor: pointer;
     margin: 1%;
-    box-shadow: 0 3px 9px rgba(0,0,0,.05);
+    border: 1px solid #ccc;
     background-color: white;
-    border-radius: 5px;
+    border-radius: 4px;
 }
-
     .inteConfContainer:hover {
         background-color: #f2f2f299;
     }
@@ -369,10 +377,6 @@
     transform: scale(2);
     transition: all .75s;
 }
-
-
-
-
 .integrationbody {
     font-size: 14px;
 }
@@ -385,14 +389,13 @@
     display: flex;
     color: black;
     font-size: 17px;
-    font-weight: bolder;
     padding: 5px;
     transition: all 0.5s;
     cursor: pointer;
     margin: 1%;
-    box-shadow: 0 3px 9px rgba(0,0,0,.05);
     background-color: white;
-    border-radius: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
     .integrationContainer:hover {

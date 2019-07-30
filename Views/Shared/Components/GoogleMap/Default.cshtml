@@ -1,0 +1,40 @@
+﻿
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" asp-append-version=@bApnd>
+<link rel="stylesheet" type="text/css" href="~/css/ChartStyle.css" asp-append-version=@bApnd />
+<script src="~/js/splitWindow.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/dvContainer.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/GoogleMap/Googlemap.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
+
+<div class="dv" id="parent-div@(ViewBag.tabnum)" style="height:calc(100vh - 87px);"></div>
+<div class="ppcont"><div id="pp_inner"></div></div>
+<script>
+    console.log("googlemap");
+    if (@ViewBag.tabnum === 0) {
+        var commonO = $("#layout_div").data("commonObj");
+    }
+    let tempobj = {
+        googlekey : '@ViewBag.al_arz_map_key',
+        refid: '@ViewBag.Refid',
+        ver_num: '@ViewBag.VersionNumber',
+        type : @ViewBag.ObjType,
+        dsobj: @Html.Raw(ViewBag.dsObj),
+        cur_status: '@ViewBag.Status',
+        tabNum: @ViewBag.tabnum,
+        ssurl: '@ViewBag.ServiceUrl',
+        login: '@ViewBag.wc',
+        counter: @ViewBag.counter,
+        TenantId: '@ViewBag.cid',
+        UserId : '@ViewBag.uid'
+    }
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EbGoogleMap(tempobj);
+
+</script>

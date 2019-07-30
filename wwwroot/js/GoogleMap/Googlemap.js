@@ -482,9 +482,11 @@ var EbGoogleMap = function (option) {
         this.Lat = [], this.Long = [];
 
         $.each(this.data, function (k, value) {
-            let _data = value[this.EbObject.LatLong.data].split(",");
-            this.Lat.push(_data[0]);
-            this.Long.push(_data[1]);
+            if (value[this.EbObject.LatLong.data] && value[this.EbObject.LatLong.data] !== "0,0") {
+                let _data = value[this.EbObject.LatLong.data].split(",");
+                this.Lat.push(_data[0]);
+                this.Long.push(_data[1]);
+            }
         }.bind(this));
     };
 

@@ -435,7 +435,7 @@
 
     this.drake = new dragula(this.DraggableConts, {
         revertOnSpill: true,
-        copy: function (el, source) { return (source.className.includes('div-primitive-tools') || source.className.includes('div-custom-tools')); },
+        copy: function (el, source) { return (source.className.includes('tool-sec-cont')); },
         copySortSource: true,
         moves: this.movesfn.bind(this),
         accepts: this.acceptFn.bind(this)

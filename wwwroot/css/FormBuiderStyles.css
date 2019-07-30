@@ -128,11 +128,15 @@
     font-weight: 500;
     letter-spacing: 0.1px;
 }
+    .toolbox-cont .tool_item_head:hover {
+        background: #f1f1f1;
+    }
 
-.toolbox-cont .toolbox-head {
+
+.toolbox-cont .toolbox-head, .pgHead {
     background-color: rgb(51, 51, 51);
     color: #ffffff;
-    padding: 4px 5px;
+    padding: 5px 5px;
     padding-left: 7px;
     font-weight: 500;
     font-size: 12px;
@@ -588,7 +592,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12), 0 0 14px 0 rgba(0, 0, 0, 0.17);
     height: calc(100% - 40px);
     background-color: transparent;
-    width: 380px;
+    width: 325px;
     /*overflow: hidden;*/
     border-radius: 4px 4px 0 0;
 }
@@ -620,7 +624,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 3px 14px;
     top: -500px;
     color: white;
-    background-color: #2f6194;
+    background-color: #333;
     -ms-transform: rotate(-90deg);
     -webkit-transform: rotate(-90deg);
     transform: rotate(90deg);
@@ -628,12 +632,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*box-shadow: 1px 1px 2px 0 rgba(255, 255, 255, 0.49);*/
     box-shadow: 4px 2px 4px 0 rgba(26, 26, 26, 0.26);
     z-index: 99;
-    cursor: default;
+    cursor: pointer;
     animation-duration: 0.3s;
 }
 
     .stickBtn:hover {
-        background-color: #258;
+        background-color: #555;
     }
 
     .stickBtn:active {

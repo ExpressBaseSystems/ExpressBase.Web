@@ -15,18 +15,17 @@
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
-    @Html.Raw(ViewBag.ReportSections);
     @Html.Raw(ViewBag.EbObjectTypes);
 </script>
-<div class="container-fluid api_body">
+<div class="container-fluid api_body" id="@("apiversion-body"+ViewBag.tabnum)">
     <div class="row">
         <div class="eb_apiWrper">
-            <div class="eb_apiSideBar resource_wraper" id="resource_wraper">
+            <div class="eb_apiSideBar resource_wraper" id="@("tb"+ViewBag.tabnum+"_resource_wraper")">
                 <div class="resource_link_Bdy">
                     <div class="head">
                         Resources
                     </div>
-                    <div class="bdy" id="draggable">
+                    <div class="bdy" id="@("tb"+ViewBag.tabnum+"_draggable")">
                         <div eb-type="SqlReader" ctrname="DataReader" class="resource_items draggable">
                             <div class="resource_items-inner">
                                 <i class="fa fa-database"></i>DataReader
@@ -53,36 +52,36 @@
                     </div>
                 </div>
             </div>
-            <div class="eb_apiPane resource_append_wraper" id="resource_append_wraper">
-                <div class="resource_Body" id="resource_Body_drparea">
-                    <div class="apiPrcItem" id="start_item">
+            <div class="eb_apiPane resource_append_wraper" id="@("tb"+ViewBag.tabnum+"_resource_append_wraper")">
+                <div class="resource_Body" id="@("tb" + ViewBag.tabnum + "_resource_Body_drparea")">
+                    <div class="apiPrcItem" id="@("tb" + ViewBag.tabnum + "_start_item")">
                         <div class="strt_circ" id="start">
 
                         </div>
                     </div>
-                    <div class='apiPrcItem' eb-type='Request' id="api_request">
+                    <div class='apiPrcItem' eb-type='Request' id="@("tb" + ViewBag.tabnum + "_api_request")">
                         <div tabindex='1' class='drpbox' onclick='$(this).focus();'>
                             <div class='CompLabel'>Request</div>
                         </div>
                     </div>
-                    <div class="apiPrcItem" id="end_item">
+                    <div class="apiPrcItem" id="@("tb" + ViewBag.tabnum + "_end_item")">
                         <div class="stop_circ" id="stop">
 
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="pgContainer" id="pgContainer">
-                <div class="pgContainer_wrpr" id="pgContainer_wrpr">
+            <div class="pgContainer" id="@("tb" + ViewBag.tabnum + "_pgContainer")">
+                <div class="pgContainer_wrpr" id="@("tb" + ViewBag.tabnum + "_pgContainer_wrpr")">
 
                 </div>
             </div>
         </div>
     </div>
-    <div class="Json_reqOrRespWrpr" id="Json_reqOrRespWrp">
+    <div class="Json_reqOrRespWrpr" id="@("tb" + ViewBag.tabnum + "_Json_reqOrRespWrp")">
         <div class="regRespWHead">
-            JSON <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg);" id="pin_jswindow"></i>
-            <i class="fa fa-thumb-tack pull-right" id="unpin_jswindow" style="display:none;"></i>
+            JSON <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg);" id="@("tb" + ViewBag.tabnum + "_pin_jswindow")"></i>
+            <i class="fa fa-thumb-tack pull-right" id="@("tb" + ViewBag.tabnum + "_unpin_jswindow")" style="display:none;"></i>
         </div>
         <div class="Json_reqOrRespWrpr_inner">
             <div class="JsonReq">
@@ -92,7 +91,7 @@
                         @*<button class="jsw_btn runReq_btn">Run <i class="fa fa-play pull-right"></i></button>*@
                         @*<buton class="jsw_btn" id="sample_codes"><i class="fa fa-code" aria-hidden="true"></i></buton>*@
                     </div>
-                    <div class="_b" id="JsonReq_CMW">
+                    <div class="_b" id="@("tb" + ViewBag.tabnum + "_JsonReq_CMW")">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -102,9 +101,7 @@
                                     <th></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -113,7 +110,7 @@
                 <div class="JsonResp_inner">
                     <div class="_h">
                         Response
-                        <span class="fa fa-arrows-alt pull-right" onclick="$('#api_RqFullSwrapr').show();" data-toggle="tooltip" title="Full Screen"></span>
+                        <span class="fa fa-arrows-alt pull-right" onclick="$('@("#tb" + ViewBag.tabnum + "_api_RqFullSwrapr")').show();" data-toggle="tooltip" title="Full Screen"></span>
                         <span class="formatType">
                             <select class="format_type">
                                 <option value="json">json</option>
@@ -122,14 +119,14 @@
                             </select>
                         </span>
                     </div>
-                    <div class="_b" id="JsonResp_CMW"></div>
+                    <div class="_b" id="@("tb" + ViewBag.tabnum + "_JsonResp_CMW")"></div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="api_RqFullSwrapr" id="api_RqFullSwrapr">
+    <div class="api_RqFullSwrapr" id="@("tb" + ViewBag.tabnum + "_api_RqFullSwrapr")">
         <div class="FS_head">
-            <span class="Comp_Name">Untitled</span> 
+            <span class="Comp_Name">Untitled</span>
             <span class="formatType_fullscreen">
                 <select class="format_type">
                     <option value="json">json</option>
@@ -137,7 +134,7 @@
                     <option value="raw">raw</option>
                 </select>
             </span>
-            <i class="fa fa-close pull-right" onclick="$('#api_RqFullSwrapr').hide();"></i>
+            <i class="fa fa-close pull-right" onclick="$('@("#tb" + ViewBag.tabnum + "_api_RqFullSwrapr")').hide();"></i>
         </div>
         <div class="FS_bdy">
 
@@ -145,7 +142,7 @@
     </div>
 
     <!--sample code mdl-->
-    <div class="modal fade api_scodeMd" id="api_scodeMd" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal fade api_scodeMd" id="@("tb" + ViewBag.tabnum + "_api_scodeMd")" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
             <div class="modal-content" style="overflow: hidden;">
                 <div class="modal-header">
@@ -161,19 +158,19 @@
                             </div>
                             <div class="form-group col-md-6">
                                 <label style="width:100%">Type</label>
-                                <select class="form-control" name="param_type" id="param_type"></select>
+                                <select class="form-control" name="param_type" id="@("tb" + ViewBag.tabnum + "_param_type")"></select>
                             </div>
                         </div>
                         <div class="Custom_Param_val">
                             <Label>Value</Label>
-                            <div class="CpVcdMIrror" id="CpVcdMIrror" contenteditable="true">
+                            <div class="CpVcdMIrror" id="@("tb" + ViewBag.tabnum + "_CpVcdMIrror")" contenteditable="true">
 
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="adCpToObj" class="btn btn-default">Save</button>
+                    <button type="button" id="@("tb" + ViewBag.tabnum + "_adCpToObj")" class="btn btn-default">Save</button>
                 </div>
             </div>
         </div>
@@ -182,8 +179,8 @@
 <script>
      if (@ViewBag.tabnum === 0) {
         var commonO = $("#layout_div").data("commonObj");
-    }
-    var api = EB_Api_entry({
+     }
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = EB_Api_entry({
         Wc: '@ViewBag.wc',
         TenantId: '@ViewBag.cid',
         RefId: '@ViewBag.Refid',
@@ -194,22 +191,21 @@
         TabNum: @ViewBag.tabnum,
         ServiceUrl: '@ViewBag.ServiceUrl'
     });
-    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = api;
 
-    $("#pin_jswindow").click(function (ev) {
-        $("#Json_reqOrRespWrp").animate({ height: 10 }, 300).css("top","unset");
-        $(`#unpin_jswindow`).show();
-        $("#pin_jswindow").hide();
+    $("#tb"+@ViewBag.tabnum+"_pin_jswindow").click(function (ev) {
+        $("#tb"+@ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 10 }, 300).css("top","unset");
+        $(`#tb${@ViewBag.tabnum}_unpin_jswindow`).show();
+        $("#tb"+@ViewBag.tabnum+"_pin_jswindow").hide();
     });
-    $(`#unpin_jswindow`).click(function (ev) {
-        $("#Json_reqOrRespWrp").animate({ height: 250 }, 300).css("top", "unset");
-        $(`#unpin_jswindow`).hide();
-        $("#pin_jswindow").show();
+    $("#tb" + @ViewBag.tabnum + "_unpin_jswindow").click(function (ev) {
+        $("#tb"+@ViewBag.tabnum+"_Json_reqOrRespWrp").animate({ height: 250 }, 300).css("top", "unset");
+        $(`#tb${@ViewBag.tabnum}_unpin_jswindow`).hide();
+        $("#tb"+@ViewBag.tabnum+"_pin_jswindow").show();
     });
 
     $("#param_type")
 
     for (key in EbEnums.EbDbTypes) {
-        $("#param_type").append(`<option value='${EbEnums.EbDbTypes[key]}'>${key}</option>`);
+        $("#tb"+@ViewBag.tabnum+"_param_type").append(`<option value='${EbEnums.EbDbTypes[key]}'>${key}</option>`);
     }
 </script>

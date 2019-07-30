@@ -514,6 +514,8 @@ namespace ExpressBase.Web.Controllers
                 VCName = "ReportBuilder";
             else if (Objtype == (int)EbObjectTypes.EmailBuilder)
                 VCName = "Emailbuilder";
+            else if (Objtype == (int)EbObjectTypes.Api)
+                VCName = "ApiBuilder";
             return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });
 
         }

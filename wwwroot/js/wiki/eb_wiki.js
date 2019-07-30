@@ -117,12 +117,16 @@
         //let $tagDiv = $(`<div class="row"></div>`);
         $('#wiki_data_div').html(ob.html).slideUp(10).slideDown(200).fadeIn(100);
         var res = ob.tags.split(",");
+        let $Tags = $(`<div style="display:flex"></div>`);
         for (var i = 0; i < res.length; i++) {
-            //$tagDiv.append(` <button class="SearchWithTag" tag-val="${res[i]}"> ${res[i]}</button>`);
-            $('#wiki_data_div').append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
+            if (res[i] != "") {
+                $Tags.append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
+            }
         }
-        $('.front_page_wiki').hide();
+        $('#wiki_data_div').append($Tags);
 
+        $('.front_page_wiki').hide();
+     
         let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
         let Pre = $(`[order-id="${orderId}"]`).prev().attr("order-id");
         let $nextPre = $(`<div></div>`);
@@ -147,7 +151,8 @@
             <div> 
        
             </div>
-            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" > <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" >
+        <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
         <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
         <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
         <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
@@ -160,7 +165,6 @@
             `;
         $('#wiki_data_div').append($WasItHelpFul);
 
-    
         let title = $(".wiki_data h1").text();
         let desc = $(".wiki_data p").text().substring(0, $(".wiki_data p").text().indexOf("."));
         $(`meta[property="og:title"]`).attr("content", `${title}`);
@@ -741,7 +745,10 @@
         let dataId= $(`[order-id="${OrderId}"]`).children().attr("data-id");
         $(`[data-id="${dataId}"]`).click();
     }
-   
+
+    this.gallerytab = function () {
+        $("#gallery").click();
+    }
 
     this.init = function () {
 
@@ -764,7 +771,7 @@
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".WikiAdminMenuBar").on("click", this.WikiAdminMenuBarHighlight.bind(this));
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
-        //$("#CreateWiki").on("click", this.CreateNewWikiTrigger.bind(this));
+        $("#gallery-tab1").on("click", this.gallerytab.bind(this));
      
     };
 

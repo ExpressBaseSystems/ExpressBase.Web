@@ -91,7 +91,6 @@
 
 .form-buider-toolBox {
     width: 100%;
-    padding: 3px;
     display: inline-block;
     vertical-align: top;
     overflow-y: auto;
@@ -99,22 +98,55 @@
 }
 
 
-.tool {
-    padding: 1.85em 1em;
-    width: calc( 50% - 6px);
-    margin: 3px;
-    display: inline-block;
-    font-size: 0.98em;
-    border-radius: 2px;
-    box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
-    background-color: white;
-    border: solid 1px rgba(0, 0, 255, 0);
-    transition-duration: 0.05s;
+    .form-buider-toolBox .tool {
+        padding: 8px 10px;
+        font-size: 0.8em;
+        margin: 2px;
+        cursor: move;
+        width: calc( 50% - 4px);
+        display: inline-block;
+        border-radius: 2px;
+        box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+        background-color: white;
+        border: solid 1px rgba(0, 0, 255, 0);
+        transition-duration: 0.05s;
+    }
+
+
+    .form-buider-toolBox .tool-sec-cont {
+        /*background: rgba(181, 181, 181, 0.09);*/
+        border-bottom: solid 1px rgba(181, 181, 181, 0.2);
+    }
+
+
+.toolbox-cont .tool_item_head {
+    padding: 5px 5px;
+    border-bottom: 1px solid #ddd;
+    background: #fff;
+    font-size: 11.3px;
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+}
+    .toolbox-cont .tool_item_head:hover {
+        background: #f1f1f1;
+    }
+
+
+.toolbox-cont .toolbox-head, .pgHead {
+    background-color: rgb(51, 51, 51);
+    color: #ffffff;
+    padding: 5px 5px;
+    padding-left: 7px;
+    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.7px;
+    border-radius: 2px 2px 0 0;
 }
 
-.form-buider-toolBox .tool {
-    padding: 0.9em 1em;
-    font-size: 0.92em;
+.form-buider-toolBox i {
+    margin-right: 5px;
+    font-size: 12px;
 }
 
 .form-buider-form {
@@ -541,7 +573,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .web-form-wraper {
     display: inline-block;
-    width: 74.5%;
+    width: calc( 100% - 254px);
     height: calc(100% - 22px);
 }
 
@@ -560,7 +592,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.12), 0 0 14px 0 rgba(0, 0, 0, 0.17);
     height: calc(100% - 40px);
     background-color: transparent;
-    width: 380px;
+    width: 325px;
     /*overflow: hidden;*/
     border-radius: 4px 4px 0 0;
 }
@@ -592,7 +624,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 3px 14px;
     top: -500px;
     color: white;
-    background-color: #2f6194;
+    background-color: #333;
     -ms-transform: rotate(-90deg);
     -webkit-transform: rotate(-90deg);
     transform: rotate(90deg);
@@ -600,12 +632,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*box-shadow: 1px 1px 2px 0 rgba(255, 255, 255, 0.49);*/
     box-shadow: 4px 2px 4px 0 rgba(26, 26, 26, 0.26);
     z-index: 99;
-    cursor: default;
+    cursor: pointer;
     animation-duration: 0.3s;
 }
 
     .stickBtn:hover {
-        background-color: #258;
+        background-color: #555;
     }
 
     .stickBtn:active {
@@ -632,7 +664,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .web-form-buider-cont .toolbox-cont {
-    width: 25%;
+    width: 250px;
+    border-right: solid 1px #c7c7c7;
 }
 
 .tdDropable {

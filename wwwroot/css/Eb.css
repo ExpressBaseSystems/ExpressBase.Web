@@ -444,7 +444,7 @@
     border: none !important;
     border-radius: 2px !important;
     padding: 0.01em .45em 0.15em 0.45em !important;
-    margin: 2px 0px 1px 3px !important;
+    margin: 2px 0px 2px 3px !important;
     font-size: 12px;
     padding-right: 18px !important;
 }
@@ -455,7 +455,7 @@
         opacity: 1;
         opacity: 1;
         position: absolute;
-        top: 2.5px;
+        top: 1.5px;
         right: 4px;
     }
 

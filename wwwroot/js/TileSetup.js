@@ -175,21 +175,23 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">${this.title}</h4>
-                        </div>   <div class="modal-body" style="height:400px">
-                            <div class="input-group ">
-                                <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                            <h4 class="modal-title" style="font-weight:400">${this.title}</h4>
+                        </div>   
+                        <div class="modal-body">
+                            <div class="input-group md-search-box">
                                 <span class="input-group-btn">
                                     <button id="btnSearch${t}" title="Click to Search" class="btn btn-secondary" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
                                 </span>
+                                <input id="txtSearch${t}" title="Type to Search" type="text" class="form-control" placeholder="Search">
+                                
                             </div>
                             <div id="message${t}" style=" margin-left: 32%; margin-top: 25% ;font-size: 24px; color: #bbb; display:none;">Type Few Characters</div>
                             <div id="loader${t}" style=" margin-left:45%; margin-top:25% ; display:none;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true"></i></div>
-                            <div id="divSearchResults${t}" style="height:338px; overflow-y:auto"></div>
+                            <div id="divSearchResults${t}" style="height:338px;padding-top:10px;overflow-y:auto"></div>
                         </div>
                         <div class="modal-footer">
-                            <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button id="btnModalOk${t}" class="ebbtn eb_btn-sm eb_btnblue">OK</button>
+                            <button class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -200,21 +202,21 @@
     this.createBody = function (parent, title) {
         var t = title.replace(/\s/g, "_");
         $(parent).append(`
-        <div class="row" style="padding:6px 10px">
+        <div class="roles-tab-header">
             <div class="col-md-7"><div class="subHeading">${this.options.longTitle || ""}</div></div>
-            <div class="col-md-3">
-                <input id="txtDemoSearch${t}" type="search" class="form-control input-custom-style" placeholder="Search" title="Type to Search" style="padding-right:30px; display:inline-block; width:100%" />
-                <span id="spanSrch${t}" class="form-control-feedback" style="top: -3px; right: 16px;"><i class="fa fa-search" aria-hidden="true"></i></span>
-                <span id="spanRemv${t}" class="form-control-feedback" style="top: -3px; right: 16px; display:none;"><i class="fa fa-times" aria-hidden="true"></i></span>                
+            <div class="col-md-3" style="margin-left:auto;">
+                <input id="txtDemoSearch${t}" type="search" class="form-control" placeholder="Search" title="Type to Search" />
+                <span id="spanSrch${t}" class="form-control-feedback" style="top: 0; right: 16px;"><i class="fa fa-search" aria-hidden="true"></i></span>
+                <span id="spanRemv${t}" class="form-control-feedback" style="top: 0; right: 16px; display:none;"><i class="fa fa-times" aria-hidden="true"></i></span>                
             </div>
-            <div class="col-md-2">
-                <button type="button" class="input-custom-style" id="btnAddModal${t}" style="float:right"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}</button>
-            </div>
+            <button class="ebbtn eb_btnblue eb_btn-sm" id="btnAddModal${t}">
+                <i class="fa fa-plus" aria-hidden="true"></i>&nbsp${title}
+            </button>            
         </div>
         <div class="container">`
             + this.getPresetModalBody() +
             `</div>
-        <div id="divSelectedDisplay${t}" class="row tilediv1" style="Height: ${this.options.tileDivHeight || '500px'}"> </div>`);
+        <div id="divSelectedDisplay${t}" class="tilediv1" style="Height: ${this.options.tileDivHeight || 'auto'}"> </div>`);
 
         this.txtDemoSearch = $('#txtDemoSearch' + t);
         this.spanSrch = $('#spanSrch' + t);

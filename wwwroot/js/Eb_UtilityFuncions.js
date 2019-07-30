@@ -47,6 +47,17 @@ function slide(dir, $leftDiv, $rightDiv, $stickBtn, delay) {
     }
 }
 
+function isAllValuesTrue(Obj) {
+    var all_true = true;
+    for (var key in Obj) {
+        if (!Obj[key]) {
+            all_true = false;
+            break;
+        }
+    }
+    return all_true;
+}
+
 function getObjByval(ObjArray, key, val) {
     if (ObjArray === undefined) {
         console.error("ObjArray undefined");

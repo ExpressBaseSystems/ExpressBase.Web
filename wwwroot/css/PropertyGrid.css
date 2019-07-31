@@ -479,12 +479,15 @@
     -webkit-user-select: none;
     -o-user-select: none;
     user-select: none;
+    animation-duration: 0.3s;
+    transition: all 0.3s;
 }
 
 .pgGroupCell {
     vertical-align: inherit !important;
     padding-top: 0.6em !important;
     padding-bottom: 0.6em !important;
+    padding: 5px !important;
     padding-left: 0.4em !important;
 }
 
@@ -868,6 +871,7 @@
 .pgRow {
     background-color: rgba(0, 0, 0, 0.045);
     animation-duration: 0.3s;
+    transition: all 0.3s;
 }
 
     .pgRow:hover {

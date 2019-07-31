@@ -94,7 +94,7 @@
     display: inline-block;
     vertical-align: top;
     overflow-y: auto;
-    height: 81vh;
+    height: calc(100% - 27px);
 }
 
 
@@ -106,26 +106,27 @@
         width: calc( 50% - 4px);
         display: inline-block;
         border-radius: 2px;
-        box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
-        background-color: white;
-        border: solid 1px rgba(0, 0, 255, 0);
+        border: solid 1px rgba(240, 240, 240, 0);
+        border-bottom: solid 1px rgba(240, 240, 240, 0.6);
+        /* box-shadow: 0px 1px 0px 0px rgba(185, 185, 185, 0.15); */
         transition-duration: 0.05s;
     }
 
 
     .form-buider-toolBox .tool-sec-cont {
-        /*background: rgba(181, 181, 181, 0.09);*/
-        border-bottom: solid 1px rgba(181, 181, 181, 0.2);
+        background: rgba(181, 181, 181, 0.05);
+        /* border-bottom: solid 1px rgba(181, 181, 181, 0.2); */
     }
 
 
 .toolbox-cont .tool_item_head {
     padding: 5px 5px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: none;
     background: #fff;
     font-size: 11.3px;
     cursor: pointer;
     font-weight: 500;
+    box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.12), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
     letter-spacing: 0.1px;
 }
     .toolbox-cont .tool_item_head:hover {
@@ -134,7 +135,7 @@
 
 
 .toolbox-cont .toolbox-head, .pgHead {
-    background-color: rgb(51, 51, 51);
+    background-color:#444;
     color: #ffffff;
     padding: 5px 5px;
     padding-left: 7px;
@@ -1131,12 +1132,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .toolbox-cont ::-webkit-scrollbar-track {
     /*-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);*/
-    background-color: #F5F5F5;
+    background-color: rgba(214, 214, 214, 0.52);
     border-radius: 10px;
 }
 
 .toolbox-cont ::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
     background-color: #F5F5F5;
 }
 

@@ -253,6 +253,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" data-target="#GoogleDriveConnectionEdit" data-whatever="GoogleDrive">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#SentGridConnectionEdit" data-whatever="SendGrid">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
@@ -324,16 +334,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
-                                                <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div id="googleanalitics" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
@@ -344,27 +344,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @*<div id="quickbooks" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                            <div class="connection_wrap w-100">
-                                                <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
-                                                    <img class="img-responsive image-vender" src="~/images/QuickBooks_logo.png" style="width:100%" />
-                                                    <div class="image-add">
-                                                        <div class="text fa-coming-soon">Coming Soon</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>*@
-                                    @*<div id="shopify" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                            <div class="connection_wrap w-100">
-                                                <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
-                                                    <img class="img-responsive image-vender" src="~/images/shopify-logo.png" style="width:100%" />
-                                                    <div class="image-add">
-                                                        <div class="text fa-coming-soon">Coming Soon</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>*@
-
+                                   
                                 </div>
                             </div>
                             <div class="tab-pane" id="MyIntegrations" role="tabpanel">
@@ -508,49 +488,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="All_IntreationConfig" role="dialog">
-    <div class="modal-dialog modal-lg" style="width:1250px;">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div id="All_IntreationConfig_header" class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h3 class="modal-title"></h3>
-            </div>
-            <div class="modal-body" style="min-height:525px">
-                <div id="All_IntreationConfig_bodyflex" class="display-flex">
-                </div>
-
-            </div>
-            @*<div id="All_IntreationConfig_footer" class="modal-footer">
-
-                </div>*@
-        </div>
-
-    </div>
-</div>
-
-<div class="modal fade" id="All_IntreationList" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <form action="" method="post" id="IntegrationSubmit" data-toggle="validator">
-                <div id="All_Intreation_header" class="modal-header">
-                    <div id="Integration_loder" class="dbConnection_loder"></div>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                    <h3 class="modal-title"></h3>
-                </div>
-                <div class="modal-body">
-                    <div id="All_Intreation_bodyflex">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 <div id="dbConnectionEdit" class="modal fade s-dash-modal" role="dialog" style="align-items: center;">
     <div class="modal-dialog" style="min-width: 70%;max-width:100%;">
@@ -1136,6 +1073,62 @@
 
                 <div class="modal-footer border-style-none">
                     <button type="submit" class="ebbtn eb_btnblue eb_btn-sm MapConnection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="GoogleDriveConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="GoogleDrive_mask">
+            <form action="" method="post" id="GoogleDriveConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">GoogleDrive</h4>
+                    <div id="GoogleDrive_loader" class="GoogleDriveConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:50%">
+                        <img class='img-responsive' src='~/images/Google-Drive-Logo.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Build customized, agile experiences that bring the real world to your users with static and dynamic maps, Street View imagery, and 360° views.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="GoogleDriveVendor" type="hidden" value="GoogleDrive" class="form-control Vendor" readonly />
+                                @* <input name="MongoId" type="hidden" />*@
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="GoogleDriveInputNickname" name="NickName" type="text" class=" Inputclear form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Application Name</label>
+                                        <input id="GoogleDriveInputApplicationName" name="ApplicationName" type="text" class="form-control Inputclear" required />
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <p>Upload JSON Key</p>
+                                        <input id="GoogleDriveInputJSONUpload" type="file" name="files" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="GoogleDriveInputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary MapConnection">Save</button>
                 </div>
             </form>
         </div>

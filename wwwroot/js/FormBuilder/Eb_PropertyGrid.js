@@ -221,7 +221,7 @@
             }
             arrow = '<i class="fa fa-caret-right" aria-hidden="true"></i>';
             isExpandedAttr = 'is-expanded="true"';
-            valueHTML = '<input type="text" for="' + name + '" readonly value="' + ((type === 15) ? this.getExpandedValue(value) : value23) + '" style="width:100%; direction: rtl;" />' +
+            valueHTML = '<input type="text" class="pg-inp" for="' + name + '" readonly value="' + ((type === 15) ? this.getExpandedValue(value) : value23) + '" style="width:100%; direction: rtl;" />' +
                 "<input type='hidden' value='" + JSON.stringify(value) + "' id='" + elemId + "'>";
         }// If Dictionary Editor
         else {    // Default is textbox
@@ -832,13 +832,22 @@
         if (groupName !== "All") {
             let delay = 100;
             if (isExpanded) {
-                $("#" + this.wraperId + " [group=" + groupName + "]").filter("[subtype-of]").hide(200);
-                $groupRows.hide(delay);
+                setTimeout(function () {
+                    $groupRows.filter("[subtype-of]").addClass("hidden");
+                    $groupRows.addClass("hidden");
+                }.bind(this), 100);
+
+                $groupRows.filter("[subtype-of]").find("td").css("padding", "0 0 0 1.9em").css("opacity", "0");
+                $groupRows.find("td").css("padding", "0 0 0 1.9em").css("opacity", "0");
             }
             else {
-                $groupRows.not("[is-showprop]").show(delay);
-                $groupRows.filter("[is-showprop=true]").show(delay);
-                $("#" + this.wraperId + " [group=" + groupName + "]").filter("[is-expanded]").find(".fa-caret-right").click().click();
+                $groupRows.not("[is-showprop]").removeClass("hidden");
+                $groupRows.filter("[is-showprop=true]").removeClass("hidden");
+
+                $groupRows.filter("[subtype-of]").find("td").removeAttr("style").css("opacity", "1");
+                $groupRows.find("td").removeAttr("style").css("opacity", "1");
+
+                $groupRows.filter("[is-expanded]").find(".fa-caret-right").click().click();
             }
         }
         $GroupHeadRow.attr("is-expanded", !isExpanded);

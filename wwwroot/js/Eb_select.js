@@ -239,7 +239,6 @@ const EbSelect = function (ctrl, options) {
         this.Vobj.valueMembers.splice(0, this.Vobj.valueMembers.length);// clears array without modifying array Object (watch)
         $.each(this.dmNames, this.popAllDmValues.bind(this));
         $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
-
     }.bind(this);
 
     this.initComplete4SetVal = function (callBFn, StrValues) {
@@ -476,14 +475,16 @@ const EbSelect = function (ctrl, options) {
         if (!this.$curEventTarget)
             return;
         let vmValue = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
-        if (event.target.nodeName === "SPAN")
+        if (event.target.nodeName === "SPAN")// if clicked tagclose
             vmValue = this.ClosedItem;
 
-        if (!this.columnVals[this.vmName].contains(vmValue)) {
-            this.addColVals();
+        vmValue = parseInt(vmValue);
+
+        if (this.columnVals[this.vmName].contains(vmValue)) {
+            this.removeColVals(vmValue);
         }
         else {
-            this.removeColVals(vmValue);
+            this.addColVals();
         }
 
     };
@@ -500,17 +501,17 @@ const EbSelect = function (ctrl, options) {
         }.bind(this));
     };
 
-    this.convertValue = function (val, type) {
-        if (type === 11)
-            return parseInt(val);
-        return val;
-    };
-
     this.removeColVals = function (vmValue) {
         let idx = this.columnVals[this.vmName].indexOf(vmValue);
         $.each(this.ColNames, function (i, name) {
             this.columnVals[name].splice(idx, 1);
         }.bind(this));
+    };
+
+    this.convertValue = function (val, type) {
+        if (type === 11)
+            return parseInt(val);
+        return val;
     };
 
     this.setDmValues = function (i, name) {

@@ -16,150 +16,119 @@
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/tagsinput.css">
 
-<div style="padding-top:45px"></div>
-<div class="container-fluid">
-    <div class="row">
+<div style="padding-top:40px"></div>
+<div class="container-fluid wiki-add">
+    <ul class="nav nav-tabs eb-styledTab">
+        <li class="active"><a data-toggle="tab"  href="#builder">Builder</a></li>
+        <li><a data-toggle="tab" href="#wiki-gallery" id="gallery">Gallery</a></li>
+    </ul>
 
-        @*<div class="col-sm-6 btnstyle" id="editor_wiki">*@
+    <div class="tab-content">
+        <div id="builder" class="tab-pane fade in active">
+            <div class="row">
 
-        <form action="/wiki/save" method="post">
+                @*<div class="col-sm-6 btnstyle" id="editor_wiki">*@
 
-            <div class="row fullViewtoggle" style="padding-left:10px">
-                <div class="col-sm-4">  <input type="text" placeholder="Title" name="title" id="title" value="@ViewBag.Wiki.Title" class="GrpAddSel" style="margin-right: 4%;" /> </div>
-                <div class="col-sm-2">
-                    <select name="category" id="category" class="GrpAddSel" style="    margin-right: 4%;">
-                        <option value="" disabled selected>Select category</option>
-                        @foreach (WikiCat categ in ViewBag.WikiCat)
-                        {
-                            <option>@categ.WikiCategory</option>
-                        }
+                <form action="/wiki/save" method="post">
 
-                    </select>
-                    <script>
+                    <div class="row fullViewtoggle" style="padding-left:10px">
+                        <div class="col-sm-4">  <input type="text" placeholder="Title" name="title" id="title" value="@ViewBag.Wiki.Title" class="GrpAddSel" style="margin-right: 4%;" required /> </div>
+                        <div class="col-sm-2">
+                            <select name="category" id="category" class="GrpAddSel" style="    margin-right: 4%;">
+                                <option value="" disabled selected required>Select category</option>
+                                @foreach (WikiCat categ in ViewBag.WikiCat)
+                                {
+                                    <option>@categ.WikiCategory</option>
+                                }
+
+                            </select>
+                            <script>
 
                             $("#category").attr("value" ,"@ViewBag.Wiki.Category");
-                    </script>
-                </div>
-                <div class="col-sm-2">
-                    <select name="status" id="status" value="@ViewBag.Wiki.Status" class="GrpAddSel">
-                        <option value="" disabled selected>Select Status</option>
-                        <option>Draft</option>
-                        <option>Publish</option>
-                        <option>Unpublish</option>
-                    </select>
-                </div>
-                <div class="col-sm-3">  <input type="text" value="@ViewBag.Wiki.Tags" data-role="tagsinput" name="tagbox" class="form-control" placeholder="Add tags" style="" /> </div>
-                <div class="col-sm-1">
-                    <input type="submit" value="Save" name="submit" class="Save_Btn" style="color: white;background-color: #2f82fd;width:100%" />
-                </div>
+                            </script>
+                        </div>
+                        <div class="col-sm-2">
+                            <select name="status" id="status" value="@ViewBag.Wiki.Status" class="GrpAddSel">
+                                <option value="" disabled selected required>Select Status</option>
+                                <option>Draft</option>
+                                <option>Publish</option>
+                                <option>Unpublish</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3">  <input type="text" value="@ViewBag.Wiki.Tags" data-role="tagsinput" name="tagbox" class="form-control" placeholder="Add tags" style="" /> </div>
+                        <div class="col-sm-1">
+                            <input type="submit" value="Save" name="submit" class="Save_Btn" style="color: white;background-color: #2f82fd;width:100%" />
+                        </div>
                     </div>
-                
-            <div class="row fullViewtoggle">
-                <div class="col-sm-12" style="padding: 4px 10px 4px 25px;">
-                  
+
+                    <div class="row fullViewtoggle">
+                        <div class="col-sm-12" style="padding: 4px 10px 4px 25px;">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6" style="padding-left: 25px;     margin-bottom: -1px;">
+                            <div class="ButtonBox">
+                                <div style="display:flex" class="Btn1stRow">
+                                    <input type="button" value="H1" class="props" val="h1" style="border-radius: 4px 0px 0px 0px;">
+                                    <input type="button" value="H2" class="props" val="h2">
+                                    <input type="button" value="H3" class="props" val="h3">
+                                    <input type="button" value="H4" class="props" val="h4">
+                                    <input type="button" value="H5" class="props" val="h5">
+                                    <input type="button" value="H6" class="props" val="h6">
+                                    <input type="button" value="div" class="props " val="div">
+                                    <input type="button" value="p" class="props" val="p">
+                                    <input type="button" class="props" val="b" value="B" style="font-weight: bold;" />
+                                    <input type="button" class="props" value="i" val="i" style="font-style: italic;" />
+                                    <input type="button" class="props" value="U" val="u" style="text-decoration:underline;border-radius:  0px 4px 0px 0px;">
+                                </div>
+                                <div style="display:flex" class="Btn2ndRow">
+                                    <input type="button" value="span" class="props" val="span">
+                                    <input type="button" value="Center" class="props" val="center">
+                                    <input type="button" value="code" class="props" val="pre class='prettyprint'">
+
+                                    <input type="button" value="ul" class="props" val="ul">
+                                    <input type="button" value="ol" class="props" val="ol">
+                                    <input type="button" value="li" class="props" val="li">
+                                    <input type="button" value="Links" class="props" val="a">
+                                    <div value="YouTube" class="props fa fa-youtube-play props2" val="iframe"> </div>
+                                    <div class="fa fa-upload props2" id="btnUploadImg" type="button" value="Upload Image"> </div>
+
+                                    <a  class="fa fa-file-image-o props2" id="gallery-tab1"> </a>
+                                    <div class="fa fa-arrows-alt props2" id="render_page_toggle" val="show" style="float:right"> </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row" style="padding: 0px 10px 10px 10px">
+                        <div class="col-sm-6" id="edit_field">
+                            <textarea rows="23" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea>
+                        </div>
+                        <div class="col-sm-6" id="render_field">
+                            <div class="render" name="render" id="render">
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex;justify-content: center;">
+
+                    </div>
+                    <div class="col-sm-2"><input type="hidden" name="id" value="@ViewBag.Id" /></div>
+                </form>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-6" style="padding-left: 25px;     margin-bottom: -1px;">
-                    <div class="ButtonBox">
-                        <div style="display:flex" class="Btn1stRow">
-                            <input type="button" value="H1" class="props" val="h1" style="border-radius: 4px 0px 0px 0px;">
-                            <input type="button" value="H2" class="props" val="h2">
-                            <input type="button" value="H3" class="props" val="h3">
-                            <input type="button" value="H4" class="props" val="h4">
-                            <input type="button" value="H5" class="props" val="h5">
-                            <input type="button" value="H6" class="props" val="h6">
-                            <input type="button" value="div" class="props" val="div">
-                            <input type="button" value="p" class="props" val="p">
-                            <input type="button" class="props" val="b" value="B" style="font-weight: bold;" />
-                            <input type="button" class="props" value="i" val="i" style="font-style: italic;"/>
-                            <input type="button" class="props" value="U" val="u" style="text-decoration:underline;border-radius:  0px 4px 0px 0px;">
-                        </div>
-                        <div style="display:flex" class="Btn2ndRow">
-                            <input type="button" value="span" class="props" val="span">
-                            <input type="button" value="Center" class="props" val="center">
-                            <input type="button" value="code" class="props" val="pre class='prettyprint'">
-
-                            <input type="button" value="ul" class="props" val="ul">
-                            <input type="button" value="ol" class="props" val="ol">
-                            <input type="button" value="li" class="props" val="li">
-                            <input type="button" value="Links" class="props" val="a">
-                            <div value="YouTube" class="props fa fa-youtube-play props2" val="iframe" > </div>
-                            <div class="fa fa-upload props2" id="btnUploadImg" type="button" value="Upload Image"> </div>
-
-                            <a value="undo" class="fa fa-file-image-o props2" href="#DEFAULT_ColBdy" id="galleryToggle"> </a>
-                            <div class="fa fa-arrows-alt props2" id="render_page_toggle" val="show" style="float:right" > </div>
-                        </div>
-                    </div>
-                </div>
-                
-                </div>
-                @*<div class="col-sm-6">
-                    <div style="display:flex">
-                        <input id="btnUploadImg" type="button" value="Upload Image" />
-                        <input type="button" id="render_page_toggle" value="hide page view" val="show" style="float:right">
-                    </div>
-                </div>
-                <div class="row">
-
-                </div>
-                <div class="row" style="padding:8px;padding-top:10px;padding-right:30px">
-                    <div class="col-sm-6">
-                        <table class="table" style="margin-bottom: 0px;">
-                            <tbody>
-                                <tr>
-                                    <td><input type="button" class="props" val="b" value="B" style="font-weight: bold;" /> </td>
-                                    <td><i><input type="button" class="props" value="i" val="i"> </i></td>
-                                    <td><input type="button" class="props" value="U" val="u" style="text-decoration:underline;"></td>
-                                    <td> <input type="button" value="Center" class="props" val="center"> </td>
-                                    <td><input type="button" value="H1" class="props" val="h1"></td>
-                                    <td><input type="button" value="H2" class="props" val="h2"></td>
-                                    <td> <input type="button" value="H3" class="props" val="h3"> </td>
-                                    <td> <input type="button" value="H4" class="props" val="h4"></td>
-                                </tr>
-                                <tr>
-                                    <td><input type="button" value="YouTube" class="props fa fa-youtube-play" val="iframe"></td>
-                                    <td><input type="button" value="Image" class="props" val="img"></td>
-                                    <td><input type="button" value="code" class="props" val="pre class='prettyprint'"></td>
-                                    <td><input type="button" value="p" class="props" val="p"></td>
-                                    <td><input type="button" value="ul" class="props" val="ul"> </td>
-                                    <td><input type="button" value="ol" class="props" val="ol"> </td>
-                                    <td><input type="button" value="li" class="props" val="li"> </td>
-                                    <td><input type="button" value="Links" class="props" val="a"> </td>
-
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="row">
-                            <div class="col-sm-8">        <input type="text" value="@ViewBag.Wiki.Tags" data-role="tagsinput" name="tagbox" class="form-control" placeholder="Add tags" /> </div>
-                            <div class="col-sm-1"> </div>
-                            <div class="col-sm-1"><input type="button" id="render_page_toggle" value="hide page view" val="show"></div>
-                        </div>
-                        <div class="row">
-                            <input id="btnUploadImg" type="button" value="Upload Image" />
-                        </div>
-                    </div>
-                </div>*@
-                <div class="row" style="padding: 0px 10px 10px 10px">
-                    <div class="col-sm-6" id="edit_field">
-                        <textarea rows="23" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea>
-                    </div>
-                    <div class="col-sm-6" id="render_field">
-                        <div class="render" name="render" id="render">
-                        </div>
-                    </div>
-                </div>
-                <div style="display: flex;justify-content: center;">
-                   
-                </div>
-                <div class="col-sm-2"><input type="hidden" name="id" value="@ViewBag.Id" /></div>
-</form>
-        <div class="imageGallery" id="ImageGallery">
+        <div id="wiki-gallery" class="tab-pane fade">
+            <div class="imageGallery" id="ImageGallery">
+            </div>
         </div>
-
     </div>
+</div>
+
+
+<div class="container-fluid">
+
+   
 </div>
 
 <script>
@@ -182,10 +151,10 @@
     });
 
     imgup.uploadSuccess = function (fileid) {
-       
+
     }
     imgup.windowClose = function () {
-        
+
     }
     imgup.customTrigger = function (name, refids) {
         let imgtag = "";

@@ -112,7 +112,7 @@ var DvContainerObj = function (settings) {
                 UserId = this.UserId
             );
         }
-        else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
+        else if (this.currentObj.$type.indexOf("EbChartVisualization") !== -1) {
             this.dvcol[focusedId] = new eb_chart(
                 googlekey = this.googlekey,
                 refid = this.dvRefid,
@@ -131,6 +131,29 @@ var DvContainerObj = function (settings) {
                 PGobj = this.PGobj,
                 TenantId = this.TenantId,
                 UserId = this.UserId
+            );
+        }
+
+        else if (this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
+            this.dvcol[focusedId] = new EbGoogleMap({
+                googlekey : this.googlekey,
+                refid : this.dvRefid,
+                ver_num : this.ver_num,
+                type : this.type,
+                dsobj : this.currentObj,
+                cur_status : this.cur_status,
+                tabNum : this.tabnum,
+                ss_url : this.ssurl,
+                login : this.wc,
+                counter : counter,
+                data : this.MainData,
+                rowData : this.rowData,
+                filterValues : this.filterValues,
+                cellData : this.cellData,
+                PGobj : this.PGobj,
+                TenantId : this.TenantId,
+                UserId : this.UserId
+                }
             );
         }
         console.log("xxxxx", this.dvcol[focusedId]);

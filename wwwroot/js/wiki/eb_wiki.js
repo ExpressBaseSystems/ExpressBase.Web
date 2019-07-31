@@ -1,11 +1,10 @@
 ﻿let addwiki = function () {
     let historyId = [];
 
-    this.printresult = function () {
+    this.AppendHtml = function () {
         let abc = $('#text').val();
         $('#render').html(abc);
         $('#new1').append('');
-
     };
 
     this.show_home = function () {
@@ -118,12 +117,16 @@
         //let $tagDiv = $(`<div class="row"></div>`);
         $('#wiki_data_div').html(ob.html).slideUp(10).slideDown(200).fadeIn(100);
         var res = ob.tags.split(",");
+        let $Tags = $(`<div style="display:flex"></div>`);
         for (var i = 0; i < res.length; i++) {
-            //$tagDiv.append(` <button class="SearchWithTag" tag-val="${res[i]}"> ${res[i]}</button>`);
-            $('#wiki_data_div').append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
+            if (res[i] != "") {
+                $Tags.append(`<button class="SearchWithTag" val="${res[i]}"> ${res[i]}</button>`);
+            }
         }
-        $('.front_page_wiki').hide();
+        $('#wiki_data_div').append($Tags);
 
+        $('.front_page_wiki').hide();
+     
         let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
         let Pre = $(`[order-id="${orderId}"]`).prev().attr("order-id");
         let $nextPre = $(`<div></div>`);
@@ -148,7 +151,8 @@
             <div> 
        
             </div>
-            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" > <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" >
+        <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
         <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
         <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
         <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
@@ -161,7 +165,6 @@
             `;
         $('#wiki_data_div').append($WasItHelpFul);
 
-    
         let title = $(".wiki_data h1").text();
         let desc = $(".wiki_data p").text().substring(0, $(".wiki_data p").text().indexOf("."));
         $(`meta[property="og:title"]`).attr("content", `${title}`);
@@ -656,11 +659,29 @@
                 data: { myList: JSON.stringify(myList) },
                 success: function (data) {
                     if (data == true) {
-                        alert("Success")
+                        EbPopBox("show", {
+                            Message: "Success...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }});
                         $("#eb_common_loader").EbLoader("hide");
                     }
                     else {
-                        alert("Un fSuccess")
+                        EbPopBox("show", {
+                            Message: "Failed to update the order...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
+                       
                         $("#eb_common_loader").EbLoader("hide");
                     }
 
@@ -724,15 +745,18 @@
         let dataId= $(`[order-id="${OrderId}"]`).children().attr("data-id");
         $(`[data-id="${dataId}"]`).click();
     }
-   
+
+    this.gallerytab = function () {
+        $("#gallery").click();
+    }
 
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
         $(".wikilist").on("click", this.FetchWikiList.bind(this)); 
         $("#wiki_data_div").on("click", ".searchshow", this.FetchWikiList.bind(this));
-        $("#text").on("keyup", this.printresult.bind(this));
-        $("#text").on("click", this.printresult.bind(this));
+        $("#text").on("keyup", this.AppendHtml.bind(this));
+        $("#text").on("click", this.AppendHtml.bind(this));
         $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
@@ -747,7 +771,7 @@
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".WikiAdminMenuBar").on("click", this.WikiAdminMenuBarHighlight.bind(this));
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
-        //$("#CreateWiki").on("click", this.CreateNewWikiTrigger.bind(this));
+        $("#gallery-tab1").on("click", this.gallerytab.bind(this));
      
     };
 

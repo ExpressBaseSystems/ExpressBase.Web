@@ -387,6 +387,34 @@ var SolutionDashBoard = function (connections, sid) {
         }.bind(this));
     };
 
+    this.GoogleDriveOnSubmit = function (e) {
+        e.preventDefault();
+        var fileUpload = $("#GoogleDriveInputJSONUpload")[0].files[0];
+        var formData = new FormData();
+       
+        formData = $(e.target).serializeArray();
+        formData.push(fileUpload);
+
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddGoogleDrive",
+            cache: false,
+            contentType: false,
+            processData: false,
+            data: postData,
+            beforeSend: function () {
+                $("#GoogleDrive_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#GoogleDrive_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#GoogleDriveOConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    }.bind(this);
+
     this.ftpOnSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -1491,6 +1519,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
+        $("#GoogleDriveConnectionSubmit").on("submit", this.GoogleDriveOnSubmit.bind(this));
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));

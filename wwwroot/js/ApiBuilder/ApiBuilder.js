@@ -5,14 +5,16 @@
     };
 
     if (this.validate()) {
-        window.Api = {};
-        window.Api.Constants = {};
-        window.Api.Creator = new EbApiBuild(this.Config);
-        window.Api.JsonWindow = new EbPrettyJson({
+        if (window.Api === null || window.Api === undefined)
+            window.Api = {};
+        window.Api["Tab" + this.Config.TabNum] = {};
+        window.Api["Tab" + this.Config.TabNum].Constants = {};
+        window.Api["Tab" + this.Config.TabNum].Creator = new EbApiBuild(this.Config);
+        window.Api["Tab" + this.Config.TabNum].JsonWindow = new EbPrettyJson({
             ContetEditable: ["Value"],
             HideFields: ["ValueTo"]
         });
-        return window.Api.Creator;
+        return window.Api["Tab" + this.Config.TabNum].Creator;
     }
     else {
         console.log("initialization error");
@@ -26,7 +28,7 @@ function EbApiBuild(config) {
     this.EbObject = null;
     this.Lines = {};
     this.Procs = {};
-    this.dropArea = "resource_Body_drparea";
+    this.dropArea = "tb" + this.Conf.TabNum + "_resource_Body_drparea";
     this.FlagRun = false;
     this.ComponentRun = false;
     this.Component = null;
@@ -35,20 +37,21 @@ function EbApiBuild(config) {
     this.Customparams = {};
 
     this.pg = new Eb_PropertyGrid({
-        id: "pgContainer_wrpr",
+        id: "tb" + this.Conf.TabNum + "_pgContainer_wrpr",
         wc: this.Conf.Wc,
         cid: this.Conf.TenantId,
-        $extCont: $("#pgContainer")
+        $extCont: $("#tb" + this.Conf.TabNum + "_pgContainer")
     });
 
     this.DragDrop_Items = function () {
-        var drg = dragula([document.getElementById("draggable"), document.getElementById("resource_Body_drparea")],
+        let dritem = `tb${this.Conf.TabNum}_draggable`;
+        var drg = dragula([document.getElementById(dritem), document.getElementById(`tb${this.Conf.TabNum}_resource_Body_drparea`)],
             {
                 copy: function (el, source) {
-                    return source === document.getElementById("draggable")
+                    return source === document.getElementById(dritem);
                 },
                 accepts: function (el, target) {
-                    return target !== document.getElementById("draggable")
+                    return target !== document.getElementById(dritem);
                 }
             });
         drg.on("drop", this.onDropFn.bind(this));
@@ -65,10 +68,9 @@ function EbApiBuild(config) {
 
     this.makeElement = function (el) {
         let ebtype = $(el).attr("eb-type");
-        var id = ebtype + CtrlCounters[$(el).attr("eb-type") + "Counter"]++;
+        var id = "tb" + this.Conf.TabNum + ebtype + CtrlCounters[$(el).attr("eb-type") + "Counter"]++;
         this.Procs[id] = new EbObjects["Eb" + ebtype](id);
         this.Procs[id].Label = $(el).attr("ctrname");
-
         return this.Procs[id];
     };
 
@@ -142,7 +144,7 @@ function EbApiBuild(config) {
     }
 
     this.loopProcess = function (i, o) {
-        if (["start_item", "end_item", "api_request"].indexOf(o.id) < 0) {
+        if (["tb" + this.Conf.TabNum + "_start_item", "tb" + this.Conf.TabNum + "_end_item", "tb" + this.Conf.TabNum + "_api_request"].indexOf(o.id) < 0) {
             if (this.validateRefid(o.id)) {
                 this.Procs[o.id].RouteIndex = $(o).index();
                 this.EbObject.Resources.$values.push(this.Procs[o.id]);
@@ -199,7 +201,7 @@ function EbApiBuild(config) {
         }
     };
 
-    this.setRequestW = function (o,type) {
+    this.setRequestW = function (o, type) {
         let html = [];
         for (let i = 0, n = o.length; i < n; i++) {
             edit = (type == "custom") ? "<td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>" : "";
@@ -210,31 +212,31 @@ function EbApiBuild(config) {
                         ${edit}
                        </tr>`);
         }
-        $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).append(html.join(""));
+        $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonReq_CMW .table tbody`).append(html.join(""));
     };
 
     this.drawProcsEmode = function () {
         var o = this.EditObj.Resources.$values;
         for (let i = 0; i < o.length; i++) {
             var ebtype = o[i].$type.split(",")[0].split(".").pop().substring(2);
-            var id = ebtype + CtrlCounters[ebtype + "Counter"]++;
+            var id = "tb" + this.Conf.TabNum + ebtype + CtrlCounters[ebtype + "Counter"]++;
             var obj = new EbObjects["Eb" + ebtype](id);
             $.extend(obj, o[i]);
-            $(`#${this.dropArea} #end_item`).before(obj.$Control.outerHTML());
+            $(`#${this.dropArea} #tb${this.Conf.TabNum}_end_item`).before(obj.$Control.outerHTML());
             this.Procs[id] = obj;
             this.RefreshControl(this.Procs[id]);
         }
     };
 
     this.toggleReqWindow = function (name, resp) {
-        $("#Json_reqOrRespWrp .reqLabel").text(` (${name}) `);
-        $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).empty();
+        $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp .reqLabel`).text(` (${name}) `);
+        $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonReq_CMW .table tbody`).empty();
         this.Request.Default = resp;
         this.setRequestW(resp);
     };
 
     this.newApi = function () {
-        this.EbObject = new EbObjects["EbApi"]("Api");
+        this.EbObject = new EbObjects["EbApi"]("tb" + this.Conf.TabNum + "Api");
         this.pg.setObject(this.EbObject, AllMetas["EbApi"]);
         //this.setLine('start', 'stop');
         this.resetLinks();
@@ -251,16 +253,16 @@ function EbApiBuild(config) {
         this.drawProcsEmode();
         this.resetLinks();
         this.setRequestW(this.EbObject.Request.Default.$values);
-        this.setRequestW(this.EbObject.Request.Custom.$values,'custom');
+        this.setRequestW(this.EbObject.Request.Custom.$values, 'custom');
         this.Request.Default = this.EbObject.Request.Default.$values;
         this.Request.Custom = this.EbObject.Request.Custom.$values;
     };
 
     this.setBtns = function () {
-        $("#obj_icons").empty().append(`<button class='btn run' id='api_run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
+        $("#obj_icons").empty().append(`<button class='btn run' id='tb${this.Conf.TabNum}_api_run' data-toggle='tooltip' data-placement='bottom' title= 'Run'>
                                             <i class='fa fa-play' aria-hidden='true'></i>
                                         </button>`);
-        $("#api_run").off("click").on("click", this.getApiResponse.bind(this));
+        $(`#tb${this.Conf.TabNum}_api_run`).off("click").on("click", this.getApiResponse.bind(this));
     };
 
     commonO.saveOrCommitSuccess = function (ref) {
@@ -271,34 +273,13 @@ function EbApiBuild(config) {
         this.setBtns();
     };
 
-    //this.apiRun = function (ev) {
-    //    this.reidStat = true;
-    //    this.prepareApiobject();
-    //    if (this.reidStat) {
-    //        $.ajax({
-    //            url: "../Dev/GetReq_respJson",
-    //            type: "GET",
-    //            cache: false,
-    //            beforeSend: function () {
-    //                $("#eb_common_loader").EbLoader("show");
-    //            },
-    //            data: { "components": JSON.stringify(this.EbObject.Resources) },
-    //            success: function (result) {
-    //                this.toggleReqWindow((this.EbObject.Name||"Api"),JSON.parse(result));
-    //                this.ComponentRun = false;
-    //                $("#eb_common_loader").EbLoader("hide");
-    //            }.bind(this)
-    //        });
-    //    }
-    //}
-
     this.getRequest = function () {
         for (let i = 0, n = this.Request.Default.length; i < n; i++) {
-            this.Request.Default[i].Value = $(`input[Json-prop='${this.Request.Default[i].Name}']`).val();
+            this.Request.Default[i].Value = $(`#tb${this.Conf.TabNum}_JsonReq_CMW input[Json-prop='${this.Request.Default[i].Name}']`).val();
         }
         if (!this.ComponentRun) {
             for (let i = 0, n = this.Request.Custom.length; i < n; i++) {
-                this.Request.Custom[i].Value = $(`input[Json-prop='${this.Request.Custom[i].Name}']`).val();
+                this.Request.Custom[i].Value = $(`#tb${this.Conf.TabNum}_JsonReq_CMW input[Json-prop='${this.Request.Custom[i].Name}']`).val();
             }
         }
         return JSON.stringify(this.Request);
@@ -318,8 +299,8 @@ function EbApiBuild(config) {
             type: "GET",
             cache: false,
             beforeSend: function () {
-                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#JsonResp_CMW', Style: { "top": "0", "left": "0" } } });
-            },
+                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: '#tb' + this.Conf.TabNum + '_JsonResp_CMW', Style: { "top": "0", "left": "0" } } });
+            }.bind(this),
             data: _data,
             success: function (result) {
                 (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result, this.Component) : this.toggleRespWindow(JSON.parse(result), this.EbObject);
@@ -330,11 +311,11 @@ function EbApiBuild(config) {
 
     this.toggleRespWindow = function (result, o) {
         this.ResultData = result;
-        let _html = window.Api.JsonWindow.build(result);
-        $(`#Json_reqOrRespWrp`).show();
-        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(_html);
-        $(`#api_RqFullSwrapr .FS_bdy`).html(_html);
-        $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
+        let _html = window.Api["Tab" + this.Conf.TabNum].JsonWindow.build(result);
+        $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp`).show();
+        $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonResp_CMW`).html(_html);
+        $(`#tb${this.Conf.TabNum}_api_RqFullSwrapr .FS_bdy`).html(_html);
+        $(`#tb${this.Conf.TabNum}_api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
     this.foramatChange = function (ev) {
@@ -346,21 +327,21 @@ function EbApiBuild(config) {
             o = this.EbObject;
 
         if ($(ev.target).val() === 'xml') {
-            html = window.Api.JsonWindow.json2xml(this.ResultData);
+            html = window.Api["Tab" + this.Conf.TabNum].JsonWindow.json2xml(this.ResultData);
         }
         else if ($(ev.target).val() === 'json')
-            html = window.Api.JsonWindow.build(this.ResultData);
+            html = window.Api["Tab" + this.Conf.TabNum].JsonWindow.build(this.ResultData);
         else if ($(ev.target).val() === 'raw')
-            html = window.Api.JsonWindow.rawData(this.ResultData);
+            html = window.Api["Tab" + this.Conf.TabNum].JsonWindow.rawData(this.ResultData);
 
-        $(`#Json_reqOrRespWrp #JsonResp_CMW`).html(html);
-        $(`#api_RqFullSwrapr .FS_bdy`).html(html);
-        $(`#api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
+        $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonResp_CMW`).html(html);
+        $(`#tb${this.Conf.TabNum}_api_RqFullSwrapr .FS_bdy`).html(html);
+        $(`#tb${this.Conf.TabNum}_api_RqFullSwrapr .FS_head .Comp_Name`).text(`${o.RefName || o.Name} (${o.Version || o.VersionNumber})`);
     };
 
     this.saveCustomParam = function () {
-        let pname = $('#api_scodeMd input[name="param_name"]').val();
-        let type = $('#api_scodeMd select[name="param_type"]').val();
+        let pname = $(`#tb${this.Conf.TabNum}_api_scodeMd input[name="param_name"]`).val();
+        let type = $(`#tb${this.Conf.TabNum}_api_scodeMd select[name="param_type"]`).val();
         let val = this.CustomPval.getValue();
         if (!pname || !val)
             EbMessage('show', { Message: "field cannot be empty", Background: 'red' });
@@ -376,13 +357,13 @@ function EbApiBuild(config) {
             else {
                 this.EbObject.Request.Custom.$values.push(o);
                 var formated_val = (o.Type === "13") ? o.Value : o.Value;
-                $(`#Json_reqOrRespWrp #JsonReq_CMW .table tbody`).append(`<tr p-name='${o.Name}'>
+                $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonReq_CMW .table tbody`).append(`<tr p-name='${o.Name}'>
                         <td>${o.Name}</td>
                         <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o.Type)}</td>
-                        <td><input type='text' style='width:100%;' Json-prop='${o.Name}' value='${formated_val|| ""}'></input></td>
+                        <td><input type='text' style='width:100%;' Json-prop='${o.Name}' value='${formated_val || ""}'></input></td>
                         <td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>
                        </tr>`);
-                $('#api_scodeMd').modal('hide');
+                $('#tb' + this.Conf.TabNum + '_api_scodeMd').modal('hide');
             }
         }
     };
@@ -411,16 +392,16 @@ function EbApiBuild(config) {
             this.editApi();
         this.DragDrop_Items();
         this.ApiMenu = new ApiMenu(this);
-        var resize = $("#Json_reqOrRespWrp").resizable({
+        var resize = $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp`).resizable({
             handles: "n",
             minHeight: 50
         });
 
         //$(".runReq_btn").off("click").on("click", this.getApiResponse.bind(this));
-        $('.format_type').off("change").on("change", this.foramatChange.bind(this));
-        this.CustomPval = CodeMirror(document.getElementById('CpVcdMIrror'), { mode: 'javascript' });
-        $('#adCpToObj').off('click').on('click', this.saveCustomParam.bind(this));
-        $('body').off("click").on("click", ".deleteCustom_p", this.RmCustParam.bind(this));
+        $(`#apiversion-body${this.Conf.TabNum} .format_type`).off("change").on("change", this.foramatChange.bind(this));
+        this.CustomPval = CodeMirror(document.getElementById('tb' + this.Conf.TabNum + '_CpVcdMIrror'), { mode: 'javascript' });
+        $('#tb' + this.Conf.TabNum + '_adCpToObj').off('click').on('click', this.saveCustomParam.bind(this));
+        $(`#apiversion-body${this.Conf.TabNum}`).on("click", ".deleteCustom_p", this.RmCustParam.bind(this));
         //$('body').off("click").on("click", ".editCustom_p", this.editCustParam.bind(this));
     };
 

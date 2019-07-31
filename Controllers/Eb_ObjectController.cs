@@ -507,13 +507,15 @@ namespace ExpressBase.Web.Controllers
             if (Objtype == (int)EbObjectTypes.DataReader)
                 VCName = "CodeEditor";
             else if (Objtype == (int)EbObjectTypes.TableVisualization)
-                VCName = "DVTable";
+                VCName = "DVBuilder";
             else if (Objtype == (int)EbObjectTypes.WebForm)
                 VCName = "FormBuilder";
             else if (Objtype == (int)EbObjectTypes.Report)
                 VCName = "ReportBuilder";
             else if (Objtype == (int)EbObjectTypes.EmailBuilder)
                 VCName = "Emailbuilder";
+            else if (Objtype == (int)EbObjectTypes.Api)
+                VCName = "ApiBuilder";
             return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });
 
         }

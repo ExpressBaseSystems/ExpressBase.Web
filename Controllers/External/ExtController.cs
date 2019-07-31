@@ -178,35 +178,53 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public int ForgotPassword(string email)
+        public async Task<int> ForgotPasswordAsync(string email,string token)
         {
-            try
-            {
-                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
-                if (result.Unique || !result.HasPassword)
-                {
-                    return 0;
-                }
-                else
-                {
-                    string resetcode = Guid.NewGuid().ToString();
-                    HostString pgurl = this.HttpContext.Request.Host;
-                    PathString pgpath = this.HttpContext.Request.Path;
-                    ForgotPasswordResponse res = this.ServiceClient.Post<ForgotPasswordResponse>(new ForgotPasswordRequest
-                    {
-                        Email = email,
-                        Resetcode = resetcode,
-                        PagePath = pgpath.ToString(),
-                        PageUrl = pgurl.ToString()
-                    });
-                    return 1;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message + e.StackTrace);
-                return 0;
-            }
+
+			var grecap = false;
+			Recaptcha cap = null;
+			try
+			{
+				cap = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+				grecap = cap.Success;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("RECAPTCHA EXCEPTION");
+				Console.WriteLine(e.Message);
+				TempData["ErrorMessage"] = "Recaptcha error, try again";
+			}
+			if (grecap == true)
+			{
+				try
+				{
+					UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = email });
+					if (result.Unique || !result.HasPassword)
+					{
+						return 0;
+					}
+					else
+					{
+						string resetcode = Guid.NewGuid().ToString();
+						HostString pgurl = this.HttpContext.Request.Host;
+						PathString pgpath = this.HttpContext.Request.Path;
+						ForgotPasswordResponse res = this.ServiceClient.Post<ForgotPasswordResponse>(new ForgotPasswordRequest
+						{
+							Email = email,
+							Resetcode = resetcode,
+							PagePath = pgpath.ToString(),
+							PageUrl = pgurl.ToString()
+						});
+						return 1;
+					}
+				}
+				catch (Exception e)
+				{
+					Console.WriteLine(e.Message + e.StackTrace);
+					return 0;
+				}
+			}
+			return 2;
         }
 
         [HttpGet("resetpassword")]

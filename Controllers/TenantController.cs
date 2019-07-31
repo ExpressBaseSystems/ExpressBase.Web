@@ -54,9 +54,27 @@ namespace ExpressBase.Web.Controllers
             else
             {
                 var r = new CreateSolutionFurtherResponse();
-                    r.ResponseStatus.Message = "No permission to create solution";
+                r.ResponseStatus.Message = "No permission to create solution";
                 return r;
             }
+        }
+
+        [HttpPost]
+        public IActionResult CreateSolutionManual(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            var response = this.ServiceClient.Post(new CreateSolutionRequest
+            {
+                SolutionName = req["Sname"],
+                SolnUrl = req["SolnId"],
+                DeployDB = true,
+                Description = req["Desc"]
+            });
+            if (response.Id > 0)
+            {
+                return Redirect("/MySolutions");
+            }
+            return View();
         }
 
         //[EbBreadCrumbFilter("MySolutions/Sid")]
@@ -77,7 +95,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions/{Sid}")]
         public IActionResult SolutionManager(string Sid)
         {
-            ViewBag.Title = "MySolutions/"+ Sid;
+            ViewBag.Title = "MySolutions/" + Sid;
             GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = Sid });
             //ViewBag.intergrationconfig = resp.IntegrationsConfig;
             //ViewBag.integrations = resp.Integrations;
@@ -164,17 +182,17 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-       
+
         public string VersioningSwitch(bool data, string SolnId)
         {
             GetVersioning resp = new GetVersioning();
             try
-            {                
+            {
                 resp = this.ServiceClient.Post<GetVersioning>(new SetVersioning { Versioning = data, solution_id = SolnId });
-                 this.MqClient.Post<RefreshSolutionConnectionsAsyncResponse>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+                this.MqClient.Post<RefreshSolutionConnectionsAsyncResponse>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
                 {
                     SolutionId = SolnId
-                 });
+                });
 
             }
             catch (Exception e)

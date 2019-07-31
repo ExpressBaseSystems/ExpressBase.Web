@@ -10,6 +10,8 @@ class Tour {
         this.tour = null;
         this.tc = 0;
         this.s = $.extend({
+            WelcomeMessage: "",
+            Description: "explore",
             Stack:[],
             AutoStart:true
         }, o);
@@ -32,8 +34,26 @@ class Tour {
                           <div class="ebTour_bodyWrprInner">
                             <a class="touFtr-skip">Skip <i class="fa fa-step-forward" aria-hidden="true"></i></a>
                             <a class="touFtr-showAgn">Dont show again <i class="fa fa-power-off" aria-hidden="true"></i></a>
-                          </div>`);
+                            ${this.getWelcomeBox()}
+                           </div>`);
         return { fade: $(".ebTour_bodyWrpr"), container: $(".ebTour_bodyWrprInner") };
+    }
+
+    getWelcomeBox() {
+        if (this.s.WelcomeMessage !== "") {
+            return `<div class="ebTour_welcomebox">
+                                <img src="/images/walls/tour-welcomebox.png"/>
+                                <div class="ebTour_welcomebox_inner">
+                                    <div class="title">${this.s.WelcomeMessage}</div>
+                                    <div class="subtitle">${this.s.Description}</div>
+                                    <div class="ebTour-startBtn-container">
+                                        <button class="ebTour-startBtn" id="tour-trigger">Take a tour</button>
+                                    </div>
+                                </div>
+                            </div>`;
+        }
+        else
+            return "";
     }
 
     g_position(el) {
@@ -57,6 +77,7 @@ class Tour {
     }
 
     s_tour(tc) {
+        store.set("tour_"+location.href, tc);
         let el = null;
         if (this.s.Stack[tc].element.indexOf(".") >= 0)
             el = $(this.s.Stack[tc].element).eq(0);
@@ -121,6 +142,7 @@ class Tour {
         if (this.tc === this.s.Stack.length - 1) {
             this.tour.fade.hide();
             this.tour.container.hide();
+            store.remove("tour_" + location.href);
         }
         else {
             this.tc = this.tc + 1;
@@ -136,7 +158,7 @@ class Tour {
     }
 
     t_click(el, tile) {
-        el.click();
+        el[0].click();
         el.removeClass("el_current");
         tile.hide();
     }
@@ -145,11 +167,29 @@ class Tour {
         $(".el_current").removeClass("el_current");
         this.tour.fade.hide();
         this.tour.container.hide();
+        store.remove("tour_" + location.href);
+    }
+
+    startTourByTrigger() {
+        $(".ebTour_welcomebox").fadeOut();
+        this.s_tour(this.tc);
     }
 
     i() {
         this.tour = this.setWraper();
         $(".touFtr-skip").off("click").on("click", this.skipTour.bind(this));
-        this.s_tour(this.tc);
+        let _vistc = store.get("tour_"+location.href);
+        if (_vistc) {
+            this.tc = _vistc;
+            this.s_tour(this.tc);
+        }
+        else {
+            if (this.s.WelcomeMessage === "")
+                this.s_tour(this.tc);
+            else {
+                $(".ebTour_welcomebox").fadeIn();
+                $("#tour-trigger").off("click").on("click", this.startTourByTrigger.bind(this));
+            }
+        }
     };
 }

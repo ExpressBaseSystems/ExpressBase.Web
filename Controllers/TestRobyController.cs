@@ -64,6 +64,7 @@ namespace ExpressBase.Web.Controllers
         {
             string[] Scopes = new string[] { DriveService.Scope.Drive,
                                  DriveService.Scope.DriveFile};
+            Console.WriteLine("Scopes: " + Scopes);
             string ApplicationName = "Other client 1";
             try
             {
@@ -72,6 +73,7 @@ namespace ExpressBase.Web.Controllers
                 using (var stream =
                     new FileStream("client_secret_1080114714952-m42q3n8khtv3ctibkrd1g71l1d8u4gom.apps.googleusercontent.com.json", FileMode.Open, FileAccess.Read))
                 {
+                    Console.WriteLine("Inside Auth: stream : " + stream.ToString());
                     // The file token.json stores the user's access and refresh tokens, and is created
                     // automatically when the authorization flow completes for the first time.
                     string credPath = "token.json";
@@ -83,14 +85,14 @@ namespace ExpressBase.Web.Controllers
                         new FileDataStore(credPath, true)).Result;
                     Console.WriteLine("Credential file saved to: " + credPath);
                 }
-
+                Console.WriteLine("After key generation ") ;
                 // Create Drive API service.
                 var service = new DriveService(new BaseClientService.Initializer()
                 {
                     HttpClientInitializer = credential,
                     ApplicationName = ApplicationName,
                 });
-
+                Console.WriteLine("After Service create ");
                 var fileMetadata = new Google.Apis.Drive.v3.Data.File()
                 {
                     Name = "photo.jpg"

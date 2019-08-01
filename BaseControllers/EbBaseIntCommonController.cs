@@ -114,7 +114,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.cid = bToken.Payload[TokenConstants.CID];
                     controller.ViewBag.wc = bToken.Payload[TokenConstants.WC];
                     controller.ViewBag.email = bToken.Payload[TokenConstants.EMAIL];
-                    controller.ViewBag.UserDisplayName = context.HttpContext.Request.Cookies["UserDisplayName"];
+                    
                     controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
                     controller.ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
                     controller.ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
@@ -122,6 +122,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.BrowserURLContext = context.HttpContext.Request.Host.Value;
 
                     this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
+                    controller.ViewBag.UserDisplayName = this.LoggedInUser.FullName;
 
                     controller.ViewBag.UserObject = JsonConvert.SerializeObject(this.LoggedInUser);
 

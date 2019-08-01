@@ -16,7 +16,7 @@
     let id;
 
     this.appendVal = function (e) {
-        //document.getElementById('text');
+        document.getElementById('text');
         let SelectedString = window.getSelection().toString();
        var ele = document.getElementById('text');
         var text = ele.value;
@@ -49,27 +49,28 @@
             }
         }
         else if (id == `right`) {
-            let insertVal = `<div style="float:right"> <div>`
+            let insertVal = `<p style="text-align: right;"> </p>`
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(txt, insertVal);
             }
             else {
-                let insertVal = `<div style="float:right"> ${SelectedString} </div>`
+                let insertVal = `<p style="text-align: left;"> ${SelectedString}  </p>`
                 this.insertAtCaret(txt, insertVal);
             }
         }
         else if (id == `left`) {
-            let insertVal = `<div style="float:left"> <div>`
+            let insertVal = `<p style="text-align: left;"> </p>`
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(txt, insertVal);
             }
             else {
-                let insertVal = `<div style="float:left"> ${SelectedString} </div>`
+                let insertVal = `<p style="text-align: left;"> ${SelectedString} </p>`
                 this.insertAtCaret(txt, insertVal);
             }
         }
+       
         else if (id == `code`) {
             let insertVal = `<pre class="prettyprint"> </pre>`
             let txt = 'text';

@@ -64,6 +64,7 @@ namespace ExpressBase.Web.Controllers
         {
             string[] Scopes = new string[] { DriveService.Scope.Drive,
                                  DriveService.Scope.DriveFile};
+            Console.WriteLine("Scopes: " + Scopes);
             string ApplicationName = "Other client 1";
             try
             {
@@ -86,7 +87,7 @@ namespace ExpressBase.Web.Controllers
                     HttpClientInitializer = credential,
                     ApplicationName = ApplicationName,
                 });
-
+                Console.WriteLine("After Service create ");
                 var fileMetadata = new Google.Apis.Drive.v3.Data.File()
                 {
                     Name = "photo.jpg"

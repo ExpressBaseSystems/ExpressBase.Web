@@ -417,6 +417,7 @@
 
     this.Save = function (callback) {
         this.FlagSave = true;
+        callback = (typeof callback === "function") ? callback : function () { };
         $("#eb_common_loader").EbLoader("show");
         var tagvalues = $('#tags').val();
         var apps = $("#apps").val();
@@ -435,6 +436,7 @@
 
     this.Commit = function (event, callback) {
         $("#eb_common_loader").EbLoader("show");
+        callback = (typeof callback === "function") ? callback : function () { };
         var tagvalues = $('#tags').val();
         var apps = $("#apps").val();
         if (apps === "")

@@ -1015,17 +1015,46 @@ Navigation bar
         justify-content: center;
     }
 
-
-
-
-
-
-
-
-
-
-
-
+/*inner page expand button*/
+.eb-expndLinkswrpr {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    flex-flow: column-reverse;
+    border-radius: 30px;
+    background: white;
+    -webkit-box-shadow: 0px 0px 9px 2px #ababab;
+    -moz-box-shadow: 0px 0px 9px 2px #ababab;
+    box-shadow: 0px 0px 9px 2px #ababab;
+}
+    .eb-expndLinkswrpr .eb-expand-link {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: none;
+        background: #4987fb;
+        color: white;
+        font-size: 18px;
+        outline:none;
+    }
+    .eb-expndLinkswrpr .eb-expndLinkswrpr-inner {
+        display: flex;
+        flex-flow: column;
+        align-items:center;
+    }
+        .eb-expndLinkswrpr .eb-expndLinkswrpr-inner .eb-expand-innerbtn {
+            height: 30px;
+            width: 30px;
+            background: white;
+            margin: 4px 0;
+            border-style: none;
+            border-radius:50%;
+        }
+        .eb-expndLinkswrpr .eb-expndLinkswrpr-inner .eb-expand-innerbtn:hover {
+            background:#f2f2f2;
+        }
+/*inner page expand button end*/
 /*Responsive media queries*/
 @media (max-width: 768px) {
 }
@@ -1087,3 +1116,4 @@ Navigation bar
         left: 0;
     }
 }
+

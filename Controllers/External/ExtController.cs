@@ -690,6 +690,12 @@ namespace ExpressBase.Web.Controllers
             return Redirect(_redirectUrl);
         }
 
+        public IActionResult pp()
+        {
+            return Redirect("/Ext/EbSignIn");
+
+        }
+
         private void DecideConsole(string subDomain, out string whichconsole)
         {
             string cid = null;

@@ -101,14 +101,8 @@
     };
 
     this.setMenuBar = function () {
-        var headHtml = `<div class="form-group has-feedback" style="display:inline-block; margin-right: 15px;">
-                            <input type="text" class="form-control" id="txtSrchCmnList" placeholder="Search" style="height: 32px; border: 1px solid #eee; width: 160px;" title="Search"/>
-                            <span id="spanSrchCmnList" class="form-control-feedback" style="top:0px; color: #888;"><i class="fa fa-search" aria-hidden="true"></i></span>
-                            <span id="spanRemvCmnList" class="form-control-feedback" style="top:0px; display:none; color: #888;"><i class="fa fa-times" aria-hidden="true"></i></span>
-                        </div>`;
-
         if (this.metadata.indexOf("_user") !== -1) {
-            headHtml += `<button class='btn' title='List/Unlist Hidden Users' onclick = "
+            this.menuBarObj.insertButton(`<button class='btn' title='List/Unlist Hidden Users' onclick = "
                                 var plength = window.location.href.split('&').length;
                                 if(plength === 1){
                                     window.open('../Security/CommonList?type=Users&show=all', '_self');
@@ -116,36 +110,26 @@
                                 else{
                                     window.open('../Security/CommonList?type=Users', '_self');
                                 }
-                        "><i class="fa fa-eye-slash" aria-hidden="true"></i></button>  <button class='btn' title='Create User' onclick="window.open('../Security/ManageUser', '_blank');"><i class="fa fa-plus-circle"></i> New User </button>`;
+                        "><i class="fa fa-eye-slash" aria-hidden="true"></i></button>`);
+
+            $("#btnNewCmnList").text("Create User");
+            $("#btnNewCmnList").on("click", function () { window.open('../Security/ManageUser', '_blank'); });
         }
         else if (this.metadata.indexOf("_userGroup") !== -1) {
-            headHtml += `<button class='btn' title='Create UserGroup' onclick="window.open('../Security/ManageUserGroups', '_blank');"><i class="fa fa-plus-circle"></i> New UserGroup </button>`;
+            $("#btnNewCmnList").text("Create UserGroup");
+            $("#btnNewCmnList").on("click", function () { window.open('../Security/ManageUserGroups', '_blank'); });
         }
         else if (this.metadata.indexOf("_roles") !== -1) {
-            headHtml += `<button class='btn' title='Create Role' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i> New Role </button>`;
+            $("#btnNewCmnList").text("Create Role");
+            $("#btnNewCmnList").on("click", function () { window.open('../Security/ManageRoles', '_blank'); });
+        }
+        else if (this.metadata.indexOf("_anonymousUser") !== -1) {
+            $("#btnNewCmnList").hide();
         }
 
-        this.menuBarObj.insertButton(headHtml);
-
         $('#txtSrchCmnList').on('keyup', function (e) {
-            if ($(e.target).val() === "") {
-                $("#spanRemvCmnList").hide();
-                $("#spanSrchCmnList").show();
-            }
-            else {
-                $("#spanSrchCmnList").hide();
-                $("#spanRemvCmnList").show();
-            }
             this.table.search($(e.target).val()).draw();
         }.bind(this));
-        $("#spanRemvCmnList").on('click', function () {
-            $('#txtSrchCmnList').val("");
-            $("#spanRemvCmnList").hide();
-            $("#spanSrchCmnList").show();
-            this.table.search("").draw();
-        }.bind(this));
-
-
     };
 
     this.onClickEdit = function (e) {

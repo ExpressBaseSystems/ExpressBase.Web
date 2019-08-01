@@ -18,7 +18,8 @@ var SolutionDashBoard = function (connections, sid) {
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
-        "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />"
+        "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />",
+        "GoogleDrive": "<img class='img- responsive image-vender' src='../images/Google-Drive-Logo.png' style='width:68%' />"
     }
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -99,12 +100,11 @@ var SolutionDashBoard = function (connections, sid) {
                                         EbMessage("show", { Message: "Integreation Changed Successfully" });
                                     }
                                 }.bind(this));
-                            } else if (name == "Cancel")
-                            {
+                            } else if (name == "Cancel") {
                                 preventContextMenu = 0;
                                 EbMessage("show", { Message: "Integreation Failed", Background: "red" });
                             }
-                                
+
                         }.bind(this)
                     });
             }
@@ -389,18 +389,10 @@ var SolutionDashBoard = function (connections, sid) {
 
     this.GoogleDriveOnSubmit = function (e) {
         e.preventDefault();
-        var fileUpload = $("#GoogleDriveInputJSONUpload")[0].files[0];
-        var formData = new FormData();
-       
-        formData = $(e.target).serializeArray();
-        formData.push(fileUpload);
-
+        var postData = $(e.target).serializeArray();
         $.ajax({
             type: 'POST',
             url: "../ConnectionManager/AddGoogleDrive",
-            cache: false,
-            contentType: false,
-            processData: false,
             data: postData,
             beforeSend: function () {
                 $("#GoogleDrive_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
@@ -409,11 +401,11 @@ var SolutionDashBoard = function (connections, sid) {
             this.Conf_obj_update(JSON.parse(data));
             $("#GoogleDrive_loader").EbLoader("hide");
             EbMessage("show", { Message: "Connection Added Successfully" });
-            $("#GoogleDriveOConnectionEdit").modal("toggle");
+            $("#GoogleDriveConnectionEdit").modal("toggle");
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
         }.bind(this));
-    }.bind(this);
+    };
 
     this.ftpOnSubmit = function (e) {
         e.preventDefault();
@@ -434,6 +426,16 @@ var SolutionDashBoard = function (connections, sid) {
     };
 
 
+
+    this.getgoogledrivefile = function (evt) {
+        evt.preventDefault();
+        let files = document.getElementById("GoogleDriveInputJSONUpload").files[0];
+        let reader = new FileReader();
+        reader.onload = function (resp) {
+            $('#exampleTextarea').val(resp.target.result);
+        };
+        reader.readAsText(files);
+    }
 
     this.testConnection = function (e) {
         var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
@@ -466,7 +468,7 @@ var SolutionDashBoard = function (connections, sid) {
                 //$("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
             }.bind(this)
         }).done(function (data) {
- 
+
             if (data) {
                 //EbMessage("show", { Message: "Test Connection Success" });
                 //$("#" + formid + " .saveConnection").show();
@@ -660,10 +662,23 @@ var SolutionDashBoard = function (connections, sid) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#SendGridInputNickname').val(temp[obj].NickName);
                 $('#SendGridInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(temp[obj].ConObject);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#SendGridInputApiKey').val(temp1["ApiKey"]);
                 $('#SendGridInputFrom').val(temp1["EmailAddress"]);
                 $('#SendGridInputFromName').val(temp1["Name"]);
+            }
+        }
+    };
+    this.GoogleDriveinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#GoogleDriveConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#GoogleDriveInputNickname').val(temp[obj].NickName);
+                $('#GoogleDriveInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#exampleTextarea').val(temp1["JsonString"]);
+                $('#GoogleDriveInputApplicationName').val(temp1["AppName"]);
             }
         }
     };
@@ -1058,6 +1073,11 @@ var SolutionDashBoard = function (connections, sid) {
                 }
                 else if ($trigger.hasClass('SendGridedit')) {
                     options.items.SMTP = { name: "Set as Email" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('GoogleDriveedit')) {
+                    options.items.EbFILES = { name: "Configure as File Store" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
@@ -1507,6 +1527,7 @@ var SolutionDashBoard = function (connections, sid) {
 
     this.init = function () {
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
+        $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         if (this.Connections.SolutionInfo.IsVersioningEnabled) {
             $("#VersioningSwitch").prop("checked", true);
         }
@@ -1556,16 +1577,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_SMS_all();
         this.integration_Map_all();
 
-        //$(".inteConfContainer").on("click", ".PGSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MYSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MSSQLedit", this.PostgreinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".ORACLEedit", this.PostgreinteConfEditr.bind(this));
-        ////$(".oracleintegrationedit").on("click", this.DbinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".MongoDBedit", this.MongointeConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".Cloudinaryedit", this.ColudinaryinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".SMTPedit", this.SmtpinteConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".Twilioedit", this.twiliointeConfEditr.bind(this));
-        //$(".inteConfContainer").on("click", ".ExpertTextingedit", "", this.expertinteConfEditr.bind(this));
+
 
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));
         //$("#IntegrationsCall").trigger("click");

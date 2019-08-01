@@ -10,8 +10,8 @@ class Tour {
         this.tour = null;
         this.tc = 0;
         this.s = $.extend({
-            WelcomeMessage: "<small>Welcome To </small> <br/> <b>EXPRESSbase</b>",
-            Description: "explore the platform",
+            WelcomeMessage: "",
+            Description: "",
             Stack: []
         }, o);
 
@@ -20,14 +20,24 @@ class Tour {
             return false;
         this.tour.fade.show();
         this.tour.container.show();
-        this.tour.msgbox.show();
+        if (this.s.WelcomeMessage !== "") {
+            this.tour.msgbox.show();
+        }
+        else {
+            this.s_tour(this.tc);
+        }
     };
 
     start() {
         this.tour.fade.show();
         this.tour.container.show();
-        this.tour.msgbox.fadeIn();
         this.tc = 0;
+        if (this.s.WelcomeMessage !== "") {
+            this.tour.msgbox.show();
+        }
+        else {
+            this.s_tour(this.tc);
+        }
         return "Tour started";
     }
 

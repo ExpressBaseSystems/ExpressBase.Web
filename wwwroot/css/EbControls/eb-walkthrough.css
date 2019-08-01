@@ -21,7 +21,7 @@
     overflow:hidden;
 }
 .TourTile {
-    background: white;
+    background: #3876ea;
     width: 350px;
     border-radius: 6px;
     border-top-left-radius: 0;
@@ -31,13 +31,14 @@
     -moz-transition: all .3s ease-out;
     -ms-transition: all .3s ease-out;
     -o-transition: all .3s ease-out;
+    color: white;
 }
 .TourTileInner {
     padding: 10px;
 }
 .TourTileHead {
-    border-bottom: 1px solid #ccc;
     padding: 2px 0;
+    font-size: 16px;
 }
 .TourTileContent {
     padding: 10px 0;
@@ -59,9 +60,9 @@
     position: absolute;
     width: 30px;
     height: 25px;
-    /*left: 0;*/
+    /* left: 0; */
     top: -25px;
-    background: white;
+    background: #3876ea;
     -webkit-clip-path: polygon(0 0, 0% 100%, 100% 100%);
     clip-path: polygon(0 0, 0% 100%, 100% 100%);
 }

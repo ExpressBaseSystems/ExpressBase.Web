@@ -892,6 +892,29 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
+        public string AddGoogleDrive()
+        {
+            AddGoogleDriveResponse res = new AddGoogleDriveResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbGoogleDriveConfig con = new EbGoogleDriveConfig
+                {
+                    JsonString = req["JsonFile"],
+                    NickName = req["NickName"],
+                    AppName = req["ApplicationName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                };
+                res = this.ServiceClient.Post<AddGoogleDriveResponse>(new AddGoogleDriveRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
 
         //[HttpGet("SolutionManager/{Sid}")]
         //public IActionResult GetIntegrationConfigs(string Sid)

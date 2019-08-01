@@ -56,6 +56,8 @@
     }.bind(this);
 
     this.controlOnFocus = function (e) {
+        if (this.curControl && this.curControl.attr("ebsid") === $(e.target).attr("ebsid"))
+            return;
         if (e.target.id === this.formId) {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);

@@ -80,10 +80,10 @@
                                 </div>
                                 <div class="sso_head text-center">
                                     <input name="WhichConsole" type="hidden" value="" />
-                                    <a sid="@s.IsolutionId" wc="uc" class="sso-btn eb_btnblue single__sso" title="go to user console">
+                                    <a sid="@s.IsolutionId" tour-for="userhome" wc="uc" class="sso-btn eb_btnblue single__sso" title="go to user console">
                                         <i class="fa fa-user-o" aria-hidden="true"></i> User Login
                                     </a>
-                                    <a sid="@s.IsolutionId" wc="dc" class="sso-btn eb_btnwhite  single__sso" title="go to dev console">
+                                    <a sid="@s.IsolutionId" tour-for="devhome" wc="dc" class="sso-btn eb_btnwhite  single__sso" title="go to dev console">
                                         <i class="fa fa-wrench" aria-hidden="true"></i> Dev Login
                                     </a>
                                 </div>
@@ -113,30 +113,34 @@
         //setTimeout(function () {
         //    window.tour = new Tour(
         //        {
+        //            WelcomeMessage: "<small>Welcome To </small> <br/> <b>EXPRESSbase</b>",
+        //            Description:"explore the platform",
         //            Stack: [
         //                {
-        //                    element: ".eb_btnblue ",
-        //                    content: "go to user home",
-        //                    title: "User home",
-        //                },
-        //                {
-        //                    element: ".eb_btnwhite",
-        //                    content: "go to developer home",
-        //                    title: "developer home",
+        //                    element: '[tour-for="userhome"]',
+        //                    title: "Go to user home",
+        //                    content: "Go to user home where u can view the applications you created.",
         //                    click: true
         //                },
         //                {
-        //                    element: ".new_sol_lk",
-        //                    content: "create new solution",
-        //                    title:"Create Solution"
+        //                    element: '[tour-for="devhome"]',
+        //                    title: "Go to developer home",
+        //                    content: "Go to developer home and build your applications.",
+        //                    click: true
         //                },
         //                {
         //                    element: ".sln_settings_link",
-        //                    content: "configure solution",
-        //                    title: "Configure Solution"
+        //                    title: "Go to Solution settings",
+        //                    content: "Configure your solution like add integrations,manage your team etc...",
+        //                    click: true
+        //                },
+        //                {
+        //                    element: "#eb-new-solution",
+        //                    title: "Create new solution",
+        //                    content: "Create your next solution",
+        //                    click: true
         //                }
-        //            ],
-        //            AutoStart:false
+        //            ]
         //        })
         //},1000)
     </script>

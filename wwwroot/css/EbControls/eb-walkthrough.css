@@ -8,7 +8,7 @@
     background: black;
     z-index: 2000;
     opacity: .5;
-    /*display:none;*/
+    display:none;
 }
 .ebTour_bodyWrprInner {
     position: fixed;
@@ -17,7 +17,7 @@
     width: 100%;
     height: 100%;
     z-index: 5000;
-    /*display:none;*/
+    display:none;
     overflow:hidden;
 }
 .TourTile {

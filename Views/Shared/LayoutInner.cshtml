@@ -142,6 +142,17 @@
             }
             @RenderBody()
         </div>
+        <div class="eb-expndLinkswrpr">
+            <button id="eb-expandbutton" onclick="$('.eb-expndLinkswrpr-body').toggle();" class="eb-expand-link"><i class="fa fa-cog"></i></button>
+            <div class="eb-expndLinkswrpr-body" style="display:none;">
+                <div class="eb-expndLinkswrpr-inner">
+                    <button class="eb-expand-innerbtn" onclick="if (window.tour) { window.tour.deleteCokkie(); window.tour.start();} $('.eb-expndLinkswrpr-body').toggle();" title="Walk through">
+                        <i class="fa fa-plane"></i>
+                    </button>
+                    <button class="eb-expand-innerbtn" title="Shortcuts"><i class="fa fa-random"></i></button>
+                </div>
+            </div>
+        </div>
     </div>
     @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
     {

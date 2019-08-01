@@ -60,7 +60,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public async void Test()
+        public async System.Threading.Tasks.Task Test()
         {
             string[] Scopes = new string[] { DriveService.Scope.Drive,
                                  DriveService.Scope.DriveFile};

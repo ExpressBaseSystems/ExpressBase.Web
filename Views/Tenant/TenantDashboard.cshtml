@@ -11,7 +11,7 @@
     }
 }
 @section StyleSheet {
-    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" />
+    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd/>
 }
 @section JavaScript{
     <script src="~/js/EbDashBoards/TenantDashBoard.js" type="text/javascript" asp-append-version=@bApnd></script>
@@ -108,7 +108,7 @@
             var Tdb = TenantDashBoard();
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-
+            
             window.tour = new Tour(
                 {
                     WelcomeMessage: "<small>Welcome To </small> <br/> <b>EXPRESSbase</b>",

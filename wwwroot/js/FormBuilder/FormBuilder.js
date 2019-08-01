@@ -306,6 +306,9 @@
                     ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
                     this.ApprovalCtrl = ctrlObj;
                 }
+                else if (type === "SimpleSelect") {
+                    $ctrl.find(".selectpicker").selectpicker();
+                }
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {

@@ -70,22 +70,17 @@ namespace ExpressBase.Web.Controllers
             {
                 UserCredential credential;
 
-                using (var stream =
-                    new FileStream("client_secret_1080114714952-m42q3n8khtv3ctibkrd1g71l1d8u4gom.apps.googleusercontent.com.json", FileMode.Open, FileAccess.Read))
-                {
-                    Console.WriteLine("Inside Auth: stream : " + stream.ToString());
-                    // The file token.json stores the user's access and refresh tokens, and is created
-                    // automatically when the authorization flow completes for the first time.
-                    string credPath = "token.json";
-                    credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                        GoogleClientSecrets.Load(stream).Secrets,
-                        Scopes,
-                        "user",
-                        CancellationToken.None,
-                        new FileDataStore(credPath, true)).Result;
-                    Console.WriteLine("Credential file saved to: " + credPath);
-                }
-                Console.WriteLine("After key generation ") ;
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                                new ClientSecrets
+                                {
+                                    ClientId = "1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com",
+                                    ClientSecret = "DwaDGHou5ghXrJ0EitwnIQWu"
+                                },
+                                new[] { DriveService.Scope.Drive },
+                                "kurianurl",
+                                CancellationToken.None,
+                                new FileDataStore("JSON.Key"));
+
                 // Create Drive API service.
                 var service = new DriveService(new BaseClientService.Initializer()
                 {

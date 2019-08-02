@@ -51,6 +51,7 @@
     <link href="~/css/EbControls/EbFileUpload.css" asp-append-version=@bApnd rel="stylesheet" />@*amal*@
     <link href="~/css/EbControls/EbDialogBox.css" asp-append-version=@bApnd rel="stylesheet" />@*amal*@
     <link href="~/css/EbControls/EbFupFormControl.css" asp-append-version=@bApnd rel="stylesheet" />@*amal*@
+    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd />@*amal*@
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -117,6 +118,7 @@
     <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbQuickMenu/eb-quickmenu.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
@@ -161,7 +163,8 @@
             sid: "@ViewBag.cid",
             user: _uo || null,
             menu: {},
-            locations: {}
+            locations: {},
+            header: {}
         }
     </script>
 </head>

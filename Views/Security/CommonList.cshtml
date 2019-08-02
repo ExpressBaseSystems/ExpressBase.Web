@@ -21,6 +21,24 @@
         <div class="t-container">
             <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Security/CommonList?type=Users">
+                        <span class="material-icons t__sidebar_icon">person</span>
+                        <span class="t__sidebar_text">Users</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Security/CommonList?type=UserGroups">
+                        <span class="material-icons t__sidebar_icon">group</span>
+                        <span class="t__sidebar_text">UserGroups</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
+                    <a class="t_a" href="/Security/CommonList?type=Roles">
+                        <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
+                        <span class="t__sidebar_text">Roles</span>
+                    </a>
+                </li>
+                <li class="list-group-item outer_li text-center">
                     <a class="t_a" href="/Wiki">
                         <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
                         <span class="t__sidebar_text">Wiki</span>
@@ -173,6 +191,7 @@
                 //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
                 var _metadata = ["7", "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Status", "_user", "_profPic" ];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
+                $($(".eb-dashbord-sidebar").children()[0]).hide();
             }
             else if ("@ViewBag.ListType" === "anonymoususers") {
                 mnuBarObj.setName("Anonymous Users");
@@ -185,7 +204,7 @@
                 document.title = "User Groups";
                 var _metadata = ["3", "Id", "Name", "Description", "_userGroup"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
-
+                $($(".eb-dashbord-sidebar").children()[1]).hide();
             }
             else if ("@ViewBag.ListType" === "roles") {
                 mnuBarObj.setName("Roles");
@@ -193,6 +212,7 @@
                 //mnuBarObj.BuildMenu(`<button class='btn' title='New' onclick="window.open('../Security/ManageRoles', '_blank');"><i class="fa fa-plus-circle"></i></button>`);
                 var _metadata = ["7", "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
+                $($(".eb-dashbord-sidebar").children()[2]).hide();
             }
     });
 </script>

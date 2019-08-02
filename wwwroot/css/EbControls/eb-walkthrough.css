@@ -22,7 +22,7 @@
 }
 .TourTile {
     background: #3876ea;
-    width: 350px;
+    width: 400px;
     border-radius: 6px;
     border-top-left-radius: 0;
     transition: all .3s ease-out;
@@ -34,7 +34,7 @@
     color: white;
 }
 .TourTileInner {
-    padding: 10px;
+    padding: 20px;
 }
 .TourTileHead {
     padding: 2px 0;
@@ -52,9 +52,10 @@
 }
 .TourTileBtn {
     background: white;
-    border: 1px solid #ccc;
+    border: 1px solid #3876ea;
     border-radius: 4px;
-    color: #524f4f;
+    color: #3876ea;
+    padding: 5px 10px;
 }
 .TilePointer {
     position: absolute;

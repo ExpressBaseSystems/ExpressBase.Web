@@ -41,6 +41,24 @@
             <div class="t-container">
                 <ul class="list-group eb-dashbord-sidebar">
                     <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Security/CommonList?type=Users">
+                            <span class="material-icons t__sidebar_icon">person</span>
+                            <span class="t__sidebar_text">Users</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Security/CommonList?type=UserGroups">
+                            <span class="material-icons t__sidebar_icon">group</span>
+                            <span class="t__sidebar_text">UserGroups</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Security/CommonList?type=Roles">
+                            <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
+                            <span class="t__sidebar_text">Roles</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
                         <a class="t_a" href="/AppStore">
                             <span class="material-icons t__sidebar_icon">store</span>
                             <span class="t__sidebar_text">App Store</span>
@@ -140,7 +158,7 @@
                                     <li><a data-toggle="tab" href="#profile"><i class="fa fa-user"></i> Profile</a></li>
                                 </ul>
                                 <div class="tab-content" style="background-color:transparent;">
-                                    <div id="settings" class="tab-pane in active">
+                                    <div id="settings" class="tab-pane fade in active">
                                         <div class="form-group user-status-div" id="divStatus" style="display: none;">
                                             <div class="form-group">
                                                 <label class="label-custom-style">User Status</label>
@@ -156,8 +174,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="menu1" class="tab-pane"></div>
-                                    <div id="menu2" class="tab-pane" style="padding-top:30px;">
+                                    <div id="menu1" class="tab-pane fade"></div>
+                                    <div id="menu2" class="tab-pane fade" style="padding-top:30px;">
                                         <div class="row home-tab-cont">
                                             <div class="col-md-6">
                                                 <div class="form-group" id="divLocConstraint">
@@ -176,8 +194,8 @@
 
                                         @*<div style="text-align: center; padding-top: 28%; font-size: 28px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>*@
                                     </div>
-                                    <div id="menu3" class="tab-pane"></div>
-                                    <div id="menu4" class="tab-pane" style="padding-top:30px">
+                                    <div id="menu3" class="tab-pane fade"></div>
+                                    <div id="menu4" class="tab-pane fade" style="padding-top:30px">
                                         <div class="row home-tab-cont">
                                             <div class="col-md-6">
                                                 <div class="form-group">
@@ -198,7 +216,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="api" class="tab-pane">
+                                    <div id="api" class="tab-pane fade">
                                         <label class="label-custom-style">Api Key</label>
                                         <div style="display:flex;">
                                             <div class="col-md-6 pd-l-0">
@@ -217,7 +235,7 @@
                                         
                                         <button class="ebbtn eb_btn-sm eb_btnblue" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Api key generation was temporarily suspended'); $(event.target).prop('disabled', false);}, 2000, event);">Generate</button>
                                     </div>
-                                    <div id="profile" class="tab-pane">
+                                    <div id="profile" class="tab-pane fade">
                                         <div class="row home-tab-cont">
                                             <div class="col-md-12">
                                                 <div class="col-md-4 pd-0">

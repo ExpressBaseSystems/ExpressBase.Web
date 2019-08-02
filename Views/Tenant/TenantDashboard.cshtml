@@ -11,7 +11,7 @@
     }
 }
 @section StyleSheet {
-    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" />
+    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd/>
 }
 @section JavaScript{
     <script src="~/js/EbDashBoards/TenantDashBoard.js" type="text/javascript" asp-append-version=@bApnd></script>
@@ -108,41 +108,39 @@
             var Tdb = TenantDashBoard();
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
+            
+            window.tour = new Tour(
+                {
+                    WelcomeMessage: "<small>Welcome To </small> <br/> <b>EXPRESSbase</b>",
+                    Description: "explore the platform",
+                    Stack: [
+                        {
+                            element: '[tour-for="userhome"]',
+                            title: "Go to user home",
+                            content: "Go to user home where u can view the applications you created.",
+                            click: true
+                        },
+                        {
+                            element: '[tour-for="devhome"]',
+                            title: "Go to developer home",
+                            content: "Go to developer home and build your applications.",
+                            click: true
+                        },
+                        {
+                            element: ".sln_settings_link",
+                            title: "Go to Solution settings",
+                            content: "Configure your solution like add integrations,manage your team etc...",
+                            click: true
+                        },
+                        {
+                            element: "#eb-new-solution",
+                            title: "Create new solution",
+                            content: "Create your next solution",
+                            click: true
+                        }
+                    ]
+                });
         });
-
-        //setTimeout(function () {
-        //    window.tour = new Tour(
-        //        {
-        //            WelcomeMessage: "<small>Welcome To </small> <br/> <b>EXPRESSbase</b>",
-        //            Description:"explore the platform",
-        //            Stack: [
-        //                {
-        //                    element: '[tour-for="userhome"]',
-        //                    title: "Go to user home",
-        //                    content: "Go to user home where u can view the applications you created.",
-        //                    click: true
-        //                },
-        //                {
-        //                    element: '[tour-for="devhome"]',
-        //                    title: "Go to developer home",
-        //                    content: "Go to developer home and build your applications.",
-        //                    click: true
-        //                },
-        //                {
-        //                    element: ".sln_settings_link",
-        //                    title: "Go to Solution settings",
-        //                    content: "Configure your solution like add integrations,manage your team etc...",
-        //                    click: true
-        //                },
-        //                {
-        //                    element: "#eb-new-solution",
-        //                    title: "Create new solution",
-        //                    content: "Create your next solution",
-        //                    click: true
-        //                }
-        //            ]
-        //        })
-        //},1000)
     </script>
 }
 

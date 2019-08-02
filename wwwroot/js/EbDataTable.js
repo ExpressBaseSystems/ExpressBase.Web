@@ -237,12 +237,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.CloseParamDiv = function () {
-        //if (this.login === "dc") {
-        //    this.stickBtn.minimise();
-        //}
-        //else {
-        //    dvcontainerObj.dvcol[focusedId].stickBtn.minimise();
-        //}
         this.stickBtn.minimise();
     };
 
@@ -2241,7 +2235,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         //this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
         $("#clearfilterbtn_" + this.tableId).off("click").on("click", this.clearFilter.bind(this));
-        $("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
+        //$("#" + this.tableId + "_btntotalpage").off("click").on("click", this.showOrHideAggrControl.bind(this));
         this.copybtn.off("click").on("click", this.CopyToClipboard.bind(this));
         this.printbtn.off("click").on("click", this.ExportToPrint.bind(this));
         //this.printAllbtn.off("click").on("click", this.printAll.bind(this));
@@ -2251,7 +2245,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $(".columnMarker_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
-        $('[data-toggle="tooltip"]').tooltip({
+        $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
         $('.columntooltip').popover({
@@ -2282,13 +2276,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $("#obj_icons").append(this.$submit);
         this.$submit.click(this.getColumnsSuccess.bind(this));
 
+        if (this.EbObject.FormLinks.$values.length > 0) {
+            this.CreateNewFormLinks();
+        }
 
         if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
             $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
 
         if ($("#" + this.tableId).children().length > 0) {
             if (this.login === "dc") {
-                $("#obj_icons").append("<button type='button' id='" + this.tableId + "_btntotalpage' class='btn' style='display:none;'>&sum;</button>" +
+                $("#obj_icons").append(
                     "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
                     "<div class='btn-group'>" +
                     "<div class='btn-group'>" +
@@ -2314,11 +2311,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
                 $.each(this.permission, function (i, obj) {
                     if (obj === "Excel")
-                        $("#" + this.tableId + "_fileBtns .btn-group").append("<button id = 'btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data - toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
+                        $("#" + this.tableId + "_fileBtns .btn-group").append("<button id = 'btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
                 }.bind(this));
             }
 
-            if (this.login == "uc") {
+            if (this.login === "uc") {
                 dvcontainerObj.modifyNavigation();
             }
         }
@@ -2396,6 +2393,21 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             });
         }
         $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
+    };
+
+    this.CreateNewFormLinks = function () {
+        $("#obj_icons").append(`<div class="dropdown" style="display:inline-block;" id="NewFormdd${this.tableId}">
+                    <button class="btn" type="button" id="NewFormButton${this.tableId}" data-toggle="dropdown" title='Newform'>
+                        <i class="fa fa-plus" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu newform-menu">
+                        <div class="dropdown-menu-inner"></div>
+                    </div>
+                    </div>`);
+        $.each(this.EbObject.FormLinks.$values, function (i, obj) {
+            let url = `../webform/index?refid=${obj.Refid}&_params=""&_mode=2&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            $(`#NewFormdd${this.tableId} .dropdown-menu-inner`).append(`<a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a>`);
+        }.bind(this));
     };
 
     this.FormNewGroup = function (key, opt, event) {

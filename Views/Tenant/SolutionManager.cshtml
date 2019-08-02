@@ -1117,14 +1117,24 @@
                                 <div class="col-md-12">
                                     <div class="form-group">
                                         <p>Upload JSON Key</p>
-                                        <input id="GoogleDriveInputJSONUpload" type="file" name="files" >
+                                        <input id="GoogleDriveInputJSONUpload" class="form-control Inputclear" type="file" name="files" accept=".JSON">
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                        <input type="hidden" class="Inputclear IntConfId" id="GoogleDriveInputIntConfId" name="Id" value="0" />
-                    </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Crendentials</label>
+                                        <textarea class="form-control Inputclear" rows="8" name="JsonFile" id="exampleTextarea"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                            <input type="hidden" class="Inputclear IntConfId" id="GoogleDriveInputIntConfId" name="Id" value="0" />
+                        </div>
                 </div>
 
                 <div class="modal-footer">

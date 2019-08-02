@@ -56,6 +56,8 @@
     }.bind(this);
 
     this.controlOnFocus = function (e) {
+        if (this.curControl && this.curControl.attr("ebsid") === $(e.target).attr("ebsid"))
+            return;
         if (e.target.id === this.formId) {
             this.curControl = $(e.target);
             this.CreatePG(this.rootContainerObj);
@@ -303,6 +305,9 @@
                 else if (type === "Approval") {
                     ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
                     this.ApprovalCtrl = ctrlObj;
+                }
+                else if (type === "SimpleSelect") {
+                    $ctrl.find(".selectpicker").selectpicker();
                 }
 
                 this.dropedCtrlInit($ctrl, type, ebsid);

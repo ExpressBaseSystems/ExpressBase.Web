@@ -23,7 +23,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class ImportExportController : EbBaseIntCommonController
     {
-        public ImportExportController(IServiceClient sclient, IRedisClient redis, IEbMqClient _mqc) : base(sclient, redis,_mqc) { }
+        public ImportExportController(IServiceClient sclient, IRedisClient redis, IEbMqClient _mqc) : base(sclient, redis, _mqc) { }
 
         public IActionResult Index()
         {
@@ -94,19 +94,19 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Export(string refids, int appid)
         {
-            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest { Refids = refids, AppId= appid });
+            ExportApplicationResponse res = ServiceClient.Post<ExportApplicationResponse>(new ExportApplicationMqRequest { Refids = refids, AppId = appid });
             return RedirectToAction("AppStore");
         }
 
         public IActionResult Import(int Id)
         {
-            ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationMqRequest { Id = Id });
-            return RedirectToAction("DevDashboard","Dev");
+            ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationMqRequest { Id = Id, IsDemoApp = false });
+            return RedirectToAction("DevDashboard", "Dev");
         }
 
-        public IActionResult ExportOSE(string ids,int AppId)
+        public IActionResult ExportOSE(string ids, int AppId)
         {
-            EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds =ids});
+            EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
             ViewBag.objlist = resultlist.Data;
             ViewBag.appid = AppId;
             return View();

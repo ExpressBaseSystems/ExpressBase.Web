@@ -252,9 +252,6 @@
     }
 
 .drp_item .user_info {
-    min-width: 80%;
-    height: 100%;
-    float: left;
     padding: 5px 5px 5px 10px;
 }
 
@@ -269,9 +266,7 @@
     }
 
 .proimage_inner {
-    float: left;
-    height: 83%;
-    margin-right: 1rem;
+    width:50px;
 }
 
 .obj_dash_proimage {

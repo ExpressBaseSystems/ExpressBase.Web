@@ -37,18 +37,8 @@
         <div class="pgHead">Toolbox  <i class="fa fa-wrench" aria-hidden="true"></i> <i class="fa fa-times pin" aria-hidden="true"></i></div>
         <div id="form-buider-toolBox" class="form-buider-toolBox">
 
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#div-primitive-tools" style="padding: 2px 15px; font-weight: 600;">Basic</a></li>
-                <li><a data-toggle="tab" href="#div-custom-tools" style="padding: 2px 15px; font-weight: 600;">User Controls</a></li>
-            </ul>
-            <div class="tab-content">
-                <div id="div-primitive-tools" class="tab-pane fade in active div-primitive-tools">
-                    @Html.Raw(_toolBox.ToolsHtml)
-                </div>
-                <div id="div-custom-tools" class="tab-pane fade div-custom-tools">
-                    @Html.Raw(ViewBag.UserControlHtml)
-                </div>
-            </div>
+            @Html.Raw(_toolBox.ToolsHtml)
+            @Html.Raw(ViewBag.UserControlHtml)
 
         </div>
     </div>
@@ -66,11 +56,11 @@
         }
 
         @*<div class="dev-chat-cont">
-            <div class="eb-chat-head"><span>Filter Dialog <i class="fa fa-comment pull-right" aria-hidden="true"></i></span></div>
-                <div id="FilterForm1" ebsid="FilterForm1" IsRenderMode='false' eb-form="true"  ui-inp eb-type="@_builderType" tabindex="1" class="eb-chatBox-dev ebcont-ctrl">
-                @Html.Raw(@ViewBag.html)
-            </div>
-        </div>*@
+                <div class="eb-chat-head"><span>Filter Dialog <i class="fa fa-comment pull-right" aria-hidden="true"></i></span></div>
+                    <div id="FilterForm1" ebsid="FilterForm1" IsRenderMode='false' eb-form="true"  ui-inp eb-type="@_builderType" tabindex="1" class="eb-chatBox-dev ebcont-ctrl">
+                    @Html.Raw(@ViewBag.html)
+                </div>
+            </div>*@
 
     </div>
     <input type="hidden" id="objtype" value="@type" />

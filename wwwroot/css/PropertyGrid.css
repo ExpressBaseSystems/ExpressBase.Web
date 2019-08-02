@@ -63,17 +63,19 @@
         height: 21px;
         -webkit-tap-highlight-color: rgba(255,255,255,0);
         padding: 3px;
-        font-size: 11.5px;
         -webkit-transition: box-shadow .1s ease,border-color .1s ease;
         transition: box-shadow .1s ease,border-color .1s ease;
         box-shadow: none;
+        font-size: 11.1px;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
 .cxv-inp {
     vertical-align: sub;
     background-color: rgba(255, 255, 255, 0.13) !important;
     border: solid 1px rgba(221, 221, 221, 0.45098039215686275) !important;
-    padding: 0 !important;
+    padding-top: 2px !important;
     color: rgba(0, 0, 0, 0.65);
 }
 
@@ -141,16 +143,31 @@
 .pg-table [is-expanded] td {
     padding-left: 0;
     padding-top: 0;
-    padding-bottom: 0.1em;
+    padding-bottom: 0;
 }
 
-.pg-table [subtype-of] .pgTdName {
-    padding-left: 2.9em;
-}
+    .pg-table [is-expanded] td:nth-child(2) {
+        padding-left: 3px;
+    }
+
 
 .pg-table [subtype-of] td {
     padding-top: 0.30em;
     padding-bottom: 0.30em;
+}
+
+.pg-table [subtype-of] .pgTdName {
+    padding-left: 2.9em;
+    font-size: 11.1px !important;
+}
+
+.pg-table [subtype-of] .pgTdval {
+    padding-left: 1em;
+    padding-right: 4em;
+}
+
+.pg-table [subtype-of] > .pgTdval input {
+    height:16px;
 }
 
 .outer-pg > .pgHead {
@@ -162,7 +179,7 @@
 .pgHead {
     /*background-color: rgba(3, 1, 45, 0.53);*/
     /*background-color: rgb(71, 97, 123);*/
-    /*/*background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));*/*/
+    /*/*background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.25, #369), color-stop(0.98, #2c5e90));*/ */
     /*color: #fff;*/
     /*padding: 2%;*/
     /*font-weight: bold;*/
@@ -479,12 +496,15 @@
     -webkit-user-select: none;
     -o-user-select: none;
     user-select: none;
+    animation-duration: 0.3s;
+    transition: all 0.3s;
 }
 
 .pgGroupCell {
     vertical-align: inherit !important;
     padding-top: 0.6em !important;
     padding-bottom: 0.6em !important;
+    padding: 5px !important;
     padding-left: 0.4em !important;
 }
 
@@ -571,6 +591,7 @@
         background-color: rgba(0, 0, 0, 0.7);
         color: white;
     }
+
     .pgCXEditor-Cont .btn[name="CXE_OK"]:focus {
         outline: none;
         box-shadow: 0 0 1px 1px #72c5ff;
@@ -846,9 +867,24 @@
     color: #114;
     background-color: white;
 }
+
 .pgTdval .bootstrap-select.btn-group .dropdown-toggle .filter-option {
     text-overflow: ellipsis;
     padding-right: 8px;
+    font-size: 11.1px;
+    padding-top: 1px;
+}
+
+.pgTdval .bootstrap-select.btn-group .dropdown-menu > li > a {
+    font-size: 11.1px;
+    padding: 3px 18px;
+}
+
+.pgTdval .bootstrap-select.btn-group .dropdown-menu {
+    min-width: calc(100% - 8px);
+    box-sizing: border-box;
+    border-radius: 2px;
+    background-color: #fdfdfd;
 }
 
 .pgRow .pgTdName {
@@ -868,6 +904,7 @@
 .pgRow {
     background-color: rgba(0, 0, 0, 0.045);
     animation-duration: 0.3s;
+    transition: all 0.3s;
 }
 
     .pgRow:hover {
@@ -903,6 +940,7 @@
     padding: 5px;
     /*font-family: Tahoma, sans-serif;*/
 }
+
     .strE-texarea:focus {
         outline: none;
     }

@@ -203,16 +203,6 @@
         margin-left: 25%;
     }
 
-.render {
-    background-color: #fff;
-    min-width: 100%;
-    height: 44.4rem;
-    border: 1px solid #b5b5b5;
-    padding: 20px;
-    margin: 0px;
-    overflow: auto;
-}
-
 div.searchDiv {
     width: 100%;
     height: 80px;
@@ -274,7 +264,8 @@ div.searchDiv iframe{
 
 .props {
     background: #fff;
-    min-width: 52px;
+    min-width: 53px;
+    width:100%;
     min-height: 22px;
     font-size: 12px;
     align-content: center;
@@ -291,42 +282,30 @@ div.searchDiv iframe{
 
  .Btn1stRow .props {
     border-right: solid 1px #e6e6e6;
-    border-bottom: solid 1px #e6e6e6;
     border-left:solid 0px;
     border-top:solid 0px;
+    border-bottom:solid 0px;
 }
-    .Btn1stRow .props:first-child {
-        border-left: none;
-    }
-    .Btn1stRow .props:last-child {
-        border-right: solid 1px #828282;
-    }
 
-.Btn2ndRow .props {
+.Btn1stRow .props2 {
     border-right: solid 1px #e6e6e6;
     border-bottom: solid 0px;
     border-left: solid 0px;
     border-top: solid 0px;
 }
-   
-.Btn2ndRow .props2 {
-    border-right: solid 1px #e6e6e6;
-    border-bottom: solid 0px;
-    border-left: solid 0px;
-    border-top: solid 0px;
-}
-
-    .Btn2ndRow .props2:last-child {
-        border-right: none;
+    .Btn1stRow .props2:last-child {
+        border-right: solid 0px;
     }
+
    
+
     
 .props2 {
     text-align: center;
     padding: 3px;
     min-width: 50px;
     background: #fff;
-    width: 52px;
+    width: 53px;
     height: 22px;
     font-size: 12px;
     align-content: center;
@@ -418,47 +397,99 @@ iframe {
         font-size: 20px;
         padding: 4px;
     }
-/*wiki admin*/
 
-/*.WikiAdminNavBar {
-    margin-top: 4%;
+
+/*wiki add*/
+
+#btnUploadImg {
+    border: solid 1px #fff;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 12px;
+    padding: 2px 15px 2px 15px;
+    background: #1573ff;
 }
-   .WikiAdminNavBar h5{
-       font-size:18px;
-       line-height:0px;
-       font-weight:300;
 
-    }
-    .WikiAdminNavBar p {
-        color: #5f6c7d;
-        font-size: 15px;
-        line-height: 0px;
-        font-weight: 300;
-        padding: 10px 15px 0px
-    }
-    .WikiAdminNavBar p:hover {
-        color: #508bf9;
-        font-weight: 500;
-    }
-    .WikiAdminNavBar a {
-        font-size: 12px;
-        padding: 2px 15px 3px 15px;
-        border: solid 1px #508bf9;
-        border-radius: 4px;
-        background: #508bf9;
-        color: #fff;
-        text-decoration: none;
-    }
-        .WikiAdminNavBar a:hover {
-            background: #3876ea;
-            color: white;
-        }*/
-
-.manage-wiki-nav {
-    display: flex;
-    width: 100%;
-    flex-flow: column;
+.wiki-preview {
+    color: #2b2b2b;
+    font-size: 15px;
+    text-align: justify;
+    font-weight: 400;
+    padding: 0% 10% 0% 10%;
+    font-weight: 300;
 }
+    .wiki-preview .render {
+        
+    }
+
+        .wiki-preview .render h1 {
+            font-size: 31px;
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+        .wiki-preview .render h3 {
+            font-size: 22px;
+            font-weight: 400;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .wiki-preview .render p {
+            font-size: 15px;
+            line-height: 1.8em;
+            text-align: justify;
+        }
+
+        .wiki-preview .render pre.prettyprint {
+            padding: 10px;
+            border: 1px solid #e2e2e2;
+            background: #f1f5f9;
+            margin-bottom: 20px;
+        }
+
+
+        .wiki-preview .render a {
+            font-size: 15px;
+            line-height: 1.8em;
+        }
+
+        .wiki-preview .render li {
+            font-size: 15px;
+            line-height: 1.8em;
+        }
+
+        .wiki-preview .render h2 {
+            font-size: 27px;
+            font-weight: 400;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .wiki-preview .render h3 {
+            font-size: 22px;
+            font-weight: 400;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .wiki-preview .render img {
+            min-height: 300px;
+        }
+
+        .wiki-preview .render iframe {
+            min-height: 315px;
+            min-width: 560px;
+            margin-left: 25%;
+        }
+
+
+    .manage-wiki-nav {
+        display: flex;
+        width: 100%;
+        flex-flow: column;
+    }
     .public h1 {
         font-size: 18px;
         padding: 0px;
@@ -468,42 +499,6 @@ iframe {
         font-weight: 200;
     }
 
-/*.admin_wiki_list {
-    height: 39px;
-    width: 100%;
-    overflow: hidden;
-}
-
-    .admin_wiki_list h1 {
-        font-size: 15px;
-        padding: 0px;
-        margin-bottom: 0px;
-        margin-top: 0px;
-        text-align: left;
-    }
-
-    .admin_wiki_list p {
-        font-size: 10px;
-        line-height: 10px;
-        font-family: Montserrat;
-        color: #4c4848;
-    }
-
-    .admin_wiki_list center {
-        text-align: left;
-    }
-
-    .admin_wiki_list h2 {
-        font-size: 13px;
-        padding: 0px;
-        margin-bottom: 0px;
-        margin-top: 0px;
-        text-align: left;
-    }*/
-
-/*.container {
-    padding: 20px;
-}*/
 
 .form-control {
     width: 120px;
@@ -645,13 +640,6 @@ iframe {
 .menu_border {
     font-weight: bold;
 }
-
-.render_field {
-    width: 45px;
-    height: 30px;
-    margin-right: 25px;
-    border: 2px solid #73AD21;
-}
 .search-box-fab{
     position:absolute;
 }
@@ -763,7 +751,15 @@ iframe {
 }
 
 .nav > li > a {
-    padding: 2px 14px 2px 14px;
+    padding: 10px 15px 2px 15px;
+}
+.nav > li > input {
+    color: white;
+    background-color: #2f82fd;
+    float: right;
+    padding: 5px;
+    margin: 0px 25px 0px 0px;
+
 }
 .wiki-add .eb-styledTab {
     margin-right: -30px;
@@ -772,7 +768,6 @@ iframe {
     margin-bottom: 10px;
 }
 
-}
 
 /*padding-right: 15px;*/
 /* padding-left: 15px; *//**/

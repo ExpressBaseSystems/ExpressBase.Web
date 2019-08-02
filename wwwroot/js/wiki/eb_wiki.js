@@ -1,9 +1,8 @@
 ﻿let addwiki = function () {
-    let historyId = [];
 
     this.AppendHtml = function () {
-        let abc = $('#text').val();
-        $('#render').html(abc);
+        let SelectedString = $('#text').val();
+        $('#render').html(SelectedString);
         $('#new1').append('');
     };
 
@@ -12,14 +11,13 @@
         $('.front_page_wiki').show();
     };
 
-
     let start;
     let end;
     let id;
 
     this.appendVal = function (e) {
         document.getElementById('text');
-        let abc = window.getSelection().toString();
+        let SelectedString = window.getSelection().toString();
        var ele = document.getElementById('text');
         var text = ele.value;
         start = ele.selectionStart;
@@ -31,33 +29,67 @@
         if (id == `img` ||  id == `iframe`) {
             let insertVal = `<${id} src=" "> </${id}>`
             let txt = 'text';
-            if (abc == "") {
+            if (SelectedString == "") {
                 this.insertAtCaret(txt, insertVal);
             }
             else {
-                let insertVal = `<${id} src=''> ${abc} </${id}>`
+                let insertVal = `<${id} src=''> ${SelectedString} </${id}>`
                 this.insertAtCaret(txt, insertVal);
             }
         }
         else if (id == `a`) {
             let insertVal = `<${id} data-id=" " class="wikilist"> </${id}>`
             let txt = 'text';
-            if (abc == "") {
+            if (SelectedString == "") {
                 this.insertAtCaret(txt, insertVal);
             }
             else {
-                let insertVal = `<${id} src=''> ${abc} </${id}>`
+                let insertVal = `<${id} src=''> ${SelectedString} </${id}>`
+                this.insertAtCaret(txt, insertVal);
+            }
+        }
+        else if (id == `right`) {
+            let insertVal = `<p style="text-align: right;"> </p>`
+            let txt = 'text';
+            if (SelectedString == "") {
+                this.insertAtCaret(txt, insertVal);
+            }
+            else {
+                let insertVal = `<p style="text-align: left;"> ${SelectedString}  </p>`
+                this.insertAtCaret(txt, insertVal);
+            }
+        }
+        else if (id == `left`) {
+            let insertVal = `<p style="text-align: left;"> </p>`
+            let txt = 'text';
+            if (SelectedString == "") {
+                this.insertAtCaret(txt, insertVal);
+            }
+            else {
+                let insertVal = `<p style="text-align: left;"> ${SelectedString} </p>`
+                this.insertAtCaret(txt, insertVal);
+            }
+        }
+       
+        else if (id == `code`) {
+            let insertVal = `<pre class="prettyprint"> </pre>`
+            let txt = 'text';
+            if (SelectedString == "") {
+                this.insertAtCaret(txt, insertVal);
+            }
+            else {
+                let insertVal = `<pre class="prettyprint"> ${SelectedString} </pre>`
                 this.insertAtCaret(txt, insertVal);
             }
         }
         else {
             let insertVal = `<${id}> </${id}>`
             let txt = 'text';
-            if (abc == "") {
+            if (SelectedString == "") {
                 this.insertAtCaret(txt, insertVal);
             }
             else {
-                let insertVal = `<${id}> ${abc} </${id}>`
+                let insertVal = `<${id}> ${SelectedString} </${id}>`
                 this.insertAtCaret(txt, insertVal);
             }
         }
@@ -362,26 +394,24 @@
         }
     }
 
-    this.render_page_toggle = function (e) {
-        let val = e.target.getAttribute("val");
-        if (val == "show") {
-            $("#render_field").hide();
-            $("#render_page_toggle").removeAttr("val").attr("val", "hide");
-            $("#render_page_toggle").removeClass("fa-arrows-alt").addClass("fa-compress");
-            $("#render_page_toggle").removeAttr("value").attr("value", "Normal Screen");
-            $("#edit_field").removeClass("col-sm-6").addClass("col-sm-12");
-            $("#text").css("height", "100%");
-            //$("#text").attr("rows", "23");
-        }
-        else {
-            $("#render_field").show();
-            $("#render_page_toggle").removeAttr("val").attr("val", "show");
-            $("#edit_field").removeClass("col-sm-12").addClass("col-sm-6");
-            $("#render_page_toggle").removeAttr("value").attr("value", "Full Screen");
-            //$("#text").attr("rows", "21");
-            $("#render_page_toggle").removeClass("fa-compress").addClass("fa-arrows-alt");
-        }
-    }
+    //this.render_page_toggle = function (e) {
+    //    let val = e.target.getAttribute("val");
+    //    if (val == "show") {
+    //        $("#render_page_toggle").removeAttr("val").attr("val", "hide");
+    //        $("#render_page_toggle").removeClass("fa-arrows-alt").addClass("fa-compress");
+    //        $("#render_page_toggle").removeAttr("value").attr("value", "Normal Screen");
+    //        $("#edit_field").removeClass("col-sm-6").addClass("col-sm-12");
+    //        $("#text").css("height", "100%");
+    //        //$("#text").attr("rows", "23");
+    //    }
+    //    else {
+    //        $("#render_page_toggle").removeAttr("val").attr("val", "show");
+    //        $("#edit_field").removeClass("col-sm-12").addClass("col-sm-6");
+    //        $("#render_page_toggle").removeAttr("value").attr("value", "Full Screen");
+    //        //$("#text").attr("rows", "21");
+    //        $("#render_page_toggle").removeClass("fa-compress").addClass("fa-arrows-alt");
+    //    }
+    //}
 
     //wiki admin page
 
@@ -749,6 +779,9 @@
     this.gallerytab = function () {
         $("#gallery").click();
     }
+    this.WikiPreviewTab = function () {
+        $("#preview").click();
+    }
 
     this.init = function () {
 
@@ -759,7 +792,7 @@
         $("#text").on("click", this.AppendHtml.bind(this));
         $("#search_wiki").on("keyup change", this.WikiSearch.bind(this));
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
-        $("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
+        //$("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
@@ -772,6 +805,7 @@
         $(".WikiAdminMenuBar").on("click", this.WikiAdminMenuBarHighlight.bind(this));
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
         $("#gallery-tab1").on("click", this.gallerytab.bind(this));
+        $("#wiki-preview-tab").on("click", this.WikiPreviewTab.bind(this));
      
     };
 

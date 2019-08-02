@@ -10,15 +10,34 @@ class Tour {
         this.tour = null;
         this.tc = 0;
         this.s = $.extend({
-            Stack:[],
-            AutoStart:true
+            WelcomeMessage: "",
+            Description: "",
+            Stack: []
         }, o);
-        if (this.s.AutoStart)
-            this.i();
+
+        this.i();
+        if (this.getCookie("ebwlkthrougstatusofforon") === "off")
+            return false;
+        this.tour.fade.show();
+        this.tour.container.show();
+        if (this.s.WelcomeMessage !== "") {
+            this.tour.msgbox.show();
+        }
+        else {
+            this.s_tour(this.tc);
+        }
     };
 
     start() {
-        this.i();
+        this.tour.fade.show();
+        this.tour.container.show();
+        this.tc = 0;
+        if (this.s.WelcomeMessage !== "") {
+            this.tour.msgbox.show();
+        }
+        else {
+            this.s_tour(this.tc);
+        }
         return "Tour started";
     }
 
@@ -32,8 +51,22 @@ class Tour {
                           <div class="ebTour_bodyWrprInner">
                             <a class="touFtr-skip">Skip <i class="fa fa-step-forward" aria-hidden="true"></i></a>
                             <a class="touFtr-showAgn">Dont show again <i class="fa fa-power-off" aria-hidden="true"></i></a>
-                          </div>`);
-        return { fade: $(".ebTour_bodyWrpr"), container: $(".ebTour_bodyWrprInner") };
+                            ${this.getWelcomeBox()}
+                           </div>`);
+        return { fade: $(".ebTour_bodyWrpr"), container: $(".ebTour_bodyWrprInner"), msgbox: $(".ebTour_welcomebox") };
+    }
+
+    getWelcomeBox() {
+            return `<div class="ebTour_welcomebox">
+                                <img src="/images/walls/tour-welcomebox.png"/>
+                                <div class="ebTour_welcomebox_inner">
+                                    <div class="title">${this.s.WelcomeMessage}</div>
+                                    <div class="subtitle">${this.s.Description}</div>
+                                    <div class="ebTour-startBtn-container">
+                                        <button class="ebTour-startBtn" id="tour-trigger">Take a tour</button>
+                                    </div>
+                                </div>
+                            </div>`;
     }
 
     g_position(el) {
@@ -46,7 +79,7 @@ class Tour {
             p = "right:0 !important;transform: scaleX(-1);";
         }
         let t = el.offset().top + el.innerHeight() + 30;
-        return { l: l, t: t ,pointer:p};
+        return { l: l, t: t, pointer: p };
     }
 
     getStyle(pointer) {
@@ -90,7 +123,7 @@ class Tour {
                 $(`#stack_el_${tc}_click`).off("click").on("click", this.t_click.bind(this, el, $(`#TourTile_${tc}`)));
             }
             else {
-                $(`#TourTile_${tc}`).show()
+                $(`#TourTile_${tc}`).fadeIn()
                 el.addClass("el_current");
             }
         }
@@ -136,20 +169,48 @@ class Tour {
     }
 
     t_click(el, tile) {
-        el.click();
+        el[0].click();
         el.removeClass("el_current");
         tile.hide();
     }
 
     skipTour(e) {
+        $(".TourTile").fadeOut();
         $(".el_current").removeClass("el_current");
         this.tour.fade.hide();
         this.tour.container.hide();
     }
 
+    offTour() {
+        this.setCookie('ebwlkthrougstatusofforon', "off", 20 * 365);
+        this.skipTour();
+    }
+
+    setCookie(c_name, value, exdays) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) + ((exdays == null) ? "" : ";expires = " + exdate.toUTCString());
+        document.cookie = c_name + "=" + c_value;
+    }
+
+    getCookie(name) {
+        var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+    }
+
+    deleteCokkie() {
+        this.setCookie("ebwlkthrougstatusofforon", 'on', -1);
+    }
+
+    startTourByTrigger() {
+        this.tour.msgbox.fadeOut();
+        this.s_tour(this.tc);
+    }
+
     i() {
         this.tour = this.setWraper();
         $(".touFtr-skip").off("click").on("click", this.skipTour.bind(this));
-        this.s_tour(this.tc);
+        $(".touFtr-showAgn").off("click").on("click", this.offTour.bind(this));
+        $("#tour-trigger").on("click", this.startTourByTrigger.bind(this));
     };
 }

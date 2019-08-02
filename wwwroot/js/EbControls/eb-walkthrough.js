@@ -11,16 +11,33 @@ class Tour {
         this.tc = 0;
         this.s = $.extend({
             WelcomeMessage: "",
-            Description: "explore",
-            Stack:[],
-            AutoStart:true
+            Description: "",
+            Stack: []
         }, o);
-        if (this.s.AutoStart)
-            this.i();
+
+        this.i();
+        if (this.getCookie("ebwlkthrougstatusofforon") === "off")
+            return false;
+        this.tour.fade.show();
+        this.tour.container.show();
+        if (this.s.WelcomeMessage !== "") {
+            this.tour.msgbox.show();
+        }
+        else {
+            this.s_tour(this.tc);
+        }
     };
 
     start() {
-        this.i();
+        this.tour.fade.show();
+        this.tour.container.show();
+        this.tc = 0;
+        if (this.s.WelcomeMessage !== "") {
+            this.tour.msgbox.show();
+        }
+        else {
+            this.s_tour(this.tc);
+        }
         return "Tour started";
     }
 
@@ -36,11 +53,10 @@ class Tour {
                             <a class="touFtr-showAgn">Dont show again <i class="fa fa-power-off" aria-hidden="true"></i></a>
                             ${this.getWelcomeBox()}
                            </div>`);
-        return { fade: $(".ebTour_bodyWrpr"), container: $(".ebTour_bodyWrprInner") };
+        return { fade: $(".ebTour_bodyWrpr"), container: $(".ebTour_bodyWrprInner"), msgbox: $(".ebTour_welcomebox") };
     }
 
     getWelcomeBox() {
-        if (this.s.WelcomeMessage !== "") {
             return `<div class="ebTour_welcomebox">
                                 <img src="/images/walls/tour-welcomebox.png"/>
                                 <div class="ebTour_welcomebox_inner">
@@ -51,9 +67,6 @@ class Tour {
                                     </div>
                                 </div>
                             </div>`;
-        }
-        else
-            return "";
     }
 
     g_position(el) {
@@ -66,7 +79,7 @@ class Tour {
             p = "right:0 !important;transform: scaleX(-1);";
         }
         let t = el.offset().top + el.innerHeight() + 30;
-        return { l: l, t: t ,pointer:p};
+        return { l: l, t: t, pointer: p };
     }
 
     getStyle(pointer) {
@@ -77,7 +90,6 @@ class Tour {
     }
 
     s_tour(tc) {
-        store.set("tour_"+location.href, tc);
         let el = null;
         if (this.s.Stack[tc].element.indexOf(".") >= 0)
             el = $(this.s.Stack[tc].element).eq(0);
@@ -111,7 +123,7 @@ class Tour {
                 $(`#stack_el_${tc}_click`).off("click").on("click", this.t_click.bind(this, el, $(`#TourTile_${tc}`)));
             }
             else {
-                $(`#TourTile_${tc}`).show()
+                $(`#TourTile_${tc}`).fadeIn()
                 el.addClass("el_current");
             }
         }
@@ -125,7 +137,7 @@ class Tour {
         if (tc != 0)
             html.push(`<button id="stack_el_${tc}_prev" class="TourTileBtn TourTilePrevBtn">&#8592; Prev</button>`);
         else {
-            html.push('<div></div>');
+            //html.push('<div></div>');
         }
 
         if ("click" in this.s.Stack[tc] && this.s.Stack[tc].click) {
@@ -142,7 +154,6 @@ class Tour {
         if (this.tc === this.s.Stack.length - 1) {
             this.tour.fade.hide();
             this.tour.container.hide();
-            store.remove("tour_" + location.href);
         }
         else {
             this.tc = this.tc + 1;
@@ -164,32 +175,42 @@ class Tour {
     }
 
     skipTour(e) {
+        $(".TourTile").fadeOut();
         $(".el_current").removeClass("el_current");
         this.tour.fade.hide();
         this.tour.container.hide();
-        store.remove("tour_" + location.href);
+    }
+
+    offTour() {
+        this.setCookie('ebwlkthrougstatusofforon', "off", 20 * 365);
+        this.skipTour();
+    }
+
+    setCookie(c_name, value, exdays) {
+        var exdate = new Date();
+        exdate.setDate(exdate.getDate() + exdays);
+        var c_value = escape(value) + ((exdays == null) ? "" : ";expires = " + exdate.toUTCString());
+        document.cookie = c_name + "=" + c_value;
+    }
+
+    getCookie(name) {
+        var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+        return v ? v[2] : null;
+    }
+
+    deleteCokkie() {
+        this.setCookie("ebwlkthrougstatusofforon", 'on', -1);
     }
 
     startTourByTrigger() {
-        $(".ebTour_welcomebox").fadeOut();
+        this.tour.msgbox.fadeOut();
         this.s_tour(this.tc);
     }
 
     i() {
         this.tour = this.setWraper();
         $(".touFtr-skip").off("click").on("click", this.skipTour.bind(this));
-        let _vistc = store.get("tour_"+location.href);
-        if (_vistc) {
-            this.tc = _vistc;
-            this.s_tour(this.tc);
-        }
-        else {
-            if (this.s.WelcomeMessage === "")
-                this.s_tour(this.tc);
-            else {
-                $(".ebTour_welcomebox").fadeIn();
-                $("#tour-trigger").off("click").on("click", this.startTourByTrigger.bind(this));
-            }
-        }
+        $(".touFtr-showAgn").off("click").on("click", this.offTour.bind(this));
+        $("#tour-trigger").on("click", this.startTourByTrigger.bind(this));
     };
 }

@@ -39,6 +39,7 @@
     <link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" asp-append-version=@bApnd />@*amal*@
     <link href="~/css/EbControls/EbDialogBox.css" rel="stylesheet" asp-append-version=@bApnd />@*amal*@
     <link href="~/css/EbControls/EbFupFormControl.css" rel="stylesheet" asp-append-version=@bApnd />@*amal*@
+    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd />@*amal*@
 
     @* JQUERY JS *@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -75,6 +76,7 @@
     <script src="~/js/EbControls/EbDialogBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbQuickMenu/eb-quickmenu.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     @if (ViewBag.wc == "uc")
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
@@ -98,7 +100,8 @@
             sid: "@ViewBag.cid",
             user: _uo || null,
             menu: {},
-            locations: {}
+            locations: {},
+            header: {}
         }
     </script>
 </head>
@@ -141,6 +144,17 @@
                 @await Component.InvokeAsync("PageHeaderCommon")
             }
             @RenderBody()
+        </div>
+        <div class="eb-expndLinkswrpr">
+            <button id="eb-expandbutton" onclick="$('.eb-expndLinkswrpr-body').toggle();" class="eb-expand-link"><i class="fa fa-cog"></i></button>
+            <div class="eb-expndLinkswrpr-body" style="display:none;">
+                <div class="eb-expndLinkswrpr-inner">
+                    <button class="eb-expand-innerbtn" onclick="if (window.tour) {window.tour.start();} $('.eb-expndLinkswrpr-body').toggle();" title="Walk through">
+                        <i class="fa fa-plane"></i>
+                    </button>
+                    <button class="eb-expand-innerbtn" title="Shortcuts"><i class="fa fa-random"></i></button>
+                </div>
+            </div>
         </div>
     </div>
     @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")

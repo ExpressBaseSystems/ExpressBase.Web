@@ -106,7 +106,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.IsNew = "true";
                 ViewBag.Refid = string.Empty;
                 ViewBag.ObjectName = "*Untitled";
-                ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj (){ Value = "*Untitled" });//regional languages not support in ViewBag
+                ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = "*Untitled" });//regional languages not support in ViewBag
                 ViewBag.Status = string.Empty;
                 ViewBag.ObjectDesc = string.Empty;
                 ViewBag.ReadOnly = false;
@@ -307,7 +307,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
-                obj.BeforeSave();
+                obj.BeforeSave(ServiceClient, Redis);
                 string _rel_obj_tmp = obj.DiscoverRelatedRefids();
                 if (_rel_obj_tmp.Length > 0)
                     _rel_obj_tmp = _rel_obj_tmp.Substring(0, _rel_obj_tmp.Length - 1);//removing excess comma
@@ -391,7 +391,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
-                obj.BeforeSave();
+                obj.BeforeSave(ServiceClient, Redis);
                 string _rel_obj_tmp = obj.DiscoverRelatedRefids();
                 if (obj is EbDataReader)
                 {

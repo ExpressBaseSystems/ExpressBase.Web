@@ -614,3 +614,12 @@ table.dataTable tr.group td {
     border-radius: 5px;
     text-align: center;
 }
+.dropdown-menu-inner {
+    display: flex;
+    flex-direction: column;
+    padding-left: 10px;
+}
+.newform-menu {
+    right:-50px !important;
+    left:unset !important;
+}

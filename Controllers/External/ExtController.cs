@@ -343,9 +343,12 @@ namespace ExpressBase.Web.Controllers
 
 		public int FacebookLogin(string name, string fbid, string email)
 		{
+			Console.WriteLine("reached contoller / facebooklogin");
+
 			int st = 0;
 			try
 			{
+
 				if (email != null)
 				{
 					FacebookLoginResponse res = this.ServiceClient.Post<FacebookLoginResponse>(new FacebookLoginRequest
@@ -356,6 +359,7 @@ namespace ExpressBase.Web.Controllers
 					});
 					SocialOath(res.jsonval);
 				}
+
 			}
 			catch (Exception e)
 			{
@@ -370,6 +374,7 @@ namespace ExpressBase.Web.Controllers
 		[HttpGet("social_oauth")]
 		public IActionResult SocialOath(string scosignup)
 		{
+			Console.WriteLine("reached contoller / SocialOath");
 
 			SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
 			if (Social.UniqueEmail)

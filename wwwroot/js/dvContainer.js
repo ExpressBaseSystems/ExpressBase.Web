@@ -85,7 +85,7 @@ var DvContainerObj = function (settings) {
             this.currentObj.Pippedfrom = "";
             prevfocusedId = focusedId;
         }
-
+        this.modifyNavigation();
         this.PippedColl[focusedId] = this.RelatedDvlist;
         this.TaggedColl[focusedId] = this.TaggedDvlist;
         this.MainData = (this.currentObj.Pippedfrom !== null && this.currentObj.Pippedfrom !== "") ? this.previousObj.data : null;
@@ -528,13 +528,15 @@ var DvContainerObj = function (settings) {
                 nextArrow: "<i class='pull-right fa fa-angle-right' style='right: 15px;' aria-hidden='true'></i>"
             });
             $('.splitdiv_parent').on('afterChange', this.focusChanged.bind(this));
-            $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
+            if ($("#" + focusedId).length >0)
+                $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
         }
         else {
             this.clickDot = true;
-            $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
+            if ($("#" + focusedId).length > 0)
+                $('.splitdiv_parent').slick('slickGoTo', $("#" + focusedId).attr("data-slick-index"), true);
         }
-    }
+    };
 
     this.focusChanged = function (event, slick, currentSlide, nextSlide) {
         $("#Relateddiv").hide();

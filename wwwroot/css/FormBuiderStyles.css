@@ -660,10 +660,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 18%;
 }
 
-.filter-form-buider-cont .tool {
-    width: calc( 100% - 6px);
-}
-
 .web-form-buider-cont .toolbox-cont {
     width: 250px;
     border-right: solid 1px #c7c7c7;
@@ -759,6 +755,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-color: #f5f5f5;
     border: 1px solid #e3e3e3;
     border-radius: 2px;*/
+}
+
+.web-form-wraper .tab-btn-cont {
+    padding: 0.75rem 0 0 0;
+    border: solid 1px #dddddd;
+    border-bottom: none;
+    background-color: rgba(0,0,0,.03);
 }
 
 .msg-cont, .req-cont {

@@ -8,7 +8,7 @@
     background: black;
     z-index: 2000;
     opacity: .5;
-    /*display:none;*/
+    display:none;
 }
 .ebTour_bodyWrprInner {
     position: fixed;
@@ -17,12 +17,12 @@
     width: 100%;
     height: 100%;
     z-index: 5000;
-    /*display:none;*/
+    display:none;
     overflow:hidden;
 }
 .TourTile {
-    background: white;
-    width: 350px;
+    background: #3876ea;
+    width: 400px;
     border-radius: 6px;
     border-top-left-radius: 0;
     transition: all .3s ease-out;
@@ -31,13 +31,14 @@
     -moz-transition: all .3s ease-out;
     -ms-transition: all .3s ease-out;
     -o-transition: all .3s ease-out;
+    color: white;
 }
 .TourTileInner {
-    padding: 10px;
+    padding: 20px;
 }
 .TourTileHead {
-    border-bottom: 1px solid #ccc;
     padding: 2px 0;
+    font-size: 16px;
 }
 .TourTileContent {
     padding: 10px 0;
@@ -51,17 +52,18 @@
 }
 .TourTileBtn {
     background: white;
-    border: 1px solid #ccc;
+    border: 1px solid #3876ea;
     border-radius: 4px;
-    color: #524f4f;
+    color: #3876ea;
+    padding: 5px 10px;
 }
 .TilePointer {
     position: absolute;
     width: 30px;
     height: 25px;
-    /*left: 0;*/
+    /* left: 0; */
     top: -25px;
-    background: white;
+    background: #3876ea;
     -webkit-clip-path: polygon(0 0, 0% 100%, 100% 100%);
     clip-path: polygon(0 0, 0% 100%, 100% 100%);
 }

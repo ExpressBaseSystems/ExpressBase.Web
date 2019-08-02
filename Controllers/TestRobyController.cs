@@ -84,7 +84,7 @@ namespace ExpressBase.Web.Controllers
             {
                 credential = null;
                 error = "Failed to UserCredential Initialization:" + ex.ToString();
-                Console.WriteLine("Failed");
+                Console.WriteLine("Failed : "+ex.ToString());
             }
             return credential;
         }

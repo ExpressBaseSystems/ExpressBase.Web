@@ -79,19 +79,47 @@
       }
 
     function fbuserdetails(response) {
-         $.ajax({
-                url: "../Ext/FacebookLogin",
-             data: {
-                    fbid:response.id,
-                     email: response.email,
-                     name:response.name
-                },
-                cache: false,
-                type: "POST",
-                success: function (status) {
+         //$.ajax({
+         //       url: "../Ext/FacebookLogin",
+         //    data: {
+         //           fbid:response.id,
+         //            email: response.email,
+         //            name:response.name
+         //       },
+         //       cache: false,
+         //       type: "POST",
+         //       success: function (status) {
 
-                }
-            });
+         //       }
+         //   });
+
+         let url = "../Ext/FacebookLogin?fbdtls=" ;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+           // _form.setAttribute("target", "_blank");
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "fbid";
+            input.value = response.id;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "email";
+            input.value =  response.email;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "name";
+            input.value = response.name;
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
     }
 
 
@@ -268,6 +296,12 @@
 
     </div>
 </div>
+
+<script>
+    if ('@(TempData["socloginerr"])') {
+          EbMessage("show", { Message: '@(TempData["socloginerr"])', Background: "#d83535" });
+    }
+</script>
 
 <script>
      var boarding = new EbOnBoarding();

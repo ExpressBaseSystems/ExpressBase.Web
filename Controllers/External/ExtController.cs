@@ -341,15 +341,14 @@ namespace ExpressBase.Web.Controllers
 		}
 
 
-		public int FacebookLogin(string name, string fbid, string email)
+		public IActionResult FacebookLogin(string name, string fbid, string email)
 		{
 			Console.WriteLine("reached contoller / facebooklogin");
 
-			int st = 0;
 			try
 			{
 
-				if (email != null)
+				if ((email != null)&(fbid!=null))
 				{
 					FacebookLoginResponse res = this.ServiceClient.Post<FacebookLoginResponse>(new FacebookLoginRequest
 					{
@@ -357,17 +356,17 @@ namespace ExpressBase.Web.Controllers
 						Fbid = fbid,
 						Name = name,
 					});
-					SocialOath(res.jsonval);
+				return	SocialOath(res.jsonval);
 				}
 
 			}
 			catch (Exception e)
 			{
+				TempData["socloginerr"] = "Something went wrong. Please try later";
 				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+				return Redirect("/Platform/OnBoarding");
 			}
-
-
-			return st;
+			return Redirect("/Platform/OnBoarding");
 		}
 
 

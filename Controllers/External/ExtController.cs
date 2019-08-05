@@ -358,12 +358,14 @@ namespace ExpressBase.Web.Controllers
 						Fbid = fbid,
 						Name = name,
 					});
-				return	SocialOath(res.jsonval);
+					Console.WriteLine("reached completed service to store user details FacebookLoginRequest");
+					return	SocialOath(res.jsonval);
 				}
 
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine("reached exception FacebookLogin");
 				TempData["socloginerr"] = "Something went wrong. Please try later";
 				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
 				return Redirect("/Platform/OnBoarding");
@@ -380,6 +382,7 @@ namespace ExpressBase.Web.Controllers
 			SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
 			if (Social.UniqueEmail)
 			{
+				Console.WriteLine("reached UniqueEmail");
 				MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
 				{
 					provider = CredentialsAuthProvider.Name,
@@ -399,22 +402,25 @@ namespace ExpressBase.Web.Controllers
 
 				var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
 				{
+
 					SolutionName = "My First solution",
 					Description = "This is my first solution",
 					DeployDB = true,
 				});
+				Console.WriteLine("reached completed CreateSolutionRequest");
 				return Redirect(RoutingConstants.MYSOLUTIONS);
 			}
 			else
 			if (!Social.Forsignup)
 			{
+				Console.WriteLine("reached Forsignup??");
 				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == ""))
 				{
 					TempData["scl_signin_msg"] = "You have already completed Signin. Please login using your mailid";
 				}
 				else
 				{
-
+					Console.WriteLine("reached user autologin??");
 					var lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
 					{
 						Email = Social.Email,
@@ -468,8 +474,11 @@ namespace ExpressBase.Web.Controllers
 							//_redirectUrl = this.RouteToDashboard(whichconsole);
 						}
 					}
+					Console.WriteLine("reached RoutingConstants.MYSOLUTIONS");
 					return Redirect(RoutingConstants.MYSOLUTIONS);
 				}
+				Console.WriteLine("reached RoutingConstants.TENANTSIGNIN");
+
 				return RedirectToAction(RoutingConstants.TENANTSIGNIN);
 			}
 			else

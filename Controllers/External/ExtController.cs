@@ -420,7 +420,7 @@ namespace ExpressBase.Web.Controllers
 				}
 				else
 				{
-					Console.WriteLine("reached user autologin??");
+					Console.WriteLine("reached user autologin");
 					var lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
 					{
 						Email = Social.Email,

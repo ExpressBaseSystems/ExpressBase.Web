@@ -347,10 +347,15 @@ namespace ExpressBase.Web.Controllers
 		{
 			Console.WriteLine("reached contoller / facebooklogin");
 
+			string x = Request.Form["email"];
+			string y = Request.Form["name"];
+			string z = Request.Form["fbid"];
+			Console.WriteLine("XYZ =" + x + "," + y + "," + z );
+			Console.WriteLine("ajax =" + email + "," + name + "," + fbid);
 			try
 			{
 
-				if ((email != null)&(fbid!=null))
+				if ((email != null) & (fbid != null))
 				{
 					FacebookLoginResponse res = this.ServiceClient.Post<FacebookLoginResponse>(new FacebookLoginRequest
 					{
@@ -359,7 +364,7 @@ namespace ExpressBase.Web.Controllers
 						Name = name,
 					});
 					Console.WriteLine("reached completed service to store user details FacebookLoginRequest");
-					return	SocialOath(res.jsonval);
+					return SocialOath(res.jsonval);
 				}
 
 			}

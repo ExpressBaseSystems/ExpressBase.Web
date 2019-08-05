@@ -38,12 +38,18 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/Wiki/{id}")]
-        public IActionResult GetWikiList2(string id)
+        public IActionResult GetWikiListRedirect1(string id)
         {
             return Redirect("/Wiki");
         }
 
-        [HttpGet("/Wiki/View/{id}/{title}")]
+        [HttpGet("/Wiki/{category}/{wikiname}")]
+        public IActionResult GetWikiListRedirect2(string id)
+        {
+            return Redirect("/Wiki");
+        }
+
+        [HttpGet("/Wiki/{category}/{id}/{title}")]
         public IActionResult GetArticleById(string id)
         {
             GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
@@ -52,21 +58,12 @@ namespace ExpressBase.Web.Controllers
             });
 
             ViewBag.Wiki = resp.Wiki;
-            //if(ViewBag.Env == "Staging")
-            //{
-               
             var location = new Uri($"{Request.Scheme}s://{Request.Host}{Request.Path}{Request.QueryString}");
             ViewBag.Url = location.AbsoluteUri;
               object TagObject;
             TagObject = resp.Wiki.Tags.Split(',');
             ViewBag.TagObject = TagObject;
-            ViewBag.Title = resp.Wiki.Title + " | EXPRESSbase Systems";
-
-           //int si = resp.Wiki.HTML.IndexOf("<p>");
-
-            //int ei = resp.Wiki.HTML.IndexOf("</p>");
-            //ViewBag.Metatitle = resp.Wiki.HTML.Substring(si, ei - si);
-
+            ViewBag.Title = resp.Wiki.Title + " | EXPRESSbase Systems";        
             return View();
         }
 
@@ -92,7 +89,7 @@ namespace ExpressBase.Web.Controllers
         //{
         //    UserReviewRateResponse = new UserReviewRateRequest()
         //    {
-
+        //     UserReview = Convert.ToInt32(userreview);
         //    }
         //}
 

@@ -137,7 +137,7 @@ class Tour {
         if (tc != 0)
             html.push(`<button id="stack_el_${tc}_prev" class="TourTileBtn TourTilePrevBtn">&#8592; Prev</button>`);
         else {
-            html.push('<div></div>');
+            //html.push('<div></div>');
         }
 
         if ("click" in this.s.Stack[tc] && this.s.Stack[tc].click) {

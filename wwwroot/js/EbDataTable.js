@@ -111,7 +111,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dir: "left",
                 label: "Parameters",
                 //btnTop: 42,
-                style: { top: "82px" }
+                style: { top: "78px" }
             });
         }
     };
@@ -164,7 +164,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 dir: "left",
                 label: "Parameters",
                 //btnTop: 42,
-                //style: { top: "44px" }
+                style: { top: "42px" }
             });
         }
         $("#obj_icons").empty();
@@ -347,11 +347,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     wc: "dc",
                     cid: this.cid,
                     $extCont: $(".ppcont"),
-                    style: { top: "80px" }
+                    style: { top: "76px" }
                 }, this.PGobj);
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             }
+            else
+                this.propGrid.ClosePG();
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             this.init();
             this.call2FD();
@@ -364,6 +366,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getColumnsSuccess = function (e) {
+        this.propGrid.ClosePG();
+        if (this.FD)
+            this.stickBtn.minimise();
+        else
+            this.stickBtn.hide();
         $("#objname").text(this.EbObject.DisplayName);
         this.validateFD = this.FilterDialog.IsFDValidationOK;
         if (this.isContextual) {
@@ -379,7 +386,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.filterValues = this.getFilterValues("filter");
         }
         this.isSecondTime = false;
-        $(".dv-body1").show();
+        if(this.login === "uc")
+            $(".dv-body1").show();
         $("#eb_common_loader").EbLoader("show");
         this.extraCol = [];
         this.ebSettings = this.EbObject;
@@ -389,11 +397,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.dvName = this.ebSettings.Name;
         this.initCompleteflag = false;
 
-        this.propGrid.ClosePG();
-        if (this.FD)
-            this.stickBtn.minimise();
-        else
-            this.stickBtn.hide();
         this.check4Customcolumn();
         this.CheckforTree();
         this.addSerialAndCheckboxColumns();
@@ -1490,30 +1493,29 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.arrangeWindowHeight = function () {
         var filterId = "#filterdisplayrowtd_" + this.tableId;
         if (this.login === "uc") {
-            $(".dv-body2").style("height", "calc(100vh - 58px)", "important");
             if (this.IsTree) {
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 27px)", "important");
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 29px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader)
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 60px)", "important");
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 62px)", "important");
             else {
                 if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && this.EbObject.AllowMultilineHeader) {//multilineonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 77px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 79px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader) {//pagingonly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 86px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 88px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader) {//filteronly
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 84px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 86px)", "important");
                 }
                 else if ($(filterId).children().length === 0 && this.ebSettings.IsPaging && this.EbObject.AllowMultilineHeader) {//paging & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 104px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && !this.ebSettings.IsPaging && this.EbObject.AllowMultilineHeader) {//filter & multiline
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 100px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 102px)", "important");
                 }
                 else if ($(filterId).children().length !== 0 && this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader) {//filetr & paging
-                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 110px)", "important");
+                    $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 112px)", "important");
                 }
                 else {
                     $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 127px)", "important");//filter && paging & multiline
@@ -1522,7 +1524,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             //this.stickBtn.$stickBtn.css("top", "46px");
         }
         else {
-
+            $(".dv-body2").style("height", "calc( 100vh - 38px )", "important");
             if (this.tabNum !== 0) {
                 $("#sub_window_" + this.tableId).style("height", "calc(100vh - 40px)", "important");
                 if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)

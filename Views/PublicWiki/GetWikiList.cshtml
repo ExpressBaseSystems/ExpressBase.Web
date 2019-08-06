@@ -307,7 +307,9 @@
             let url = window.location.href;
             //alert(url);
             let urlSplit = url.split("/");
-            let id = urlSplit[urlSplit.length - 1];
+            let wiki_name = urlSplit[urlSplit.length - 1];
+            let wname = wiki_name.replace(/\-/g, ' ');
+            let id = $(`[val="${wname}"]`).attr("data-id");
             $(".wikilist").removeClass("CurrentSelection");
             $(`[data-id='${id}']`).addClass("CurrentSelection");
             if ($.isNumeric(id)) {

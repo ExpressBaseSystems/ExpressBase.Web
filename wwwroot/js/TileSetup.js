@@ -59,25 +59,27 @@
         if (this.title === 'New IP') {
             return `   
             <div class="modal fade" id="addModal${t}" role="dialog">
-                <div class="modal-dialog" style="width: 400px;">
-                    <div class="modal-content">
-                        <div class="modal-header">
+                <div class="modal-dialog" style="display:flex; height:100%; justify-content:center; align-items:center; margin: 0 auto;">
+                    <div class="modal-content" style="min-width:500px; padding: 15px;">
+                        <div class="modal-header" style="border-style:none;">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">${this.title}</h4>
+                            <h4 class="modal-title" style="font-weight:400;">${this.title} Constraint</h4>
                         </div>
                         <div class="modal-body" style="height:180px">
                             <div class="form-group">
-                                <label style="font-weight: 300;">IP Address</label>
-                                <input id="txtIpAddress${t}" class="form-control" placeholder="Type IP Address Here" title="IP Address">
+                                <label class="label-custom-style w-100">IP Address</label>
+                                <input id="txtIpAddress${t}" class="form-control input-custom-style" title="IP Address. eg: 192.168.123.123">
                             </div>
                             <div class="form-group">
-                                <label style="font-weight: 300;">Description</label>
-                                <input id="txtIpDescription${t}" class="form-control" placeholder="Type Description Here" title="Description">
+                                <label class="label-custom-style w-100">Description</label>
+                                <input id="txtIpDescription${t}" class="form-control input-custom-style" title="Description">
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button id="btnModalOk${t}" type="button" class="btn btn-default">OK</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <div class="modal-footer" style="border-style:none;">
+                            <div style="display:flex;">
+                                <button id="btnModalOk${t}" type="button" style="margin-left:auto;margin-right:10px;" class="ebbtn eb_btn-sm eb_btnblue">Ok</button>
+                                <button type="button" class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,7 +92,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">${this.title}</h4>
+                            <h4 class="modal-title">${this.title} Constraint</h4>
                         </div>   
                         <div class="modal-body" style="height:315px">
                             <div class="row">

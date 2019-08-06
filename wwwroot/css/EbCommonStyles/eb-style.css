@@ -831,6 +831,7 @@ Navigation bar
     overflow: hidden;
     box-sizing: border-box;
     text-decoration: none;
+    transition-duration: 0.08s;
 }
 
 .navmain .ico {

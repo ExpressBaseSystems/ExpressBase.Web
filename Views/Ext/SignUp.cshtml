@@ -63,6 +63,7 @@
             //add event listener to login button
                       function FBLogin() {
                           console.log("fb");
+                          $("#loaderdiv").EbLoader("show");
                         FB.login(function (response) {
                           if (response.authResponse) {
                               getUserData();
@@ -82,17 +83,16 @@
     function fbuserdetails(response) {
         if (response.email != null &
             response.email != undefined &
-             response.email != "undefined"
-           )
-        {
+            response.email != "undefined"
+        ) {
 
-        
-         let url = "../Ext/FacebookLogin?fbdtls=" ;
+
+            let url = "../Ext/FacebookLogin?fbdtls=";
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
             _form.setAttribute("action", url);
             _form.setAttribute("target", "_top");
-      
+
 
             var input = document.createElement('input');
             input.type = 'hidden';
@@ -103,7 +103,7 @@
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "email";
-            input.value =  response.email;
+            input.value = response.email;
             _form.appendChild(input);
 
             input = document.createElement('input');
@@ -115,6 +115,10 @@
             document.body.appendChild(_form);
             _form.submit();
             document.body.removeChild(_form);
+        }
+        else {
+              EbMessage("show", { Message: 'Error while getting permission from facebook', Background: "#d83535" });
+             $("#loaderdiv").EbLoader("hide");
         }
     }
 

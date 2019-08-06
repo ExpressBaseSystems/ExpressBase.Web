@@ -78,6 +78,7 @@
         if (this.itemId > 1) {
             this.menuBarObj.insertButton(`<button id="btnDeleteUser" class='btn' title='Delete'><i class="fa fa-trash-o" aria-hidden="true"></i></button>`);
             $("#btnDeleteUser").on('click', this.clickbtnDeleteUser.bind(this));
+            $('.nav-tabs a[href="#settings"]').tab('show');
         }
         this.menuBarObj.insertButton(`<button id="btnCreateUser" class='btn' title='Save'><i class="fa fa-floppy-o" aria-hidden="true"></i></button>`);       
         this.btnCreateUser = $("#btnCreateUser");

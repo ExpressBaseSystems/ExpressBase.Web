@@ -1027,6 +1027,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.receiveAjaxData = function (dd) {
+        if (dd.responseStatus.message !== null) {
+            EbPopBox("show", { Message: dd.responseStatus.message, Title:"Error" });
+        }
         this.isRun = true;
         if (this.login === "uc") {
             dvcontainerObj.currentObj.data = dd;

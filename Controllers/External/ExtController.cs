@@ -421,7 +421,7 @@ namespace ExpressBase.Web.Controllers
 				Console.WriteLine("reached Forsignup??");
 				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == ""))
 				{
-					TempData["scl_signin_msg"] = "You have already completed Signin. Please login using your mailid";
+					TempData["scl_signin_msg"] = "You have already completed Signin. Please Sign in using your mailid";
 				}
 				else
 				{

@@ -63,6 +63,8 @@ namespace ExpressBase.Web.Controllers
 		[HttpGet("Platform/OnBoarding")]
 		public IActionResult SignUp()
 		{
+			//ViewBag.FacebookSigninAppid = 149537802493867;
+			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
 			return View();
 		}
 
@@ -341,15 +343,19 @@ namespace ExpressBase.Web.Controllers
 		}
 
 
-		public int FacebookLogin(string name, string fbid, string email)
+		public IActionResult FacebookLogin(string name, string fbid, string email)
 		{
 			Console.WriteLine("reached contoller / facebooklogin");
 
-			int st = 0;
+			string x = Request.Form["email"];
+			string y = Request.Form["name"];
+			string z = Request.Form["fbid"];
+			Console.WriteLine("XYZ =" + x + "," + y + "," + z );
+			Console.WriteLine("ajax =" + email + "," + name + "," + fbid);
 			try
 			{
 
-				if (email != null)
+				if ((email != null) & (fbid != null))
 				{
 					FacebookLoginResponse res = this.ServiceClient.Post<FacebookLoginResponse>(new FacebookLoginRequest
 					{
@@ -357,17 +363,19 @@ namespace ExpressBase.Web.Controllers
 						Fbid = fbid,
 						Name = name,
 					});
-					SocialOath(res.jsonval);
+					Console.WriteLine("reached completed service to store user details FacebookLoginRequest");
+					return SocialOath(res.jsonval);
 				}
 
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine("reached exception FacebookLogin");
+				TempData["socloginerr"] = "Something went wrong. Please try later";
 				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+				return Redirect("/Platform/OnBoarding");
 			}
-
-
-			return st;
+			return Redirect("/Platform/OnBoarding");
 		}
 
 
@@ -379,6 +387,7 @@ namespace ExpressBase.Web.Controllers
 			SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
 			if (Social.UniqueEmail)
 			{
+				Console.WriteLine("reached UniqueEmail");
 				MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
 				{
 					provider = CredentialsAuthProvider.Name,
@@ -398,22 +407,25 @@ namespace ExpressBase.Web.Controllers
 
 				var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
 				{
+
 					SolutionName = "My First solution",
 					Description = "This is my first solution",
 					DeployDB = true,
 				});
+				Console.WriteLine("reached completed CreateSolutionRequest");
 				return Redirect(RoutingConstants.MYSOLUTIONS);
 			}
 			else
 			if (!Social.Forsignup)
 			{
+				Console.WriteLine("reached Forsignup??");
 				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == ""))
 				{
 					TempData["scl_signin_msg"] = "You have already completed Signin. Please login using your mailid";
 				}
 				else
 				{
-
+					Console.WriteLine("reached user autologin");
 					var lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
 					{
 						Email = Social.Email,
@@ -467,8 +479,11 @@ namespace ExpressBase.Web.Controllers
 							//_redirectUrl = this.RouteToDashboard(whichconsole);
 						}
 					}
+					Console.WriteLine("reached RoutingConstants.MYSOLUTIONS");
 					return Redirect(RoutingConstants.MYSOLUTIONS);
 				}
+				Console.WriteLine("reached RoutingConstants.TENANTSIGNIN");
+
 				return RedirectToAction(RoutingConstants.TENANTSIGNIN);
 			}
 			else

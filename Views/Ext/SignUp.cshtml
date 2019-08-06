@@ -30,10 +30,18 @@
 <script src="~/js/EbDashBoards/Ebsitepagepass.js" type="text/javascript"></script>
 
 <script>
+                     //load the JavaScript SDK
+                      (function(d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "https://connect.facebook.net/en_US/sdk.js";
+                        fjs.parentNode.insertBefore(js, fjs);
+                      }(document, 'script', 'facebook-jssdk'));
                 
                    window.fbAsyncInit = function() {
                       FB.init({
-                      appId      : '149537802493867',
+                      appId      :  '@ViewBag.FacebookSigninAppid',
                       cookie     : true,  
                       xfbml      : true,  
                       version    : 'v4.0' 
@@ -50,14 +58,7 @@
 	                   });
                    };
 
-            //load the JavaScript SDK
-                      (function(d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0];
-                        if (d.getElementById(id)) return;
-                        js = d.createElement(s); js.id = id;
-                        js.src = "https://connect.facebook.net/en_US/sdk.js";
-                        fjs.parentNode.insertBefore(js, fjs);
-                      }(document, 'script', 'facebook-jssdk'));
+           
 
             //add event listener to login button
                       function FBLogin() {
@@ -79,19 +80,48 @@
       }
 
     function fbuserdetails(response) {
-         $.ajax({
-                url: "../Ext/FacebookLogin",
-             data: {
-                    fbid:response.id,
-                     email: response.email,
-                     name:response.name
-                },
-                cache: false,
-                type: "POST",
-                success: function (status) {
+         //$.ajax({
+         //       url: "../Ext/FacebookLogin",
+         //    data: {
+         //           fbid:response.id,
+         //            email: response.email,
+         //            name:response.name
+         //       },
+         //       cache: false,
+         //       type: "POST",
+         //       success: function (status) {
 
-                }
-            });
+         //       }
+         //   });
+
+         let url = "../Ext/FacebookLogin?fbdtls=" ;
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_top");
+      
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "fbid";
+            input.value = response.id;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "email";
+            input.value =  response.email;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "name";
+            input.value = response.name;
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
     }
 
 
@@ -270,6 +300,13 @@
 </div>
 
 <script>
+    if ('@(TempData["socloginerr"])') {
+          EbMessage("show", { Message: '@(TempData["socloginerr"])', Background: "#d83535" });
+    }
+</script>
+
+<script>
+    console.log("k");
      var boarding = new EbOnBoarding();
     var psd = new PasswordValidation();
 

@@ -113,12 +113,17 @@
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
+        let wname = $(`[data-id="${id}"]`).text().trim();
+        let con = $(`[data-id="${id}"]`).parent().parent().parent().attr("id");
+        $(`[data-id="${id}"]`).attr("val" ,wname);
+        wiki_name = wname.replace(/ /g, '-');
         //let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
         $(`[data-id='${id}']`).addClass("CurrentSelection");
+        $(".commonLoader").EbLoader("show");
         this.AjaxCalFetchWikiList(id);
         //let title = $(".wiki_data h1").text();
-        window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
+        window.history.pushState('obj', 'PageTitle', `/Wiki/${con}/${wiki_name}`);
     }
 
     this.AjaxCalFetchWikiList = function (id) {
@@ -141,7 +146,8 @@
         document.title = ob.title;
         $("#ebwiki_panebrd").html(`${ob.category} / ${ob.title}`)
         urlTitle = ob.title.replace(/\s+/g, '-').toLowerCase();
-        var url = window.location.origin + "/Wiki/View/" + id + "/" + urlTitle;
+        //var url = window.location.origin + "/Wiki/View/" + id + "/" + urlTitle;
+        var url = window.location.origin + `/Wiki/${ob.category}/${id}/${urlTitle}`;
         let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;
         let twUrl = "https://twitter.com/intent/tweet?status=" + url;
         let lnUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" +url +"&title="+ ob.title + "&summary=YourarticleSummary&source=expressbase.com";
@@ -170,26 +176,26 @@
         }
 
         $('#wiki_data_div').append($nextPre);
+        //Was this page helpfull?
+        //    <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
 
+    //       </div >
+        //<div> 
+    //<div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" >
+    //    <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+    //    <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
+    //    <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
+    //    <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
+    //    </div ></div >
         $WasItHelpFul = `<div class="row"> <div class="col-sm-12"> 
-                               <div id="Help" show><span> Was this page helpfull?
-            <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
+                               <div id="Help" show><span> 
        <span style="float: right;"> <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
         <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
         <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
         <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></span>
       
      </div> 
-            <div> 
-       
-            </div>
-            <div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" >
-        <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
-        <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
-        <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
-        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
-        </div></div>
-
+            
              <h4>Questions?</h4>
             <p>We're always happy to help with code or other questions you might have. Search our documentation,
             contact support, or connect <a>team</a> .<p>
@@ -208,10 +214,12 @@
         //this.AddMetaTags();
         if (PR)
             PR.prettyPrint();
+        $(".commonLoader").EbLoader("hide");
     }
 
    
     this.WikiSearch = function () {
+       
         let key = $('#search_wiki').val();
         if (key.length == 0) {
             let url = window.location.href;
@@ -232,6 +240,7 @@
             $('.front_page_wiki').hide();
         }
         else {
+            $(".commonLoader").EbLoader("show");
             $.ajax({
                 type: 'POST',
                 url: "/PublicWiki/GetWikiBySearch",
@@ -239,6 +248,7 @@
                     search_wiki: key
                 },
                 success: function (ob) {
+
 
                     if (!ob.length && key.length != 0) {
                         $("#wiki_data_div").empty();
@@ -259,6 +269,7 @@
                         //$("#wiki_data_div").append($Tags);          
                         $('#' + ob[i].id).attr('title', ob[i].category);
                     };
+                    $(".commonLoader").EbLoader("hide");
                 }
             });
         }
@@ -782,6 +793,9 @@
     this.WikiPreviewTab = function () {
         $("#preview").click();
     }
+    this.EbloaderTrigger = function () {
+        $(".eb_common_loader").EbLoader("show");
+    }
 
     this.init = function () {
 
@@ -806,7 +820,8 @@
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
         $("#gallery-tab1").on("click", this.gallerytab.bind(this));
         $("#wiki-preview-tab").on("click", this.WikiPreviewTab.bind(this));
-     
+        $("#wikisave").on("click", this.EbloaderTrigger.bind(this));
+
     };
 
     this.init();

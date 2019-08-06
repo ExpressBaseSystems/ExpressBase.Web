@@ -801,8 +801,8 @@
 
     this.makeAsShowPwdField = function ($pwdField) {
         let id = $pwdField.attr("id");
-        $pwdField.after(`<span id="${id}_eop" class="form-control-feedback" style="top: -3px; cursor: pointer; color: #555;" title="Click to show password"><i class="fa fa-eye" aria-hidden="true"></i></span>`);
-        $pwdField.after(`<span id="${id}_ecl" class="form-control-feedback" style="top: -3px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>`);
+        $pwdField.after(`<span id="${id}_eop" class="form-control-feedback" style="top: 5px; cursor: pointer; color: #555;" title="Click to show password"><i class="fa fa-eye" aria-hidden="true"></i></span>`);
+        $pwdField.after(`<span id="${id}_ecl" class="form-control-feedback" style="top: 5px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>`);
         let $eop = $("#" + id + "_eop");
         let $ecl = $("#" + id + "_ecl");
         $eop.on("click", function (e) {

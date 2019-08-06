@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.Structures;
@@ -31,6 +29,11 @@ namespace ExpressBase.Web.Controllers
 {
     public class TestRobyController : EbBaseIntCommonController
     {
+        public static string ApplicationName = "Other client 1";
+        public static string ClientId = "1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com";
+        public static string ClientSecret = "DwaDGHou5ghXrJ0EitwnIQWu";
+        public static string[] Scopes = new string[] { DriveService.Scope.Drive,
+                                 DriveService.Scope.DriveFile};
         public TestRobyController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
         // GET: /<controller>/
         public IActionResult Index()
@@ -59,29 +62,43 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             return View();
         }
-
-        public async System.Threading.Tasks.Task Test()
+        public static UserCredential GetUserCredential(out string error)
         {
-            string[] Scopes = new string[] { DriveService.Scope.Drive,
-                                 DriveService.Scope.DriveFile};
-            Console.WriteLine("Scopes: " + Scopes);
-            string ApplicationName = "Other client 1";
+            UserCredential credential = null;
+            error = string.Empty;
             try
             {
-                UserCredential credential;
+                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
+                    new ClientSecrets
+                    {
+                        ClientId = ClientId,
+                        ClientSecret = ClientSecret
+                    },
+                    Scopes,
+                    Environment.UserName,
+                    CancellationToken.None,
+                    new FileDataStore("Google Oaut2")).Result;
+                Console.WriteLine("Success");
+            }
+            catch (Exception ex)
+            {
+                credential = null;
+                error = "Failed to UserCredential Initialization:" + ex.ToString();
+                Console.WriteLine("Failed : "+ex.ToString());
+            }
+            return credential;
+        }
 
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                new ClientSecrets
-                                {
-                                    ClientId = "1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com",
-                                    ClientSecret = "DwaDGHou5ghXrJ0EitwnIQWu"
-                                },
-                                new[] { DriveService.Scope.Drive },
-                                "kurianurl",
-                                CancellationToken.None,
-                                new FileDataStore("JSON.Key"));
-
-                // Create Drive API service.
+        public void btnAuthorize_Click(object sender, EventArgs e)
+        {
+            Console.WriteLine("Start ");
+            string credentialError = string.Empty;
+            string refreshToken = string.Empty;
+            UserCredential credential = GetUserCredential(out credentialError);
+            Console.WriteLine(credential);
+            if (credential != null && string.IsNullOrWhiteSpace(credentialError))
+            {
+                refreshToken = credential.Token.RefreshToken;
                 var service = new DriveService(new BaseClientService.Initializer()
                 {
                     HttpClientInitializer = credential,
@@ -125,6 +142,32 @@ namespace ExpressBase.Web.Controllers
                     Console.WriteLine("No files found.");
                 }
                 Console.Read();
+            }
+            Console.WriteLine("finished");
+        }
+
+        public async System.Threading.Tasks.Task Test()
+        {
+            string[] Scopes = new string[] { DriveService.Scope.Drive,
+                                 DriveService.Scope.DriveFile};
+            Console.WriteLine("Scopes: " + Scopes);
+            string ApplicationName = "Other client 1";
+            try
+            {
+                UserCredential credential;
+
+                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                                new ClientSecrets
+                                {
+                                    
+                                },
+                                new[] { DriveService.Scope.Drive },
+                                "kurianurl",
+                                CancellationToken.None,
+                                new FileDataStore("JSON.Key"));
+
+                // Create Drive API service.
+                
             }
             catch (Exception e)
             {

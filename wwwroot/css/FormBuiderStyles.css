@@ -103,7 +103,7 @@
         font-size: 0.8em;
         margin: 2px;
         cursor: move;
-        width: calc( 50% - 4px);
+        width: calc( 50% - 6px);
         display: inline-block;
         border-radius: 2px;
         border: solid 1px rgba(240, 240, 240, 0);
@@ -146,9 +146,21 @@
 }
 
 .form-buider-toolBox i {
-    margin-right: 5px;
     font-size: 12px;
 }
+    .form-buider-toolBox i:nth-child(2) {
+        font-size: 8.5px;
+        margin-left: 1px;
+    }
+
+.form-buider-toolBox .tool > .tool-icon-cont {
+    width: 26px;
+    display: inline-block;
+    text-align: center;
+    margin-right: 0 !important;
+    margin-left: -6px;
+}
+
 
 .form-buider-form {
     position: relative;

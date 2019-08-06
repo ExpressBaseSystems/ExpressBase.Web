@@ -77,6 +77,7 @@
     <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbQuickMenu/eb-quickmenu.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
+    <script src="~/js/Common/eb-setup.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
     @if (ViewBag.wc == "uc")
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
@@ -101,7 +102,8 @@
             user: _uo || null,
             menu: {},
             locations: {},
-            header: {}
+            header: {},
+            setup:new Setup()
         }
     </script>
 </head>
@@ -145,7 +147,7 @@
             }
             @RenderBody()
         </div>
-        <div class="eb-expndLinkswrpr">
+        <div class="eb-expndLinkswrpr" id="eb-expndLinkswrprWdgt">
             <button id="eb-expandbutton" onclick="$('.eb-expndLinkswrpr-body').toggle();" class="eb-expand-link"><i class="fa fa-cog"></i></button>
             <div class="eb-expndLinkswrpr-body" style="display:none;">
                 <div class="eb-expndLinkswrpr-inner">

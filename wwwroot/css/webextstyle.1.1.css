@@ -1,4 +1,4 @@
-﻿.eb-banner {
+﻿/*.eb-banner {
     padding: 15px 15px 15px 15px;
 }
 
@@ -110,7 +110,7 @@ eb font colors
 }
 
 /*Footer*/
-footer {
+/*footer {
     padding-top: 30px;
     background-color: #1c3c4c;
     color: white;
@@ -205,4 +205,4 @@ footer ul {
         width: 100%;
     }
 
-/*Footer*/
+/*Footer*/*/*/

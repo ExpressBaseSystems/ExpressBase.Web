@@ -5,6 +5,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects.Helpers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web.Models;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -572,16 +573,8 @@ namespace ExpressBase.Web.Controllers
             return d;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EbSignIn(int i)
+        private void EventLogWriteEntry()
         {
-            HostString host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split(CharConstants.DOT);
-            string whichconsole = null;
-            IFormCollection req = this.HttpContext.Request.Form;
-            string _redirectUrl = null;
-            TempData["Email"] = req["uname"].ToString();
-
             var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
             Console.WriteLine("-------------------------------------------------");
             IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
@@ -592,8 +585,19 @@ namespace ExpressBase.Web.Controllers
             Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
             foreach (var zzz in this.HttpContext.Request.Headers)
                 Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
+        }
 
-            this.DecideConsole(hostParts[0], out whichconsole);
+        [HttpPost]
+        public async Task<EbAuthResponse> EbSignIn(int i)
+        {
+            EbAuthResponse authresp = new EbAuthResponse();
+            this.EventLogWriteEntry();
+
+            HostString host = this.HttpContext.Request.Host;
+            string[] hostParts = host.Host.Split(CharConstants.DOT);
+            IFormCollection req = this.HttpContext.Request.Form;
+
+            this.DecideConsole(hostParts[0], out string whichconsole);
 
             string token = req["g-recaptcha-response"];
             Recaptcha data = null;
@@ -605,39 +609,38 @@ namespace ExpressBase.Web.Controllers
             {
                 Console.WriteLine("RECAPTCHA EXCEPTION");
                 Console.WriteLine(e.Message);
-                TempData["ErrorMessage"] = "Recaptcha error, try again";
-                return Redirect("/");
+                authresp.AuthStatus = false;
+                authresp.ErrorMessage = "Recaptcha error, try again";
             }
             
             if (!data.Success)
             {
+                authresp.AuthStatus = false;
                 if (data.ErrorCodes.Count <= 0)
                 {
-                    TempData["ErrorMessage"] = "The captcha input is invalid or malformed.";
-                    return Redirect("/");
+                    authresp.ErrorMessage = "The captcha input is invalid or malformed.";
                 }
                 var error = data.ErrorCodes[0].ToLower();
                 switch (error)
                 {
                     case ("missing-input-secret"):
-                        TempData["ErrorMessage"] = "The secret parameter is missing.";
+                        authresp.CaptchaError = "The secret parameter is missing.";
                         break;
                     case ("invalid-input-secret"):
-                        TempData["ErrorMessage"] = "The secret parameter is invalid or malformed.";
+                        authresp.CaptchaError = "The secret parameter is invalid or malformed.";
                         break;
 
                     case ("missing-input-response"):
-                        TempData["ErrorMessage"] = "The captcha input is missing.";
+                        authresp.CaptchaError = "The captcha input is missing.";
                         break;
                     case ("invalid-input-response"):
-                        TempData["ErrorMessage"] = "The captcha input is invalid or malformed.";
+                        authresp.CaptchaError = "The captcha input is invalid or malformed.";
                         break;
 
                     default:
-                        TempData["ErrorMessage"] = "Error occured. Please try again";
+                        authresp.CaptchaError = "Error occured. Please try again";
                         break;
                 }
-                return Redirect("/");
             }
             else
             {
@@ -660,22 +663,19 @@ namespace ExpressBase.Web.Controllers
                 catch (WebServiceException wse)
                 {
                     Console.WriteLine("Exception:" + wse.ToString());
-                    TempData["ErrorMessage"] = wse.Message;
-                    return Redirect("/");
+                    authresp.AuthStatus = false;
+                    authresp.ErrorMessage = wse.Message;
                 }
                 catch (Exception wse)
                 {
                     Console.WriteLine("Exception:" + wse.ToString());
-                    TempData["ErrorMessage"] = wse.Message;
-                    return Redirect("/");
+                    authresp.AuthStatus = false;
+                    authresp.ErrorMessage = wse.Message;
                 }
-                if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
+
+                if (authResponse != null)
                 {
-                    TempData["ErrorMessage"] = "EbUnauthorized";
-                    return Redirect("/");
-                }
-                else //AUTH SUCCESS
-                {
+                    authresp.AuthStatus = true;
                     CookieOptions options = new CookieOptions();
                     Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                     Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
@@ -684,16 +684,10 @@ namespace ExpressBase.Web.Controllers
                     if (req.ContainsKey("remember"))
                         Response.Cookies.Append("UserName", req["uname"], options);
 
-                    _redirectUrl = this.RouteToDashboard(whichconsole);
+                    authresp.RedirectUrl = this.RouteToDashboard(whichconsole);
                 }
             }
-            return Redirect(_redirectUrl);
-        }
-
-        public IActionResult pp()
-        {
-            return Redirect("/Ext/EbSignIn");
-
+            return authresp;
         }
 
         private void DecideConsole(string subDomain, out string whichconsole)

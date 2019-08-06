@@ -35,6 +35,15 @@ namespace ExpressBase.Web.BaseControllers
                 var controller = context.Controller as Controller;
                 controller.ViewBag.SolutionId = solutionId;
                 controller.ViewBag.WhichConsole = hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
+                controller.ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+                if (controller.ViewBag.Env == "Production")
+                {
+                    controller.ViewBag.Root = "https://expressbase.com";
+                }
+                else
+                {
+                    controller.ViewBag.Root = "https://eb-test.xyz";
+                }
                 base.OnActionExecuting(context);
             }
             catch (System.ArgumentNullException ane)

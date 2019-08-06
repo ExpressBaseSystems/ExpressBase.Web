@@ -30,7 +30,7 @@
 <script src="~/js/EbDashBoards/Ebsitepagepass.js" type="text/javascript"></script>
 
 <script>
-                //load the JavaScript SDK
+                     //load the JavaScript SDK
                       (function(d, s, id) {
                         var js, fjs = d.getElementsByTagName(s)[0];
                         if (d.getElementById(id)) return;
@@ -38,9 +38,7 @@
                         js.src = "https://connect.facebook.net/en_US/sdk.js";
                         fjs.parentNode.insertBefore(js, fjs);
                       }(document, 'script', 'facebook-jssdk'));
-
-
-
+                
                    window.fbAsyncInit = function() {
                       FB.init({
                       appId      :  '@ViewBag.FacebookSigninAppid',
@@ -60,7 +58,7 @@
 	                   });
                    };
 
-            
+           
 
             //add event listener to login button
                       function FBLogin() {

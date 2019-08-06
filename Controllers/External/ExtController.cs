@@ -63,7 +63,7 @@ namespace ExpressBase.Web.Controllers
 		[HttpGet("Platform/OnBoarding")]
 		public IActionResult SignUp()
 		{
-			ViewBag.FacebookSigninAppid = "1495378023867";
+			ViewBag.FacebookSigninAppid = 149537802493867;
 			//ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
 			return View();
 		}

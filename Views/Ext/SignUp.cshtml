@@ -80,20 +80,13 @@
       }
 
     function fbuserdetails(response) {
-         //$.ajax({
-         //       url: "../Ext/FacebookLogin",
-         //    data: {
-         //           fbid:response.id,
-         //            email: response.email,
-         //            name:response.name
-         //       },
-         //       cache: false,
-         //       type: "POST",
-         //       success: function (status) {
+        if (response.email != null &
+            response.email != undefined &
+             response.email != "undefined"
+           )
+        {
 
-         //       }
-         //   });
-
+        
          let url = "../Ext/FacebookLogin?fbdtls=" ;
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
@@ -122,6 +115,7 @@
             document.body.appendChild(_form);
             _form.submit();
             document.body.removeChild(_form);
+        }
     }
 
 

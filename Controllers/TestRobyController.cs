@@ -241,7 +241,10 @@ namespace ExpressBase.Web.Controllers
                 }
 
                 var file = request.ResponseBody;
-                Console.WriteLine(file.Id);
+                if (file != null)
+                    Console.WriteLine(file.Id);
+                else
+                    Console.WriteLine("ResponseBody is null");
             }
             catch (Exception e)
             {

@@ -22,6 +22,106 @@
         signinLink = "https://myaccount.expressbase.com";
     }
 }
+
+
+<script>
+                     //load the JavaScript SDK
+                      (function(d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "https://connect.facebook.net/en_US/sdk.js";
+                        fjs.parentNode.insertBefore(js, fjs);
+                      }(document, 'script', 'facebook-jssdk'));
+
+                   window.fbAsyncInit = function() {
+                      FB.init({
+                      appId      :  '@ViewBag.FacebookSigninAppid',
+                      cookie     : true,
+                      xfbml      : true,
+                      version    : 'v4.0'
+                      });
+
+	                    //check user session and refresh it
+	                   FB.getLoginStatus((response) => {
+		                    if (response.status === 'connected') {
+			                    //user is authorized
+			                   // getUserData();
+		                    } else {
+			                    //user is not authorized
+		                    }
+	                   });
+                   };
+
+
+
+            //add event listener to login button
+                      function FBLogin() {
+                          console.log("fb");
+                          $("#loaderdiv").EbLoader("show");
+                        FB.login(function (response) {
+                          if (response.authResponse) {
+                              getUserData();
+                          } else {
+                          //alert('User cancelled login or did not fully authorize.');
+                          }
+                        }, {scope: 'email,public_profile'});
+                      }
+
+      function getUserData() {
+	      FB.api('/me', {fields: 'id, name, first_name, last_name,email, gender,hometown'}, (response) => {
+              fbuserdetails(response);
+	      });
+
+      }
+
+    function fbuserdetails(response) {
+        if (response.email != null &
+            response.email != undefined &
+            response.email != "undefined"
+        ) {
+
+
+            let url = "../Ext/FacebookLogin?fbdtls=";
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_top");
+
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "fbid";
+            input.value = response.id;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "email";
+            input.value = response.email;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "name";
+            input.value = response.name;
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
+        }
+        else {
+              EbMessage("show", { Message: 'Error while getting permission from facebook', Background: "#d83535" });
+             $("#loaderdiv").EbLoader("hide");
+        }
+    }
+
+
+
+</script>
+
+
 <section class="eb_login">
     <div class="header hidden-xs">
         <div class="container-fluid">
@@ -89,21 +189,21 @@
                         {
                             <div class="eb_socilaWrpr text-center">
                                 <div class="eb_socilaWrpr_inner">
-                                    <a href="@sociallink/auth/facebook" class="btn btn-lg">
+                                    <div id="fblogin" onClick="FBLogin()" class="btn btn-lg">
                                         <i class="fa fa-facebook text-muted"></i>
-                                    </a>
+                                    </div>
                                     <a href="@sociallink/auth/github" class="btn btn-lg">
                                         <i class="fa fa-github text-muted"></i>
                                     </a>
                                     @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
-                                            <i class="fa fa-twitter text-muted"></i>
-                                        </a>
-                                        <a href=" @sociallink/auth/google" class="btn btn-lg">
-                                             <i class="fa fa-google-plus text-muted"></i>
-                                        </a>
-                                        <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
-                                        <i class="fa fa-linkedin text-muted"></i>
-                                      </a>*@
+                                              <i class="fa fa-twitter text-muted"></i>
+                                          </a>
+                                          <a href=" @sociallink/auth/google" class="btn btn-lg">
+                                               <i class="fa fa-google-plus text-muted"></i>
+                                          </a>
+                                          <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
+                                          <i class="fa fa-linkedin text-muted"></i>
+                                        </a>*@
                                 </div>
                             </div>
                         }

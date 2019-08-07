@@ -62,6 +62,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             return View();
         }
+
         public static UserCredential GetUserCredential(out string error)
         {
             UserCredential credential = null;
@@ -77,24 +78,25 @@ namespace ExpressBase.Web.Controllers
                     Scopes,
                     Environment.UserName,
                     CancellationToken.None,
-                    new FileDataStore("Google Oaut2")).Result;
+                    new FileDataStore("12345")).Result;
                 Console.WriteLine("Success");
             }
             catch (Exception ex)
             {
                 credential = null;
                 error = "Failed to UserCredential Initialization:" + ex.ToString();
-                Console.WriteLine("Failed : "+ex.ToString());
+                Console.WriteLine("Failed : " + ex.ToString());
             }
             return credential;
         }
 
-        public void btnAuthorize_Click(object sender, EventArgs e)
+        public void btnAuthorize_Click(UserCredential credential)
         {
+            //UserCredential credential = 
             Console.WriteLine("Start ");
             string credentialError = string.Empty;
             string refreshToken = string.Empty;
-            UserCredential credential = GetUserCredential(out credentialError);
+            //UserCredential credential = GetUserCredential(out credentialError);
             Console.WriteLine(credential);
             if (credential != null && string.IsNullOrWhiteSpace(credentialError))
             {
@@ -127,52 +129,30 @@ namespace ExpressBase.Web.Controllers
                 listRequest.Fields = "nextPageToken, files(id, name)";
 
                 // List files.
-                IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute()
-                    .Files;
-                Console.WriteLine("Files:");
-                if (files != null && files.Count > 0)
-                {
-                    foreach (var filee in files)
-                    {
-                        Console.WriteLine("{0} ({1})", filee.Name, filee.Id);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("No files found.");
-                }
-                Console.Read();
+
+                //IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute()
+                //    .Files;
+                //Console.WriteLine("Files:");
+                //if (files != null && files.Count > 0)
+                //{
+                //    foreach (var filee in files)
+                //    {
+                //        Console.WriteLine("{0} ({1})", filee.Name, filee.Id);
+                //    }
+                //}
+                //else
+                //{
+                //    Console.WriteLine("No files found.");
+                //}
+                //Console.Read();
+
             }
             Console.WriteLine("finished");
         }
 
-        public async System.Threading.Tasks.Task Test()
+        public IActionResult Test()
         {
-            string[] Scopes = new string[] { DriveService.Scope.Drive,
-                                 DriveService.Scope.DriveFile};
-            Console.WriteLine("Scopes: " + Scopes);
-            string ApplicationName = "Other client 1";
-            try
-            {
-                UserCredential credential;
-
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                                new ClientSecrets
-                                {
-                                    
-                                },
-                                new[] { DriveService.Scope.Drive },
-                                "kurianurl",
-                                CancellationToken.None,
-                                new FileDataStore("JSON.Key"));
-
-                // Create Drive API service.
-                
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+            return View();
         }
     }
 }

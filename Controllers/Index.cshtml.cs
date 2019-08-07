@@ -14,25 +14,25 @@ namespace WebApplication1.Pages
     public class IndexModel : PageModel
     {
         private string[] Scopes = { DriveService.Scope.Drive };
-        private string ApplicationName = "Test App By Suresh";
+        private string ApplicationName = "API by kc";
 
         private string json = @"{
   'type': 'service_account',
-  'project_id': 'eb-test-223008',
-  'private_key_id': '689dda17e462f3f2700be5f104e1071f041ed6fa',
-  'private_key': '-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDS1c1XxlVJFcDT\nvAWjqsm610ghBqlNuLpdMXnuvGBk4rD0fZKFcDMKf7Kx3Fd58fHh15MlU79T/+iL\nqflDzfYUr4rQHU8gEdSu/gc8vPPLXSEU1XFxRQnDEX9xXD4sTkBJQSR6+IDPiDVy\nRglONuk0coSFi6H0tNdKNpvmOmsXJTn4RU980coSd97jBxsyQuUVOT+BlPoZREyF\nZhTIQxFDWnNz4g7qeYDvsNfG0h9KR0VkCaJ54yNGu5PcuXc2Kgbt/3WHYz6KzpgY\nBIiLVGp6DwgPGWoJLvv1TWn5wX+hq4j+f85/qKq6lHPxn3rXO04P6JmysWMbzoaq\nGF8fb3LdAgMBAAECggEACs9gDTNT3aCyJ5kRH/RqjfwqTFkzVpMVaSBXjGRXu+x8\nnriOie14DH6CKsjtqki7unTrbENIQNYS9hBDwdR+XM6oWyXZj/8iDMvlEpnslR2E\nC/WqsKBV0QzlYCpW3L4xYSAoLu7tadalyONq6Dn8CI6jmVZQukOIc1tr8GjH42KT\nKTogi7fENwLdwvV01TNNLD3yP6owlz9TkvowZTPOYsGZcz/KVDkb6Ryj8BX7pKLs\nptGPe7Nt1lS+t+reZJGPuGXWYnBwvaRa0xaCgSBD2j2Zcwpm+m/ENDyA2rno7MNm\nTH3tRPR/HuAsBn9JUn15uZ/9BKQHoTqvnGw0pBtTIQKBgQDwQLRaXF8+teqoe2zp\nJEYuVH5vmpjd1b8QFZ+x0araCOTaiLzfxk3Prj6HT+fSHgvSPQxY7eEEYGVq3YKe\nMQX2bv04QQGhBC9VAr0Ol5ccNSbrh/tgO9XVhFiMnqyq+9jukXARt6ibBLGX7av4\nTTV2i3Y6QrR1K1492+Q8rIdw4QKBgQDgp30DsJp4aJBG+Bu5vzOr/Qo8SSdTaERS\nOKxcMOryGtzjYbVlYkQZdarW85kDjNRUrc0icbZQXKoS7dZkpw5eK237M512vdRs\nK46MvYhSIpbOyiIX/BtpJA0ag8NSCOU05iPZb4xoNXky2m0AFvYJQiZUV70Q42fv\nbrNvPQb1fQKBgQDvZvqQpEVAfxQCqWLgewX3+rg2y62SOAD4rSOBlLUUKRKq9OCI\nd9lnnnCucyBEzy3mZHDeWMQFkWzd7TbQHXeclgJ7wMM3yKzFoEH1vXaVZB2RS+Jg\nhZ9R8VwvW5ohk24aZBBxhzpapnW1N99KQN2Kb/PyoC+kJf/10hz/nMgl4QKBgQCL\nP4W/ucGljLqRIsycr6Upn+iuQXG8w05F4JcFddTLSFdOIYw8UVKArWy9W7SmfK5H\n5orWJMGqwiUxInbXYK0JNcYwBGg/5545hi4PkpNixcnQV34We8/JtezhWHbC7HyV\n82iZKAlRtoNvP/B8M79BMd1sPg4U37/WqzlRY/RiSQKBgQDeD18LIrjEvR8RtZm0\nUmSp/VPSpy+FZb6PTijwqS6UVcg43hthsLcmFQU0X6CJazyRLw0EracVa7PLJeou\nDvg4da9jYjIDlgzZAGeo6e37NFO62u2L7HhSYExnL+9DBbta8zYwtHv3y6LDfBKd\n2RS/DpioGnreN6l67R489rb2rQ==\n-----END PRIVATE KEY-----\n',
-  'client_email': 'suresh-test-service-account@eb-test-223008.iam.gserviceaccount.com',
-  'client_id': '117544013727211631254',
+  'project_id': 'skillful-radar-245705',
+  'private_key_id': '66be46107dffe85a53edfefe3e56461044deacb6',
+  'private_key': '-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDSG+M+42MZvRhG\nqAAOB6FWqtMLN5kqAgsQTmcZjlBdfFK2dgm/f+QOH2kk3n1T3BjevJeyXsK2E3xy\n1tT8js3Iv9ggUzUgBwtOG/2kRyJNjcfgWi5DRXCkwSpfcS0B4OlZu+LN7BTwbf26\npf+OaLp7Bv3TiFBnSBxppCdBmE4eSs20wwa5F9hQ2g9AUmx6M8Fgxn+AvSIX2dyQ\noxFtzeuzitTaRubuM5qZMFJ5UNq+pWtU0G/1zZ3bvvJ8dHDThmPYAENdZG/Q8m8/\nN7yGv3fkLAekIspNvV2HOZA/Rzek3pxIBKYmx8fZLUFKmrUfkfDGMrZcvlNNFKou\nu+5ebQ2BAgMBAAECggEAPunq2eHswsBEjKOxoIHYZcMw/qLfUhzagz92z8g1eEjJ\n26jsslLxTulI6qlUjc/SAqAmLFsDotGi6iA6FoYMSJhpdwRzW+vADtuCz7YdJ2vU\n9fEK+UnJuQu+TGXvPCjEtwHzoAWZH4VP/JvIMjRZ4oztZHHk4YhOObPVrWaVvavN\nkx+2/Sav4ud+7RWzstkLJz+vvX783YH3/Lr0AolVLKdgPq8Ty7rsU6D3izrVukQt\nK4HeNcMqeE4MxNCq8tpPn4SNOtxx4RN103cFEhDvYR3OO7WQrkU4bcx7zi0KzHUW\nKGRFBMpGV9lpMkdIAKjePG5gcvTlfBe/C2NVtsLkoQKBgQDr6MIYRSwmgo9/gwh2\n5ssoOE2+k0JmL42UEr28WvOPFey3yveZdotoksnTK/WkjA0dFhnT8Jc27nkd7MNb\nwt2ZZdCBODka4PuHu2C5UmAIcd90ELanSYGFAhFfOhdZHp9v6YX0Dvlhg5t6OcQE\nJAsefZxjHaPKEAmPIPGoVyR5RwKBgQDkAKMv0wZYc4EecmamC3enCNAeKODE7aK6\nQ2os7VE7305r4OClgydOvlJQY43rTbRIMjPSSx36cw7epaQk/I2f160juzhQsNwz\ntpnZchOmUGsPBDAs/Dmr0FaB3boi3Kj2V64BZPBhgYJRgYsafkfn0T3DNaQvDoi3\nc53NC6im9wKBgHxDUaHpJdVvJlk7U0UWUuLvrXv6I5qh58icipbhrbOsD9HMNtn+\nSHagA3GZkT3Ii8vLbXVnIK/Ns7ygj1MRdRqtN8QpMmNHKRcZC1zy2CT6noKLnzrF\nDFVcfnwTpGLML52Ke4XQMWo9IbOjI+4ucjDwZ2UKItF32yEqcECFDnBXAoGAOCow\nCMfi+Eb7t5RW1PBeOTdijQtk0x32yAtzTD3plOYdW1W6AQud0zfu7v6XJy+tCVvU\niCkY6WkOcKo9FR9hg86NSBAGf1oR5GtG2tnPHVkSBlDxzSMU0c4wgS0tfQj+VjCj\nHJTQ4jQU9h8DNTOGYwSYQk4kc7MQ2qAQb0I/+WECgYAwhMMICxOYZeqV3KKMf4tA\nfPBt2z48nOpwPJPRJM2OkTM4OMIUTZMSMTHdGNHHYpi9MDQydcK25f0aHSzwuxkB\nPzDw27T4/ZIMVeLLsxyPpMZw2qOdlE30LxwZguPwaxJSWT8CHFG3tbaIpuGVV5o5\nwetkYQErLvtMWdhWc+TC+g==\n-----END PRIVATE KEY-----\n',
+  'client_email': 'kurian@skillful-radar-245705.iam.gserviceaccount.com',
+  'client_id': '111527805126325213102',
   'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
   'token_uri': 'https://oauth2.googleapis.com/token',
   'auth_provider_x509_cert_url': 'https://www.googleapis.com/oauth2/v1/certs',
-  'client_x509_cert_url': 'https://www.googleapis.com/robot/v1/metadata/x509/suresh-test-service-account%40eb-test-223008.iam.gserviceaccount.com'
+  'client_x509_cert_url': 'https://www.googleapis.com/robot/v1/metadata/x509/kurian%40skillful-radar-245705.iam.gserviceaccount.com'
 }";
 
         public void OnGet()
         {
             Console.WriteLine("Hello World!");
-            UploadFIle(@"C:\Users\sureba\Desktop\sign2.png");
+            UploadFIle(@"C:\Users\Kurian Kalathoor\Pictures\430831-most-popular-relaxing-desktop-background-1920x1080.jpg");
         }
 
         public void DownloadFile(string blobId, string savePath)
@@ -70,6 +70,7 @@ namespace WebApplication1.Pages
 
         public string UploadFIle(string path)
         {
+            Console.WriteLine("upload started");
             var service = GetDriveServiceInstance();
             var fileMetadata = new Google.Apis.Drive.v3.Data.File();
             fileMetadata.Name = Path.GetFileName(path);
@@ -83,20 +84,22 @@ namespace WebApplication1.Pages
             }
 
             var file = request.ResponseBody;
-
+            Console.WriteLine("upload complete");
             return file.Id;
+            
         }
 
         private DriveService GetDriveServiceInstance()
         {
+            Console.WriteLine("Service started");
             GoogleCredential credential = GoogleCredential.FromJson(json);
 
             var service = new DriveService(new BaseClientService.Initializer()
             {
-                ApiKey = "AIzaSyCxTcLGx-g_rG0lrrHJOdULFLYvyqx8leU",
+                ApiKey = "AIzaSyBrfVA8qXGtHso9vJ6DI_go9pHXIO-oS7U",
                 ApplicationName = ApplicationName,
             });
-
+            Console.WriteLine("service complete");
             return service;
         }
 

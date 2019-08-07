@@ -152,7 +152,7 @@
             cache: false,
             data: {
                 refid: this.RbObj.EbObject.DataSourceRefId,
-                expression: atob(obj.ValueExpression)
+                expression: atob(obj.ValExpression)
             },
             success: function (result) {
                 this.setCalcFieldType(obj, JSON.parse(result));
@@ -185,13 +185,13 @@
         var Objid = "CalcField" + (this.RbObj.idCounter["CalcFieldCounter"])++;
         var obj = new EbObjects["EbCalcField"](Objid);
         $("#ReportDetail0").append(obj.$Control.outerHTML());
-        obj.ValueExpression = btoa(vexp);
+        obj.ValExpression = btoa(vexp);
         obj.Name = name || Objid;
         obj.Title = name || Objid;
         this.RbObj.objCollection[Objid] = obj;
         this.RbObj.RefreshControl(obj);
         $("#eb_calcF_summarry").modal("toggle");
-        if (obj.ValueExpression)
+        if (obj.ValExpression)
             this.ValidateCalcExpression(obj);//returns the type of expression
         $("#calcFields ul[id='calcfields-childul']").append(`<li class='styl'><div tabindex='1' $(this).focus(); class='textval' EbSid="${obj.EbSid}">
             ${obj.Name}</div></li>`);

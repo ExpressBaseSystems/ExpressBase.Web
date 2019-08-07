@@ -23,6 +23,7 @@ using ServiceStack.Redis;
 using ServiceStack.Stripe;
 using ServiceStack.Stripe.Types;
 using System.Threading;
+using WebApplication1.Pages;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -152,6 +153,8 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult Test()
         {
+            IndexModel m = new IndexModel();
+            m.OnGet();
             return View();
         }
     }

@@ -218,7 +218,15 @@ namespace ExpressBase.Web.Controllers
 							PagePath = pgpath.ToString(),
 							PageUrl = pgurl.ToString()
 						});
-						return 1;
+						if (res.VerifyStatus == true)
+						{
+							return 1;
+						}
+						else
+						{
+							return 2;
+						}
+						
 					}
 				}
 				catch (Exception e)
@@ -325,7 +333,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public IActionResult TenantSignIn()
         {
-            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
+			var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];

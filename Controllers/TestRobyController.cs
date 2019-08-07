@@ -173,7 +173,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 Console.WriteLine("Hello World!");
-                UploadFIle(@"..\images\imageControlSampleImage.jpg");
+                UploadFIle(@"../images/imageControlSampleImage.jpg");
             }
             catch (Exception e)
             {

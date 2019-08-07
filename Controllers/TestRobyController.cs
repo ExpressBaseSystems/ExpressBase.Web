@@ -173,7 +173,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 Console.WriteLine("Hello World!");
-                UploadFIle(@"430831-most-popular-relaxing-desktop-background-1920x1080.jpg");
+                UploadFIle(@"../images/imageControlSampleImage.jpg");
             }
             catch (Exception e)
             {

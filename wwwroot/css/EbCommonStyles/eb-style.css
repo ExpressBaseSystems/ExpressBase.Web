@@ -4,7 +4,6 @@
 
 body {
     padding: 0 !important;
-    --eb-font: open sans;
     /*jith*/
     --colorDDD: #ddf;
     --sild1pxDDD: solid 1px var(--colorDDD);
@@ -244,7 +243,9 @@ body, html,.html-root {
 .mb-25 {
     margin-bottom: 25px;
 }
-
+.validator_error {
+    border: 1px solid #f5222d !important;
+}
 .eb_login .container {
     height: inherit;
 }
@@ -308,21 +309,21 @@ body, html,.html-root {
             width: 15px;
             height: 15px;
         }
-    .login_container form {
-        padding: 30px;
-        width: 100%;
-        max-width: 700px;
-        background: linear-gradient(to right,#eef9fe,#edf7ff);
-        flex: 0 0 85%;
-        border-radius: 6px;
-        border: 1px solid #d3edff;
-        max-width: 90%;
-        position:relative;
-    }
-.login_container_usr form {
+.login_container .eb-auth-htmlbox {
+    padding: 30px;
+    width: 100%;
+    max-width: 700px;
+    background: linear-gradient(to right,#eef9fe,#edf7ff);
+    flex: 0 0 85%;
+    border-radius: 6px;
+    border: 1px solid #d3edff;
+    max-width: 90%;
+    position: relative;
+}
+.login_container_usr .eb-auth-htmlbox {
     border: 1px solid #d3edff;
     padding: 30px;
-    border-radius:6px;
+    border-radius: 6px;
     /*background: linear-gradient(to right,#eef9fe,#edf7ff);*/
 }
 
@@ -425,7 +426,7 @@ body, html,.html-root {
 Navigation bar
 ************************************/
 
-.ext-pageheader .navbar-brand {
+/*.ext-pageheader .navbar-brand {
     padding: 0;
 }
 
@@ -472,7 +473,7 @@ Navigation bar
 .hvr-underline-from-center:not(.active_Link):hover:before, .hvr-underline-from-center:not(.active_Link):focus:before, .hvr-underline-from-center:not(.active_Link):active:before {
     left: 15px;
     right: 15px;
-}
+}*/
 
 .active_Link {
     background-color: #168ac2;
@@ -769,7 +770,7 @@ Navigation bar
 .eb_messageBox_container {
     width: 100%;
     padding: 10px;
-    font-family: Montserrat;
+    font-family: Montserrat,Roboto;
     font-size: 15px;
     display: none;
     text-align: center;
@@ -830,6 +831,7 @@ Navigation bar
     overflow: hidden;
     box-sizing: border-box;
     text-decoration: none;
+    transition-duration: 0.08s;
 }
 
 .navmain .ico {
@@ -1063,20 +1065,20 @@ Navigation bar
 }
 
 @media (min-width: 450px) and (max-width: 800px) {
-    .ext-pageheader .drp_container {
+    /*.ext-pageheader .drp_container {
         width: 400px !important;
-    }
+    }*/
 }
 
 @media only screen and (min-device-width: 480px) and (max-device-width: 640px) and (orientation: landscape) {
-    .ext-pageheader .nav > li {
+    /*.ext-pageheader .nav > li {
         float: left;
         width: 100%;
     }
 
     .ext-pageheader .drp_container::after {
         display: none;
-    }
+    }*/
 }
 
 @media (min-width: 20px) and (max-width: 450px) {
@@ -1085,7 +1087,7 @@ Navigation bar
         margin-right: unset;
     }
 
-    .ext-pageheader .navbar-collapse {
+    /*.ext-pageheader .navbar-collapse {
         text-align: center;
     }
 
@@ -1098,15 +1100,15 @@ Navigation bar
         float: left;
         width: 100%;
         padding-left: 0;
-    }
+    }*/
 
-    .ext-pageheader li[class='open'] {
+    /*.ext-pageheader li[class='open'] {
         background: #fafafa;
     }
 
     .ext-pageheader .drp_container::after {
         display: none;
-    }
+    }*/
 
     .login_container form, .login_container_usr form {
         flex:1;max-width:100%;

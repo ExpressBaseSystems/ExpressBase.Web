@@ -375,7 +375,6 @@ namespace ExpressBase.Web.Controllers
             public List<EbObjectWrapper> DvTaggedList { get; set; }
         }
 
-
         [HttpPost]
         public void exportToexcel(TableDataRequest req)
         {
@@ -398,7 +397,6 @@ namespace ExpressBase.Web.Controllers
             }
 
         }
-
 
         public IActionResult GetExcel(string refid, string filename)
         {

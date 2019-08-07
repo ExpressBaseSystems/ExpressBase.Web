@@ -141,7 +141,7 @@ namespace ExpressBase.Web.Controllers
 
 		public bool ChangeUserPassword(string OldPwd, string NewPwd)
 		{
-			if(isTenant() && (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.DC))
+			if(isTenant() && (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.DC) && this.LoggedInUser.UserId > 1)
 				return false;
 			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email, WC = ViewBag.wc });
 			return resp.isSuccess;

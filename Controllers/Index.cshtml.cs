@@ -28,7 +28,7 @@ namespace WebApplication1.Pages
   'auth_provider_x509_cert_url': 'https://www.googleapis.com/oauth2/v1/certs',
   'client_x509_cert_url': 'https://www.googleapis.com/robot/v1/metadata/x509/kurian%40skillful-radar-245705.iam.gserviceaccount.com'
 }";
-        [Route("/Onget")]
+
         public void OnGet()
         {
             Console.WriteLine("Hello World!");

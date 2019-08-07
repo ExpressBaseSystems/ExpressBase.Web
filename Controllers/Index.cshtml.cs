@@ -32,7 +32,7 @@ namespace WebApplication1.Pages
         public void OnGet()
         {
             Console.WriteLine("Hello World!");
-            UploadFIle(@"C:\Users\Kurian Kalathoor\Pictures\430831-most-popular-relaxing-desktop-background-1920x1080.jpg");
+            UploadFIle(@"./430831-most-popular-relaxing-desktop-background-1920x1080.jpg");
         }
 
         public void DownloadFile(string blobId, string savePath)

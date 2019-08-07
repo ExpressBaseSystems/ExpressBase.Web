@@ -5,6 +5,7 @@
 @using Newtonsoft.Json;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 @using ExpressBase.Common.Objects;
+@using ExpressBase.Common.Singletons;
 @{
     Layout = "~/Views/Shared/LayoutBuilders.cshtml";
 }
@@ -18,16 +19,16 @@
 
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css" />
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css" />
-<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" asp-append-version=@bApnd >
-<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd >
-<link rel="stylesheet" type="text/css" href="~/css/ChartStyle.css" asp-append-version=@bApnd >
-<script src="~/js/splitWindow.js" type="text/javascript" asp-append-version=@bApnd ></script>
-<script src="~/js/EbReportSample.js" type="text/javascript" asp-append-version=@bApnd ></script>
-<script type="text/javascript" src="~/js/EbDataTable.js" asp-append-version=@bApnd ></script>
-<script type="text/javascript" src="~/js/Eb_chart.js" asp-append-version=@bApnd ></script>
-<script type="text/javascript" src="~/js/dvContainer.js" asp-append-version=@bApnd ></script>
-<script type="text/javascript" src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd ></script>
-<script type="text/javascript" src="~/js/GoogleMap/Googlemap.js" asp-append-version=@bApnd ></script>
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" asp-append-version=@bApnd>
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
+<link rel="stylesheet" type="text/css" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
+<script src="~/js/splitWindow.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script src="~/js/EbReportSample.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbDataTable.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/Eb_chart.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/dvContainer.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/GoogleMap/Googlemap.js" asp-append-version=@bApnd></script>
 
 <script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
@@ -44,7 +45,8 @@
 
     var dvobj = EbSerializers.Json_Serialize(ViewBag.dvObject);
 
-    var _user_culture = CultureInfo.GetCultureInfo(ViewBag.currentUser.Preference.Locale);
+    //var _user_culture = CultureInfo.GetCultureInfo(ViewBag.currentUser.Preference.Locale);
+    var _user_culture = CultureHelper.GetSerializedCultureInfo(ViewBag.currentUser.Preference.Locale).GetCultureInfo();
     var datePattern = (_user_culture as CultureInfo).DateTimeFormat.ShortDatePattern;
 }
 <script>
@@ -113,7 +115,7 @@
     $("body").prepend(`
 <div class="modal fade" id="iFrameFormPopupModal" role="dialog">
     <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
-        <div class="modal-content"> 
+        <div class="modal-content">
             <div class="modal-body" style="height: 60vh; padding: 0px;">
                 <div>
                     <div id="iFrameFormPopupOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
@@ -174,7 +176,7 @@
     <div class="ppcont"><div id="pp_inner"></div></div>
 </div>
 
-    <script>
+<script>
         $("#obj_icons").append(`<button id='btnGo0' class='btn commonControls'><i class="fa fa-play" aria-hidden="true"></i></button>`);
         $("#obj_icons").after(`<div id="Common_obj_icons" style="display:inline"></div>`);
         var counter = 0;
@@ -206,4 +208,4 @@
         $(document).ready(function () {
             @Html.Raw(head)
         });
-    </script>
+</script>

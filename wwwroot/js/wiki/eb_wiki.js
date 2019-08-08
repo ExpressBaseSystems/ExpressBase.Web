@@ -82,6 +82,17 @@
                 this.insertAtCaret(txt, insertVal);
             }
         }
+        else if (id == `br`) {
+            let insertVal = `<br/>`
+            let txt = 'text';
+            if (SelectedString == "") {
+                this.insertAtCaret(txt, insertVal);
+            }
+            else {
+                let insertVal = `<br/>`
+                this.insertAtCaret(txt, insertVal);
+            }
+        }
         else {
             let insertVal = `<${id}> </${id}>`
             let txt = 'text';
@@ -197,8 +208,7 @@
      </div> 
             
              <h4>Questions?</h4>
-            <p>We're always happy to help with code or other questions you might have. Search our documentation,
-            contact support, or connect <a>team</a> .<p>
+            <p>Please mail <span style="color:blue"> support@expressbasebase.com</span> , we are always happy to help.<p>
 
             `;
         $('#wiki_data_div').append($WasItHelpFul);
@@ -230,7 +240,20 @@
                 this.AjaxCalFetchWikiList(id);
             }
             else {
-                this.show_home();
+                let url = window.location.href;
+                //alert(url);
+                let urlSplit = url.split("/");
+                let wiki_name = urlSplit[urlSplit.length - 1];
+                let wname = wiki_name.replace(/\-/g, ' ');
+                let id = $(`[val="${wname}"]`).attr("data-id");
+                $(".wikilist").removeClass("CurrentSelection");
+                $(`[data-id='${id}']`).addClass("CurrentSelection");
+                if ($.isNumeric(id)) {
+                    obj.AjaxCalFetchWikiList(id);
+                }
+                else {
+                    obj.show_home();
+                }
             }
         }
         else if (key.length < 3) {
@@ -240,6 +263,7 @@
             $('.front_page_wiki').hide();
         }
         else {
+            $("#ebwiki_panebrd").text("").text("Wiki Search Result");
             $(".commonLoader").EbLoader("show");
             $.ajax({
                 type: 'POST',
@@ -790,11 +814,64 @@
     this.gallerytab = function () {
         $("#gallery").click();
     }
+
     this.WikiPreviewTab = function () {
         $("#preview").click();
     }
+
     this.EbloaderTrigger = function () {
         $(".eb_common_loader").EbLoader("show");
+    }
+
+    this.SaveWiki = function () {
+        $("#eb_common_loader").EbLoader("show");
+        var wiki = {};
+        wiki["category"] = $("#category option:selected").text();
+        wiki["CatId"] = $("#category").val();
+        wiki["title"]= $("#title").val();
+        wiki["status"] = $("#status option:selected").text();
+        wiki["html"] = $("#text").text();
+        wiki["tags"] = $("#tagbox").val();
+        wiki["Id"] = $("#wiki-id").val();
+
+        $.ajax(
+            {
+                url: '/Wiki/Save',
+                type: 'POST',
+                data: { wiki: wiki },
+                success: function (data) {
+                    if (data !== null) {
+                        EbPopBox("show", {
+                            Message: "Success...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                    let url = window.location.origin + "/Wiki/View/" + data.id + "/" + data.title ;
+                                    window.open(url, '_blank');
+                                }
+                            }
+                        });
+                        $("#eb_common_loader").EbLoader("hide");
+                    }
+                    else {
+                        EbPopBox("show", {
+                            Message: "Failed to update the order...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
+
+                        $("#eb_common_loader").EbLoader("hide");
+                    }
+
+                }
+            });
     }
 
     this.init = function () {
@@ -813,6 +890,7 @@
         $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
 
         //wiki admin
+        $("#wikisave").on("click", this.SaveWiki.bind(this));
         $(".wikies_list").on("click", this.Admin_Wiki_List.bind(this));
         $("#public").on("click",".WikiMenu", this.WikiMenuToggle.bind(this));
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
@@ -820,8 +898,7 @@
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
         $("#gallery-tab1").on("click", this.gallerytab.bind(this));
         $("#wiki-preview-tab").on("click", this.WikiPreviewTab.bind(this));
-        $("#wikisave").on("click", this.EbloaderTrigger.bind(this));
-
+        //$("#wikisave").on("click", this.EbloaderTrigger.bind(this));
     };
 
     this.init();

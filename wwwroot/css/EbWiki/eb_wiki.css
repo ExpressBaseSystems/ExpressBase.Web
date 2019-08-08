@@ -412,11 +412,9 @@ iframe {
 
 .wiki-preview {
     color: #2b2b2b;
-    font-size: 15px;
     text-align: justify;
-    font-weight: 400;
+    font-family: Montserrat;
     padding: 0% 10% 0% 10%;
-    font-weight: 300;
 }
     .wiki-preview .render {
         
@@ -475,7 +473,7 @@ iframe {
         }
 
         .wiki-preview .render img {
-            min-height: 300px;
+            max-height: 300px;
         }
 
         .wiki-preview .render iframe {
@@ -581,7 +579,6 @@ iframe {
     margin-right: 7%;
     border-radius: 4px;
     margin-bottom: 10px;
-    /* padding-bottom: 5px; */
     border: solid 1px #d4d4d4;
     padding: 6px;
 }
@@ -693,29 +690,6 @@ iframe {
     .btnGrp2:active {
         background-color: cornflowerblue;
     }
-/*#galleryToggle {
-    font-size: 12px;
-    font-weight: 500;
-    margin: 10px;
-    height: 25px;
-    padding: 3px;
-    margin-right: 10px;
-    border: solid 1px #cecece;
-    background: #efefef;
-    width: 20%;
-    text-decoration: none;
-    color: black;
-    padding-left: 6%;
-    border-radius: 4px;
-    outline: none;
-}
-    #galleryToggle:hover {
-        background-color: #8AB6F7
-    }
-
-    #galleryToggle:active {
-        background-color: cornflowerblue;
-    }*/
 
 .WikiDefaultImage {
     height: 400px;
@@ -767,7 +741,3 @@ iframe {
     padding-left: 13px;
     margin-bottom: 10px;
 }
-
-
-/*padding-right: 15px;*/
-/* padding-left: 15px; *//**/

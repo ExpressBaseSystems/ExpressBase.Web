@@ -1,59 +1,32 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPageHeader");
 }
 @section StyleSheet{
-<meta property="og:title" content="gdf">
-<meta property="og:description" content="">
-<meta property="og:image" content="">
-<meta property="og:url" content="">
-<meta name="twitter:card" content="">    
-
-<!--  Non-Essential, But Recommended -->
-
-<meta property="og:site_name" content="EXPRESSbase Systems">
-<meta name="twitter:image:alt" content="">
-
-
-<!--  Non-Essential, But Required for Analytics -->
-
-<meta property="fb:app_id" content="your_app_id" />
-<meta name="twitter:site" content="">
-
+    <meta property="og:title" content="gdf">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="">
+    <meta property="og:url" content="">
+    <meta name="twitter:card" content="">
+    <!--  Non-Essential, But Recommended -->
+    <meta property="og:site_name" content="EXPRESSbase Systems">
+    <meta name="twitter:image:alt" content="">
+    <!--  Non-Essential, But Required for Analytics -->
+    <meta property="fb:app_id" content="your_app_id" />
+    <meta name="twitter:site" content="">
     <style>
-        html{
-            overflow-y:scroll !important;
+        html {
+            overflow-y: scroll !important;
         }
     </style>
-    <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+    <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css" asp-append-version="true">
 }
 @section JavaScript{
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-    <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
+    <script type="text/javascript" src="~/js/wiki/eb_wiki.js" asp-append-version="true"></script>
 }
 
-
-@{
-    string signinurl = string.Empty, appstoreurl = string.Empty, home = string.Empty; ;
-    if (ViewBag.Env == "Development")
-    {
-        home = "http://localhost:41400";
-        signinurl = "http://myaccount.localhost:41500";
-    }
-    if (ViewBag.Env == "Staging")
-    {
-        home = "https://eb-test.xyz";
-        signinurl = "https://myaccount.eb-test.xyz";
-    }
-    if (ViewBag.Env == "Production")
-    {
-        home = "https://expressbase.com";
-        signinurl = "https://myaccount.expressbase.com";
-    }
-    bool isLogined = (ViewBag.AvailToken == null) ? false : ViewBag.AvailToken;
-}
-
+@Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
 <div class="container-fluid">
     <div class="search-box-fab">
         <div class="link-wrapr">
@@ -100,144 +73,144 @@
 
 
                 @*<div class="sidebar-item-wraper wraper-link" val="Forms">
-                    <div class="sidebar-item">
-                        <span class="fa fa-list-alt i-con"></span>
-                        <span class="menu text"> Forms </span>
+                        <div class="sidebar-item">
+                            <span class="fa fa-list-alt i-con"></span>
+                            <span class="menu text"> Forms </span>
+                        </div>
                     </div>
-                </div>
-                <div id="Forms" class="sidebar-list-wraper" val="hide" show>
-                    <ul>
-                        @foreach (Wiki wiki in ViewBag.WikiList)
-                        {
-                            int link = wiki.Id;
-                            int order = wiki.Order;
-                            if (wiki.Category == "Form")
+                    <div id="Forms" class="sidebar-list-wraper" val="hide" show>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == "Form")
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                }
                             }
-                        }
-                    </ul>
-                </div>*@
+                        </ul>
+                    </div>*@
                 @*<div class="sidebar-item-wraper wraper-link" val="Reporting">
-                    <div class="sidebar-item">
-                        <span class="fa fa-table i-con"></span>
-                        <span class="menu text"> Reporting </span>
+                        <div class="sidebar-item">
+                            <span class="fa fa-table i-con"></span>
+                            <span class="menu text"> Reporting </span>
+                        </div>
                     </div>
-                </div>
-                <div id="Reporting" class="sidebar-list-wraper" val="hide" show>
-                    <ul>
-                        @foreach (Wiki wiki in ViewBag.WikiList)
-                        {
-                            int link = wiki.Id;
-                            int order = wiki.Order;
-                            if (wiki.Category == "Report")
+                    <div id="Reporting" class="sidebar-list-wraper" val="hide" show>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == "Report")
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                }
                             }
-                        }
-                    </ul>
-                </div>*@
+                        </ul>
+                    </div>*@
 
                 @*<div class="sidebar-item-wraper wraper-link" val="Integrations">
-                    <div class="sidebar-item">
-                        <span class="fa fa-plug i-con"></span>
-                        <span class="menu text"> Integrations </span>
+                        <div class="sidebar-item">
+                            <span class="fa fa-plug i-con"></span>
+                            <span class="menu text"> Integrations </span>
+                        </div>
                     </div>
-                </div>
-                <div id="Integrations" class="sidebar-list-wraper" val="hide" show>
-                    <ul>
-                        @foreach (Wiki wiki in ViewBag.WikiList)
-                        {
-                            int link = wiki.Id;
-                            int order = wiki.Order;
-                            if (wiki.Category == "Integrations")
+                    <div id="Integrations" class="sidebar-list-wraper" val="hide" show>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == "Integrations")
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                }
                             }
-                        }
-                    </ul>
-                </div>*@
+                        </ul>
+                    </div>*@
 
                 @*<div class="sidebar-item-wraper wraper-link" val="API">
-                    <div class="sidebar-item">
-                        <span class="fa fa-code i-con"></span>
-                        <span class="menu text"> API </span>
+                        <div class="sidebar-item">
+                            <span class="fa fa-code i-con"></span>
+                            <span class="menu text"> API </span>
+                        </div>
                     </div>
-                </div>
-                <div id="API" class="sidebar-list-wraper" val="hide" show>
-                    <ul>
-                        @foreach (Wiki wiki in ViewBag.WikiList)
-                        {
-                            int link = wiki.Id;
-                            int order = wiki.Order;
-                            if (wiki.Category == "API")
+                    <div id="API" class="sidebar-list-wraper" val="hide" show>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == "API")
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                }
                             }
-                        }
-                    </ul>
-                </div>*@
+                        </ul>
+                    </div>*@
                 @*<div class="sidebar-item-wraper wraper-link" val="Chatbots">
-            <div class="sidebar-item">
-                <span class="fa fa-commenting i-con"> </span>
-                <span class="menu text"> Chatbots </span>
-            </div>
-        </div>
-        <div id="Chatbots" class="sidebar-list-wraper" val="hide" hidden>
-            <ul>
-                @foreach (Wiki wiki in ViewBag.WikiList)
-                {
-                    int link = wiki.Id;
-                    int order = wiki.Order;
-                    if (wiki.Category == "Chatbots")
-                    {
-                        <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
-                    }
-                }
-            </ul>
-        </div>*@
+                        <div class="sidebar-item">
+                            <span class="fa fa-commenting i-con"> </span>
+                            <span class="menu text"> Chatbots </span>
+                        </div>
+                    </div>
+                    <div id="Chatbots" class="sidebar-list-wraper" val="hide" hidden>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
+                            {
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == "Chatbots")
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
+                                }
+                            }
+                        </ul>
+                    </div>*@
 
                 @*<div class="sidebar-item-wraper wraper-link" val="Security">
-                    <div class="sidebar-item">
-                        <span class="fa fa-lock i-con"></span>
-                        <span class="menu text"> Security </span>
+                        <div class="sidebar-item">
+                            <span class="fa fa-lock i-con"></span>
+                            <span class="menu text"> Security </span>
+                        </div>
                     </div>
-                </div>
-                <div id="Security" class="sidebar-list-wraper" val="hide" show>
-                    <ul>
-                        @foreach (Wiki wiki in ViewBag.WikiList)
-                        {
-                            int link = wiki.Id;
-                            int order = wiki.Order;
-                            if (wiki.Category == "Security")
+                    <div id="Security" class="sidebar-list-wraper" val="hide" show>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == "Security")
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                }
                             }
-                        }
-                    </ul>
-                </div>*@
+                        </ul>
+                    </div>*@
 
 
 
                 @*<div class="sidebar-item-wraper wraper-link" val="AppStore1">
-                    <div class="sidebar-item">
-                        <span class="fa fa-shopping-cart i-con"></span>
-                        <span class="menu text"> App Store </span>
+                        <div class="sidebar-item">
+                            <span class="fa fa-shopping-cart i-con"></span>
+                            <span class="menu text"> App Store </span>
+                        </div>
                     </div>
-                </div>
-                <div id="AppStore1" class="sidebar-list-wraper" val="hide" show>
-                    <ul>
-                        @foreach (Wiki wiki in ViewBag.WikiList)
-                        {
-                            int link = wiki.Id;
-                            int order = wiki.Order;
-                            if (wiki.Category == "AppStore")
+                    <div id="AppStore1" class="sidebar-list-wraper" val="hide" show>
+                        <ul>
+                            @foreach (Wiki wiki in ViewBag.WikiList)
                             {
-                                <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                int link = wiki.Id;
+                                int order = wiki.Order;
+                                if (wiki.Category == "AppStore")
+                                {
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                }
                             }
-                        }
-                    </ul>
-                </div>*@
+                        </ul>
+                    </div>*@
             </div>
         </div>
         <div class="col-sm-9 col-md-9 col-lg-9 pd-0 eb-wiki-pane">
@@ -261,50 +234,53 @@
                         <h4>Get familiar with the ExpressBase products and explore their features:</h4>
 
 
-                     
-                            @for (var i = 0; i < ViewBag.WikiCat.Count; i = i+2)
+
+                        @for (var i = 0; i < ViewBag.WikiCat.Count; i = i + 2)
+                        {
+                            string WikiCategory = ViewBag.WikiCat[i].WikiCategory;
+                            string WikiIconClass = ViewBag.WikiCat[i].WikiIconClass;
+                            string WikiDescription = ViewBag.WikiCat[i].WikiDescription;
+                            string WikiCategory1 = "";
+                            string WikiIconClass1 = "";
+                            string WikiDescription1 = "";
+                            if ((i + 1) < ViewBag.WikiCat.Count)
                             {
-                                string WikiCategory = ViewBag.WikiCat[i].WikiCategory;
-                                string WikiIconClass = ViewBag.WikiCat[i].WikiIconClass;
-                                string WikiDescription = ViewBag.WikiCat[i].WikiDescription;
-                                string WikiCategory1 = "";
-                                string WikiIconClass1 = "";
-                                string WikiDescription1 = "";
-                                if ((i+1)< ViewBag.WikiCat.Count)
-                                {
-                                    WikiCategory1 = ViewBag.WikiCat[i + 1].WikiCategory;
-                                    WikiIconClass1 = ViewBag.WikiCat[i + 1].WikiIconClass;
-                                    WikiDescription1 = ViewBag.WikiCat[i + 1].WikiDescription;
-                                }
-                                <div class="GettingStartedWrapper">
-                                    <div class="GettingStarted" val="@WikiCategory">
-                                        <div class="divIcon"> <span class="@WikiIconClass i-con"></span></div>
-                                        <div><div class="h1Wrap"> @WikiCategory</div>
-                                        <div class="PWrap"> @WikiDescription</div></div>
+                                WikiCategory1 = ViewBag.WikiCat[i + 1].WikiCategory;
+                                WikiIconClass1 = ViewBag.WikiCat[i + 1].WikiIconClass;
+                                WikiDescription1 = ViewBag.WikiCat[i + 1].WikiDescription;
+                            }
+                            <div class="GettingStartedWrapper">
+                                <div class="GettingStarted" val="@WikiCategory">
+                                    <div class="divIcon"> <span class="@WikiIconClass i-con"></span></div>
+                                    <div>
+                                        <div class="h1Wrap"> @WikiCategory</div>
+                                        <div class="PWrap"> @WikiDescription</div>
                                     </div>
-                                       @if(WikiCategory1 != "") {
+                                </div>
+                                @if (WikiCategory1 != "")
+                                {
                                     <div class="GettingStarted" val="@WikiCategory1">
                                         <div class="divIcon"> <span class="@WikiIconClass1 i-con"></span></div>
                                         <div>
                                             <div class="h1Wrap"> @WikiCategory1</div>
-                                            <div  class="PWrap"> @WikiDescription1</div>
+                                            <div class="PWrap"> @WikiDescription1</div>
                                         </div>
                                     </div>}
-                                     </div>                                       
-                            }
+                            </div>
+                        }
 
                         @*<div class="GettingStartedWrapper">
-                            <div class="GettingStarted" val="Forms">  <div class="divIcon"><span class="fa fa-list-alt i-con"></span></div> <div class="h1Wrap"> Forms</div></div>
-                            <div class="GettingStarted" val="Reporting"><div class="divIcon"> <span class="fa fa-table i-con"></span></div> <div class="h1Wrap"> Reports</div></div>
-                        </div>
-                        <div class="GettingStartedWrapper">
-                            <div class="GettingStarted" val="Integrations"><div class="divIcon"><span class="fa fa-plug i-con"></span></div><div class="h1Wrap"> Integrations</div></div>
-                            <div class="GettingStarted" val="API"><div class="divIcon"><span class="fa fa-code i-con"></span></div> <div class="h1Wrap"> API </div></div>
-                        </div>
-                        <div class="GettingStartedWrapper">
-                            <div class="GettingStarted" val="Security"><div class="divIcon"><span class="fa fa-lock i-con"></span> </div><div class="h1Wrap"> Security</div> </div>
-                            <div class="GettingStarted" val="AppStore1"><div class="divIcon"><span class="fa fa-shopping-cart i-con"></span> </div> <div class="h1Wrap">AppStore </div> </div>
-                        </div>*@
+                                <div class="GettingStarted" val="Forms">  <div class="divIcon"><span class="fa fa-list-alt i-con"></span></div> <div class="h1Wrap"> Forms</div></div>
+                                <div class="GettingStarted" val="Reporting"><div class="divIcon"> <span class="fa fa-table i-con"></span></div> <div class="h1Wrap"> Reports</div></div>
+                            </div>
+                            <div class="GettingStartedWrapper">
+                                <div class="GettingStarted" val="Integrations"><div class="divIcon"><span class="fa fa-plug i-con"></span></div><div class="h1Wrap"> Integrations</div></div>
+                                <div class="GettingStarted" val="API"><div class="divIcon"><span class="fa fa-code i-con"></span></div> <div class="h1Wrap"> API </div></div>
+                            </div>
+                            <div class="GettingStartedWrapper">
+                                <div class="GettingStarted" val="Security"><div class="divIcon"><span class="fa fa-lock i-con"></span> </div><div class="h1Wrap"> Security</div> </div>
+                                <div class="GettingStarted" val="AppStore1"><div class="divIcon"><span class="fa fa-shopping-cart i-con"></span> </div> <div class="h1Wrap">AppStore </div> </div>
+                            </div>*@
 
 
                     </div>
@@ -313,11 +289,11 @@
         </div>
     </div>
     @*<div class="icon-bar">
-        <a href="https://www.facebook.com/share.php?u=http://www.expressbase.com&title=ExpressBase" class="facebook" target="_blank"><i class="fa fa-facebook"></i></a>
-        <a href="#" class="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
-        <a href="#" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
-        <a href="#" class="whatsapp" target="_blank"><i class="fa fa-whatsapp"></i></a>
-    </div>*@
+            <a href="https://www.facebook.com/share.php?u=http://www.expressbase.com&title=ExpressBase" class="facebook" target="_blank"><i class="fa fa-facebook"></i></a>
+            <a href="#" class="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
+            <a href="#" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
+            <a href="#" class="whatsapp" target="_blank"><i class="fa fa-whatsapp"></i></a>
+        </div>*@
 </div>
 @section JsCode{
     <script>

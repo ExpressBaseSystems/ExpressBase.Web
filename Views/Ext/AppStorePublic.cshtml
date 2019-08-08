@@ -1,57 +1,14 @@
-﻿@{
-    Layout = "~/Views/Shared/LayoutInner.cshtml";
-    Html.RenderPartial("ExtPageHeader");
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
 }
-@using ExpressBase.Objects.ServiceStack_Artifacts;
 
-<script>$("#AppStore").remove();</script>
+@section StyleSheet{
+    <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.extended.css" asp-append-version="true" />
+}
+@Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
 
-<link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
-<link rel="icon" href="~/images/favicon.ico">
-<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
-@*<link async href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
-<link rel="stylesheet" type="text/css" href="~/css/webextstyle.1.1.css" asp-append-version="true" />
-<link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" asp-append-version="true" />
-<link rel="stylesheet" type="text/css" href="~/css/style-extended-1.1.css" asp-append-version="true" />
-<link rel="stylesheet" type="text/css" href="~/css/eb-pagegraphics.css" asp-append-version="true" />
-<style>
-    body {
-        overflow-x: hidden !important;
-    }
-    .navbar-default {
-        border-color: none !important;
-    }
-</style>
 <div class="row" style="background:white;font-family:Montserrat">
-    @*@{
-        Html.RenderPartial("ExtPageHeader");
-    }*@
-    <!--message box top-->
-    <section class="message-box-indexpage cookie" id="set_cookies">
-        <div class="cookie_container">
-            <span>
-                We use cookies to personalize our website content, provide social media features,
-                analyze how our site is used, <br /> and give you a better experience.
-            </span>
-            <span class="btn accept_cookies"><i class="fa fa-check"></i> Accept Cookies </span>
-            <i class="fa fa-close pull-right" id="close-msg" onclick="$('#set_cookies').hide();"></i>
-        </div>
-    </section>
-    <!--message box top end-->
-    @*<section class="comsoon-plcholder mt mb">
-            <div class="container">
-                <img src="~/images/underconstruct.jpg" />
-            </div>
-        </section>*@
-    <!--graphics-->
-    <div class="grahpBoxblue hidden-xs"></div>
-    <div class="grahpBoxgrey-trans"></div>
-    <div class="grahpBoxgrey-trans1"></div>
-    <div class="grahpBoxgrey-trans2"></div>
-    <div class="grahpBoxgrey-trans3"></div>
-
-    <!--graphics end-->
     <section class="slider eb-banner">
         <div class="container">
             <div class="row">
@@ -127,9 +84,10 @@
                 </div>
             </div>
         </div>
-    </section><!--partners/-->
-    @{
-        Html.RenderPartial("PageFooter");
-    }
-
+    </section>
+    @Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetFooter/" + ViewBag.Env))
 </div>
+
+@section JsCode{
+    <script>$("#AppStore").remove();</script>
+}

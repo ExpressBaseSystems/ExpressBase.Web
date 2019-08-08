@@ -130,7 +130,7 @@
                                         <label class="label-custom-style">Confirm Password</label>
                                         <div class="input-group">
                                             <span class="input-group-addon span-custom-style"><i class="fa fa-key" aria-hidden="true"></i></span>
-                                            <input id="pwdPasswordCon" type="password" class="form-control input-custom-style" title="Confirm Password" autocomplete="off">
+                                            <input id="pwdPasswordCon" type="password" class="form-control input-custom-style" title="Confirm Password" autocomplete="off" style="border-radius: 0 4px 4px 0;">
                                         </div>
                                     </div>
                                 </div>
@@ -149,16 +149,16 @@
                         <div class="col-md-9">
                             <div class="user-tab-paneInner h-100">
                                 <ul class="nav nav-tabs eb-styledTab">
-                                    <li class="active"><a data-toggle="tab" href="#settings"><i class="fa fa-cog"></i> Settings</a></li>
+                                    <li><a data-toggle="tab" href="#settings"><i class="fa fa-cog"></i> Settings</a></li>
                                     <li><a data-toggle="tab" href="#menu1"><i class="fa fa-user-plus"></i> Roles</a></li>
                                     <li><a data-toggle="tab" href="#menu2"><i class="fa fa-ban"></i> Constraints</a></li>
                                     <li><a data-toggle="tab" href="#menu3"><i class="fa fa-users"></i> User Groups</a></li>
                                     <li><a data-toggle="tab" href="#menu4"><i class="fa fa-heart"></i> Preference</a></li>
                                     <li><a data-toggle="tab" href="#api"><i class="fa fa-code"></i> Api</a></li>
-                                    <li><a data-toggle="tab" href="#profile"><i class="fa fa-user"></i> Profile</a></li>
+                                    <li class="active"><a data-toggle="tab" href="#profile"><i class="fa fa-user"></i> Profile</a></li>
                                 </ul>
                                 <div class="tab-content" style="background-color:transparent;">
-                                    <div id="settings" class="tab-pane fade in active">
+                                    <div id="settings" class="tab-pane fade">
                                         <div class="form-group user-status-div" id="divStatus" style="display: none;">
                                             <div class="form-group">
                                                 <label class="label-custom-style">User Status</label>
@@ -235,7 +235,7 @@
                                         
                                         <button class="ebbtn eb_btn-sm eb_btnblue" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Api key generation was temporarily suspended'); $(event.target).prop('disabled', false);}, 2000, event);">Generate</button>
                                     </div>
-                                    <div id="profile" class="tab-pane fade">
+                                    <div id="profile" class="tab-pane fade in active">
                                         <div class="row home-tab-cont">
                                             <div class="col-md-12">
                                                 <div class="col-md-4 pd-0">
@@ -363,7 +363,7 @@
 </div>
 
 <div id="MU_ResetPwdModal" class="modal fade" role="dialog">
-    <div class="modal-dialog" style="display:flex;height:100%;justify-content:center;align-items:center;">
+    <div class="modal-dialog" style="display:flex; height:100%; justify-content:center; align-items:center; margin: 0 auto;">
         <div class="modal-content" style="min-width:500px;padding: 15px;">
             <div class="modal-header" style="border-style:none;">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>

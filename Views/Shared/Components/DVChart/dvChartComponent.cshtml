@@ -114,10 +114,6 @@
         TenantId: '@ViewBag.cid',
         UserId : '@ViewBag.uid'
     }
-
-    if (@Html.Raw(ViewBag.dsObj).$type.indexOf("EbGoogleMap") !== -1)
-        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EbGoogleMap(tempobj);
-    else
-        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new eb_chart('@ViewBag.al_arz_map_key','@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc', @ViewBag.counter, null, null, null, null, null, '@ViewBag.cid', '@ViewBag.uid');
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new eb_chart('@ViewBag.al_arz_map_key','@ViewBag.Refid', '@ViewBag.VersionNumber', @ViewBag.ObjType, @Html.Raw(ViewBag.dsObj), '@ViewBag.Status', @ViewBag.tabnum, '@ViewBag.ServiceUrl', '@ViewBag.wc', @ViewBag.counter, null, null, null, null, null, '@ViewBag.cid', '@ViewBag.uid');
 
 </script>

@@ -1,11 +1,13 @@
 ﻿@{
-    Layout = "~/Views/Shared/LayoutInner.cshtml";
-    Html.RenderPartial("ExtPageHeader");
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
 }
-<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
-<link href="~/css/Demos/Demos.css" rel="stylesheet" type="text/css" />
 
-<script>
+@section StyleSheet{
+    <link href="~/css/Demos/Demos.css" rel="stylesheet" type="text/css" asp-append-version="true" />
+}
+
+@section JavaScript{
+    <script>
     $.getScript('https://connect.facebook.net/en_US/sdk.js', function () {
         FB.init({
             appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),
@@ -55,8 +57,11 @@
         //context = $(event.target).attr("_context");
         FB.login(loginCallBack, { scope: 'email' });
     }
-</script>
-<div class="row dmssrw">
+    </script>
+}
+
+@Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env));
+<section class="dmssrw">
     <div class="container">
         <div class="ssowrpHs">
             <h2 class="text-center">Live Demo</h2>
@@ -99,5 +104,10 @@
             }
         </div>
     </div>
-</div>
-<script>$('.loginbutton').click(FBlogin);</script>
+</section>
+@section JsCode{
+
+    <script>
+        $('.loginbutton').click(FBlogin);      
+    </script>
+}

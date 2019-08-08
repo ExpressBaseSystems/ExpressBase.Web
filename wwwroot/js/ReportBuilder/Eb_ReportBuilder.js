@@ -645,7 +645,7 @@
         else if (pname === "ImageRefId" || pname === "WaterMark") {
             this.addImageFn(obj);
         }
-        else if (pname === "ValueExpression") {
+        else if (pname === "ValExpression") {
             this.RbCommon.ValidateCalcExpression(obj);
         }
         else if (pname === "WaterMarkText") {

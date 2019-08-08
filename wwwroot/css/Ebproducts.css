@@ -1,4 +1,4 @@
-﻿.pd-0{
+﻿/*.pd-0{
     padding:0;
 }
 .pd-r-15{
@@ -32,7 +32,7 @@
 .float-l {
     float: left;
 }
-/*bot*/
+/*bot
 
 .w-100 {
     width:100% !important;
@@ -43,7 +43,7 @@
 .eb_bot_motion_frame {
     background: white;
     margin-top: -100px;
-    /*box-shadow: 0 2px 2px 0 rgba(0, 0, 0,0), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px -2px rgba(0, 0, 0, 0.1);*/
+    /*box-shadow: 0 2px 2px 0 rgba(0, 0, 0,0), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px -2px rgba(0, 0, 0, 0.1);
     border-bottom: none;
     border-style: none none solid none;
     border-width: 3px;
@@ -194,7 +194,7 @@
 .no-padd {
     padding: 0;
 }
-/*code section*/
+/*code section
 
 .eb-codeedit{
     padding:0;
@@ -249,7 +249,7 @@ pn {
     line-height: 2;
     font-size: 15px;
 }
-/*live demos section*/
+/*live demos section
 /*.icon-box-demo-no {
 width:30%;
 float:left;
@@ -257,7 +257,7 @@ float:left;
 .icon-box-demo-img {
     width:70%;
     float:left;
-}*/
+}
 .bot-prob-img-sec {
     float: left;
     width: 14%;  
@@ -306,7 +306,7 @@ float:left;
     height:100%;
 }
 
-/*...................................bot end.................*/
+/*...................................bot end.................
 
 .bot-section2, .embed_scriptBot {
     font-family:Montserrat;
@@ -407,7 +407,7 @@ float:left;
     .bot-faq .faqs {
         margin-top:20px;
     }
-    /*dfgfdhgfhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh*/
+    /*dfgfdhgfhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 .livDemo_icons {
     width:100%;
 }
@@ -512,7 +512,7 @@ float:left;
     background-image: linear-gradient(46deg,rgba(0,130,235,.17) 0,rgba(150,195,34,.32) 100%);
 }
 
-/*Report style ---------------------------------*/
+/*Report style ---------------------------------
 .report-wall {
     font-family: Montserrat;
     line-height: 3.5rem;

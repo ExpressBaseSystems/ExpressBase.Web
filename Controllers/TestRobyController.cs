@@ -238,7 +238,8 @@ namespace ExpressBase.Web.Controllers
                 {
                     request = service.Files.Create(fileMetadata, stream, "image/png");
                     request.Fields = "id";
-                    request.Upload();
+                    var x = request.Upload();
+                    Console.WriteLine("Upload Result" + x.Exception.Message + x.Status.ToString());
                 }
 
                 var file = request.ResponseBody;

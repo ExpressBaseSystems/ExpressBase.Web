@@ -77,7 +77,7 @@
     //this.j = function (p1) {
     //    let VMs = this.initializer.Vobj.valueMembers;
     //    let DMs = this.initializer.Vobj.displayMembers;
-    //    let columnvals = this.initializer.columnvals;
+    //    let columnVals = this.initializer.columnVals;
 
     //    if (VMs.length > 0)// clear if already values there
     //        this.initializer.clearValues();
@@ -98,15 +98,18 @@
     //        }.bind(this));
     //    }.bind(this));
 
-    //    $.each(DMtable, function (j, r) {
-    //        $.each(r.Columns, function (j, item) {
-    //            if (!columnvals[item.Name]) {
-    //                console.warn('Mismatch found in Colums in datasource and Colums in object');
-    //                return true;
-    //            }
-    //            columnvals[item.Name].push(item.Value);
+
+    //    if (this.initializer.datatable === null) {//for aftersave actions
+    //        $.each(DMtable, function (j, r) {
+    //            $.each(r.Columns, function (j, item) {
+    //                if (!columnVals[item.Name]) {
+    //                    console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                    return true;
+    //                }
+    //                columnVals[item.Name].push(item.Value);
+    //            }.bind(this));
     //        }.bind(this));
-    //    }.bind(this));
+    //    }
 
     //};
 

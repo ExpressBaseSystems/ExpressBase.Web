@@ -323,7 +323,8 @@
 
         local: $.map(data, function (app, i) {
             return {
-                name: app
+                name: app,
+                id: i
             };
         })
     });

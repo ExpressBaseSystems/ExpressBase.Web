@@ -203,7 +203,7 @@
 }
 
 .split-inner {
-    /*width: 100%;*/
+    width: 100%;
     height: 100%;
     border: none;
     border-radius: 2px;
@@ -248,18 +248,19 @@
     position: relative;
     margin-left: -15px;
     margin-right: -15px;
-    height: 100vh;
+    height: calc( 100% - 39px );
     padding-top: 38px;
 }
 
 .dv-body2 {
-    height: calc( 100vh - 38px );
+    height: calc( 100vh - 58px );
     padding: 0 1px;
     width: 100%;
 }
 
 .dv-body1 {
     display: none;
+    min-height: 21px;
 }
 
 .filter-cont {

@@ -22,29 +22,107 @@
         signinLink = "https://myaccount.expressbase.com";
     }
 }
-@section StyleSheet{
-    <style>
-        .btn.disabled, .btn[disabled], fieldset[disabled] .btn {
-            cursor: pointer;
-            filter: unset;
-            -webkit-box-shadow: none;
-            box-shadow: none;
-            opacity: unset;
+
+
+<script>
+                     //load the JavaScript SDK
+                      (function(d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "https://connect.facebook.net/en_US/sdk.js";
+                        fjs.parentNode.insertBefore(js, fjs);
+                      }(document, 'script', 'facebook-jssdk'));
+
+                   window.fbAsyncInit = function() {
+                      FB.init({
+                      appId      :  '@ViewBag.FacebookSigninAppid',
+                      status: true,
+                      cookie     : true,
+                      xfbml      : true,
+                      version    : 'v4.0'
+                      });
+
+	                    //check user session and refresh it
+	                   FB.getLoginStatus((response) => {
+		                    if (response.status === 'connected') {
+			                    //user is authorized
+			                   // getUserData();
+		                    } else {
+			                    //user is not authorized
+		                    }
+	                   });
+                   };
+
+
+
+            //add event listener to login button
+                      function FBLogin() {
+                          console.log("fb");
+                          $("#loaderdiv").EbLoader("show");
+                        FB.login(function (response) {
+                          if (response.authResponse) {
+                              getUserData();
+                          } else {
+                          //alert('User cancelled login or did not fully authorize.');
+                          }
+                        }, {scope: 'email,public_profile'});
+                      }
+
+      function getUserData() {
+	      FB.api('/me', {fields: 'id, name, first_name, last_name,email, gender,hometown'}, (response) => {
+              fbuserdetails(response);
+	      });
+
+      }
+
+    function fbuserdetails(response) {
+        if (response.email != null &
+            response.email != undefined &
+            response.email != "undefined"
+        ) {
+
+
+            let url = "../Ext/FacebookLogin?fbdtls=";
+            var _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_top");
+
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "fbid";
+            input.value = response.id;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "email";
+            input.value = response.email;
+            _form.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "name";
+            input.value = response.name;
+            _form.appendChild(input);
+
+            document.body.appendChild(_form);
+            _form.submit();
+            document.body.removeChild(_form);
         }
-    </style>
-}
-@section JavaScript{
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
-    <script src="~/js/Auth/eb-authenticate.js" type="text/javascript"></script>
-    <script>
-        function recaptchaCallback(token) {
-            if (token) {
-                document.getElementById("log_form").submit();
-                $(".loader_top").EbLoader("show");
-            }
+        else {
+              EbMessage("show", { Message: 'Error while getting permission from facebook', Background: "#d83535" });
+             $("#loaderdiv").EbLoader("hide");
         }
-    </script>
-}
+    }
+
+
+
+</script>
+
+
 <section class="eb_login">
     <div class="header hidden-xs">
         <div class="container-fluid">
@@ -72,22 +150,22 @@
 
             <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12 login_container">
                 <div class="raw  col-sm-12 col-md-12 col-lg-12 ">
-                    <form id="log_form" action="~/Ext/EbSignIn" method="post" data-toggle="validator" role="form">
+                    <div id="log_form" class="eb-auth-htmlbox">
                         <div class="loader_top" id="loader_profile" style="left:0;top:0;"></div>
                         <h1>SIGN IN</h1><br>
-                        <div class="form-group mb-25">
+                        <div class="form-group mb-25" validator="email">
                             <label>Email</label>
                             <div class="log-username">
-                                <input type="email" name="uname" class="form-control ebtext-lg" data-error="email address is invalid" required value="@ViewBag.Email" />
+                                <input type="email" name="uname" class="form-control ebtext-lg" value="@ViewBag.Email" />
                             </div>
-                            <div class="help-block with-errors"></div>
+                            <div class="validator-error"></div>
                         </div>
-                        <div class="form-group mb-25">
+                        <div class="form-group mb-25" validator='password'>
                             <label>Password</label>
                             <div class="log-pw">
-                                <input type="password" id="pass" name="pass" class="form-control ebtext-lg" required />
+                                <input type="password" id="pass" name="pass" class="form-control ebtext-lg" />
                             </div>
-                            <div class="help-block with-errors"></div>
+                            <div class="validator-error"></div>
                         </div>
                         <div class="form-group mb-25">
                             <div class="fpNdRemMe">
@@ -97,63 +175,50 @@
                                 <a href="/ForgotPassword">Forgot password?</a>
                             </div>
                         </div>
-                        <div class="form-group mb-25">
-                            <button type="submit" id="logNow" class="btn signin-btn eb_blue g-recaptcha" data-sitekey="@ViewBag.ReCaptchaKey" data-callback='recaptchaCallback'>
+                        <div class="g-recaptcha"
+                             data-sitekey="@ViewBag.ReCaptchaKey"
+                             data-callback="validator_recaptcha"
+                             data-size="invisible">
+                        </div>
+                        <div class="form-group">
+                            <button validator="submit" id="logNow" class="btn signin-btn eb_blue">
                                 Sign In
                             </button>
                         </div>
-                    </form>
+                    </div>
                     @{ if (ViewBag.Env != "Production")
                         {
                             <div class="eb_socilaWrpr text-center">
                                 <div class="eb_socilaWrpr_inner">
-                                    <a href="@sociallink/auth/facebook" class="btn btn-lg">
+                                    <div id="fblogin" onClick="FBLogin()" class="btn btn-lg">
                                         <i class="fa fa-facebook text-muted"></i>
-                                    </a>
+                                    </div>
                                     <a href="@sociallink/auth/github" class="btn btn-lg">
                                         <i class="fa fa-github text-muted"></i>
                                     </a>
                                     @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
-                                            <i class="fa fa-twitter text-muted"></i>
-                                        </a>
-                                        <a href=" @sociallink/auth/google" class="btn btn-lg">
-                                             <i class="fa fa-google-plus text-muted"></i>
-                                        </a>
-                                        <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
-                                        <i class="fa fa-linkedin text-muted"></i>
+                                              <i class="fa fa-twitter text-muted"></i>
+                                          </a>
+                                          <a href=" @sociallink/auth/google" class="btn btn-lg">
+                                               <i class="fa fa-google-plus text-muted"></i>
+                                          </a>
+                                          <a href=" @sociallink/auth/linkedin" class="btn btn-lg">
+                                          <i class="fa fa-linkedin text-muted"></i>
                                         </a>*@
                                 </div>
                             </div>
                         }
                     }
                 </div>
-
             </div>
-
         </div>
     </div>
 </section>
-
-
 <script>
     if ('@(TempData["scl_signin_msg"])') {
           EbMessage("show", { Message: '@(TempData["scl_signin_msg"])', Background: "#d83535" });
     }
 </script>
-
-
 @section JsCode{
-    <script>
-
-        if ('@ViewBag.ErrorMsg')
-            EbMessage("show", { Message: "@ViewBag.ErrorMsg", Background: "#d83535" });
-        if ('@ViewBag.UniqTest')
-            EbMessage("show", { Message: "@ViewBag.UniqTest", Background: "#d83535" });
-        if ('@ViewBag.mailmsg')
-            EbMessage("show", { Message: "@ViewBag.mailmsg" });
-
-
-         @*if (@TempData["scl_signin_msg"]==null)
-            EbMessage("show", { Message: "@TempData["scl_signin_msg"]", Background: "#d83535" });*@
-    </script>
+    <script src="~/js/Auth/eb-authenticate.js" type="text/javascript" asp-append-version="true"></script>
 }

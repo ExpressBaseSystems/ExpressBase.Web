@@ -323,12 +323,13 @@
 
         local: $.map(data, function (app, i) {
             return {
-                name: app
+                name: app,
+                id: i
             };
         })
     });
     Applications.initialize();
-
+    console.log(55555);
     $('#apps').tagsinput({
         typeaheadjs: [{
             minLength: 1,

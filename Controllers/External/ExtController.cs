@@ -5,6 +5,7 @@ using ExpressBase.Common.Structures;
 using ExpressBase.Objects.Helpers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Web.Models;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -63,6 +64,8 @@ namespace ExpressBase.Web.Controllers
 		[HttpGet("Platform/OnBoarding")]
 		public IActionResult SignUp()
 		{
+			//ViewBag.FacebookSigninAppid = 149537802493867;
+			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
 			return View();
 		}
 
@@ -215,7 +218,15 @@ namespace ExpressBase.Web.Controllers
 							PagePath = pgpath.ToString(),
 							PageUrl = pgurl.ToString()
 						});
-						return 1;
+						if (res.VerifyStatus == true)
+						{
+							return 1;
+						}
+						else
+						{
+							return 2;
+						}
+						
 					}
 				}
 				catch (Exception e)
@@ -282,74 +293,77 @@ namespace ExpressBase.Web.Controllers
 				return 0;
 			}
 		}
-
 		private bool isAvailSolution(string url)
-		{
-			IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
-			if (resp.Any() || ((url.Split(CharConstants.DASH)[0]) == CoreConstants.ADMIN))
-				return true;
-			else
-				return false;
-		}
+        {
+            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
+            if (resp.Any() || ((url.Split(CharConstants.DASH)[0]) == CoreConstants.ADMIN))
+                return true;
+            else
+                return false;
+        }
 
-		public IActionResult UsrSignIn()
-		{
+        public IActionResult UsrSignIn()
+        {
+            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(CharConstants.DOT);
+            if (isAvailSolution(hostParts[0]))
+            {
+                string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+                string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+
+                if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+                {
+                    if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    {
+                        if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                            return Redirect(RoutingConstants.MYAPPLICATIONS);
+                        else
+                            return RedirectToAction("UserDashboard", "TenantUser");
+                    }
+                }
+                ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+                ViewBag.ErrorMsg = TempData["ErrorMessage"];
+                ViewBag.Email = TempData["Email"];
+                return View();
+            }
+            else
+                return Redirect("/StatusCode/404");
+        }
+
+        [HttpGet]
+        public IActionResult TenantSignIn()
+        {
+			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
 			var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-			string[] hostParts = host.Split(CharConstants.DOT);
-			if (isAvailSolution(hostParts[0]))
-			{
-				string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-				string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+            string[] hostParts = host.Split(CharConstants.DOT);
 
-				if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
-				{
-					if (IsTokensValid(sRToken, sBToken, hostParts[0]))
-					{
-						if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
-							return Redirect(RoutingConstants.MYAPPLICATIONS);
-						else
-							return RedirectToAction("UserDashboard", "TenantUser");
-					}
-				}
-				ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-				ViewBag.ErrorMsg = TempData["ErrorMessage"];
-				ViewBag.Email = TempData["Email"];
-				return View();
-			}
-			else
-				return Redirect("/StatusCode/404");
-		}
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
-		[HttpGet]
-		public IActionResult TenantSignIn()
-		{
-			var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-			string[] hostParts = host.Split(CharConstants.DOT);
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+            {
+                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    return Redirect(RoutingConstants.MYSOLUTIONS);
+            }
+            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+            ViewBag.ErrorMsg = TempData["ErrorMessage"];
+            ViewBag.Email = TempData["Email"];
+            return View();
+        }
 
-			string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-			string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
-
-			if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
-			{
-				if (IsTokensValid(sRToken, sBToken, hostParts[0]))
-					return Redirect(RoutingConstants.MYSOLUTIONS);
-			}
-			ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-			ViewBag.ErrorMsg = TempData["ErrorMessage"];
-			ViewBag.Email = TempData["Email"];
-			return View();
-		}
-
-
-		public int FacebookLogin(string name, string fbid, string email)
+		public IActionResult FacebookLogin(string name, string fbid, string email)
 		{
 			Console.WriteLine("reached contoller / facebooklogin");
 
-			int st = 0;
+			string x = Request.Form["email"];
+			string y = Request.Form["name"];
+			string z = Request.Form["fbid"];
+			Console.WriteLine("XYZ =" + x + "," + y + "," + z);
+			Console.WriteLine("ajax =" + email + "," + name + "," + fbid);
 			try
 			{
 
-				if (email != null)
+				if ((email != null) & (fbid != null))
 				{
 					FacebookLoginResponse res = this.ServiceClient.Post<FacebookLoginResponse>(new FacebookLoginRequest
 					{
@@ -357,17 +371,19 @@ namespace ExpressBase.Web.Controllers
 						Fbid = fbid,
 						Name = name,
 					});
-					SocialOath(res.jsonval);
+					Console.WriteLine("reached completed service to store user details FacebookLoginRequest");
+					return SocialOath(res.jsonval);
 				}
 
 			}
 			catch (Exception e)
 			{
+				Console.WriteLine("reached exception FacebookLogin");
+				TempData["socloginerr"] = "Something went wrong. Please try later";
 				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+				return Redirect("/Platform/OnBoarding");
 			}
-
-
-			return st;
+			return Redirect("/Platform/OnBoarding");
 		}
 
 
@@ -379,6 +395,7 @@ namespace ExpressBase.Web.Controllers
 			SocialSignup Social = JsonConvert.DeserializeObject<SocialSignup>(scosignup);
 			if (Social.UniqueEmail)
 			{
+				Console.WriteLine("reached UniqueEmail");
 				MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
 				{
 					provider = CredentialsAuthProvider.Name,
@@ -398,22 +415,25 @@ namespace ExpressBase.Web.Controllers
 
 				var tmp = this.ServiceClient.Post<CreateSolutionResponse>(new CreateSolutionRequest
 				{
+
 					SolutionName = "My First solution",
 					Description = "This is my first solution",
 					DeployDB = true,
 				});
+				Console.WriteLine("reached completed CreateSolutionRequest");
 				return Redirect(RoutingConstants.MYSOLUTIONS);
 			}
 			else
 			if (!Social.Forsignup)
 			{
+				Console.WriteLine("reached Forsignup??");
 				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == ""))
 				{
-					TempData["scl_signin_msg"] = "You have already completed Signin. Please login using your mailid";
+					TempData["scl_signin_msg"] = "You have already completed Signin. Please Sign in using your mailid";
 				}
 				else
 				{
-
+					Console.WriteLine("reached user autologin");
 					var lgid = this.ServiceClient.Post<SocialAutoSignInResponse>(new SocialAutoSignInRequest
 					{
 						Email = Social.Email,
@@ -467,8 +487,11 @@ namespace ExpressBase.Web.Controllers
 							//_redirectUrl = this.RouteToDashboard(whichconsole);
 						}
 					}
+					Console.WriteLine("reached RoutingConstants.MYSOLUTIONS");
 					return Redirect(RoutingConstants.MYSOLUTIONS);
 				}
+				Console.WriteLine("reached RoutingConstants.TENANTSIGNIN");
+
 				return RedirectToAction(RoutingConstants.TENANTSIGNIN);
 			}
 			else
@@ -489,33 +512,33 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> TenantExtSignup()
-		{
-			try
-			{
-				string reqEmail = this.HttpContext.Request.Form[TokenConstants.EMAIL];
-				TempData[RequestEmail] = reqEmail;
-				UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
-				if (result.Unique)
-				{
-					RegisterResponse res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
+        public async Task<IActionResult> TenantExtSignup()
+        {
+            try
+            {
+                string reqEmail = this.HttpContext.Request.Form[TokenConstants.EMAIL];
+                TempData[RequestEmail] = reqEmail;
+                UniqueRequestResponse result = this.ServiceClient.Post<UniqueRequestResponse>(new UniqueRequest { email = reqEmail });
+                if (result.Unique)
+                {
+                    RegisterResponse res = this.ServiceClient.Post<RegisterResponse>(new RegisterRequest { Email = reqEmail, DisplayName = CoreConstants.EXPRESSBASE });
 
-					if (Convert.ToInt32(res.UserId) >= 0)
-						return RedirectToAction("EbOnBoarding", new { Email = reqEmail }); // convert get to post
-				}
-				else
-				{
-					TempData["Email"] = reqEmail;
-					if (result.HasPassword)
-						return RedirectToAction("TenantSignIn");
-				}
-			}
-			catch (WebServiceException e)
-			{
-				Console.WriteLine("Exception:" + e.ToString());
-			}
-			return View();
-		}
+                    if (Convert.ToInt32(res.UserId) >= 0)
+                        return RedirectToAction("EbOnBoarding", new { Email = reqEmail }); // convert get to post
+                }
+                else
+                {
+                    TempData["Email"] = reqEmail;
+                    if (result.HasPassword)
+                        return RedirectToAction("TenantSignIn");
+                }
+            }
+            catch (WebServiceException e)
+            {
+                Console.WriteLine("Exception:" + e.ToString());
+            }
+            return View();
+        }
 
 		[HttpGet("em")]
 		public IActionResult EmailVerify(string emv)
@@ -540,464 +563,463 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		public IActionResult SwitchContext()
-		{
-			Console.WriteLine("Inside Context Switch");
-			var req = this.HttpContext.Request.Form;
-			string btoken = req["Btoken"].ToString();
-			string rtoken = req["Rtoken"].ToString();
-			string console = req["WhichConsole"];
-			if (TenantSingleSignOn(btoken, rtoken, console))
-			{
-				if (console == RoutingConstants.DC)
-					return RedirectToAction("DevDashBoard", "Dev");
-				else if (console == RoutingConstants.UC)
-					return RedirectToAction("UserDashboard", "TenantUser");
-			}
-			return View();
-		}
+        {
+            Console.WriteLine("Inside Context Switch");
+            var req = this.HttpContext.Request.Form;
+            string btoken = req["Btoken"].ToString();
+            string rtoken = req["Rtoken"].ToString();
+            string console = req["WhichConsole"];
+            if (TenantSingleSignOn(btoken, rtoken, console))
+            {
+                if (console == RoutingConstants.DC)
+                    return RedirectToAction("DevDashBoard", "Dev");
+                else if (console == RoutingConstants.UC)
+                    return RedirectToAction("UserDashboard", "TenantUser");
+            }
+            return View();
+        }
 
-		public bool TenantSingleSignOn(string btoken, string rtoken, string wc)
-		{
-			var host = this.HttpContext.Request.Host;
-			string[] hostParts = host.Host.Split(CharConstants.DOT);
-			string whichconsole = wc;
+        public bool TenantSingleSignOn(string btoken, string rtoken, string wc)
+        {
+            var host = this.HttpContext.Request.Host;
+            string[] hostParts = host.Host.Split(CharConstants.DOT);
+            string whichconsole = wc;
 
-			string email = ValidateTokensAndGetUserName(btoken, rtoken);
-			if (string.IsNullOrEmpty(email))
-				return false;
+            string email = ValidateTokensAndGetUserName(btoken, rtoken);
+            if (string.IsNullOrEmpty(email))
+                return false;
 
-			this.DecideConsole(hostParts[0], out whichconsole);
-			MyAuthenticateResponse authResponse = null;
-			try
-			{
-				var authClient = this.ServiceClient;
-				authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
-				{
-					provider = CredentialsAuthProvider.Name,
-					UserName = email,
-					Password = "NIL",
-					Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, ViewBag.cid }, { "sso", "true" } },
-				});
+            this.DecideConsole(hostParts[0], out whichconsole);
+            MyAuthenticateResponse authResponse = null;
+            try
+            {
+                var authClient = this.ServiceClient;
+                authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = email,
+                    Password = "NIL",
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, ViewBag.cid }, { "sso", "true" } },
+                });
 
-			}
-			catch (WebServiceException wse) { Console.WriteLine("Exception:" + wse.ToString()); }
-			catch (Exception wse) { Console.WriteLine("Exception:" + wse.ToString()); }
-			if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
-			else //AUTH SUCCESS
-			{
-				CookieOptions options = new CookieOptions();
-				Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-				Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-				return true;
-			}
-			return false;
-		}
+            }
+            catch (WebServiceException wse) { Console.WriteLine("Exception:" + wse.ToString()); }
+            catch (Exception wse) { Console.WriteLine("Exception:" + wse.ToString()); }
+            if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
+            else //AUTH SUCCESS
+            {
+                CookieOptions options = new CookieOptions();
+                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                return true;
+            }
+            return false;
+        }
 
-		private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
-		{
-			string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);
-			var req = WebRequest.Create(url);
-			var r = await req.GetResponseAsync().ConfigureAwait(false);
-			var responseReader = new StreamReader(r.GetResponseStream());
-			var responseData = await responseReader.ReadToEndAsync();
-			var d = Newtonsoft.Json.JsonConvert.DeserializeObject<Recaptcha>(responseData);
-			return d;
-		}
+        private static async Task<Recaptcha> RecaptchaResponse(string secret, string token)
+        {
+            string url = string.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, token);
+            var req = WebRequest.Create(url);
+            var r = await req.GetResponseAsync().ConfigureAwait(false);
+            var responseReader = new StreamReader(r.GetResponseStream());
+            var responseData = await responseReader.ReadToEndAsync();
+            var d = Newtonsoft.Json.JsonConvert.DeserializeObject<Recaptcha>(responseData);
+            return d;
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> EbSignIn(int i)
-		{
-			HostString host = this.HttpContext.Request.Host;
-			string[] hostParts = host.Host.Split(CharConstants.DOT);
-			string whichconsole = null;
-			IFormCollection req = this.HttpContext.Request.Form;
-			string _redirectUrl = null;
-			TempData["Email"] = req["uname"].ToString();
+        private void EventLogWriteEntry()
+        {
+            var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
+            Console.WriteLine("-------------------------------------------------");
+            IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ttt in heserver.AddressList)
+                Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
+            Console.WriteLine("-------------------------------------------------");
 
-			var t = this.HttpContext.Request.Headers["Eb-X-Forwarded-For"];
-			Console.WriteLine("-------------------------------------------------");
-			IPHostEntry heserver = Dns.GetHostEntry(Dns.GetHostName());
-			foreach (var ttt in heserver.AddressList)
-				Console.WriteLine("From IP AddressList  ---> " + ttt.ToString());
-			Console.WriteLine("-------------------------------------------------");
+            Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
+            foreach (var zzz in this.HttpContext.Request.Headers)
+                Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
+        }
 
-			Console.WriteLine(this.httpContextAccessor.HttpContext.Connection.RemoteIpAddress.ToString());
-			foreach (var zzz in this.HttpContext.Request.Headers)
-				Console.WriteLine("Key : " + zzz.Key + "Value : " + zzz.Value);
+        [HttpPost]
+        public async Task<EbAuthResponse> EbSignIn(int i)
+        {
+            EbAuthResponse authresp = new EbAuthResponse();
+            this.EventLogWriteEntry();
 
-			this.DecideConsole(hostParts[0], out whichconsole);
+            HostString host = this.HttpContext.Request.Host;
+            string[] hostParts = host.Host.Split(CharConstants.DOT);
+            IFormCollection req = this.HttpContext.Request.Form;
 
-			string token = req["g-recaptcha-response"];
-			Recaptcha data = null;
-			try
-			{
-				data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
-			}
-			catch (Exception e)
-			{
-				Console.WriteLine("RECAPTCHA EXCEPTION");
-				Console.WriteLine(e.Message);
-				TempData["ErrorMessage"] = "Recaptcha error, try again";
-				return Redirect("/");
-			}
+            this.DecideConsole(hostParts[0], out string whichconsole);
 
-			if (!data.Success)
-			{
-				if (data.ErrorCodes.Count <= 0)
-				{
-					TempData["ErrorMessage"] = "The captcha input is invalid or malformed.";
-					return Redirect("/");
-				}
-				var error = data.ErrorCodes[0].ToLower();
-				switch (error)
-				{
-					case ("missing-input-secret"):
-						TempData["ErrorMessage"] = "The secret parameter is missing.";
-						break;
-					case ("invalid-input-secret"):
-						TempData["ErrorMessage"] = "The secret parameter is invalid or malformed.";
-						break;
+            string token = req["g-recaptcha-response"];
+            Recaptcha data = null;
+            try
+            {
+                data = await RecaptchaResponse(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_RECAPTCHA_SECRET), token);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("RECAPTCHA EXCEPTION");
+                Console.WriteLine(e.Message);
+                authresp.AuthStatus = false;
+                authresp.ErrorMessage = "Recaptcha error, try again";
+            }
+            
+            if (!data.Success)
+            {
+                authresp.AuthStatus = false;
+                if (data.ErrorCodes.Count <= 0)
+                {
+                    authresp.ErrorMessage = "The captcha input is invalid or malformed.";
+                }
+                var error = data.ErrorCodes[0].ToLower();
+                switch (error)
+                {
+                    case ("missing-input-secret"):
+                        authresp.CaptchaError = "The secret parameter is missing.";
+                        break;
+                    case ("invalid-input-secret"):
+                        authresp.CaptchaError = "The secret parameter is invalid or malformed.";
+                        break;
 
-					case ("missing-input-response"):
-						TempData["ErrorMessage"] = "The captcha input is missing.";
-						break;
-					case ("invalid-input-response"):
-						TempData["ErrorMessage"] = "The captcha input is invalid or malformed.";
-						break;
+                    case ("missing-input-response"):
+                        authresp.CaptchaError = "The captcha input is missing.";
+                        break;
+                    case ("invalid-input-response"):
+                        authresp.CaptchaError = "The captcha input is invalid or malformed.";
+                        break;
 
-					default:
-						TempData["ErrorMessage"] = "Error occured. Please try again";
-						break;
-				}
-				return Redirect("/");
-			}
-			else
-			{
-				MyAuthenticateResponse authResponse = null;
-				try
-				{
-					string tenantid = ViewBag.cid;
-					var authClient = this.ServiceClient;
-					authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
-					{
-						provider = CredentialsAuthProvider.Name,
-						UserName = req["uname"],
-						Password = (req["pass"] + req["uname"]).ToMD5Hash(),
-						Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, tenantid } },
-						RememberMe = true
-						//UseTokenCookie = true
-					});
+                    default:
+                        authresp.CaptchaError = "Error occured. Please try again";
+                        break;
+                }
+            }
+            else
+            {
+                MyAuthenticateResponse authResponse = null;
+                try
+                {
+                    string tenantid = ViewBag.cid;
+                    var authClient = this.ServiceClient;
+                    authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                    {
+                        provider = CredentialsAuthProvider.Name,
+                        UserName = req["uname"],
+                        Password = (req["pass"] + req["uname"]).ToMD5Hash(),
+                        Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, tenantid } },
+                        RememberMe = true
+                        //UseTokenCookie = true
+                    });
 
-				}
-				catch (WebServiceException wse)
-				{
-					Console.WriteLine("Exception:" + wse.ToString());
-					TempData["ErrorMessage"] = wse.Message;
-					return Redirect("/");
-				}
-				catch (Exception wse)
-				{
-					Console.WriteLine("Exception:" + wse.ToString());
-					TempData["ErrorMessage"] = wse.Message;
-					return Redirect("/");
-				}
-				if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized")
-				{
-					TempData["ErrorMessage"] = "EbUnauthorized";
-					return Redirect("/");
-				}
-				else //AUTH SUCCESS
-				{
-					CookieOptions options = new CookieOptions();
-					Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-					Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-					Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-					Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
-					if (req.ContainsKey("remember"))
-						Response.Cookies.Append("UserName", req["uname"], options);
+                }
+                catch (WebServiceException wse)
+                {
+                    Console.WriteLine("Exception:" + wse.ToString());
+                    authresp.AuthStatus = false;
+                    authresp.ErrorMessage = wse.Message;
+                }
+                catch (Exception wse)
+                {
+                    Console.WriteLine("Exception:" + wse.ToString());
+                    authresp.AuthStatus = false;
+                    authresp.ErrorMessage = wse.Message;
+                }
 
-					_redirectUrl = this.RouteToDashboard(whichconsole);
-				}
-			}
-			return Redirect(_redirectUrl);
-		}
+                if (authResponse != null)
+                {
+                    authresp.AuthStatus = true;
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+                    Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+                    if (req.ContainsKey("remember"))
+                        Response.Cookies.Append("UserName", req["uname"], options);
 
-		private void DecideConsole(string subDomain, out string whichconsole)
-		{
-			string cid = null;
-			if (subDomain == RoutingConstants.MYACCOUNT)
-			{
-				cid = CoreConstants.EXPRESSBASE;
-				whichconsole = EbAuthContext.TenantContext;
-			}
-			else
-			{
-				if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
-				{
-					cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.DASH));
+                    authresp.RedirectUrl = this.RouteToDashboard(whichconsole);
+                }
+            }
+            return authresp;
+        }
 
-					if (subDomain.EndsWith(RoutingConstants.DASHBOT))
-						whichconsole = EbAuthContext.BotUserContext;
-					else if (subDomain.EndsWith(RoutingConstants.DASHMOB))
-						whichconsole = EbAuthContext.MobileUserContext;
-					else //if (subDomain.EndsWith("-dev"))
-						whichconsole = EbAuthContext.DeveloperContext;
-				}
-				else //User Console
-				{
-					cid = subDomain;
-					whichconsole = EbAuthContext.WebUserContext;
-				}
-			}
-			ViewBag.cid = cid;
-		}
+        private void DecideConsole(string subDomain, out string whichconsole)
+        {
+            string cid = null;
+            if (subDomain == RoutingConstants.MYACCOUNT)
+            {
+                cid = CoreConstants.EXPRESSBASE;
+                whichconsole = EbAuthContext.TenantContext;
+            }
+            else
+            {
+                if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
+                {
+                    cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.DASH));
 
-		private string RouteToDashboard(string whichconsole)
-		{
-			string url = string.Empty;
-			if (ViewBag.cid == CoreConstants.EXPRESSBASE)
-			{
-				url = RoutingConstants.MYSOLUTIONS;
-			}
-			else
-			{
-				if (whichconsole == RoutingConstants.DC)
-				{
-					url = RoutingConstants.MYAPPLICATIONS;
-				}
-				else if (whichconsole == RoutingConstants.UC)
-				{
-					url = RoutingConstants.USERDASHBOARD;
-				}
-			}
-			return url;
-		}
+                    if (subDomain.EndsWith(RoutingConstants.DASHBOT))
+                        whichconsole = EbAuthContext.BotUserContext;
+                    else if (subDomain.EndsWith(RoutingConstants.DASHMOB))
+                        whichconsole = EbAuthContext.MobileUserContext;
+                    else //if (subDomain.EndsWith("-dev"))
+                        whichconsole = EbAuthContext.DeveloperContext;
+                }
+                else //User Console
+                {
+                    cid = subDomain;
+                    whichconsole = EbAuthContext.WebUserContext;
+                }
+            }
+            ViewBag.cid = cid;
+        }
 
-		[HttpGet]
-		public IActionResult AfterSignInSocial(string provider, string providerToken,
-			string email, string socialId, int lg)
-		{
+        private string RouteToDashboard(string whichconsole)
+        {
+            string url = string.Empty;
+            if (ViewBag.cid == CoreConstants.EXPRESSBASE)
+            {
+                url = RoutingConstants.MYSOLUTIONS;
+            }
+            else
+            {
+                if (whichconsole == RoutingConstants.DC)
+                {
+                    url = RoutingConstants.MYAPPLICATIONS;
+                }
+                else if (whichconsole == RoutingConstants.UC)
+                {
+                    url = RoutingConstants.USERDASHBOARD;
+                }
+            }
+            return url;
+        }
 
-			try
-			{
-				var authClient = this.ServiceClient;
-				MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
-				{
-					provider = CredentialsAuthProvider.Name,
-					UserName = "NIL",
-					Password = "NIL",
-					Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE }, { TokenConstants.SOCIALID, socialId } },
-					// UseTokenCookie = true
-				});
+        [HttpGet]
+        public IActionResult AfterSignInSocial(string provider, string providerToken,
+            string email, string socialId, int lg)
+        {
 
-				if (authResponse.User != null)
-				{
-					CookieOptions options = new CookieOptions();
-					Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-					Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-					return RedirectToAction("TenantDashboard", "Tenant");
-					//if (lg <= 1)
-					//{
-					//    return RedirectToAction("ProfileSetup", "Tenant");
-					//}
-					//{
-					//}
-				}
-				else
-					return Redirect(RoutingConstants.EXTERROR);
-			}
-			catch (WebServiceException wse)
-			{
-				Console.WriteLine("Exception:" + wse.ToString());
-				ViewBag.errormsg = wse.Message;
-				return Redirect(RoutingConstants.EXTERROR);
-			}
-		}
+            try
+            {
+                var authClient = this.ServiceClient;
+                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = "NIL",
+                    Password = "NIL",
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.TC }, { TokenConstants.CID, CoreConstants.EXPRESSBASE }, { TokenConstants.SOCIALID, socialId } },
+                    // UseTokenCookie = true
+                });
 
-		public IActionResult VerificationStatus()
-		{
-			var email = HttpContext.Request.Query[TokenConstants.EMAIL];
-			var token = HttpContext.Request.Query[TokenConstants.SIGNUP_TOK];
-			var authClient = this.ServiceClient;
-			MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
-			{
-				provider = CredentialsAuthProvider.Name,
-				UserName = email,
-				Password = "NIL",
-				Meta = new Dictionary<string, string> { { TokenConstants.SIGNUP_TOK, token }, { RoutingConstants.WC, RoutingConstants.TC } },
-				// UseTokenCookie = true
-			});
+                if (authResponse.User != null)
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    return RedirectToAction("TenantDashboard", "Tenant");
+                    //if (lg <= 1)
+                    //{
+                    //    return RedirectToAction("ProfileSetup", "Tenant");
+                    //}
+                    //{
+                    //}
+                }
+                else
+                    return Redirect(RoutingConstants.EXTERROR);
+            }
+            catch (WebServiceException wse)
+            {
+                Console.WriteLine("Exception:" + wse.ToString());
+                ViewBag.errormsg = wse.Message;
+                return Redirect(RoutingConstants.EXTERROR);
+            }
+        }
 
-			if (authResponse != null)
-				ViewBag.SuccessMessage = "Successfully Verified";
-			else
-				ViewBag.SuccessMessage = "Verification failed";
-			return View();
-		}
+        public IActionResult VerificationStatus()
+        {
+            var email = HttpContext.Request.Query[TokenConstants.EMAIL];
+            var token = HttpContext.Request.Query[TokenConstants.SIGNUP_TOK];
+            var authClient = this.ServiceClient;
+            MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+            {
+                provider = CredentialsAuthProvider.Name,
+                UserName = email,
+                Password = "NIL",
+                Meta = new Dictionary<string, string> { { TokenConstants.SIGNUP_TOK, token }, { RoutingConstants.WC, RoutingConstants.TC } },
+                // UseTokenCookie = true
+            });
 
-		[HttpPost]
-		public void SMSCallBack(int i)
-		{
-			var req = this.HttpContext.Request.Form;
-			var smsSid = Request.Form["SmsSid"];
-			var messageStatus = Request.Form["MessageStatus"];
-			SMSInitialRequest sMSSentRequest = new SMSInitialRequest();
-			// sMSSentRequest.To = req["to"];
-			//  sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
-			this.ServiceClient.Post(sMSSentRequest);
-		}
+            if (authResponse != null)
+                ViewBag.SuccessMessage = "Successfully Verified";
+            else
+                ViewBag.SuccessMessage = "Verification failed";
+            return View();
+        }
 
-		public string ValidateTokensAndGetUserName(string btoken, string rtoken, string _wc = RoutingConstants.TC, string _cid = CoreConstants.EXPRESSBASE)
-		{
-			if (VerifySignature(btoken) && VerifySignature(rtoken))
-			{
-				try
-				{
-					var jwtToken = new JwtSecurityToken(btoken);
-					var cid = jwtToken.Payload[TokenConstants.CID];
-					var uid = jwtToken.Payload[TokenConstants.UID];
-					var email = jwtToken.Payload[TokenConstants.EMAIL];
-					var wc = jwtToken.Payload[TokenConstants.WC];
-					var sub = jwtToken.Payload[TokenConstants.SUB];
-					long iat = Convert.ToInt64(jwtToken.Payload[TokenConstants.IAT]);
-					long exp = Convert.ToInt64(jwtToken.Payload[TokenConstants.EXP]);
-					DateTime startDate = new DateTime(1970, 1, 1);
-					DateTime iat_time = startDate.AddSeconds(iat);
-					DateTime exp_time = startDate.AddSeconds(exp);
+        [HttpPost]
+        public void SMSCallBack(int i)
+        {
+            var req = this.HttpContext.Request.Form;
+            var smsSid = Request.Form["SmsSid"];
+            var messageStatus = Request.Form["MessageStatus"];
+            SMSInitialRequest sMSSentRequest = new SMSInitialRequest();
+            // sMSSentRequest.To = req["to"];
+            //  sMSSentRequest.Body = "SMS Id: " + smsSid.ToString() + "/nMessageStatus:" + messageStatus.ToString();
+            this.ServiceClient.Post(sMSSentRequest);
+        }
 
-					if (!(wc.ToString().Equals(_wc) && cid.ToString().Equals(_cid)))
-					{
-						Console.WriteLine("wc/cid mismatch");
-						return string.Empty;
-					}
-					if (iat_time < DateTime.Now && exp_time > DateTime.Now)
-					{
-						Console.WriteLine("Valid btoken");
-						return email.ToString();
-					}
-					else
-					{
-						Console.WriteLine("btoken expired");
-						var jwtrToken = new JwtSecurityToken(rtoken);
-						var rsub = jwtrToken.Payload[TokenConstants.SUB];
-						long riat = Convert.ToInt64(jwtrToken.Payload[TokenConstants.IAT]);
-						long rexp = Convert.ToInt64(jwtrToken.Payload[TokenConstants.EXP]);
-						DateTime riat_time = startDate.AddSeconds(riat);
-						DateTime rexp_time = startDate.AddSeconds(rexp);
-						if (riat_time < DateTime.Now && rexp_time > DateTime.Now && rsub.Equals(sub))
-						{
-							Console.WriteLine("Valid rtoken");
-							return email.ToString();
-						}
-						else
-							Console.WriteLine("rtoken expired or invalid");
-					}
-				}
-				catch (Exception e) { Console.WriteLine("Exception:" + e.ToString()); }
-			}
-			return string.Empty;
-		}
+        public string ValidateTokensAndGetUserName(string btoken, string rtoken, string _wc = RoutingConstants.TC, string _cid = CoreConstants.EXPRESSBASE)
+        {
+            if (VerifySignature(btoken) && VerifySignature(rtoken))
+            {
+                try
+                {
+                    var jwtToken = new JwtSecurityToken(btoken);
+                    var cid = jwtToken.Payload[TokenConstants.CID];
+                    var uid = jwtToken.Payload[TokenConstants.UID];
+                    var email = jwtToken.Payload[TokenConstants.EMAIL];
+                    var wc = jwtToken.Payload[TokenConstants.WC];
+                    var sub = jwtToken.Payload[TokenConstants.SUB];
+                    long iat = Convert.ToInt64(jwtToken.Payload[TokenConstants.IAT]);
+                    long exp = Convert.ToInt64(jwtToken.Payload[TokenConstants.EXP]);
+                    DateTime startDate = new DateTime(1970, 1, 1);
+                    DateTime iat_time = startDate.AddSeconds(iat);
+                    DateTime exp_time = startDate.AddSeconds(exp);
 
-		[HttpGet("Store")]
-		public IActionResult AppStorePublic()
-		{
-			GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreExternalRequest { });
-			ViewBag.StoreApps = resp.Apps;
+                    if (!(wc.ToString().Equals(_wc) && cid.ToString().Equals(_cid)))
+                    {
+                        Console.WriteLine("wc/cid mismatch");
+                        return string.Empty;
+                    }
+                    if (iat_time < DateTime.Now && exp_time > DateTime.Now)
+                    {
+                        Console.WriteLine("Valid btoken");
+                        return email.ToString();
+                    }
+                    else
+                    {
+                        Console.WriteLine("btoken expired");
+                        var jwtrToken = new JwtSecurityToken(rtoken);
+                        var rsub = jwtrToken.Payload[TokenConstants.SUB];
+                        long riat = Convert.ToInt64(jwtrToken.Payload[TokenConstants.IAT]);
+                        long rexp = Convert.ToInt64(jwtrToken.Payload[TokenConstants.EXP]);
+                        DateTime riat_time = startDate.AddSeconds(riat);
+                        DateTime rexp_time = startDate.AddSeconds(rexp);
+                        if (riat_time < DateTime.Now && rexp_time > DateTime.Now && rsub.Equals(sub))
+                        {
+                            Console.WriteLine("Valid rtoken");
+                            return email.ToString();
+                        }
+                        else
+                            Console.WriteLine("rtoken expired or invalid");
+                    }
+                }
+                catch (Exception e) { Console.WriteLine("Exception:" + e.ToString()); }
+            }
+            return string.Empty;
+        }
 
-			string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-			string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
-			if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
-				ViewBag.AvailToken = true;
+        [HttpGet("Store")]
+        public IActionResult AppStorePublic()
+        {
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreExternalRequest { });
+            ViewBag.StoreApps = resp.Apps;
 
-			return View();
-		}
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+                ViewBag.AvailToken = true;
 
-		[HttpGet("AppInfo/{id}")]
-		public IActionResult GoDetail(int id)
-		{
-			GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = id });
-			ViewBag.StoreApps = resp.Wrapper;
-			ViewBag.AppId = id;
-			return View();
-		}
+            return View();
+        }
 
-		[HttpPost]
-		public IActionResult BuyPubApp()
-		{
-			string _appid = this.HttpContext.Request.Form["AppId"];
-			var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
-			string[] hostParts = host.Split(CharConstants.DOT);
+        [HttpGet("AppInfo/{id}")]
+        public IActionResult GoDetail(int id)
+        {
+            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = id });
+            ViewBag.StoreApps = resp.Wrapper;
+            ViewBag.AppId = id;
+            return View();
+        }
 
-			string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
-			string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+        [HttpPost]
+        public IActionResult BuyPubApp()
+        {
+            string _appid = this.HttpContext.Request.Form["AppId"];
+            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(CharConstants.DOT);
 
-			if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
-			{
-				if (IsTokensValid(sRToken, sBToken, hostParts[0]))
-					return Redirect(RoutingConstants.PAYNOW);
-				else
-					return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir=" + this.S2B64("/AppInfo/" + _appid));
-			}
-			else
-			{
-				return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir=" + this.S2B64("/AppInfo/" + _appid));
-			}
-		}
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
 
-		public string S2B64(string s)
-		{
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(s));
-		}
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+            {
+                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    return Redirect(RoutingConstants.PAYNOW);
+                else
+                    return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir=" + this.S2B64("/AppInfo/" + _appid));
+            }
+            else
+            {
+                return Redirect(RoutingConstants.TENANTSIGNIN + "?reDir=" + this.S2B64("/AppInfo/" + _appid));
+            }
+        }
 
-		public string B642S(string b64)
-		{
-			byte[] b = Convert.FromBase64String(b64);
-			return Encoding.UTF8.GetString(b);
-		}
+        public string S2B64(string s)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(s));
+        }
 
-		[Microsoft.AspNetCore.Mvc.Route("{stripwebhook}")]
-		public string TestStripeWebhook()
-		{
-			string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
-			Console.WriteLine("Webhook Response  : " + json);
-			return json;
-		}
+        public string B642S(string b64)
+        {
+            byte[] b = Convert.FromBase64String(b64);
+            return Encoding.UTF8.GetString(b);
+        }
 
-		//[HttpGet("wiki/view/{id}")]
-		//public IActionResult GetArticleById(string id)
-		//{
-		//    GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
-		//    {
-		//        Wiki = new Wiki()
-		//        {
-		//            Id = Convert.ToInt32(id)
-		//        }
-		//    });
+        [Microsoft.AspNetCore.Mvc.Route("{stripwebhook}")]
+        public string TestStripeWebhook()
+        {
+            string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+            Console.WriteLine("Webhook Response  : " + json);
+            return json;
+        }
 
-		//    ViewBag.Wiki = resp.Wiki;
+        //[HttpGet("wiki/view/{id}")]
+        //public IActionResult GetArticleById(string id)
+        //{
+        //    GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
+        //    {
+        //        Wiki = new Wiki()
+        //        {
+        //            Id = Convert.ToInt32(id)
+        //        }
+        //    });
 
-		//    return View();
-		//}
+        //    ViewBag.Wiki = resp.Wiki;
 
-		//[HttpGet]
-		//public IActionResult GetWikiList()
-		//{
-		//    GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
-		//    ViewBag.WikiList = resp.WikiList;
-		//    return View();
-		//}
+        //    return View();
+        //}
 
-		//[HttpPost]
-		//public object GetWiki(string wiki_id)
-		//{
-		//    GetWikiResponse resp = this.ServiceClient.Get(new GetWikiRequest()
-		//    {
-		//        Wiki = new Wiki()
-		//        {
-		//            Id = Convert.ToInt32(wiki_id)
-		//        }
-		//    });
-		//    return resp.Wiki;
-		//}
-	}
+        //[HttpGet]
+        //public IActionResult GetWikiList()
+        //{
+        //    GetWikiListResponse resp = this.ServiceClient.Get(new GetWikiListRequest());
+        //    ViewBag.WikiList = resp.WikiList;
+        //    return View();
+        //}
+
+        //[HttpPost]
+        //public object GetWiki(string wiki_id)
+        //{
+        //    GetWikiResponse resp = this.ServiceClient.Get(new GetWikiRequest()
+        //    {
+        //        Wiki = new Wiki()
+        //        {
+        //            Id = Convert.ToInt32(wiki_id)
+        //        }
+        //    });
+        //    return resp.Wiki;
+        //}
+    }
 }

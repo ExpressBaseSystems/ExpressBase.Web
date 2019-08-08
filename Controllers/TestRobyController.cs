@@ -30,7 +30,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class TestRobyController : EbBaseIntCommonController
     {
-        
+
         public static string ClientId = "1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com";
         public static string ClientSecret = "DwaDGHou5ghXrJ0EitwnIQWu";
         public static string[] Scopes = new string[] { DriveService.Scope.Drive,
@@ -166,14 +166,14 @@ namespace ExpressBase.Web.Controllers
             }
             Console.WriteLine("finished");
         }
-       
+
 
         public void OnGet()
         {
             try
             {
                 Console.WriteLine("Hello World!");
-                UploadFIle(@"../images/imageControlSampleImage.jpg");
+                UploadFIle(@"./wwwroot/images/imageControlSampleImage.jpg");
             }
             catch (Exception e)
             {
@@ -215,16 +215,16 @@ namespace ExpressBase.Web.Controllers
                 };
                 request.Download(stream);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }
-            
+
         }
 
         public void UploadFIle(string path)
         {
-            
+
             try
             {
                 Console.WriteLine("upload started");
@@ -233,6 +233,7 @@ namespace ExpressBase.Web.Controllers
                 fileMetadata.Name = Path.GetFileName(path);
                 fileMetadata.MimeType = "image/png";
                 FilesResource.CreateMediaUpload request;
+                Console.WriteLine("Path : " + path);
                 using (var stream = new FileStream(path, FileMode.Open))
                 {
                     request = service.Files.Create(fileMetadata, stream, "image/png");
@@ -266,14 +267,14 @@ namespace ExpressBase.Web.Controllers
                     ApplicationName = ApplicationName,
                 });
                 Console.WriteLine("service complete");
-               return service;
+                return service;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
                 return service;
             }
-            
+
         }
 
         private void SaveStream(MemoryStream stream, string saveTo)
@@ -288,7 +289,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception e)
             {
                 Console.WriteLine(e);
-            }           
+            }
         }
         public IActionResult Test()
         {

@@ -1,5 +1,6 @@
 ﻿body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
+    --txtarea-bg: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
 }
 
 .webform-cont {
@@ -1182,6 +1183,16 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
+[eb-form="true"][mode="view"] .ctrl-cover > textarea, [eb-form="true"][mode="view"] [ctype="Numeric"] .numinput {
+    background-image: none !important;
+}
+
+
+
+[eb-form="true"][mode="view"] .ctrl-cover .dropdown-toggle[data-toggle="dropdown"], [eb-form="true"][mode="view"] .v-select.searchable > .dropdown-toggle {
+    background-color: rgb(243, 243, 243);
+}
+
 [eb-form="true"][mode="view"] .v-select .selected-tag {
     padding: 0.01em .45em 0.15em 0.45em !important;
 }
@@ -1207,7 +1218,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
     resize: none;
     background-attachment: local;
-    background-image: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
+    background-image: var(--txtarea-bg);
     line-height: 19px;
     padding: 2px 11px;
 }

@@ -100,6 +100,7 @@
     .EbQuickMoverlaySideWRpr .InnerBlock {
         display: flex;
         flex-grow: 1;
+        max-height: calc(100% - 46px);
     }
 
     .EbQuickMoverlaySideWRpr .AppContainer {

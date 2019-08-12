@@ -289,7 +289,6 @@ body, html,.html-root {
     overflow: hidden;
     font-family: Montserrat;
     font-weight: 300;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     position: relative;
     padding:0;
 }
@@ -324,6 +323,7 @@ body, html,.html-root {
     border: 1px solid #d3edff;
     padding: 30px;
     border-radius: 6px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     /*background: linear-gradient(to right,#eef9fe,#edf7ff);*/
 }
 
@@ -1086,8 +1086,13 @@ Navigation bar
         float: unset;
         margin-right: unset;
     }
-
-    /*.ext-pageheader .navbar-collapse {
+    .login_container .eb-auth-htmlbox {
+    max-width:100%;
+    }
+    .eb_login .eb_socilaWrpr {
+        max-width: 100%;
+    }
+        /*.ext-pageheader .navbar-collapse {
         text-align: center;
     }
 
@@ -1101,16 +1106,14 @@ Navigation bar
         width: 100%;
         padding-left: 0;
     }*/
-
-    /*.ext-pageheader li[class='open'] {
+        /*.ext-pageheader li[class='open'] {
         background: #fafafa;
     }
 
     .ext-pageheader .drp_container::after {
         display: none;
     }*/
-
-    .login_container form, .login_container_usr form {
+        .login_container form, .login_container_usr form {
         flex:1;max-width:100%;
     }
 

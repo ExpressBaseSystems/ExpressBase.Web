@@ -1,6 +1,6 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-    string console = ViewBag.WhichConsole == "dc" ? "Dev" : "User";
+    string console = ViewBag.WhichConsole == "dc" ? "Developer" : "User";
     string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
 }
 @section JavaScript{
@@ -17,7 +17,7 @@
                     <div class="login-sec-image text-center">
                         <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
                     </div>
-                    <h1 class="text-center">Sign In as @console</h1><br>
+                    <h1 class="text-center">@console Login</h1><br>
                     <div class="form-group mb-25" validator="email">
                         <label>Email</label>
                         <div class="log-username">

@@ -150,8 +150,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#home" role="tab">
-                        <i class="fa fa-cog"></i>
-                        Settings
+                        <i class="fa fa-home"></i>
+                        General
                     </a>
                 </li>
             </ul>
@@ -463,22 +463,54 @@
                     @await Component.InvokeAsync("Stripe", new { sid = ViewBag.cid })
                 </div>
                 <div class="tab-pane" id="home" role="tabpanel">
-                    <div class="form-group">
-                        <div class="col-md-push-12 pd-0">
-                            <label>Upload Logo</label>
-                            <button id="log-upload-btn" class="btn btn-default log-upload-b">Change Logo <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                    <div class="eb-sdash-general-container flex-center">
+                        <div class="eb-sdash-longdiv" style="margin-bottom:20px;">
+                            <div class="eb-sdash-longdivhead">
+                                <label>Solution Logo</label>
+                            </div>
+                            <div class="eb-sdash-longdivcontainer">
+                                <div class="left-sec" style="display:flex;justify-content:center;min-width:25%;">
+                                    <img src="~/images/contact.png" style="max-width:200px;" />
+                                </div>
+                                <div class="right-sec">
+                                    <p>
+                                        Select the logo to represent the business for which this solution is being
+                                        built/managed. If your business has multiple branches and each branch is having
+                                        a different logo, you have the option to configure it in the “Locations” section.
+                                    </p>
+                                    <button id="log-upload-btn" class="btn eb_btn-sm btn-success eb_btngreen log-upload-b">Change Logo <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-8 pd-0 logo_img_cont">
-                            <img src="" class="img-responsive pull-right" id="oB_logo-prev" />
-                        </div>
-                    </div>
-                    <div class="form-group uname-advanced-sec form-inline">
-                        <div class="col-md-4 pd-0">
-                            <label>Versioning :  </label>
-                            <label class="switch">
-                                <input type="checkbox" id="VersioningSwitch" style="display:inline">
-                                <span class="slider round" style="margin"></span>
-                            </label>
+                        <div class="eb-sdash-longdiv">
+                            <div class="eb-sdash-longdivhead">
+                                <label>Object Versioning</label>
+                            </div>
+                            <div class="eb-sdash-longdivcontainer">
+                                <div class="left-sec">
+                                    <p>
+                                        An Invoice Form, can have two versions, pre-VAT & post-VAT, or a PDF report
+                                        with two different ways of calculating taxable amount.
+
+                                        By default, versioning of objects is switched off. Switch it on, only 
+                                        if you need to manage multiple versions for objects. By switching on,
+                                        you agree that you are doing it deliberately, and you understand the 
+                                        complexity of managing multiple versions.
+
+                                        We recommend keeping versioning switched off, and only switch it on,
+                                        when you have a real need to have two or more different versions of
+                                        the same object.
+                                    </p>
+                                </div>
+                                <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
+                                    <div class="uname-advanced-sec">
+                                        <label class="switch">
+                                            <input type="checkbox" id="VersioningSwitch" style="display:inline">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

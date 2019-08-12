@@ -108,31 +108,56 @@
             
             window.tour = new Tour(
                 {
-                    WelcomeMessage: "<small>Welcome To </small> <br/> <b>EXPRESSbase</b>",
-                    Description: "explore the platform",
+                    WelcomeMessage: "<small>Welcome to </small> <br/> <b>EXPRESSbase</b>",
+                    Description: `A low-code, Rapid application development <br/> & delivery platform
+                                  on the cloud for Businesses <br/> & Developers to build, run & manage
+                                  business <br/> process apps 10x efficiently.`,
                     Stack: [
                         {
-                            element: '[tour-for="userhome"]',
-                            title: "Go to user home",
-                            content: "Go to user home where u can view the applications you created.",
+                            element: '[tour-for="devhome"]',
+                            title: "Go to the Developer Home",
+                            content: `Here is where your developers (you yourself, if you are a developer,
+                                      or your IT team members or your IT solution providers)
+                                      will login to the solution to build applications. The URL
+                                      for the developers would be <br/> <span style="color: #e2ef9d;text-decoration: underline;">
+                                      https://&#60;solution-id>-dev.expressbase.com</span>
+                                      <br/>You don’t need to login again (as you are the solution owner),
+                                      we use Single-Sign-On (SSO), to let you in.`,
                             click: true
                         },
                         {
-                            element: '[tour-for="devhome"]',
-                            title: "Go to developer home",
-                            content: "Go to developer home and build your applications.",
+                            element: '[tour-for="userhome"]',
+                            title: "Go to the User Home",
+                            content: `Here is where your users (employees or contractors or whomever 
+                                    you wish to grant access) will login to the solution to use the applications
+                                    under it. The URL for those users would be <br/>
+                                    <span style="color: #e2ef9d;text-decoration: underline;">
+                                    https://&#60;solution-id>.expressbase.com</span><br/>
+                                    You don’t need to login again (as you are the solution owner),
+                                    we use Single-Sign-On (SSO), to let you in.`,
                             click: true
                         },
                         {
                             element: ".sln_settings_link",
-                            title: "Go to Solution settings",
-                            content: "Configure your solution like add integrations,manage your team etc...",
+                            title: "Go to the Solution Settings",
+                            content: `Here is where you will be configuring your solution’s connections
+                                      or integrations – like the email server to enable the applications
+                                      to send emails, SMS gateway to send SMS, etc.<br/>
+                                      You can also configure the databases to be used (in case you want to connect your own database)
+                                      by the solution.`,
                             click: true
                         },
                         {
                             element: "#eb-new-solution",
-                            title: "Create new solution",
-                            content: "Create your next solution",
+                            title: "Create a NEW Solution",
+                            content: `In EXPRESSbase, you can create as many solutions you want, and each
+                                      solution having its own database.
+                                      <br> Think of a solution as a collection of applications for one of your businesses.
+                                      <br>For example, if you have two businesses, say a wholesale trading company,
+                                      and a food manufacturing company, you would go ahead
+                                      and create two different solutions.  Each of those businesses
+                                      may have multiple branches, that is okay, as our platform
+                                      supports multi-location out-of-the-box.`,
                             click: true
                         }
                     ]

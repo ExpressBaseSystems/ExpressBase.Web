@@ -38,7 +38,7 @@
             }
         }
         else if (id == `a`) {
-            let insertVal = `<${id} data-id=" " class="wikilist"> </${id}>`
+            let insertVal = `<${id} src="link">  </${id}>`
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(txt, insertVal);
@@ -158,7 +158,7 @@
         $("#ebwiki_panebrd").html(`${ob.category} / ${ob.title}`)
         urlTitle = ob.title.replace(/\s+/g, '-').toLowerCase();
         //var url = window.location.origin + "/Wiki/View/" + id + "/" + urlTitle;
-        var url = window.location.origin + `/Wiki/${ob.category}/${id}/${urlTitle}`;
+        var url = window.location.origin + `/Wiki/${ob.category}/${urlTitle}`;
         let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;
         let twUrl = "https://twitter.com/intent/tweet?status=" + url;
         let lnUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" +url +"&title="+ ob.title + "&summary=YourarticleSummary&source=expressbase.com";
@@ -208,7 +208,7 @@
      </div> 
             
              <h4>Questions?</h4>
-            <p>Please mail <span style="color:blue"> support@expressbasebase.com</span> , we are always happy to help.<p>
+            <p>Please mail <span style="color:blue"> support@expressbase.com</span> , we are always happy to help.<p>
 
             `;
         $('#wiki_data_div').append($WasItHelpFul);
@@ -830,7 +830,7 @@
         wiki["CatId"] = $("#category").val();
         wiki["title"]= $("#title").val();
         wiki["status"] = $("#status option:selected").text();
-        wiki["html"] = $("#text").text();
+        wiki["html"] = $("#text").val();
         wiki["tags"] = $("#tagbox").val();
         wiki["Id"] = $("#wiki-id").val();
 
@@ -874,6 +874,32 @@
             });
     }
 
+    this.tbl_size_select = function (e) {
+        let rows = $("#tbl-row").val();
+        let cols = $("#tbl-col").val();
+        let txt = 'text';
+        let $tbl = $(`<table class="table table-bordered">&#13;&#10; </table> &#13;&#10;`);
+        for (i = 0; i < rows; i++) {
+            let $tblRow = $("<tr> &#13;&#10; </tr> &#13;&#10;");
+            if (i == 0) {
+                for (j = 0; j < cols; j++) {
+                    $tblRow.append("<th></th> &#13;&#10;");
+                }
+                $tbl.append($tblRow);
+            }
+            else {
+                for (j = 0; j < cols; j++) {
+                    $tblRow.append("<td></td> &#13;&#10;");
+                }
+                $tbl.append($tblRow);
+            }
+            
+        }
+        let insertVal = $tbl.outerHTML();
+        this.insertAtCaret(txt, insertVal);
+
+    }
+
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
@@ -898,6 +924,7 @@
         $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
         $("#gallery-tab1").on("click", this.gallerytab.bind(this));
         $("#wiki-preview-tab").on("click", this.WikiPreviewTab.bind(this));
+        $("#tbl-size-select").on("click", this.tbl_size_select.bind(this));
         //$("#wikisave").on("click", this.EbloaderTrigger.bind(this));
     };
 

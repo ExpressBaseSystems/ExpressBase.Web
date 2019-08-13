@@ -84,6 +84,8 @@
                         else
                         {
                             <button class='btn save' id="singlesave" data-toggle="tooltip" data-plament="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
+                            <button class="btn" id="live" data-toggle="tooltip" data-placement="bottom" title="Make Live"><i class="fa fa-heartbeat" aria-hidden="true"></i></button>
+                            <button class="btn" id="offline" data-toggle="tooltip" data-placement="bottom" title="Make Offline"><i class="fa fa-power-off" aria-hidden="true"></i></button>
                         }
                         <button class='btn del_obj' id="del_obj" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
                     }
@@ -105,7 +107,7 @@
                             </ul>
                         </div>
                     </div>
-                    <button class='btn' id="minmize" data-toggle="tooltip" title="Dash Board"><i class="fa fa-ellipsis-v" aria-hidden="true" data-placement="bottom" ></i></button>
+                    <button class='btn' id="minmize" data-toggle="tooltip" title="Dash Board"><i class="fa fa-ellipsis-v" aria-hidden="true" data-placement="bottom"></i></button>
                 </div>
             </div>
         </div>
@@ -292,22 +294,6 @@
     <button class="btn btn-primary pull-right" id="commit">Commit</button>
 </div>
 
-@*<div class="changLog-container" id="changelogPopup">
-        <div class="chlog-top">
-            <div class="ch-l-title">Change Log</div>
-            <button class="btn btn-sm" id="close_popup"><i class="fa fa-times"></i></button>
-        </div>
-        <div class="text-sec">
-            <div class="">
-                <textarea class="txt-area" id="obj_changelog" placeholder="ChangeLog"></textarea>
-
-                <div class="submitsec-changeLog">
-                    <button class="btn btn-primary" id="commit">Go</button>
-                </div>
-            </div>
-        </div>
-    </div>*@
-
 
 <script>
      window.ebcontext.header = new EbHeader();@*added amal*@
@@ -406,6 +392,13 @@
         }
         else {
             $('#profiler').prop("checked", false)  ;
+        }
+
+         if ('@ViewBag.Status' === "Offline" && '@ViewBag.versioning'=='False' ) {
+            $('#offline').hide();
+        }
+        else if ('@ViewBag.Status' === "Live" && '@ViewBag.versioning'=='False' ) {
+            $('#live').hide();
         }
     });
 

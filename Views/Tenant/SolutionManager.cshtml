@@ -44,6 +44,8 @@
     Image_url.Add("ExpertTexting", "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />");
     Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
     Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
+
+    string Logourl = "/images/logo/" + ViewBag.cid + ".png";
     <script>
         const sid = '@ViewBag.cid';
     </script>
@@ -470,7 +472,7 @@
                             </div>
                             <div class="eb-sdash-longdivcontainer">
                                 <div class="left-sec" style="display:flex;justify-content:center;min-width:25%;">
-                                    <img src="~/images/contact.png" style="max-width:200px;" />
+                                    <img src="~/images/your_company_logo.png" data-src=@Logourl class="Eb_Image" style="max-width:200px;align-self:center;" />
                                 </div>
                                 <div class="right-sec">
                                     <p>
@@ -504,6 +506,7 @@
                                 </div>
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
                                     <div class="uname-advanced-sec">
+                                        <label>Switch Versioning</label>
                                         <label class="switch">
                                             <input type="checkbox" id="VersioningSwitch" style="display:inline">
                                             <span class="slider round"></span>

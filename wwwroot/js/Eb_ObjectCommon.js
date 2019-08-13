@@ -663,6 +663,7 @@
                     }, function () {
                         this.Current_obj.Status = "Live";
                     }.bind(this));
+                $('#offline').show();
             }
         }.bind(this));
     }.bind(this);

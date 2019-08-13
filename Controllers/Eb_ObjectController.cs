@@ -504,16 +504,39 @@ namespace ExpressBase.Web.Controllers
         public IActionResult CallObjectEditor(string _dsobj, int _tabnum, int Objtype, string _refid, string _ssurl)
         {
             string VCName = string.Empty;
-            if (Objtype == (int)EbObjectTypes.DataReader)
-                VCName = "CodeEditor";
-            else if (Objtype == (int)EbObjectTypes.TableVisualization)
-                VCName = "DVBuilder";
-            else if (Objtype == (int)EbObjectTypes.WebForm)
+            if (Objtype == (int)EbObjectTypes.WebForm)
                 VCName = "FormBuilder";
+
+            else if (Objtype == (int)EbObjectTypes.DataReader || Objtype == (int)EbObjectTypes.DataWriter || Objtype == (int)EbObjectTypes.SqlFunction)
+                VCName = "CodeEditor";
+
             else if (Objtype == (int)EbObjectTypes.Report)
                 VCName = "ReportBuilder";
+
+            else if (Objtype == (int)EbObjectTypes.FilterDialog)
+                VCName = "FilterDialogBuilder";
+
+            else if (Objtype == (int)EbObjectTypes.UserControl)
+                VCName = " UserControl";
+
             else if (Objtype == (int)EbObjectTypes.EmailBuilder)
                 VCName = "Emailbuilder";
+
+            else if (Objtype == (int)EbObjectTypes.TableVisualization)
+                VCName = "DVBuilder";
+
+            else if (Objtype == (int)EbObjectTypes.ChartVisualization)
+                VCName = "DVChart";
+
+            else if (Objtype == (int)EbObjectTypes.GoogleMap)
+                VCName = "GoogleMap";
+
+            else if (Objtype == (int)EbObjectTypes.BotForm)
+                VCName = "BotFormBuilder";
+
+            else if (Objtype == (int)EbObjectTypes.SmsBuilder)
+                VCName = "Smsbuilder";
+
             else if (Objtype == (int)EbObjectTypes.Api)
                 VCName = "ApiBuilder";
             return ViewComponent(VCName, new { dsobj = _dsobj, tabnum = _tabnum, type = Objtype, refid = _refid, ssurl = _ssurl });

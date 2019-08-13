@@ -374,6 +374,7 @@
 .uname-advanced-sec {
     margin-top: 10px;
     display: flex;
+    flex-direction:column;
 }
 /*tenant add solution*/
 .createAppFrm {

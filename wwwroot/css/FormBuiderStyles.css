@@ -1031,9 +1031,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .user-ctrl {
-    padding: 5px;
+    /*padding: 5px;
     border: solid 1px rgba(96, 98, 185, 0.2);
-    border-radius: 6px;
+    border-radius: 6px;*/
 }
 
 

@@ -13,6 +13,7 @@
     this.PGobj = null;
     this.ssurl = url;
     this.clipboard = {};
+    this.toolContClass = "tool-sec-cont";
     this.botDpURL = 'url(https\:\/\/expressbase\.com\/images\/assistant\.png)center center no-repeat';
 
     this.controlCounters = CtrlCounters;//Global
@@ -21,6 +22,7 @@
     this.CurRowCount = 2;
     this.CurColCount = 2;
     this.movingObj = {};
+    this.DraggableConts = [...(document.querySelectorAll("[ebclass=tool-sec-cont]")), document.getElementById(this.formid)];
 
     this.controlOnFocus = function (e) {
         window.scrollTo(0, 0);
@@ -32,18 +34,18 @@
         }
         else
             this.curControl = $(e.target).closest(".Eb-ctrlContainer");
-        var id = this.curControl.attr("id");
+        let ebsid = this.curControl.attr("ebsid");
         e.stopPropagation();
         this.curControl.children('.ctrlHead').show();
-        this.CreatePG(this.rootContainerObj.Controls.GetByName(id));
+        this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
         this.CurColCount = $(e.target).val();
     };
 
     this.InitEditModeCtrls = function (editModeObj) {
         this.rootContainerObj = editModeObj;
         //setTimeout(function () {
-            Proc(editModeObj, this.rootContainerObj);
-            this.renderCtrls();
+        Proc(editModeObj, this.rootContainerObj);
+        this.renderCtrls();
 
         //}.bind(this), 1000);
     };
@@ -70,14 +72,14 @@
 
     this.del = function (ce) {
         var $e = $(ce.trigger.context);
-        var id = $e.attr("id");
+        var id = $e.attr("ebsid");
         this.DelCtrl(id);
     }.bind(this);
 
     this.cut = function (ce) {
         var $e = $(ce.trigger.context);
         var id = $e.attr("id");
-        this.clipboard.$ctrl = $(`#${id}`)
+        this.clipboard.$ctrl = $(`#${id}`);
         this.clipboard.ctrl = this.DelCtrl(id);
     }.bind(this);
 
@@ -108,7 +110,7 @@
         img: `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAE5SURBVGhD7dqvSgRhFIbx0apRMOwdmEwWvQAtbhKDVQRvwD/NC/AKlC2iRTDaBYuIFovXoAajTX2+dsKBGb45Z3ThfeAXlhnm27fsht1GKdW7bdziKcEyBukMP4nWkN4Y3uGRBhlyCe/wSIMMuYM99BxbwRaQ3j3skH1MZRry3+o6ZBYbOMBhoB3Mo3ddhozwDHtfpDf0/mRrGzKDB9h7MnxiEdW1DVmFvZ7pGNW1DdmFvf6B6yAvsM++QHVtQ8pre73cH9UR7LOvUJ2GBKQhXhoSkIZ4aUhAGuKlIQFpiJeGBKQhXhoSUOiQTewZS7BNzZC2NKRDGlKThnToT4e8wvsxp0Z54/bZqUPKx7M9LNMp0prDO7yDI31jBamV30W+4L2BKCcYpPKNP8EjvD8F1LrBOpRSvWuaX5uuctVnE+66AAAAAElFTkSuQmCC`,
         title: 'Copy this control',
         fun: function () {
-            alert('i am update button')
+            alert('i am update button');
         }
     }, {
         name: 'Cut',
@@ -170,16 +172,15 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        var toolBoxId = "form-buider-toolBox";
         var formId = this.formid;
-        if (source.id === toolBoxId && target.id === toolBoxId) {
+        if ($(source).attr("ebclass") === this.toolContClass && $(target).attr("class") === this.toolContClass) {
             return false;
         }
         // allow copy except toolbox
-        if (source.id === toolBoxId && target.id === formId) {
+        if ($(source).attr("ebclass") === this.toolContClass && target.id === formId) {
             return true;
         }
-        if (source.id === formId && target.id === toolBoxId) {
+        if (source.id === formId && $(target).attr("ebclass") === this.toolContClass) {
             return false;
         }
         // sortable with in the container
@@ -206,9 +207,9 @@
 
     this.onDragFn = function (el, source) {
         //if drag start within the form
-        if (source.id !== "form-buider-toolBox") {
+        if ($(source).attr("ebclass") !== this.toolContClass) {
             console.log("el poped");
-            this.movingObj = this.rootContainerObj.Controls.PopByName(el.id);
+            this.movingObj = this.rootContainerObj.Controls.PopByName($(el).attr("ebsid"));
         }
         else
             this.movingObj = null;
@@ -216,11 +217,11 @@
 
     this.onDragendFn = function (el) {
         var sibling = $(el).next();
-        var target = $(el).parent();
+        var $target = $(el).parent();
         if (this.movingObj) {
 
             //Drag end with in the form
-            if (target.attr("id") !== "form-buider-toolBox") {
+            if ($target.attr("ebclass") !== this.toolContClass) {
                 if (sibling.attr("id")) {
                     console.log("sibling : " + sibling.id);
                     var idx = sibling.index() - 1;
@@ -242,7 +243,7 @@
 
         if (target) {
             //drop from toolbox to form
-            if (source.id === "form-buider-toolBox") {
+            if ($(source).attr("ebclass") === this.toolContClass) {
                 var $el = $(el);
                 var type = $el.attr("eb-type").trim();
                 var id = type + (this.controlCounters[type + "Counter"])++;
@@ -251,7 +252,7 @@
                 $el.remove();
                 $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
                 $ctrl.on("focus", this.controlOnFocus.bind(this));
-                $ctrl.attr("id", id);
+                $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
                 $ctrl.attr("eb-type", type);
                 if (sibling) {
                     $ctrl.insertBefore($(sibling));
@@ -268,7 +269,7 @@
 
                 this.RefreshControl(ctrlObj);
 
-                
+
             }
             else
                 console.log("ondrop else : removed");
@@ -340,17 +341,17 @@
 
     };
 
-	this.CreateRelationString = function () {
+    this.CreateRelationString = function () {
         var relObjs = '';
         $.each(this.rootContainerObj.Controls.$values, function (indx, ctrl) {
-            if (ctrl.ObjType === 'SimpleSelect' && ctrl.DataSourceId !== '') 
+            if (ctrl.ObjType === 'SimpleSelect' && ctrl.DataSourceId !== '')
                 relObjs += ctrl.DataSourceId + ',';
             else if (ctrl.ObjType === 'PowerSelect' && ctrl.DataSourceId !== '')
                 relObjs += ctrl.DataSourceId + ',';
             else if (ctrl.ObjType === 'DynamicCardSet' && ctrl.DataSourceId !== '')
                 relObjs += ctrl.DataSourceId + ',';
             else if (ctrl.ObjType === 'StaticCardSet' && ctrl.DataSourceId !== '')
-                relObjs += ctrl.DataSourceId + ',';            
+                relObjs += ctrl.DataSourceId + ',';
         }.bind(relObjs));
         this.rootContainerObj.relatedObjects = relObjs.substring(0, relObjs.length - 1);
     }
@@ -443,9 +444,11 @@
     this.GenerateButtons = function () { };
 
     this.Init = function () {
-        this.drake = new dragula([document.getElementById(this.toolBoxid), document.getElementById(this.formid)], {
+        this.drake = new dragula(this.DraggableConts, {
             removeOnSpill: false,
-            copy: function (el, source) { return (source.className === 'form-buider-toolBox'); },
+            copy: function (el, source) {
+                return ($(source).attr("ebclass") === this.toolContClass);
+            }.bind(this),
             copySortSource: true,
             //mirrorContainer: document.getElementById(this.formid),
             moves: this.movesfn.bind(this),
@@ -647,7 +650,7 @@
                         $("#selFGrp" + id).show();
                     }
                 });
-            }           
+            }
         }.bind(id));
 
         $("#btnOk" + id).on("click", function () {

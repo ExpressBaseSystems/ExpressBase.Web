@@ -77,7 +77,7 @@
     //this.j = function (p1) {
     //    let VMs = this.initializer.Vobj.valueMembers;
     //    let DMs = this.initializer.Vobj.displayMembers;
-    //    let columnvals = this.initializer.columnvals;
+    //    let columnVals = this.initializer.columnVals;
 
     //    if (VMs.length > 0)// clear if already values there
     //        this.initializer.clearValues();
@@ -98,15 +98,18 @@
     //        }.bind(this));
     //    }.bind(this));
 
-    //    $.each(DMtable, function (j, r) {
-    //        $.each(r.Columns, function (j, item) {
-    //            if (!columnvals[item.Name]) {
-    //                console.warn('Mismatch found in Colums in datasource and Colums in object');
-    //                return true;
-    //            }
-    //            columnvals[item.Name].push(item.Value);
+
+    //    if (this.initializer.datatable === null) {//for aftersave actions
+    //        $.each(DMtable, function (j, r) {
+    //            $.each(r.Columns, function (j, item) {
+    //                if (!columnVals[item.Name]) {
+    //                    console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                    return true;
+    //                }
+    //                columnVals[item.Name].push(item.Value);
+    //            }.bind(this));
     //        }.bind(this));
-    //    }.bind(this));
+    //    }
 
     //};
 
@@ -292,7 +295,7 @@
     };
 
     this.getTdHtml = function (inpCtrl, col, i) {
-        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
                     <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                 </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -681,7 +684,7 @@
             this.ctrl[col.Name + "_sum"] = 0;
         }.bind(this));
 
-        this.$table.on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCol.bind(this));
+        this.$table.on("keyup", "[tdcoltype=DGNumericColumn][agg=true] [ui-inp]", this.updateAggCol.bind(this));
     };
 
     this.PScallBFn = function (Row) {

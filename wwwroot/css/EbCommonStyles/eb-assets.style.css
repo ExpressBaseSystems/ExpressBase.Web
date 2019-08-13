@@ -428,23 +428,19 @@
     width: 4%;
     margin: auto;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
+.eb-sdash-general-container .eb-sdash-longdivcontainer {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    display: flex;
+    padding: 20px;
+    line-height: 2em;
+    FONT-SIZE: 15PX;
+}
+/*solution dashboard*/
 .tab {
     float: left;
-    //border: 5px solid #ccc;
-    //background-color: #f1f1f1;
+    /*border: 5px solid #ccc;
+    background-color: #f1f1f1;*/
     width: 20%;
     height: 470px;
 }

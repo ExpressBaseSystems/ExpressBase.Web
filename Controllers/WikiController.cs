@@ -43,7 +43,7 @@ namespace ExpressBase.Web.Controllers
             {
                 AddNewWikiResponse resp = this.ServiceClient.Get(new AddNewWikiRequest());
                 ViewBag.WikiCat = resp.WikiCat;
-                ViewBag.Wiki = new Wiki() { Id = 0 };
+                ViewBag.Wiki = new Wiki() { Id = 0 ,CatId = 0};
             }
             return View();
         }
@@ -76,26 +76,27 @@ namespace ExpressBase.Web.Controllers
         //}
 
         [HttpPost("wiki/save")]
-        public IActionResult SaveWiki(object obj)
+        public Wiki SaveWiki(Wiki wiki)
         {
-            int id = Convert.ToInt32(Request.Form["id"]);
+            int id = wiki.Id ;
             if (id > 0)
             {
                 UpdateWikiResponse resp = this.ServiceClient.Post(new UpdateWikiRequest
                 {
                     Wiki = new Wiki
                     {
-                        Category = Request.Form["category"],
-                        Title = Request.Form["title"],
-                        HTML = Request.Form["content"],
+                        Category = wiki.Category,
+                        Title = wiki.Title,
+                        HTML = wiki.HTML,
                         CreatedBy = ViewBag.UId,
-                        Tags = Request.Form["tagbox"],
-                        Status = Request.Form["status"],
+                        Tags = wiki.Tags,
+                        Status = wiki.Status,
+                        CatId = wiki.CatId,
                         Id = id
                     }
                 });
 
-                return Redirect(string.Format("/Wiki/View/{0}/wikilist", resp.Wiki.Id));
+                return resp.Wiki;
             }
             else
             {
@@ -103,16 +104,17 @@ namespace ExpressBase.Web.Controllers
                 {
                     Wiki = new Wiki
                     {
-                        Category = Request.Form["category"],
-                        Title = Request.Form["title"],
-                        HTML = Request.Form["content"],
+                        Category = wiki.Category,
+                        Title = wiki.Title,
+                        HTML = wiki.HTML,
                         CreatedBy = ViewBag.UId,
-                        Tags = Request.Form["tagbox"],
-                        Status = Request.Form["status"]
+                        Tags = wiki.Tags,
+                        Status = wiki.Status,
+                        CatId = wiki.CatId,
                     }
 
                 });
-                return Redirect(string.Format("/Wiki/View/{0}/wikilist", resp.Wiki.Id));
+                return resp.Wiki;
             }
         }
 
@@ -189,5 +191,7 @@ namespace ExpressBase.Web.Controllers
 
             return resp.ResponseStatus;
         }
+
+        
     }
 }

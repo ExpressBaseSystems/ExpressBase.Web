@@ -44,9 +44,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/Wiki/{category}/{wikiname}")]
-        public IActionResult GetWikiListRedirect2(string id)
+        public IActionResult GetWikiListRedirect2(string category , string wikiname)
         {
-            return Redirect("/Wiki");
+            TempData["Category"] = category; 
+            TempData["WikiName"] = wikiname;
+            return Redirect("/Wiki"); 
         }
 
         [HttpGet("/Wiki/{category}/{id}/{title}")]

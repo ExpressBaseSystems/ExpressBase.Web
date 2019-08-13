@@ -64,7 +64,7 @@
                                 int order = wiki.Order;
                                 if (wiki.Category == WikiCategory)
                                 {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
+                                    <li order-id="@order"> <a data-id="@link" class="wikilist" val="@wiki.Title"> @wiki.Title </a></li>
                                 }
                             }
                         </ul>
@@ -296,11 +296,23 @@
         </div>*@
 </div>
 @section JsCode{
-    <script>
+<script>
         let obj;
         $(document).ready(function () {
             obj = new addwiki();
             PR.prettyPrint();
+            window.history.pushState('obj', 'PageTitle', "/Wiki/@TempData["Category"]/@TempData["WikiName"]");
+            let wiki_name = "@TempData["WikiName"]";
+            let wname = wiki_name.replace(/\-/g, ' ');
+            let id = $(`[val="${wname}"]`).attr("data-id");
+            $(".wikilist").removeClass("CurrentSelection");
+            $(`[data-id='${id}']`).addClass("CurrentSelection");
+            if ($.isNumeric(id)) {
+                obj.AjaxCalFetchWikiList(id);
+            }
+            else if (id == 'docs') {
+                obj.show_home();
+            }
         });
 
         $(window).on('popstate', function (event) {
@@ -319,7 +331,7 @@
                 obj.show_home();
             }
         });
-    </script>
+</script>
 }
 
 

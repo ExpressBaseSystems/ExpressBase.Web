@@ -192,7 +192,7 @@
     imgup.customTrigger = function (name, refids) {
         let imgtag = "";
         for (let i = 0; i < refids.length; i++) {
-            imgtag += `<img src="/wiki/images/original/${refids[i]}.jpg" class="WikiDefaultImage"/>`;
+            imgtag += `<img style="width:60px;height:100px;" src="/wiki/images/original/${refids[i]}.jpg" class="WikiDefaultImage"/>`;
         }
         copyStringToClipboard(imgtag);
     }

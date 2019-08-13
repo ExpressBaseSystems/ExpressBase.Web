@@ -84,8 +84,11 @@
                         else
                         {
                             <button class='btn save' id="singlesave" data-toggle="tooltip" data-plament="bottom" title="Save"><i class="fa fa-floppy-o" aria-hidden="true"></i></button>
-                            <button class="btn" id="live" data-toggle="tooltip" data-placement="bottom" title="Make Live"><i class="fa fa-heartbeat" aria-hidden="true"></i></button>
-                            <button class="btn" id="offline" data-toggle="tooltip" data-placement="bottom" title="Make Offline"><i class="fa fa-power-off" aria-hidden="true"></i></button>
+                            if (ViewBag.Refid.Length > 0)
+                            {
+                                <button class="btn" id="live" data-toggle="tooltip" data-placement="bottom" title="Make Live" hidden><i class="fa fa-heartbeat" aria-hidden="true"></i></button>
+                                <button class="btn" id="offline" data-toggle="tooltip" data-placement="bottom" title="Make Offline" hidden><i class="fa fa-power-off" aria-hidden="true"></i></button>
+                            }
                         }
                         <button class='btn del_obj' id="del_obj" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fa fa-trash" aria-hidden="true"></i></button>
                     }
@@ -393,11 +396,16 @@
         else {
             $('#profiler').prop("checked", false)  ;
         }
-
-         if ('@ViewBag.Status' === "Offline" && '@ViewBag.versioning'=='False' ) {
+        if ('@ViewBag.Status' === "Offline" && '@ViewBag.versioning' == 'False') {
+            $('#live').show();
             $('#offline').hide();
         }
-        else if ('@ViewBag.Status' === "Live" && '@ViewBag.versioning'=='False' ) {
+        else if ('@ViewBag.Status' === "Live" && '@ViewBag.versioning' == 'False') {
+            $('#offline').show();
+            $('#live').hide();
+        }
+        else {
+            $('#offline').hide();
             $('#live').hide();
         }
     });

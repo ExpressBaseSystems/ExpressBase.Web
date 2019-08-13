@@ -667,8 +667,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     height: 100%;
 }
 
-.filter-form-buider-cont .toolbox-cont {
-    width: 18%;
+.web-form-buider-cont .toolbox-cont, .filter-form-buider-cont .toolbox-cont {
+    width: 250px;
+    box-shadow: 0 0 1px 0 #c7c7c7;
 }
 
 .web-form-buider-cont .toolbox-cont {

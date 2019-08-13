@@ -72,7 +72,7 @@
 
     this.del = function (ce) {
         var $e = $(ce.trigger.context);
-        var id = $e.attr("ebsid");
+        var id = $e.attr("id");
         this.DelCtrl(id);
     }.bind(this);
 
@@ -95,12 +95,13 @@
     }.bind(this);
 
     this.DelCtrl = function (id) {
-        var ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
-        this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(id).EbSid);
-        var ctrl = this.rootContainerObj.Controls.PopByName(id);
-        ControlTile.parent().focus();
-        ControlTile.remove();
-        this.PGobj.removeFromDD(id);
+        var $ControlTile = $(`#${id}`).closest(".Eb-ctrlContainer");
+        let ebsid = $ControlTile.attr("ebsid");
+        this.PGobj.removeFromDD(ebsid);
+        var ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
+        $ControlTile.parent().focus();
+        $ControlTile.remove();
+        this.PGobj.removeFromDD(ebsid);
         this.saveObj();
         return ctrl;
     };

@@ -5,7 +5,7 @@
     this.cid = options.cid;
     this.IsInnerCall = options.IsInnerCall || false;
     this.wraperId = options.id;
-    this.$scope = options.$scope || $(document.body)
+    this.$scope = options.$scope || $(document.body);
     this.$wraper = $("#" + this.wraperId);
     this.$extCont = options.$extCont;
     this.parentId = null;

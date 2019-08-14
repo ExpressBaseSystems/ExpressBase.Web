@@ -273,11 +273,12 @@
                     <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.AllRowCtrls[rowid] = [];
 
+        let visibleCtrlIdx = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;
             let inpCtrlType = col.InputControlType;
-            let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+            let ctrlEbSid = "ctrl_" + (Date.now() + visibleCtrlIdx).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
@@ -285,9 +286,10 @@
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.AllRowCtrls[rowid].push(inpCtrl);
 
-            tr += this.getTdHtml(inpCtrl, col, i);
+            tr += this.getTdHtml(inpCtrl, col, visibleCtrlIdx);
             if (col.IsEditable)
                 isAnyColEditable = true;
+            visibleCtrlIdx++;
         }.bind(this));
         this.S_cogsTdHtml = this.getCogsTdHtml(isAnyColEditable);
         tr += this.S_cogsTdHtml;

@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <div class="row s-dash-container h-100">
-    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
@@ -31,7 +31,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 pd-0">
@@ -40,7 +40,7 @@
             <div class="col-md-5 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
             </div>
         </div>
-        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
             <div class="tdash-box-body">
                 <div class="eb-nesol-wraper col-md-5 col-sm-6 col-xs-12 col-lg-5">
                     <form class="subscript-submit w-100" action="/Tenant/CreateSolutionManual" method="post" id="sol-form-submit">

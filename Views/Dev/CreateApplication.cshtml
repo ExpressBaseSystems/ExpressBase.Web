@@ -1,17 +1,17 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
-<script>
-    var cm = new EbHeader().setName('@ViewBag.Op');
-</script>
-@{
+@section StyleSheet{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
+}
+@section JavaScript{
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
 }
 <div class="row s-dash-container h-100">
-    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
@@ -46,7 +46,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 pd-0">
@@ -57,7 +57,7 @@
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <div class="tdash-box-body">
-                <div class="col-md-6 col-lg-6 col-sm-6 createAppFrm">
+                <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 createAppFrm">
                     <form class="app-form" action="../Dev/CreateApplication" method="post" data-toggle="validator" role="form" id="app-form">
                         <div class="form-group">
                             <label>Application Name</label>
@@ -70,20 +70,20 @@
                             <div class="help-block with-errors"></div>
                         </div>
                         <label>Application Type</label>
-                        <div class="col-md-12 pd-0 apptypes-cont">
-                            <div class="col-md-4 apps-wrapper">
+                        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 apptypes-cont">
+                            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-4 apps-wrapper">
                                 <div class="apps-wrapper-fchiled" id="app_web" type="1" tabindex="1">
                                     <img class="apptype" src="~/images/svg/grid-world.svg" />
                                     <div class="app-type-name">Web</div>
                                 </div>
                             </div>
-                            <div class="col-md-4 apps-wrapper">
+                            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-4 apps-wrapper">
                                 <div class="apps-wrapper-fchiled" id="app_mob" type="2" tabindex="1">
                                     <img class="apptype" src="~/images/svg/smartphone-call.svg" />
                                     <div class="app-type-name">Mobile</div>
                                 </div>
                             </div>
-                            <div class="col-md-4 apps-wrapper">
+                            <div class="col-md-4 col-lg-4 col-sm-4 col-xs-4 apps-wrapper">
                                 <div class="apps-wrapper-fchiled" id="app_bot" type="3" tabindex="1">
                                     <img class="apptype" src="~/images/svg/chat1.svg" />
                                     <div class="app-type-name">Bot</div>
@@ -113,8 +113,11 @@
         </div>
     </div>
 </div>
-<script>
-    $(document).ready(function () {
+@section JsCode{   
+    <script>
+        $(document).ready(function () {
+            ebcontext.header.setName('@ViewBag.Op');
+
         $("#AppIcon").iconpicker({
             placement: 'top',
             iconset: 'fontawesome',
@@ -142,4 +145,5 @@
         if ('@TempData["Msg"]')
             EbMessage("show", { Message: '@TempData["Msg"]', AutoHide: true });
     });
-</script>
+    </script>
+}

@@ -195,7 +195,7 @@
     margin-bottom: 15px;
 }
 .wiki_data_div img {
-    min-height : 300px;
+    max-height : 300px;
 }
     .wiki_data_div iframe {
         min-height: 315px;
@@ -263,13 +263,13 @@ div.searchDiv iframe{
     }
 
 
-.ButtonBox input {
+.ButtonBox input, .ButtonBox button {
     background: #fff;
-   border-right:solid 1px #9a9a9a;
-   border-top:solid 0px #9a9a9a;
-   border-left:solid 0px #9a9a9a;
-   border-bottom:solid 0px #9a9a9a;
-   width:100%;
+    border-right: solid 1px #9a9a9a;
+    border-top: solid 0px #9a9a9a;
+    border-left: solid 0px #9a9a9a;
+    border-bottom: solid 0px #9a9a9a;
+    width: 100%;
 }
 
     .ButtonBox input:hover {
@@ -447,7 +447,7 @@ iframe {
             min-width: 560px;
             margin-left: 25%;
         }
-        .wiki-preview .render table, th, td {
+        .wiki-preview .render table, .wiki-preview .render table th, .wiki-preview .render table td {
             border: 1px solid black;
             width: 50%;
         } 
@@ -712,12 +712,12 @@ iframe {
     margin-bottom: 10px;
 }
 
-.tblmodal input{
-    width: 35px;
-    height: 24px;
-    margin:8px;
+.modal-class select {
+    width: 70px;
+    height: 25px;
 }
-.tblmodal p{
-    line-height:10px;
-    margin:15px;
+.modal-class p {
+    width: 50px;
+    height: 25px;
+    margin: 4px;
 }

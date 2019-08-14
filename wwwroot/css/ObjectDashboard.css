@@ -662,3 +662,13 @@ input:checked + .proslider:before {
         background: #3487da;
         color: white;
     }
+
+/*medial queries for mobile*/
+@media (min-width: 20px) and (max-width: 450px) {
+   
+}
+
+/*medial queries for tablets*/
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
+   
+}

@@ -68,7 +68,7 @@
             }*/
 </style>
 <div class="row s-dash-container h-100">
-    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
@@ -82,7 +82,7 @@
                             <span class="material-icons t__sidebar_icon">attach_money</span>
                             <span class="t__sidebar_text">Billing</span>
                         </a>
-                    </li>*@
+                    </li>
                 <li class="list-group-item outer_li text-center">
                     <a class="t_a" href="/AppStore" target="_blank">
                         <span class="material-icons t__sidebar_icon">store</span>
@@ -103,17 +103,17 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
-            <div class="col-md-9 pd-0">
+            <div class="col-md-9 col-lg-9 col-xs-12 pd-0">
                 <h4 class="mr-t-0 mr-0">@ViewBag.Connections.SolutionInfo.SolutionName</h4>
                 <p class="small mr-t-10 mr-b-0">Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
                 <p class="small mr-0">
                     @ViewBag.Connections.SolutionInfo.Description
                 </p>
             </div>
-            <div class="col-md-3 pd-0 form-inline">
+            <div class="col-md-3 col-lg-3 col-xs-12 pd-0 form-inline s-dash-btnwraper">
                 <form method="post" action="@sso_dev.Replace("myaccount.", "" )" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
@@ -132,7 +132,7 @@
                 </form>
             </div>
         </div>
-        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+        <div class="col-md-12 col-lg-12 pd-0 s-dash-workplace-tabs">
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
                     <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">

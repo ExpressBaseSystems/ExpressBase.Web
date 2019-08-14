@@ -44,7 +44,7 @@
                       appId      :  '@ViewBag.FacebookSigninAppid',
                       cookie     : true,  
                       xfbml      : true,  
-                      version    : 'v4.0' 
+                      version: ('@ViewBag.Env' === 'Development' ? 'v3.3' : ('@ViewBag.Env' === 'Staging' ? 'v4.0' : 'v3.0'))
                       });
 
 	                    //check user session and refresh it

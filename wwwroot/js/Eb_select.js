@@ -332,7 +332,7 @@ const EbSelect = function (ctrl, options) {
         this.IsDatatableInit = true;
         //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         //this.EbObject.DataSourceRefId = this.dsid;
-        let o = new Object();
+        let o = {};
         o.containerId = this.name + "DDdiv";
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
@@ -634,9 +634,12 @@ const EbSelect = function (ctrl, options) {
         //    $(".search-block .input-group").css("height", maxHeight + "px");
         //    $('#' + this.name + 'Wraper [type=search]').val("");
         //}.bind(this), 10);
-
-        this.setColumnvals();
-        this.$inp.val(this.Vobj.valueMembers).trigger("change");
+        if (this.datatable !== null) {
+            this.setColumnvals();
+            this.$inp.val(this.Vobj.valueMembers).trigger("change");
+        }
+        else
+            this.$inp.val(this.Vobj.valueMembers);
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);

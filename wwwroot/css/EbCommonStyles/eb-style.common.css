@@ -157,7 +157,7 @@
     padding: 5px 8px;
     border-radius: 4px;
     font-size: 13px;
-    border: 1px solid transparent;
+    /*border: 1px solid transparent;*/
     text-decoration: none !important;
     cursor: pointer;
 }
@@ -374,6 +374,7 @@
 .uname-advanced-sec {
     margin-top: 10px;
     display: flex;
+    flex-direction:column;
 }
 /*tenant add solution*/
 .createAppFrm {

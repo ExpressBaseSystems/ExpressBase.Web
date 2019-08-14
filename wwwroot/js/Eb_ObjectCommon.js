@@ -34,6 +34,8 @@
         $('#profiler').off('click').on('click', this.onProfilerClick.bind(this));
         $('#del_obj').off('click').on('click', this.DeleteObject.bind(this));
         $('#singlesave').off('click').on('click', this.SingleSave.bind(this));
+        $('#offline').off('click').on('click', this.MakeOffline.bind(this));
+        $('#live').off('click').on('click', this.MakeLive.bind(this));
 
         if (this.Current_obj !== null)
             if (this.Current_obj.VersionNumber !== "")
@@ -661,9 +663,52 @@
                     }, function () {
                         this.Current_obj.Status = "Live";
                     }.bind(this));
+                $('#offline').show();
             }
         }.bind(this));
     }.bind(this);
 
+    this.MakeOffline = function (isoffline) {
+        $("#eb_common_loader").EbLoader("show");
+        $.post("../Eb_Object/ChangeStatus",
+            {
+                _refid: this.Current_obj.RefId,
+                _changelog: "Single Version Offline",
+                _status: "4"
+            }, function (result) {
+                if (result === true) {
+                    this.Current_obj.Status = "Offline";
+                    EbMessage("show", { Message: "The object is Offline now. It will not be available for users", Background: this.GreenColor, AutoHide: true});
+                }
+                else {
+                    EbMessage("show", { Message: "Something Went Wrong", Background: this.RedColor, AutoHide: true});
+                }
+
+                $("#eb_common_loader").EbLoader("hide");
+                $('#live').show();
+                $('#offline').hide();
+            }.bind(this));
+    };
+
+    this.MakeLive = function () {
+        $("#eb_common_loader").EbLoader("show");
+        $.post("../Eb_Object/ChangeStatus",
+            {
+                _refid: this.Current_obj.RefId,
+                _changelog: "Single Version Live",
+                _status: "3"
+            }, function (result) {
+                if (result === true) {
+                    this.Current_obj.Status = "Live";
+                    EbMessage("show", { Message: "The object is Live now. It will be available for users", Background: this.GreenColor, AutoHide: true });
+                }
+                else {
+                    EbMessage("show", { Message: "Something Went Wrong", Background: this.RedColor, AutoHide: true });
+                }
+                $("#eb_common_loader").EbLoader("hide");
+                $('#live').hide();
+                $('#offline').show();
+            }.bind(this));
+    };
     this.init();
 };

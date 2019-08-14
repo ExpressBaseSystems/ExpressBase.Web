@@ -1475,7 +1475,7 @@ var SolutionDashBoard = function (connections, sid) {
     this.VersioningSwitch = function (e) {
         postData = e.target.checked;
         if (postData == false) {
-            $("#VersioningSwitch").prop("checked", true);
+            $("#VersioningSwitch").bootstrapToggle('on');
             EbDialog("show",
                 {
                     Message: "The Versioning cannot is turend off !!!!",

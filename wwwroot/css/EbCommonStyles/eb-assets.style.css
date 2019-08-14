@@ -124,14 +124,14 @@
             padding: 0 15px;
         }
 /*Tenant header css*/
-.tenant_sidebar {
+/*.tenant_sidebar {
     width: 100px;
-}
-    .tenant_sidebar .t-container {
+}*/
+    /*.tenant_sidebar .t-container {
         padding-top: 0 !important;
-    }
+    }*/
 
-.t_a {
+/*.t_a {
     padding: 0 !important;
     display: flex;
     flex-direction: column;
@@ -141,17 +141,17 @@
 
     .t_a:hover, .t_a:focus {
         text-decoration: none;
-    }
+    }*/
 
-.t__sidebar_icon {
+/*.t__sidebar_icon {
     color: #fdfbfb;
     font-size: 30px;
-}
+}*/
 
-.t__sidebar_text {
+/*/*.t__sidebar_text {
     color: #d2d0d0;
     font-size: 15px;
-}
+}*/
 /*solution dash*/
 .eb_connection_wrapper {
     float: left;
@@ -820,12 +820,12 @@ pd-10 {
 }
 
 /*dashboras sidebar*/
-.eb-dashbord-sidebar {
+/*.eb-dashbord-sidebar {
     padding-left: 0;
     list-style: none;
-}
+}*/
 
-    .eb-dashbord-sidebar .outer_li {
+    /*.eb-dashbord-sidebar .outer_li {
         border-radius: 0 !important;
         border: none !important;
         font-weight: 400;
@@ -838,7 +838,7 @@ pd-10 {
     }
         .eb-dashbord-sidebar .outer_li:hover {
             background: #4987fb;
-        }
+        }*/
 /*dashboras sidebar end*/
 
 /*appdashboard style*/
@@ -1037,3 +1037,35 @@ pd-10 {
     filter: progid: DXImageTransform.Microsoft.gradient(startColorstr='#008fe2', endColorstr='#00b29c', GradientType=1);
 }
 /*export button end*/
+
+
+/*medial queries for mobile*/
+@media (min-width: 20px) and (max-width: 450px) {
+    .connection_wrap_outer {
+        width: 50%;
+    }
+
+    .inteConfContainer {
+        width: 48%;
+    }
+
+    .appcontainer {
+        width: 100%;
+    }
+    .raw-objectTypeWrpr .obj_linkthumb {
+        width:100%;
+    }
+    .appdash_obj_container .raw {
+      flex-direction:column;
+    }
+        .appdash_obj_container .raw button, .appdash_obj_container .raw .eb-search-box {
+            margin-right: 0 !important;
+            margin-bottom: 10px;
+        }
+}
+/*medial queries for tablets*/
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
+    .appcontainer {
+        width: 50%;
+    }
+}

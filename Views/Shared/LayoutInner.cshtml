@@ -110,7 +110,7 @@
 <body>
     <div class="html-root">
         @{
-            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+            if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
             {
                 <div id="eb-common-menu">
                     @{ Html.RenderPartial("EbQuickMenu");}
@@ -159,7 +159,7 @@
             </div>
         </div>
     </div>
-    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc" || ViewBag.wc == "tc")
     {
         <script>
             window.ebcontext.menu = new EbMenu({

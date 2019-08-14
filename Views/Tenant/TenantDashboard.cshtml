@@ -15,35 +15,35 @@
 }
 <div class="row s-dash-container h-100">
     @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group eb-dashbord-sidebar">
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/MySolutions">
-                        <span class="material-icons t__sidebar_icon">highlight</span>
-                        <span class="t__sidebar_text">My Solutions</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Store">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">App Store</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Wiki">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>*@
+            <div class="t-container">
+                <ul class="list-group eb-dashbord-sidebar">
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/MySolutions">
+                            <span class="material-icons t__sidebar_icon">highlight</span>
+                            <span class="t__sidebar_text">My Solutions</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Store">
+                            <span class="material-icons t__sidebar_icon">store</span>
+                            <span class="t__sidebar_text">App Store</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Wiki">
+                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                            <span class="t__sidebar_text">Wiki</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a">
+                            <span class="material-icons t__sidebar_icon">contact_support</span>
+                            <span class="t__sidebar_text">Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 col-lg-7 col-xs-12 col-sm-6 pd-0">
@@ -101,11 +101,17 @@
     <script>
         $(document).ready(function () {
             window.ebcontext.header.setName("My Solutions");
+            window.ebcontext.menu.Items.push({
+                    Link: "/Wiki",
+                    Icon: "fa-home",
+                    Name:"Wiki"
+            });
+
             TenantDashBoard();//init tenant assset js
 
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-            
+
             window.tour = new Tour(
                 {
                     WelcomeMessage: "<small>Welcome to </small> <br/> <b>EXPRESSbase</b>",
@@ -119,9 +125,9 @@
                             content: `A solution is nothing but a collection of applications, using the same
                                       Data-Store (Database). A solution may have multiple File-Stores
                                       (to store files/attachments), and multiple other connections/integrations.<br>
-                                      When you signed-up to the EXPRESSbase platform, this solution 
+                                      When you signed-up to the EXPRESSbase platform, this solution
                                       was automatically created for you. It is connected to a database
-                                      (PostGreSQL), setup exclusively for you in our data centre. 
+                                      (PostGreSQL), setup exclusively for you in our data centre.
                                       This solution also has a demo application built on the famous NorthWind test data.<br>
                                       If you wish, you may connect your own database to this solution in the Solution Settings page.`
                         },
@@ -140,7 +146,7 @@
                         {
                             element: '[tour-for="userhome"]',
                             title: "Go to the User Home",
-                            content: `Here is where your users (employees or contractors or whomever 
+                            content: `Here is where your users (employees or contractors or whomever
                                     you wish to grant access) will login to the solution to use the applications
                                     under it. The URL for those users would be <br/>
                                     <span style="color: #e2ef9d;text-decoration: underline;">

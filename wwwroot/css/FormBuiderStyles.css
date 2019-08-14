@@ -622,7 +622,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         border: dashed 1px #9699a5;
         border-radius: 0px;
     }
-    
+
 
 /*.eb-chatBox-dev div {
     margin-top: 1px;
@@ -1199,8 +1199,18 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 0.01em .45em 0.15em 0.45em !important;
 }
 
+.eb-radiobtn {
+    margin: -1px 0 0 0 !important;
+}
+
+.eb-radiospan {
+    margin: 0 0 0 6px;
+}
+
 .webform-cont .radio-wrap {
     padding: 5px;
+    display: flex;
+    align-items: center;
 }
 
 .webform-cont .dgtr .radio-wrap {

@@ -431,7 +431,7 @@ const EbSelect = function (ctrl, options) {
         let $tr = $(row.nodes());
         //let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        let vmValue = this.datatable.Api.row($tr.index()).data()[idx];
+        let vmValue = this.datatable.data[$tr.index()][idx];
         this.$curEventTarget = $tr;
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
@@ -474,7 +474,7 @@ const EbSelect = function (ctrl, options) {
     this.setColumnvals = function () {
         if (!this.$curEventTarget)
             return;
-        let vmValue = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
+        let vmValue = this.datatable.data[this.$curEventTarget.closest("tr").index()][getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
         if (event.target.nodeName === "SPAN")// if clicked tagclose
             vmValue = this.ClosedItem;
 
@@ -493,7 +493,7 @@ const EbSelect = function (ctrl, options) {
         $.each(this.ColNames, function (i, name) {
             let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
             let type = obj.Type;
-            let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[obj.data];
+            let cellData = this.datatable.data[this.$curEventTarget.closest("tr").index()][obj.data];
             //if (this.maxLimit === 1)
             //    this.columnVals[name] = cellData;
 
@@ -526,7 +526,7 @@ const EbSelect = function (ctrl, options) {
         this.$curEventTarget = $(e.target);
         //let idx = this.datatable.ebSettings.Columns.$values[getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        let vmValue = this.datatable.Api.row($(e.target).closest("tr")).data()[idx];
+        let vmValue = this.datatable.data[$(e.target).closest("tr").index()][idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             this.SelectRow(idx, vmValue);
         }

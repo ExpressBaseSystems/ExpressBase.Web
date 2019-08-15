@@ -6,20 +6,8 @@
     this.objTypes = null;
     this.isSolOwner = false;
     this.attempt = 0;
-    this.Items = option.MenuItems || [];
-    this.ItemsInternal = [];
-
-    this.defineCustom = function () {
-        Object.defineProperty(this.Items, "push", {
-            enumerable: false,
-            configurable: false,
-            writable: false,
-            value: this.listenPush.bind(this)
-        });
-    }
 
     this.start = function () {
-        this.defineCustom();
 
         $(document).bind('keypress', function (event) {
             if (event.which === 10 && event.ctrlKey)
@@ -27,14 +15,21 @@
         }.bind(this));
         $('#quik_menu').off("click").on("click", this.showMenuOverlay.bind(this));
         $("#ebm-close").off("click").on("click", this.closeMenuOverlay.bind(this));
-        if (this.login == "dc") {
+
+        if (this.login === "dc") {
             $("#ebm-new").off("click").on("click", this.toggleNewW.bind(this));
         }
-        $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
-        $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
-        $("body").on("click", ".EbQuickMoverlaySideWRpr .backbtn", this.closeSingle.bind(this));
-        $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
-        $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+        
+        if (this.login !== "tc") {
+            $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
+            $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
+            $("body").on("click", ".EbQuickMoverlaySideWRpr .backbtn", this.closeSingle.bind(this));
+
+            if (this.login === "uc") {
+                $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
+                $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+            }
+        }
         //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
         $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
     };
@@ -68,9 +63,6 @@
                 if (this.attempt <= 0 && this.login == "dc") {
                     this.LoadApps();
                     this.attempt = 1;
-                }
-                else if (this.login == "tc") {
-                    this.loadTenantMenu();
                 }
                 else {
                     this.LoadApps();
@@ -445,27 +437,6 @@
         store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");
         store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login);
     };
-
-    this.loadTenantMenu = function () {
-        $("#tc-menubody").empty();
-        for (let i = 0; i < this.ItemsInternal.length; i++) {
-            $("#tc-menubody").append(`
-                <li klink='true'>
-                    <a href="${this.ItemsInternal[i].Link}" class="list-group-item inner_li Obj_link for_brd">
-                        <div class="apibox"><i class="fa ${this.ItemsInternal[i].Icon}"></i></div> ${this.ItemsInternal[i].Name}
-                    </a>
-                </li>
-            `);
-        }
-    };
-
-    //listner for array change
-    this.listenPush = function (...arg) {
-        for (var i = 0; i < arg.length; i++) {
-            this.ItemsInternal.push(arg[i]);
-        }
-        this.loadTenantMenu();
-    }
 
     this.start();
 }

@@ -114,7 +114,7 @@
                     let valExpFnStr = atob(depCtrl.ValueExpr.Code);
                     if (valExpFnStr) {
                         if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)()
+                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
                             depCtrl.setValue(val);
                         }
                         else {

@@ -621,7 +621,34 @@
             sum += val || 0;
         }.bind(this));
         this.ctrl[colname + "_sum"] = sum;
+        this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
         return this.appendDecZeros(sum);
+    };
+
+    this.updateDepCtrl = function (Col) {       
+        $.each(Col.DependedValExp.$values, function (i, depCtrl_s) {
+            try {
+                let depCtrl = this.ctrl.formObject.__getCtrlByPath(depCtrl_s);
+                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                if (valExpFnStr) {
+                    if (!depCtrl.IsDGCtrl) {
+                        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.ctrl.formObject, this.ctrl.__userObject)();
+                        depCtrl.setValue(val);
+                    }
+                    //else {
+                    //    $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                    //        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.ctrl.formObject, this.FO.userObject)();
+                    //        row[depCtrl.Name].setValue(val);
+                    //    }.bind(this));
+                    //}
+                }
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'Value Expression' of : " + Col.Name + " - " + e.message);
+            }
+        }.bind(this));
     };
 
     this.removeTr = function ($tr) {

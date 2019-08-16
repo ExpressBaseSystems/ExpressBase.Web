@@ -14,7 +14,7 @@
                 {
                     mrl = "auto";
                     <button class="btn c_btn" title="New Object" id="ebm-new" style="margin-left:@mrl;">
-                    <i class="material-icons">add</i>
+                        <i class="material-icons">add</i>
                     </button>
                     mrl = "0px";
                 }
@@ -23,75 +23,109 @@
                     mrl = "auto";
                 }
             }
-            <button class="btn c_btn" title="Refresh Menu" id="menu_refresh" style="margin-left:@mrl;">
-                <i class="material-icons">refresh</i>
-            </button>
+
+            @if (ViewBag.wc != "tc")
+            {
+                <button class="btn c_btn" title="Refresh Menu" id="menu_refresh" style="margin-left:@mrl;">
+                    <i class="material-icons">refresh</i>
+                </button>
+            }
             <button class="btn c_btn closebtn" title="Close" id="ebm-close">
                 <i class="material-icons">close</i>
             </button>
             <div class="quick_menu_load" id="quick_menu_load"></div>
         </div>
         <div class="InnerBlock" id="ebm-wrprbody">
-            <div class="AppContainer" slider='true'>
-                <div class="body" id="appList">
-
-                </div>
-            </div>
-            <div class="ObjectTypeContainer" id="ebm-objtcontainer" slider='true'>
-                <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
-                <div class="ObjectTypeContainer-inner objtypes">
-
-                </div>
-            </div>
-            <div class="objListContainer" id="ebm-objectcontainer" slider='true'>
-                <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
-                <div class="objListContainer-inner ebm-objlist">
-
-                </div>
-            </div>
             @{
-                if (ViewBag.wc == "dc")
+                if (ViewBag.wc == "tc")
                 {
-                    <div class="newObjectContainer" id="ebm-newobject" slider='true'>
-                        <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
-                        <div class="newObjectContainer-inner">
-                            @foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
-                            {
-                                <div class="ebm_newob" klink='true'>
-                                    <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=@objectType.IntCode">
-                                        <div class="ebm-newob-icon"><i class="fa @objectType.Icon"></i></div>
-                                        <div class="ebm-newob-text">@objectType.Name</div>
-                                    </a>
-                                </div>
-                            }
+                    <div class="TenantMenu-wraper" slider='true'>
+                        <div class="body">
+                            <div class="side-menu-container">
+                                <ul class="outer sub-menuObj" id="tc-menubody">
+                                    <li klink='true'>
+                                        <a href="/MySolutions" class="list-group-item inner_li Obj_link for_brd">
+                                            <div class="apibox"><i class="fa fa-th-list"></i></div> My Solutions
+                                        </a>
+                                    </li>
+                                    <li klink='true'>
+                                        <a href="/Wiki" target="_blank" class="list-group-item inner_li Obj_link for_brd">
+                                            <div class="apibox"><i class="fa fa-wikipedia-w"></i></div> Wiki
+                                        </a>
+                                    </li>
+                                    <li klink='true'>
+                                        <a href="/Store" target="_blank" class="list-group-item inner_li Obj_link for_brd">
+                                            <div class="apibox"><i class="fa fa fa-archive"></i></div> App store
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 }
-            }
+                else
+                {
+                    <div class="AppContainer" slider='true'>
+                        <div class="body" id="appList">
 
-            @if (ViewBag.wc == "uc")
-            {
-                <div class="securityContainer" id="ebm-security" slider='true'>
-                    <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
-                    <div class="securityContainer-inner security">
-                        <ul class="sub-menuObj">
-                            <li klink='true'>
-                                <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Users">
-                                    <div class="apibox"><i class="fa fa-user"></i></div> Users
-                                </a>
-                            </li>
-                            <li klink='true'>
-                                <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=AnonymousUsers"><div class="apibox"><i class="fa fa-question"></i></div> Anonymous Users</a>
-                            </li>
-                            <li klink='true'>
-                                <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=UserGroups"><div class="apibox"><i class="fa fa-users"></i></div> User Groups</a>
-                            </li>
-                            <li klink='true'>
-                                <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Roles"><div class="apibox"><i class="fa fa-user-circle-o"></i></div> Roles</a>
-                            </li>
-                        </ul>
+                        </div>
                     </div>
-                </div>
+                    <div class="ObjectTypeContainer" id="ebm-objtcontainer" slider='true'>
+                        <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
+                        <div class="ObjectTypeContainer-inner objtypes">
+
+                        </div>
+                    </div>
+                    <div class="objListContainer" id="ebm-objectcontainer" slider='true'>
+                        <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
+                        <div class="objListContainer-inner ebm-objlist">
+
+                        </div>
+                    </div>
+
+                    @if (ViewBag.wc == "dc")
+                    {
+                        <div class="newObjectContainer" id="ebm-newobject" slider='true'>
+                            <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
+                            <div class="newObjectContainer-inner">
+                                @foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+                                {
+                                    <div class="ebm_newob" klink='true'>
+                                        <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=@objectType.IntCode">
+                                            <div class="ebm-newob-icon"><i class="fa @objectType.Icon"></i></div>
+                                            <div class="ebm-newob-text">@objectType.Name</div>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                    @if (ViewBag.wc == "uc")
+                    {
+                        <div class="securityContainer" id="ebm-security" slider='true'>
+                            <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
+                            <div class="securityContainer-inner security">
+                                <ul class="sub-menuObj">
+                                    <li klink='true'>
+                                        <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Users">
+                                            <div class="apibox"><i class="fa fa-user"></i></div> Users
+                                        </a>
+                                    </li>
+                                    <li klink='true'>
+                                        <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=AnonymousUsers"><div class="apibox"><i class="fa fa-question"></i></div> Anonymous Users</a>
+                                    </li>
+                                    <li klink='true'>
+                                        <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=UserGroups"><div class="apibox"><i class="fa fa-users"></i></div> User Groups</a>
+                                    </li>
+                                    <li klink='true'>
+                                        <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Roles"><div class="apibox"><i class="fa fa-user-circle-o"></i></div> Roles</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+                }
             }
         </div>
     </div>

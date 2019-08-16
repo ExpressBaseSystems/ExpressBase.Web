@@ -211,7 +211,7 @@
     }
 
 .Eb-ctrlContainer [type="RadioGroup"] {
-    padding: 5px;
+    /*padding: 5px;*/
 }
 
 .Eb-ctrlContainer .input-group-addon {
@@ -845,6 +845,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
+[isrendermode="false"] .Eb-ctrlContainer input, [isrendermode="false"] .Eb-ctrlContainer .radio-wrap {
+    pointer-events: none;
+}
+
+
 .dropdown-toggle.clearfix {
     width: 100%;
 }
@@ -1199,11 +1204,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 0.01em .45em 0.15em 0.45em !important;
 }
 
-.eb-radiobtn {
+.eb-radiobtn, .eb-chckbx {
     margin: -1px 0 0 0 !important;
 }
 
-.eb-radiospan {
+.eb-radiospan, .eb-chckbxspan {
     margin: 0 0 0 6px;
 }
 

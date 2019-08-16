@@ -878,7 +878,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-    /*vertical-align: initial;*/
+    vertical-align: initial;
 }
 
 .moveBtn {

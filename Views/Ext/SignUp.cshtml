@@ -31,6 +31,32 @@
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            xfbml: true,
+            version: 'v4.0'
+        });
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12"
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- Your customer chat code -->
+<div class="fb-customerchat"
+     attribution=setup_tool
+     page_id="1616632595309068">
+</div>
+
+
+
 <script>
                      //load the JavaScript SDK
                       (function(d, s, id) {
@@ -308,7 +334,6 @@
 
 
 
-
 <script>
     if ('@(TempData["socloginerr"])') {
           EbMessage("show", { Message: '@(TempData["socloginerr"])', Background: "#d83535" });
@@ -340,7 +365,7 @@
     }
     function googlesigninfn(profile) {
          $("#loaderdiv").EbLoader("show");
-        if (profile.getEmail() != null &  profile.getEmail() != undefined &   profile.getEmail() != "undefined" )    
+        if (profile.getEmail() != null &  profile.getEmail() != undefined &   profile.getEmail() != "undefined" )
         {
              console.log('ID: ' + profile.getId());// Do not send to your backend! Use an ID token instead.
                 console.log('Full Name: ' + profile.getName());
@@ -386,7 +411,7 @@
 
     }
 
-   
+
 </script>
 
 <script>

@@ -867,6 +867,29 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
+        public string AddDropBox()
+        {
+            AddDropBoxResponse res = new AddDropBoxResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbDropBoxConfig con = new EbDropBoxConfig
+                {
+                    AccessToken = req["AccessToken"],
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    Type = EbIntegrations.DropBox
+                };
+                res = this.ServiceClient.Post<AddDropBoxResponse>(new AddDropBoxRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
         public string AddSendGrid()
         {
             AddSendGridResponse res = new AddSendGridResponse();

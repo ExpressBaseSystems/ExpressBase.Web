@@ -79,6 +79,9 @@ class Tour {
             p = "right:0 !important;transform: scaleX(-1);";
         }
         let t = el.offset().top + el.innerHeight() + 30;
+        if ((t + el.innerHeight() + 25) > window.innerHeight) {
+            t = t - el.innerHeight() +20;
+        }
         return { l: l, t: t, pointer: p };
     }
 

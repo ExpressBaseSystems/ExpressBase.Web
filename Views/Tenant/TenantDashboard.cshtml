@@ -14,42 +14,42 @@
     <script src="~/js/EbDashBoards/TenantDashBoard.js" type="text/javascript" asp-append-version=@bApnd></script>
 }
 <div class="row s-dash-container h-100">
-    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group eb-dashbord-sidebar">
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/MySolutions">
-                        <span class="material-icons t__sidebar_icon">highlight</span>
-                        <span class="t__sidebar_text">My Solutions</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Store">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">App Store</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Wiki">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
+            <div class="t-container">
+                <ul class="list-group eb-dashbord-sidebar">
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/MySolutions">
+                            <span class="material-icons t__sidebar_icon">highlight</span>
+                            <span class="t__sidebar_text">My Solutions</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Store">
+                            <span class="material-icons t__sidebar_icon">store</span>
+                            <span class="t__sidebar_text">App Store</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Wiki">
+                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                            <span class="t__sidebar_text">Wiki</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a">
+                            <span class="material-icons t__sidebar_icon">contact_support</span>
+                            <span class="t__sidebar_text">Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
-            <div class="col-md-7 pd-0">
+            <div class="col-md-7 col-lg-7 col-xs-12 col-sm-6 pd-0">
                 <h4 class="mr-t-0 mr-b-0">Solutions <span class="apps_count">(@sarr.Count)</span></h4>
             </div>
-            <div class="col-md-5 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+            <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 pd-0 s-dash-btnwraper">
                 <div class="input-group eb-search-box" style="margin-left: 15px;">
                     <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     <input type="text" id="solSearch" class="form-control" placeholder="Search solution">
@@ -57,7 +57,7 @@
                 <button class="ebbtn eb_btnblue eb_btn-sm new_sol_lk" id="eb-new-solution">New Solution</button>
             </div>
         </div>
-        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
             <div class="tdash-box-body">
                 @{
                     foreach (EbSolutionsWrapper s in sarr)
@@ -105,7 +105,7 @@
 
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-            
+
             window.tour = new Tour(
                 {
                     WelcomeMessage: "<small>Welcome to </small> <br/> <b>EXPRESSbase</b>",
@@ -113,6 +113,18 @@
                                   on the cloud for Businesses <br/> & Developers to build, run & manage
                                   business <br/> process apps 10x efficiently.`,
                     Stack: [
+                        {
+                            element: '.solution_container',
+                            title: "This is your FIRST Solution",
+                            content: `A solution is nothing but a collection of applications, using the same
+                                      Data-Store (Database). A solution may have multiple File-Stores
+                                      (to store files/attachments), and multiple other connections/integrations.<br>
+                                      When you signed-up to the EXPRESSbase platform, this solution
+                                      was automatically created for you. It is connected to a database
+                                      (PostGreSQL), setup exclusively for you in our data centre.
+                                      This solution also has a demo application built on the famous NorthWind test data.<br>
+                                      If you wish, you may connect your own database to this solution in the Solution Settings page.`
+                        },
                         {
                             element: '[tour-for="devhome"]',
                             title: "Go to the Developer Home",
@@ -128,7 +140,7 @@
                         {
                             element: '[tour-for="userhome"]',
                             title: "Go to the User Home",
-                            content: `Here is where your users (employees or contractors or whomever 
+                            content: `Here is where your users (employees or contractors or whomever
                                     you wish to grant access) will login to the solution to use the applications
                                     under it. The URL for those users would be <br/>
                                     <span style="color: #e2ef9d;text-decoration: underline;">

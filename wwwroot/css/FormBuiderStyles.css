@@ -665,6 +665,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .toolbox-cont {
     height: 100%;
+    width: 250px;
 }
 
 .web-form-buider-cont .toolbox-cont, .filter-form-buider-cont .toolbox-cont {

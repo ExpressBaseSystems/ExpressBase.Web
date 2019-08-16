@@ -73,7 +73,7 @@ namespace ExpressBase.Web.Controllers
 		{
 			//ViewBag.FacebookSigninAppid = 149537802493867;
 			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
-			ViewBag.GoogleSigninAppid= "122037037653-de0i1emsfg17jun53qa8s03cnu808tv6.apps.googleusercontent.com";
+			ViewBag.GoogleSigninAppid= Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GOOGLE_CLIENT_ID);
 			return View();
 		}
 
@@ -342,7 +342,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult TenantSignIn()
         {
 			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
-			ViewBag.GoogleSigninAppid = "122037037653-de0i1emsfg17jun53qa8s03cnu808tv6.apps.googleusercontent.com";
+			ViewBag.GoogleSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GOOGLE_CLIENT_ID);
 			var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 

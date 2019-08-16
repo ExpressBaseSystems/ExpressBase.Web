@@ -231,6 +231,7 @@
     };
 
     this.searchFAllObjects = function (e) {
+        var _tempsearch = [];
         $(".active_link").removeClass("active_link");
         let min = (this.login === "uc") ? 1 : 3;
         {
@@ -248,8 +249,11 @@
                 $.each(Types.Types, function (i, _obj) {
                     _obj.Objects.forEach(function (obItem) {
                         if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
-                            this.appendObjByCategory(obItem, false);
-                            f = true;
+                            if (_tempsearch.indexOf(obItem.Id) < 0) {
+                                this.appendObjByCategory(obItem, false);
+                                f = true;
+                                _tempsearch.push(obItem.Id);
+                            }
                         }
                     }.bind(this));
                 }.bind(this));

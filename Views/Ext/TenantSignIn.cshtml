@@ -23,6 +23,7 @@
     }
 }
 
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 
 <script>
                      //load the JavaScript SDK
@@ -196,6 +197,9 @@
                                     <a href="@sociallink/auth/github" class="btn btn-lg">
                                         <i class="fa fa-github text-muted"></i>
                                     </a>
+                                    <a id="google-button" class="btn btn-lg" onClick="GoogleLogin()">
+                                        <i class="fa fa-google text-muted"></i>
+                                    </a>
                                     @*<a href="@sociallink/auth/twitter" class="btn btn-lg">
                                               <i class="fa fa-twitter text-muted"></i>
                                           </a>
@@ -217,6 +221,74 @@
 <script>
     if ('@(TempData["scl_signin_msg"])') {
           EbMessage("show", { Message: '@(TempData["scl_signin_msg"])', Background: "#d83535" });
+    }
+
+    function GoogleLogin() {
+        gapi.load('auth2', function() {
+          auth2 = gapi.auth2.init({
+            client_id: '@ViewBag.GoogleSigninAppid',
+          });
+
+            if (auth2.isSignedIn.get()) {
+                var profile = auth2.currentUser.get().getBasicProfile();
+                googlesigninfn(profile);
+            }
+            else {
+                // Sign the user in, and then retrieve their ID.
+                auth2.signIn().then(function () {
+                    var profile = auth2.currentUser.get().getBasicProfile();
+                     googlesigninfn(profile);
+                    //var id_token = googleUser.getAuthResponse().id_token;
+                    //  console.log("ID Token: " + id_token);
+
+                });
+            }
+        });
+    }
+    function googlesigninfn(profile) {
+        $("#loaderdiv").EbLoader("show");
+        if (profile.getEmail() != null & profile.getEmail() != undefined & profile.getEmail() != "undefined") {
+            console.log('ID: ' + profile.getId());// Do not send to your backend! Use an ID token instead.
+            console.log('Full Name: ' + profile.getName());
+            console.log('Name: ' + profile.getName());
+            console.log('Given Name: ' + profile.getGivenName());
+            console.log('Family Name: ' + profile.getFamilyName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+            let url = "../Ext/GoogleLogin?gogldtls=";
+            var _form1 = document.createElement("form");
+            _form1.setAttribute("method", "post");
+            _form1.setAttribute("action", url);
+            _form1.setAttribute("target", "_top");
+
+
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "goglid";
+            input.value = profile.getId();
+            _form1.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "email";
+            input.value = profile.getEmail();
+            _form1.appendChild(input);
+
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "name";
+            input.value = profile.getName();
+            _form1.appendChild(input);
+
+            document.body.appendChild(_form1);
+            _form1.submit();
+            document.body.removeChild(_form1);
+        }
+        else {
+            EbMessage("show", { Message: 'Error while getting permission from Google', Background: "#d83535" });
+            $("#loaderdiv").EbLoader("hide");
+        }
     }
 </script>
 @section JsCode{

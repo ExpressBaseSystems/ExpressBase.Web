@@ -109,11 +109,6 @@ var animateObj = function (duration) {
     };
 }
 
-var informaion = function (nam, val) {
-    this.name = nam;
-    this.value = val;
-}
-
 var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, cellData, PGobj, TenantId, UserId) {
     this.propGrid = PGobj || null;
     this.EbObject = null;

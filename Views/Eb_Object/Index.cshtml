@@ -159,6 +159,11 @@
                         @await Component.InvokeAsync("ApiBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                     }
+                    else if (ViewBag.ObjType == (int)EbObjectTypes.DashBoard)
+                    {
+                        @await Component.InvokeAsync("DashBoardBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                    }
                 }
             </div>
         @if (ViewBag.ObjType == (int)EbObjectTypes.Report)

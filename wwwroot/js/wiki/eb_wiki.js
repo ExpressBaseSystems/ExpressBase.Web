@@ -16,6 +16,7 @@
     let id;
 
     this.appendVal = function (e) {
+        var cursorPos = $("#text").prop('selectionStart');
         document.getElementById('text');
         let SelectedString = window.getSelection().toString();
        var ele = document.getElementById('text');
@@ -30,44 +31,44 @@
             let insertVal = `<${id} src=" "> </${id}>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<${id} src=''> ${SelectedString} </${id}>`
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `a`) {
             let insertVal = `<${id} src="link"> </${id}>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<${id} src=''>   ${SelectedString}   </${id}>`
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `right`) {
             let insertVal = `<p style="text-align: right;"> </p>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<p style="text-align: left;"> ${SelectedString} </p>`
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `left`) {
             let insertVal = `<p style="text-align: left;"> </p>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<p style="text-align: left;">   ${SelectedString}   </p>`
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
        
@@ -75,39 +76,38 @@
             let insertVal = `<pre class="prettyprint"> </pre>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<pre class="prettyprint"> ${SelectedString} </pre>`
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `br`) {
             let insertVal = `<br/>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<br/>`
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else {
             let insertVal = `<${id}> </${id}>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<${id}> ${SelectedString} </${id}>`
-                this.insertAtCaret(insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
-        }
-    }
+        }    }
 
-    this.insertAtCaret = function (text){
-        var cursorPos = $("#text").prop('selectionStart');
+    this.insertAtCaret = function (text ,cur){
+        var cursorPos = cur;
         var v = $("#text").val();
         var textBefore = v.substring(0, cursorPos);
         var textAfter = v.substring(cursorPos, v.length);
@@ -130,10 +130,13 @@
         $("#text").prop('selectionEnd');
         var closestPosition = this.closest(cursorPosition, indices);
         $("#text").prop('selectionEnd', closestPosition);
+        var cursorPos = $("#text").prop('selectionStart');
+ 
     }
 
     this.closest = function (num, arr) {
         var curr = arr[0];
+
         var diff = Math.abs(num - curr);
         for (var val = 0; val < arr.length; val++) {
             var newdiff = Math.abs(num - arr[val]);
@@ -915,6 +918,7 @@
     }
 
     this.tbl_size_select = function (e) {
+        var cursorPos = $("#text").prop('selectionStart');
         let rows = $("#tbl-row").val();
         let cols = $("#tbl-col").val();
         let $tbl = $(`<table class="table table-bordered">&#13;&#10; </table> &#13;&#10;`);
@@ -935,11 +939,12 @@
             
         }
         let insertVal = $tbl.outerHTML();
-        this.insertAtCaret(insertVal);
+        this.insertAtCaret(insertVal, cursorPos);
 
     }
 
     this.ul_type_select = function () {
+        var cursorPos = $("#text").prop('selectionStart');
         let ul_row = $("#ul-row").val();
         let type = $("#ul-style-sel option:selected").text();
         let $ul = $(`<ul style="list-style-type:${type};"> &#13;&#10;</ul>`);
@@ -947,10 +952,11 @@
             $ul.append("<li> </li> &#13;&#10;");
         }
         let insertVal = $ul.outerHTML();
-        this.insertAtCaret(insertVal);
+        this.insertAtCaret(insertVal, cursorPos);
     }
 
     this.ol_type_select = function () {
+        var cursorPos = $("#text").prop('selectionStart');
         let ul_row = $("#ol-row").val();
         let type = $("#ol-style-sel option:selected").text();
         let $ul = $(`<ol ${type}> &#13;&#10;</ol>`);
@@ -958,7 +964,7 @@
             $ul.append("<li> </li> &#13;&#10;");
         }
         let insertVal = $ul.outerHTML();
-        this.insertAtCaret(insertVal);
+        this.insertAtCaret(insertVal, cursorPos);
     }
 
 

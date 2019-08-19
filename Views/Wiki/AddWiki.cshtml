@@ -129,9 +129,25 @@
 
                 <div class="row" style="padding: 0px 10px 10px 10px">
                     <div class="col-sm-12" id="edit_field">
-                        <textarea rows="23" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea>
-                    </div>
+                        <div class="backdrop">
+                            <div class="highlights"></div>
+                        </div>
 
+                    </div>
+                    <div class="fixed">  <textarea rows="23" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea></div>
+                    <style>
+                        div.fixed {
+                            border:0px solid;
+                            position: fixed;
+                            bottom: 13px;
+                            right: 24px;
+                            width: 1312px;
+                            height: 507px;
+                            border: 1px solid #e3e4e2;
+                            background: transparent;
+                        }
+                    </style>
+                   
                 </div>
                 <div style="display: flex;justify-content: center;">
 
@@ -161,122 +177,129 @@
 </div>
 
 <div class="modal-class">
-<!-- Modal -->
-<div class="modal fade tblmodal" id="myModal" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h6 class="modal-title">select rows and colums</h6>
-            </div>
-            <div class="modal-body">
-                <div style="display:flex">
-                    <p>Rows</p>
-                    <select id="tbl-row">
-                        <option selected> 0 </option>
-                        @{
-                            for (int i = 1; i < 20; i++)
-                            {
-                                <option> @i </option>
-                            }
-                        }
-                    </select>
-
-                    <p>X</p><p>Cols</p><select id="tbl-col">
-                        <option selected> 0 </option>
-                        @{
-                            for (int i = 1; i < 20; i++)
-                            {
-                                <option> @i </option>
-                            }
-                        }
-                    </select>
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="myModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and colums</h6>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="tbl-size-select">Add Table</button>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p>
+                        <select id="tbl-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+
+                        <p>X</p><p>Cols</p><select id="tbl-col">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="tbl-size-select">Add Table</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 
 
-<!-- Modal -->
-<div class="modal fade tblmodal" id="ol-modal" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h6 class="modal-title">select rows and style</h6>
-            </div>
-            <div class="modal-body">
-                <div style="display:flex">
-                    <p>Rows</p><select id="ol-row">
-                        <option selected> 0 </option>
-                        @{
-                            for (int i = 1; i < 20; i++)
-                            {
-                                <option> @i </option>
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="ol-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and style</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p><select id="ol-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
                             }
-                        }
-                    </select>
+                        </select>
+                    </div>
+                    <div style="display:flex">
+                        <p>Style</p><select id="ol-style-sel">
+                            <option selected>type="1"</option>
+                            <option>type="A"</option>
+                            <option>type="a"</option>
+                            <option>type="I"</option>
+                            <option>type="i"</option>
+                        </select>
+                    </div>
                 </div>
-                <div style="display:flex">
-                    <p>Style</p><select id="ol-style-sel">
-                        <option selected>type="1"</option>
-                        <option>type="A"</option>
-                        <option>type="a"</option>
-                        <option>type="I"</option>
-                        <option>type="i"</option>
-                    </select>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ol-type-select">Add O-List</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="ol-type-select">Add O-List</button>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal -->
-<div class="modal fade tblmodal" id="ul-modal" role="dialog">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h6 class="modal-title">select rows and style</h6>
-            </div>
-            <div class="modal-body">
-                <div style="display:flex">
-                    <p>Rows</p><select id="ul-row">
-                        <option selected> 0 </option>
-                        @{
-                            for (int i = 1; i < 20; i++)
-                            {
-                                <option> @i </option>
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="ul-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and style</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p><select id="ul-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
                             }
-                        }
-                    </select>
+                        </select>
+                    </div>
+                    <div style="display:flex">
+                        <p>Style</p><select id="ul-style-sel">
+                            <option>disc</option>
+                            <option>square</option>
+                            <option>circle</option>
+                            <option>none</option>
+                        </select>
+                    </div>
                 </div>
-                <div style="display:flex">
-                    <p>Style</p><select id="ul-style-sel">
-                        <option>disc</option>
-                        <option>square</option>
-                        <option>circle</option>
-                        <option>none</option>
-                    </select>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ul-type-select">Add UO-list</button>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" id="ul-type-select">Add UO-list</button>
             </div>
         </div>
     </div>
-</div>
 
 
 </div>
+
+
+
+
+
+
+
 
 <script>
     let abc = $('#text').val();
@@ -332,3 +355,78 @@
 
 </script>
 
+<script type="text/javascript">
+
+
+    var $container = $('.container');
+    var $backdrop = $('.backdrop');
+    var $highlights = $('.highlights');
+    var $textarea = $('#text');
+    var $toggle = $('button');
+
+    // yeah, browser sniffing sucks, but there are browser-specific quirks to handle that are not a matter of feature detection
+    var ua = window.navigator.userAgent.toLowerCase();
+    var isIE = !!ua.match(/msie|trident\/7|edge/);
+    var isWinPhone = ua.indexOf('windows phone') !== -1;
+    var isIOS = !isWinPhone && !!ua.match(/ipad|iphone|ipod/);
+
+    function applyHighlights(text) {
+        text = text
+            .replace(/\n$/g, '\n\n')
+            .replace(/&lt[^&gt]*&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*[a-z].*?&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*\/\s*\w\s*.*?&gt|&lt\s*br\s*&gt/g, '<mark>$&</mark>');
+           
+            
+
+        if (isIE) {
+            // IE wraps whitespace differently in a div vs textarea, this fixes it
+            text = text.replace(/ /g, ' <wbr>');
+        }
+
+        return text;
+    }
+
+    function handleInput() {
+        var text = $textarea.val();
+        var text = text.replace(/\>/g, '&gt');
+        var text = text.replace(/\</g, '&lt');
+        var highlightedText = applyHighlights(text);
+        $highlights.html(highlightedText);
+    }
+
+    function handleScroll() {
+        var scrollTop = $textarea.scrollTop();
+        $backdrop.scrollTop(scrollTop);
+
+        var scrollLeft = $textarea.scrollLeft();
+        $backdrop.scrollLeft(scrollLeft);
+    }
+
+    function fixIOS() {
+        // iOS adds 3px of (unremovable) padding to the left and right of a textarea, so adjust highlights div to match
+        $highlights.css({
+            'padding-left': '+=3px',
+            'padding-right': '+=3px'
+        });
+    }
+
+    function bindEvents() {
+        $textarea.on({
+            'input': handleInput,
+            'scroll': handleScroll
+        });
+
+        $toggle.on('click', function () {
+            $container.toggleClass('perspective');
+        });
+    }
+
+    if (isIOS) {
+        fixIOS();
+    }
+
+    bindEvents();
+    handleInput();
+
+</script>

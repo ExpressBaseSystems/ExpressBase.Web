@@ -447,10 +447,7 @@ iframe {
             min-width: 560px;
             margin-left: 25%;
         }
-        .wiki-preview .render table, .wiki-preview .render table th, .wiki-preview .render table td {
-            border: 1px solid black;
-            width: 50%;
-        } 
+       
 
 
     .manage-wiki-nav {
@@ -668,10 +665,55 @@ iframe {
 }
 
 .readtext {
+    caret-color: black;
+    color: transparent;
     outline: none;
     border: solid 1px #9a9a9a;
     border-radius: 0px 0px 4px 4px;
+    background: transparent;
 }
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.backdrop {
+    width: 1307px;
+    height: 507px;
+}
+
+.highlights, textarea {
+    padding: 10px;
+    font: 18px/28px 'Open Sans', sans-serif;
+    letter-spacing: 1px;
+}
+
+
+.backdrop {
+    position: absolute;
+    border: 2px solid #685972;
+    background-color: #fff;
+    overflow: auto;
+    pointer-events: none;
+    border: 0px solid;
+}
+
+.highlights {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 0px solid;
+}
+
+mark {
+    padding: 0px;
+    border-radius: 3px;
+    color:red;
+    background:#fff;
+}
+
+
 .ButtonBox {
     border-top: solid 1px #9a9a9a;
     border-left: solid 1px #9a9a9a;
@@ -721,3 +763,5 @@ iframe {
     height: 25px;
     margin: 4px;
 }
+
+

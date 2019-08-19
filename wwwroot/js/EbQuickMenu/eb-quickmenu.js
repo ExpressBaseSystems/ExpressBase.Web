@@ -8,20 +8,28 @@
     this.attempt = 0;
 
     this.start = function () {
+
         $(document).bind('keypress', function (event) {
             if (event.which === 10 && event.ctrlKey)
                 this.showMenuOverlay();
         }.bind(this));
         $('#quik_menu').off("click").on("click", this.showMenuOverlay.bind(this));
         $("#ebm-close").off("click").on("click", this.closeMenuOverlay.bind(this));
-        if (this.login == "dc") {
+
+        if (this.login === "dc") {
             $("#ebm-new").off("click").on("click", this.toggleNewW.bind(this));
         }
-        $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
-        $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
-        $("body").on("click", ".EbQuickMoverlaySideWRpr .backbtn", this.closeSingle.bind(this));
-        $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
-        $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+        
+        if (this.login !== "tc") {
+            $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
+            $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
+            $("body").on("click", ".EbQuickMoverlaySideWRpr .backbtn", this.closeSingle.bind(this));
+
+            if (this.login === "uc") {
+                $("#ebm-objectcontainer").on("click", ".btn-setfav", this.setAsFavourite.bind(this));
+                $("#ebm-objectcontainer").on("click", ".favourited", this.removeFavorite.bind(this));
+            }
+        }
         //$(document).off("keyup").on("keyup", this.listKeyControl.bind(this));
         $("#ebm-overlayfade").on("click", function (e) { this.showMenuOverlay(); }.bind(this));
     };
@@ -223,6 +231,7 @@
     };
 
     this.searchFAllObjects = function (e) {
+        var _tempsearch = [];
         $(".active_link").removeClass("active_link");
         let min = (this.login === "uc") ? 1 : 3;
         {
@@ -240,8 +249,11 @@
                 $.each(Types.Types, function (i, _obj) {
                     _obj.Objects.forEach(function (obItem) {
                         if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
-                            this.appendObjByCategory(obItem, false);
-                            f = true;
+                            if (_tempsearch.indexOf(obItem.Id) < 0) {
+                                this.appendObjByCategory(obItem, false);
+                                f = true;
+                                _tempsearch.push(obItem.Id);
+                            }
                         }
                     }.bind(this));
                 }.bind(this));
@@ -300,7 +312,7 @@
             },
         }).done(function (result) {
             if (result) {
-                $.each(this.resultObj.Favourites,function (i,ob) {
+                $.each(this.resultObj.Favourites, function (i, ob) {
                     if (ob.Id === objid) {
                         let obj = this.resultObj.Data[appid].Types[otype].Objects.filter(_ob => _ob.Id === objid);
                         this.resultObj.Favourites.splice(i, 1);
@@ -382,7 +394,7 @@
 
     this.listKeyControl = function (e) {
         e.preventDefault();
-       //$(".active_link").removeClass("active_link");
+        //$(".active_link").removeClass("active_link");
         if ($(".EbQuickMoverlaySideWRpr").find(":focus").length <= 0) {
             $(".AppContainer").find(`[klink='true']`).eq(0).attr("tabindex", "1").focus();
         }
@@ -408,7 +420,7 @@
                     $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
                 }
             }
-            else if (e.which == 13 ) {
+            else if (e.which == 13) {
                 if ($current.find("a").length > 0) {
                     $current.find("a")[0].click();
                 }

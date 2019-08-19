@@ -467,7 +467,7 @@ namespace ExpressBase.Web.Controllers
 				Console.WriteLine("reached Forsignup??");
 				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == "")& (Social.GoogleId == ""))
 				{
-					TempData["scl_signin_msg"] = "You have already completed Signin. Please Sign in using your mailid";
+					TempData["scl_signin_msg"] = "You have already completed Sign up. Please Sign in using your Email";
 				}
 				else
 				{
@@ -477,7 +477,11 @@ namespace ExpressBase.Web.Controllers
 						Email = Social.Email,
 						Social_id = Social.Social_id
 					});
-
+					if(string.IsNullOrEmpty(lgid.psw))
+					{
+						TempData["scl_signin_msg"] = "Something went wrong. Please try later";
+					}
+					else 
 					{
 						MyAuthenticateResponse authResponse = null;
 						try

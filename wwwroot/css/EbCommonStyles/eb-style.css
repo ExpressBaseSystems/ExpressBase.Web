@@ -60,6 +60,7 @@ body, html,.html-root {
     border: 1px solid transparent;
     display:inline-flex;
     align-items:center;
+    justify-content:center;
 }
     .ebbtn:hover {
         /*box-shadow: 0 5px 16px 1px rgba(0,0,0,0.13), 0 1px 4px 0 rgba(0,0,0,0.09);*/
@@ -74,6 +75,7 @@ body, html,.html-root {
 
 .eb_btngreen {
     background: #47af08;
+    color:white;
 }
 
 .eb_btn-sm {
@@ -107,7 +109,7 @@ body, html,.html-root {
     color: #4987fb;
     box-shadow: none;
     background: white;
-    border: 1px solid #4987fb !important;
+    border: 1px solid #4987fb;
 }
     .eb_btnplain:hover, .eb_btnwhite:hover {
         color: #3876ea;
@@ -289,7 +291,6 @@ body, html,.html-root {
     overflow: hidden;
     font-family: Montserrat;
     font-weight: 300;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     position: relative;
     padding:0;
 }
@@ -324,6 +325,7 @@ body, html,.html-root {
     border: 1px solid #d3edff;
     padding: 30px;
     border-radius: 6px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
     /*background: linear-gradient(to right,#eef9fe,#edf7ff);*/
 }
 
@@ -1086,8 +1088,13 @@ Navigation bar
         float: unset;
         margin-right: unset;
     }
-
-    /*.ext-pageheader .navbar-collapse {
+    .login_container .eb-auth-htmlbox {
+    max-width:100%;
+    }
+    .eb_login .eb_socilaWrpr {
+        max-width: 100%;
+    }
+        /*.ext-pageheader .navbar-collapse {
         text-align: center;
     }
 
@@ -1101,16 +1108,14 @@ Navigation bar
         width: 100%;
         padding-left: 0;
     }*/
-
-    /*.ext-pageheader li[class='open'] {
+        /*.ext-pageheader li[class='open'] {
         background: #fafafa;
     }
 
     .ext-pageheader .drp_container::after {
         display: none;
     }*/
-
-    .login_container form, .login_container_usr form {
+        .login_container form, .login_container_usr form {
         flex:1;max-width:100%;
     }
 

@@ -100,6 +100,7 @@
     .EbQuickMoverlaySideWRpr .InnerBlock {
         display: flex;
         flex-grow: 1;
+        max-height: calc(100% - 46px);
     }
 
     .EbQuickMoverlaySideWRpr .AppContainer {
@@ -109,15 +110,23 @@
         display: flex;
         flex-flow: column;
     }
-
-    .EbQuickMoverlaySideWRpr .header {
-        padding: 5px 0;
-        background: #ececec;
-        border-bottom: 1px solid #ccc;
+    .EbQuickMoverlaySideWRpr .TenantMenu-wraper {
+        width: 350px;
+        height: 100%;
+        background: white;
         display: flex;
-        flex-flow: row;
-        position: relative;
+        flex-flow: column;
+        overflow-y:auto;
     }
+
+.EbQuickMoverlaySideWRpr .header {
+    padding: 5px 0;
+    background: #ececec;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    flex-flow: row;
+    position: relative;
+}
 
     .EbQuickMoverlaySideWRpr .AppContainer .body {
         height: 100%;

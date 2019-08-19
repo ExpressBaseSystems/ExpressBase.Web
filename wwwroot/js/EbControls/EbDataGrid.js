@@ -273,11 +273,12 @@
                     <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.AllRowCtrls[rowid] = [];
 
+        let visibleCtrlIdx = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
             if (col.Hidden)
                 return true;
             let inpCtrlType = col.InputControlType;
-            let ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+            let ctrlEbSid = "ctrl_" + (Date.now() + visibleCtrlIdx).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
@@ -285,9 +286,10 @@
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.AllRowCtrls[rowid].push(inpCtrl);
 
-            tr += this.getTdHtml(inpCtrl, col, i);
+            tr += this.getTdHtml(inpCtrl, col, visibleCtrlIdx);
             if (col.IsEditable)
                 isAnyColEditable = true;
+            visibleCtrlIdx++;
         }.bind(this));
         this.S_cogsTdHtml = this.getCogsTdHtml(isAnyColEditable);
         tr += this.S_cogsTdHtml;
@@ -295,7 +297,7 @@
     };
 
     this.getTdHtml = function (inpCtrl, col, i) {
-        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
                     <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
                 </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
@@ -619,7 +621,34 @@
             sum += val || 0;
         }.bind(this));
         this.ctrl[colname + "_sum"] = sum;
+        this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
         return this.appendDecZeros(sum);
+    };
+
+    this.updateDepCtrl = function (Col) {       
+        $.each(Col.DependedValExp.$values, function (i, depCtrl_s) {
+            try {
+                let depCtrl = this.ctrl.formObject.__getCtrlByPath(depCtrl_s);
+                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                if (valExpFnStr) {
+                    if (!depCtrl.IsDGCtrl) {
+                        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.ctrl.formObject, this.ctrl.__userObject)();
+                        depCtrl.setValue(val);
+                    }
+                    //else {
+                    //    $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                    //        let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.ctrl.formObject, this.FO.userObject)();
+                    //        row[depCtrl.Name].setValue(val);
+                    //    }.bind(this));
+                    //}
+                }
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'Value Expression' of : " + Col.Name + " - " + e.message);
+            }
+        }.bind(this));
     };
 
     this.removeTr = function ($tr) {
@@ -684,7 +713,7 @@
             this.ctrl[col.Name + "_sum"] = 0;
         }.bind(this));
 
-        this.$table.on("keyup", "[tdcoltype=DGNumericColumn] [ui-inp]", this.updateAggCol.bind(this));
+        this.$table.on("keyup", "[tdcoltype=DGNumericColumn][agg=true] [ui-inp]", this.updateAggCol.bind(this));
     };
 
     this.PScallBFn = function (Row) {

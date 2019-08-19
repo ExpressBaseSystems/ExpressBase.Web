@@ -293,10 +293,10 @@
                 let $el = $(el);
                 let type = $el.attr("eb-type").trim();
                 let ebsid = type + ++(this.controlCounters[type + "Counter"]);
-                let $ctrl = new EbObjects["Eb" + type](ebsid).$Control;
                 let $sibling = $(sibling);
                 $el.remove();
                 let ctrlObj = new EbObjects["Eb" + type](ebsid);
+                let $ctrl = ctrlObj.$Control;
 
                 if (type === "UserControl") {///user control refid set on ctrlobj
                     ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');

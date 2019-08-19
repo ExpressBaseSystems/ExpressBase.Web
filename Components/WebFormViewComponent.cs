@@ -38,7 +38,8 @@ namespace ExpressBase.Web.Components
                 EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
                 WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
                 this.Redis.Set<EbWebForm>(refid, WebForm);
-            }            
+            }
+            WebForm.IsRenderMode = true;//this property must set before AfterRedisGet //userctrl using this prop
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             WebForm.RefId = refid;
             WebForm.UserObj = ViewBag.__User;
@@ -81,7 +82,6 @@ namespace ExpressBase.Web.Components
                     }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
-                WebForm_L.IsRenderMode = true;
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();
                 ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(WebForm_L as EbControlContainer, BuilderType.WebForm);
                 ViewBag.WebFormObj = EbSerializers.Json_Serialize(WebForm_L);

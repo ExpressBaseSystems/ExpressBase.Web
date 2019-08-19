@@ -52,6 +52,13 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.Sid = id;
 			return View();
 		}
+
+		public IActionResult chatmessagetest()
+		{
+			return View();
+		}
+
+
 		public IActionResult EmailVerifyStructure()
 		{
 			return View();
@@ -66,6 +73,7 @@ namespace ExpressBase.Web.Controllers
 		{
 			//ViewBag.FacebookSigninAppid = 149537802493867;
 			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
+			ViewBag.GoogleSigninAppid= Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GOOGLE_CLIENT_ID);
 			return View();
 		}
 
@@ -334,6 +342,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult TenantSignIn()
         {
 			ViewBag.FacebookSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_FB_APP_ID);
+			ViewBag.GoogleSigninAppid = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GOOGLE_CLIENT_ID);
 			var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 
@@ -355,23 +364,19 @@ namespace ExpressBase.Web.Controllers
 		{
 			Console.WriteLine("reached contoller / facebooklogin");
 
-			string x = Request.Form["email"];
-			string y = Request.Form["name"];
-			string z = Request.Form["fbid"];
-			Console.WriteLine("XYZ =" + x + "," + y + "," + z);
-			Console.WriteLine("ajax =" + email + "," + name + "," + fbid);
+			
 			try
 			{
 
 				if ((email != null) & (fbid != null))
 				{
-					FacebookLoginResponse res = this.ServiceClient.Post<FacebookLoginResponse>(new FacebookLoginRequest
+					SocialLoginResponse res = this.ServiceClient.Post<SocialLoginResponse>(new SocialLoginRequest
 					{
 						Email = email,
 						Fbid = fbid,
 						Name = name,
 					});
-					Console.WriteLine("reached completed service to store user details FacebookLoginRequest");
+					Console.WriteLine("reached completed service to store user details SocialLoginRequest of facebook");
 					return SocialOath(res.jsonval);
 				}
 
@@ -385,6 +390,39 @@ namespace ExpressBase.Web.Controllers
 			}
 			return Redirect("/Platform/OnBoarding");
 		}
+
+
+		public IActionResult GoogleLogin(string name, string goglid, string email)
+		{
+			Console.WriteLine("reached contoller / facebooklogin");
+
+			
+			try
+			{
+
+				if ((email != null) & (goglid != null))
+				{
+					SocialLoginResponse res = this.ServiceClient.Post<SocialLoginResponse>(new SocialLoginRequest
+					{
+						Email = email,
+						Goglid = goglid,
+						Name = name,
+					});
+					Console.WriteLine("reached completed service to store user details SocialLoginRequest of google");
+					return SocialOath(res.jsonval);
+				}
+
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("reached exception FacebookLogin");
+				TempData["socloginerr"] = "Something went wrong. Please try later";
+				Console.WriteLine("Exception: " + e.Message + e.StackTrace);
+				return Redirect("/Platform/OnBoarding");
+			}
+			return Redirect("/Platform/OnBoarding");
+		}
+
 
 
 		[HttpGet("social_oauth")]
@@ -427,9 +465,9 @@ namespace ExpressBase.Web.Controllers
 			if (!Social.Forsignup)
 			{
 				Console.WriteLine("reached Forsignup??");
-				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == ""))
+				if ((Social.FbId == "") & (Social.GithubId == "") & (Social.TwitterId == "")& (Social.GoogleId == ""))
 				{
-					TempData["scl_signin_msg"] = "You have already completed Signin. Please Sign in using your mailid";
+					TempData["scl_signin_msg"] = "You have already completed Sign up. Please Sign in using your Email";
 				}
 				else
 				{
@@ -439,7 +477,11 @@ namespace ExpressBase.Web.Controllers
 						Email = Social.Email,
 						Social_id = Social.Social_id
 					});
-
+					if(string.IsNullOrEmpty(lgid.psw))
+					{
+						TempData["scl_signin_msg"] = "Something went wrong. Please try later";
+					}
+					else 
 					{
 						MyAuthenticateResponse authResponse = null;
 						try

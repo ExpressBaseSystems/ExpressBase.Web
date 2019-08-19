@@ -291,6 +291,7 @@ var EbBasicDataTable = function (Option) {
             dq.length = 25;/////////hard coding
         }
         dq.QueryIndex = this.QueryIndex;
+        dq.DataVizObjString = JSON.stringify(this.EbObject);
         return dq;
     };
 
@@ -342,7 +343,8 @@ var EbBasicDataTable = function (Option) {
         this.isRun = true;
         this.MainData = dd;
         this.data = dd.data;
-        return dd.data;
+        this.formatteddata = dd.formattedData || dd.data;
+        return this.formatteddata;
     };
 
     this.compareFilterValues = function () {

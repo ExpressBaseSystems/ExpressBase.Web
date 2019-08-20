@@ -405,6 +405,12 @@
         this.$hiddenProps[prop] = null;
     };
 
+    this.changePropertyValue = function (prop, val) {
+        this.CurObj[prop] = val;
+        let $pginp = $(`#${this.wraperId}${prop}`);
+        $pginp.val(val).trigger("change");
+    };
+
     //build PG table by Assembling property GroupHeaders, property rows ...
     this.buildGrid = function () {
         // Now we have all the html we need, just assemble it

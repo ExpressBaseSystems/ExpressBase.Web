@@ -90,8 +90,20 @@
                             <div class="newObjectContainer-inner">
                                 @foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
                                 {
-                                    <div class="ebm_newob" klink='true'>
-                                        <a role="menuitem" tabindex="-1" href="../Eb_Object/Index?objid=null&objtype=@objectType.IntCode">
+                                    List<int> cs = new List<int> { 18, 23, 24, 22, 7, 25 };
+                                    string url = string.Empty, _class = string.Empty;
+                                    if (cs.Contains(objectType.IntCode))
+                                    {
+                                        url = "#";
+                                        _class = "eb-newobj-comingsoon-frmenu";
+                                    }
+                                    else
+                                    {
+                                        url = "../Eb_Object/Index?objid=null&objtype=" + objectType.IntCode;
+                                    }
+
+                                    <div class="ebm_newob @_class" klink='true'>
+                                        <a role="menuitem" tabindex="-1" href="@url">
                                             <div class="ebm-newob-icon"><i class="fa @objectType.Icon"></i></div>
                                             <div class="ebm-newob-text">@objectType.Name</div>
                                         </a>

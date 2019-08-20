@@ -1,9 +1,11 @@
 ﻿@using System;
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 @using Newtonsoft.Json;
+@using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     List<EbSolutionsWrapper> sarr = ViewBag.Solutions;
+    int fs = sarr.FindAll(it => it.PricingTier == PricingTiers.FREE).Count;
     var bApnd = true;
     if (ViewBag.Env == "Development")
     {
@@ -101,7 +103,7 @@
     <script>
         $(document).ready(function () {
             window.ebcontext.header.setName("My Solutions");
-            TenantDashBoard();//init tenant assset js
+            TenantDashBoard(@fs);//init tenant assset js
 
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });

@@ -507,7 +507,7 @@
     this.ctrlLblDblClick = function (e) {
         $e = $(event.target);
         $e.hide();
-        $e.next(".eb-lbltxtb").show();
+        $e.next(".eb-lbltxtb").val($e.text()).show().select();
     };
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
@@ -539,6 +539,7 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
+        this.$form.on("dblclick", ".abc", this.ctrlLblDblClick.bind(this));
         this.$form.on("dblclick", ".eb-ctrl-label", this.ctrlLblDblClick.bind(this));
         this.$form.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
         this.$form.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));

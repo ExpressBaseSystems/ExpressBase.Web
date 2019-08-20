@@ -1,7 +1,8 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
-    Html.RenderPartial("ExtPageHeader");
+
 }
+@Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
 <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
@@ -17,21 +18,21 @@
             document.write(_meta);
         </script>*@
     @*<meta property="og:title" content="@ViewBag.Wiki.Title">
-    <meta property="og:description" content="">
-    <meta property="og:image" content="">
-    <meta property="og:url" content="@ViewBag.Url">
-    <meta name="twitter:card" content="">
+        <meta property="og:description" content="">
+        <meta property="og:image" content="">
+        <meta property="og:url" content="@ViewBag.Url">
+        <meta name="twitter:card" content="">
 
-    <!--  Non-Essential, But Recommended -->
+        <!--  Non-Essential, But Recommended -->
 
-    <meta property="og:site_name" content="EXPRESSbase Systems">
-    <meta name="twitter:image:alt" content="">
+        <meta property="og:site_name" content="EXPRESSbase Systems">
+        <meta name="twitter:image:alt" content="">
 
 
-    <!--  Non-Essential, But Required for Analytics -->
+        <!--  Non-Essential, But Required for Analytics -->
 
-    <meta property="fb:app_id" content="your_app_id" />
-    <meta name="twitter:site" content="">*@
+        <meta property="fb:app_id" content="your_app_id" />
+        <meta name="twitter:site" content="">*@
 
     <link rel="canonical" href="@ViewBag.Url" />
     <meta property="og:locale" content="en_US" />
@@ -43,7 +44,7 @@
     <meta property="article:publisher" content="https://www.facebook.com/expressbase" />
     @foreach (Object ob in ViewBag.TagObject)
     {
-    <meta property="article:tag" content="@ob" />
+        <meta property="article:tag" content="@ob" />
     }
     <meta property="article:section" content="National" />
     <meta property="og:image" content="" />
@@ -81,7 +82,7 @@
             let title = $(".wiki_data_div h1").text();
             title = title.replace(/(\r\n|\n|\r)/gm, "");
             let desc = $(".wiki_data_div p").text().substring(0, $(".wiki_data_div p").text().indexOf("."));
-            $(`meta[property="og:title"]`).prop("content", `${title} -  ${desc} `);          
+            $(`meta[property="og:title"]`).prop("content", `${title} -  ${desc} `);
             $(`meta[property="og:description"]`).prop("content", `${desc}`);
             $(`meta[property="twitter:description"]`).prop("content", `${desc}`);
             $(`meta[property="twitter:title"]`).prop("content", `${title}`);

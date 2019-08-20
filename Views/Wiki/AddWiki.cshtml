@@ -4,12 +4,37 @@
 }
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 
+@*icon*@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/htmlmixed/htmlmixed.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/xml/xml.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/javascript/javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/css/css.js"></script>
+
+
 <script type="text/javascript" src="~/js/wiki/eb_wiki.js"></script>
 <script type="text/javascript" src="~/js/wiki/tagsinput.js"></script>
 <script>
     $(document).ready(function () {
-        new addwiki();
+        let obj =new addwiki();
         $("#status").val("@ViewBag.Wiki.Status");
+
+        $("#iconselect").iconpicker({
+            placement: 'bottom',
+            iconset: 'fontawesome',
+            icon: ''
+
+        }).on('change', function (e) {
+            let insertVal = "<i class='fa " + e.icon + "'></i>";
+            obj.insertAtCaret(insertVal);
+        });
+
     });
 </script>
 <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
@@ -43,8 +68,8 @@
                             <option value="0" disabled>Select category</option>
                             @foreach (WikiCat categ in ViewBag.WikiCat)
                             {
-                          
-                                    <option value="@categ.WikiCatId">@categ.WikiCategory</option>
+
+                                <option value="@categ.WikiCatId">@categ.WikiCategory</option>
                             }
 
                         </select>
@@ -70,8 +95,8 @@
                 <div class="row">
                     <div class="col-sm-12" style="padding: 0px 25px 0px 25px;">
                         <div class="ButtonBox">
-                            <div style="display:flex" class="Btn1stRow">
-                                <input type="button" value="h1" class="props" val="h1" style="border-radius: 4px 0px 0px 0px;">
+                            <div style="display:flex">
+                                <input type="button" value="h1" class="props" val="h1">
                                 <input type="button" value="h2" class="props" val="h2">
                                 <input type="button" value="h3" class="props" val="h3">
                                 <input type="button" value="h4" class="props" val="h4">
@@ -82,17 +107,18 @@
                                 <input type="button" value="br" class="props" val="br">
                                 <input type="button" class="props fa fa-input" val="b" value="&#xf032" />
                                 <input type="button" class="props fa fa-input" value="&#xf033" val="i" />
-                                <input type="button" class="props fa fa-input" value="&#xf0cd" val="u" style="border-radius:  0px 4px 0px 0px;">
+                                <input type="button" class="props fa fa-input" value="&#xf0cd" val="u">
                                 <input type="button" value="&#xf036" class="props fa fa-input" val="left" />
                                 <input type="button" value="&#xf037" val="center" class="fa fa-input props" />
                                 <input type="button" value="&#xf038" class="props fa fa-input" val="right" />
                                 <input type="button" value="&#xf121" class="props fa fa-input" val="code" />
-
-                                <input type="button" value="&#xf0ca" class="props fa fa-input" val="ul" />
-                                <input type="button" value="&#xf0cb" class="props fa fa-input" val="ol" />
+                                <input type="button" value="&#xf0ca" class="fa fa-input" val="ul" data-toggle="modal" data-target="#ul-modal" />
+                                <input type="button" value="&#xf0cb" class="fa fa-input" val="ol" data-toggle="modal" data-target="#ol-modal" />
                                 <input type="button" value="li" class="props" val="li" />
                                 <input type="button" value="&#xf0c1" class="props fa fa-input" val="a" />
                                 <input type="button" value="&#xf16a" class="props fa fa-input" val="iframe" />
+                                <input type="button" value="&#xf0ce" class="fa fa-input" val="table" data-toggle="modal" data-target="#myModal" />
+                                <button name="icon" role="iconpicker" id="iconselect"></button>
                                 @*<input type="button" class="fa fa-input props2" value="&#xf03e" id="gallery-tab1" />*@
                                 @*<input type="button" class="fa fa-input props2" value="&#xf06e" id="wiki-preview-tab" style="text-decoration:none" />*@
                             </div>
@@ -103,9 +129,25 @@
 
                 <div class="row" style="padding: 0px 10px 10px 10px">
                     <div class="col-sm-12" id="edit_field">
-                        <textarea rows="23" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea>
-                    </div>
+                        <div class="backdrop">
+                            <div class="highlights"></div>
+                        </div>
 
+                    </div>
+                    <div class="fixed">  <textarea rows="23" cols="87" class="readtext" id="text" name="content" style="width: 100%;height: 100%;"> @ViewBag.Wiki.HTML</textarea></div>
+                    <style>
+                        div.fixed {
+                            border:0px solid;
+                            position: fixed;
+                            bottom: 13px;
+                            right: 24px;
+                            width: 1312px;
+                            height: 507px;
+                            border: 1px solid #e3e4e2;
+                            background: transparent;
+                        }
+                    </style>
+                   
                 </div>
                 <div style="display: flex;justify-content: center;">
 
@@ -132,9 +174,132 @@
 </div>
 
 <div class="container-fluid">
+</div>
+
+<div class="modal-class">
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="myModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and colums</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p>
+                        <select id="tbl-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+
+                        <p>X</p><p>Cols</p><select id="tbl-col">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="tbl-size-select">Add Table</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="ol-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and style</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p><select id="ol-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div style="display:flex">
+                        <p>Style</p><select id="ol-style-sel">
+                            <option selected>type="1"</option>
+                            <option>type="A"</option>
+                            <option>type="a"</option>
+                            <option>type="I"</option>
+                            <option>type="i"</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ol-type-select">Add O-List</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="ul-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and style</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p><select id="ul-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div style="display:flex">
+                        <p>Style</p><select id="ul-style-sel">
+                            <option>disc</option>
+                            <option>square</option>
+                            <option>circle</option>
+                            <option>none</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ul-type-select">Add UO-list</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 </div>
+
+
+
+
+
+
+
 
 <script>
     let abc = $('#text').val();
@@ -164,7 +329,7 @@
     imgup.customTrigger = function (name, refids) {
         let imgtag = "";
         for (let i = 0; i < refids.length; i++) {
-            imgtag += `<img src="/wiki/images/original/${refids[i]}.jpg" class="WikiDefaultImage"/>`;
+            imgtag += `<img style="width:60px;height:100px;" src="/wiki/images/original/${refids[i]}.jpg" class="WikiDefaultImage"/>`;
         }
         copyStringToClipboard(imgtag);
     }
@@ -180,5 +345,88 @@
         document.body.removeChild(el);
     }
     $(".Col_head").click();
+
+    //$('#AppIcon').iconpicker({
+    //iconset: 'fontawesome',
+    //rows: 5,
+    //cols: 5,
+    //placement: 'bottom',
+    //});
+
+</script>
+
+<script type="text/javascript">
+
+
+    var $container = $('.container');
+    var $backdrop = $('.backdrop');
+    var $highlights = $('.highlights');
+    var $textarea = $('#text');
+    var $toggle = $('button');
+
+    // yeah, browser sniffing sucks, but there are browser-specific quirks to handle that are not a matter of feature detection
+    var ua = window.navigator.userAgent.toLowerCase();
+    var isIE = !!ua.match(/msie|trident\/7|edge/);
+    var isWinPhone = ua.indexOf('windows phone') !== -1;
+    var isIOS = !isWinPhone && !!ua.match(/ipad|iphone|ipod/);
+
+    function applyHighlights(text) {
+        text = text
+            .replace(/\n$/g, '\n\n')
+            .replace(/&lt[^&gt]*&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*[a-z].*?&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*\/\s*\w\s*.*?&gt|&lt\s*br\s*&gt/g, '<mark>$&</mark>');
+           
+            
+
+        if (isIE) {
+            // IE wraps whitespace differently in a div vs textarea, this fixes it
+            text = text.replace(/ /g, ' <wbr>');
+        }
+
+        return text;
+    }
+
+    function handleInput() {
+        var text = $textarea.val();
+        var text = text.replace(/\>/g, '&gt');
+        var text = text.replace(/\</g, '&lt');
+        var highlightedText = applyHighlights(text);
+        $highlights.html(highlightedText);
+    }
+
+    function handleScroll() {
+        var scrollTop = $textarea.scrollTop();
+        $backdrop.scrollTop(scrollTop);
+
+        var scrollLeft = $textarea.scrollLeft();
+        $backdrop.scrollLeft(scrollLeft);
+    }
+
+    function fixIOS() {
+        // iOS adds 3px of (unremovable) padding to the left and right of a textarea, so adjust highlights div to match
+        $highlights.css({
+            'padding-left': '+=3px',
+            'padding-right': '+=3px'
+        });
+    }
+
+    function bindEvents() {
+        $textarea.on({
+            'input': handleInput,
+            'scroll': handleScroll
+        });
+
+        $toggle.on('click', function () {
+            $container.toggleClass('perspective');
+        });
+    }
+
+    if (isIOS) {
+        fixIOS();
+    }
+
+    bindEvents();
+    handleInput();
 
 </script>

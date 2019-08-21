@@ -1,5 +1,7 @@
 ﻿
 /*new style*/
+
+
 .pd-0{
     padding:0;
 }
@@ -195,7 +197,7 @@
     margin-bottom: 15px;
 }
 .wiki_data_div img {
-    min-height : 300px;
+    max-height : 300px;
 }
     .wiki_data_div iframe {
         min-height: 315px;
@@ -262,65 +264,32 @@ div.searchDiv iframe{
         border-color: #508cf9;
     }
 
-.props {
+
+.ButtonBox input, .ButtonBox button {
     background: #fff;
-    min-width: 53px;
-    width:100%;
-    min-height: 22px;
-    font-size: 12px;
-    align-content: center;
-    margin: 0px;
-    font-weight: 500;
+    border-right: solid 1px #9a9a9a;
+    border-top: solid 0px #9a9a9a;
+    border-left: solid 0px #9a9a9a;
+    border-bottom: solid 0px #9a9a9a;
+    width: 100%;
 }
-    .props:hover {
+
+    .ButtonBox input:hover {
         background-color: #d3e5ff;
     }
 
-    .props:active {
+    .ButtonBox input:active {
         background-color: cornflowerblue;
     }
-
- .Btn1stRow .props {
-    border-right: solid 1px #e6e6e6;
-    border-left:solid 0px;
-    border-top:solid 0px;
-    border-bottom:solid 0px;
-}
-
-.Btn1stRow .props2 {
-    border-right: solid 1px #e6e6e6;
-    border-bottom: solid 0px;
-    border-left: solid 0px;
-    border-top: solid 0px;
-}
-    .Btn1stRow .props2:last-child {
-        border-right: solid 0px;
+    .ButtonBox input:last-child {
+        border-right: 0px solid;
+        border-top-right-radius: 4px;
+    }
+    .ButtonBox input:first-child {
+        border-top-left-radius: 4px;
     }
 
-   
-
-    
-.props2 {
-    text-align: center;
-    padding: 3px;
-    min-width: 50px;
-    background: #fff;
-    width: 53px;
-    height: 22px;
-    font-size: 12px;
-    align-content: center;
-    margin: 0px;
-    font-weight: 500;
-    color: black;
-}
-    .props2:hover {
-        background-color: #d3e5ff;
-        color: black;
-    }
-
-    .props2:active {
-        background-color: cornflowerblue;
-            }
+ 
 
 iframe {
     width: 470px;
@@ -366,7 +335,7 @@ iframe {
         height: 80px;
         border-radius: 10px;
         border: solid 1px #d2d2d2;
-        width: 100%;
+        width: 50%;
         margin: 5px 15px 15px 5px;
     }
         .GettingStarted .divIcon {
@@ -413,7 +382,6 @@ iframe {
 .wiki-preview {
     color: #2b2b2b;
     text-align: justify;
-    font-family: Montserrat;
     padding: 0% 10% 0% 10%;
 }
     .wiki-preview .render {
@@ -422,19 +390,19 @@ iframe {
 
         .wiki-preview .render h1 {
             font-size: 31px;
-            font-weight: 400;
+            font-weight: 300;
             margin-top: 0;
             margin-bottom: 15px;
-            font-weight: 400;
         }
         .wiki-preview .render h3 {
             font-size: 22px;
-            font-weight: 400;
+            font-weight: 300;
             margin-top: 20px;
             margin-bottom: 15px;
         }
 
         .wiki-preview .render p {
+            font-weight:300;
             font-size: 15px;
             line-height: 1.8em;
             text-align: justify;
@@ -481,6 +449,7 @@ iframe {
             min-width: 560px;
             margin-left: 25%;
         }
+       
 
 
     .manage-wiki-nav {
@@ -698,10 +667,55 @@ iframe {
 }
 
 .readtext {
+    caret-color: black;
+    color: transparent;
     outline: none;
     border: solid 1px #9a9a9a;
     border-radius: 0px 0px 4px 4px;
+    background: transparent;
 }
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.backdrop {
+    width: 1307px;
+    height: 507px;
+}
+
+.highlights, textarea {
+    padding: 10px;
+    font: 18px/28px 'Open Sans', sans-serif;
+    letter-spacing: 1px;
+}
+
+
+.backdrop {
+    position: absolute;
+    border: 2px solid #685972;
+    background-color: #fff;
+    overflow: auto;
+    pointer-events: none;
+    border: 0px solid;
+}
+
+.highlights {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    border: 0px solid;
+}
+
+mark {
+    padding: 0px;
+    border-radius: 3px;
+    color:red;
+    background:#fff;
+}
+
+
 .ButtonBox {
     border-top: solid 1px #9a9a9a;
     border-left: solid 1px #9a9a9a;
@@ -741,3 +755,39 @@ iframe {
     padding-left: 13px;
     margin-bottom: 10px;
 }
+
+.modal-class select {
+    width: 70px;
+    height: 25px;
+}
+.modal-class p {
+    width: 50px;
+    height: 25px;
+    margin: 4px;
+}
+#Help{
+    padding-top:20px;
+}
+#Help span{
+    padding-top:0px;
+}
+#internal-links-view {
+    display: flex;
+    flex-flow: row wrap;
+    padding-right: 0px;
+}
+#author{
+    margin-left:37%;
+}
+    #author img{
+        padding:10px;
+    }
+    #author p{
+        padding:5px;
+    }
+    #author .authorimg {
+        width: 40px;
+        height: 40px;
+        border: solid 1px #9c9c9c;
+        border-radius: 25px;
+    }

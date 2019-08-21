@@ -1,4 +1,4 @@
-﻿var TenantDashBoard = function () {
+﻿var TenantDashBoard = function (scount) {
     this.goToSolutionWindow = function (e) {
         var console = $(e.target).closest(".sso-btn").attr("wc");
         var sid = $(e.target).closest(".sso-btn").attr("sid");
@@ -41,27 +41,34 @@
     }
 
     this.ns = function (e) {
-        let po = {
-            Message: "Creating solution...",
-            Html: function ($selector) {
-                $selector.html(`<span>Creating solution...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
-            },
-            ButtonStyle: {
-                Text:"Continue",
-                Color: "white",
-                Background: "#508bf9",
-                Callback: function () {
-                    location.reload();
+        if (scount <= 3) {
+            let po = {
+                Message: "Creating solution...",
+                Html: function ($selector) {
+                    $selector.html(`<span>Creating solution...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
+                },
+                ButtonStyle: {
+                    Text: "Continue",
+                    Color: "white",
+                    Background: "#508bf9",
+                    Callback: function () {
+                        location.reload();
+                    }
                 }
-            }
-        };
-        self.EbPopBox("show", po);
-        this.cs(function (res) {
-            if (res.status)
-                self.EbPopBox("show", { Message: "Solution created :)" });
-            else
-                self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
-        });
+            };
+            self.EbPopBox("show", po);
+            this.cs(function (res) {
+                if (res.status)
+                    self.EbPopBox("show", { Message: "Solution created :)" });
+                else
+                    self.EbPopBox("show", { Title: "Oops!", Message: "Unable to create solution!" });
+            });
+        }
+        else {
+            self.EbPopBox("show", {
+                Message:"You can't create more than 3 FREE solution "
+            });
+        }
     };
 
     this.cs = function (fn) {

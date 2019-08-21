@@ -8,29 +8,24 @@
 }
 @Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
 
-<div class="row" style="background:white;font-family:Montserrat">
+<div class="row">
     <section class="slider eb-banner">
         <div class="container">
             <div class="row">
-                <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 no-padd eb-banner-text-img-sec">
-                    <div class="col-md-9 col-lg-9 col-sm-9 col-xs-12 bg-color-banner" style="margin-bottom: 100px;">
-                        <h2 class="cbl">Install and customize pre-built one-click apps into your solution</h2>
-                        <div class="spot"><div class="tick g"></div></div>
-                        <p class="cblk">
-                            One-click apps are database agnostic, you can connect any postgre,
-                            oracle, mysql or sql server instance whether it is an on-premise or on-cloud.
-                        </p>
-                    </div>
-                    <div class="col-md-3 col-lg-3 col-sm-3 col-xs-12 hidden-xs banner-img pull-right">
-                        <img src="~/images/svg/appbuildwall.svg" />
-                    </div>
+                <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 bg-color-banner">
+                    <h2 class="cbl text-center">Install & customize pre-built, one-click apps into your solution</h2>
+                    <div class="spot"><div class="tick g" style="margin:0 auto;"></div></div>
+                    <p class="cblk text-center w-100" style="padding:0;">
+                        One-click apps are database agnostic, you can connect any 
+                        PostgreSQL, MySQL, SQL Server or Oracle instance,<br /> whether it is on-premise or on-cloud.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
     <section class="apStrH">
         <div class="container">
-            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 fWsearchBar">
+            <div class="col-md-6 col-lg-6 col-sm-6 col-md-offset-3 col-lg-offset-3 col-sm-offset-3 fWsearchBar">
                 <div class="input-group">
                     <input type="text" class="form-control" placeholder="Search">
                     <span class="input-group-addon"><i class="fa fa-search"></i> Search</span>
@@ -53,18 +48,16 @@
                 </div>
                 <div class="coTBx-apStr-bdy">
                     @{
-                        var applist = ViewBag.StoreApps;
-                        string desc = string.Empty, grph = string.Empty;
-                        for (int i = 0; i < applist.Count; i++)
-                        {
-                            desc = (string.IsNullOrEmpty(applist[i].Description)) ? "No description" : applist[i].Description;
+                            var applist = ViewBag.StoreApps;
+                            string desc = string.Empty;
+                            for (int i = 0; i < applist.Count; i++)
+                            {
+                                desc = (string.IsNullOrEmpty(applist[i].Description)) ? "No description" : applist[i].Description;
 
-                            grph = (i % 2 == 0) ? "bg-lb" : "bg-lr";
 
                             <div class="apPtiLe">
                                 <div class="apTileInner">
                                     <a href="/AppInfo/@applist[i].Id" class="apTileInner-bdy">
-                                        <div class="grpAppTile1 @grph"></div>
                                         <div class="col1">
                                             <i class="fa @applist[i].Icon"></i>
                                         </div>

@@ -179,7 +179,7 @@
         border: solid 1px green;
     }
 
-    .form-buider-form input[type="text"], .form-buider-form input[type="email"], .form-buider-form input[type="number"], .form-buider-form input[type="password"], .form-buider-form input[type="singleline"] {
+    .form-buider-form .ctrl-cover input[type="text"], .form-buider-form input[type="email"], .form-buider-form input[type="number"], .form-buider-form input[type="password"], .form-buider-form input[type="singleline"] {
         height: auto !important;
         min-height: 28px;
         -webkit-tap-highlight-color: rgba(255,255,255,0);
@@ -484,7 +484,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
-.Eb-ctrlContainer input:not([type=radio]):not([type=checkbox]), .Eb-ctrlContainer select {
+.Eb-ctrlContainer .ctrl-cover input:not([type=radio]):not([type=checkbox]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
     height: auto;
     min-height: 24px;
@@ -829,6 +829,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
+[ctype="RadioButton"] > .eb-ctrl-label {
+    display: none;
+}
+
 .eb-ctrl-label {
     position: relative;
     font-size: 11.5px;
@@ -837,16 +841,33 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     letter-spacing: 0.3PX;
     padding: 1px;
     padding: 2px 0px;
+    border:none;
     display: inline-block;
     margin: 1px 0;
-    z-index: -1;
+    /*z-index: -1;*/
+}
+
+.eb-lbltxtb {
+    display:none;
+    min-height: 16px !important;
+    height: 16px !important;
+    border: 1px solid rgba(34,36,38,.15);
+    font-size: 11.5px;
+    font-weight: 500;
+    outline:none;
+    font-family: Roboto;
+    letter-spacing: 0.3PX;
+}
+
+[isrendermode="true"] .eb-lbltxtb {
+    display: none !important;
 }
 
 [isrendermode="true"] [eb-hidden="True"] {
     display: none;
 }
 
-[isrendermode="false"] .Eb-ctrlContainer input, [isrendermode="false"] .Eb-ctrlContainer .radio-wrap {
+[isrendermode="false"] .Eb-ctrlContainer .ctrl-cover input, [isrendermode="false"] .Eb-ctrlContainer .ctrl-cover .radio-wrap {
     pointer-events: none;
 }
 

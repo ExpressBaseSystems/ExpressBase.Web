@@ -454,7 +454,7 @@
     this.addTabPane = function (SelectedCtrl, prop, val, addedObj) {
         let id = SelectedCtrl.EbSid;
         let $ctrl = $("#cont_" + id);
-        let $tabMenu = $(`<li li-of="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}">${addedObj.Name}</a></li>`);
+        let $tabMenu = $(`<li li-of="${addedObj.EbSid}" ebsid="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}"><span class='eb-label-editable'>${addedObj.Name}</span><input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/></a></li>`);
         let $tabPane = $(`<div id="${addedObj.EbSid}" ctype="${addedObj.ObjType}" ebsid="${addedObj.EbSid}" class="tab-pane fade  ebcont-ctrl"></div>`);
         $ctrl.closestInner(".nav-tabs").append($tabMenu);
         $ctrl.closestInner(".tab-content").append($tabPane);
@@ -490,17 +490,29 @@
     this.lbltxtbBlur = function (e) {
         $e = $(event.target);
         $e.hide();
-        $e.prev(".eb-ctrl-label").show();
+        $e.prev(".eb-label-editable").show();
     };
 
     this.lbltxtbKeyUp = function (e) {
         $e = $(event.target);
         let val = $e.val();
-        let ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");
-        let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
-        if (this.PGobj.CurObj !== ctrl)
-            this.PGobj.setObject(ctrl, AllMetas["Eb" + $e.closest(".Eb-ctrlContainer").attr("eb-type")]);
-        this.PGobj.changePropertyValue("Label", val);
+        let $colTile = $e.closest(".Eb-ctrlContainer");
+        let ebsid = $colTile.attr("ebsid");
+        let ctrlType = $colTile.attr("eb-type");
+        let ctrlMeta = AllMetas["Eb" + ctrlType];
+        if (ctrlType === "TabControl") {
+            ebsid = $e.closest("li").attr("ebsid");
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            let paneMeta = AllMetas["Eb" + ctrl.ObjType];
+            ctrl["Title"] = val;
+            this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
+        }
+        else {
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            if (this.PGobj.CurObj !== ctrl)
+                this.PGobj.setObject(ctrl, ctrlMeta);
+            this.PGobj.changePropertyValue("Label", val);
+        }
 
     };
 
@@ -540,7 +552,7 @@
         this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         this.$form.on("dblclick", ".abc", this.ctrlLblDblClick.bind(this));
-        this.$form.on("dblclick", ".eb-ctrl-label", this.ctrlLblDblClick.bind(this));
+        this.$form.on("dblclick", ".eb-label-editable", this.ctrlLblDblClick.bind(this));
         this.$form.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
         this.$form.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")

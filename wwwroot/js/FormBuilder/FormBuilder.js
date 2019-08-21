@@ -137,6 +137,7 @@
         let curTdWidthPerc = (curTdWidth / tblWidth) * 100;
         let cuTdobj = this.rootContainerObj.Controls.GetByName($curTd.attr("ebsid"));
         cuTdobj.WidthPercentage = curTdWidthPerc;
+        cuTdobj.Width = parseInt(curTdWidthPerc);
         $(event.target).css("width", curTdWidthPerc.toString() + "%");
     };
 
@@ -197,7 +198,11 @@
                 $(event.target).closest(".Eb-ctrlContainer").focus();
             });
         else
-            $ctrl.attr("onclick", "event.stopPropagation();$(this).focus()");
+            $ctrl.on("click", function myfunction() {
+                //event.stopPropagation();
+                if (event.target.getAttribute("class") !== "eb-lbltxtb")
+                    $(this).focus();
+            });
     };
 
     this.updateControlUI = function (ebsid, type) {
@@ -482,6 +487,29 @@
 
     }.bind(this);
 
+    this.lbltxtbBlur = function (e) {
+        $e = $(event.target);
+        $e.hide();
+        $e.prev(".eb-ctrl-label").show();
+    };
+
+    this.lbltxtbKeyUp = function (e) {
+        $e = $(event.target);
+        let val = $e.val();
+        let ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");
+        let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+        if (this.PGobj.CurObj !== ctrl)
+            this.PGobj.setObject(ctrl, AllMetas["Eb" + $e.closest(".Eb-ctrlContainer").attr("eb-type")]);
+        this.PGobj.changePropertyValue("Label", val);
+
+    };
+
+    this.ctrlLblDblClick = function (e) {
+        $e = $(event.target);
+        $e.hide();
+        $e.next(".eb-lbltxtb").val($e.text()).show().select();
+    };
+
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
         if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
             alert();
@@ -500,7 +528,7 @@
                             "name": "Remove",
                             icon: "fa-trash",
                             callback: this.del
-                        },
+                        }
                     }
                 };
             }.bind(this)
@@ -511,6 +539,10 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
+        this.$form.on("dblclick", ".abc", this.ctrlLblDblClick.bind(this));
+        this.$form.on("dblclick", ".eb-ctrl-label", this.ctrlLblDblClick.bind(this));
+        this.$form.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
+        this.$form.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
         if (this.rootContainerObj.DisplayName.trim() === "")

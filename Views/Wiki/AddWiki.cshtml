@@ -31,8 +31,9 @@
             icon: ''
 
         }).on('change', function (e) {
+            var cursorPos = $("#text").prop('selectionStart');
             let insertVal = "<i class='fa " + e.icon + "'></i>";
-            obj.insertAtCaret(insertVal);
+            obj.insertAtCaret(insertVal, cursorPos);
         });
 
     });
@@ -48,6 +49,7 @@
                 <li class="active"><a data-toggle="tab" href="#builder">Builder</a></li>
                 <li><a data-toggle="tab" href="#wiki-preview" id="preview">Preview</a></li>
                 <li><a data-toggle="tab" href="#wiki-gallery" id="gallery">Gallery</a></li>
+                <li><a data-toggle="tab" href="#internal-links" id="internal-a">Internal Links</a></li>
                 <li style="float:right"> <input type="submit" value="Save" name="submit" class="Save_Btn" id="wikisave" /></li>
             </ul>
         </div>
@@ -166,6 +168,12 @@
 
             <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
             <div class="imageGallery" id="ImageGallery">
+            </div>
+        </div> 
+        
+        <div id="internal-links" class="tab-pane fade">
+            <div id="internal-links-view">
+                
             </div>
         </div>
 
@@ -417,7 +425,7 @@
             'scroll': handleScroll
         });
 
-        $toggle.on('click', function () {
+        $toggle.on('change', function () {
             $container.toggleClass('perspective');
         });
     }

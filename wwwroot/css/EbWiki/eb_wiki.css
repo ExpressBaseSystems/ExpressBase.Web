@@ -1,5 +1,7 @@
 ﻿
 /*new style*/
+
+
 .pd-0{
     padding:0;
 }
@@ -333,7 +335,7 @@ iframe {
         height: 80px;
         border-radius: 10px;
         border: solid 1px #d2d2d2;
-        width: 100%;
+        width: 50%;
         margin: 5px 15px 15px 5px;
     }
         .GettingStarted .divIcon {
@@ -763,5 +765,29 @@ mark {
     height: 25px;
     margin: 4px;
 }
-
-
+#Help{
+    padding-top:20px;
+}
+#Help span{
+    padding-top:0px;
+}
+#internal-links-view {
+    display: flex;
+    flex-flow: row wrap;
+    padding-right: 0px;
+}
+#author{
+    margin-left:37%;
+}
+    #author img{
+        padding:10px;
+    }
+    #author p{
+        padding:5px;
+    }
+    #author .authorimg {
+        width: 40px;
+        height: 40px;
+        border: solid 1px #9c9c9c;
+        border-radius: 25px;
+    }

@@ -56,6 +56,7 @@
     }.bind(this);
 
     this.controlOnFocus = function (e) {
+        e.stopPropagation();
         if (this.curControl && this.curControl.attr("ebsid") === $(e.target).attr("ebsid"))
             return;
         if (e.target.id === this.formId) {
@@ -66,7 +67,6 @@
         else
             this.curControl = $(e.target).closest(".Eb-ctrlContainer");
         let ebsid = this.curControl.attr("ebsid");
-        e.stopPropagation();
         this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
         //  this.PGobj.ReadOnly();
     }.bind(this);
@@ -199,7 +199,7 @@
             });
         else
             $ctrl.on("click", function myfunction() {
-                //event.stopPropagation();
+                event.stopPropagation();
                 if (event.target.getAttribute("class") !== "eb-lbltxtb")
                     $(this).focus();
             });

@@ -9,6 +9,7 @@
     this.show_home = function () {
         $('#wiki_data_div').hide();
         $('.front_page_wiki').show();
+        window.history.pushState('obj', 'PageTitle', `/Wiki`);
     };
 
     let start;
@@ -116,6 +117,7 @@
         var cur = textBefore.length + text.length; 
        
         this.clickfun(cur);
+        this.handleInput();
     }
 
     this.clickfun = function (curpos) {
@@ -216,7 +218,9 @@
             }
         }
         $('#wiki_data_div').append($Tags);
-
+        var $author = $("<div id='author'></div>");
+        $author.append("<div style='display:flex'><div class='authorimg'><img src='/images/users/dp/" + ob.createdBy + ".jbg'/></div><p>"+ob.authorName+"</p><div/>");
+        $('#wiki_data_div').append($author);
         $('.front_page_wiki').hide();
      
         let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
@@ -230,30 +234,17 @@
         }
 
         $('#wiki_data_div').append($nextPre);
-        //Was this page helpfull?
-        //    <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
-
-    //       </div >
-        //<div> 
-    //<div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" >
-    //    <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
-    //    <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
-    //    <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
-    //    <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
-    //    </div ></div >
-        $WasItHelpFul = `<div class="row"> <div class="col-sm-12"> 
-                               <div id="Help" show><span> 
-       <span style="float: right;"> <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+        $WasItHelpFul = `<div class="row"> 
+        <div class="col-sm-12" id="Help"> 
+        <h4>Questions?</h4>
+        <span>
+        Please mail <span style="color:blue"> support@expressbase.com</span> , we are always happy to help.
+        <span style="float: right;">
+        <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
         <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
         <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
-        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></span>
-      
-     </div> 
-            
-             <h4>Questions?</h4>
-            <p>Please mail <span style="color:blue"> support@expressbase.com</span> , we are always happy to help.<p>
-
-            `;
+        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> 
+             </span></span></div> </div>`;
         $('#wiki_data_div').append($WasItHelpFul);
 
         let title = $(".wiki_data h1").text();
@@ -465,10 +456,12 @@
             $("#ebwiki_panebrd").html("Getting started");
             $('#wiki_data_div').hide();
             $('.front_page_wiki').show();
+            window.history.pushState('obj', 'PageTitle', `/Wiki`);
         }
         else {
             $("#" + id).toggle(200);
             $("#ebwiki_panebrd").html(`${id}`);
+            window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
         }
     }
 
@@ -967,6 +960,121 @@
         this.insertAtCaret(insertVal, cursorPos);
     }
 
+    this.InternalLinksFun = function(){
+        $.ajax({
+            type: 'POST',
+            url: "/Wiki/Admin_Wiki_List",
+            data: {
+                status: 'Publish'
+            },
+            success: this.AjaxInternalLinksFun.bind(this)
+        });
+    }
+    this.AjaxInternalLinksFun = function (ob) {
+        $("#internal-links-view").empty();
+        if (ob.length == 0) {
+            $("#internal-links-view").append(`
+                        <h1 style="margin-left:50px"> You haven’t  any wikies yet.</h1>
+                        `)
+        }
+        else {
+
+
+            $("#internal-links-view").empty();
+
+            for (let j = 0; j < ob.wikiCat.length; j++) {
+                let temp = 0;
+                let $divObj = $(`<div class="BoxView"></div>`);
+                $divObj.append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}" toggleval="show">  ${ob.wikiCat[j].wikiCategory} 
+                       <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
+                <div>`);
+                let $Form = $(`<div data-val="${ob.wikiCat[j].wikiCategory}"></div>`);
+                for (let i = 0; i < ob.wikiList.length; i++) {
+                    if (ob.wikiList[i].category == `${ob.wikiCat[j].wikiCategory}`) {
+                        // var date = new Date(ob.wikiList[i].createdAt);
+                        var date = ob.wikiList[i].createdAt.split("T");
+
+                        $Form.append(`
+                                <div class="WikiList ${ ob.wikiList[i].status}" data-id= ${ob.wikiList[i].id} val="${ob.wikiList[i].title}">
+                                <h1>  ${ob.wikiList[i].title}  </h1>
+                                   </div>
+                        `);
+                        temp++;
+                    }
+                }
+                if (temp == 0) {
+                    $Form.append(`<h6 style="padding-left:100px;"> Empty List</h6> `);
+                }
+
+                $divObj.append($Form);
+                $("#internal-links-view").append($divObj);
+            }
+        }
+        this.InternalLinkContextMenu();
+        $("#eb_common_loader").EbLoader("hide");
+
+    }
+    this.InternalLinkContextMenu = function () {
+        $.contextMenu({
+            selector: '.Publish',
+            trigger: 'right',
+            items: {
+                "edit": {
+                    name: "Copy", icon: "copy", callback: this.CopyInternalLink.bind(this)
+                },
+            }
+        });
+    }
+    this.CopyInternalLink = function (key, options) {
+        let id = $(options.$trigger).attr("data-id");
+        let title = $(options.$trigger).attr("val");
+        let link = `<a data-id="${id}" class="wikilist CurrentSelection" val="${title}"> ${title} </a>`
+        copyStringToClipboard(link);
+    };
+    
+this.copyStringToClipboard = function(str)  {
+    var el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style = { position: 'absolute', left: '-9999px' };
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+}
+
+
+    var $highlights = $('.highlights');
+    var $textarea = $('#text');
+
+    // yeah, browser sniffing sucks, but there are browser-specific quirks to handle that are not a matter of feature detection
+    var ua = window.navigator.userAgent.toLowerCase();
+    var isIE = !!ua.match(/msie|trident\/7|edge/);
+    var isWinPhone = ua.indexOf('windows phone') !== -1;
+    var isIOS = !isWinPhone && !!ua.match(/ipad|iphone|ipod/);
+
+    this.applyHighlights = function(text) {
+        text = text
+            .replace(/\n$/g, '\n\n')
+            .replace(/&lt[^&gt]*&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*[a-z].*?&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*\/\s*\w\s*.*?&gt|&lt\s*br\s*&gt/g, '<mark>$&</mark>');
+
+        if (isIE) {
+            // IE wraps whitespace differently in a div vs textarea, this fixes it
+            text = text.replace(/ /g, ' <wbr>');
+        }
+
+        return text;
+    }
+
+    this.handleInput = function() {
+        var text = $textarea.val();
+        var text = text.replace(/\>/g, '&gt');
+        var text = text.replace(/\</g, '&lt');
+        var highlightedText = applyHighlights(text);
+        $highlights.html(highlightedText);
+    }
 
     this.init = function () {
 
@@ -979,7 +1087,7 @@
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         //$("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
-        $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
+       // $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
         $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
 
@@ -989,13 +1097,13 @@
         $("#public").on("click",".WikiMenu", this.WikiMenuToggle.bind(this));
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".WikiAdminMenuBar").on("click", this.WikiAdminMenuBarHighlight.bind(this));
-        $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
         $("#gallery-tab1").on("click", this.gallerytab.bind(this));
         $("#wiki-preview-tab").on("click", this.WikiPreviewTab.bind(this));
         $("#tbl-size-select").on("click", this.tbl_size_select.bind(this));
         $("#ul-type-select").on("click", this.ul_type_select.bind(this));
         $("#ol-type-select").on("click", this.ol_type_select.bind(this));
-        //$("#wikisave").on("click", this.EbloaderTrigger.bind(this));
+        $("#internal-a").on("click", this.InternalLinksFun.bind(this));
+        $("#wiki_data_div").on("click", ".wikilist", this.FetchWikiList.bind(this));
     };
 
     this.init();

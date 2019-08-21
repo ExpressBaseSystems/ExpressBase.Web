@@ -218,9 +218,9 @@
             }
         }
         $('#wiki_data_div').append($Tags);
-        var $author = $("<div id='author'></div>");
-        $author.append("<div style='display:flex'><div class='authorimg'><img src='/images/users/dp/" + ob.createdBy + ".jbg'/></div><p>"+ob.authorName+"</p><div/>");
-        $('#wiki_data_div').append($author);
+        //var $author = $("<div id='author'></div>");
+        //$author.append("<div style='display:flex'><div class='authorimg'><img src='/images/users/dp/" + ob.createdBy + ".jbg'/></div><p>"+ob.authorName+"</p><div/>");
+        //$('#wiki_data_div').append($author);
         $('.front_page_wiki').hide();
      
         let next = $(`[order-id="${orderId}"]`).next().attr("order-id");

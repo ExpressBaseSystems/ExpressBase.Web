@@ -21,15 +21,23 @@
     </style>
     <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css" asp-append-version="true">
 }
+
 @section JavaScript{
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script type="text/javascript" src="~/js/wiki/eb_wiki.js" asp-append-version="true"></script>
 }
 
 @Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
+@if (ViewBag.isLogedIn)
+{
+    <script>$("#signIn").remove();</script>
+}
 <style>
     body {
         overflow-x: initial !important;
+    }
+    .ext-pageheader .navbar {
+        border-bottom: 1px solid #efe7e7;
     }
 </style>
 
@@ -105,7 +113,7 @@
                 }
 
 
-       
+
             </div>
         </div>
         <div class="col-sm-9 col-md-9 col-lg-9 pd-0 eb-wiki-pane">
@@ -171,7 +179,7 @@
 
 </div>
 @section JsCode{
-<script>
+    <script>
         let obj;
         $(document).ready(function () {
             obj = new addwiki();
@@ -193,7 +201,7 @@
                     obj.show_home();
                 }
             }
-         
+
         });
 
         $(window).on('popstate', function (event) {
@@ -212,7 +220,7 @@
                 obj.show_home();
             }
         });
-</script>
+    </script>
 }
 
 

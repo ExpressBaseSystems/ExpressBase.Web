@@ -707,6 +707,83 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("ObjectDashboard", new { refid, objname = w.Name, w.Status, vernum = w.VersionNumber, workcopies = w.Wc_All, _tags = w.Tags, _apps = w.Apps, _dashbord_tiles = w.Dashboard_Tiles, _versioning = versioning });
         }
 
+        [HttpPost]
+        public IActionResult UpdateBuilder(string _refid, int _tabnum, int _ObjType, string _ssurl)
+        {
+            dynamic versionObj = null;
+            if (_ObjType == (int)EbObjectTypes.WebForm)
+            {
+                versionObj = Redis.Get<EbWebForm>(_refid);
+                return ViewComponent("FormBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.DataReader || _ObjType == (int)EbObjectTypes.DataWriter || _ObjType == (int)EbObjectTypes.SqlFunction)
+            {
+                if (_ObjType == (int)EbObjectTypes.DataReader)
+                    versionObj = Redis.Get<EbDataReader>(_refid);
+                else if (_ObjType == (int)EbObjectTypes.DataWriter)
+                    versionObj = Redis.Get<EbDataWriter>(_refid);
+                else if (_ObjType == (int)EbObjectTypes.SqlFunction)
+                    versionObj = Redis.Get<EbSqlFunction>(_refid);
+                return ViewComponent("CodeEditor", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.Report)
+            {
+                versionObj = Redis.Get<EbReport>(_refid);
+                return ViewComponent("ReportBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.FilterDialog)
+            {
+                versionObj = Redis.Get<EbFilterDialog>(_refid);
+                return ViewComponent("FilterDialogBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.UserControl)
+            {
+                versionObj = Redis.Get<EbUserControl>(_refid);
+                return ViewComponent("UserControl", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.EmailBuilder)
+            {
+                versionObj = Redis.Get<EbEmailTemplate>(_refid);
+                return ViewComponent("Emailbuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.TableVisualization)
+            {
+                versionObj = Redis.Get<EbTableVisualization>(_refid);
+                return ViewComponent("DVBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl});
+            }
+            else if (_ObjType == (int)EbObjectTypes.TableVisualization)
+            {
+                versionObj = Redis.Get<EbTableVisualization>(_refid);
+                return ViewComponent("DVTable", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.ChartVisualization)
+            {
+                versionObj = Redis.Get<EbChartVisualization>(_refid);
+                return ViewComponent("DVChart", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl});
+            }
+            else if (_ObjType == (int)EbObjectTypes.GoogleMap)
+            {
+                versionObj = Redis.Get<EbGoogleMap>(_refid);
+                return ViewComponent("GoogleMap", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl});
+            }
+            else if (_ObjType == (int)EbObjectTypes.BotForm)
+            {
+                versionObj = Redis.Get<EbBotForm>(_refid);
+                return ViewComponent("BotFormBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.SmsBuilder)
+            {
+                versionObj = Redis.Get<EbSmsTemplate>(_refid);
+                return ViewComponent("Smsbuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.Api)
+            {
+                versionObj = Redis.Get<EbApi>(_refid);
+                return ViewComponent("ApiBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            return View();
+        }
+
         public bool CheckRestricted(string _sql)
         {
             return

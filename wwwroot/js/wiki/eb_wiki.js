@@ -9,6 +9,7 @@
     this.show_home = function () {
         $('#wiki_data_div').hide();
         $('.front_page_wiki').show();
+        window.history.pushState('obj', 'PageTitle', `/Wiki`);
     };
 
     let start;
@@ -16,6 +17,7 @@
     let id;
 
     this.appendVal = function (e) {
+        var cursorPos = $("#text").prop('selectionStart');
         document.getElementById('text');
         let SelectedString = window.getSelection().toString();
        var ele = document.getElementById('text');
@@ -30,44 +32,44 @@
             let insertVal = `<${id} src=" "> </${id}>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<${id} src=''> ${SelectedString} </${id}>`
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `a`) {
-            let insertVal = `<${id} data-id=" " class="wikilist"> </${id}>`
+            let insertVal = `<${id} src="link"> </${id}>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<${id} src=''> ${SelectedString} </${id}>`
-                this.insertAtCaret(txt, insertVal);
+                let insertVal = `<${id} src=''>   ${SelectedString}   </${id}>`
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `right`) {
             let insertVal = `<p style="text-align: right;"> </p>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<p style="text-align: left;"> ${SelectedString}  </p>`
-                this.insertAtCaret(txt, insertVal);
+                let insertVal = `<p style="text-align: left;"> ${SelectedString} </p>`
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `left`) {
             let insertVal = `<p style="text-align: left;"> </p>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<p style="text-align: left;"> ${SelectedString} </p>`
-                this.insertAtCaret(txt, insertVal);
+                let insertVal = `<p style="text-align: left;">   ${SelectedString}   </p>`
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
        
@@ -75,36 +77,79 @@
             let insertVal = `<pre class="prettyprint"> </pre>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<pre class="prettyprint"> ${SelectedString} </pre>`
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `br`) {
             let insertVal = `<br/>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<br/>`
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else {
             let insertVal = `<${id}> </${id}>`
             let txt = 'text';
             if (SelectedString == "") {
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
             }
             else {
                 let insertVal = `<${id}> ${SelectedString} </${id}>`
-                this.insertAtCaret(txt, insertVal);
+                this.insertAtCaret(insertVal, cursorPos);
+            }
+        }    }
+
+    this.insertAtCaret = function (text ,cur){
+        var cursorPos = cur;
+        var v = $("#text").val();
+        var textBefore = v.substring(0, cursorPos);
+        var textAfter = v.substring(cursorPos, v.length);
+        $("#text").focus(); 
+        $("#text").val(textBefore + text + textAfter);
+        var cur = textBefore.length + text.length; 
+       
+        this.clickfun(cur);
+        this.handleInput();
+    }
+
+    this.clickfun = function (curpos) {
+        var v = $("#text").val();
+      
+        var str = v.substring(0, curpos);
+        var regex = /\<([a-z1-9A-Z\/]+\>)/gi, result, indices = [];
+        while ((result = regex.exec(str))) {
+            indices.push(result.index);
+        }
+        var cursorPosition = $("#text").prop("selectionStart");
+        $("#text").prop('selectionEnd');
+        var closestPosition = this.closest(cursorPosition, indices);
+        $("#text").prop('selectionEnd', closestPosition);
+        var cursorPos = $("#text").prop('selectionStart');
+ 
+    }
+
+    this.closest = function (num, arr) {
+        var curr = arr[0];
+
+        var diff = Math.abs(num - curr);
+        for (var val = 0; val < arr.length; val++) {
+            var newdiff = Math.abs(num - arr[val]);
+            if (newdiff < diff) {
+                diff = newdiff;
+                curr = arr[val];
             }
         }
+        return curr;
     }
+
 
     this.SelectInternalLink = function () {
         $.contextMenu({
@@ -158,7 +203,7 @@
         $("#ebwiki_panebrd").html(`${ob.category} / ${ob.title}`)
         urlTitle = ob.title.replace(/\s+/g, '-').toLowerCase();
         //var url = window.location.origin + "/Wiki/View/" + id + "/" + urlTitle;
-        var url = window.location.origin + `/Wiki/${ob.category}/${id}/${urlTitle}`;
+        var url = window.location.origin + `/Wiki/${ob.category}/${urlTitle}`;
         let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;
         let twUrl = "https://twitter.com/intent/tweet?status=" + url;
         let lnUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" +url +"&title="+ ob.title + "&summary=YourarticleSummary&source=expressbase.com";
@@ -173,7 +218,9 @@
             }
         }
         $('#wiki_data_div').append($Tags);
-
+        //var $author = $("<div id='author'></div>");
+        //$author.append("<div style='display:flex'><div class='authorimg'><img src='/images/users/dp/" + ob.createdBy + ".jbg'/></div><p>"+ob.authorName+"</p><div/>");
+        //$('#wiki_data_div').append($author);
         $('.front_page_wiki').hide();
      
         let next = $(`[order-id="${orderId}"]`).next().attr("order-id");
@@ -187,30 +234,17 @@
         }
 
         $('#wiki_data_div').append($nextPre);
-        //Was this page helpfull?
-        //    <button val="yes" class="WasItHelp">Yes</button><button val="no" class="WasItHelp">No</button>
-
-    //       </div >
-        //<div> 
-    //<div id="EbHelp" hidden> <p>Thank you for helping improve ExpressBase's documentation. If you need help or have any questions, <a>cick Here</a>     <span style="float: right;" >
-    //    <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
-    //    <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
-    //    <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
-    //    <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></p></div>
-    //    </div ></div >
-        $WasItHelpFul = `<div class="row"> <div class="col-sm-12"> 
-                               <div id="Help" show><span> 
-       <span style="float: right;"> <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
+        $WasItHelpFul = `<div class="row"> 
+        <div class="col-sm-12" id="Help"> 
+        <h4>Questions?</h4>
+        <span>
+        Please mail <span style="color:blue"> support@expressbase.com</span> , we are always happy to help.
+        <span style="float: right;">
+        <a href=${fbUrl} class="facebook icon-bar" target="_blank" ><i class="fa fa-facebook"></i></a>
         <a href=${twUrl} class="twitter icon-bar" target="_blank"><i class="fa fa-twitter" ></i></a>
         <a href=${lnUrl} class="linkedin icon-bar " target="_blank"><i class="fa fa-linkedin"></i></a>
-        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> </span></span>
-      
-     </div> 
-            
-             <h4>Questions?</h4>
-            <p>Please mail <span style="color:blue"> support@expressbasebase.com</span> , we are always happy to help.<p>
-
-            `;
+        <a href=${whUrl} class="whatsapp icon-bar" target="_blank"><i class="fa fa-whatsapp"></i></a> 
+             </span></span></div> </div>`;
         $('#wiki_data_div').append($WasItHelpFul);
 
         let title = $(".wiki_data h1").text();
@@ -300,44 +334,44 @@
     }
 
 
-    this.insertAtCaret = function (areaId, text) {
-        var txtarea = document.getElementById(areaId);
-        if (!txtarea) {
-            return;
-        }
+    //this.insertAtCaret = function (areaId, text) {
+    //    var txtarea = document.getElementById(areaId);
+    //    if (!txtarea) {
+    //        return;
+    //    }
 
-        var scrollPos = txtarea.scrollTop;
-        var strPos = 0;
-        var br = ((start || end == '0') ?
-            "ff" : (document.selection ? "ie" : false));
-        if (br == "ie") {
-            txtarea.focus();
-            var range = document.selection.createRange();
-            range.moveStart('character', -txtarea.value.length);
-            strPos = range.text.length;
-        } else if (br == "ff") {
-            strPos = start;
-        }
+    //    var scrollPos = txtarea.scrollTop;
+    //    var strPos = 0;
+    //    var br = ((start || end == '0') ?
+    //        "ff" : (document.selection ? "ie" : false));
+    //    if (br == "ie") {
+    //        txtarea.focus();
+    //        var range = document.selection.createRange();
+    //        range.moveStart('character', -txtarea.value.length);
+    //        strPos = range.text.length;
+    //    } else if (br == "ff") {
+    //        strPos = start;
+    //    }
 
-        var front = (txtarea.value).substring(0, strPos);
-        var back = (txtarea.value).substring(strPos, txtarea.value.length);
-        txtarea.value = front + text + back;
-        strPos = strPos + text.length;
-        if (br == "ie") {
-            txtarea.focus();
-            var ieRange = document.selection.createRange();
-            ieRange.moveStart('character', -txtarea.value.length);
-            ieRange.moveStart('character', strPos);
-            ieRange.moveEnd('character', 0);
-            ieRange.select();
-        } else if (br == "ff") {
-            txtarea.selectionStart = strPos;
-            txtarea.selectionEnd = strPos;
-            txtarea.focus();
-        }
+    //    var front = (txtarea.value).substring(0, strPos);
+    //    var back = (txtarea.value).substring(strPos, txtarea.value.length);
+    //    txtarea.value = front + text + back;
+    //    strPos = strPos + text.length;
+    //    if (br == "ie") {
+    //        txtarea.focus();
+    //        var ieRange = document.selection.createRange();
+    //        ieRange.moveStart('character', -txtarea.value.length);
+    //        ieRange.moveStart('character', strPos);
+    //        ieRange.moveEnd('character', 0);
+    //        ieRange.select();
+    //    } else if (br == "ff") {
+    //        txtarea.selectionStart = strPos;
+    //        txtarea.selectionEnd = strPos;
+    //        txtarea.focus();
+    //    }
 
-        txtarea.scrollTop = scrollPos;
-    }
+    //    txtarea.scrollTop = scrollPos;
+    //}
 
     //this.insertAtCaret = function (areaId, text) {
     //    let txtarea = document.getElementById(areaId);
@@ -422,10 +456,12 @@
             $("#ebwiki_panebrd").html("Getting started");
             $('#wiki_data_div').hide();
             $('.front_page_wiki').show();
+            window.history.pushState('obj', 'PageTitle', `/Wiki`);
         }
         else {
             $("#" + id).toggle(200);
             $("#ebwiki_panebrd").html(`${id}`);
+            window.history.pushState('obj', 'PageTitle', `/Wiki/${id}`);
         }
     }
 
@@ -830,7 +866,7 @@
         wiki["CatId"] = $("#category").val();
         wiki["title"]= $("#title").val();
         wiki["status"] = $("#status option:selected").text();
-        wiki["html"] = $("#text").text();
+        wiki["html"] = $("#text").val();
         wiki["tags"] = $("#tagbox").val();
         wiki["Id"] = $("#wiki-id").val();
 
@@ -874,6 +910,172 @@
             });
     }
 
+    this.tbl_size_select = function (e) {
+        var cursorPos = $("#text").prop('selectionStart');
+        let rows = $("#tbl-row").val();
+        let cols = $("#tbl-col").val();
+        let $tbl = $(`<table class="table table-bordered">&#13;&#10; </table> &#13;&#10;`);
+        for (i = 0; i < rows; i++) {
+            let $tblRow = $("<tr> &#13;&#10; </tr> &#13;&#10;");
+            if (i == 0) {
+                for (j = 0; j < cols; j++) {
+                    $tblRow.append("<th> </th> &#13;&#10;");
+                }
+                $tbl.append($tblRow);
+            }
+            else {
+                for (j = 0; j < cols; j++) {
+                    $tblRow.append("<td> </td> &#13;&#10;");
+                }
+                $tbl.append($tblRow);
+            }
+            
+        }
+        let insertVal = $tbl.outerHTML();
+        this.insertAtCaret(insertVal, cursorPos);
+
+    }
+
+    this.ul_type_select = function () {
+        var cursorPos = $("#text").prop('selectionStart');
+        let ul_row = $("#ul-row").val();
+        let type = $("#ul-style-sel option:selected").text();
+        let $ul = $(`<ul style="list-style-type:${type};"> &#13;&#10;</ul>`);
+        for (i = 0; i < ul_row; i++) {
+            $ul.append("<li> </li> &#13;&#10;");
+        }
+        let insertVal = $ul.outerHTML();
+        this.insertAtCaret(insertVal, cursorPos);
+    }
+
+    this.ol_type_select = function () {
+        var cursorPos = $("#text").prop('selectionStart');
+        let ul_row = $("#ol-row").val();
+        let type = $("#ol-style-sel option:selected").text();
+        let $ul = $(`<ol ${type}> &#13;&#10;</ol>`);
+        for (i = 0; i < ul_row; i++) {
+            $ul.append("<li> </li> &#13;&#10;");
+        }
+        let insertVal = $ul.outerHTML();
+        this.insertAtCaret(insertVal, cursorPos);
+    }
+
+    this.InternalLinksFun = function(){
+        $.ajax({
+            type: 'POST',
+            url: "/Wiki/Admin_Wiki_List",
+            data: {
+                status: 'Publish'
+            },
+            success: this.AjaxInternalLinksFun.bind(this)
+        });
+    }
+    this.AjaxInternalLinksFun = function (ob) {
+        $("#internal-links-view").empty();
+        if (ob.length == 0) {
+            $("#internal-links-view").append(`
+                        <h1 style="margin-left:50px"> You haven’t  any wikies yet.</h1>
+                        `)
+        }
+        else {
+
+
+            $("#internal-links-view").empty();
+
+            for (let j = 0; j < ob.wikiCat.length; j++) {
+                let temp = 0;
+                let $divObj = $(`<div class="BoxView"></div>`);
+                $divObj.append(`<div class="WikiMenu" val="${ob.wikiCat[j].wikiCategory}" toggleval="show">  ${ob.wikiCat[j].wikiCategory} 
+                       <i class="fa fa-chevron-circle-down" aria-hidden="true"></i>
+                <div>`);
+                let $Form = $(`<div data-val="${ob.wikiCat[j].wikiCategory}"></div>`);
+                for (let i = 0; i < ob.wikiList.length; i++) {
+                    if (ob.wikiList[i].category == `${ob.wikiCat[j].wikiCategory}`) {
+                        // var date = new Date(ob.wikiList[i].createdAt);
+                        var date = ob.wikiList[i].createdAt.split("T");
+
+                        $Form.append(`
+                                <div class="WikiList ${ ob.wikiList[i].status}" data-id= ${ob.wikiList[i].id} val="${ob.wikiList[i].title}">
+                                <h1>  ${ob.wikiList[i].title}  </h1>
+                                   </div>
+                        `);
+                        temp++;
+                    }
+                }
+                if (temp == 0) {
+                    $Form.append(`<h6 style="padding-left:100px;"> Empty List</h6> `);
+                }
+
+                $divObj.append($Form);
+                $("#internal-links-view").append($divObj);
+            }
+        }
+        this.InternalLinkContextMenu();
+        $("#eb_common_loader").EbLoader("hide");
+
+    }
+    this.InternalLinkContextMenu = function () {
+        $.contextMenu({
+            selector: '.Publish',
+            trigger: 'right',
+            items: {
+                "edit": {
+                    name: "Copy", icon: "copy", callback: this.CopyInternalLink.bind(this)
+                },
+            }
+        });
+    }
+    this.CopyInternalLink = function (key, options) {
+        let id = $(options.$trigger).attr("data-id");
+        let title = $(options.$trigger).attr("val");
+        let link = `<a data-id="${id}" class="wikilist CurrentSelection" val="${title}"> ${title} </a>`
+        copyStringToClipboard(link);
+    };
+    
+this.copyStringToClipboard = function(str)  {
+    var el = document.createElement('textarea');
+    el.value = str;
+    el.setAttribute('readonly', '');
+    el.style = { position: 'absolute', left: '-9999px' };
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+}
+
+
+    var $highlights = $('.highlights');
+    var $textarea = $('#text');
+
+    // yeah, browser sniffing sucks, but there are browser-specific quirks to handle that are not a matter of feature detection
+    var ua = window.navigator.userAgent.toLowerCase();
+    var isIE = !!ua.match(/msie|trident\/7|edge/);
+    var isWinPhone = ua.indexOf('windows phone') !== -1;
+    var isIOS = !isWinPhone && !!ua.match(/ipad|iphone|ipod/);
+
+    this.applyHighlights = function(text) {
+        text = text
+            .replace(/\n$/g, '\n\n')
+            .replace(/&lt[^&gt]*&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*[a-z].*?&gt/g, '<mark>$&</mark>')
+            .replace(/&lt\s*\/\s*\w\s*.*?&gt|&lt\s*br\s*&gt/g, '<mark>$&</mark>');
+
+        if (isIE) {
+            // IE wraps whitespace differently in a div vs textarea, this fixes it
+            text = text.replace(/ /g, ' <wbr>');
+        }
+
+        return text;
+    }
+
+    this.handleInput = function() {
+        var text = $textarea.val();
+        var text = text.replace(/\>/g, '&gt');
+        var text = text.replace(/\</g, '&lt');
+        var highlightedText = applyHighlights(text);
+        $highlights.html(highlightedText);
+    }
+
     this.init = function () {
 
         $(".props").on("click", this.appendVal.bind(this));
@@ -885,7 +1087,7 @@
         $(".wraper-link").on("click", this.WikiListToggle.bind(this));
         //$("#render_page_toggle").on("click", this.render_page_toggle.bind(this));
         $(".wiki_data").on("click", ".SearchWithTag ", this.SearchWithTagFun.bind(this));
-        $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
+       // $(".wiki_data").on("click", ".wikilist", this.SearchWithTagFun.bind(this));
         $(".wiki_data").on("click", ".NextPreWiki", this.NextAndPreWiki.bind(this));
         $(".GettingStarted").on("click", this.GetStartToWikiDocs.bind(this));
 
@@ -895,10 +1097,13 @@
         $("#public").on("click",".WikiMenu", this.WikiMenuToggle.bind(this));
         $("#public").on("click", ".UpdateOrder", this.UpdateOrder.bind(this));
         $(".WikiAdminMenuBar").on("click", this.WikiAdminMenuBarHighlight.bind(this));
-        $("#wiki_data_div").on("click", ".WasItHelp", this.WasItHelp.bind(this));
         $("#gallery-tab1").on("click", this.gallerytab.bind(this));
         $("#wiki-preview-tab").on("click", this.WikiPreviewTab.bind(this));
-        //$("#wikisave").on("click", this.EbloaderTrigger.bind(this));
+        $("#tbl-size-select").on("click", this.tbl_size_select.bind(this));
+        $("#ul-type-select").on("click", this.ul_type_select.bind(this));
+        $("#ol-type-select").on("click", this.ol_type_select.bind(this));
+        $("#internal-a").on("click", this.InternalLinksFun.bind(this));
+        $("#wiki_data_div").on("click", ".wikilist", this.FetchWikiList.bind(this));
     };
 
     this.init();

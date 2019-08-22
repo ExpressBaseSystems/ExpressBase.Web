@@ -979,12 +979,17 @@ pd-10 {
         border-radius: 4px;
         text-decoration: none;
         color: #333;
+        position: relative;
     }
 
         .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner:hover {
             background-color: #508bf9;
             color: white;
         }
+            .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner:hover.eb-newobj-comingsoon:after {
+                content: "Coming Soon";
+                background: #508bf9;
+            }
 
         .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner .icon {
             font-size: 25px;
@@ -1001,17 +1006,30 @@ pd-10 {
             flex-flow: row wrap;
             justify-content: center;
         }
-/*app dashboard new object modal*/
-
-/*marker for export*/
-.ExportMark {
-    position: absolute;
-    right: 15px;
-    top: 15px;
-    border-radius: 0;
-    margin: 0;
-    display: none;
-}
+    .newObjectmdl .eb-newobj-mdlbdy .eb-newobj-comingsoon:after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        font-weight: 300;
+        pointer-events: none;
+    }
+    /*app dashboard new object modal*/
+    /*marker for export*/
+    .ExportMark {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        border-radius: 0;
+        margin: 0;
+        display: none;
+    }
 
 .appdash_obj_container .objitems .object_container:hover .ExportMark {
     display: block;

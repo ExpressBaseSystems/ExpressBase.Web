@@ -417,6 +417,9 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
+        if (el.contains(target))
+            return;
+
         if ($(source).attr("class") !== this.toolContClass && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({

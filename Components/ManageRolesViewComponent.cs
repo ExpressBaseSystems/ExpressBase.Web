@@ -62,16 +62,23 @@ namespace ExpressBase.Web.Components
             {
                 if (objectType.IsUserFacing)
                 {
-                    var eOperations = assembly.GetType(string.Format("ExpressBase.Objects.Eb{0}", objectType.Name))
+                    try
+                    {
+                        var eOperations = assembly.GetType(string.Format("ExpressBase.Objects.Eb{0}", objectType.Name))
                     .GetField("Operations").GetValue(null);
 
-                    if (eOperations != null)
-                    {
-                        var _obj = new Eb_ObjectTypeOperations { Op_Id = objectType.IntCode, Op_Name = objectType.Name, Operations = new List<string>() };
-                        foreach (var Op in (eOperations as EbOperations).Enumerator)
-                            _obj.Operations.Add(Op.ToString());
+                        if (eOperations != null)
+                        {
+                            var _obj = new Eb_ObjectTypeOperations { Op_Id = objectType.IntCode, Op_Name = objectType.Name, Operations = new List<string>() };
+                            foreach (var Op in (eOperations as EbOperations).Enumerator)
+                                _obj.Operations.Add(Op.ToString());
 
-                        _listObj.Add(_obj);
+                            _listObj.Add(_obj);
+                        }
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine("Please instantiate Operations for EbObject : " + objectType.Name + "\nMessage : " + e.Message + "\nStackTrace : " + e.StackTrace);
                     }
                 }
             }

@@ -485,6 +485,30 @@
     this.SysCreatedAt = function (ctrl) {
         //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
+    this.MuGetValue = function (p1, p2) {
+        let _finalObj = {};
+        $.each(this.Fields.$values, function (i, obj) {
+            if (obj.ControlName !== '') {
+                _finalObj[obj.Name] = obj.Control.getValue();
+            }            
+        }.bind(this));
+        return JSON.stringify(_finalObj);
+    };
+
+    this.ManageUser = function (ctrl, ctrlopts) {
+        console.log('init ManageUser');
+
+        $.each(ctrl.Fields.$values, function (i, obj) {
+            if (obj.ControlName !== '') {
+                let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
+                if (c)
+                    obj.Control = c;
+            }
+        }.bind(this));
+
+        $.extend(ctrl, { getValue: this.MuGetValue });
+    };
+
 
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;

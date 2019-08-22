@@ -682,8 +682,11 @@ iframe {
 }
 
 .backdrop {
-    width: 1307px;
+    padding-top: 3px;
+    padding-left: 2px;
+    /*width: 1312px;*/
     height: 507px;
+    margin-right:15px;
 }
 
 .highlights, textarea {

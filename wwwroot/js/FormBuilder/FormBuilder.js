@@ -84,7 +84,7 @@
             let tapBtns = $ctrl.find("ul.nav-tabs a");
             $.each(ctrlObj.Controls.$values, function (i, pane) {
                 $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
-                $(tapBtns[0]).attr("href", "#" + pane.EbSid).text(pane.Name).closest("li").attr("li-of", pane.EbSid);
+                $(tapBtns[0]).attr("href", "#" + pane.EbSid).find("span").text(pane.Name).closest("li").attr("li-of", pane.EbSid).attr("ebsid", pane.EbSid);
             });
             this.makeTabsDropable();
         }
@@ -551,7 +551,6 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
-        this.$form.on("dblclick", ".abc", this.ctrlLblDblClick.bind(this));
         this.$form.on("dblclick", ".eb-label-editable", this.ctrlLblDblClick.bind(this));
         this.$form.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
         this.$form.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));

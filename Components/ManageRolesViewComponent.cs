@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Components
             ViewBag.SelectedRoleInfo = EbSerializers.Json_Serialize(fr.SelectedRoleInfo);
             ViewBag.PermissionList = EbSerializers.Json_Serialize(fr.PermissionList);
             ViewBag.RoleId = itemid;
-            TempData["_dict"] = GetPermissionOperationsAsJs();
+            ViewBag._dict = GetPermissionOperationsAsJs();
             foreach (var role in Enum.GetValues(typeof(SystemRoles)))
             {
                 fr.RoleList.Add(new Eb_RoleObject()

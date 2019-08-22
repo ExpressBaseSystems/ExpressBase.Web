@@ -196,7 +196,7 @@
     };
 
     this.UpdateBuilder_Success = function (data) {
-        $('#vernav' + this.tabNum).html(data);
+        $(this.target).html(data);
     };
 
     this.LoadStatusPage = function () {

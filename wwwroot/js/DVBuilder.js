@@ -99,8 +99,8 @@ class DvBuilder {
         }
         this.propGrid.PropertyChanged = this.PropertyChanged.bind(this);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-
         commonO.saveOrCommitSuccess = this.rendertable.bind(this);
+        commonO.Current_obj = this.EbObject;
     }
 
     EventBind() {

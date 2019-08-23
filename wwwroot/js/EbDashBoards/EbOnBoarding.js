@@ -233,6 +233,6 @@ var EbOnBoarding = function () {
         $("#name").on("keyup", this.Namevalidate.bind(this));
         $("#country").on("click", this.Countryselect.bind(this));
         $("#email").on('focusout', this.Emailvalidate1.bind(this))
-    };
+ };
     this.init();
 };

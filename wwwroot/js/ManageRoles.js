@@ -61,8 +61,8 @@
             //Anonymous Role Management
             if (roleInfo["IsAnonymous"] === "true") {
                 this.chkboxAnonymous.bootstrapToggle('on');
-                $($("#ulTabOnMngRole").children()[1]).hide();
                 $($("#ulTabOnMngRole").children()[2]).hide();
+                $($("#ulTabOnMngRole").children()[3]).hide();
                 $('.nav-tabs a[href="#divObjList"]').tab('show');
             }
 
@@ -116,9 +116,9 @@
                             if (name === "OK")
                                 flag = true;
                             if (flag || (sroles === "" && usrs === "")) {
-                                $($("#ulTabOnMngRole").children()[1]).hide();
                                 $($("#ulTabOnMngRole").children()[2]).hide();
-                                $('.nav-tabs a[href="#divObjList"]').tab('show');
+                                $($("#ulTabOnMngRole").children()[3]).hide();
+                                $('.nav-tabs a[href="#settings"]').tab('show');
                             }
                             else
                                 this.chkboxAnonymous.bootstrapToggle('off');
@@ -126,14 +126,14 @@
                     });
             }
             else {
-                $($("#ulTabOnMngRole").children()[1]).hide();
                 $($("#ulTabOnMngRole").children()[2]).hide();
-                $('.nav-tabs a[href="#divObjList"]').tab('show');
+                $($("#ulTabOnMngRole").children()[3]).hide();
+                $('.nav-tabs a[href="#settings"]').tab('show');
             }
         }
         else {
-            $($("#ulTabOnMngRole").children()[1]).show();
             $($("#ulTabOnMngRole").children()[2]).show();
+            $($("#ulTabOnMngRole").children()[3]).show();
         }
 
         //}

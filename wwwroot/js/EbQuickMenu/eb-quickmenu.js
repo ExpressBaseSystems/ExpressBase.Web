@@ -19,7 +19,7 @@
         if (this.login === "dc") {
             $("#ebm-new").off("click").on("click", this.toggleNewW.bind(this));
         }
-        
+
         if (this.login !== "tc") {
             $("#menu_refresh").off("click").on('click', this.refreshMenu.bind(this));
             $(".Eb_quick_menu #ebm-objsearch").off("keyup").on("keyup", this.searchFAllObjects.bind(this));
@@ -92,7 +92,7 @@
         if ($.isEmptyObject(o)) {
             $("#quick_menu_load").EbLoader("show");
             $.ajax({
-                url: "../TenantUser/getSidebarMenu",
+                url: location.origin + "/TenantUser/getSidebarMenu",
                 type: "GET",
                 data: {
                     LocId: locId
@@ -231,6 +231,7 @@
     };
 
     this.searchFAllObjects = function (e) {
+        var _tempsearch = [];
         $(".active_link").removeClass("active_link");
         let min = (this.login === "uc") ? 1 : 3;
         {
@@ -248,8 +249,11 @@
                 $.each(Types.Types, function (i, _obj) {
                     _obj.Objects.forEach(function (obItem) {
                         if (obItem.DisplayName.toLowerCase().indexOf(srch) !== -1) {
-                            this.appendObjByCategory(obItem, false);
-                            f = true;
+                            if (_tempsearch.indexOf(obItem.Id) < 0) {
+                                this.appendObjByCategory(obItem, false);
+                                f = true;
+                                _tempsearch.push(obItem.Id);
+                            }
                         }
                     }.bind(this));
                 }.bind(this));
@@ -281,7 +285,7 @@
         let appid = parseInt($(e.target).closest("button").attr("appid"));
         let otype = parseInt($(e.target).closest("button").attr("otype"));
         $.ajax({
-            url: "../TenantUser/AddFavourite",
+            url: location.origin + "/TenantUser/AddFavourite",
             type: "POST",
             data: {
                 objid: objid
@@ -301,7 +305,7 @@
         let appid = parseInt($(e.target).closest("button").attr("appid"));
         let otype = parseInt($(e.target).closest("button").attr("otype"));
         $.ajax({
-            url: "../TenantUser/RemoveFavourite",
+            url: location.origin + "/TenantUser/RemoveFavourite",
             type: "POST",
             data: {
                 objid: objid

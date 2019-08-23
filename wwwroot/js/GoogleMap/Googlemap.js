@@ -1,4 +1,9 @@
-﻿var BuilderMode = {
+﻿var informaion = function (nam, val) {
+    this.name = nam;
+    this.value = val;
+};
+
+var BuilderMode = {
     NEW: "new",
     EDIT: "edit"
 };
@@ -295,7 +300,9 @@ var EbGoogleMap = function (option) {
         $("#eb_common_loader").EbLoader("hide");
         if (this.login === "uc")
             dvcontainerObj.currentObj.data = result;
-        this.drawMapHelper(result.data);
+        this.data = result.data;
+        this.formatedData = result.formattedData;
+        this.drawMapHelper();
     };
 
     this.GenerateButtons = function () {
@@ -425,7 +432,8 @@ var EbGoogleMap = function (option) {
     };
 
     this.drawMapHelper = function (datain) {
-        this.data = datain;
+        if (datain)
+            this.data = datain;
         if (this.EbObject.LatLong !== null)
             this.drawMap();
     };
@@ -511,7 +519,7 @@ var EbGoogleMap = function (option) {
         if (this.EbObject.InfoWindow) {
             $.each(this.EbObject.InfoWindow.$values, function (i, obj) {
                 let info = [];
-                $.each(this.data, function (k, value) {
+                $.each(this.formatedData, function (k, value) {
                     info.push(value[obj.data]);
                 });
                 this.Inform.push(new informaion(obj.name, info));

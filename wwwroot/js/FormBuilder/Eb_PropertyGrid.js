@@ -405,6 +405,13 @@
         this.$hiddenProps[prop] = null;
     };
 
+    this.changePropertyValue = function (prop, val) {
+        this.CurObj[prop] = val;
+        let $pginp = $(`#${this.wraperId}${prop}`);
+        if ($pginp.length !== 0)
+            $pginp.val(val).trigger("change");
+    };
+
     //build PG table by Assembling property GroupHeaders, property rows ...
     this.buildGrid = function () {
         // Now we have all the html we need, just assemble it
@@ -503,15 +510,19 @@
                 $colTile.attr("id", this.PropsObj[this.CurProp]).find("span").text(this.PropsObj[this.CurProp]);
         }
         if (typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
-            let NS1 = this.CurMeta.UIChangefn.split(".")[0];
-            let NS2 = this.CurMeta.UIChangefn.split(".")[1];
-            EbOnChangeUIfns[NS1][NS2](this.PropsObj.EbSid, this.PropsObj);
+            this.execUiChangeFn(this.CurMeta.UIChangefn, this.PropsObj);
         }
         if (this.CurProp === 'DataSourceId') {
             this.PGHelper.dataSourceInit();
         }
         let newVal = this.PropsObj[this.CurProp];
         this.PropertyChanged(this.PropsObj, this.CurProp, newVal, oldVal);
+    };
+
+    this.execUiChangeFn = function (UIChangefn, PropsObj) {
+        let NS1 = UIChangefn.split(".")[0];
+        let NS2 = UIChangefn.split(".")[1];
+        EbOnChangeUIfns[NS1][NS2](PropsObj.EbSid, PropsObj);
     };
 
     ////Add a control name to Control DD

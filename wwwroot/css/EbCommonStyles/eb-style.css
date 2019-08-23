@@ -759,7 +759,7 @@ Navigation bar
 
 
 /*home page dropdown*/
-.nav_drp_li .sub {
+/*.nav_drp_li .sub {
     padding: 7px 20px !important;
     color: #1488c5 !important;
     font-size: 15px;
@@ -767,7 +767,7 @@ Navigation bar
 
 .nav_drp_li .dropdown-menu {
     padding: 10px;
-}
+}*/
 /*EbMsgBox*/
 .eb_messageBox_container {
     width: 100%;
@@ -781,7 +781,7 @@ Navigation bar
     top: 0;
 }
 /*dropdown menu*/
-.drp_container {
+/*.drp_container {
     transition: transform .27s ease,opacity .27s ease,visibility .27s ease;
     width: 560px;
     padding: 0;
@@ -803,9 +803,9 @@ Navigation bar
         transform: rotate(45deg);
         border-left: 1px solid #c3c3c3;
         border-top: 1px solid #c3c3c3;
-    }
+    }*/
 
-.navmain .drop-body {
+/*.navmain .drop-body {
     background: white;
     border-radius: 4px 4px 0 0;
     padding: 22px 33px 20px;
@@ -822,9 +822,9 @@ Navigation bar
     text-transform: uppercase;
     margin-bottom: 21px;
     letter-spacing: .3px;
-}
+}*/
 
-.navmain .drop-link {
+/*.navmain .drop-link {
     display: block;
     padding: 2px 0 4px 50px;
     margin-bottom: 15px;
@@ -834,9 +834,9 @@ Navigation bar
     box-sizing: border-box;
     text-decoration: none;
     transition-duration: 0.08s;
-}
+}*/
 
-.navmain .ico {
+/*.navmain .ico {
     box-shadow: 0 3px 4px 0 rgba(0,0,0,.05);
     background: #fff;
 }
@@ -893,9 +893,9 @@ Navigation bar
     -ms-flex-pack: center;
     display: flex;
     justify-content: center;
-}
+}*/
 
-.navmain .drop-foot {
+/*.navmain .drop-foot {
     background: #fff;
     border-radius: 0 0 4px 4px;
     padding: 17px 54px 7px;
@@ -918,17 +918,17 @@ Navigation bar
     transition: opacity .25s ease;
     will-change: opacity;
     width: 81%;
-}
+}*/
 
-.drop-link:hover {
+/*.drop-link:hover {
     -moz-transform: translate(-2px, -2px);
     -ms-transform: translate(-2px, -2px);
     -o-transform: translate(-2px, -2px);
     -webkit-transform: translate(-2px, -2px);
     transform: translate(-2px, -2px)
-}
+}*/
 
-.drp_down:focus:before, drp_down:not(.active_Link):hover:focus {
+/*.drp_down:focus:before, drp_down:not(.active_Link):hover:focus {
     display: none !important;
 }
 
@@ -938,7 +938,7 @@ Navigation bar
 
 .drp_container:hover {
     display: block !important;
-}
+}*/
 /*
     Dragula style BEGIN  https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css
 */

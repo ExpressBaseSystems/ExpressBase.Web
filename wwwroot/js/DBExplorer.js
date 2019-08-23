@@ -24,23 +24,29 @@
         $(".show_loader").EbLoader("show");
         var exe_window = $("#TabAdderMain li.active").attr("id");
         exe_window = exe_window[exe_window.length - 1];
+        var dt = $('.dbTyper').attr("dt");
+        var down = $('.dbTyper').attr("dOwn");
+        if (down == 'dOwn')
+            down = true;
         var data = this.editor[exe_window].getValue();        
         $.ajax({
             type: "POST",
             url: "../DbClient/ExecuteQuery",
             content: "application/json; charset=utf-8",
             dataType: "json",
-            data: { Query: data },
+            data: { Query: data, solution: dt, Isadmin: down  },
             traditional: true,
             success: function (result) {
-                if (result[0].columnCollection != null) {
-                    this.query_result(result);
-                    $('#t' + (res - 1) + ' a').trigger('click');
-                } else if (result[0].message != "") {
-                    alert(result[0].message);
-                } else if (result[0].Result === 0) {
-                    alert('Oh Yes success :(  : ' + result);
-                }
+                if (result.length != 0) {
+                    if (result[0].columnCollection != null) {
+                        this.query_result(result);
+                        $('#t' + (res - 1) + ' a').trigger('click');
+                    } else if (result[0].message != "") {
+                        alert(result[0].message);
+                    } else if (result[0].Result === 0) {
+                        alert('Oh Yes success :(  : ' + result);
+                    }
+                }               
                 $(".show_loader").EbLoader("hide");
             }.bind(this),
             error: function (result) {
@@ -49,6 +55,27 @@
             }
         });
 
+    }.bind(this);
+
+    this.searchSolution = function (e) {
+        //$("#eb_common_loader").EbLoader("show");
+        var searchValue = e.target.selectedOptions[0].text;
+        $.ajax({
+            type: 'POST',
+            url: "../DbClient/SearchSolution",
+            data: { clientSolnid: searchValue },
+            success: function (data) {
+                //cmeditor = document.getElementById(".coder");
+                //cmeditor.toTextArea();
+                $('#viewdbclientappend').html(data);
+                $('.selectpicker').selectpicker('destroy').selectpicker();
+                $('#searchSolution').on('changed.bs.select', this.searchSolution);
+                this.makeDraggable();
+                $('.mytree div:has(div)').addClass('parent');
+                $('div.mytree div').click(this.create_tree);
+                
+            }.bind(this)
+        });
     }.bind(this);
 
     this.query_result = function (result) {
@@ -233,8 +260,17 @@
     };
 
     window.onload = function () {
+        this.codemirrorloader();
+        this.makeDraggable();
+        $('.mytree div:has(div)').addClass('parent');
+        $('div.mytree div').click(this.create_tree);
+        $('#sqlquery').click(this.ajax_call);   
 
-    };
+        this.pannelhide();
+        //this.tableHide();
+        $('#TabAdder').click(this.codemirrorloader.bind(this));
+        $('#DragAdder').click(this.DaggAdder.bind(this));
+    }.bind(this);
 
     this.Tab_Closer = function () {
         let $e = $(event.target).closest("li").children("a").attr("href");
@@ -257,7 +293,7 @@
         let $TabHtml = $(`<li id="query_li${++quer}"><a data-toggle="tab" class="cetab" href="#result_set${++tab}">QUERY ${quer}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; "  onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
         $('#pannel #TabAdderMain').append($TabHtml);
         $(`body`).off("click").on("click", ".Tabclose", this.Tab_Closer.bind(this));
-        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><div id="code' + quer + '" class="Resize_toolbox"><textarea id="coder' + quer + '" name="coder" style="visibility:hidden"></textarea></div ><div class="tttab-session"><ul class="nav nav-tabs tab-section" id="Result_Tab' + tab + '"></ul></div><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
+        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><div id="code' + quer + '" class="Resize_toolbox"><textarea id="coder' + quer + '" class="coder" name="coder" style="visibility:hidden"></textarea></div ><div class="tttab-session"><ul class="nav nav-tabs tab-section" id="Result_Tab' + tab + '"></ul></div><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
         $('#maintab').append($TabHtml_cont);
         //let $ResultHtml = $(' <li class="active"><a data-toggle="tab" href="#queryresult' + res + '" style="margin: 25px 5px 0px 5px;">Result ' + res + '</a></li>');
         //$('#Result_Tab').append($ResultHtml);
@@ -356,7 +392,7 @@
     }.bind(this);
 
     $.contextMenu({
-        selector: '.table-name',
+        selector: '.treecontextmenu',
         build: function (key, opt) {
             $(".mytree .selected").removeClass("selected");
             key.parent().addClass("selected");
@@ -372,7 +408,7 @@
                                     //opt.$trigger.parent().addClass("selected");
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
-                                    var tb_name = key.$trigger.attr("data-name");
+                                    var tb_name = key.$trigger[0].innerText;
                                     this.editor[exe_window].setValue("select * from " + tb_name + " ORDER BY id ASC LIMIT 100;");
                                     $('#sqlquery').trigger('click');
                                 }.bind(this)
@@ -384,7 +420,7 @@
                                     //opt.$trigger.parent().addClass("selected");
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
-                                    var tb_name = key.$trigger.attr("data-name");
+                                    var tb_name = key.$trigger[0].innerText;
                                     this.editor[exe_window].setValue("select * from " + tb_name + " ORDER BY id DESC LIMIT 100;");
                                     $('#sqlquery').trigger('click');
                                 }.bind(this)
@@ -396,7 +432,7 @@
                                     //opt.$trigger.parent().addClass("selected");
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
-                                    var tb_name = key.$trigger.attr("data-name");
+                                    var tb_name = key.$trigger[0].innerText;
                                     this.editor[exe_window].setValue("select * from " + tb_name + ";");
                                     $('#sqlquery').trigger('click');
                                 }.bind(this)
@@ -414,7 +450,7 @@
                                     //opt.$trigger.parent().addClass("selected");
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
-                                    var tb_name = key.$trigger.attr("data-name");
+                                    var tb_name = key.$trigger[0].innerText;
                                     var Col_name = "";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + ", ";
@@ -429,7 +465,7 @@
                                     //opt.$trigger.parent().addClass("selected");
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
-                                    var tb_name = key.$trigger.attr("data-name");
+                                    var tb_name = key.$trigger[0].innerText;
                                     var Col_name="";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + ", ";
@@ -444,7 +480,7 @@
                                     //opt.$trigger.parent().addClass("selected");
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
-                                    var tb_name = key.$trigger.attr("data-name");
+                                    var tb_name = key.$trigger[0].innerText;
                                     var Col_name="";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + "= ?, ";
@@ -461,7 +497,7 @@
                             //opt.$trigger.parent().addClass("selected");
                             var exe_window = $("#TabAdderMain li.active").attr("id");
                             exe_window = exe_window[exe_window.length - 1];
-                            var tb_name = key.$trigger.attr("data-name");
+                            var tb_name = key.$trigger[0].innerText;
                             this.editor[exe_window].setValue("select COUNT(*) from " + tb_name + ";");
                             $('#sqlquery').trigger('click');
                         }.bind(this)
@@ -479,21 +515,11 @@
 
 
     this.init = function () {
-        $('.mytree div:has(div)').addClass('parent');
-        $('div.mytree div').click(this.create_tree);
-        $('#sqlquery').click(this.ajax_call);
-        this.makeDraggable();
-        this.makeDrop();
-        this.pannelhide();
-        this.codemirrorloader();
-        //this.tableHide();
-        $('#TabAdder').click(this.codemirrorloader.bind(this));
-        $('#DragAdder').click(this.DaggAdder.bind(this));
+        
         $('#myInput').keyup(this.SearchTool.bind(this));
         $(".DbClient_toolbox").resizable();
         $('[data-toggle="tooltip"]').tooltip(); 
-
-
+        $('#searchSolution').on('changed.bs.select', this.searchSolution);
     };
     this.init();
 }

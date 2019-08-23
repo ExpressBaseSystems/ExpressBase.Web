@@ -23,60 +23,70 @@
     }
 }
 
+@section StyleSheet{
+    <style>
+        .grecaptcha-badge {
+            width: 70px !important;
+            overflow: hidden !important;
+            transition: all 0.3s ease !important;
+            left: 4px !important;
+        }
+
+            .grecaptcha-badge:hover {
+                width: 256px !important;
+            }
+    </style>
+}
 <script src="https://apis.google.com/js/platform.js" async defer></script>
 
 <script>
-                     //load the JavaScript SDK
-                      (function(d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0];
-                        if (d.getElementById(id)) return;
-                        js = d.createElement(s); js.id = id;
-                        js.src = "https://connect.facebook.net/en_US/sdk.js";
-                        fjs.parentNode.insertBefore(js, fjs);
-                      }(document, 'script', 'facebook-jssdk'));
+    //load the JavaScript SDK
+    (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "https://connect.facebook.net/en_US/sdk.js";
+    fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
 
-                   window.fbAsyncInit = function() {
-                      FB.init({
-                      appId      :  '@ViewBag.FacebookSigninAppid',
-                      status: true,
-                      cookie     : true,
-                      xfbml      : true,
-                      version    : 'v4.0'
-                      });
+    window.fbAsyncInit = function() {
+        FB.init({
+        appId      :  '@ViewBag.FacebookSigninAppid',
+        status: true,
+        cookie     : true,
+        xfbml      : true,
+        version    : 'v4.0'
+        });
 
-	                    //check user session and refresh it
-	                   FB.getLoginStatus((response) => {
-		                    if (response.status === 'connected') {
-			                    //user is authorized
-			                   // getUserData();
-		                    } else {
-			                    //user is not authorized
-		                    }
-	                   });
-                   };
+	    //check user session and refresh it
+	    FB.getLoginStatus((response) => {
+		    if (response.status === 'connected') {
+			    //user is authorized
+			    // getUserData();
+		    } else {
+			    //user is not authorized
+		    }
+	    });
+    };
+    //add event listener to login button
+    function FBLogin() {
+        console.log("fb");
+        $("#loaderdiv").EbLoader("show");
+    FB.login(function (response) {
+        if (response.authResponse) {
+            getUserData();
+        } else {
+        //alert('User cancelled login or did not fully authorize.');
+        }
+    }, {scope: 'email,public_profile'});
+    }
 
+    function getUserData() {
+	    FB.api('/me', {fields: 'id, name, first_name, last_name,email, gender,hometown'}, (response) => {
+            fbuserdetails(response);
+	    });
 
-
-            //add event listener to login button
-                      function FBLogin() {
-                          console.log("fb");
-                          $("#loaderdiv").EbLoader("show");
-                        FB.login(function (response) {
-                          if (response.authResponse) {
-                              getUserData();
-                          } else {
-                          //alert('User cancelled login or did not fully authorize.');
-                          }
-                        }, {scope: 'email,public_profile'});
-                      }
-
-      function getUserData() {
-	      FB.api('/me', {fields: 'id, name, first_name, last_name,email, gender,hometown'}, (response) => {
-              fbuserdetails(response);
-	      });
-
-      }
-
+    }
     function fbuserdetails(response) {
         if (response.email != null &
             response.email != undefined &
@@ -118,9 +128,6 @@
              $("#loaderdiv").EbLoader("hide");
         }
     }
-
-
-
 </script>
 
 
@@ -218,6 +225,13 @@
         </div>
     </div>
 </section>
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<!-- Your customer chat code -->
+<div class="fb-customerchat"
+     attribution=setup_tool
+     page_id="1616632595309068">
+</div>
 <script>
     if ('@(TempData["scl_signin_msg"])') {
           EbMessage("show", { Message: '@(TempData["scl_signin_msg"])', Background: "#d83535" });
@@ -293,4 +307,20 @@
 </script>
 @section JsCode{
     <script src="~/js/Auth/eb-authenticate.js" type="text/javascript" asp-append-version="true"></script>
+    <script>
+        window.fbAsyncInit = function () {
+            FB.init({
+                xfbml: true,
+                version: 'v4.0'
+            });
+        };
+
+        (function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
 }

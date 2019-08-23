@@ -88,7 +88,7 @@
 
 <script>
     $('document').ready(function () {
-        var _dict = @Html.Raw(TempData.Peek("_dict"));
+        var _dict = @Html.Raw(ViewBag._dict);
         var obj = new ManageRolesJs(@_applicationCollection, @_roleId, @_roleInfo, @_permission, _dict, @_roleList, @_role2RoleList, @_usersList, @_locationList);
     });
 </script>

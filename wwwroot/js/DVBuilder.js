@@ -1125,6 +1125,7 @@ class DvBuilder {
         let type = this.getType(result.Type);
         let objid = type + this.calcfieldCounter++;
         let obj = new EbObjects[type](objid);
+        obj.Type = result.Type;
         this.objCollection[name] = obj;
         obj.name = name;
         obj.Title = obj.name;
@@ -1143,8 +1144,12 @@ class DvBuilder {
 
     addCalcFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
-        obj.sTitle = obj.name;
-        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
+        obj.sTitle = obj.name;        
+        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
+            <div id="${obj.name}_elemsCont" class="columnelemsCont">
+                <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>
+                <input class="columntitle" type="text" id="${obj.name}_columntitle"/>
+            </div></li>`);
         this.ColumnDropRelated(element);
         $("#columns-list-body").append(element);
         $(element).off("click").on("click", this.elementOnFocus.bind(this));

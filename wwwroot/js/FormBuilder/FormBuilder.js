@@ -194,7 +194,7 @@
         if (type === "TabControl")
             $ctrl.on("click", function myfunction() {
                 let $e = $(event.target);
-                if ($e.closest(".cont-prop-btn").attr("class") === "cont-prop-btn")// to skip event.stopPropagation()
+                if ($e.closest(".cont-prop-btn").length === 1 || $e.closest(".ebtab-add-btn").length === 1)// to skip event.stopPropagation()
                     return;
 
                 if ($e.closest("a").attr("data-toggle") !== "tab")
@@ -204,7 +204,7 @@
         else
             $ctrl.on("click", function myfunction() {
                 let $e = $(event.target);
-                if ($e.closest(".cont-prop-btn").attr("class") === "cont-prop-btn")// to skip event.stopPropagation()
+                if ($e.closest(".cont-prop-btn").length === 1)// to skip event.stopPropagation()
                     return;
 
                 event.stopPropagation();
@@ -466,7 +466,15 @@
     this.addTabPane = function (SelectedCtrl, prop, val, addedObj) {
         let id = SelectedCtrl.EbSid;
         let $ctrl = $("#cont_" + id);
-        let $tabMenu = $(`<li li-of="${addedObj.EbSid}" class="ppbtn-cont" ebsid="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}"><span class='eb-label-editable'>${addedObj.Name}</span><input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/><div class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div></a></li>`);
+        let $tabMenu = $(`<li li-of="${addedObj.EbSid}" ebsid="${addedObj.EbSid}">
+                            <a data-toggle="tab" class="ppbtn-cont" href="#${addedObj.EbSid}">
+                                <span class='eb-label-editable'>${addedObj.Name}</span>
+                                <input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/>
+                                <div class='ebtab-close-btn eb-fb-icon'><i class='fa fa-times' aria-hidden='true'></i></div>
+                                <div class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div>
+                            </a>
+                            <div class='ebtab-add-btn eb-fb-icon'><i class='fa fa-plus' aria-hidden='true'></i></div>
+                        </li>`);
         let $tabPane = $(`<div id="${addedObj.EbSid}" ctype="${addedObj.ObjType}" ebsid="${addedObj.EbSid}" class="tab-pane fade  ebcont-ctrl"></div>`);
         $ctrl.closestInner(".nav-tabs").append($tabMenu);
         $ctrl.closestInner(".tab-content").append($tabPane);
@@ -503,6 +511,7 @@
         $e = $(event.target);
         $e.hide();
         $e.prev(".eb-label-editable").show();
+        $e.siblings(".ebtab-close-btn").show();
     };
 
     this.lbltxtbKeyUp = function (e) {
@@ -529,6 +538,9 @@
     };
 
     this.contPropBtnClick = function (e) {
+        $(".stickBtn").hide(); // hard coding temp2 23-08 -19
+        $("#form-buider-propGrid").show();
+
         let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
         let ebsid = $ControlTile.attr("ebsid");
         let ctrlType = $ControlTile.attr("eb-type");
@@ -539,10 +551,58 @@
 
     }.bind(this);
 
+    this.contTabAddClick = function (e) {////////////////////////////////
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+        let PrevObjEbsid = $ControlTile.find(".tab-btn-cont > ul > li:last-child").attr("ebsid");
+
+
+        let numStr = this.PGobj.CXVE.getMaxNumberFromItemName($ControlTile.find(".tab-btn-cont > ul > li"));//PrevObjEbsid.substr(PrevObjEbsid.length - 3).replace(/[^0-9]/g, '');
+
+        let lastNum = parseInt(numStr) || 0;
+        let nextCount = lastNum + 1;
+        let ShortName = "Pane" + nextCount;
+
+        let ebsid = TabEdsid + "_" + ShortName;
+
+        let newObj = new EbObjects["EbTabPane"](ebsid);
+
+        newObj.Name = ShortName;
+        newObj.Title = ShortName;
+
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+
+
+        let ctrlMeta = AllMetas["EbTabControl"];
+        this.PGobj.setObject(TabObj, ctrlMeta);
+
+        TabObj.Controls.$values.push(newObj);
+        this.addTabPane(this.PGobj.PropsObj, "Controls", "val", newObj);
+
+    }.bind(this);
+
+    this.contTabDelClick = function (e) {/////////////////////////
+        let $e = $(e.target).closest("li");
+        let PaneEbsid = $e.attr("ebsid");
+               
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+        let PaneObj = this.rootContainerObj.Controls.GetByName(PaneEbsid);
+        let ctrlMeta = AllMetas["EbTabControl"];
+        this.PGobj.setObject(TabObj, ctrlMeta);
+
+        let index = TabObj.Controls.$values.indexOf(PaneObj);
+        let delobj = TabObj.Controls.$values.splice(index, 1)[0];
+        this.RemoveTabPane(this.PGobj.PropsObj, "Controls", "val", delobj);
+    }.bind(this);
+
     this.ctrlLblDblClick = function (e) {
         $e = $(event.target);
         $e.hide();
-        $e.next(".eb-lbltxtb").val($e.text()).show().select();
+        $e.siblings(".ebtab-close-btn").hide();
+        $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
     };
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
@@ -578,6 +638,8 @@
         this.$form.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
         this.$form.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));
         this.$form.on("click", ".cont-prop-btn", this.contPropBtnClick.bind(this));
+        this.$form.on("click", ".ebtab-add-btn", this.contTabAddClick.bind(this));
+        this.$form.on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
         if (this.rootContainerObj.DisplayName.trim() === "")

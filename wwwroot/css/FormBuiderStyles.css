@@ -833,29 +833,78 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
-.cont-prop-btn {
+
+.tab-btn-cont > ul > li:last-child .ebtab-add-btn {
+    display: inline-block;
+}
+
+.eb-fb-icon {
+    color: #555;
+    line-height: 8px;
+}
+
+.eb-fb-icon > .fa {
+    text-shadow: -1px 2px 4px #84848421, 0px 1px 1px #ccccccc4;
+}
+
+.eb-fb-icon:hover > .fa {
+    text-shadow: none;
+}
+
+.ebtab-add-btn {
     display: none;
     position: absolute;
     top: 0px;
-    background: #dddddd;
-    height: 14px;
-    text-align: right;
-    color: #000;
-    width: 14px;
-    font-weight: bold;
-    right: 0px;
-    padding-top: 1px;
-    padding-right: 4px;
-    vertical-align: top;
-    z-index: 2;
-    border-radius: 0 0 0 17px;
-    line-height: 10px;
+    right: -42px;
     font-size: 10px;
-    box-shadow: -1px 2px 4px 0px #8484845c, 0px 1px 1px 0px #cccccc;
+    border: solid 1px transparent;
+    border-radius: 2px 2px 0 0;
+    background-color: #f6f6f6;
+    padding: 13px 16px;
 }
+
+    .ebtab-add-btn:hover {
+        border: solid 1px #dddddd;
+        border-bottom: solid 1px #ffffff00;
+    }
+
+.ebtab-close-btn {
+    display: inline-block;
+    margin-left: 3px;
+    font-size:11px;
+}
+
+    .ebtab-close-btn:hover {
+        color: #d80505c4;
+    }
+
+    .cont-prop-btn {
+        display: none;
+        position: absolute;
+        top: 0px;
+        background: #dddddd;
+        height: 14px;
+        text-align: right;
+        color: #000;
+        width: 14px;
+        font-weight: bold;
+        right: 0px;
+        padding-top: 1px;
+        padding-right: 4px;
+        vertical-align: top;
+        z-index: 2;
+        border-radius: 0 0 0 17px;
+        line-height: 10px;
+        font-size: 10px;
+        box-shadow: -1px 2px 4px 0px #8484845c, 0px 1px 1px 0px #cccccc;
+    }
 
 .ppbtn-cont:hover .cont-prop-btn {
     display: block;
+}
+
+[isrendermode=true] .ebtab-add-btn, [isrendermode=true] .eb-fb-icon, [isrendermode=true] .cont-prop-btn {
+    display: none !important;
 }
 
 .eb-ctrl-label {
@@ -873,13 +922,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .eb-lbltxtb {
-    display:none;
+    display: none;
     min-height: 16px !important;
     height: 16px !important;
     border: 1px solid rgba(34,36,38,.15);
     font-size: 11.5px;
     font-weight: 500;
-    outline:none;
+    outline: none;
     font-family: Roboto;
     letter-spacing: 0.3PX;
 }

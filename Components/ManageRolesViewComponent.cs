@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Components
             ViewBag.SelectedRoleInfo = EbSerializers.Json_Serialize(fr.SelectedRoleInfo);
             ViewBag.PermissionList = EbSerializers.Json_Serialize(fr.PermissionList);
             ViewBag.RoleId = itemid;
-            TempData["_dict"] = GetPermissionOperationsAsJs();
+            ViewBag._dict = GetPermissionOperationsAsJs();
             foreach (var role in Enum.GetValues(typeof(SystemRoles)))
             {
                 fr.RoleList.Add(new Eb_RoleObject()
@@ -65,7 +65,7 @@ namespace ExpressBase.Web.Components
                     try
                     {
                         var eOperations = assembly.GetType(string.Format("ExpressBase.Objects.Eb{0}", objectType.Name))
-                        .GetField("Operations").GetValue(null);
+                    .GetField("Operations").GetValue(null);
 
                         if (eOperations != null)
                         {
@@ -76,9 +76,9 @@ namespace ExpressBase.Web.Components
                             _listObj.Add(_obj);
                         }
                     }
-                    catch (Exception e)
+                    catch(Exception e)
                     {
-                        Console.WriteLine(e.Message + "for" + objectType.Name + e.StackTrace);
+                        Console.WriteLine("Please instantiate Operations for EbObject : " + objectType.Name + "\nMessage : " + e.Message + "\nStackTrace : " + e.StackTrace);
                     }
                 }
             }

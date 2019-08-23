@@ -99,6 +99,8 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
+            else if (Obj.ObjType === "ManageUser")
+                opt.flatControls = this.flatControls;
             this.initControls.init(Obj, opt);
         }.bind(this));
         if (this.ApprovalCtrl) {

@@ -89,7 +89,7 @@
             this.makeTabsDropable();
         }
         else if (ctrlObj.ObjType === "GroupBox") {
-            let el = $("#" + this.formId + " .group-box")[0];
+            let el = $(`[ebsid=${ctrlObj.EbSid}] .group-box`)[0];
             this.makeGBDropable(el);
         }
     };

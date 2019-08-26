@@ -473,7 +473,7 @@
                                 <span class='eb-label-editable'>${addedObj.Name}</span>
                                 <input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/>
                                 <div class='ebtab-close-btn eb-fb-icon'><i class='fa fa-times' aria-hidden='true'></i></div>
-                                <div class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div>
+                                <div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div>
                             </a>
                             <div class='ebtab-add-btn eb-fb-icon'><i class='fa fa-plus' aria-hidden='true'></i></div>
                         </li>`);
@@ -493,7 +493,9 @@
     this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
         if (this.PGobj.PropsObj.ObjType === "TableLayout" && prop === "Controls") {
             let $tblTr = $(`#cont_${this.PGobj.CurObj.EbSid}>table>tbody>tr`);
-            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='padding: 3px; width:auto;' class='form-render-table-Td ebResizable ebcont-ctrl'> <div style='height: 100%; width: 100%; min-height: 30px;'></div> </td>`);
+            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='padding: 3px; width:auto;' class='form-render-table-Td ebResizable ebcont-ctrl ppbtn-cont'>
+                            <div style='height: 100%; width: 100%; min-height: 30px;'><div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div></div>
+                       </td>`);
             $tblTr.append($td);
             this.pushToDragables($($td.children()[0]));
             this.makeTdResizable($td.prev("td"));
@@ -549,6 +551,8 @@
         let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
         let ctrlMeta = AllMetas["Eb" + ctrlType];
         this.PGobj.setObject(ctrl, ctrlMeta);
+        let colEbsid = $(e.target).closest(`[ctrl-ebsid]`).attr("ctrl-ebsid");
+        this.PGobj.CXVE.colTile2FocusSelec = `[ebsid=${colEbsid}].colTile`;
         $(`#${this.PGobj.wraperId} [for='Controls']`).trigger("click");
 
     }.bind(this);

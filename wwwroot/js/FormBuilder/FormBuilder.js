@@ -532,6 +532,13 @@
             ctrl["Title"] = val;
             this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
         }
+        if (ctrlType === "DataGrid") {
+            ebsid = $e.closest("th").attr("ebsid");
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            let ColMeta = AllMetas["Eb" + ctrl.ObjType];
+            ctrl["Title"] = val;
+            this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);
+        }
         else {
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
             if (this.PGobj.CurObj !== ctrl)

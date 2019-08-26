@@ -1019,8 +1019,7 @@
             let ebsid = el.getAttribute("ebsid");
             if (!ebsid)
                 console.warn(">> no EbSid found");
-            let numStr = ebsid.replace(/[^0-9]/g, '');
-            numStr = numStr.substr(numStr.length - 3);
+            let numStr = ebsid.substr(ebsid.length - 3).replace(/[^0-9]/g, '');
             let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);
         });

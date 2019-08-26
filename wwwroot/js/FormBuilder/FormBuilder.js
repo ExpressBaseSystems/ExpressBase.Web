@@ -625,6 +625,25 @@
             this.RemoveTabPane(this.PGobj.PropsObj, prop, val, delobj);
     }.bind(this);
 
+    this.keyUp = function (e) {
+        if (e.keyCode === 46) {// if delete key
+            let $e = $(e.target);
+            if ($e.hasClass("Eb-ctrlContainer")); {
+                let ebsid = $e.attr("ebsid");
+                let ControlTile = $(`#cont_${ebsid}`).closest(".Eb-ctrlContainer");
+                this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(ebsid).EbSid);
+                let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
+                if (ctrl.ObjType === "Approval")
+                    this.ApprovalCtrl = null;
+                ControlTile.parent().focus();
+                ControlTile.remove();
+                this.PGobj.removeFromDD(ebsid);
+                this.saveObj();
+                return ctrl;
+            }
+        }
+    };
+
     this.Init = function () {
         $.contextMenu({
             selector: '.Eb-ctrlContainer',
@@ -653,6 +672,7 @@
         this.$form.on("click", ".cont-prop-btn", this.contPropBtnClick.bind(this));
         this.$form.on("click", ".ebtab-add-btn", this.contTabAddClick.bind(this));
         this.$form.on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
+        this.$form.on("keyup", this.keyUp.bind(this));
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
         if (this.rootContainerObj.DisplayName.trim() === "")

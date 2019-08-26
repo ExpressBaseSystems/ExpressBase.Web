@@ -528,6 +528,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .Eb-ctrlContainer .tab-content {
     border: 1px solid #ddd;
     border-top: none;
+    overflow-y: auto;
 }
 
 .Eb-ctrlContainer .tab-pane {

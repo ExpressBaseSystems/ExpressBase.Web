@@ -89,12 +89,18 @@
             this.makeTabsDropable();
         }
         else if (ctrlObj.ObjType === "GroupBox") {
-            let el = $("#" + this.formId + " .group-box")[0];
-            this.makeGBDropable(el);
+            let el = $(`[ebsid=${ctrlObj.EbSid}] .group-box`)[0];
+            this.makeElementDropable(el);
         }
     };
 
-    this.makeGBDropable = function (el) {
+    this.makeGBsDropable = function () {
+        $.each($("#" + this.formId + " .group-box"), function (i, el) {
+            this.makeElementDropable(el);
+        }.bind(this));
+    };
+
+    this.makeElementDropable = function (el) {
         if (this.drake) {
             if (!this.drake.containers.contains(el)) {
                 this.drake.containers.push(el);
@@ -104,11 +110,7 @@
 
     this.makeTabsDropable = function () {
         $.each($("#" + this.formId + " .tab-pane"), function (i, el) {
-            if (this.drake) {
-                if (!this.drake.containers.contains(el)) {
-                    this.drake.containers.push(el);
-                }
-            }
+            this.makeElementDropable(el);
         }.bind(this));
     };
 
@@ -584,7 +586,7 @@
     this.contTabDelClick = function (e) {/////////////////////////
         let $e = $(e.target).closest("li");
         let PaneEbsid = $e.attr("ebsid");
-               
+
         let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
         let TabEdsid = $ControlTile.attr("ebsid");
 
@@ -648,6 +650,7 @@
         if (this.isEditMode) {
             this.makeTdsDropable_Resizable();
             this.makeTabsDropable();
+            this.makeGBsDropable();
         }
         this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
 

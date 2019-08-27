@@ -1671,7 +1671,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
             }
         }.bind(this));
-
+        //$(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
         $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
         $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
 
@@ -3598,7 +3598,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
         if (col.Type === parseInt(gettypefromString("Boolean"))) {
-            if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
+            if (this.ebSettings.Columns.$values[i].name === "eb_void" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
             }
@@ -3681,7 +3681,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === true) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === true || data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {

@@ -225,6 +225,8 @@
 
     // check all validations in a control
     this.isValidationsOK = function (ctrl) {
+        if (!ctrl.Validators)
+            return true;
         let formValidationflag = true;
         ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
         $.each(ctrl.Validators.$values, function (i, Validator) {

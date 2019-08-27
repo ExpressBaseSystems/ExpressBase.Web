@@ -109,8 +109,13 @@
             window.editor.setValue(atob(value));
             window.editor.focus();
         }
-        else if (this.editor === 7 || this.editor === 22 || this.editor === 26)
-            $("#" + this.CEctrlsContId + " .colTile:eq(0)").click();
+        else if (this.editor === 7 || this.editor === 22 || this.editor === 26) {
+            this.$colTile2Focus = $(this.colTile2FocusSelec);
+            this.$colTile2Focus = this.$colTile2Focus || $("#" + this.CEctrlsContId + " .colTile:eq(0)");
+            this.$colTile2Focus.click();
+            this.colTile2FocusSelec = null;
+            this.$colTile2Focus = null;
+        }
         else if (this.editor === 16)
             $(".strE-texarea").focus();
     };
@@ -1019,8 +1024,7 @@
             let ebsid = el.getAttribute("ebsid");
             if (!ebsid)
                 console.warn(">> no EbSid found");
-            let numStr = ebsid.replace(/[^0-9]/g, '');
-            numStr = numStr.substr(numStr.length - 3);
+            let numStr = ebsid.substr(ebsid.length - 3).replace(/[^0-9]/g, '');
             let lastNum = parseInt(numStr) || 0;
             tempArr.push(lastNum);
         });

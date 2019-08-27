@@ -357,6 +357,7 @@
         border: none !important;
         padding: 0 !important;
         border-right: dotted 1px rgb(241, 241, 241) !important;
+        height: 27px;
         vertical-align: middle;
     }
 
@@ -511,6 +512,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         right: 5px;
         top: 10px;
     }
+.grid-col-title {
+    font-size: 12px;
+}
 
     .grid-cont .grid-col-title {
         width: 100%;

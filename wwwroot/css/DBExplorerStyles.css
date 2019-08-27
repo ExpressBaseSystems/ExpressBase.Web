@@ -5,7 +5,7 @@
 }
 
 .TablePannelHead .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
-    width: 370px !important;
+    width: 356px !important;
 }
     div .mytree div {
     padding-left: 20px;

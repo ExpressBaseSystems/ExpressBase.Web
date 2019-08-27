@@ -1,0 +1,173 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    //Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+
+
+
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>*@
+
+<link rel="stylesheet" href="~/css/SupportTicket/SupportTicket.css">
+<script src="~/js/SupportTicket/SupportTicketjs.js" type="text/javascript"></script>
+
+
+<div class="supporttkt">
+
+
+    <div class="col-sm-12 col-md-12 col-lg-12 supporttktwrp m-top50">
+        <h4>My tickets</h4>
+
+        <div>
+            <button class="btn btn-success fltri " data-toggle="modal" data-target="#ticketModal">+ Add new</button>
+        </div>
+        <div>
+            <table class="table table-striped">
+                <thead class=" ">
+                    <tr>
+                        <th>Ticket Id</th>
+                        <th>Title</th>
+                        <th>Solution Id</th>
+                        <th>Priorty</th>
+                        <th>Last Modified At</th>
+                        <th>Status</th>
+                        <th>Support</th>
+                        <th>Edit/Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="bugtblbody">
+                    @*@for (int k = 0; k < ViewBag.tkttable2.supporttkt.Count; k++)
+                    {
+                        <tr id="k">
+                            <td> @ViewBag.tkttable2.supporttkt[k].ticketid</td>
+                            <td> @ViewBag.tkttable2.supporttkt[k].title</td>
+                            <td> @ViewBag.tkttable2.supporttkt[k].solutionid</td>
+                            <td> @ViewBag.tkttable2.supporttkt[k].priority</td>
+                            <td> @ViewBag.tkttable2.supporttkt[k].lstmodified</td>
+                            <td> @ViewBag.tkttable2.supporttkt[k].status</td>
+                            <td> @ViewBag.tkttable2.supporttkt[k].support</td>
+                            <td>
+                                <button class="btn btn-default btn-xs" style="color:blue" >Edit <i class="fa fa-edit"></i></button>
+                                <button class="btn btn-default btn-xs" style="color:red">Delete <i class="fa fa-trash-o"></i></button>
+
+                            </td>
+                        </tr>
+                    }*@
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="modal fade supporttktmodal" id="ticketModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog  modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Ticket</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div id="addbug" class="row">
+                        <div class="col-sm-12 col-md-6 col-lg-6 bdr">
+                            <label>Title</label>
+                            <div class=" ">
+                                <input class="form-control w-100 " type="text" id="bugtitle">
+                            </div>
+                            <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
+                            
+                                <div class="">
+                                    <label>Priority</label>
+                                    <div>
+                                        <select id="bugpriority" class="form-control   w-100">
+                                            <option value="1">High</option>
+                                            <option value="2">Mid</option>
+                                            <option value="3">Low</option>
+                                        </select>
+                                    </div>
+                                    <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
+                                </div>
+
+                            @{if (ViewBag.wc.Equals("tc"))
+                                {
+                                    <div class="">
+                                        <label>Solution id</label>
+                                        <div>
+                                            <select id="soluid" class="form-control w-100">
+                                                @for (int i = 0; i < ViewBag.soluids.Count; i++)
+                                                {
+                                                    <option value=@i +1>@ViewBag.soluids[i]</option>
+                                                }
+
+                                            </select>
+                                        </div>
+                                        <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
+                                    </div>
+                                }
+
+                            }
+                            <div>
+                                <label>Description</label>
+                                <div>
+                                    <textarea rows="4" cols="50" class="form-control" id="descriptionid"></textarea>
+                                </div>
+                                <div id="descrlbl" class="" style=" visibility :hidden"> </div>
+                            </div>
+
+
+                        </div>
+                        <div class="col-sm-12 col-md-6 col-lg-6">
+                            <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="savebugid">Save Tickets</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+         tktob = @Html.Raw(ViewBag.tkttable);
+        var bugrpt = new BugReport();
+       
+    });
+
+   
+</script>
+
+
+<script>
+     var imgup = new EbFileUpload({
+        Type: "image",
+        Context:"Support-ticket",
+        Toggle: "#btnUploadImg",
+        Container: "eb-wiki-uploader",
+        Multiple: true,
+        ServerEventUrl: 'https://se.eb-test.xyz',
+        EnableCrop: true,
+        MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes
+        CustomMenu: [{ name: "Copy link", icon: "fa-user" }]
+    });
+
+    imgup.uploadSuccess = function (fileid) {
+
+    }
+    imgup.windowClose = function () {
+
+        }
+
+</script>

@@ -354,6 +354,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             else
                 this.propGrid.ClosePG();
+            $("#objname").text(this.EbObject.DisplayName);
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             this.init();
             this.call2FD();
@@ -1670,7 +1671,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
             }
         }.bind(this));
-
+        //$(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
         $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
         $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
 
@@ -2254,8 +2255,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             placement: 'bottom'
         });
         $('.columntooltip').popover({
+            container: 'body',
             trigger: 'hover',
-            placement: 'right'
+            placement: this.PopoverPlacement,
+            html:true,
+            content: function (e,i) {
+                return atob($(this).attr("data-contents"));                
+            },
         });
         $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
@@ -2270,6 +2276,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         this.Api.columns.adjust();
+    };
+
+    this.PopoverPlacement = function (context, source) {
+        var position = $(source).position();
+
+        if (position.left > 1150)
+            return "left";
+        else {
+            return "right";
+        }
     };
 
     this.GenerateButtons = function () {
@@ -3551,8 +3567,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.openColumnTooltip = function (e, i) {
-        $(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-content")));
-        $(e.currentTarget).siblings(".popover").find(".arrow").remove();
+        //$(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-contents")));
+        //$(e.currentTarget).siblings(".popover").find(".arrow").remove();
     };
 
     this.collapseFilter = function () {
@@ -3582,7 +3598,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
         if (col.Type === parseInt(gettypefromString("Boolean"))) {
-            if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
+            if (this.ebSettings.Columns.$values[i].name === "eb_void" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
             }
@@ -3665,7 +3681,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === true) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === true || data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {

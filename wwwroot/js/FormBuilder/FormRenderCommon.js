@@ -16,7 +16,7 @@
                 alert("  error in 'On Change function' of : " + inpCtrl.Name + " - " + e.message);
             }
         }
-    };    
+    };
 
     ////////////
     this.setDefaultValues = function (Obj) {
@@ -54,7 +54,7 @@
             this.bindUniqueCheck(Obj);
         if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0)
             this.bindOnChange(Obj);
-        if (Obj.Validators.$values.length > 0)
+        if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
         if (Obj.IsDisable)// should move
             Obj.disable();
@@ -225,6 +225,8 @@
 
     // check all validations in a control
     this.isValidationsOK = function (ctrl) {
+        if (!ctrl.Validators)
+            return true;
         let formValidationflag = true;
         ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
         $.each(ctrl.Validators.$values, function (i, Validator) {

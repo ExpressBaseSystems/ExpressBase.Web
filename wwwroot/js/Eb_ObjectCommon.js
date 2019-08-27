@@ -186,6 +186,17 @@
             $('#save').show();
             $('#commit_outer').show();
         }
+        // only for form autosave
+        if (this.ObjectType === 0)
+            this.UpdateBuilder();
+    };
+
+    this.UpdateBuilder = function () {
+        $.post("../Eb_Object/UpdateBuilder", { _refid: this.ver_Refid, _tabnum: this.tabNum, _ObjType: this.ObjectType,  _ssurl: this.ssurl }).done(this.UpdateBuilder_Success.bind(this));
+    };
+
+    this.UpdateBuilder_Success = function (data) {
+        $(this.target).html(data);
     };
 
     this.LoadStatusPage = function () {

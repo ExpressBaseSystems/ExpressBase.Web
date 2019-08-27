@@ -1065,7 +1065,7 @@
             this.selectedCols = this.getSelectedColsByProp(this.CElistFromSrc);
             this.set9ColTiles(this.CE_all_ctrlsContId, this.CElistFromSrc);
             this.setSelColtiles();
-            $("#" + obj.name).attr("is-customobj", "true")
+            $("#" + obj.name).attr("is-customobj", "true");
         }
         else
             this.setColTiles();

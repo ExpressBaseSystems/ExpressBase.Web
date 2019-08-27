@@ -6,104 +6,95 @@
 @{
     List<AppStore> _appList = ViewBag.StoreApps;
 }
+@section StyleSheet{
+    <style>
+        .coTBx-apStr-bdy {
+            display: flex;
+            flex-flow: row wrap;
+            padding: 0 10px;
+        }
 
-<link rel="stylesheet" type="text/css" href="~/css/eb-pagegraphics.css" asp-append-version="true" />
-<link rel="stylesheet" type="text/css" href="~/css/style-extended-1.1.css" asp-append-version="true" />
-<script>new EbHeader().setName("My Apps");</script>
-<div class="row s-dash-container">
-    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group menuwrapper_ul_outer">
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">App Store</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Survey/SurveyHome">
-                        <span class="material-icons t__sidebar_icon">question_answer</span>
-                        <span class="t__sidebar_text">Survey</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>*@
+            .coTBx-apStr-bdy .apPtiLe {
+                padding: 10px;
+                width: 33.3%;
+            }
+
+                .coTBx-apStr-bdy .apPtiLe .apTileInner {
+                    border: 1px solid #ccc;
+                    padding: 20px;
+                    border-radius: 4px;
+                }
+
+                    .coTBx-apStr-bdy .apPtiLe .apTileInner .apTileInner-heading {
+                        margin-top: 0;
+                        color: #333;
+                        font-weight: 300;
+                        font-size: 20px;
+                        text-decoration: none;
+                    }
+
+                        .coTBx-apStr-bdy .apPtiLe .apTileInner .apTileInner-heading:hover {
+                            text-decoration: none;
+                            color: #4987fb;
+                            font-weight: 400;
+                        }
+
+        .apPtiLe .apTileInner-bdy-footer {
+            margin-top: 20px;
+        }
+
+            .apPtiLe .apTileInner-bdy-footer .install-btn {
+                color: #368c03;
+                font-weight: 500;
+            }
+
+            .apPtiLe .apTileInner-bdy-footer .share-btn {
+                color: #4a80e4;
+                font-weight: 500;
+            }
+    </style>
+}
+<div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
-            <div class="col-md-10 pd-0">
-                <h4 class="mr-t-0 mr-b-0">My Apps <span class="privcount"></span> </h4>
+            <div class="col-md-6 pd-0">
+                <h4 class="mr-t-0 mr-b-0">My Store <span class="privcount"></span> </h4>
             </div>
-            <div class="col-md-2 pd-0">
-                <a href='@Url.Action("AppStorePublic","Ext")' target="_blank" class="ebbtn eb_btngreen pull-right eb_btn-sm new_sol_lk">Public Apps</a>
+            <div class="col-md-6 pd-0 s-dash-btnwraper">
+                <div class="input-group eb-search-box" style="margin-left: 15px;">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    <input type="text" id="appSearch" class="form-control" placeholder="Search...">
+                </div>
+                <a href='@Url.Action("AppStorePublic","Ext")' target="_blank" class="ebbtn eb_btnblue pull-right eb_btn-sm new_sol_lk">Public Apps</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <div class="coTBx-apStr-bdy" style="width:100%;padding:0 5px;">
+            <div class="coTBx-apStr-bdy w-100" id="app-wrapperOuter">
                 @{
                     int privcount = 0;
-                    string grph = string.Empty;
                     if (_appList != null)
                     {
                         @for (int i = 0; i < _appList.Count; i++)
                         {
                             var apptype = (EbApplicationTypes)_appList[i].AppType;
-                            grph = (i % 2 == 0) ? "bg-lb" : "bg-lr";
 
                             string desc = String.IsNullOrEmpty(_appList[i].Description) ? "No Description" : _appList[i].Description;
                             if (_appList[i].Status == 1)
                             {
                                 privcount = privcount + 1;
-                                @*<div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
-                                        <a class="appcontainer_inner exp_apps" href="@Url.Action("AppDashBoard", "Dev", new { Id = aw.Id, Type = aw.AppType })">
-                                            <div class="display-flex">
-                                                <div class="col-md-2 pd-l-0 flex-center">
-                                                    <span class="fa @aw.Icon"></span>
-                                                </div>
-                                                <div class="col-md-10 pd-l-0 l-h1_2">
-                                                    <h5 class="txtdecor_none">@aw.Name</h5>
-                                                    <p class="small txtdecor_none">@desc</p>
-                                                    <p class="small txtdecor_none pull-right"><span>@apptype</span> Application</p>
-                                                    <p class="small txtdecor_none">@aw.TenantName</p>
-                                                    <p class="small txtdecor_none">@aw.CreatedAt</p>
-                                                    <p class="small txtdecor_none ">$ @aw.Cost @aw.Currency</p>
-                                                </div>
-                                            </div>
-                                            <div class="ftr_exp_apps col-md-12 w-100 float-l">
-                                                <button class="ebbtn eb_btnplain eb_btn-sm cg" onclick="location.href='../ImportExport/Import?Id=@aw.Id'">Install</button>
-                                                <button class="ebbtn eb_btnplain eb_btn-sm pull-right mr-10 cb" onclick="location.href='../ImportExport/ShareToPublic?id=@aw.Id'">Share to Public</button>
-                                            </div>
-                                        </a>
-                                    </div>*@
-
-                                <div class="apPtiLe" style="z-index:1;width:25%;">
+                                <div class="apPtiLe">
                                     <div class="apTileInner">
-                                        <a @*href="@Url.Action("AppDashBoard", "Dev", new { Id = _appList[i].Id, Type = _appList[i].AppType })"*@ class="apTileInner-bdy">
-                                            <div class="grpAppTile1 @grph"></div>
-                                            <div class="col1">
-                                                <i class="fa @_appList[i].Icon"></i>
-                                            </div>
-                                            <div class="col2">
-                                                <h3>@_appList[i].Name</h3>
-                                                <p>@desc</p>
-                                            </div>
+                                        <a href="@Url.Action("AppDashBoard", "Dev" , new { Id=_appList[i].Id, Type=_appList[i].AppType })" class="apTileInner-bdy">
+                                            <h3 class="apTileInner-heading"><i class="fa @_appList[i].Icon"></i> @_appList[i].Name</h3>
                                         </a>
+                                        <p>@desc</p>
                                         <div class="apTileInner-bdy-footer">
-                                            <button class="btn-Apstr installbtn" onclick="location.href='../ImportExport/Import?Id=@(_appList[i].Id)'">Install</button>
-                                            <button class="btn-Apstr installbtn" onclick="location.href='../ImportExport/ShareToPublic?id=@(_appList[i].Id)'">Share to Public</button>
-                                            <button class="btn-Apstr installbtn pull-right"><i class="fa fa-usd"></i> Buy</button>
+                                            <a class="install-btn" href="../ImportExport/Import?Id=@(_appList[i].Id)">
+                                                <i class="fa fa-download" aria-hidden="true"></i> Install
+                                            </a>
+                                            <a class="share-btn pull-right" href="../ImportExport/ShareToPublic?id=@(_appList[i].Id)">
+                                                <i class="fa fa-share-alt" aria-hidden="true"></i> Share to Public
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -116,14 +107,28 @@
         </div>
     </div>
 </div>
-<script>
-     if ('@ViewBag.Msg') {
-        EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-    }
-    $(document).ready(function () {
-        $(".privcount").text("(@privcount)");
-    });
-    $('#share').on('click', function () {
+@section JsCode{
+    <script>
+        window.ebcontext.header.setName("My Store");
+         if ('@ViewBag.Msg') {
+            EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
+        }
+        $(document).ready(function () {
+            $(".privcount").text("(@privcount)");
+            $("#appSearch").off("keyup").on("keyup", function (e) {
+                var srch = $(e.target).val().toLowerCase();
+                $.each($("#app-wrapperOuter").find(".apPtiLe"), function (i, obj) {
+                    var cmpstr = $(obj).find('.apTileInner-heading').text().toLowerCase();
+                    if (cmpstr.indexOf(srch) !== -1) {
+                        $(obj).show();
+                    }
+                    else
+                        $(obj).hide();
+                });
+            });
 
-     });
-</script>
+        });
+        $('#share').on('click', function () {});
+    </script>
+}
+

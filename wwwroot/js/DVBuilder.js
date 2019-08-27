@@ -31,6 +31,7 @@ class DvBuilder {
         this.isCustomColumnExist = false;
         this.isPreview = false;
         this.MisMatchedColumns = [];
+        this.NewlyAddedColumns = [];
         this.returnobj = null;
         this.__OSElist = [];
         this.__oldValues = [];
@@ -70,8 +71,10 @@ class DvBuilder {
         if (this.EbObject.RefId)
             objid = this.EbObject.RefId.split("-")[3];
         $("#obj_icons ").empty();
-        $("#obj_icons").append(`<a class='btn' id="preview" ><i class="fa fa-eye" aria-hidden="true"></i></a>`);
+        $("#obj_icons").append(`<a class='btn' id="preview" data-toggle="tooltip" data-placement="bottom" title="Preview"><i class="fa fa-eye" aria-hidden="true"></i></a>`);
+        $("#obj_icons").append(`<button class='btn' id="refresh" data-toggle="tooltip" data-placement="bottom" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
         $("#preview").off("click").on("click", this.previewClick.bind(this));
+        $("#refresh").off("click").on("click", this.DatasourceModified.bind(this));
     }
 
     previewClick() {
@@ -99,8 +102,8 @@ class DvBuilder {
         }
         this.propGrid.PropertyChanged = this.PropertyChanged.bind(this);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-
         commonO.saveOrCommitSuccess = this.rendertable.bind(this);
+        commonO.Current_obj = this.EbObject;
     }
 
     EventBind() {
@@ -122,30 +125,34 @@ class DvBuilder {
 
         if (pname === "DataSourceRefId") {
             this.OldDataSourceRefid = oldval;
-            this.check4Customcolumn();
-            if (this.isCustomColumnExist) {
-                EbDialog("show", {
-                    Message: "Retain Custom Columns?",
-                    Buttons: {
-                        "Yes": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
-                        },
-                        "No": {
-                            Background: "red",
-                            Align: "left",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: this.dialogboxAction.bind(this)
-                });
-            }
-            else
-                this.getColumns();
+            this.DatasourceModified();
         }
         else if (pname === "sTitle")
             $("#" + obj.name + "_columntitle").val(newval);
+    }
+
+    DatasourceModified() {
+        this.check4Customcolumn();
+        if (this.isCustomColumnExist) {
+            EbDialog("show", {
+                Message: "Retain Custom Columns?",
+                Buttons: {
+                    "Yes": {
+                        Background: "green",
+                        Align: "right",
+                        FontColor: "white;"
+                    },
+                    "No": {
+                        Background: "red",
+                        Align: "left",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: this.dialogboxAction.bind(this)
+            });
+        }
+        else
+            this.getColumns();
     }
 
     DrawBuilder() {
@@ -192,29 +199,13 @@ class DvBuilder {
             data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: isCustom },
             success: function (result) {
                 this.MisMatchedColumns = [];
+                this.NewlyAddedColumns = [];
                 this.returnobj = JSON.parse(result);
-                this.checkOldAndNewColumns();
+                if (this.EbObject.Columns.$values.length > 0)
+                    this.checkOldAndNewColumns();
                 this.RemoveDuplicateMismatchedColumns();
-                if (this.MisMatchedColumns.length > 0) {
-                    let temparray = this.MisMatchedColumns.map(function (ob) { return ob.name; });
-                    let _message = "The columns " + temparray.join(", ");
-                    _message += " not present in new data reader. It will be Removed from existing configurations.. Do u want to Continue ? ",
-                        EbDialog("show", {
-                            Message: _message,
-                            Buttons: {
-                                "Yes": {
-                                    Background: "green",
-                                    Align: "right",
-                                    FontColor: "white;"
-                                },
-                                "No": {
-                                    Background: "red",
-                                    Align: "left",
-                                    FontColor: "white;"
-                                }
-                            },
-                            CallBack: this.Columnconfirmation.bind(this)
-                        });
+                if (this.MisMatchedColumns.length > 0 || this.NewlyAddedColumns.length > 0) {
+                    this.ShowMessagebox();
                 }
                 else {
                     this.Columnconfirmation("Yes");
@@ -229,6 +220,51 @@ class DvBuilder {
             if (temp.length === 0)
                 this.MisMatchedColumns.push(obj);
         }.bind(this));
+
+        this.checkNewColumns();
+    }
+
+    checkNewColumns() {
+        $.each(this.returnobj.ColumnOrginal.$values, function (i, obj) {
+            let temp = this.EbObject.Columns.$values.filter((item) => item.name === obj.name && item.Type === obj.Type);
+            if (temp.length === 0)
+                this.NewlyAddedColumns.push(obj);
+        }.bind(this));
+    }
+
+    ShowMessagebox() {
+        let RemovedTemparray = this.MisMatchedColumns.map(function (ob) { return ob.name; });
+        let AddedTemparray = this.NewlyAddedColumns.map(function (ob) { return ob.name; });
+        let _message = "";
+        if (this.MisMatchedColumns.length > 0) {
+            _message = "The columns " + RemovedTemparray.join(", ");
+            _message += " not present in new data reader. It will be Removed from existing configurations..";
+        }
+        if (this.NewlyAddedColumns.length > 0) {
+            if (_message !== "")
+                _message += "And "; 
+            _message += "The Columns " + AddedTemparray.join(", ");
+            _message += " present in new data reader. It will be Added..  Do u want to Continue ? ";
+        }
+        else {
+            _message += "Do u want to Continue ? ";
+        }            
+        EbDialog("show", {
+            Message: _message,
+            Buttons: {
+                "Yes": {
+                    Background: "green",
+                    Align: "right",
+                    FontColor: "white;"
+                },
+                "No": {
+                    Background: "red",
+                    Align: "left",
+                    FontColor: "white;"
+                }
+            },
+            CallBack: this.Columnconfirmation.bind(this)
+        });
     }
 
     Columnconfirmation(flag) {
@@ -1089,6 +1125,7 @@ class DvBuilder {
         let type = this.getType(result.Type);
         let objid = type + this.calcfieldCounter++;
         let obj = new EbObjects[type](objid);
+        obj.Type = result.Type;
         this.objCollection[name] = obj;
         obj.name = name;
         obj.Title = obj.name;
@@ -1107,8 +1144,12 @@ class DvBuilder {
 
     addCalcFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
-        obj.sTitle = obj.name;
-        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
+        obj.sTitle = obj.name;        
+        let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
+            <div id="${obj.name}_elemsCont" class="columnelemsCont">
+                <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>
+                <input class="columntitle" type="text" id="${obj.name}_columntitle"/>
+            </div></li>`);
         this.ColumnDropRelated(element);
         $("#columns-list-body").append(element);
         $(element).off("click").on("click", this.elementOnFocus.bind(this));
@@ -1184,7 +1225,7 @@ class DvBuilder {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             obj.ColumnsRef = null;
             this.__OSElist.push($.extend({}, obj.__OSElist));
-             obj.__OSElist = null;
+            obj.__OSElist = null;
             this.__oldValues.push($.extend({}, obj.__oldValues));
             obj.__oldValues = null;
         }.bind(this));

@@ -124,19 +124,20 @@
                     </div>
                     <div class="form-group">
                         <label class="myLabel">Full Name</label>
-                        <input id="txtFullName" type="text" class="form-control myTextField" title="Full Name" placeholder="Enter Full Name" autocomplete="off" onchange="this.title = 'Full Name : ' + this.value ;">
+                        <input id="txtFullName" type="text" class="form-control myTextField" title="Full Name" autocomplete="off" onchange="this.title = 'Full Name : ' + this.value ;">
                     </div>
                     @*<div class="form-group">
-                            <label class="myLabel">Nick Name</label>
-                            <input id="txtNickName" type="text" class="form-control myTextField" title="Nick Name" placeholder="Enter Nick Name" autocomplete="off" onchange="this.title = 'Nick Name : ' + this.value ;">
-                        </div>*@
+            <label class="myLabel">Nick Name</label>
+            <input id="txtNickName" type="text" class="form-control myTextField" title="Nick Name" autocomplete="off" onchange="this.title = 'Nick Name : ' + this.value ;">
+        </div>*@
                     <div class="form-group">
                         <label class="myLabel">Email ID</label>
-                        <input id="txtEmailPri" type="text" class="form-control myTextField" style="background: transparent;" title="Email ID" placeholder="Enter Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
+                        <input id="txtEmailPri" type="text" class="form-control myTextField" style="background: transparent;" title="Email ID" autocomplete="off" onchange="this.title = 'Email ID : ' + this.value ;" disabled="disabled">
                     </div>
                     <div style="margin-top: 25px;">
                         <div class="linkDiv" onclick="$('#MU_ChangePwdModal').modal('show');"><i class="fa fa-key" aria-hidden="true"></i> Change Password</div>
                     </div>
+
                 </div>
                 <div class="col-md-9" style="padding-left: 50px;">
                     <div class="sub-head" style="padding: 0 0px 20px 0px;">Basic Details</div>
@@ -145,7 +146,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="myLabel">Date of Birth</label>
-                                <input id="txtDob" type="text" class="form-control myTextField" title="Date of Birth" placeholder="Date of Birth" autocomplete="off" onchange="this.title = 'Date of Birth : ' + this.value ;">
+                                <input id="txtDob" type="text" class="form-control myTextField" title="Date of Birth" autocomplete="off" onchange="this.title = 'Date of Birth : ' + this.value ;">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -162,7 +163,7 @@
                         <div class="col-md-5">
                             <div class="form-group">
                                 <label class="myLabel">Alternate Email ID</label>
-                                <input id="txtEmailSec" type="text" class="form-control myTextField" title="Alternate Email ID" placeholder="Alternate Email ID" autocomplete="off" onchange="this.title = 'Alternate Email ID : ' + this.value ;">
+                                <input id="txtEmailSec" type="text" class="form-control myTextField" title="Alternate Email ID" autocomplete="off" onchange="this.title = 'Alternate Email ID : ' + this.value ;">
                             </div>
                         </div>
                     </div>
@@ -170,26 +171,29 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="myLabel">Primary Phone Number</label>
-                                <input id="txtPhPri" type="text" class="form-control myTextField" title="Primary Phone Number" placeholder="Primary Phone Number" autocomplete="off" onchange="this.title = 'Primary Phone Number : ' + this.value ;">
+                                <input id="txtPhPri" type="text" class="form-control myTextField" title="Primary Phone Number" autocomplete="off" onchange="this.title = 'Primary Phone Number : ' + this.value ;">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="myLabel">Secondary Phone Number</label>
-                                <input id="txtPhSec" type="text" class="form-control myTextField" title="Secondary Phone Number" placeholder="Secondary Phone Number" autocomplete="off" onchange="this.title = 'Secondary Phone Number : ' + this.value ;">
+                                <input id="txtPhSec" type="text" class="form-control myTextField" title="Secondary Phone Number" autocomplete="off" onchange="this.title = 'Secondary Phone Number : ' + this.value ;">
                             </div>
                         </div>
                         <div class="col-md-1"></div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="myLabel">Land Phone Number</label>
-                                <input id="txtPhLand" type="text" class="form-control myTextField" title="Land Phone Number" placeholder="Land Phone Number" autocomplete="off" onchange="this.title = 'Land Phone Number : ' + this.value ;">
+                                <input id="txtPhLand" type="text" class="form-control myTextField" title="Land Phone Number" autocomplete="off" onchange="this.title = 'Land Phone Number : ' + this.value ;">
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label class="myLabel">Extension</label>
-                                <input id="txtPhExt" type="text" class="form-control myTextField" title="Extension" placeholder="Extension" autocomplete="off" onchange="this.title = 'Extension : ' + this.value ;">
+                                <input id="txtPhExt" type="text" class="form-control myTextField" title="Extension" autocomplete="off" onchange="this.title = 'Extension : ' + this.value ;">
+                            </div>
+                            <div class="form-group" style="margin: 0">
+                                <input id="email" type="email" class="form-control" style="padding: 0; width: 0; border: none; height: 0;">
                             </div>
                         </div>
                     </div>
@@ -1203,7 +1207,7 @@
 </div>
 
 <div id="MU_ChangePwdModal" class="modal fade" role="dialog">
-    <div class="modal-dialog" style="height:100%;display:flex;align-items:center;">
+    <div class="modal-dialog" style="height:100%; display:flex; align-items:center; margin-top: 0px; margin-bottom: 0px;">
         <div class="modal-content" style="width:100%;">
             <div class="modal-header" style="border-style:none;">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>

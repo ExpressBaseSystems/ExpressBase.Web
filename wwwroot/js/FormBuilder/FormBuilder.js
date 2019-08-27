@@ -84,17 +84,23 @@
             let tapBtns = $ctrl.find("ul.nav-tabs a");
             $.each(ctrlObj.Controls.$values, function (i, pane) {
                 $(tapPanes[0]).attr("ebsid", pane.EbSid).attr("id", pane.EbSid);
-                $(tapBtns[0]).attr("href", "#" + pane.EbSid).text(pane.Name).closest("li").attr("li-of", pane.EbSid);
+                $(tapBtns[0]).attr("href", "#" + pane.EbSid).find("span").text(pane.Name).closest("li").attr("li-of", pane.EbSid).attr("ebsid", pane.EbSid);
             });
             this.makeTabsDropable();
         }
         else if (ctrlObj.ObjType === "GroupBox") {
-            let el = $("#" + this.formId + " .group-box")[0];
-            this.makeGBDropable(el);
+            let el = $(`[ebsid=${ctrlObj.EbSid}] .group-box`)[0];
+            this.makeElementDropable(el);
         }
     };
 
-    this.makeGBDropable = function (el) {
+    this.makeGBsDropable = function () {
+        $.each($("#" + this.formId + " .group-box"), function (i, el) {
+            this.makeElementDropable(el);
+        }.bind(this));
+    };
+
+    this.makeElementDropable = function (el) {
         if (this.drake) {
             if (!this.drake.containers.contains(el)) {
                 this.drake.containers.push(el);
@@ -104,19 +110,15 @@
 
     this.makeTabsDropable = function () {
         $.each($("#" + this.formId + " .tab-pane"), function (i, el) {
-            if (this.drake) {
-                if (!this.drake.containers.contains(el)) {
-                    this.drake.containers.push(el);
-                }
-            }
+            this.makeElementDropable(el);
         }.bind(this));
     };
 
     this.makeTdsDropable_Resizable = function () {
-        $.each($(".tdDropable"), function (i, el) {
+        $.each($(".ebResizable"), function (i, el) {
             let $e = $(el);
             this.pushToDragables($($e.children()[0]));
-            if (($(".tdDropable").length - 1) !== i)
+            if (($(".ebResizable").length - 1) !== i)
                 this.makeTdResizable($e);
         }.bind(this));
     };
@@ -193,14 +195,22 @@
     this.ctrlOnClickBinder = function ($ctrl, type) {
         if (type === "TabControl")
             $ctrl.on("click", function myfunction() {
-                if (event.target.getAttribute("data-toggle") !== "tab")
+                let $e = $(event.target);
+                if ($e.closest(".cont-prop-btn").length === 1 || $e.closest(".ebtab-add-btn").length === 1)// to skip event.stopPropagation()
+                    return;
+
+                if ($e.closest("a").attr("data-toggle") !== "tab")
                     event.stopPropagation();
                 $(event.target).closest(".Eb-ctrlContainer").focus();
             });
         else
             $ctrl.on("click", function myfunction() {
+                let $e = $(event.target);
+                if ($e.closest(".cont-prop-btn").length === 1)// to skip event.stopPropagation()
+                    return;
+
                 event.stopPropagation();
-                if (event.target.getAttribute("class") !== "eb-lbltxtb")
+                if ($e.attr("class") !== "eb-lbltxtb")
                     $(this).focus();
             });
     };
@@ -250,7 +260,6 @@
     this.CreatePG = function (control) {
         console.log("CreatePG called for:" + control.Name);
         this.$propGrid.css("visibility", "visible");
-        this.SelectedCtrl = control;
         this.PGobj.setObject(control, AllMetas["Eb" + this.curControl.attr("eb-type")]);////
     };
 
@@ -291,6 +300,8 @@
     };
 
     this.onDropFn = function (el, target, source, sibling) {
+        if (el.contains(target))
+            return;
         let $target = $(target);
         if (target) {
             //drop from toolbox to form
@@ -408,7 +419,10 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        if ($(source).attr("class") !== this.toolContClass && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
+        if (el.contains(target))
+            return;
+
+        if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({
                 id: "reviewCtrl",
@@ -454,7 +468,15 @@
     this.addTabPane = function (SelectedCtrl, prop, val, addedObj) {
         let id = SelectedCtrl.EbSid;
         let $ctrl = $("#cont_" + id);
-        let $tabMenu = $(`<li li-of="${addedObj.EbSid}" ebsid="${addedObj.EbSid}"><a data-toggle="tab" href="#${addedObj.EbSid}"><span class='eb-label-editable'>${addedObj.Name}</span><input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/></a></li>`);
+        let $tabMenu = $(`<li li-of="${addedObj.EbSid}" ebsid="${addedObj.EbSid}">
+                            <a data-toggle="tab" class="ppbtn-cont" href="#${addedObj.EbSid}">
+                                <span class='eb-label-editable'>${addedObj.Name}</span>
+                                <input id='${addedObj.EbSid}lbltxtb' class='eb-lbltxtb' type='text'/>
+                                <div class='ebtab-close-btn eb-fb-icon'><i class='fa fa-times' aria-hidden='true'></i></div>
+                                <div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div>
+                            </a>
+                            <div class='ebtab-add-btn eb-fb-icon'><i class='fa fa-plus' aria-hidden='true'></i></div>
+                        </li>`);
         let $tabPane = $(`<div id="${addedObj.EbSid}" ctype="${addedObj.ObjType}" ebsid="${addedObj.EbSid}" class="tab-pane fade  ebcont-ctrl"></div>`);
         $ctrl.closestInner(".nav-tabs").append($tabMenu);
         $ctrl.closestInner(".tab-content").append($tabPane);
@@ -469,17 +491,19 @@
     };
 
     this.PGobj.CXVE.onAddToCE = function (prop, val, addedObj) {
-        if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls") {
+        if (this.PGobj.PropsObj.ObjType === "TableLayout" && prop === "Controls") {
             let $tblTr = $(`#cont_${this.PGobj.CurObj.EbSid}>table>tbody>tr`);
-            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='padding: 3px; width:auto;' class='form-render-table-Td tdDropable ebcont-ctrl'> <div style='height: 100%; width: 100%; min-height: 30px;'></div> </td>`);
+            let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='padding: 3px; width:auto;' class='form-render-table-Td ebResizable ebcont-ctrl ppbtn-cont'>
+                            <div style='height: 100%; width: 100%; min-height: 30px;'><div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div></div>
+                       </td>`);
             $tblTr.append($td);
             this.pushToDragables($($td.children()[0]));
             this.makeTdResizable($td.prev("td"));
         }
-        else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls") {
+        else if (this.PGobj.PropsObj.ObjType === "TabControl" && prop === "Controls") {
             //addedObj.EbSid = parent.EbSid + addedObj.EbSid;
             addedObj.Name = addedObj.Name.substr(-5);//furthure shorten name 
-            this.addTabPane(this.SelectedCtrl, prop, val, addedObj);
+            this.addTabPane(this.PGobj.PropsObj, prop, val, addedObj);
         }
     }.bind(this);
 
@@ -491,6 +515,7 @@
         $e = $(event.target);
         $e.hide();
         $e.prev(".eb-label-editable").show();
+        $e.siblings(".ebtab-close-btn").show();
     };
 
     this.lbltxtbKeyUp = function (e) {
@@ -507,6 +532,13 @@
             ctrl["Title"] = val;
             this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
         }
+        if (ctrlType === "DataGrid") {
+            ebsid = $e.closest("th").attr("ebsid");
+            let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+            let ColMeta = AllMetas["Eb" + ctrl.ObjType];
+            ctrl["Title"] = val;
+            this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);
+        }
         else {
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
             if (this.PGobj.CurObj !== ctrl)
@@ -516,18 +548,101 @@
 
     };
 
+    this.contPropBtnClick = function (e) {
+        $(".stickBtn").hide(); // hard coding temp2 23-08 -19
+        $("#form-buider-propGrid").show();
+
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let ebsid = $ControlTile.attr("ebsid");
+        let ctrlType = $ControlTile.attr("eb-type");
+        let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
+        let ctrlMeta = AllMetas["Eb" + ctrlType];
+        this.PGobj.setObject(ctrl, ctrlMeta);
+        let colEbsid = $(e.target).closest(`[ctrl-ebsid]`).attr("ctrl-ebsid");
+        this.PGobj.CXVE.colTile2FocusSelec = `[ebsid=${colEbsid}].colTile`;
+        $(`#${this.PGobj.wraperId} [for='Controls']`).trigger("click");
+
+    }.bind(this);
+
+    this.contTabAddClick = function (e) {////////////////////////////////
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+        let PrevObjEbsid = $ControlTile.find(".tab-btn-cont > ul > li:last-child").attr("ebsid");
+
+
+        let numStr = this.PGobj.CXVE.getMaxNumberFromItemName($ControlTile.find(".tab-btn-cont > ul > li"));//PrevObjEbsid.substr(PrevObjEbsid.length - 3).replace(/[^0-9]/g, '');
+
+        let lastNum = parseInt(numStr) || 0;
+        let nextCount = lastNum + 1;
+        let ShortName = "Pane" + nextCount;
+
+        let ebsid = TabEdsid + "_" + ShortName;
+
+        let newObj = new EbObjects["EbTabPane"](ebsid);
+
+        newObj.Name = ShortName;
+        newObj.Title = ShortName;
+
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+
+
+        let ctrlMeta = AllMetas["EbTabControl"];
+        this.PGobj.setObject(TabObj, ctrlMeta);
+
+        TabObj.Controls.$values.push(newObj);
+        this.addTabPane(this.PGobj.PropsObj, "Controls", "val", newObj);
+
+    }.bind(this);
+
+    this.contTabDelClick = function (e) {/////////////////////////
+        let $e = $(e.target).closest("li");
+        let PaneEbsid = $e.attr("ebsid");
+
+        let $ControlTile = $(e.target).closest(".Eb-ctrlContainer");
+        let TabEdsid = $ControlTile.attr("ebsid");
+
+        let TabObj = this.rootContainerObj.Controls.GetByName(TabEdsid);
+        let PaneObj = this.rootContainerObj.Controls.GetByName(PaneEbsid);
+        let ctrlMeta = AllMetas["EbTabControl"];
+        this.PGobj.setObject(TabObj, ctrlMeta);
+
+        let index = TabObj.Controls.$values.indexOf(PaneObj);
+        let delobj = TabObj.Controls.$values.splice(index, 1)[0];
+        this.RemoveTabPane(this.PGobj.PropsObj, "Controls", "val", delobj);
+    }.bind(this);
+
     this.ctrlLblDblClick = function (e) {
         $e = $(event.target);
         $e.hide();
-        $e.next(".eb-lbltxtb").val($e.text()).show().select();
+        $e.siblings(".ebtab-close-btn").hide();
+        $e.siblings(".eb-lbltxtb").val($e.text()).show().select();
     };
 
     this.PGobj.CXVE.onRemoveFromCE = function (prop, val, delobj) {
-        if (this.SelectedCtrl.ObjType === "TableLayout" && prop === "Controls")
+        if (this.PGobj.PropsObj.ObjType === "TableLayout" && prop === "Controls")
             alert();
-        else if (this.SelectedCtrl.ObjType === "TabControl" && prop === "Controls")
-            this.RemoveTabPane(this.SelectedCtrl, prop, val, delobj);
+        else if (this.PGobj.PropsObj.ObjType === "TabControl" && prop === "Controls")
+            this.RemoveTabPane(this.PGobj.PropsObj, prop, val, delobj);
     }.bind(this);
+
+    this.keyUp = function (e) {
+        if (e.keyCode === 46) {// if delete key
+            let $e = $(e.target);
+            if ($e.hasClass("Eb-ctrlContainer")); {
+                let ebsid = $e.attr("ebsid");
+                let ControlTile = $(`#cont_${ebsid}`).closest(".Eb-ctrlContainer");
+                this.PGobj.removeFromDD(this.rootContainerObj.Controls.GetByName(ebsid).EbSid);
+                let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
+                if (ctrl.ObjType === "Approval")
+                    this.ApprovalCtrl = null;
+                ControlTile.parent().focus();
+                ControlTile.remove();
+                this.PGobj.removeFromDD(ebsid);
+                this.saveObj();
+                return ctrl;
+            }
+        }
+    };
 
     this.Init = function () {
         $.contextMenu({
@@ -551,10 +666,13 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.drake.on("cloned", this.onClonedFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
-        this.$form.on("dblclick", ".abc", this.ctrlLblDblClick.bind(this));
         this.$form.on("dblclick", ".eb-label-editable", this.ctrlLblDblClick.bind(this));
         this.$form.on("blur", ".eb-lbltxtb", this.lbltxtbBlur.bind(this));
         this.$form.on("keyup", ".eb-lbltxtb", this.lbltxtbKeyUp.bind(this));
+        this.$form.on("click", ".cont-prop-btn", this.contPropBtnClick.bind(this));
+        this.$form.on("click", ".ebtab-add-btn", this.contTabAddClick.bind(this));
+        this.$form.on("click", ".ebtab-close-btn", this.contTabDelClick.bind(this));
+        this.$form.on("keyup", this.keyUp.bind(this));
         if (options.builderType === 'WebForm' && this.rootContainerObj.TableName.trim() === "")
             this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
         if (this.rootContainerObj.DisplayName.trim() === "")
@@ -563,6 +681,7 @@
         if (this.isEditMode) {
             this.makeTdsDropable_Resizable();
             this.makeTabsDropable();
+            this.makeGBsDropable();
         }
         this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
 

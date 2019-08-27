@@ -486,13 +486,23 @@
         //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
     this.MuGetValue = function (p1, p2) {
-        let _finalObj = {};
+        if (!this.hasOwnProperty("_finalObj"))
+            this._finalObj = {};
         $.each(this.Fields.$values, function (i, obj) {
             if (obj.ControlName !== '') {
-                _finalObj[obj.Name] = obj.Control.getValue();
+                this._finalObj[obj.Name] = obj.Control.getValue();
             }            
         }.bind(this));
-        return JSON.stringify(_finalObj);
+        return JSON.stringify(this._finalObj);
+    };
+    this.MuSetValue = function (p1, p2) {
+        this._finalObj = JSON.parse(p1);
+        $.each(this.Fields.$values, function (i, obj) {
+            if (obj.ControlName !== '') {
+                obj.Control.setValue(this._finalObj[obj.Name]);
+            }
+        }.bind(this));
+
     };
 
     this.ManageUser = function (ctrl, ctrlopts) {
@@ -506,7 +516,7 @@
             }
         }.bind(this));
 
-        $.extend(ctrl, { getValue: this.MuGetValue });
+        $.extend(ctrl, { getValue: this.MuGetValue, setValue: this.MuSetValue });
     };
 
 

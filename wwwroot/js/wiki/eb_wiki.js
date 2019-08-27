@@ -29,18 +29,18 @@
 
         id = e.target.getAttribute('val');
         if (id == `img` ||  id == `iframe`) {
-            let insertVal = `<${id} src=" "> </${id}>`
+            let insertVal = `<${id} src=" "> </${id}> `
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<${id} src=''> ${SelectedString} </${id}>`
+                let insertVal = `<${id} src=''> ${SelectedString} </${id}> `
                 this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `a`) {
-            let insertVal = `<${id} src="link"> </${id}>`
+            let insertVal = `<${id} src="link"> </${id}> `
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(insertVal, cursorPos);
@@ -51,13 +51,13 @@
             }
         }
         else if (id == `right`) {
-            let insertVal = `<p style="text-align: right;"> </p>`
+            let insertVal = `<p style="text-align: right;"> </p> `
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<p style="text-align: left;"> ${SelectedString} </p>`
+                let insertVal = `<p style="text-align: left;"> ${SelectedString} </p> `
                 this.insertAtCaret(insertVal, cursorPos);
             }
         }
@@ -68,41 +68,41 @@
                 this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<p style="text-align: left;">   ${SelectedString}   </p>`
+                let insertVal = `<p style="text-align: left;"> ${SelectedString} </p> `
                 this.insertAtCaret(insertVal, cursorPos);
             }
         }
        
         else if (id == `code`) {
-            let insertVal = `<pre class="prettyprint"> </pre>`
+            let insertVal = `<pre class="prettyprint"> </pre> `
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<pre class="prettyprint"> ${SelectedString} </pre>`
+                let insertVal = `<pre class="prettyprint"> ${SelectedString} </pre> ` 
                 this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else if (id == `br`) {
-            let insertVal = `<br/>`
+            let insertVal = `<br/> `
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<br/>`
+                let insertVal = `<br/> `
                 this.insertAtCaret(insertVal, cursorPos);
             }
         }
         else {
-            let insertVal = `<${id}> </${id}>`
+            let insertVal = `<${id}> </${id}> `
             let txt = 'text';
             if (SelectedString == "") {
                 this.insertAtCaret(insertVal, cursorPos);
             }
             else {
-                let insertVal = `<${id}> ${SelectedString} </${id}>`
+                let insertVal = `<${id}> ${SelectedString} </${id}> `
                 this.insertAtCaret(insertVal, cursorPos);
             }
         }    }
@@ -169,9 +169,10 @@
 
     this.FetchWikiList = function (e) {
         let id = e.target.getAttribute('data-id');
-        let wname = $(`[data-id="${id}"]`).text().trim();
+        let wname = e.target.getAttribute('val').trim();
+
         let con = $(`[data-id="${id}"]`).parent().parent().parent().attr("id");
-        $(`[data-id="${id}"]`).attr("val" ,wname);
+        //$(`[data-id="${id}"]`).attr("val" ,wname);
         wiki_name = wname.replace(/ /g, '-');
         //let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
@@ -208,8 +209,11 @@
         let twUrl = "https://twitter.com/intent/tweet?status=" + url;
         let lnUrl = "https://www.linkedin.com/shareArticle?mini=true&url=" +url +"&title="+ ob.title + "&summary=YourarticleSummary&source=expressbase.com";
         let whUrl = "https://wa.me/?text=" + url;
-        //let $tagDiv = $(`<div class="row"></div>`);
-        $('#wiki_data_div').html(ob.html).slideUp(10).slideDown(200).fadeIn(100);
+        let $Wiki_dat = $(`<div></div>`);
+        $Wiki_dat.append(`<h1>${ob.title}</h1>`);
+        $Wiki_dat.append(ob.html);
+        //$('#wiki_data_div').html(ob.title);
+        $('#wiki_data_div').html($Wiki_dat).slideUp(10).slideDown(200).fadeIn(100);
         var res = ob.tags.split(",");
         let $Tags = $(`<div style="display:flex"></div>`);
         for (var i = 0; i < res.length; i++) {
@@ -860,6 +864,8 @@
     }
 
     this.SaveWiki = function () {
+        let sts = true; 
+        let a = "";
         $("#eb_common_loader").EbLoader("show");
         var wiki = {};
         wiki["category"] = $("#category option:selected").text();
@@ -869,46 +875,77 @@
         wiki["html"] = $("#text").val();
         wiki["tags"] = $("#tagbox").val();
         wiki["Id"] = $("#wiki-id").val();
-
-        $.ajax(
-            {
-                url: '/Wiki/Save',
-                type: 'POST',
-                data: { wiki: wiki },
-                success: function (data) {
-                    if (data !== null) {
-                        EbPopBox("show", {
-                            Message: "Success...",
-                            ButtonStyle: {
-                                Text: "Ok",
-                                Color: "white",
-                                Background: "#508bf9",
-                                Callback: function () {
-                                    let url = window.location.origin + "/Wiki/View/" + data.id + "/" + data.title ;
-                                    window.open(url, '_blank');
+        if (wiki["title"] == "") {
+            sts = false;
+            a = a + "title/";
+        }
+        if (wiki["status"] == "Select Status") {
+            sts = false;
+            a = a + "status/";
+        }
+        if (wiki["category"] == "Select Category") {
+            sts = false;
+            a = a + "category/";
+        }
+        if (sts == true) {
+            $.ajax(
+                {
+                    url: '/Wiki/Save',
+                    type: 'POST',
+                    data: { wiki: wiki },
+                    success: function (data) {
+                        if (data.responseStatus === true) {
+                            EbPopBox("show", {
+                                Message: "Success...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                        let url = window.location.origin + "/Wiki/add/" + data.wiki.id;
+                                        window.location.replace(url);
+                                    }
                                 }
-                            }
-                        });
-                        $("#eb_common_loader").EbLoader("hide");
-                    }
-                    else {
-                        EbPopBox("show", {
-                            Message: "Failed to update the order...",
-                            ButtonStyle: {
-                                Text: "Ok",
-                                Color: "white",
-                                Background: "#508bf9",
-                                Callback: function () {
+                            });
+                            $("#eb_common_loader").EbLoader("hide");
+                        }
+                        else {
+                            EbPopBox("show", {
+                                Message: "Failed to Save",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        $("#eb_common_loader").EbLoader("hide");
+                            $("#eb_common_loader").EbLoader("hide");
+                        }
+
                     }
+                });
+        }
+        else {
 
+            EbPopBox("show", {
+                Message: "Enter " + a,
+                ButtonStyle: {
+                    Text: "Ok",
+                    Color: "white",
+                    Background: "#508bf9",
+                    Callback: function () {
+                    }
                 }
             });
-    }
+
+                $("#eb_common_loader").EbLoader("hide");
+        }
+   
+}
+
+
 
     this.tbl_size_select = function (e) {
         var cursorPos = $("#text").prop('selectionStart');
@@ -952,7 +989,7 @@
         var cursorPos = $("#text").prop('selectionStart');
         let ul_row = $("#ol-row").val();
         let type = $("#ol-style-sel option:selected").text();
-        let $ul = $(`<ol ${type}> &#13;&#10;</ol>`);
+        let $ul = $(`<ol ${type}> &#13;&#10;</ol> `);
         for (i = 0; i < ul_row; i++) {
             $ul.append("<li> </li> &#13;&#10;");
         }
@@ -1028,7 +1065,7 @@
     this.CopyInternalLink = function (key, options) {
         let id = $(options.$trigger).attr("data-id");
         let title = $(options.$trigger).attr("val");
-        let link = `<a data-id="${id}" class="wikilist CurrentSelection" val="${title}"> ${title} </a>`
+        let link = `<a data-id="${id}" class="wikilist"> ${title} </a> `
         copyStringToClipboard(link);
     };
     

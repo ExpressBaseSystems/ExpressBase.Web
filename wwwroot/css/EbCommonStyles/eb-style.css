@@ -77,7 +77,10 @@ body, html,.html-root {
     background: #47af08;
     color:white;
 }
-
+    .eb_btngreen:hover {
+        background: #3c9208;
+        color: white;
+    }
 .eb_btn-sm {
     padding: 5px 10px;
     font-size: 12px;

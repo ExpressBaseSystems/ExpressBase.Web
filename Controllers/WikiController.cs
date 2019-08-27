@@ -76,7 +76,7 @@ namespace ExpressBase.Web.Controllers
         //}
 
         [HttpPost("wiki/save")]
-        public Wiki SaveWiki(Wiki wiki)
+        public object SaveWiki(Wiki wiki)
         {
             int id = wiki.Id ;
             if (id > 0)
@@ -96,7 +96,7 @@ namespace ExpressBase.Web.Controllers
                     }
                 });
 
-                return resp.Wiki;
+                return resp;
             }
             else
             {
@@ -114,7 +114,7 @@ namespace ExpressBase.Web.Controllers
                     }
 
                 });
-                return resp.Wiki;
+                return resp;
             }
         }
 

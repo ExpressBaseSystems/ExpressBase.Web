@@ -110,8 +110,10 @@
             window.editor.focus();
         }
         else if (this.editor === 7 || this.editor === 22 || this.editor === 26) {
-            this.$colTile2Focus = $(this.colTile2FocusSelec);
-            this.$colTile2Focus = this.$colTile2Focus || $("#" + this.CEctrlsContId + " .colTile:eq(0)");
+            this.$colTile2Focus = $("#" + this.CEctrlsContId + " .colTile:eq(0)");
+            if (this.colTile2FocusSelec) {
+                this.$colTile2Focus = $(this.colTile2FocusSelec);
+            }
             this.$colTile2Focus.click();
             this.colTile2FocusSelec = null;
             this.$colTile2Focus = null;

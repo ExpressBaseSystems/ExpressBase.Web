@@ -3,55 +3,95 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     Dictionary<string, List<EbObjectWrapper>> ObjList = ViewBag.objlist;
 }
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css" />
+@section StyleSheet{
+    <style>
+        .list_cont {
+            display: flex;
+            flex-direction: column;
+        }
 
-<div class="container list_cont col-md-7 col-md-offset-2">
-    <div class="page-header"><h3>Export Objects</h3>Please select versions of each objects to be exported.</div>
-    @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in ObjList)
-    {
-        <div class="list-group-item objContainer_f_app">
-            <span class="col-md-2 objkey"> @obj.Key</span>
+        .eb-exprt-container {
+            display: flex;
+            flex-direction: column;
+            width: 60%;
+        }
 
-            <select class="selectpicker show-tick version_dd pull-right col-md-2">
-                @foreach (EbObjectWrapper ver in obj.Value)
-                {
-                    <option value="@ver.RefId">@ver.VersionNumber</option>
-                }
-            </select>
+        .objContainer_f_app {
+            background: white;
+            display: flex;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
 
+            .objContainer_f_app:last-child {
+                margin-bottom: 20px;
+            }
+    </style>
+}
+<div class="container list_cont w-100 h-100">
+    <div class="page-header" style="font-weight:400"><h3>Export Objects</h3>Please select versions of each objects to be exported.</div>
+    <div class="eb-exprt-container">
+        <div class="eb-exprt-body">
+            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in ObjList)
+            {
+                <div class="objContainer_f_app">
+                    <span class="col-md-10 pd-0 objkey"> @obj.Key</span>
+                    <select class="selectpicker show-tick version_dd col-md-2" style="border:none;">
+                        @foreach (EbObjectWrapper ver in obj.Value)
+                        {
+                            <option value="@ver.RefId">@ver.VersionNumber</option>
+                        }
+                    </select>
+                </div>
+            }
         </div>
-    }
-    <input type="button" value="Back to App Store" id="goto_store" class="pull-left" onclick="location.href='../AppStore'"/>
-    <input type="button" value="Export" id="commit_export" class="pull-right" />
+        <div class="eb-exprt-footer">
+            <a id="goto_store" class="ebbtn" href="/AppStore" style="background: #f58a8a;color: white;">Back to App Store</a>
+            <button id="commit_export" class="pull-right ebbtn eb_btngreen">Export</button>
+        </div>
+    </div>
 </div>
+@section JsCode{
+    <script>
+        window.ebcontext.header.setName("Export objects");
 
-<script>
-    $('#commit_export').on('click', function () {
-        var refids = [];
-        $('.list_cont').find('.selectpicker').each(function (i, o) {
-            refids.push($(this).find("option:selected").val());
+        $('#commit_export').on('click', function () {
+            var refids = [];
+            $('.list_cont').find('.selectpicker').each(function (i, o) {
+                refids.push($(this).find("option:selected").val());
+            });
+            let po = {
+                Message: "Exporting objects...",
+                Html: function ($selector) {
+                    $selector.html(`<span>Exporting objects...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
+                },
+                ButtonStyle: {
+                    Text: "Go to App Store",
+                    Color: "white",
+                    Background: "#508bf9",
+                    Callback: function () {
+                        location.href = "/AppStore";
+                    }
+                }
+            };
+
+            $.ajax({
+                url: "../ImportExport/Export",
+                type: "POST",
+                data: { refids: refids.toString(), appid: @ViewBag.appid },
+                beforeSend: function () {
+                    self.EbPopBox("show", po);
+                },
+                success: function (data) {
+                    self.EbPopBox("show", { Message: "Exported Successfully. Go to App Store to view the package :)" });
+                },
+                error: function () {
+                    self.EbPopBox("show", { Title: "Oops!", Message: "Unable to export objects!" });
+                }
+            })
         });
-        $.post('../ImportExport/Export', { refids: refids.toString(), appid: @ViewBag.appid }, function () {
-            EbMessage("show", { Message: "Exported Successfully. Go to App Store to view the package.", Background: "#00AD6E", AutoHide: false});
-            $('#goto_store').trigger("click");
-          }
-        );
-    });
-    
-</script>
 
-<style>
-    .list_cont {
-        margin-top: 80px;
-    }
-
-    .version_dd {
-        width: 280px;
-    }
-
-    .objkey {
-        width: 25%;
-        padding-top: 7px;
-    }
-</style>
+    </script>
+}

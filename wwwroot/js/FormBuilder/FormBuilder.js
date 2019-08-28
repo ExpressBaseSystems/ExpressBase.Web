@@ -422,7 +422,7 @@
         if (el.contains(target))
             return;
 
-        if ($(source).attr("class") !== this.toolContClass && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
+        if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({
                 id: "reviewCtrl",

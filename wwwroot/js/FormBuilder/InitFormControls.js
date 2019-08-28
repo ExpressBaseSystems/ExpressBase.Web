@@ -519,6 +519,40 @@
         $.extend(ctrl, { getValue: this.MuGetValue, setValue: this.MuSetValue });
     };
 
+    this.MlGetValue = function (p1, p2) {
+        if (!this.hasOwnProperty("_finalObj"))
+            this._finalObj = {};
+        $.each(this.Fields.$values, function (i, obj) {
+            if (obj.ControlName !== '') {
+                this._finalObj[obj.Name] = obj.Control.getValue();
+            }
+        }.bind(this));
+        return JSON.stringify(this._finalObj);
+    };
+    this.MlSetValue = function (p1, p2) {
+        this._finalObj = JSON.parse(p1);
+        $.each(this.Fields.$values, function (i, obj) {
+            if (obj.ControlName !== '') {
+                obj.Control.setValue(this._finalObj[obj.Name]);
+            }
+        }.bind(this));
+
+    };
+
+    this.ManageLocation = function (ctrl, ctrlopts) {
+        console.log('init ManageUser');
+
+        $.each(ctrl.Fields.$values, function (i, obj) {
+            if (obj.ControlName !== '') {
+                let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
+                if (c)
+                    obj.Control = c;
+            }
+        }.bind(this));
+
+        $.extend(ctrl, { getValue: this.MlGetValue, setValue: this.MlSetValue });
+    };
+
 
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;

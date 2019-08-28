@@ -519,7 +519,15 @@
     };
 
     this.lbltxtbKeyUp = function (e) {
-        $e = $(event.target);
+
+        let $e = $(event.target);
+        let count = $e.val().length;
+        let width = "10px";
+        if (count !== 0)
+            width = (count * 6.4 + 8) + "px";
+
+        $e.css("width", width);
+
         let val = $e.val();
         let $colTile = $e.closest(".Eb-ctrlContainer");
         let ebsid = $colTile.attr("ebsid");

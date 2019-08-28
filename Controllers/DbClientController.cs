@@ -89,7 +89,7 @@ namespace ExpressBase.Web.Controllers
                         }
                         else if (Query.IndexOf("select ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
-                            if (Query.IndexOf("eb_", StringComparison.OrdinalIgnoreCase) < 0)
+                            if (Query.IndexOf("eb_", StringComparison.OrdinalIgnoreCase) < 0 || IsAdmin)
                             {
                                 DbClientQueryResponse ress = new DbClientQueryResponse();
                                 ress = SelectQuery(SplitQuery);

@@ -1156,6 +1156,7 @@ class DvBuilder {
         $(element).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
         $(`#${obj.name}_columntitle`).val(obj.sTitle);
         $(".columntitle").off("change").on("change", this.ColumnTitleChanged.bind(this));
+        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
     }
 
     BeforeSave() {

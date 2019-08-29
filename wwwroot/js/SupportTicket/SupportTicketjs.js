@@ -3,6 +3,7 @@
     this.init = function () {
         this.AppendBugsfn();
         $("#savebugid").on("click", this.Savebug.bind(this));
+        $(".edttkt").on("click", this.EditTicketfn.bind(this));
 
 
 
@@ -19,10 +20,10 @@
             <td>${obj.priority}</td> 
             <td>${obj.lstmodified}</td> 
             <td>${obj.status}</td> 
-            <td>${obj.support}</td> 
+            <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs" style="color:blue" >Edit <i class="fa fa-edit"></i></button>
-                    <button class="btn btn-default btn-xs" style="color:red">Delete <i class="fa fa-trash-o"></i></button>
+                    <button class="btn btn-default btn-xs edttkt" style="color:blue"  id="${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs" style="color:red">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
 
               </td>
          </tr>`;
@@ -31,7 +32,15 @@
     }
 
     this.Savebug = function () {
-
+        let bfr = null;
+        if ($("#check1").is(':checked')) {
+            alert("featurerequest");
+            bfr = "featurerequest";
+        }
+        else {
+            alert("bug");
+            bfr = "bug";
+        }
 
 
 
@@ -42,11 +51,58 @@
                 descp: $("#descriptionid").val().trim(),
                 priority: $("#bugpriority option:selected").text().trim(),
                 solid: $("#soluid option:selected").text().trim(),
-                type_f_b: "bug"
+                type_f_b: bfr 
             },
             cache: false,
             type: "POST",
-            //success:
+            success: function () {
+                location.reload();
+            }
+
+        });
+    }
+
+    this.EditTicketfn = function (ev) {
+        let idk = $(ev.target).attr("id");
+        location.href = `/SupportTicket/EditTicket?tktno=${idk}`;
+
+    }
+
+
+    this.init();
+};
+
+
+
+
+
+//for editticket.cshtml
+
+
+
+
+
+
+var EditTicket = function () {
+
+    this.init1 = function () {
+        this.AppendTicketfn();
+
+    };
+
+    this.AppendTicketfn = function () {
+        
+        $.each(tktdtl.supporttkt, function (i, obj) {
+            $("#tktid").text(obj.ticketid);
+            $("#stsid").text(obj.status);
+            $("#asgnid").text(obj.assignedto);
+            $("#bugtitle").val(obj.title);
+            $("#soluid").val(obj.solutionid);
+            $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
+            $("#dtecrtd").val(obj.createdat);
+            $("#dtemdfyd").val(obj.lstmodified);
+            $("#descriptionid").val(obj.description);
+            $("#remarkid").val(obj.remarks);
 
         });
     }
@@ -54,5 +110,5 @@
 
 
 
-    this.init();
-};
+    this.init1();
+}

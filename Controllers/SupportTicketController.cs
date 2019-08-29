@@ -26,10 +26,18 @@ namespace ExpressBase.Web.Controllers
 				ViewBag.solunames = ts.solname;
 			}
 			FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest{});
-			ViewBag.tkttable2 = fsr;
 			ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
 
 
+			return View();
+		}
+
+		public IActionResult EditTicket(string tktno)
+		{
+			SupportDetailsResponse sd = this.ServiceClient.Post<SupportDetailsResponse>(new SupportDetailsRequest {
+				ticketno=tktno
+			});
+			ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
 			return View();
 		}
 
@@ -52,16 +60,16 @@ namespace ExpressBase.Web.Controllers
 				usrtyp = "tenant";
 			}
 
-			SaveBugResponse sbr = this.ServiceClient.Post<SaveBugResponse>(new SaveBugRequest
-			{
-				title=title,
-				description=descp,
-				priority=priority,
-				solutionid=solid,
-				type_b_f= type_f_b,
-				status="onhold",
-				usertype= usrtyp
-			});
+			//SaveBugResponse sbr = this.ServiceClient.Post<SaveBugResponse>(new SaveBugRequest
+			//{
+			//	title=title,
+			//	description=descp,
+			//	priority=priority,
+			//	solutionid=solid,
+			//	type_b_f= type_f_b,
+			//	status="onhold",
+			//	usertype= usrtyp
+			//});
 		}
 	}
 }

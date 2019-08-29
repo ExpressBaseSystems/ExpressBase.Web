@@ -1,0 +1,136 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    //Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+
+<link rel="stylesheet" href="~/css/SupportTicket/SupportTicket.css">
+<script src="~/js/SupportTicket/SupportTicketjs.js" type="text/javascript"></script>
+
+<div class="edtsprt">
+    <div class="row m-top50 pd_lft30 ">
+        <div class="col-sm-12 col-md-12 col-lg-12 ">
+
+            <label class="lbl_lg m-bott30">Support Ticket</label>
+        </div>
+        <div class="col-sm-12 col-md-7 col-lg-7 bdr">
+            <div class="row">
+                <div class="col-sm-3 col-md-3 col-lg-3 shd recdiv">
+                    <label>Ticket Id</label>
+                    <div class=" ">
+                        <span class=""  id="tktid"> </span>
+                        
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3 shd recdiv">
+                    <label>Status</label>
+                    <div class=" ">
+                        <span id="stsid"></span>
+                    </div>
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3 shd recdiv">
+                    <label>Assigned to</label>
+                    <div class=" ">
+                        <P id="asgnid"></P>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    <label>Title</label>
+                    <div class=" ">
+                        <input class="form-control w-100 " type="text" id="bugtitle">
+                    </div>
+                    <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    <label>Solution Id</label>
+                    <div class=" ">
+                        <input class="form-control w-100 " type="text" id="soluid" disabled>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+
+                    <label>Priority</label>
+                    <div>
+                        <select id="bugpriority" class="form-control  priori w-100">
+                            <option value="1">High</option>
+                            <option value="2">Mid</option>
+                            <option value="3">Low</option>
+                        </select>
+                    </div>
+                    <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    <label>Date Created</label>
+                    <div class=" ">
+                        <input class="form-control w-100 " type="text" id="dtecrtd" disabled>
+                    </div>
+                    
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+
+                    <label>Description</label>
+                    <div>
+                        <textarea rows="8" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                    </div>
+                    <div id="descrlbl" class="" style=" visibility :hidden"> </div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+
+                    <div>
+                        <label>Date Modified</label>
+                        <div class=" ">
+                            <input class="form-control w-100 " type="text" id="dtemdfyd" disabled>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Remarks</label>
+                        <div>
+                            <textarea rows="4" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                  
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    
+
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-sm-12 col-md-5 col-lg-5">
+            <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+      $(document).ready(function () {
+         tktdtl = @Html.Raw(ViewBag.tktdetails);
+          var edt = new EditTicket();
+          
+       
+    });
+</script>

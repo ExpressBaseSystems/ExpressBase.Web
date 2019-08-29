@@ -19,13 +19,13 @@
 
 
     <div class="col-sm-12 col-md-12 col-lg-12 supporttktwrp m-top50">
-        <h4>My tickets</h4>
+        <h3 class="fw500" >My Tickets</h3>
 
         <div>
-            <button class="btn btn-success fltri " data-toggle="modal" data-target="#ticketModal">+ Add new</button>
+            <button class="btn  fltri btnstl m-bott10" data-toggle="modal" data-target="#ticketModal">+ Add new</button>
         </div>
         <div>
-            <table class="table table-striped">
+            <table class="table table-striped table-hover">
                 <thead class=" ">
                     <tr>
                         <th>Ticket Id</th>
@@ -34,8 +34,8 @@
                         <th>Priorty</th>
                         <th>Last Modified At</th>
                         <th>Status</th>
-                        <th>Support</th>
-                        <th>Edit/Delete</th>
+                        <th>Assigned to</th>
+                        @*<th>Edit/Delete</th>*@
                     </tr>
                 </thead>
                 <tbody id="bugtblbody">
@@ -67,32 +67,39 @@
         <div class="modal-dialog  modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add Ticket</h5>
+                    <h4 class="modal-title fw500" >Add Ticket</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    <div class="m-bott10">
+                        <span class="fw500">Bug Report</span>
+                        <label class="switch" >
+                            <input type="checkbox" id="check1" >
+                            <span class="slider round"></span>
+                        </label>
+                        <span class="fw500">Feature Request</span>
+                    </div>
                     <div id="addbug" class="row">
-                        <div class="col-sm-12 col-md-6 col-lg-6 bdr">
+                        <div class="col-sm-12 col-md-6 col-lg-6 ">
                             <label>Title</label>
                             <div class=" ">
                                 <input class="form-control w-100 " type="text" id="bugtitle">
                             </div>
                             <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
-                            
-                                <div class="">
-                                    <label>Priority</label>
-                                    <div>
-                                        <select id="bugpriority" class="form-control   w-100">
-                                            <option value="1">High</option>
-                                            <option value="2">Mid</option>
-                                            <option value="3">Low</option>
-                                        </select>
-                                    </div>
-                                    <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
+
+                            <div class="">
+                                <label>Priority</label>
+                                <div>
+                                    <select id="bugpriority" class="form-control   w-100">
+                                        <option value="1">High</option>
+                                        <option value="2">Mid</option>
+                                        <option value="3">Low</option>
+                                    </select>
                                 </div>
+                                <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
+                            </div>
 
                             @{if (ViewBag.wc.Equals("tc"))
                                 {
@@ -113,21 +120,21 @@
 
                             }
                             <div>
-                                <label>Description</label>
-                                <div>
-                                    <textarea rows="4" cols="50" class="form-control" id="descriptionid"></textarea>
-                                </div>
-                                <div id="descrlbl" class="" style=" visibility :hidden"> </div>
+
                             </div>
 
 
                         </div>
                         <div class="col-sm-12 col-md-6 col-lg-6">
-                            <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
+                            <label>Description</label>
+                            <div>
+                                <textarea rows="8" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                            </div>
+                            <div id="descrlbl" class="" style=" visibility :hidden"> </div>
                         </div>
 
                     </div>
-
+                    <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
 
                 </div>
                 <div class="modal-footer">

@@ -32,13 +32,11 @@
     }
 
     this.Savebug = function () {
-        let bfr = null;
+        let bfr = null
         if ($("#check1").is(':checked')) {
-            alert("featurerequest");
             bfr = "featurerequest";
         }
         else {
-            alert("bug");
             bfr = "bug";
         }
 
@@ -50,7 +48,7 @@
                 title: $("#bugtitle").val().trim(),
                 descp: $("#descriptionid").val().trim(),
                 priority: $("#bugpriority option:selected").text().trim(),
-                solid: $("#soluid option:selected").text().trim(),
+                solid: $("#soluid option:selected").attr('solu')
                 type_f_b: bfr 
             },
             cache: false,

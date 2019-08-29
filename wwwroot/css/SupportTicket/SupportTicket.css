@@ -7,7 +7,7 @@
 .supporttkt .w-100 {
     width: 100%;
 }
-.supporttkt, .edtsprt .m-top50 {
+.supporttkt .m-top50, .edtsprt .m-top50 {
     margin-top: 50px;
 }
 

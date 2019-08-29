@@ -22,8 +22,9 @@ namespace ExpressBase.Web.Controllers
 			if (ViewBag.wc.Equals("tc")){
 
 				TenantSolutionsResponse ts = this.ServiceClient.Post<TenantSolutionsResponse>(new TenantSolutionsRequest { });
-				ViewBag.soluids = ts.solid;
+				ViewBag.soluids = ts.soldispid;
 				ViewBag.solunames = ts.solname;
+				ViewBag.isolu = ts.solid;
 			}
 			FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest{});
 			ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
@@ -44,7 +45,7 @@ namespace ExpressBase.Web.Controllers
 
 		public void SaveBugDetails(string title,string descp,string priority,string solid,string type_f_b)
 		{
-			string usrtyp = "tenant";
+			string usrtyp = null;
 			if (ViewBag.wc.Equals("dc"))
 			{
 				solid = ViewBag.cid;
@@ -60,16 +61,16 @@ namespace ExpressBase.Web.Controllers
 				usrtyp = "tenant";
 			}
 
-			//SaveBugResponse sbr = this.ServiceClient.Post<SaveBugResponse>(new SaveBugRequest
-			//{
-			//	title=title,
-			//	description=descp,
-			//	priority=priority,
-			//	solutionid=solid,
-			//	type_b_f= type_f_b,
-			//	status="onhold",
-			//	usertype= usrtyp
-			//});
+			SaveBugResponse sbr = this.ServiceClient.Post<SaveBugResponse>(new SaveBugRequest
+			{
+				title = title,
+				description = descp,
+				priority = priority,
+				solutionid = solid,
+				type_b_f = type_f_b,
+				status = "onhold",
+				usertype = usrtyp
+			});
 		}
 	}
 }

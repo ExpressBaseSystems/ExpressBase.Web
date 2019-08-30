@@ -1512,7 +1512,7 @@ var SolutionDashBoard = function (connections, sid) {
 
     this.VersioningSwitch = function (e) {
         postData = e.target.checked;
-        if (postData == false) {
+        if (this.Connections.SolutionInfo.IsVersioningEnabled) {
             $("#VersioningSwitch").bootstrapToggle('on');
             EbDialog("show",
                 {
@@ -1556,9 +1556,10 @@ var SolutionDashBoard = function (connections, sid) {
                                 if (data)
                                     EbMessage("show", { Message: "Versioning : On" });
                             }.bind(this));
-                        else
-                            $("#VersioningSwitch").prop("checked", false);
-                    }.bind(this)
+                        else if (name == "Cancel") {
+                            $("#VersioningSwitch").bootstrapToggle('off');
+                        }                            
+                    }
                 });
         }
     };
@@ -1567,7 +1568,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         if (this.Connections.SolutionInfo.IsVersioningEnabled) {
-            $("#VersioningSwitch").prop("checked", true);
+            $("#VersioningSwitch").bootstrapToggle('on');
         }
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));

@@ -371,6 +371,22 @@
         });
     };
 
+    this.GetLocationConfig = function (_ctrl) {
+        if (_ctrl.hasOwnProperty('_locationConfig'))
+            return;
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/GetLocationConfig",
+            data: { },
+            success: function (ctrl, configObj) {
+                ctrl._locationConfig = JSON.parse(configObj);
+                $.each(ctrl._locationConfig, function (i, config) {
+                    ctrl.Fields.$values.push(new EbObjects.MngUsrLocField(config.Name));
+                });
+            }.bind(this, _ctrl)
+        });
+    };
+
     this.adjustPanesHeight = function ($target) {
         let parent = $target.attr("eb-form") ? this.rootContainerObj : this.rootContainerObj.Controls.GetByName($target.attr("ebsid"));
         let tabControl = this.rootContainerObj.Controls.GetByName($target.closest(".Eb-ctrlContainer").attr("ebsid"));
@@ -519,7 +535,15 @@
     };
 
     this.lbltxtbKeyUp = function (e) {
-        $e = $(event.target);
+
+        let $e = $(event.target);
+        let count = $e.val().length;
+        let width = "10px";
+        if (count !== 0)
+            width = (count * 6.4 + 8) + "px";
+
+        $e.css("width", width);
+
         let val = $e.val();
         let $colTile = $e.closest(".Eb-ctrlContainer");
         let ebsid = $colTile.attr("ebsid");

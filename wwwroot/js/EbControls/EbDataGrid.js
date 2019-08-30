@@ -4,6 +4,7 @@
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
     this.ctrl.__userObject = options.userObject;
+    this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
@@ -613,12 +614,14 @@
 
             if (event && event.target === Iter_Inp) {
                 let typing_inp = event.target;
-                val = parseFloat(typing_inp.value);
+                val = typing_inp.value;
             }
-            else
-                val = parseFloat($(Iter_Inp).val());
+            else {
+                val = $(Iter_Inp).val() || 0;
+            }
 
-            sum += val || 0;
+            sum += parseFloat(val) || 0;
+            sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
         }.bind(this));
         this.ctrl[colname + "_sum"] = sum;
         this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));

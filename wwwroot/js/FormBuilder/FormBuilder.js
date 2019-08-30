@@ -381,7 +381,9 @@
             success: function (ctrl, configObj) {
                 ctrl._locationConfig = JSON.parse(configObj);
                 $.each(ctrl._locationConfig, function (i, config) {
-                    ctrl.Fields.$values.push(new EbObjects.MngUsrLocField(config.Name));
+                    let newo = new EbObjects.MngUsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
+                    newo.DisplayName = config.Name;
+                    ctrl.Fields.$values.push(newo);
                 });
             }.bind(this, _ctrl)
         });

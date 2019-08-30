@@ -27,7 +27,7 @@
 .coTBx-apStr-bdy {
     width: 80%;
     display:flex;
-    flex-flow:row wrap;
+    flex-direction:column;
 }
 .catGlist-group {
     list-style: none;
@@ -50,25 +50,24 @@
     box-shadow: -2px -1px 31px 5px rgba(108,99,255,0.51);
 }
 .apPtiLe {
-    width: 33.3%;
     padding: 10px;
     z-index: 10;
-}
-.apTileInner {
-    display: flex;
-    flex-flow: column nowrap;
+    margin-bottom: 20px;
     -webkit-box-shadow: -2px -1px 31px 5px rgba(239,239,242,1);
     -moz-box-shadow: -2px -1px 31px 5px rgba(239,239,242,1);
     box-shadow: -2px -1px 31px 5px rgba(239,239,242,1);
     border-radius: 6px;
-    border: 1px solid #f5f3f3;
-    background: white;
+    position:relative;
+}
+.apTileInner {
+    display: flex;
+    flex-flow: column nowrap;
     height: 100%;
 }
 .apTileInner-bdy {
     display: flex;
     flex-flow: row nowrap;
-    padding: 15px;
+    /*padding: 15px;*/
     position: relative;
     overflow: hidden;
     color: inherit;
@@ -79,38 +78,90 @@
     display: flex;
     font-size: 25px;
     color: #6c63ff;
-    padding: 10px;
+    /*padding: 10px;*/
     z-index: 2;
 }
-.col2{
-    padding:10px;
-    max-width:70%;
+    .col1 .apptile-scshot {
+        width: 100%;
+        height: 100%;
+        border: 1px solid #ececec;
+        border-radius: 4px;
+    }
+        .col1 .apptile-scshot .plcholder-ifemptyimg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #a7a6a6;
+            font-size: 17px;
+            background: #f1f1f1;
+        }
+.col2 {
+    padding: 0 10px;
+    width: 70%;
 }
     .col2 h3 {
         margin: 0px 0px 10px 0px;
-        font-size: 17px;
+        font-size: 20px;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
     }
     .col2 p {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        font-size: 14px;
+        font-weight: 400;
+        color: #636363;
+        line-height: 1.8em;
     }
-
-.apTileInner-bdy-footer {
-    padding: 15px 10px;
+.apptile-priceplan {
+    position: absolute;
+    top: 0;
+    z-index: 10;
+    width: 60px;
+    height: 60px;
+    border-bottom-right-radius: 100%;
+    color: white;
+    padding: 8px 5px;
+    left: 0;
+    border-top-left-radius: 6px;
 }
-.btn-Apstr {
+    .apptile-priceplan.free {
+        background: #add2b3;
+    }
+    .apptile-priceplan.paid {
+        background: #ffca7b;
+    }
+    .apTileInner-bdy-footer {
+        padding: 15px 10px 0px 10px;
+        display: flex;
+        align-items: center;
+    }
+    .apTileInner-bdy-footer .btn-Apstr {
+
+    }
+    .apTileInner-bdy-footer .btn-mrdetail {
+        margin-left: auto;
+        margin-right: 20px;
+    }
+    .apTileInner-bdy-footer .installbtn {
+       
+    }
+.ebapptile-tagscontaner .name {
+    font-size: 15px;
+    font-weight: 600;
+    margin-right: 10px;
+}
+.ebapptile-tagscontaner .app-tag {
+    font-weight: 500;
+}
+/*.btn-Apstr {
     padding: 6px 12px;
     background: transparent;
     border: none;
 }
 .installbtn i {
     color: #119c64;
-}
-
+}*/
 /*detail of pub app*/
 .wCmn {
     min-height: 100vh;

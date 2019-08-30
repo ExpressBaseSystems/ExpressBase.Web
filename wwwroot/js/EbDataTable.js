@@ -408,20 +408,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
         let CurR_RowG = this.CurrentRowGroup;
-        if (!this.EbObject.DisableRowGrouping) {
+        if (rowG_coll.length>0 &&  !this.EbObject.DisableRowGrouping) {
             if (CurR_RowG === null) {
-
-                $.each(rowG_coll, function (i, obj) {
-                    if (obj.RowGrouping.$values.length > 0) {
-                        this.CurrentRowGroup = JSON.parse(JSON.stringify(obj));
-                        this.visibilityCheck();
-                        return false;
-                    }
-                }.bind(this));
-
+                CurR_RowG = rowG_coll.find(obj => obj.RowGrouping.$values.length > 0);
+                this.CurrentRowGroup = CurR_RowG;
             }
-            else
-                this.visibilityCheck();
+            this.visibilityCheck();
         }
         else {
             if (this.CurrentRowGroup !== null) {
@@ -1586,10 +1578,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.drawCallBackFunc = function (settings) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
-        if (this.CurrentRowGroup !== null) {
-            if (this.CurrentRowGroup.RowGrouping.$values.length > 0)
-                this.doRowgrouping();
-        }
+        if (this.EbObject.RowGroupCollection.$values.length > 0)
+            this.doRowgrouping();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
@@ -1617,12 +1607,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowGroupHandler = function (e) {
         this.orderColl = [];
         let name = $(e.target).val().trim();
-        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-            if (obj.Name === name) {
-                this.CurrentRowGroup = jQuery.extend({}, obj);
-                this.getColumnsSuccess(e);
-            }
-        }.bind(this));
+        if (!(name === "None")) {
+            this.EbObject.DisableRowGrouping = false;
+            $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+                if (obj.Name === name) {
+                    this.CurrentRowGroup = jQuery.extend({}, obj);
+                    this.getColumnsSuccess(e);
+                }
+            }.bind(this));
+        }
+        else {
+            this.EbObject.DisableRowGrouping = true;
+            this.getColumnsSuccess();
+        }
     };
 
     this.visibilityCheck = function () {
@@ -1664,36 +1661,36 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.doRowgrouping = function () {
         var rows = this.Api.rows().nodes();
         var count = this.Api.columns()[0].length;
-        $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td></tr>`);
-        $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" style="display:inline-block;"> </select></td>`);
+        $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'></tr>`);
+        $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" class="rowgroupselect"></select></td>`);
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.RowGrouping.$values.length > 0) {
                 $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
             }
         }.bind(this));
-        //$(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
+        $(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
         $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
-        $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
+        if (this.CurrentRowGroup !== null) {
+            $(`#group-All_${this.tableId}`).prepend(`<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td>`);
+            $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
 
-        //if (this.EbObject.CurrentRowGroup.$type.indexOf("MultipleLevelRowGroup") !== -1)
-        //    this.multiplelevelRowgrouping();
-        //else
-        //    this.singlelevelRowgrouping();        
+            rows = this.Api.rows().nodes();
+            $.each(this.Levels, function (i, obj) {
+                if (obj.insertionType !== "After")
+                    $(rows).eq(obj.rowIndex).before(obj.html);
+                else
+                    $(rows).eq(obj.rowIndex).after(obj.html);
+            });
+            var ct = $("#" + this.tableId + " .group[group=1]").length;
+            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups (${ct}) - `);
 
-
-        var rows = this.Api.rows().nodes();
-        $.each(this.Levels, function (i, obj) {
-            if (obj.insertionType !== "After")
-                $(rows).eq(obj.rowIndex).before(obj.html);
-            else
-                $(rows).eq(obj.rowIndex).after(obj.html);
-        });
-        var ct = $("#" + this.tableId + " .group[group=1]").length;
-        $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
-
-        $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
-        $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
-
+            $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
+            $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
+        }
+        else {
+            $(`#rowgroupDD_${this.tableId} [value=None`).attr("selected", "selected");
+            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups `);
+        }
     };
 
     this.singlelevelRowgrouping = function () {

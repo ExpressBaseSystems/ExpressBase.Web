@@ -620,6 +620,10 @@ table.dataTable tr.group td {
     padding-left: 10px;
 }
 .newform-menu {
-    right:-50px !important;
-    left:unset !important;
+    left: -20px !important;
+}
+
+.rowgroupselect {
+    display:inline-block;
+    padding:2px 4px;
 }

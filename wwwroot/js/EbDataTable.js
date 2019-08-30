@@ -408,7 +408,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
         let CurR_RowG = this.CurrentRowGroup;
-        if (!this.EbObject.DisableRowGrouping) {
+        if (rowG_coll.length>0 &&  !this.EbObject.DisableRowGrouping) {
             if (CurR_RowG === null) {
                 CurR_RowG = rowG_coll.find(obj => obj.RowGrouping.$values.length > 0);
                 this.CurrentRowGroup = CurR_RowG;

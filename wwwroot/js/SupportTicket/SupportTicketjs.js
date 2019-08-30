@@ -48,7 +48,7 @@
                 title: $("#bugtitle").val().trim(),
                 descp: $("#descriptionid").val().trim(),
                 priority: $("#bugpriority option:selected").text().trim(),
-                solid: $("#soluid option:selected").attr('solu')
+                solid: $("#soluid option:selected").attr('solu'),
                 type_f_b: bfr 
             },
             cache: false,

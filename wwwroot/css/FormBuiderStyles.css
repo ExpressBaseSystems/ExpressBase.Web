@@ -529,6 +529,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         min-height: inherit !important;
     }
 
+
+[ctype="Label"] > .ctrl-cover {
+    display: none !important;
+}
+
 .Eb-ctrlContainer .tab-content {
     border: 1px solid #ddd;
     border-top: none;

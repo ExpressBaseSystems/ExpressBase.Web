@@ -21,12 +21,51 @@
     </style>
     <link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css" asp-append-version="true">
 }
+
 @section JavaScript{
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script type="text/javascript" src="~/js/wiki/eb_wiki.js" asp-append-version="true"></script>
 }
 
 @Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
+@if (ViewBag.isLogedIn)
+{
+    <script>$("#signIn").remove();</script>
+}
+<style>
+    body {
+        overflow-x: initial !important;
+    }
+    .ext-pageheader .navbar {
+        border-bottom: 1px solid #efe7e7;
+    }
+</style>
+
+
+<!-- Load Facebook SDK for JavaScript -->
+<div id="fb-root"></div>
+<script>
+    window.fbAsyncInit = function () {
+        FB.init({
+            xfbml: true,
+            version: 'v4.0'
+        });
+    };
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js';
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- Your customer chat code -->
+<div class="fb-customerchat"
+     attribution=setup_tool
+     page_id="1616632595309068">
+</div>
+
 <div class="container-fluid">
     <div class="search-box-fab">
         <div class="link-wrapr">
@@ -72,145 +111,7 @@
                 }
 
 
-                @*<div class="sidebar-item-wraper wraper-link" val="Forms">
-                        <div class="sidebar-item">
-                            <span class="fa fa-list-alt i-con"></span>
-                            <span class="menu text"> Forms </span>
-                        </div>
-                    </div>
-                    <div id="Forms" class="sidebar-list-wraper" val="hide" show>
-                        <ul>
-                            @foreach (Wiki wiki in ViewBag.WikiList)
-                            {
-                                int link = wiki.Id;
-                                int order = wiki.Order;
-                                if (wiki.Category == "Form")
-                                {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
-                                }
-                            }
-                        </ul>
-                    </div>*@
-                @*<div class="sidebar-item-wraper wraper-link" val="Reporting">
-                        <div class="sidebar-item">
-                            <span class="fa fa-table i-con"></span>
-                            <span class="menu text"> Reporting </span>
-                        </div>
-                    </div>
-                    <div id="Reporting" class="sidebar-list-wraper" val="hide" show>
-                        <ul>
-                            @foreach (Wiki wiki in ViewBag.WikiList)
-                            {
-                                int link = wiki.Id;
-                                int order = wiki.Order;
-                                if (wiki.Category == "Report")
-                                {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
-                                }
-                            }
-                        </ul>
-                    </div>*@
 
-                @*<div class="sidebar-item-wraper wraper-link" val="Integrations">
-                        <div class="sidebar-item">
-                            <span class="fa fa-plug i-con"></span>
-                            <span class="menu text"> Integrations </span>
-                        </div>
-                    </div>
-                    <div id="Integrations" class="sidebar-list-wraper" val="hide" show>
-                        <ul>
-                            @foreach (Wiki wiki in ViewBag.WikiList)
-                            {
-                                int link = wiki.Id;
-                                int order = wiki.Order;
-                                if (wiki.Category == "Integrations")
-                                {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
-                                }
-                            }
-                        </ul>
-                    </div>*@
-
-                @*<div class="sidebar-item-wraper wraper-link" val="API">
-                        <div class="sidebar-item">
-                            <span class="fa fa-code i-con"></span>
-                            <span class="menu text"> API </span>
-                        </div>
-                    </div>
-                    <div id="API" class="sidebar-list-wraper" val="hide" show>
-                        <ul>
-                            @foreach (Wiki wiki in ViewBag.WikiList)
-                            {
-                                int link = wiki.Id;
-                                int order = wiki.Order;
-                                if (wiki.Category == "API")
-                                {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
-                                }
-                            }
-                        </ul>
-                    </div>*@
-                @*<div class="sidebar-item-wraper wraper-link" val="Chatbots">
-                        <div class="sidebar-item">
-                            <span class="fa fa-commenting i-con"> </span>
-                            <span class="menu text"> Chatbots </span>
-                        </div>
-                    </div>
-                    <div id="Chatbots" class="sidebar-list-wraper" val="hide" hidden>
-                        <ul>
-                            @foreach (Wiki wiki in ViewBag.WikiList)
-                            {
-                                int link = wiki.Id;
-                                int order = wiki.Order;
-                                if (wiki.Category == "Chatbots")
-                                {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist" > @wiki.Title </a></li>
-                                }
-                            }
-                        </ul>
-                    </div>*@
-
-                @*<div class="sidebar-item-wraper wraper-link" val="Security">
-                        <div class="sidebar-item">
-                            <span class="fa fa-lock i-con"></span>
-                            <span class="menu text"> Security </span>
-                        </div>
-                    </div>
-                    <div id="Security" class="sidebar-list-wraper" val="hide" show>
-                        <ul>
-                            @foreach (Wiki wiki in ViewBag.WikiList)
-                            {
-                                int link = wiki.Id;
-                                int order = wiki.Order;
-                                if (wiki.Category == "Security")
-                                {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
-                                }
-                            }
-                        </ul>
-                    </div>*@
-
-
-
-                @*<div class="sidebar-item-wraper wraper-link" val="AppStore1">
-                        <div class="sidebar-item">
-                            <span class="fa fa-shopping-cart i-con"></span>
-                            <span class="menu text"> App Store </span>
-                        </div>
-                    </div>
-                    <div id="AppStore1" class="sidebar-list-wraper" val="hide" show>
-                        <ul>
-                            @foreach (Wiki wiki in ViewBag.WikiList)
-                            {
-                                int link = wiki.Id;
-                                int order = wiki.Order;
-                                if (wiki.Category == "AppStore")
-                                {
-                                    <li order-id="@order"> <a data-id="@link" class="wikilist"> @wiki.Title </a></li>
-                                }
-                            }
-                        </ul>
-                    </div>*@
             </div>
         </div>
         <div class="col-sm-9 col-md-9 col-lg-9 pd-0 eb-wiki-pane">
@@ -268,51 +169,37 @@
                                     </div>}
                             </div>
                         }
-
-                        @*<div class="GettingStartedWrapper">
-                                <div class="GettingStarted" val="Forms">  <div class="divIcon"><span class="fa fa-list-alt i-con"></span></div> <div class="h1Wrap"> Forms</div></div>
-                                <div class="GettingStarted" val="Reporting"><div class="divIcon"> <span class="fa fa-table i-con"></span></div> <div class="h1Wrap"> Reports</div></div>
-                            </div>
-                            <div class="GettingStartedWrapper">
-                                <div class="GettingStarted" val="Integrations"><div class="divIcon"><span class="fa fa-plug i-con"></span></div><div class="h1Wrap"> Integrations</div></div>
-                                <div class="GettingStarted" val="API"><div class="divIcon"><span class="fa fa-code i-con"></span></div> <div class="h1Wrap"> API </div></div>
-                            </div>
-                            <div class="GettingStartedWrapper">
-                                <div class="GettingStarted" val="Security"><div class="divIcon"><span class="fa fa-lock i-con"></span> </div><div class="h1Wrap"> Security</div> </div>
-                                <div class="GettingStarted" val="AppStore1"><div class="divIcon"><span class="fa fa-shopping-cart i-con"></span> </div> <div class="h1Wrap">AppStore </div> </div>
-                            </div>*@
-
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @*<div class="icon-bar">
-            <a href="https://www.facebook.com/share.php?u=http://www.expressbase.com&title=ExpressBase" class="facebook" target="_blank"><i class="fa fa-facebook"></i></a>
-            <a href="#" class="twitter" target="_blank"><i class="fa fa-twitter"></i></a>
-            <a href="#" class="linkedin" target="_blank"><i class="fa fa-linkedin"></i></a>
-            <a href="#" class="whatsapp" target="_blank"><i class="fa fa-whatsapp"></i></a>
-        </div>*@
+
 </div>
 @section JsCode{
-<script>
+    <script>
         let obj;
         $(document).ready(function () {
             obj = new addwiki();
             PR.prettyPrint();
             window.history.pushState('obj', 'PageTitle', "/Wiki/@TempData["Category"]/@TempData["WikiName"]");
             let wiki_name = "@TempData["WikiName"]";
-            let wname = wiki_name.replace(/\-/g, ' ');
-            let id = $(`[val="${wname}"]`).attr("data-id");
-            $(".wikilist").removeClass("CurrentSelection");
-            $(`[data-id='${id}']`).addClass("CurrentSelection");
-            if ($.isNumeric(id)) {
-                obj.AjaxCalFetchWikiList(id);
-            }
-            else if (id == 'docs') {
+            if (wiki_name == "") {
                 obj.show_home();
             }
+            else {
+                let wname = wiki_name.replace(/\-/g, ' ');
+                let id = $(`[val="${wname}"]`).attr("data-id");
+                $(".wikilist").removeClass("CurrentSelection");
+                $(`[data-id='${id}']`).addClass("CurrentSelection");
+                if ($.isNumeric(id)) {
+                    obj.AjaxCalFetchWikiList(id);
+                }
+                else if (id == 'docs') {
+                    obj.show_home();
+                }
+            }
+
         });
 
         $(window).on('popstate', function (event) {
@@ -331,7 +218,8 @@
                 obj.show_home();
             }
         });
-</script>
+    </script>
 }
+
 
 

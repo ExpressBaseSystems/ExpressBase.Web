@@ -4,7 +4,10 @@
     margin-top: 25px;
 }
 
-div.mytree div {
+.TablePannelHead .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+    width: 356px !important;
+}
+    div .mytree div {
     padding-left: 20px;
     background: transparent url(http://www3.telus.net/jianlu58/bullet.gif) no-repeat top left;
 }
@@ -34,7 +37,7 @@ div.mytree div {
     }
 
     div.mytree div.selected{
-        background-color:red;
+        background-color:#aee5fb;
     }
 
     .db_client_toolbox {
@@ -51,7 +54,7 @@ div.mytree div {
     padding: 12px;
     background-color: white;
     position: relative;
-    height: 550px;
+    height: 618px;
     overflow: auto;
     border: 1px solid #ccc;
     border-top: 0;

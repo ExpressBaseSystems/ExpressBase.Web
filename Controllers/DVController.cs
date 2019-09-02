@@ -322,9 +322,7 @@ namespace ExpressBase.Web.Controllers
                 request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
                 request.ReplaceEbColumns = false;
                 if (request.DataVizObjString != null)
-                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
-                if (request.CurrentRowGroup != null)
-                    (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
+                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);               
                 request.DataVizObjString = null;
                 request.UserInfo = this.LoggedInUser;
                 if (request.TFilters != null)

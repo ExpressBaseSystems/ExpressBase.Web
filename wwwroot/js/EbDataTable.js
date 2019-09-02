@@ -354,6 +354,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             else
                 this.propGrid.ClosePG();
+            $("#objname").text(this.EbObject.DisplayName);
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             this.init();
             this.call2FD();
@@ -407,20 +408,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
         let CurR_RowG = this.CurrentRowGroup;
-        if (!this.EbObject.DisableRowGrouping) {
+        if (rowG_coll.length>0 &&  !this.EbObject.DisableRowGrouping) {
             if (CurR_RowG === null) {
-
-                $.each(rowG_coll, function (i, obj) {
-                    if (obj.RowGrouping.$values.length > 0) {
-                        this.CurrentRowGroup = JSON.parse(JSON.stringify(obj));
-                        this.visibilityCheck();
-                        return false;
-                    }
-                }.bind(this));
-
+                CurR_RowG = rowG_coll.find(obj => obj.RowGrouping.$values.length > 0);
+                this.CurrentRowGroup = CurR_RowG;
             }
-            else
-                this.visibilityCheck();
+            this.visibilityCheck();
         }
         else {
             if (this.CurrentRowGroup !== null) {
@@ -1585,10 +1578,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.drawCallBackFunc = function (settings) {
         $('tbody [data-toggle=toggle]').bootstrapToggle();
-        if (this.CurrentRowGroup !== null) {
-            if (this.CurrentRowGroup.RowGrouping.$values.length > 0)
-                this.doRowgrouping();
-        }
+        if (this.EbObject.RowGroupCollection.$values.length > 0)
+            this.doRowgrouping();
         if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         }
@@ -1616,12 +1607,19 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.rowGroupHandler = function (e) {
         this.orderColl = [];
         let name = $(e.target).val().trim();
-        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-            if (obj.Name === name) {
-                this.CurrentRowGroup = jQuery.extend({}, obj);
-                this.getColumnsSuccess(e);
-            }
-        }.bind(this));
+        if (!(name === "None")) {
+            this.EbObject.DisableRowGrouping = false;
+            $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+                if (obj.Name === name) {
+                    this.CurrentRowGroup = jQuery.extend({}, obj);
+                    this.getColumnsSuccess(e);
+                }
+            }.bind(this));
+        }
+        else {
+            this.EbObject.DisableRowGrouping = true;
+            this.getColumnsSuccess();
+        }
     };
 
     this.visibilityCheck = function () {
@@ -1663,36 +1661,36 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.doRowgrouping = function () {
         var rows = this.Api.rows().nodes();
         var count = this.Api.columns()[0].length;
-        $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'><td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td></tr>`);
-        $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" style="display:inline-block;"> </select></td>`);
+        $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'></tr>`);
+        $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" class="rowgroupselect"></select></td>`);
         $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
             if (obj.RowGrouping.$values.length > 0) {
                 $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
             }
         }.bind(this));
-
+        $(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
         $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
-        $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
+        if (this.CurrentRowGroup !== null) {
+            $(`#group-All_${this.tableId}`).prepend(`<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td>`);
+            $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
 
-        //if (this.EbObject.CurrentRowGroup.$type.indexOf("MultipleLevelRowGroup") !== -1)
-        //    this.multiplelevelRowgrouping();
-        //else
-        //    this.singlelevelRowgrouping();        
+            rows = this.Api.rows().nodes();
+            $.each(this.Levels, function (i, obj) {
+                if (obj.insertionType !== "After")
+                    $(rows).eq(obj.rowIndex).before(obj.html);
+                else
+                    $(rows).eq(obj.rowIndex).after(obj.html);
+            });
+            var ct = $("#" + this.tableId + " .group[group=1]").length;
+            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups (${ct}) - `);
 
-
-        var rows = this.Api.rows().nodes();
-        $.each(this.Levels, function (i, obj) {
-            if (obj.insertionType !== "After")
-                $(rows).eq(obj.rowIndex).before(obj.html);
-            else
-                $(rows).eq(obj.rowIndex).after(obj.html);
-        });
-        var ct = $("#" + this.tableId + " .group[group=1]").length;
-        $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
-
-        $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
-        $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
-
+            $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
+            $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
+        }
+        else {
+            $(`#rowgroupDD_${this.tableId} [value=None`).attr("selected", "selected");
+            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups `);
+        }
     };
 
     this.singlelevelRowgrouping = function () {
@@ -2254,8 +2252,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             placement: 'bottom'
         });
         $('.columntooltip').popover({
+            container: 'body',
             trigger: 'hover',
-            placement: 'right'
+            placement: this.PopoverPlacement,
+            html:true,
+            content: function (e,i) {
+                return atob($(this).attr("data-contents"));                
+            },
         });
         $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
@@ -2270,6 +2273,16 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         });
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         this.Api.columns.adjust();
+    };
+
+    this.PopoverPlacement = function (context, source) {
+        var position = $(source).position();
+
+        if (position.left > 1150)
+            return "left";
+        else {
+            return "right";
+        }
     };
 
     this.GenerateButtons = function () {
@@ -3551,8 +3564,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.openColumnTooltip = function (e, i) {
-        $(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-content")));
-        $(e.currentTarget).siblings(".popover").find(".arrow").remove();
+        //$(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-contents")));
+        //$(e.currentTarget).siblings(".popover").find(".arrow").remove();
     };
 
     this.collapseFilter = function () {
@@ -3582,7 +3595,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
         if (col.Type === parseInt(gettypefromString("Boolean"))) {
-            if (this.ebSettings.Columns.$values[i].name === "sys_locked" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
+            if (this.ebSettings.Columns.$values[i].name === "eb_void" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
             }
@@ -3665,7 +3678,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === true) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === true || data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {

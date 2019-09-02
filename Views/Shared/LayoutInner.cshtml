@@ -110,7 +110,7 @@
 <body>
     <div class="html-root">
         @{
-            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+            if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
             {
                 <div id="eb-common-menu">
                     @{ Html.RenderPartial("EbQuickMenu");}
@@ -128,6 +128,7 @@
                                     <div class="loc_searchInput w-100">
                                         <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
                                     </div>
+                                    <span class="cls_locmdl" onclick="$('.loc_switchModal_fade,#loc_switchModal').hide();">&times;</span>
                                 </div>
                                 <div class="locs_bdy"></div>
                                 <div class="locs_foot">
@@ -147,7 +148,7 @@
             }
             @RenderBody()
         </div>
-        <div class="eb-expndLinkswrpr" id="eb-expndLinkswrprWdgt">
+        <div class="eb-expndLinkswrpr hidden-xs" id="eb-expndLinkswrprWdgt">
             <button id="eb-expandbutton" onclick="$('.eb-expndLinkswrpr-body').toggle();" class="eb-expand-link"><i class="fa fa-cog"></i></button>
             <div class="eb-expndLinkswrpr-body" style="display:none;">
                 <div class="eb-expndLinkswrpr-inner">
@@ -159,7 +160,7 @@
             </div>
         </div>
     </div>
-    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc" || ViewBag.wc == "tc")
     {
         <script>
             window.ebcontext.menu = new EbMenu({

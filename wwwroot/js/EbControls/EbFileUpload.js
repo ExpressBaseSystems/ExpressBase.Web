@@ -163,6 +163,10 @@ class EbFileUpload extends EbFupStaticData {
     };
 
     fscreenN_P(ev) {
+        if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
         let action = $(ev.target).closest("button").attr("action");
         if (action === "next" && this.CurrentFimg.next('.trggrFprev').length > 0) {
             this.galleryFullScreen({ target: this.CurrentFimg.next('.trggrFprev') });
@@ -338,16 +342,30 @@ class EbFileUpload extends EbFupStaticData {
             this.startSE();
     }
 
-    toggleM() {
+    toggleM(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         this.Modal.modal("toggle");
     };
 
-    ok() {
+    ok(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         this.toggleM();
         this.windowClose();
     };
 
     browse(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             this.handleFileSelect(e);
         } else {
@@ -521,6 +539,11 @@ class EbFileUpload extends EbFupStaticData {
     }
 
     upload(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         if (this.IsCropFlow)
             this.contextUpload();
         else
@@ -597,6 +620,10 @@ class EbFileUpload extends EbFupStaticData {
     }
 
     cropClick(e) {//cropy flow
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         this.Cropy.croppie('result', this.result).then(this.cropafter.bind(this));
     }
 

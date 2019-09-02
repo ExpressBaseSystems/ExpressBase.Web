@@ -1,89 +1,30 @@
-﻿@{
-    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
-}
-@using ExpressBase.Objects.ServiceStack_Artifacts;
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @using Newtonsoft.Json;
 
-
-<link rel="stylesheet" type="text/css" href="~/css/DBExplorerStyles.css">
-<link rel="stylesheet" type="text/css" href="~/css/Eb.css">
-<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css">
-
-<script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript"></script>
-<script src="~/js/DBExplorer.js" type="text/javascript"></script>
-<script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>
-<script src="https://codemirror.net/addon/display/autorefresh.js" type="text/javascript"></script>
+@{
+    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
+}
 
 @await Component.InvokeAsync("PageHeaderCommon");
 <script>
     var head = new EbHeader().insertButton(`<button class="btn" id="EXPLAIN" data-toggle="tooltip" data-placement="top" title="Explain"><i class="fa fa-expand"></i></button>
-                                            <button class="btn" id="sqlquery" data-toggle="tooltip" data-placement="top" title="Execute"><i class="fa fa-play"></i></button>
-<button class="btn" id="TabAdder" data-toggle="tooltip" data-placement="top" title="Add Tab"><i class="fa fa-plus"></i></button>
-<button class="btn" id="DragAdder" data-toggle="tooltip" data-placement="top" title="Drag Area"><i class="fa fa-code"></i></button>
-`);
+                                                                                            <button class="btn" id="sqlquery" data-toggle="tooltip" data-placement="top" title="Execute"><i class="fa fa-play"></i></button>
+                                            <button class="btn" id="TabAdder" data-toggle="tooltip" data-placement="top" title="Add Tab"><i class="fa fa-plus"></i></button>
+                                            <button class="btn" id="DragAdder" data-toggle="tooltip" data-placement="top" title="Drag Area"><i class="fa fa-code"></i></button>
+                                            `);
 </script>
+<script src="https://codemirror.net/addon/display/autorefresh.js" type="text/javascript"></script>
+<script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript"></script>
+<script src="~/js/DBExplorer.js" type="text/javascript"></script>
+<script src="~/js/Eb_CommonHeader.js" type="text/javascript"></script>
+
+<link rel="stylesheet" type="text/css" href="~/css/DBExplorerStyles.css">
+<link rel="stylesheet" type="text/css" href="~/css/Eb.css">
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css">
 <div class="row">
     <div class="cont">
-        <div class="Resize_toolbox" style="width:25%;">
-            <div class="db_client_toolbox TablePannelHead">
-                Table Explorer : @ViewBag.DB_Name : @ViewBag.TableCount
-                <input type="text" id="myInput" placeholder="Search for Table.." title="Table Name">
-            </div>
-            <div class="mytree db_client_toolbox_bdy" id="myUL">
-                @{
-                    foreach (KeyValuePair<string, EbDbExplorerTable> Table_kvp in ViewBag.Tables.TableCollection)
-                    {
-                        <div table-name="@Table_kvp.Key" id="@Table_kvp.Key">
-
-                            @{
-                                EbDbExplorerTable table = Table_kvp.Value;
-                                string schema = table.Schema;
-                                List<string> Indexes = table.Index;
-                                List<EbDbExplorerColumn> Columns = table.Columns;
-
-                                <span class="table-name" data-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns : @Columns.Count()">@Table_kvp.Key</span>
-
-                                <div class="child">
-                                    <span>Schema</span>
-                                    <div>@schema</div>
-                                </div>
-                                <div>
-                                    <span>Index</span>
-                                    @foreach (string Index in Indexes)
-                                    {
-                                        <div>@Index</div>
-                                    }
-                                </div>
-                                <div>
-                                    <span data-toggle="tooltip" data-placement="left" title="Count : @Columns.Count()">Column</span>
-                                    @foreach (EbDbExplorerColumn Column in Columns)
-                                    {
-                                        <div>
-                                            @{ if (Column.ColumnKey == "Primary key")
-                                                { <i class="fa fa-key fa-1x gold" aria-hidden="true"></i> }
-                                                else if (Column.ColumnKey == "Foreign key")
-                                                {<i class="fa fa-key fa-1x fkey" aria-hidden="true"></i> }
-                                                if (Column.ColumnType == "integer" || Column.ColumnType == "numeric")
-                                                {
-                                                    <i class="fa fa-sort-numeric-asc data-type" aria-hidden="true"></i>
-                                                }
-                                                else if (Column.ColumnType == "text" || Column.ColumnType == "character")
-                                                {
-                                                    <i class="fa fa-font data-type" aria-hidden="true"></i>
-                                                }
-                                                if (Column.ColumnType == "timestamp without time zone")
-                                                {
-                                                    <i class="fa fa-calendar fa-1 data-type" aria-hidden="true"></i>
-                                                }
-                                            } :: <span id="@Column.ColumnName" data-toggle="tooltip" data-placement="left" title="@Column.ColumnType :: @Column.ColumnKey">@Column.ColumnName     @Column.ColumnTable</span>
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
-                    }
-                }
-            </div>
+        <div id="viewdbclientappend" class="Resize_toolbox" style="width:25%;">
+            @await Component.InvokeAsync("DBClient", new { _user = ViewBag.User, clientSolnid = ViewBag.solutionid })
         </div>
         <div id="pannel">
             <div class="tab-section">
@@ -93,19 +34,5 @@
         </div>
     </div>
 </div>
-<script>
-    let tableCollection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables));
-        $(document).ready(function () {
-            //var menuBarObj =  new EbHeader();
-            //menuBarObj.insertButton(`<button type="button" class="btn btn-primary" id="QUERY" data-toggle="button" aria-pressed="false" autocomplete="off">DRAG</button>`);
-            //menuBarObj.setName("QUERY");
-
-        let DBExplorer = new Eb_DBExplorer({
-            TCobj: tableCollection
-        });
-
-    });
-</script>
-
 
 

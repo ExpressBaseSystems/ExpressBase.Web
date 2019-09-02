@@ -28,7 +28,7 @@
     new EbHeader().setName("Application Configuration");
 </script>
 <div class="row s-dash-container h-100">
-    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
@@ -51,7 +51,7 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div>*@
     @{
         Dictionary<int, TypeWrap> list = ViewBag.ObjectCollection;
         var appinfo = ViewBag.AppInfo;
@@ -65,13 +65,13 @@
         else if (appinfo.AppType == 3) { typeIcon = "/images/svg/chat1.svg"; }
     }
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 s-dash-solution-desc border-style-none">
-            <div class="col-md-10 pd-0">
+        <div class="col-md-12 col-lg-12 s-dash-solution-desc border-style-none">
+            <div class="col-md-10 col-xs-12 pd-0">
                 <h4 class="mr-t-0"><span class="fa @appinfo.Icon appicon_style"></span> @appinfo.Name </h4>
                 <p class="small">@appinfo.Description</p>
                 <p class="small mr-b-0"><img class="apptype_icon" src="@typeIcon" /><span>@apptype</span> Application</p>
             </div>
-            <div class="col-md-2 pd-0" style="display: flex;flex-flow: row-reverse nowrap;">
+            <div class="col-md-2 col-lg-2 col-xs-12 pd-0 s-dash-btnwraper">
                 <a href='@Url.Action("CreateApplication", "Dev",new { Id = appinfo.Id,Type = appinfo.AppType})' class="ebbtn eb_btn-sm eb_btnblue"><i class="fa fa-edit"></i> Edit Application</a>
             </div>
         </div>
@@ -96,7 +96,7 @@
             <div class="tab-content">
                 <div class="tab-pane active appdash_obj_container" id="Objects" role="tabpanel">
                     <div class="raw">
-                        <button type="button" class="ebbtn eb_btnblue eb_btn-sm" data-toggle="modal" data-target="#newObjectmdl">
+                        <button type="button" class="ebbtn eb_btn-sm eb_btngreen" data-toggle="modal" data-target="#newObjectmdl">
                             New Object
                         </button>
                         <button class="ebbtn eb_btn-sm eb_btnplain" style="margin-right:10px" id="ExportBtn">Export</button>
@@ -107,7 +107,7 @@
                     </div>
                     @*<div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>*@
                     <div class="raw-obj-container">
-                        <div class="col-md-2 pd-0 sidebar-objtypes">
+                        <div class="col-md-2 col-lg-2 col-xs-6 col-sm-4 pd-0 sidebar-objtypes">
                             <ul style="list-style:none;" class="pd-0">
                                 @{
                                     int _k = (list.Keys.Count > 0) ? list.Keys.First() : 0;
@@ -127,7 +127,7 @@
                                 }
                             </ul>
                         </div>
-                        <div class="col-md-10 pd-r-0 raw-object-pane">
+                        <div class="col-md-10 col-lg-10 col-xs-6 col-sm-8 pd-r-0 raw-object-pane">
                             @{
                                 foreach (KeyValuePair<int, TypeWrap> kp in list)
                                 {
@@ -241,25 +241,36 @@
         </div>
     </div>
     <div id="newObjectmdl" class="modal fade newObjectmdl" role="dialog">
-        <div class="modal-dialog modal-lg h-100 flex-center">
-            <div class="modal-content">
+        <div class="modal-dialog h-100 w-100" style="margin:0;display: flex;justify-content: center;align-items: center;">
+            <div class="modal-content" style="width:90%;height:90%;display: flex;flex-direction: column;">
                 <div class="modal-header" style="border-style:none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Create new Object</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="flex:1;overflow-y:auto;">
                     <div class="eb-newobj-mdlbdy">
                         @{
                             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
                             {
+                                List<int> cs = new List<int> { 18, 23, 24, 22, 7, 25 };
                                 if (objectType.IsAvailableIn((EbApplicationTypes)appinfo.AppType))
                                 {
+                                    string url = string.Empty, _class = string.Empty;
+                                    if (cs.Contains(objectType.IntCode))
+                                    {
+                                        url = "#";
+                                        _class = "eb-newobj-comingsoon";
+                                    }
+                                    else
+                                    {
+                                        url = "../Eb_Object/Index?objid=null&objtype=" + objectType.IntCode;
+                                    }
                                     <div class="eb-newobjtile">
-                                        <a class="eb-newobjtile-inner" href="../Eb_Object/Index?objid=null&objtype=@objectType.IntCode">
+                                        <a class="eb-newobjtile-inner @_class" href="@url">
                                             <div class="icon">
                                                 <span class="fa @objectType.Icon"></span>
                                             </div>
-                                            <div class="name">@objectType.Name</div>
+                                            <div class="name">@objectType.Alias</div>
                                         </a>
                                     </div>
                                 }

@@ -218,6 +218,12 @@ namespace ExpressBase.Web.Controllers
             return resp.Html;
         }
 
+        public string GetLocationConfig()
+        {
+            Eb_Solution SolutionObj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
+            return JsonConvert.SerializeObject(SolutionObj.LocationConfig);
+        }
+
         //public string AuditTrail(string refid, int rowid)
         //{
         //    //sourc == dest == type == dst id == dst verid== src id == src verid

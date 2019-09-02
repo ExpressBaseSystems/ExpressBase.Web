@@ -245,10 +245,13 @@
     background-color: #f2f2f2;
     border-bottom: 1px solid #d2d2d2;
 }
-
+.s-dash-btnwraper {
+    display: flex;
+    flex-flow: row-reverse nowrap;
+}
 .s-dash-container {
     padding-top: 37px;
-    background-color:white;
+    background-color: white;
 }
 
 .s-dash-workplace {
@@ -258,7 +261,7 @@
     margin-left: auto;
     flex: 1;
     -webkit-flex:1;
-    padding-left: 100px;
+    /*padding-left: 100px;*/
 }
 
 .eb-styledTab {
@@ -374,6 +377,7 @@
 .uname-advanced-sec {
     margin-top: 10px;
     display: flex;
+    flex-direction:column;
 }
 /*tenant add solution*/
 .createAppFrm {
@@ -785,4 +789,40 @@
     border-radius: 50%;
     padding: 2px;
     margin: 6px 0;
+}
+
+/*medial queries for mobile*/
+@media (min-width: 20px) and (max-width: 450px) {
+    .s-dash-solution-desc {
+        flex-direction: column;
+        align-items: inherit;
+    }
+    .solution_container {
+        width: 100%;
+    }
+    .s-dash-btnwraper {
+        justify-content: space-between;
+        margin-top: 10px;
+        flex-direction: column;
+    }
+    .s-dash-btnwraper .eb-search-box {
+        margin-left:0 !important;
+        margin-bottom:10px;
+    }
+        .s-dash-btnwraper form:first-child {
+            margin-bottom: 10px;
+        }
+        .s-dash-btnwraper button {
+            width:100%;
+        }
+    .createAppFrm{
+        padding-left:0;
+    }
+}
+
+/*medial queries for tablets*/
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
+    .solution_container {
+        width: 50%;
+    }
 }

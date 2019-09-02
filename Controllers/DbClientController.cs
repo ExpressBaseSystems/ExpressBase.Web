@@ -18,20 +18,61 @@ namespace ExpressBase.Web.Controllers
     {
         public DbClientController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
+        private string solutionid;
+        private bool IsAdmin;
+
         [Microsoft.AspNetCore.Mvc.Route("/dbclient")]
-        public IActionResult DbClient()
+        public IActionResult DbClient(string clientSolnid)
         {
-            if(ViewBag.wc == RoutingConstants.UC)
+            if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
                 return Redirect("/StatusCode/401");
-            GetDbTablesResponse res = this.ServiceClient.Get(new GetDbTablesRequest { });
+            //GetDbTablesResponse res = null;
+            //if (ViewBag.cid == "admin" && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+            //{
+            //    if (clientSolnid != null)
+            //        res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = clientSolnid });
+            //    else
+            //        res = this.ServiceClient.Get(new GetDbTablesRequest { });
+            //    ViewBag.IsAdminOwn = true;
+            //}
+            //else
+            //{
+            //    res = this.ServiceClient.Get(new GetDbTablesRequest { });
+            //    ViewBag.IsAdminOwn = false;
+            //}
+            //ViewBag.Tables = res.Tables;
+            //ViewBag.DB_Name = res.DB_Name;
+            //ViewBag.TableCount = res.TableCount;
+            ViewBag.User = this.LoggedInUser;
+            ViewBag.solutionid = clientSolnid;
+            return View();
+        }
+        [HttpPost]
+        public IActionResult DbClientt()
+        {
+            GetDbTablesResponse res = null;
+            if (ViewBag.cid == "admin")
+                if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                    res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = "" });
             ViewBag.Tables = res.Tables;
             ViewBag.DB_Name = res.DB_Name;
             ViewBag.TableCount = res.TableCount;
-            return View();
+            ViewBag.IsAdminOwn = true;
+            return View("DbClient");
         }
 
-        public List<DbClientQueryResponse> ExecuteQuery(string Query)
+        public IActionResult SearchSolution(string clientSolnid)
         {
+            if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
+                return Redirect("/StatusCode/401");
+            var user = this.LoggedInUser;
+            return ViewComponent("DBClient", new { clientSolnid = clientSolnid, _user = user });
+        }
+
+        public List<DbClientQueryResponse> ExecuteQuery(string Query, string solution, bool Isadmin)
+        {
+            solutionid = solution;
+            IsAdmin = Isadmin;
             List<DbClientQueryResponse> responses = new List<DbClientQueryResponse>();
             string[] QueryList = Query.Split(";");
             try
@@ -48,12 +89,12 @@ namespace ExpressBase.Web.Controllers
                         }
                         else if (Query.IndexOf("select ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
-                            if (Query.IndexOf("eb_", StringComparison.OrdinalIgnoreCase) < 0)
+                            if (Query.IndexOf("eb_", StringComparison.OrdinalIgnoreCase) < 0 || IsAdmin)
                             {
                                 DbClientQueryResponse ress = new DbClientQueryResponse();
                                 ress = SelectQuery(SplitQuery);
                                 responses.Add(ress);
-                            }                                
+                            }
                         }
                         else if (Query.IndexOf("delete ", StringComparison.OrdinalIgnoreCase) >= 0)
                         {
@@ -106,7 +147,7 @@ namespace ExpressBase.Web.Controllers
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
             //bool containsSearchResult = Query.Contains("select");
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientSelectRequest { Query = Query });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientSelectRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             if (ress.Dataset != null)
             {
                 ress.RowCollection = new List<RowColletion>();
@@ -123,7 +164,7 @@ namespace ExpressBase.Web.Controllers
         public DbClientQueryResponse InsertQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientInsertRequest { Query = Query });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientInsertRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
@@ -136,21 +177,21 @@ namespace ExpressBase.Web.Controllers
         public DbClientQueryResponse DeleteQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientDeleteRequest { Query = Query });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientDeleteRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
         public DbClientQueryResponse AlterQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientAlterRequest { Query = Query });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientAlterRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
         private DbClientQueryResponse CreateQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientCreateRequest { Query = Query });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientCreateRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 
@@ -163,7 +204,7 @@ namespace ExpressBase.Web.Controllers
         public DbClientQueryResponse UpdateQuery(string Query)
         {
             DbClientQueryResponse ress = new DbClientQueryResponse();
-            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientUpdateRequest { Query = Query });
+            ress = this.ServiceClient.Post<DbClientQueryResponse>(new DbClientUpdateRequest { Query = Query, ClientSolnid = solutionid, IsAdminOwn = IsAdmin });
             return ress;
         }
 

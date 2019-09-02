@@ -19,7 +19,8 @@ var SolutionDashBoard = function (connections, sid) {
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
         "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />",
-        "GoogleDrive": "<img class='img- responsive image-vender' src='../images/Google-Drive-Logo.png' style='width:68%' />"
+        "GoogleDrive": "<img class='img- responsive image-vender' src='../images/Google-Drive-Logo.png' style='width:68%' />",
+        "DropBox": "<img class='img- responsive image-vender' src='../images/Dropbox-logo.png' style='width:100%' />"
     }
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -387,6 +388,26 @@ var SolutionDashBoard = function (connections, sid) {
         }.bind(this));
     };
 
+    this.DropBoxOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddDropBox",
+            data: postData,
+            beforeSend: function () {
+                $("#DropBox_loader").EbLoader("show", { maskItem: { Id: "#Map_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#DropBox_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#DropBoxConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
     this.GoogleDriveOnSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -652,6 +673,18 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#MapInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#MapInputApiKey').val(temp1["ApiKey"]);
+            }
+        }
+    };
+    this.DropBoxinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#DropBoxConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#DropBoxInputNickname').val(temp[obj].NickName);
+                $('#DropBoxInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#DropBoxInputAccessToken').val(temp1["AccessToken"]);
             }
         }
     };
@@ -1081,6 +1114,11 @@ var SolutionDashBoard = function (connections, sid) {
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
+                else if ($trigger.hasClass('DropBoxedit')) {
+                    options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
                 if (preventContextMenu == 0)
                     return options;
             }.bind(this)
@@ -1474,8 +1512,8 @@ var SolutionDashBoard = function (connections, sid) {
 
     this.VersioningSwitch = function (e) {
         postData = e.target.checked;
-        if (postData == false) {
-            $("#VersioningSwitch").prop("checked", true);
+        if (this.Connections.SolutionInfo.IsVersioningEnabled) {
+            $("#VersioningSwitch").bootstrapToggle('on');
             EbDialog("show",
                 {
                     Message: "The Versioning cannot is turend off !!!!",
@@ -1518,9 +1556,10 @@ var SolutionDashBoard = function (connections, sid) {
                                 if (data)
                                     EbMessage("show", { Message: "Versioning : On" });
                             }.bind(this));
-                        else
-                            $("#VersioningSwitch").prop("checked", false);
-                    }.bind(this)
+                        else if (name == "Cancel") {
+                            $("#VersioningSwitch").bootstrapToggle('off');
+                        }                            
+                    }
                 });
         }
     };
@@ -1529,7 +1568,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         if (this.Connections.SolutionInfo.IsVersioningEnabled) {
-            $("#VersioningSwitch").prop("checked", true);
+            $("#VersioningSwitch").bootstrapToggle('on');
         }
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
@@ -1542,6 +1581,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));
         $("#GoogleDriveConnectionSubmit").on("submit", this.GoogleDriveOnSubmit.bind(this));
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
+        $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();

@@ -8,6 +8,8 @@
 
 @section JavaScript{
     <script src="~/js/EbDashBoards/SolutionDashBoard.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" />
+    <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 }
 @{
     string proto = string.Empty;
@@ -44,6 +46,8 @@
     Image_url.Add("ExpertTexting", "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />");
     Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
     Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
+
+    string Logourl = "/images/logo/" + ViewBag.cid + ".png";
     <script>
         const sid = '@ViewBag.cid';
     </script>
@@ -52,21 +56,12 @@
     var cm = new EbHeader().setName("Solution Settings");
 </script>
 <style>
-    /*.cloudnaryVendorImage{
-                margin-left: 24px;
-                margin-top: 23px;
-            }*/
-    /*.POSTGRESVendorImage {
-                margin-left: 43px;
-            }
-
-            .EmailVendorImage {
-                margin-left: 50px;
-                margin-top: 4px;
-            }*/
+   .eb-sdash-longdivcontainer .toggle {
+       width:128px!important;
+   }
 </style>
 <div class="row s-dash-container h-100">
-    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
+    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
         <div class="t-container">
             <ul class="list-group eb-dashbord-sidebar">
                 <li class="list-group-item outer_li text-center">
@@ -80,7 +75,7 @@
                             <span class="material-icons t__sidebar_icon">attach_money</span>
                             <span class="t__sidebar_text">Billing</span>
                         </a>
-                    </li>*@
+                    </li>
                 <li class="list-group-item outer_li text-center">
                     <a class="t_a" href="/AppStore" target="_blank">
                         <span class="material-icons t__sidebar_icon">store</span>
@@ -101,17 +96,17 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
-            <div class="col-md-9 pd-0">
+            <div class="col-md-9 col-lg-9 col-xs-12 pd-0">
                 <h4 class="mr-t-0 mr-0">@ViewBag.Connections.SolutionInfo.SolutionName</h4>
                 <p class="small mr-t-10 mr-b-0">Created on @ViewBag.Connections.SolutionInfo.DateCreated</p>
                 <p class="small mr-0">
                     @ViewBag.Connections.SolutionInfo.Description
                 </p>
             </div>
-            <div class="col-md-3 pd-0 form-inline">
+            <div class="col-md-3 col-lg-3 col-xs-12 pd-0 form-inline s-dash-btnwraper">
                 <form method="post" action="@sso_dev.Replace("myaccount.", "" )" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
@@ -130,7 +125,7 @@
                 </form>
             </div>
         </div>
-        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+        <div class="col-md-12 col-lg-12 pd-0 s-dash-workplace-tabs">
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
                     <a id="IntegrationsCall" class="nav-link" data-toggle="tab" href="#Integrations" role="tab">
@@ -253,7 +248,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#SentGridConnectionEdit" data-whatever="SendGrid">
+                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#SentGrid" data-whatever="SendGrid">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/SendGrid.png" style="width:100%" />
@@ -263,7 +258,17 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" data-target="#GoogleDriveConnectionEdit" data-whatever="GoogleDrive">
+                                    <div id="dropbox" class="connection_wrap_outer" data-toggle="modal" data-target="#DropBoxConnectionEdit" data-whatever="DropBox">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="dropboxConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/Dropbox-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" @*data-target="#GoogleDriveConnectionEdit"*@ data-whatever="GoogleDrive">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
@@ -317,16 +322,6 @@
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="facebookConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/fb_logo.png" style="width:50%" />
-                                                <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="dropbox" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="dropboxConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/Dropbox-logo.png" style="width:100%" />
                                                 <div class="image-add">
                                                     <div class="text fa-coming-soon">Coming Soon</div>
                                                 </div>
@@ -470,7 +465,7 @@
                             </div>
                             <div class="eb-sdash-longdivcontainer">
                                 <div class="left-sec" style="display:flex;justify-content:center;min-width:25%;">
-                                    <img src="~/images/contact.png" style="max-width:200px;" />
+                                    <img src="~/images/your_company_logo.png" data-src=@Logourl class="Eb_Image" style="max-width:200px;align-self:center;" />
                                 </div>
                                 <div class="right-sec">
                                     <p>
@@ -492,9 +487,9 @@
                                         An Invoice Form, can have two versions, pre-VAT & post-VAT, or a PDF report
                                         with two different ways of calculating taxable amount.
 
-                                        By default, versioning of objects is switched off. Switch it on, only 
+                                        By default, versioning of objects is switched off. Switch it on, only
                                         if you need to manage multiple versions for objects. By switching on,
-                                        you agree that you are doing it deliberately, and you understand the 
+                                        you agree that you are doing it deliberately, and you understand the
                                         complexity of managing multiple versions.
 
                                         We recommend keeping versioning switched off, and only switch it on,
@@ -504,10 +499,13 @@
                                 </div>
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
                                     <div class="uname-advanced-sec">
-                                        <label class="switch">
-                                            <input type="checkbox" id="VersioningSwitch" style="display:inline">
-                                            <span class="slider round"></span>
-                                        </label>
+                                        @*<label>Switch Versioning</label>*@
+                                        @*<label class="switch">
+                                                <input type="checkbox" id="VersioningSwitch" style="display:inline">
+                                                <span class="slider round"></span>
+                                            </label>*@
+                                        <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>
+                                        <input id="VersioningSwitch" type="checkbox" data-toggle="toggle" data-on="Versioning On" data-off="Versioning Off">
                                     </div>
                                 </div>
                             </div>
@@ -1163,9 +1161,9 @@
                                 </div>
                             </div>
                         </div>
-                            <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
-                            <input type="hidden" class="Inputclear IntConfId" id="GoogleDriveInputIntConfId" name="Id" value="0" />
-                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="GoogleDriveInputIntConfId" name="Id" value="0" />
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -1234,6 +1232,55 @@
 
                 <div class="modal-footer border-style-none">
                     <button type="submit" class="ebbtn eb_btn-sm eb_btnblue MapConnection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="DropBoxConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="DropBox_mask">
+            <form action="" method="post" id="DropBoxConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">DropBox</h4>
+                    <div id="DropBox_loader" class="DropBoxConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:35%">
+                        <img class='img-responsive' src='~/images/Dropbox-logo.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Dropbox is a file hosting service operated by the American company Dropbox, Inc., that offers cloud storage, file synchronization, personal cloud, and client software. </span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="DropBoxVendor" type="hidden" value="DropBox" class="form-control Vendor" readonly />
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="DropBoxInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Access Token</label>
+                                        <input id="DropBoxInputAccessToken" name="AccessToken" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="DropBoxInputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm DropBoxConnection">Save</button>
                 </div>
             </form>
         </div>

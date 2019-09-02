@@ -248,7 +248,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#SentGrid" data-whatever="SendGrid">
+                                    <div id="sentgrid" class="connection_wrap_outer" data-toggle="modal" data-target="#SentGridConnectionEdit" data-whatever="SendGrid">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="sentgridConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/SendGrid.png" style="width:100%" />
@@ -262,6 +262,16 @@
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="dropboxConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/Dropbox-logo.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> 
+                                    <div id="awss3" class="connection_wrap_outer" data-toggle="modal" data-target="#AWSS3ConnectionEdit" data-whatever="AWSS3">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="AWSS3Connection_config">
+                                                <img class="img-responsive image-vender" src="~/images/amazon-s3.png" style="width:100%" />
                                                 <div class="image-add">
                                                     <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
@@ -1281,6 +1291,65 @@
 
                 <div class="modal-footer border-style-none">
                     <button type="submit" class="ebbtn eb_btnblue eb_btn-sm DropBoxConnection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="AWSS3ConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="AWSS3_mask">
+            <form action="" method="post" id="AWSS3ConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">AWS S3</h4>
+                    <div id="AWSS3_loader" class="AWSS3Connection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:35%">
+                        <img class='img-responsive' src='~/images/amazon-s3.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Amazon S3 or Amazon Simple Storage Service is a service offered by Amazon Web Services that provides object storage through a web service interface. Amazon S3 uses the same scalable storage infrastructure that Amazon.com uses to run its global e-commerce network.  </span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="AWSS3Vendor" type="hidden" value="AWSS3" class="form-control Vendor" readonly />
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="AWSS3InputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Bucket name</label>
+                                        <input id="AWSS3InputBucketName" name="BucketName" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Bucket Region</label>
+                                        <input id="AWSS3InputbucketRegion" name="bucketRegion" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="AWSS3InputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm AWSS3Connection">Save</button>
                 </div>
             </form>
         </div>

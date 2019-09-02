@@ -48,6 +48,8 @@
         let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
         if (ctrl.ObjType === "Approval")
             this.ApprovalCtrl = null;
+        else if (ctrl.ObjType === "ManageLocation")
+            this.ManageLocationCtrl = null;
         ControlTile.parent().focus();
         ControlTile.remove();
         this.PGobj.removeFromDD(ebsid);
@@ -322,6 +324,9 @@
                     ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
                     this.ApprovalCtrl = ctrlObj;
                 }
+                else if (type === "ManageLocation") {
+                    this.ManageLocationCtrl = ctrlObj;
+                }
                 else if (type === "SimpleSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
                 }
@@ -446,6 +451,18 @@
                 id: "reviewCtrl",
                 head: "Form already contains a Review control.",
                 body: "You cannot add more than one approval control into the form",
+                type: "warning",
+                delay: 3000
+            });
+            return false;
+        }
+        
+        if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ManageLocation" && this.ManageLocationCtrl) {
+            this.EbAlert.clearAlert("mngLocCtrl");
+            this.EbAlert.alert({
+                id: "mngLocCtrl",
+                head: "Form already contains a manage location control.",
+                body: "You cannot add more than one manage location control into the form",
                 type: "warning",
                 delay: 3000
             });
@@ -661,6 +678,8 @@
                 let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
                 if (ctrl.ObjType === "Approval")
                     this.ApprovalCtrl = null;
+                else if (ctrl.ObjType === "ManageLocation")
+                    this.ManageLocationCtrl = null;
                 ControlTile.parent().focus();
                 ControlTile.remove();
                 this.PGobj.removeFromDD(ebsid);
@@ -710,6 +729,7 @@
             this.makeGBsDropable();
         }
         this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
+        this.ManageLocationCtrl = getFlatObjOfType(this.rootContainerObj, "ManageLocation")[0];
 
 
         this.EbAlert = new EbAlert({

@@ -408,7 +408,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.orderColl = [];
         let rowG_coll = this.EbObject.RowGroupCollection.$values;
         let CurR_RowG = this.CurrentRowGroup;
-        if (!this.EbObject.DisableRowGrouping) {
+        if (rowG_coll.length>0 &&  !this.EbObject.DisableRowGrouping) {
             if (CurR_RowG === null) {
                 CurR_RowG = rowG_coll.find(obj => obj.RowGrouping.$values.length > 0);
                 this.CurrentRowGroup = CurR_RowG;
@@ -1682,13 +1682,15 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     $(rows).eq(obj.rowIndex).after(obj.html);
             });
             var ct = $("#" + this.tableId + " .group[group=1]").length;
-            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` All Groups (${ct}) - `);
+            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups (${ct}) - `);
 
             $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
             $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
         }
-        else
+        else {
             $(`#rowgroupDD_${this.tableId} [value=None`).attr("selected", "selected");
+            $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups `);
+        }
     };
 
     this.singlelevelRowgrouping = function () {

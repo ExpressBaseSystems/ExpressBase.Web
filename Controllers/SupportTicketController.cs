@@ -46,6 +46,7 @@ namespace ExpressBase.Web.Controllers
 		public void SaveBugDetails(string title,string descp,string priority,string solid,string type_f_b)
 		{
 			string usrtyp = null;
+
 			if (ViewBag.wc.Equals("dc"))
 			{
 				solid = ViewBag.cid;
@@ -60,6 +61,7 @@ namespace ExpressBase.Web.Controllers
 			{
 				usrtyp = "tenant";
 			}
+			
 
 			SaveBugResponse sbr = this.ServiceClient.Post<SaveBugResponse>(new SaveBugRequest
 			{
@@ -69,8 +71,10 @@ namespace ExpressBase.Web.Controllers
 				solutionid = solid,
 				type_b_f = type_f_b,
 				status = "onhold",
-				usertype = usrtyp
-			});
+				usertype = usrtyp,
+				fullname = this.LoggedInUser.FullName,
+				email=this.LoggedInUser.Email
+			}) ;
 		}
 	}
 }

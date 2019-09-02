@@ -1,0 +1,167 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+<head>
+    <title>Changes in DB</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="~/js/ProductionDBManager/productiondbmanager.js"></script>
+    <script>
+        $(document).ready(function () { 
+            new productiondbmanager();
+        });
+    </script>
+    <style>
+
+        a {
+            color: #4987fb;
+            font-family: inherit;
+            text-decoration: none;
+        }
+
+        .div-body {
+            background-color: white;
+            margin: 100px 200px 50px 200px;
+            padding: 30px 10px 30px 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+
+        .div-label {
+            height: 40px;
+            text-align-last: center;
+            width: 100%;
+        }
+
+        .headings {
+            font-family: "Trebuchet MS", Helvetica, sans-serif;
+            text-align-last: center;
+            color: #4987fb;
+            font-size: large;
+        }
+
+        .sub-headings {
+            font-family: inherit;
+            color: #4987fb;
+            font-size: small;
+        }
+
+        .div-sub-headings {
+            text-align: center;
+            border-bottom: 1px solid #ccc;
+        }
+
+
+        .div-table-contents {
+            text-align: left;
+            margin: 0px 10px 0px 10px;
+            padding: 0px 15px 0px 15px;
+            font-size: smaller;
+            font-weight: 100;
+        }
+
+        .btn-change {
+            color: white;
+            background-color: #4987fb;
+            border-color: #4987fb;
+        }
+
+        .align-center {
+            text-align: center;
+        }
+
+        .table-content-font {
+            font-family: inherit;
+            color: #162929;
+            font-size: 13px;
+        }
+
+        .row-padding {
+            padding: 5px 0px 5px 0px;
+        }
+
+        .div-row-heading {
+            background-color: #eaeff7;
+            border-radius: 4px;
+            border-bottom: 1px solid #a3b9dc;
+        }
+
+        .div-row-contents {
+            border-bottom: 1px solid #ccc;
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="div-body">
+                <div class="row div-label">
+                    <label class="headings">CHANGES</label>
+                </div>
+
+
+                <div class="div-table-contents">
+                    <div class=" div-sub-headings-main">
+                        <div class="row ">
+                            <div class="col-md-4 align-center">
+                                <label>Tenant Details</label>
+                            </div>
+                            <div class="col-md-4 align-center">
+                                <label>Solution Details</label>
+                            </div>
+                            <div class="col-md-2 align-center">
+                                <label>Last Modified</label>
+                            </div>
+                            <div class="col-md-2 align-center">
+                                <label>Action</label>
+                            </div>
+                        </div>
+                    </div>
+                    @{
+                        for (int i = 0; i < ViewBag.ChangesLog.Count; i++)
+                        {
+                            <div class="row row-padding div-row-heading">
+                                <div class="col-md-4 align-center">
+                                    <div>
+                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantName</label>
+                                    </div>
+                                    <div>
+                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantEmail</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 align-center">
+                                    <div>
+                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Solution</label>
+                                    </div>
+                                    <div>
+                                        <input type="hidden" value="@ViewBag.ChangesLog[i].DBName" id="dbname" name="dbname" />
+                                        <label class="sub-headings row-padding dbname">@ViewBag.ChangesLog[i].DBName</label>
+                                    </div>
+                                    <div>
+                                        <label class="sub-headings row-padding align-center">@ViewBag.ChangesLog[i].Vendor</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 align-center" id="modified_date">
+                                    <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Last_Modified</label>
+                                </div>
+                                <div class="col-md-2 align-center">
+                                    <input type="hidden" value="@ViewBag.ChangesLog[i].Solution" id="solu_id" name="solu_id" />
+                                    <label class="sub-headings row-padding" id="uptodate" style="display:none">Up to Date</label>
+                                    <button id="i_chk" name="i_chk" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
+                                </div>
+                            </div>
+                            <div id="@ViewBag.ChangesLog[i].Solution">
+
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+

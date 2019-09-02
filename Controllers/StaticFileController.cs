@@ -84,6 +84,37 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        [HttpGet("/eb/images/{quality}/{refid}")]
+        public IActionResult GetInfraImages(string refid, string quality)
+        {
+            DownloadFileResponse dfs = null;
+
+            ActionResult resp = new EmptyResult();
+
+            try
+            {
+                this.FileClient.Timeout = new TimeSpan(0, 5, 0);
+
+                dfs = this.FileClient.Get<DownloadFileResponse>
+                        (new DownloadInfraImgRequest
+                        {
+                            ImageInfo = new ImageMeta { FileRefId = Convert.ToInt32(refid.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.Images, ImageQuality = Enum.Parse<ImageQuality>(quality) },
+
+                            RefId = refid.Split(CharConstants.DOT)[0]
+                        });
+                if (dfs.StreamWrapper != null)
+                {
+                    dfs.StreamWrapper.Memorystream.Position = 0;
+                    resp = new FileStreamResult(dfs.StreamWrapper.Memorystream, GetMime(refid));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.Message.ToString());
+            }
+            return resp;
+        }
+
         private string GetMime(string fname)
         {
             return StaticFileConstants.GetMime[fname.SplitOnLast(CharConstants.DOT).Last().ToLower()];
@@ -447,6 +478,65 @@ namespace ExpressBase.Web.Controllers
             }
             return res.FileRefId;
         }
+
+        [HttpPost]
+        public async Task<int> UploadImageToInfra(int i)
+        {
+            UploadAsyncResponse res = new UploadAsyncResponse();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                List<string> tags = string.IsNullOrEmpty(req["Tags"]) ? new List<string>() : req["Tags"].ToList<string>();
+                List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
+                string context = (req.ContainsKey("Context")) ? context = req["Context"] : StaticFileConstants.CONTEXT_DEFAULT;
+
+                UploadImageInfraRequest uploadImageRequest = new UploadImageInfraRequest
+                {
+                    ImageInfo = new ImageMeta()
+                };
+
+                foreach (var formFile in req.Files)
+                {
+                    if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower()))
+                    {
+                        byte[] myFileContent;
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(memoryStream);
+                            memoryStream.Seek(0, SeekOrigin.Begin);
+                            myFileContent = new byte[memoryStream.Length];
+                            await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                            uploadImageRequest.ImageByte = myFileContent;
+                        }
+                        uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>
+                        {
+                            { "Tags", tags },
+                            { "Category", catogory }
+                        };
+
+                        uploadImageRequest.ImageInfo.Context = context;
+                        uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
+                        uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
+                        uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+                        uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.Images;
+                        uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+
+                        res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: Img Upload Failure");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
+            }
+            return res.FileRefId;
+        }
+
 
         [HttpPost]
         public async Task<int> UploadDPAsync(int i)

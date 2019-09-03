@@ -17,6 +17,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     this.flatControls = getFlatCtrlObjs(this.FormObj);// objectcoll with functions
     this.flatControlsWithDG = this.flatControls;
     this.IsPSsInitComplete = {};
+    this.Mode = { isEdit: false, isView: false, isNew: true };// to pass by reference
 
     this.onSubmitFn = onSubmitFn;
     this.FRC = new FormRenderCommon({ FO: this });

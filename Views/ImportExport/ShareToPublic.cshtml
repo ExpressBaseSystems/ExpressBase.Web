@@ -287,7 +287,7 @@
                                             if (v != 0)
                                             {
                                                 <div class="sc-thumb">
-                                                    <img src="/images/small/@(v+".jpg")" />
+                                                    <img src="/eb/images/small/@(v+".jpg")" />
                                                 </div>
                                             }
                                         }
@@ -369,13 +369,15 @@
                 ServerEventUrl: 'https://se.eb-test.xyz',
                 EnableTag: false,
                 EnableCrop: true,
-                ResizeViewPort: true
+                ResizeViewPort: true,
+                UploadToEb: true,
+                Context:"appstore"
             });
 
             screenshot.uploadSuccess = function (fileid) {
                 let v = $("input[name='images']").val() + "," + fileid;
                 $("input[name='images']").val(v);
-                $(".screenshot-body").append(`<div class="sc-thumb"><img src="/images/small/${fileid}.jpg"/></div>`);
+                $(".screenshot-body").append(`<div class="sc-thumb"><img src="/eb/images/small/${fileid}.jpg"/></div>`);
             }
         });
         $('input[type=radio][name=price_option]').change(function () {

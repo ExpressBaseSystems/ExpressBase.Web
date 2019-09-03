@@ -77,20 +77,16 @@
                                                 else
                                                 {
                                                     string img = applist[i].Images.Split(",")[0] + ".jpg";
-                                                    <img src="/eb/images/small/@img" class="screnshot1 w-100"/>
+                                                    <img src="/eb/images/small/@img" class="screnshot1 w-100" />
                                                 }
                                             }
                                         </div>
                                     </div>
                                     <div class="col2">
-                                        <h3>@applist[i].Name</h3>
+                                        <h3 class="title">@applist[i].Name</h3>
+                                        <h4 class="shortdesc">@applist[i].Description</h4>
                                         <p>
                                             @desc
-                                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                            Lorem Ipsum has been the industry's standard dummy text ever since the
-                                            1500s, when an unknown printer took a galley of type and scrambled it
-                                            to make a type specimen book. It has survived not only five centuries,
-                                            but also.
                                         </p>
                                     </div>
                                 </div>
@@ -98,7 +94,16 @@
                                     <div class="ebapptile-tagscontaner">
                                         <div class="ebapptile-tagscontaner-items">
                                             <div class="name p">Price</div>
-                                            <span class="app-tag">$ @applist[i].Cost</span>
+                                            @{
+                                                if (applist[i].IsFree == "T")
+                                                {
+                                                    <span class="app-tag">FREE</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="app-tag">$ @applist[i].Cost</span>
+                                                }
+                                            }
                                         </div>
                                         <div class="ebapptile-tagscontaner-items">
                                             <span class="name t">Tags</span>

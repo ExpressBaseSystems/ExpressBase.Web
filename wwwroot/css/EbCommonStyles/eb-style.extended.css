@@ -95,6 +95,7 @@
             color: #a7a6a6;
             font-size: 17px;
             background: #f1f1f1;
+            min-height:150px;
         }
         .col1 .apptile-scshot .screnshot1 {
             
@@ -103,7 +104,7 @@
     padding: 0 10px;
     width: 70%;
 }
-    .col2 h3 {
+    .col2 .title {
         margin: 0px 0px 10px 0px;
         font-size: 20px;
         text-overflow: ellipsis;
@@ -115,6 +116,10 @@
         font-weight: 400;
         color: #636363;
         line-height: 1.8em;
+    }
+    .col2 .shortdesc {
+        font-size: 14px;
+        color: #696969;
     }
 .apptile-priceplan {
     position: absolute;

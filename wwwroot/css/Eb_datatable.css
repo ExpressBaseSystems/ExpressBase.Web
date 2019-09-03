@@ -620,10 +620,19 @@ table.dataTable tr.group td {
     padding-left: 10px;
 }
 .newform-menu {
-    left: -20px !important;
+    right: 0px;
+    left: unset;
+    padding: 0;
 }
 
 .rowgroupselect {
     display:inline-block;
     padding:2px 4px;
+}
+#obj_icons .drp_ul {
+    min-width: 250px !important;
+    width: auto !important;
+}
+#obj_icons .drp_ul a {
+    height:30px !important;
 }

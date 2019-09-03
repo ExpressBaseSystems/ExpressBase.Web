@@ -2419,12 +2419,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                         <i class="fa fa-plus" aria-hidden="true"></i>
                     </button>
                     <div class="dropdown-menu newform-menu">
-                        <div class="dropdown-menu-inner"></div>
+                        <ul class="drp_ul"></ul>
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
             let url = `../webform/index?refid=${obj.Refid}&_params=""&_mode=2&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
-            $(`#NewFormdd${this.tableId} .dropdown-menu-inner`).append(`<a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a>`);
+            $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
 

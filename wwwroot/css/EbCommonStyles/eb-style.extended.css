@@ -111,11 +111,12 @@
         white-space: nowrap;
         overflow: hidden;
     }
-    .col2 p {
-        font-size: 14px;
-        font-weight: 400;
-        color: #636363;
-        line-height: 1.8em;
+    .col2 .detailed_content .col2 p, .col2 span, .col2 b {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        color: #636363 !important;
+        line-height: 1.8em !important;
+        font-family: Montserrat !important;
     }
     .col2 .shortdesc {
         font-size: 14px;
@@ -178,14 +179,14 @@
 .ebapptile-tagscontaner .app-tag {
     font-weight: 500;
 }
-/*.btn-Apstr {
-    padding: 6px 12px;
-    background: transparent;
-    border: none;
-}
-.installbtn i {
-    color: #119c64;
-}*/
+    .ebapptile-tagscontaner .app-tag .app-tag-items {
+        background: #eef9fe;
+        padding: 5px;
+        border-radius: 2px;
+        border: 1px solid #d7edf7;
+        margin-right: 3px;
+        color: #5f5d5d;
+    }
 /*detail of pub app*/
 .wCmn {
     min-height: 100vh;

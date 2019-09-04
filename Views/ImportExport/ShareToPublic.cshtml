@@ -375,7 +375,13 @@
             });
 
             screenshot.uploadSuccess = function (fileid) {
-                let v = $("input[name='images']").val() + "," + fileid;
+                let v = $("input[name='images']").val().trim();
+                if (v === "" || v === null || v === undefined) {
+                    v = fileid;
+                }
+                else {
+                    v = v + ',' + fileid;
+                }
                 $("input[name='images']").val(v);
                 $(".screenshot-body").append(`<div class="sc-thumb"><img src="/eb/images/small/${fileid}.jpg"/></div>`);
             }

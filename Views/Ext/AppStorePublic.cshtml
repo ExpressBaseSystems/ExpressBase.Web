@@ -47,7 +47,7 @@
             </div>
             <div class="coTBx-apStr-bdy">
                 @{
-                    var applist = ViewBag.StoreApps;
+                    List<AppStore> applist = ViewBag.StoreApps;
                     string desc = string.Empty;
                     for (int i = 0; i < applist.Count; i++)
                     {
@@ -83,11 +83,11 @@
                                         </div>
                                     </div>
                                     <div class="col2">
-                                        <h3 class="title">@applist[i].Name</h3>
-                                        <h4 class="shortdesc">@applist[i].Description</h4>
-                                        <p>
-                                            @desc
-                                        </p>
+                                        <h3 class="title">@applist[i].Title</h3>
+                                        <h4 class="shortdesc">@applist[i].ShortDesc</h4>
+                                        <div class="detailed_content">
+                                            @Html.Raw(desc)
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="apTileInner-bdy-footer">
@@ -105,10 +105,23 @@
                                                 }
                                             }
                                         </div>
-                                        <div class="ebapptile-tagscontaner-items">
-                                            <span class="name t">Tags</span>
-                                            <span class="app-tag">test,val,inventory</span>
-                                        </div>
+                                        @{
+                                            if (!string.IsNullOrEmpty(applist[i].Tags))
+                                            {
+                                                string[] _tags = applist[i].Tags.Split(",");
+                                                <div class="ebapptile-tagscontaner-items">
+                                                    <span class="name t">Tags</span>
+                                                    <span class="app-tag">
+                                                        @{ 
+                                                            foreach(string t in _tags)
+                                                            {
+                                                                <span class="app-tag-items">@t</span>
+                                                            }
+                                                        }
+                                                    </span>
+                                                </div>
+                                            }
+                                        }
                                     </div>
                                     <div class="ebapptile-ftr-btncont">
                                         <a class="btn-mrdetail" href="">More Details</a>@*/AppInfo/@applist[i].Id*@

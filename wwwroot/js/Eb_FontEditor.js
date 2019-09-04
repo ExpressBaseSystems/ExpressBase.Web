@@ -1,8 +1,29 @@
-﻿var FontEditor = function (params,fontEditobj) {
+﻿var FontEditor = function (params, fontEditobj) {
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId;
-    this.fontObject = $.isEmptyObject(fontEditobj) ? { Font: "Times-Roman", Size: 14, Style: 0 , color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj ;
-    this.ItextFonts = ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'];
+    this.fontObject = $.isEmptyObject(fontEditobj) ? { Font: "Times-Roman", Size: 14, Style: 0, color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj;
+    this.ItextFonts = [
+        { Name: 'Arapey', Value: 'Arapey' },
+        { Name: 'Arvo', Value: 'Arvo' },
+        { Name: 'Baskerville', Value: 'Libre Baskerville' },
+        { Name: 'Bentham', Value: 'Bentham' },
+        { Name: 'Cabin Condensed', Value: 'Cabin Condensed' },
+        { Name: 'Century Gothic', Value: 'Didact Gothic' },
+        { Name: 'Courier', Value: 'Courier' },
+        { Name: 'Crimson Text', Value: 'Crimson Text' },
+        { Name: 'EB Garamond', Value: 'EB Garamond' },
+        { Name: 'GFS Didot', Value: 'GFS-Didot' },
+        { Name: 'Gotham', Value: 'Montserrat' },
+        { Name: 'Helvetica', Value: 'Helvetica' },
+        { Name: 'Libre Franklin', Value: 'Libre Franklin' },
+        { Name: 'Maven Pro', Value: 'Maven Pro' },
+        { Name: 'Merriweather', Value: 'Merriweather' }, 
+        { Name: 'News Cycle', Value: 'News Cycle' },
+        { Name: 'Puritan', Value: 'Puritan' },
+        { Name: 'Questrial', Value: 'Questrial' },
+        { Name: 'Times', Value: 'Times' },
+        { Name: 'Times-Roman', Value: 'Tinos' },
+        { Name: 'ZapfDingbats', Value: 'Heebo' }];
     this.fontStyle = {
         0: "normal",
         2: "italic",
@@ -34,7 +55,7 @@
         var Prophtml = (`<div class="col-md-6 pd-0 FEcol FEfont-family">
             <div class="FEhead-font" style="text-align:left">
             <div class="font-text">Font</div><input type="text" id="fontSearch" class="fontSearch" placeholder="search font"></div>
-            <div class="FEcol-bdy" id="${this.ContainerId }FEfamily-bdy">
+            <div class="FEcol-bdy" id="${this.ContainerId}FEfamily-bdy">
             <select name="googleFont" id="googleFont" class="form-control font_ed_focus" size="5"></select></div></div>
             <div class="col-md-2 pd-0 FEcol FEcol FEfont-style"><div class="FEhead">Font Style</div>
             <div class="FEcol-bdy" id="${this.ContainerId}FEStyle-bdy">
@@ -43,7 +64,7 @@
             <div class="FEcol-bdy" id="${this.ContainerId}FEsize-bdy">
             <select name="fontSize" size="5" id="fontSize" class="form-control font_ed_focus"></select>
             </div></div>`);
-           
+
         $("#" + this.ContainerId + "FE-section").append(Prophtml);
         this.appendMpropSec();
     };
@@ -66,36 +87,41 @@
 
     this.loadFontStyle = function () {
         $('#fontStyle').append($(`<option tabindex='1' value='normal'>Normal</option>
-            <option tabindex='1' value= 'italic'> Italic</option >
             <option tabindex='1' value= 'bold'> Bold</option >
+            <option tabindex='1' value= 'italic'> Italic</option >
             <option tabindex='1' value= 'bold italic'> Bold Italic</option>`));
+        //$(`[value='${this.fontObject.Style}']`).attr('selected', true);
+        $(`#fontStyle>option:eq(${this.fontObject.Style})`).attr('selected', true);
     };
 
     this.loadFontFamily = function () {
         var pos = 0;
         for (let i = 0; i < this.ItextFonts.length; i++) {
-            $('#googleFont').append($("<option tabindex='1' value='" + this.ItextFonts[i] + "'>" + this.ItextFonts[i] + "</option>"));
-        }      
+            $('#googleFont').append($("<option tabindex='1' value='" + this.ItextFonts[i].Value + "'>" + this.ItextFonts[i].Name + "</option>"));
+        }
         //$.each(this.fonts.items, function (idx, font) {
         //    $('#googleFont')
         //        .append(
         //        $("<option tabindex='1' value='" + font.family + "'>" + font.family + "</option>"));
-        //});
+        //}); 
+        $(`[value='${this.fontObject.Font}']`).attr('selected', true);
     }
 
     this.loadFontSize = function () {
         for (var i = 0; i <= 50; i++) {
             $('#fontSize')
                 .append(
-                $("<option tabindex='1' value='" + i + "'>" + i + "px</option>"));
+                    $("<option tabindex='1' value='" + i + "'>" + i + "px</option>"));
         }
+        $(`[value='${this.fontObject.Size}']`).attr('selected', true);
     };
 
     this.loadFont = function (e) {
-        fontName = $(e.target).val();
-        this.loadCSS('https://fonts.googleapis.com/css?family=' + fontName);
-        $('#font-preview').css('font-family', fontName);
-        this.fontObject.Font = fontName;
+        fontVal = $(e.target).val();
+        fontName = $(`[value="${fontVal}"`).text();
+        this.loadCSS('https://fonts.googleapis.com/css?family=' + fontVal);
+        $('#font-preview').css('font-family', fontVal);
+        this.fontObject.Font = fontVal;
     }
 
     this.loadCSS = function (href) {
@@ -106,19 +132,19 @@
     this.LoadFontStyle = function (e) {
         if ($(e.target).val() === "normal") {
             $('#font-preview').css({ 'font-style': 'normal', 'font-weight': 'normal' });
-            this.fontObject.Style = 0 ;
+            this.fontObject.Style = 0;
         }
         else if ($(e.target).val() === "italic") {
             $('#font-preview').css({ 'font-style': 'italic', 'font-weight': 'normal' });
-            this.fontObject.Style = 2 ;
+            this.fontObject.Style = 2;
         }
         else if ($(e.target).val() === "bold") {
             $('#font-preview').css({ 'font-weight': 'bold', 'font-style': 'normal' });
-            this.fontObject.Style = 1 ;
+            this.fontObject.Style = 1;
         }
         else if ($(e.target).val() === "bold italic") {
             $('#font-preview').css({ 'font-style': 'italic', 'font-weight': 'bold' });
-            this.fontObject.Style = 3 ;
+            this.fontObject.Style = 3;
         }
     };
 
@@ -148,7 +174,7 @@
     this.toggleModal = function () {
         var $modal = $("#" + this.ContainerId + "fontEditor .imgup-bg");
         $modal.toggle(350);
-        if ($modal.css("display") === "block"){
+        if ($modal.css("display") === "block") {
             this.setDefault();
         }
     };
@@ -177,7 +203,7 @@
         }
     };
 
-    this.Underline = function (e) {        
+    this.Underline = function (e) {
         if ($(e.target).prop('checked') === true) {
             $('#font-preview').css('text-decoration', 'underline');
             this.fontObject.Underline = true;
@@ -217,7 +243,7 @@
         this.createModal();
         this.loadFontStyle();
         this.loadFontFamily();
-        this.loadFontSize();       
+        this.loadFontSize();
         $("body").off("click").on("click", "#" + this.ToggleId, this.toggleModal.bind(this));
         $('#googleFont').on('change', this.loadFont.bind(this));////  id matt
         $('#fontStyle').on('change', this.LoadFontStyle.bind(this));

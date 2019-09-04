@@ -202,7 +202,7 @@
         $('.edit').attr('id', ob.id);
         document.title = ob.title;
         $("#ebwiki_panebrd").html(`${ob.category} / ${ob.title}`)
-        urlTitle = ob.title.replace(/\s+/g, '-').toLowerCase();
+        urlTitle = ob.title.replace(/\s+/g, '-');
         //var url = window.location.origin + "/Wiki/View/" + id + "/" + urlTitle;
         var url = window.location.origin + `/Wiki/${ob.category}/${urlTitle}`;
         let fbUrl = "https://www.facebook.com/share.php?u=" + url + "&title=" + ob.title;

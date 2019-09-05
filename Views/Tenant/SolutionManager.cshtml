@@ -1,4 +1,4 @@
-﻿@{
+﻿k@{
     @using System;
     @using Newtonsoft.Json;
     @using ExpressBase.Common;
@@ -56,47 +56,48 @@
     var cm = new EbHeader().setName("Solution Settings");
 </script>
 <style>
-   .eb-sdash-longdivcontainer .toggle {
-       width:128px!important;
-   }
+    .eb-sdash-longdivcontainer .toggle {
+        width: 128px !important;
+    }
 </style>
 <div class="row s-dash-container h-100">
     @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group eb-dashbord-sidebar">
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/MySolutions">
-                        <span class="material-icons t__sidebar_icon">highlight</span>
-                        <span class="t__sidebar_text">My Solutions</span>
-                    </a>
-                </li>
-                @*<li class="list-group-item outer_li text-center">
+            <div class="t-container">
+                <ul class="list-group eb-dashbord-sidebar">
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/MySolutions">
+                            <span class="material-icons t__sidebar_icon">highlight</span>
+                            <span class="t__sidebar_text">My Solutions</span>
+                        </a>
+                    </li>
+                    @*
+                    <li class="list-group-item outer_li text-center">
                         <a class="t_a">
                             <span class="material-icons t__sidebar_icon">attach_money</span>
                             <span class="t__sidebar_text">Billing</span>
                         </a>
                     </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/AppStore" target="_blank">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">App Store</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>*@
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/AppStore" target="_blank">
+                            <span class="material-icons t__sidebar_icon">store</span>
+                            <span class="t__sidebar_text">App Store</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a">
+                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                            <span class="t__sidebar_text">Wiki</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a">
+                            <span class="material-icons t__sidebar_icon">contact_support</span>
+                            <span class="t__sidebar_text">Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-9 col-lg-9 col-xs-12 pd-0">
@@ -107,7 +108,7 @@
                 </p>
             </div>
             <div class="col-md-3 col-lg-3 col-xs-12 pd-0 form-inline s-dash-btnwraper">
-                <form method="post" action="@sso_dev.Replace("myaccount.", "" )" target="_blank">
+                <form method="post" action="@sso_dev.Replace(" myaccount.", "" )" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="dc" />
@@ -115,7 +116,7 @@
                         <i class="fa fa-wrench"></i> Dev Login
                     </button>
                 </form>
-                <form method="post" action="@sso_user.Replace("myaccount.", "" )" target="_blank">
+                <form method="post" action="@sso_user.Replace(" myaccount.", "" )" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="uc" />
@@ -267,7 +268,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> 
+                                    </div>
                                     <div id="awss3" class="connection_wrap_outer" data-toggle="modal" data-target="#AWSS3ConnectionEdit" data-whatever="AWSS3">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="AWSS3Connection_config">
@@ -278,7 +279,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" @*data-target="#GoogleDriveConnectionEdit"*@ data-whatever="GoogleDrive">
+                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" @*data-target="#GoogleDriveConnectionEdit" *@ data-whatever="GoogleDrive">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
@@ -1377,6 +1378,14 @@
 </div>
 
 <div class="eb-cropie" id="cropsection"></div>
+@{
+    if (ViewBag.Connections.SolutionInfo.IsVersioningEnabled)
+    {
+        <script>
+            $("#VersioningSwitch").bootstrapToggle('on');
+        </script>
+    }
+}
 @section JsCode{
     <script>
         let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));

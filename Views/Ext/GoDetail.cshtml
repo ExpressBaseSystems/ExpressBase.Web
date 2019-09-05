@@ -11,7 +11,7 @@
 
 @{
     var wraper = ViewBag.StoreApps;
-    string desc = (string.IsNullOrEmpty(wraper.Description)) ? "Nothing to display" : wraper.Description;
+    string desc = (string.IsNullOrEmpty(wraper.DetailedDesc)) ? "Nothing to display" : wraper.DetailedDesc;
 }
 <div class="row wCmn" style="background:white;font-family:Montserrat">
     <div class="container">
@@ -24,7 +24,6 @@
                 <p class="desc">@desc</p>
                 <p class="pByWho">Published on 04 October 2018 by amal-R&D</p>
                 <div class="AbCont4btn">
-                    @*<button class="ebbtn btn_try"><i class="fa fa-external-link" aria-hidden="true"></i> Try Now</button>*@
                     @using (Html.BeginForm("BuyPubApp", "Ext", FormMethod.Post))
                     {
                         <input type="hidden" name="AppId" value="@ViewBag.AppId" />

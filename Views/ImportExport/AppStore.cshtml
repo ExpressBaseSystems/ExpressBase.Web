@@ -79,26 +79,25 @@
                             var apptype = (EbApplicationTypes)_appList[i].AppType;
 
                             string desc = String.IsNullOrEmpty(_appList[i].Description) ? "No Description" : _appList[i].Description;
-                            if (_appList[i].Status == 1)
-                            {
-                                privcount = privcount + 1;
-                                <div class="apPtiLe">
-                                    <div class="apTileInner">
-                                        <a href="@Url.Action("AppDashBoard", "Dev" , new { Id=_appList[i].Id, Type=_appList[i].AppType })" class="apTileInner-bdy">
-                                            <h3 class="apTileInner-heading"><i class="fa @_appList[i].Icon"></i> @_appList[i].Name</h3>
+
+                            privcount = privcount + 1;
+
+                            <div class="apPtiLe">
+                                <div class="apTileInner">
+                                    <a href="@Url.Action("AppDashBoard", "Dev" , new { Id=_appList[i].Id, Type=_appList[i].AppType })" class="apTileInner-bdy">
+                                        <h3 class="apTileInner-heading"><i class="fa @_appList[i].Icon"></i> @_appList[i].Name</h3>
+                                    </a>
+                                    <p>@desc</p>
+                                    <div class="apTileInner-bdy-footer">
+                                        <a class="install-btn" href="../ImportExport/Import?Id=@(_appList[i].Id)">
+                                            <i class="fa fa-download" aria-hidden="true"></i> Install
                                         </a>
-                                        <p>@desc</p>
-                                        <div class="apTileInner-bdy-footer">
-                                            <a class="install-btn" href="../ImportExport/Import?Id=@(_appList[i].Id)">
-                                                <i class="fa fa-download" aria-hidden="true"></i> Install
-                                            </a>
-                                            <a class="share-btn pull-right" href="../ImportExport/ShareToPublic?id=@(_appList[i].Id)">
-                                                <i class="fa fa-share-alt" aria-hidden="true"></i> Share to Public
-                                            </a>
-                                        </div>
+                                        <a class="share-btn pull-right" href="../ImportExport/ShareToPublic?id=@(_appList[i].Id)">
+                                            <i class="fa fa-share-alt" aria-hidden="true"></i> Share to Public
+                                        </a>
                                     </div>
                                 </div>
-                            }
+                            </div>
                         }
 
                     }

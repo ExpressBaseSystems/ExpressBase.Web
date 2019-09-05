@@ -47,7 +47,8 @@ class EbFileUpload extends EbFupStaticData {
         this.Options = $.extend({
             EnableTag: false,
             Categories: [],
-            UserId:0
+            UserId: 0,
+            UploadToEb: false,
         }, options);
         this.MaxSize = this.Options.MaxSize || 5;
         this.Files = [];
@@ -163,6 +164,10 @@ class EbFileUpload extends EbFupStaticData {
     };
 
     fscreenN_P(ev) {
+        if (ev) {
+            ev.preventDefault();
+            ev.stopPropagation();
+        }
         let action = $(ev.target).closest("button").attr("action");
         if (action === "next" && this.CurrentFimg.next('.trggrFprev').length > 0) {
             this.galleryFullScreen({ target: this.CurrentFimg.next('.trggrFprev') });
@@ -241,7 +246,7 @@ class EbFileUpload extends EbFupStaticData {
                     this.renderFiles();
                 }.bind(this));
             }
-            else if (Array.isArray(this.Options.FilesUrl)){
+            else if (Array.isArray(this.Options.FilesUrl)) {
                 this.FileList = this.Options.FilesUrl;
                 this.renderFiles();
             }
@@ -252,7 +257,7 @@ class EbFileUpload extends EbFupStaticData {
         for (let i = 0; i < this.FileList.length; i++) {
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
-            
+
             if (!("Category" in this.FileList[i].Meta) || this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
                 $portdef.append(this.thumbNprevHtml(this.FileList[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
@@ -338,16 +343,30 @@ class EbFileUpload extends EbFupStaticData {
             this.startSE();
     }
 
-    toggleM() {
+    toggleM(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         this.Modal.modal("toggle");
     };
 
-    ok() {
+    ok(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         this.toggleM();
         this.windowClose();
     };
 
     browse(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         if (window.File && window.FileReader && window.FileList && window.Blob) {
             this.handleFileSelect(e);
         } else {
@@ -521,6 +540,11 @@ class EbFileUpload extends EbFupStaticData {
     }
 
     upload(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
         if (this.IsCropFlow)
             this.contextUpload();
         else
@@ -571,6 +595,14 @@ class EbFileUpload extends EbFupStaticData {
     }
 
     comUpload() {
+        let url = "";
+        if (this.Options.UploadToEb) {
+            url = location.origin + "/StaticFile/UploadImageToInfra";
+        }
+        else {
+            url = location.origin + "/StaticFile/UploadImageAsync";
+        }
+
         for (let k = 0; k < this.Files.length; k++) {
             let thumb = null;
             let formData = new FormData();
@@ -580,7 +612,7 @@ class EbFileUpload extends EbFupStaticData {
             if (this.Options.Context)
                 formData.append("Context", this.Options.Context);
             $.ajax({
-                url: location.origin + "/StaticFile/UploadImageAsync",
+                url: url,
                 type: "POST",
                 data: formData,
                 cache: false,
@@ -597,6 +629,10 @@ class EbFileUpload extends EbFupStaticData {
     }
 
     cropClick(e) {//cropy flow
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         this.Cropy.croppie('result', this.result).then(this.cropafter.bind(this));
     }
 

@@ -979,8 +979,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("AppInfo/{id}")]
         public IActionResult GoDetail(int id)
         {
-            GetOneFromAppstoreResponse resp = ServiceClient.Get(new GetOneFromAppStoreRequest { Id = id });
-            ViewBag.StoreApps = resp.Wrapper;
+            GetAppStoreDetailedResponse resp = this.ServiceClient.Get(new GetAppStoreDetailedRequest { Id = id });
+            ViewBag.StoreApps = resp.Store;
             ViewBag.AppId = id;
             return View();
         }

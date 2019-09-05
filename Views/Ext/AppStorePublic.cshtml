@@ -55,16 +55,6 @@
 
 
                         <div class="apPtiLe w-100">
-                            @{
-                                if (applist[i].Cost == 0)
-                                {
-                                    @*<div class="apptile-priceplan free">FREE</div>*@
-                                }
-                                else
-                                {
-                                    @*<div class="apptile-priceplan paid">$ @applist[i].Cost</div>*@
-                                }
-                            }
                             <div class="apTileInner">
                                 <div href="/AppInfo/@applist[i].Id" class="apTileInner-bdy">
                                     <div class="col1">
@@ -124,7 +114,7 @@
                                         }
                                     </div>
                                     <div class="ebapptile-ftr-btncont">
-                                        <a class="btn-mrdetail" href="">More Details</a>@*/AppInfo/@applist[i].Id*@
+                                        <a class="btn-mrdetail" href="/AppInfo/@applist[i].Id">More Details</a>@*/AppInfo/@applist[i].Id*@
                                         <a class="btn-Apstr btn eb_btnblue installbtn" href="../ImportExport/Import?Id=@(applist[i].Id)">Install</a>
                                     </div>
                                 </div>

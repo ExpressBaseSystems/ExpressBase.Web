@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
+using System.Net.Http.Formatting;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Specialized;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -42,6 +45,44 @@ namespace ExpressBase.Web.Controllers
 			return View();
 		}
 
+		public IActionResult imgtest()
+		{
+			
+			return View();
+		}
+		public IActionResult imgtest1()
+		{
+			
+			return View();
+		}
+
+
+
+		[HttpPost]
+
+		public void testupload()
+		{
+			try
+			{
+				var req = this.HttpContext.Request.Form;
+				for (int i = 0; i < HttpContext.Request.Form.Files.Count; i++)
+				{
+					var file = HttpContext.Request.Form.Files[i];
+
+					//var fileName = Path.GetFileName(file.FileName);
+				}
+			}
+			catch(Exception e)
+			{
+
+			}
+			
+
+		}
+
+
+
+
 
 		public void SaveBugDetails(string title,string descp,string priority,string solid,string type_f_b)
 		{
@@ -61,20 +102,41 @@ namespace ExpressBase.Web.Controllers
 			{
 				usrtyp = "tenant";
 			}
-			
+			var httpreq = this.HttpContext.Request.Form;
+
+			for (int i = 0; i < httpreq.Files.Count; i++)
+			{
+				var file = httpreq.Files[i];
+
+				//var fileName = Path.GetFileName(file.FileName);
+			}
 
 			SaveBugResponse sbr = this.ServiceClient.Post<SaveBugResponse>(new SaveBugRequest
 			{
-				title = title,
-				description = descp,
-				priority = priority,
-				solutionid = solid,
-				type_b_f = type_f_b,
+				title = httpreq["title"].ToString(),
+				description = httpreq["descp"].ToString(),
+				priority = httpreq["priority"].ToString(),
+				solutionid = httpreq["solid"].ToString(),
+				type_b_f = httpreq["type_f_b"].ToString(),
 				status = "onhold",
 				usertype = usrtyp,
 				fullname = this.LoggedInUser.FullName,
-				email=this.LoggedInUser.Email
-			}) ;
+				email = this.LoggedInUser.Email,
+				upload_files = httpreq.Files
+			}); ;
 		}
+
+
+		public void UpdateTicket(string title, string descp, string priority,string tktid)
+		{
+			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(new UpdateTicketRequest
+			{
+				ticketid=tktid,
+				title=title,
+				description=descp,
+				priority=priority
+			});
+		}
+
 	}
 }

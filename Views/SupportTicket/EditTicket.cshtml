@@ -17,13 +17,13 @@
                 <h4 class="mr-t-0 mr-b-0">Support Ticket</h4>
             </div>
             <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 pd-0 s-dash-btnwraper">
-                
+
             </div>
         </div>
         <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
             <div class="tdash-box-body">
                 <div class="edtsprt w-100">
-                    <div class="row  pd_lft30 ">
+                    <div class="row  pd_lft30 w-100 ">
                         <div class="col-sm-12 col-md-7 col-lg-7 bdr">
                             <div class="row">
                                 <div class="col-sm-3 col-md-3 col-lg-3 shd recdiv">
@@ -85,12 +85,11 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-6 col-md-6 col-lg-6 ">
-
-                                    <label>Description</label>
-                                    <div>
-                                        <textarea rows="8" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                                    <label>Issue type</label>
+                                    <div class=" ">
+                                        <input class="form-control w-100 " type="text" id="type_b_f" disabled>
                                     </div>
-                                    <div id="descrlbl" class="" style=" visibility :hidden"> </div>
+
                                 </div>
                                 <div class="col-sm-6 col-md-6 col-lg-6 ">
                                     <div>
@@ -102,30 +101,38 @@
                                 </div>
 
                             </div>
-                            <div class="row">
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
-
-
+                            <div class="row ">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <label>Description</label>
+                                    <div>
+                                        <textarea rows="8" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                                    </div>
+                                    <div id="descrlbl" class="" style=" visibility :hidden"> </div>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
-
-
+                            <div class="row ">
+                                <div class="col-sm-12 col-md-12 col-lg-12">
+                                    <button id="btnupdate" class="btn btn-primary" type="button"> Update</button>
                                 </div>
                             </div>
-
 
                         </div>
+
                         <div class="col-sm-12 col-md-5 col-lg-5">
                             <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
                         </div>
-                        <div  class="col-sm-12 col-md-12 col-lg-12">
-                            <label>Remarks</label>
-                            <div>
-                                <textarea rows="4" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
+
+                        <div class="row">
+
+                            <div class="col-sm-12 col-md-12 col-lg-12">
+                                <label>Remarks</label>
+                                <div>
+                                    <textarea rows="4" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
+                                </div>
                             </div>
+
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -138,7 +145,7 @@
       $(document).ready(function () {
          tktdtl = @Html.Raw(ViewBag.tktdetails);
           var edt = new EditTicket();
-          
-       
+
+
     });
 </script>

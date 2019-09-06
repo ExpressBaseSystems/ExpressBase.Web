@@ -465,6 +465,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             this.GroupFormLink = temp[0].GroupFormLink;
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
+            this.treeColumnIndex = this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
         }
         if (this.IsTree)
             this.EbObject.IsPaging = false;
@@ -1165,6 +1166,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             let elem = aData[this.treeColumn.data].split("&nbsp;").join("").split("&emsp;").join("");
             let treeElem = $(elem);
             $(nRow).attr("data-lvl", treeElem.attr("data-level"));
+            if (treeElem.hasClass("groupform")) {
+                $(nRow).children(`td:eq(${this.treeColumnIndex})`).addClass("groupform");
+                $(nRow).children(`td:eq(${this.treeColumnIndex})`).children().removeClass("groupform");
+            }
+            else {
+                $(nRow).children(`td:eq(${this.treeColumnIndex})`).addClass("itemform");
+                $(nRow).children(`td:eq(${this.treeColumnIndex})`).children().removeClass("itemform");
+            }
         }
     };
 
@@ -2260,7 +2269,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 return atob($(this).attr("data-contents"));                
             },
         });
-        $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
+        //$('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
@@ -2349,12 +2358,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     $("body").find("[role=row]").removeClass("selected");
                     $trigger.closest("[role=row]").addClass("selected");
                     if (this.GroupFormLink !== null) {
-                        if ($(e.currentTarget).hasClass("levelzero")) {
+                        if ($(e.currentTarget).children().hasClass("levelzero")) {
                             return {
                                 items: {
                                     "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
                                     "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                    "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                                    "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
                                 }
                             };
                         }
@@ -2363,7 +2372,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                 items: {
                                     "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
                                     "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                    "EditGroup": { name: "Edit Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
+                                    "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
                                     "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
                                 }
                             };
@@ -2394,7 +2403,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     if (this.ItemFormLink !== null) {
                         return {
                             items: {
-                                "EditItem": { name: "Edit Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
+                                "EditItem": { name: "View Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
                                 "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
@@ -2604,13 +2613,10 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.collapseTreeGroup = function (e) {
-        let el = (e.target) ? $(e.target) : $(e);
-        if (!(el.is("i"))) {
-            el = $(el).closest("i");
-        }
+        let el = (e.target).closest("td");
         let curRow = $(el).parents().closest("[role=row]");
         var level = parseInt($(curRow).attr("data-lvl"));
-        var isShow = ($(el).hasClass("fa-minus-square-o")) ? false : true;
+        var isShow = ($(el).children("i").hasClass("fa-minus-square-o")) ? false : true;
         let count = this.RowCount;
         let rows = {};
         for (var i = level; i >= 0; i--) {
@@ -2622,12 +2628,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         if (isShow) {
             rows.show();
-            el.removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
+            $(el).children("i").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
             rows.children().find("i.fa-plus-square-o").removeClass("fa-plus-square-o").addClass("fa-minus-square-o");
         }
         else {
             rows.hide();
-            el.removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
+            $(el).children("i").removeClass("fa-minus-square-o").addClass("fa-plus-square-o");
         }
     }.bind(this);
 

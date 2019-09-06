@@ -636,3 +636,12 @@ table.dataTable tr.group td {
 #obj_icons .drp_ul a {
     height:30px !important;
 }
+.sub-windows .stickBtn{
+    position:absolute!important;
+}
+.parent .loader_mask_EB {
+    position: fixed !important; 
+}
+table.dataTable tbody > tr.selected > td.context-menu-active {
+    background-color: #08C !important;
+}

@@ -905,10 +905,15 @@ var EbBasicDataTable = function (Option) {
             placement: 'bottom'
         });
         $('.columntooltip').popover({
+            container: 'body',
             trigger: 'hover',
-            placement: 'right'
+            placement: this.PopoverPlacement,
+            html: true,
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
+            },
         });
-        $('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
+        //$('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
         this.filterDisplay();
     };
 

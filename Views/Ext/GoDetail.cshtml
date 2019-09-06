@@ -1,43 +1,103 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
+    AppStore store = ViewBag.StoreApps;
 }
 
 @section StyleSheet{
-    <link rel="stylesheet" type="text/css" href="~/css/style-extended-1.1.css" asp-append-version="true" />
+    <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.extended.css" asp-append-version="true" />
 }
 
 @Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
 
-@{
-    var wraper = ViewBag.StoreApps;
-    string desc = (string.IsNullOrEmpty(wraper.Description)) ? "Nothing to display" : wraper.Description;
-}
-<div class="row wCmn" style="background:white;font-family:Montserrat">
+<section class="eb-appstore-detailed">
     <div class="container">
-        <div class="dtWrapper-iconBx">
-            <div class="icBx">
-                <i class="fa fa-home"></i>
-            </div>
-            <div class="infBx">
-                <h2 class="appname">@wraper.Name</h2>
-                <p class="desc">@desc</p>
-                <p class="pByWho">Published on 04 October 2018 by amal-R&D</p>
-                <div class="AbCont4btn">
-                    @using (Html.BeginForm("BuyPubApp", "Ext", FormMethod.Post))
-                    {
-                        <input type="hidden" name="AppId" value="@ViewBag.AppId" />
-                        <button type="submit" class="ebbtn eb_btngreen btn_try"><i class="fa fa-external-link" aria-hidden="true"></i> Buy</button>
+        <div class="row">
+            <div class="eb-asd-info">
+                <div class="eb-asd-info-scs">
+                    @{
+                        if (!string.IsNullOrEmpty(store.Images))
+                        {
+                            string img = store.Images.Split(",")[0] + ".jpg";
+                            <img src="/eb/images/small/@img" style="border-radius: 6px;" class="w-100" />
+                        }
                     }
+
+                </div>
+                <div class="eb-asd-info-desc">
+                    <h3 style="margin-top:0">@store.Title</h3>
+                    <h4>@store.ShortDesc</h4>
+                    <div class="eb-asd-info-scs-dc">
+                        @Html.Raw(store.DetailedDesc)
+                    </div>
                 </div>
             </div>
-            <div class="mInfo">
-                <div class="AppType"><i class="fa fa-mobile"></i> Mobile App</div>
-                <div class="cost">$ 67</div>
+            @{
+                if (!string.IsNullOrEmpty(store.Tags))
+                {
+                    string[] tags = store.Tags.Split(",");
+                    <div class="eb-asd-tags">
+                        @for (int i = 0; i < tags.Length; i++)
+                        {
+                            <div class="eb-asd-tags-item">@tags[i]</div>
+                        }
+                    </div>
+                }
+            }
+
+            <div class="eb-asd-meta">
+                <div class="eb-asd-meta-at" style="padding-left:0">
+                    <div class="eb-asd-meta-atinner text-center">
+                        @Enum.GetName(typeof(EbApplicationTypes), store.AppType) Application
+                    </div>
+                </div>
+                <div class="eb-asd-meta-at">
+                    <div class="eb-asd-meta-atinner text-center" style="background: #039e03;color: white;">
+                        @{
+                            if (store.IsFree == "T")
+                            {
+                                Write("FREE");
+                            }
+                            else
+                            {
+                                Write("$ " + store.Cost);
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="eb-asd-meta-at">
+                    <div class="eb-asd-meta-atinner"></div>
+                </div>
+                <div class="eb-asd-meta-at" style="padding-right:0;">
+                    <div class="eb-asd-meta-atinner"></div>
+                </div>
             </div>
+
+            @{
+                if (!string.IsNullOrEmpty(store.Images) && store.Images.Split(",").Length > 0)
+                {
+                    string[] imgs = store.Images.Split(",");
+
+                    <div class="eb-asd-screenshot">
+                        <div class="eb-asd-ssh">
+                            Images (@(imgs.Length - 1))
+                        </div>
+                        <div class="eb-asd-ssg">
+                            @{
+                                for (int i = 0; i < imgs.Length; i++)
+                                {
+                                    string fname = imgs[i] + ".jpg";
+                                    <div class="eb-asd-thumbnails">
+                                        <img src="/eb/images/small/@fname" class="w-100" style="border:1px solid #ccc" />
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+            }
         </div>
     </div>
-</div>
-@section JsCode{
-    <script>$("#AppStore").remove();</script>
-}
+</section>
+@Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetFooter/" + ViewBag.Env))

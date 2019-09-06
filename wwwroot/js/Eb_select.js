@@ -477,7 +477,7 @@ const EbSelect = function (ctrl, options) {
         let vmValue = this.datatable.data[this.$curEventTarget.closest("tr").index()][getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
         if (event.target.nodeName === "SPAN")// if clicked tagclose
             vmValue = this.ClosedItem;
-        if (!this.ComboObj.MultiSelect)
+        //if (!this.ComboObj.MultiSelect)
             vmValue = parseInt(vmValue);
 
         if (this.columnVals[this.vmName].contains(vmValue)) {
@@ -498,9 +498,9 @@ const EbSelect = function (ctrl, options) {
             //    this.columnVals[name] = cellData;
 
             if (this.ComboObj.MultiSelect)
-                this.columnVals[name].push(this.convertValue(cellData, type));
+                this.columnVals[name].push(EbConvertValue(cellData, type));
             else
-                this.columnVals[name] = [this.convertValue(cellData, type)];
+                this.columnVals[name] = [EbConvertValue(cellData, type)];
 
         }.bind(this));
     };
@@ -510,12 +510,6 @@ const EbSelect = function (ctrl, options) {
         $.each(this.ColNames, function (i, name) {
             this.columnVals[name].splice(idx, 1);
         }.bind(this));
-    };
-
-    this.convertValue = function (val, type) {
-        if (type === 11)
-            return parseInt(val);
-        return val;
     };
 
     this.setDmValues = function (i, name) {

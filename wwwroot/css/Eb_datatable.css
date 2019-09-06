@@ -642,3 +642,6 @@ table.dataTable tr.group td {
 .parent .loader_mask_EB {
     position: fixed !important; 
 }
+table.dataTable tbody > tr.selected > td.context-menu-active {
+    background-color: #08C !important;
+}

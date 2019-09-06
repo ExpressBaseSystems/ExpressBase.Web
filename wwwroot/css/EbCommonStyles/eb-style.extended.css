@@ -232,6 +232,8 @@
         .eb-appstore-detailed .eb-asd-meta .eb-asd-meta-at {
             width: 25%;
             padding: 10px;
+            display: flex;
+            flex-direction: column;
         }
             .eb-appstore-detailed .eb-asd-meta .eb-asd-meta-at .eb-asd-meta-atinner {
                 padding: 20px;
@@ -240,6 +242,22 @@
                 height: 100%;
                 font-size: 19px;
                 font-weight: 400;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+    .eb-appstore-detailed .eb-asd-installcont .eb-asd-instlbtn {
+        border-style: none;
+        border-radius: 4px;
+        padding: 10px 25px;
+        font-size: 19px;
+        float: right;
+    }
+            .eb-appstore-detailed .eb-asd-meta .eb-asd-meta-at label {
+                font-size: 16px;
+                margin-bottom: 9px;
+                color: #545454;
+                font-weight: 500;
             }
 /***********************appstore detailed end***************************/
 /*detail of pub app*/

@@ -14,6 +14,42 @@
 <section class="eb-appstore-detailed">
     <div class="container">
         <div class="row">
+            <div class="eb-asd-installcont" style="display:flex;">
+                <a type="button" class="eb-asd-instlbtn eb_btnblue" href="../ImportExport/Import?Id=@ViewBag.AppId" style="margin-left:auto;">Install</a>
+            </div>
+            <div class="eb-asd-meta">
+                <div class="eb-asd-meta-at" style="padding-left:0">
+                    <label>Application Type</label>
+                    <div class="eb-asd-meta-atinner">
+                        @Enum.GetName(typeof(EbApplicationTypes), store.AppType) Application
+                    </div>
+                </div>
+                <div class="eb-asd-meta-at">
+                    <label>Pricing</label>
+                    <div class="eb-asd-meta-atinner" style="background: #039e03;color: white;">
+                        @{
+                            if (store.IsFree == "T")
+                            {
+                                Write("FREE");
+                            }
+                            else
+                            {
+                                Write("$ " + store.Cost);
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="eb-asd-meta-at">
+                    <label>Application Icon</label>
+                    <div class="eb-asd-meta-atinner">
+                        <i class="fa @store.Icon" style="color: #336eca;font-size: 30px;"></i>
+                    </div>
+                </div>
+                <div class="eb-asd-meta-at" style="padding-right:0;">
+                    
+                </div>
+            </div>
+
             <div class="eb-asd-info">
                 <div class="eb-asd-info-scs">
                     @{
@@ -23,7 +59,6 @@
                             <img src="/eb/images/small/@img" style="border-radius: 6px;" class="w-100" />
                         }
                     }
-
                 </div>
                 <div class="eb-asd-info-desc">
                     <h3 style="margin-top:0">@store.Title</h3>
@@ -46,34 +81,6 @@
                 }
             }
 
-            <div class="eb-asd-meta">
-                <div class="eb-asd-meta-at" style="padding-left:0">
-                    <div class="eb-asd-meta-atinner text-center">
-                        @Enum.GetName(typeof(EbApplicationTypes), store.AppType) Application
-                    </div>
-                </div>
-                <div class="eb-asd-meta-at">
-                    <div class="eb-asd-meta-atinner text-center" style="background: #039e03;color: white;">
-                        @{
-                            if (store.IsFree == "T")
-                            {
-                                Write("FREE");
-                            }
-                            else
-                            {
-                                Write("$ " + store.Cost);
-                            }
-                        }
-                    </div>
-                </div>
-                <div class="eb-asd-meta-at">
-                    <div class="eb-asd-meta-atinner"></div>
-                </div>
-                <div class="eb-asd-meta-at" style="padding-right:0;">
-                    <div class="eb-asd-meta-atinner"></div>
-                </div>
-            </div>
-
             @{
                 if (!string.IsNullOrEmpty(store.Images) && store.Images.Split(",").Length > 0)
                 {
@@ -81,7 +88,7 @@
 
                     <div class="eb-asd-screenshot">
                         <div class="eb-asd-ssh">
-                            Images (@(imgs.Length - 1))
+                            Images (@(imgs.Length))
                         </div>
                         <div class="eb-asd-ssg">
                             @{

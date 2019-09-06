@@ -62,7 +62,8 @@ namespace ExpressBase.Web.Controllers
             GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreInternalRequest {
                 WhichConsole = ViewBag.wc
             });
-            ViewBag.StoreApps = resp.Apps;
+            ViewBag.PrivateApps = resp.Apps;
+            ViewBag.PublicApps = resp.PublicApps;
             return View();
         }
         public EbObject GetObjfromDB(string _refid)

@@ -522,25 +522,34 @@
     this.MlGetValue = function (p1, p2) {
         if (!this.hasOwnProperty("_finalObj"))
             this._finalObj = {};
+        let metaObj = {};
         $.each(this.Fields.$values, function (i, obj) {
             if (obj.ControlName !== '') {
-                this._finalObj[obj.Name] = obj.Control.getValue();
+                if (obj.Name === 'shortname' || obj.Name === 'longname')
+                    this._finalObj[obj.Name] = obj.Control.getValue();
+                else
+                    metaObj[obj.DisplayName] = obj.Control.getValue();
             }
         }.bind(this));
+        this._finalObj['meta_json'] = JSON.stringify(metaObj);
         return JSON.stringify(this._finalObj);
     };
+
     this.MlSetValue = function (p1, p2) {
         this._finalObj = JSON.parse(p1);
+        let metaObj = JSON.parse(this._finalObj['meta_json']) || {};
         $.each(this.Fields.$values, function (i, obj) {
             if (obj.ControlName !== '') {
-                obj.Control.setValue(this._finalObj[obj.Name]);
+                if (obj.Name === 'shortname' || obj.Name === 'longname')
+                    obj.Control.setValue(this._finalObj[obj.Name]);
+                else if (metaObj.hasOwnProperty(obj.DisplayName))
+                    obj.Control.setValue(metaObj[obj.DisplayName]);
             }
         }.bind(this));
-
     };
 
     this.ManageLocation = function (ctrl, ctrlopts) {
-        console.log('init ManageUser');
+        console.log('init ManageLocation');
 
         $.each(ctrl.Fields.$values, function (i, obj) {
             if (obj.ControlName !== '') {

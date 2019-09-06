@@ -26,13 +26,14 @@
                 min-height: 100px;
                 display: flex;
                 flex-flow: row wrap;
-                padding:10px;
+                padding: 10px;
             }
 
                 .screenshot-container .screenshot-body .sc-thumb {
                     width: 25%;
                     padding: 10px;
                 }
+
                     .screenshot-container .screenshot-body .sc-thumb img {
                         width: 100%;
                         border-radius: 4px;
@@ -176,7 +177,9 @@
                 <h4 class="mr-t-0 mr-b-0">Share To Public</h4>
             </div>
             <div class="col-md-2 pd-0">
-
+                <button class="ebbtn eb_btnblue pull-right eb_btn-sm" onclick="$('#share_btn_form').click();">
+                    <i class="fa fa-share-alt" style="margin-right:5px;"></i>  Share to public
+                </button>
             </div>
         </div>
         @using (Html.BeginForm("ShareToPublic", "ImportExport", FormMethod.Post))
@@ -271,7 +274,7 @@
                                 </div>
                                 <div class="screenshot-body">
                                     @{
-                                        string[] imgs = (appstore.Images == null) ? string.Empty.Split(","): appstore.Images.Split(",");
+                                        string[] imgs = (appstore.Images == null) ? string.Empty.Split(",") : appstore.Images.Split(",");
                                         foreach (string s in imgs)
                                         {
                                             int v = 0;
@@ -287,7 +290,7 @@
                                             if (v != 0)
                                             {
                                                 <div class="sc-thumb">
-                                                    <img src="/images/small/@(v+".jpg")" />
+                                                    <img src="/eb/images/small/@(v+".jpg")" />
                                                 </div>
                                             }
                                         }
@@ -349,7 +352,7 @@
         $(document).ready(function () {
 
             ebcontext.header.setName("ShareToPublic");
-            ebcontext.header.insertButton(`<button class="btn" onclick="$('#share_btn_form').click();"><i class="fa fa-share-alt" aria-hidden="true"></i></button>`);
+            //ebcontext.header.insertButton(`<button class="btn" onclick="$('#share_btn_form').click();"><i class="fa fa-share-alt" aria-hidden="true"></i></button>`);
 
             $('#det_desc_note').summernote();
             $('#price_desc_note').summernote();
@@ -369,13 +372,21 @@
                 ServerEventUrl: 'https://se.eb-test.xyz',
                 EnableTag: false,
                 EnableCrop: true,
-                ResizeViewPort: true
+                ResizeViewPort: true,
+                UploadToEb: true,
+                Context:"appstore"
             });
 
             screenshot.uploadSuccess = function (fileid) {
-                let v = $("input[name='images']").val() + "," + fileid;
+                let v = $("input[name='images']").val().trim();
+                if (v === "" || v === null || v === undefined) {
+                    v = fileid;
+                }
+                else {
+                    v = v + ',' + fileid;
+                }
                 $("input[name='images']").val(v);
-                $(".screenshot-body").append(`<div class="sc-thumb"><img src="/images/small/${fileid}.jpg"/></div>`);
+                $(".screenshot-body").append(`<div class="sc-thumb"><img src="/eb/images/small/${fileid}.jpg"/></div>`);
             }
         });
         $('input[type=radio][name=price_option]').change(function () {

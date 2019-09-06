@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Common.ProductionDBManager;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
@@ -20,11 +21,32 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public void FunctionCheck()
+        public Object CheckChangesInFunction(string solution_id)
         {
-            this.ServiceClient.Post<FunctionCheckResponse>(new FunctionCheckRequest
+            CheckChangesInFunctionResponse resp = this.ServiceClient.Post<CheckChangesInFunctionResponse>(new CheckChangesInFunctionRequest
+            {
+                SolutionId = solution_id
+            });
+            return resp.Changes ;
+        }
+
+        public Object UpdateDBFunctionByDB(List<Eb_FileChanges> data , string db_name )
+        {
+            UpdateDBFunctionByDBResponse resp = this.ServiceClient.Post<UpdateDBFunctionByDBResponse>(new UpdateDBFunctionByDBRequest
+            {
+                Changes = data,
+                DBName = db_name
+            });
+            return resp;
+        }
+
+        public IActionResult DatabaseIntegrityCheck()
+        {
+            DBIntegrityCheckResponse resp = this.ServiceClient.Post<DBIntegrityCheckResponse>(new DBIntegrityCheckRequest
             {
             });
+            ViewBag.ChangesLog = resp.ChangesLog;
+            return View("ChangesView");
         }
 
     }

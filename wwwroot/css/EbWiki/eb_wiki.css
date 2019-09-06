@@ -794,3 +794,212 @@ mark {
         border: solid 1px #9c9c9c;
         border-radius: 25px;
     }
+
+.mob-view {
+    display: none;
+}
+.sidenav {
+    width: 250px;
+}
+
+
+/* side bar mobile view*/
+
+.sidenav {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 45px;
+    left: 0;
+    background-color: #f2f2f2;
+    overflow-x: auto;
+    transition: 0.5s;
+    padding-top: 60px;
+}
+
+    .sidenav a {
+        display: block;
+        transition: 0.3s;
+        color: #2b2b2b;
+        text-decoration:none;
+    }
+    .sidenav .eb-wiki-sidebar .sidebar-list-wraper ul {
+        list-style: none;
+    }
+    .sidenav .closebtn {
+        position: absolute;
+        top: 45px;
+        right: 20px;
+        font-size: 20px;
+        margin-left: 50px;
+    }
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+
+        .sidenav a {
+            font-size: 18px;
+        }
+}
+/* side bar mobile view close*/
+
+    /*media query*/
+/* 
+  ##Device = Tablets, Ipads (portrait)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .eb-wiki-sidebar{
+        display:none;
+    }
+    .mob-view {
+        display: block;
+        height: 40px;
+        font-size: 25px;
+        color: #696969;
+        border-radius: 4px;
+        border: 1px solid #bbb8b8;
+    }
+    .GettingStartedWrapper {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .GettingStarted {
+        width: 100%;
+    }
+    .eb-wiki-pane {
+        margin-left: 0px;
+        width: 100%;
+    }
+    .addr-wiki {
+        display: none;
+    }
+    .eb-wiki-pane {
+        margin-left: 0px;
+        width: 100%;
+    }
+    .eb-wiki-pane .eb-wiki-pane-header {
+        padding-top: 25px;
+    }
+    .sidenav {
+        width: 310px;
+    }
+
+}
+
+/* 
+  ##Device = Tablets, Ipads (landscape)
+  ##Screen = B/w 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+    .eb-wiki-sidebar {
+        display: none;
+    }
+    .mob-view {
+        display: block;
+        height: 40px;
+        font-size: 25px;
+        color: #696969;
+        border-radius: 4px;
+        border: 1px solid #bbb8b8;
+    }
+     .GettingStartedWrapper {
+        width: 100%;
+        flex-direction: column;
+    }
+    .GettingStarted {
+        width: 100%;
+    }
+    .eb-wiki-pane {
+        margin-left: 0px;
+        width: 100%;
+    }
+    .eb-wiki-pane .eb-wiki-pane-header {
+        padding-top: 40px;
+    }
+    .sidenav {
+        width: 310px;
+    }
+}
+
+/* 
+  ##Device = Low Resolution Tablets, Mobiles (Landscape)
+  ##Screen = B/w 481px to 767px
+*/
+
+@media (min-width: 481px) and (max-width: 767px) {
+    .eb-wiki-sidebar {
+        display: none;
+    }
+    .mob-view {
+        display: block;
+        height: 40px;
+        font-size: 25px;
+        color: #696969;
+        border-radius: 4px;
+        border: 1px solid #bbb8b8;
+    }
+   
+    .GettingStartedWrapper {
+        width: 100%;
+        flex-direction: column;
+    }
+    .GettingStarted {
+        width: 100%;
+    }
+    .eb-wiki-pane {
+        margin-left: 0px;
+        width: 100%;
+    }
+    .eb-wiki-pane .eb-wiki-pane-header {
+        padding-top: 40px;
+    }
+    .front_page_wiki h2 {
+        font-size: 28px;
+    }
+    .sidenav {
+        width: 310px;
+    }
+}
+
+/* 
+  ##Device = Most of the Smartphones Mobiles (Portrait)
+  ##Screen = B/w 320px to 479px
+*/
+
+@media (min-width: 320px) and (max-width: 480px) {
+    .eb-wiki-sidebar {
+        display: none;
+    }
+    .mob-view {
+        display: block;
+        height: 40px;
+        font-size: 25px;
+        color: #696969;
+        border-radius: 4px;
+        border: 1px solid #bbb8b8;
+    }
+    .GettingStartedWrapper {
+        width: 100%;
+        flex-direction: column;
+    }
+    .GettingStarted{
+        width:100%;
+    }
+    .eb-wiki-pane {
+        margin-left: 0px;
+        width: 100%;
+    }
+    .eb-wiki-pane .eb-wiki-pane-header {
+        padding-top: 40px;
+    }
+    .front_page_wiki h2 {
+        font-size: 28px;
+    }
+}

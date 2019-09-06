@@ -512,22 +512,28 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         right: 5px;
         top: 10px;
     }
+
 .grid-col-title {
     font-size: 12px;
 }
 
-    .grid-cont .grid-col-title {
-        width: 100%;
-        position: relative;
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        font-weight: 500;
-    }
+.grid-cont .grid-col-title {
+    width: 100%;
+    position: relative;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
 
-    .grid-cont input[type=checkbox] {
-        min-height: inherit !important;
-    }
+.grid-cont input[type=checkbox] {
+    min-height: inherit !important;
+}
+
+
+[ctype="Label"] > .ctrl-cover {
+    display: none !important;
+}
 
 .Eb-ctrlContainer .tab-content {
     border: 1px solid #ddd;
@@ -786,17 +792,17 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     .form-buider-form .tab-btn-cont > .nav.nav-tabs {
         min-height: 39px;
     }
-    
-    .msg-cont, .req-cont {
-        font-size: 11.2px;
-        position: absolute;
-        /*right: 1px;*/
-        margin-top: 3px;
-        animation-duration: 0.3s;
-        z-index: 1;
-        background-color: rgba(255, 255, 255, 0.8);
-        box-shadow: 0 2px 3px 0px white;
-    }
+
+.msg-cont, .req-cont {
+    font-size: 11.2px;
+    position: absolute;
+    /*right: 1px;*/
+    margin-top: 3px;
+    animation-duration: 0.3s;
+    z-index: 1;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 3px 0px white;
+}
 
 .msg-cont {
     position: relative;
@@ -852,13 +858,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     line-height: 8px;
 }
 
-.eb-fb-icon > .fa {
-    text-shadow: -1px 2px 4px #84848421, 0px 1px 1px #ccccccc4;
-}
+    .eb-fb-icon > .fa {
+        text-shadow: -1px 2px 4px #84848421, 0px 1px 1px #ccccccc4;
+    }
 
-.eb-fb-icon:hover > .fa {
-    text-shadow: none;
-}
+    .eb-fb-icon:hover > .fa {
+        text-shadow: none;
+    }
 
 .ebtab-add-btn {
     display: none;
@@ -880,33 +886,33 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ebtab-close-btn {
     display: inline-block;
     margin-left: 3px;
-    font-size:11px;
+    font-size: 11px;
 }
 
     .ebtab-close-btn:hover {
         color: #d80505c4;
     }
 
-    .cont-prop-btn {
-        display: none;
-        position: absolute;
-        top: 0px;
-        background: #dddddd;
-        height: 14px;
-        text-align: right;
-        color: #000;
-        width: 14px;
-        font-weight: bold;
-        right: 0px;
-        padding-top: 1px;
-        padding-right: 4px;
-        vertical-align: top;
-        z-index: 2;
-        border-radius: 0 0 0 17px;
-        line-height: 10px;
-        font-size: 10px;
-        box-shadow: -1px 2px 4px 0px #8484845c, 0px 1px 1px 0px #cccccc;
-    }
+.cont-prop-btn {
+    display: none;
+    position: absolute;
+    top: 0px;
+    background: #dddddd;
+    height: 14px;
+    text-align: right;
+    color: #000;
+    width: 14px;
+    font-weight: bold;
+    right: 0px;
+    padding-top: 1px;
+    padding-right: 4px;
+    vertical-align: top;
+    z-index: 2;
+    border-radius: 0 0 0 17px;
+    line-height: 10px;
+    font-size: 10px;
+    box-shadow: -1px 2px 4px 0px #8484845c, 0px 1px 1px 0px #cccccc;
+}
 
 .ppbtn-cont:hover .cont-prop-btn {
     display: block;
@@ -1068,6 +1074,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 8px;
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
     background-color: white;
+}
+
+.locinp-cont .locinp {
+    border: none;
+    border-bottom: solid 1px #a4a4a4;
+    padding: 0px 0px;
+    margin: 6px 10px 6px 6px;
+    width: 9.4em;
+    line-height: 10px;
 }
 
 .pdf-frame {

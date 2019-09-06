@@ -119,47 +119,7 @@
         this.resetBuffers();
         $.each(SingleTable, function (i, SingleRow) {
             let rowid = SingleRow.RowId;
-            this.addRow({ rowid: rowid, isAdded: false });
-            let CurRowCtrls = this.AllRowCtrls[rowid];
-            $.each(SingleRow.Columns, function (j, SingleColumn) {// loop through column controls
-                if (j === 0)// to skip id column
-                    return true;
-                if (j === 3)
-                    console.log(j);
-                let ctrl = getObjByval(CurRowCtrls, "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
-
-                if (ctrl === undefined) {
-                    $.each(CurRowCtrls, function (i, obj) {
-                        if (obj.ObjType === "DGUserControlColumn") {
-                            let innerCtrl = getObjByval(obj.Columns.$values, "Name", SingleColumn.Name);
-                            if (innerCtrl) {
-                                let val = SingleColumn.Value;
-                                if (obj.__DGUCC.AllCtrlValues[rowid] === undefined)
-                                    obj.__DGUCC.AllCtrlValues[rowid] = {};
-                                obj.__DGUCC.AllCtrlValues[rowid][innerCtrl.EbSid] = val;
-                            }
-                        }
-                    }.bind(this));
-                }
-
-                if (!ctrl) {// to alert if no ctrl for such data
-                    console.warn(" no ctrl for such data");
-                    return true;
-                }
-
-
-                let val = SingleColumn.Value;
-                if (val === null)
-                    return true;
-
-                if (ctrl.ObjType === "PowerSelect") {
-                    //ctrl.setDisplayMember = this.j;
-                    ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
-                }
-                else
-                    ctrl.setValue(val);
-
-            }.bind(this));
+            this.addRow({ rowid: rowid, isAdded: false, editModeData: SingleRow });
             {
                 let td = $(`#${this.TableId} tbody tr[rowid=${rowid}] td:last`)[0];
                 // call checkRow_click() pass event.target directly
@@ -340,6 +300,7 @@
         let rowid = opt.rowid;
         let isAdded = opt.isAdded;
         let isAddBeforeLast = opt.isAddBeforeLast;
+        let editModeData = opt.editModeData;
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr).hide();
@@ -352,7 +313,8 @@
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
         this.updateAggCols(rowid);
-        return [$tr, this.initRowCtrls(rowid)];
+        let rowCtrls = this.initRowCtrls(rowid, editModeData);
+        return [$tr, rowCtrls];
 
     }.bind(this);
 
@@ -404,8 +366,11 @@
         EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
     };
 
-    this.initRowCtrls = function (rowid) {
-        $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
+    this.initRowCtrls = function (rowid, EditModeData) {
+        let SingleRow = EditModeData;
+        let CurRowCtrls = this.AllRowCtrls[rowid];
+        // initialise all controls in added row
+        $.each(CurRowCtrls, function (i, inpCtrl) {
             let opt = {};
             if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
                 opt.getAllCtrlValuesFn = this.getFormVals;
@@ -415,22 +380,32 @@
             }
             this.initControls.init(inpCtrl, opt);
         }.bind(this));
+
         //should fire after onChangeFn init
-        $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
-            if (inpCtrl.DefaultValue)
+        $.each(CurRowCtrls, function (i, inpCtrl) {
+
+            // DefaultValue
+            if (this.Mode.isNew && inpCtrl.DefaultValue)
                 inpCtrl.setValue(inpCtrl.DefaultValue);
-            if (inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
+
+            // DefaultValueExpression
+            if (this.Mode.isNew && inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
                 let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                 let val = fun();
                 inpCtrl.setValue(val);
             }
-            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
-                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-                let val = fun();
-                inpCtrl.setValue(val);
-            }
+
+            //// ValueExpression
+            //if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+            //    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+            //    let val = fun();
+            //    inpCtrl.setValue(val);
+            //}
+
+            // disble 
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
+
             // run DG onChangeFns initially
             if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
                 try {
@@ -445,10 +420,17 @@
                     alert("  error in 'OnChange function' of : " + inpCtrl.Name + " - " + e.message);
                 }
             }
+
         }.bind(this));
 
 
-        //should fire after default set
+        ////////////////////
+        if (SingleRow) {
+            this.setDataInRow(SingleRow, rowid, CurRowCtrls);
+        }
+        ////////////////////
+
+        //should fire after all default value set
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
             if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
                 let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
@@ -456,8 +438,52 @@
                 inpCtrl.setValue(val);
             }
         }.bind(this));
+
         return this.AllRowCtrls[rowid];
     };
+
+    this.setDataInRow = function (SingleRow, rowid, CurRowCtrls) {
+
+        $.each(SingleRow.Columns, function (j, SingleColumn) {// loop through column controls
+            if (j === 0)// to skip id column
+                return true;
+            if (j === 3)
+                console.log(j);
+            let ctrl = getObjByval(CurRowCtrls, "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
+
+            if (ctrl === undefined) {
+                $.each(CurRowCtrls, function (i, obj) {
+                    if (obj.ObjType === "DGUserControlColumn") {
+                        let innerCtrl = getObjByval(obj.Columns.$values, "Name", SingleColumn.Name);
+                        if (innerCtrl) {
+                            let val = SingleColumn.Value;
+                            if (obj.__DGUCC.AllCtrlValues[rowid] === undefined)
+                                obj.__DGUCC.AllCtrlValues[rowid] = {};
+                            obj.__DGUCC.AllCtrlValues[rowid][innerCtrl.EbSid] = val;
+                        }
+                    }
+                }.bind(this));
+            }
+
+            if (!ctrl) {// to alert if no ctrl for such data
+                console.warn(" no ctrl for such data");
+                return true;
+            }
+
+
+            let val = SingleColumn.Value;
+            if (val === null)
+                return true;
+
+            if (ctrl.ObjType === "PowerSelect") {
+                //ctrl.setDisplayMember = this.j;
+                ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
+            }
+            else
+                ctrl.setValue(val);
+
+        }.bind(this));
+    }
 
     this.getFormVals = function () {
         return getValsFromForm(this.formObject_Full);
@@ -628,7 +654,7 @@
         return this.appendDecZeros(sum);
     };
 
-    this.updateDepCtrl = function (Col) {       
+    this.updateDepCtrl = function (Col) {
         $.each(Col.DependedValExp.$values, function (i, depCtrl_s) {
             try {
                 let depCtrl = this.ctrl.formObject.__getCtrlByPath(depCtrl_s);

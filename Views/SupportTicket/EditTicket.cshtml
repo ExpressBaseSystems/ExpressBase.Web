@@ -120,12 +120,26 @@
 
                         <div class="col-sm-12 col-md-5 col-lg-5">
                             <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
+                            <div>
+                                <div class="input-field">
+                                    <label class="active">Images</label>
+                                    <div class="input-images-2" style="padding-top: .5rem; max-height:500px;overflow-y:scroll;"></div>
+                                </div>
+                                
+                            </div>
                         </div>
 
                         <div class="row">
 
                             <div class="col-sm-12 col-md-12 col-lg-12">
                                 <label>Remarks</label>
+                                <div>
+                                    @for (int i = 0; i < ViewBag.ImageData.Count; i++)
+                                    {
+                                    <img style="height:100px;width:100px" src="@ViewBag.ImageData[i]" />
+                                    }
+                                   @* <img style="height:100px;width:100px" src="@ViewBag.ImageData" />*@
+                                </div>
                                 <div>
                                     <textarea rows="4" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
                                 </div>
@@ -143,8 +157,20 @@
 
 <script>
       $(document).ready(function () {
-         tktdtl = @Html.Raw(ViewBag.tktdetails);
+          tktdtl = @Html.Raw(ViewBag.tktdetails);
+        //  wer=@(ViewBag.ImageData);
           var edt = new EditTicket();
+          
+           let preloaded = [
+           // {id: "photo", src: ``},
+            //{id: 2, src: 'https://picsum.photos/500/500?random=2'},
+        ];
+
+        $('.input-images-2').imageUploader({
+            preloaded: preloaded,
+            imagesInputName: 'photos',
+            preloadedInputName: 'old'
+        });
 
 
     });

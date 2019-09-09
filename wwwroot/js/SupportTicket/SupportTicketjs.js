@@ -74,6 +74,7 @@
 
                 }
             });
+            location.href = '/SupportTicket/bugsupport';
         }
     }
 

@@ -44,9 +44,31 @@ namespace ExpressBase.Web.Controllers
 			{
 				ticketno = tktno
 			});
+
+
+			for (var i = 0; i < sd.supporttkt.Count; i++)
+			{
+				var imgbyt = sd.supporttkt[i].Filecollection;
+				if (imgbyt.Count > 0)
+				{
+					for (var j = 0; j < imgbyt.Count; j++)
+					{
+						byte[] imgs = imgbyt[j];
+						string imageBase64Data = Convert.ToBase64String(imgs);
+						string imageDataURL = string.Format("data:image/png;base64,{0}", imageBase64Data);
+						sd.Filecollection1.Add(imageDataURL);
+					}
+					ViewBag.ImageData = sd.Filecollection1;
+				}
+
+
+			}
+
+
 			ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
 			return View();
 		}
+
 
 		public IActionResult imgtest()
 		{
@@ -63,7 +85,7 @@ namespace ExpressBase.Web.Controllers
 
 		[HttpPost]
 
-		
+
 
 
 
@@ -73,7 +95,7 @@ namespace ExpressBase.Web.Controllers
 		{
 			string usrtyp = null;
 			SaveBugRequest sbrequest = new SaveBugRequest();
-
+			var httpreq = this.HttpContext.Request.Form;
 			if (ViewBag.wc.Equals("dc"))
 			{
 				solid = ViewBag.cid;
@@ -86,28 +108,32 @@ namespace ExpressBase.Web.Controllers
 			}
 			if (ViewBag.wc.Equals("tc"))
 			{
+				solid = httpreq["solid"].ToString();
 				usrtyp = "tenant";
 			}
-			var httpreq = this.HttpContext.Request.Form;
 
-			byte[] fileData = null;
-			for (int i = 0; i < httpreq.Files.Count; i++)
+			if (httpreq.Files.Count > 0)
 			{
-				var file = httpreq.Files[i];
-
-				using (var memoryStream = new MemoryStream())
+				byte[] fileData = null;
+				for (int i = 0; i < httpreq.Files.Count; i++)
 				{
-					file.CopyTo(memoryStream);
-					memoryStream.Seek(0, SeekOrigin.Begin);
-					fileData = new byte[memoryStream.Length];
-					memoryStream.ReadAsync(fileData, 0, fileData.Length);
-					sbrequest.Filecollection.Add(fileData);
+					var file = httpreq.Files[i];
+
+					using (var memoryStream = new MemoryStream())
+					{
+						file.CopyTo(memoryStream);
+						memoryStream.Seek(0, SeekOrigin.Begin);
+						fileData = new byte[memoryStream.Length];
+						memoryStream.ReadAsync(fileData, 0, fileData.Length);
+						sbrequest.Filecollection.Add(fileData);
+					}
 				}
 			}
+
 			sbrequest.title = httpreq["title"].ToString();
 			sbrequest.description = httpreq["descp"].ToString();
 			sbrequest.priority = httpreq["priority"].ToString();
-			sbrequest.solutionid = httpreq["solid"].ToString();
+			sbrequest.solutionid = solid;
 			sbrequest.type_b_f = httpreq["type_f_b"].ToString();
 			sbrequest.status = "onhold";
 			sbrequest.usertype = usrtyp;

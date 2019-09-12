@@ -934,7 +934,7 @@ const WebFormRender = function (option) {
         if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
             $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
             $("#webformprint").on("click", this.printDocument.bind(this));
-        }        
+        }
     };
 
     this.printDocument = function () {
@@ -957,7 +957,10 @@ const WebFormRender = function (option) {
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.on("click", function () { window.parent.closeModal(); });
-        $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
+        $("body").on("focus", "[ui-inp]", function () {
+            if (event && event.target)
+                $(event.target).select();
+        });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
 

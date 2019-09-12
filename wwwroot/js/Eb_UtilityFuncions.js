@@ -58,6 +58,14 @@ function isAllValuesTrue(Obj) {
     return all_true;
 }
 
+function EbRunValueExpr(Obj, formObject, userObject) {
+    if (Obj.ValueExpr && Obj.ValueExpr.Code) {
+        let fun = new Function("form", "user", `event`, atob(Obj.ValueExpr.Code)).bind(Obj, formObject, userObject);
+        let val = fun();
+        Obj.setValue(val);
+    }    
+}
+
 function getObjByval(ObjArray, key, val) {
     if (ObjArray === undefined) {
         console.error("ObjArray undefined");

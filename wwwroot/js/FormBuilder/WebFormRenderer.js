@@ -32,6 +32,7 @@ const WebFormRender = function (option) {
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
+    this.IsPSsInitComplete = {};
     this.formValidationflag = true;
     this.isEditModeCtrlsSet = false;
     this.DGBuilderObjs = {};
@@ -137,7 +138,8 @@ const WebFormRender = function (option) {
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.setDefaultvalsNC(this.flatControls);// order 2
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.FRC.setValueExpValsNC(this.flatControls);// order 3
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 4
         this.initDGs();
 
 
@@ -934,7 +936,7 @@ const WebFormRender = function (option) {
         if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
             $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
             $("#webformprint").on("click", this.printDocument.bind(this));
-        }        
+        }
     };
 
     this.printDocument = function () {
@@ -957,7 +959,10 @@ const WebFormRender = function (option) {
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.on("click", function () { window.parent.closeModal(); });
-        $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
+        $("body").on("focus", "[ui-inp]", function () {
+            if (event && event.target)
+                $(event.target).select();
+        });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
 

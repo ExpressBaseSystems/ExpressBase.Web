@@ -477,8 +477,8 @@ const EbSelect = function (ctrl, options) {
         let vmValue = this.datatable.data[this.$curEventTarget.closest("tr").index()][getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
         if (event.target.nodeName === "SPAN")// if clicked tagclose
             vmValue = this.ClosedItem;
-
-        vmValue = parseInt(vmValue);
+        //if (!this.ComboObj.MultiSelect)
+            vmValue = parseInt(vmValue);
 
         if (this.columnVals[this.vmName].contains(vmValue)) {
             this.removeColVals(vmValue);
@@ -497,7 +497,11 @@ const EbSelect = function (ctrl, options) {
             //if (this.maxLimit === 1)
             //    this.columnVals[name] = cellData;
 
-            this.columnVals[name].push(this.convertValue(cellData, type));
+            if (this.ComboObj.MultiSelect)
+                this.columnVals[name].push(EbConvertValue(cellData, type));
+            else
+                this.columnVals[name] = [EbConvertValue(cellData, type)];
+
         }.bind(this));
     };
 
@@ -506,12 +510,6 @@ const EbSelect = function (ctrl, options) {
         $.each(this.ColNames, function (i, name) {
             this.columnVals[name].splice(idx, 1);
         }.bind(this));
-    };
-
-    this.convertValue = function (val, type) {
-        if (type === 11)
-            return parseInt(val);
-        return val;
     };
 
     this.setDmValues = function (i, name) {
@@ -634,6 +632,7 @@ const EbSelect = function (ctrl, options) {
         //    $(".search-block .input-group").css("height", maxHeight + "px");
         //    $('#' + this.name + 'Wraper [type=search]').val("");
         //}.bind(this), 10);
+
         if (this.datatable !== null) {
             this.setColumnvals();
             this.$inp.val(this.Vobj.valueMembers).trigger("change");

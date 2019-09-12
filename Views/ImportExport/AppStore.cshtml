@@ -4,20 +4,28 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 @{
-    List<AppStore> _appList = ViewBag.StoreApps;
+    List<AppStore> _appList = ViewBag.PrivateApps;
+    List<AppStore> _pubapps = ViewBag.PublicApps;
 }
 @section StyleSheet{
     <style>
         .coTBx-apStr-bdy {
             display: flex;
             flex-flow: row wrap;
-            padding: 0 10px;
         }
 
             .coTBx-apStr-bdy .apPtiLe {
                 padding: 10px;
                 width: 33.3%;
             }
+
+                .coTBx-apStr-bdy .apPtiLe:first-child {
+                    padding-left: 0;
+                }
+
+                .coTBx-apStr-bdy .apPtiLe:last-child {
+                    padding-right: 0;
+                }
 
                 .coTBx-apStr-bdy .apPtiLe .apTileInner {
                     border: 1px solid #ccc;
@@ -41,6 +49,8 @@
 
         .apPtiLe .apTileInner-bdy-footer {
             margin-top: 20px;
+            display: flex;
+            flex-direction: row-reverse;
         }
 
             .apPtiLe .apTileInner-bdy-footer .install-btn {
@@ -56,52 +66,97 @@
 }
 <div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-6 pd-0">
-                <h4 class="mr-t-0 mr-b-0">My Store <span class="privcount"></span> </h4>
+                <h4 class="mr-t-0 mr-b-0">My Store </h4>
             </div>
             <div class="col-md-6 pd-0 s-dash-btnwraper">
                 <div class="input-group eb-search-box" style="margin-left: 15px;">
                     <span class="input-group-addon"><i class="fa fa-search"></i></span>
                     <input type="text" id="appSearch" class="form-control" placeholder="Search...">
                 </div>
-                <a href='@Url.Action("AppStorePublic","Ext")' target="_blank" class="ebbtn eb_btnblue pull-right eb_btn-sm new_sol_lk">Public Apps</a>
+                <a href='@Url.Action("AppStorePublic","Ext")' target="_blank" class="ebbtn eb_btnblue pull-right eb_btn-sm new_sol_lk">Store</a>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
-            <div class="coTBx-apStr-bdy w-100" id="app-wrapperOuter">
-                @{
-                    int privcount = 0;
-                    if (_appList != null)
-                    {
-                        @for (int i = 0; i < _appList.Count; i++)
-                        {
-                            var apptype = (EbApplicationTypes)_appList[i].AppType;
+            <ul class="nav nav-tabs eb-styledTab">
+                <li class="nav-item active devdshtab">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#privateApps" role="tab">
+                        <i class="fa fa-user-secret"></i> Private Apps <span class="apps_count webcount">(@_appList.Count)</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link devdshtab" data-toggle="tab" href="#publicApps" role="tab">
+                        <i class="fa fa-chain-broken"></i> Public Apps <span class="apps_count mobcount">(@_pubapps.Count)</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="privateApps">
+                    <div class="coTBx-apStr-bdy w-100 app-wrapperOuter">
+                        @{
+                            if (_appList != null)
+                            {
+                                @for (int i = 0; i < _appList.Count; i++)
+                                {
+                                    var apptype = (EbApplicationTypes)_appList[i].AppType;
 
-                            string desc = String.IsNullOrEmpty(_appList[i].Description) ? "No Description" : _appList[i].Description;
+                                    string desc = String.IsNullOrEmpty(_appList[i].Description) ? "No Description" : _appList[i].Description;
 
-                            privcount = privcount + 1;
-
-                            <div class="apPtiLe">
-                                <div class="apTileInner">
-                                    <a href="@Url.Action("AppDashBoard", "Dev" , new { Id=_appList[i].Id, Type=_appList[i].AppType })" class="apTileInner-bdy">
-                                        <h3 class="apTileInner-heading"><i class="fa @_appList[i].Icon"></i> @_appList[i].Name</h3>
-                                    </a>
-                                    <p>@desc</p>
-                                    <div class="apTileInner-bdy-footer">
-                                        <a class="install-btn" href="../ImportExport/Import?Id=@(_appList[i].Id)">
-                                            <i class="fa fa-download" aria-hidden="true"></i> Install
-                                        </a>
-                                        <a class="share-btn pull-right" href="../ImportExport/ShareToPublic?id=@(_appList[i].Id)">
-                                            <i class="fa fa-share-alt" aria-hidden="true"></i> Share to Public
-                                        </a>
+                                    <div class="apPtiLe">
+                                        <div class="apTileInner">
+                                            <a href="@Url.Action("AppDashBoard", "Dev" , new { Id=_appList[i].Id, Type=_appList[i].AppType })" class="apTileInner-bdy">
+                                                <h3 class="apTileInner-heading"><i class="fa @_appList[i].Icon"></i> @_appList[i].Name</h3>
+                                            </a>
+                                            <p>@desc</p>
+                                            <div class="apTileInner-bdy-footer">
+                                                @*<a class="install-btn" href="../ImportExport/Import?Id=@(_appList[i].Id)">
+                                                        <i class="fa fa-download" aria-hidden="true"></i> Install
+                                                    </a>*@
+                                                <a class="share-btn pull-right" href="../ImportExport/ShareToPublic?id=@(_appList[i].Id)">
+                                                    <i class="fa fa-share-alt" aria-hidden="true"></i> Share to Public
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                        }
+                                }
 
-                    }
-                }
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="tab-pane" id="publicApps">
+                    <div class="coTBx-apStr-bdy w-100 app-wrapperOuter">
+                        @{
+                            if (_pubapps != null)
+                            {
+                                @for (int i = 0; i < _pubapps.Count; i++)
+                                {
+                                    var apptype = (EbApplicationTypes)_pubapps[i].AppType;
+
+                                    string desc = String.IsNullOrEmpty(_pubapps[i].Description) ? "No Description" : _pubapps[i].Description;
+
+                                    <div class="apPtiLe">
+                                        <div class="apTileInner">
+                                            <a href="@Url.Action("AppDashBoard", "Dev" , new { Id=_pubapps[i].Id, Type=_pubapps[i].AppType })" class="apTileInner-bdy">
+                                                <h3 class="apTileInner-heading"><i class="fa @_pubapps[i].Icon"></i> @_pubapps[i].Name</h3>
+                                            </a>
+                                            <p>@desc</p>
+                                            <div class="apTileInner-bdy-footer">
+                                                @*<a class="install-btn" href="../ImportExport/Import?Id=@(_pubapps[i].Id)">
+                                                        <i class="fa fa-download" aria-hidden="true"></i> Install
+                                                    </a>*@
+                                                <a class="share-btn pull-right" target="_blank" href="/AppInfo/@_pubapps[i].Id">
+                                                    More Details
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        }
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -113,10 +168,10 @@
             EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
         }
         $(document).ready(function () {
-            $(".privcount").text("(@privcount)");
             $("#appSearch").off("keyup").on("keyup", function (e) {
+                let curtab = $(".eb-styledTab li.active a").attr("href");
                 var srch = $(e.target).val().toLowerCase();
-                $.each($("#app-wrapperOuter").find(".apPtiLe"), function (i, obj) {
+                $.each($(curtab).find(".apPtiLe"), function (i, obj) {
                     var cmpstr = $(obj).find('.apTileInner-heading').text().toLowerCase();
                     if (cmpstr.indexOf(srch) !== -1) {
                         $(obj).show();

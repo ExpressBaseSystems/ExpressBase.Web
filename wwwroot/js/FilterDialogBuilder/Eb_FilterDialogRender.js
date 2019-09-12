@@ -81,7 +81,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         this.initFormObject2();
         this.initFilterDialogCtrls();// order 1
         this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
-        this.FRC.setValueExpValsNC(this.FormObj.Controls.$values);// order 3
+        this.FRC.setValueExpValsNC(this.FormObj.Controls.$values);//
         this.FRC.bindFnsToCtrls(this.flatControls);// order 4
         this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
         this.SetWatchers();

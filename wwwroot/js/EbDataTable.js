@@ -600,7 +600,6 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         //this.Api.on('row-reorder', function (e, diff, edit) {
         //});
-
     };
 
     this.addSerialAndCheckboxColumns = function () {
@@ -702,7 +701,13 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.paging = true;
             o.lengthChange = true;
             if (!this.ebSettings.IsPaging) {
-                o.dom = "<'col-md-12 noPadding dispaly-none'B>rt";
+                if (this.IsTree) {
+                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12'i>rt";
+                    o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
+                }
+                else {
+                    o.dom = "<'col-md-12 noPadding display-none'B>rt";
+                }
                 o.paging = false;
                 o.lengthChange = false;
             }
@@ -1188,6 +1193,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (!this.IsTree)
             this.createFilterRowHeader();
+        else
+            this.createFilterforTree();
         this.filterDisplay();
         this.createFooter();
         this.arrangeWindowHeight();
@@ -1499,7 +1506,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var filterId = "#filterdisplayrowtd_" + this.tableId;
         if (this.login === "uc") {
             if (this.IsTree) {
-                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 29px)", "important");
+                $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 52px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging && !this.EbObject.AllowMultilineHeader)
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 62px)", "important");
@@ -1545,7 +1552,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             }
             else {
                 if (this.IsTree)
-                    $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 7px)", "important");
+                    $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 32px)", "important");
                 else if ($(filterId).children().length === 0 && !this.ebSettings.IsPaging)
                     $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 42px)", "important");
                 else {
@@ -2222,6 +2229,30 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.createColspanHeader = function () {
 
+    };
+
+    this.createFilterforTree = function () {
+        $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="dataTables_filters">
+        <label>Search:<input type="search" class="form-control input-sm" placeholder="" aria-controls="${this.tableId}"></label></div>`);
+        $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
+    };
+
+    this.LocalSearch = function (e) {
+        var text = $(e.target).val();
+        if (e.keyCode === 13 && text.length >3) {
+            //window.find(text, false, false, true);
+            if (window.find && window.getSelection) {
+                document.designMode = "on";
+                var sel = window.getSelection();
+                sel.collapse(document.body, 0);
+
+                while (window.find(text)) {
+                    document.execCommand("HiliteColor", false, "yellow");
+                    sel.collapseToEnd();
+                }
+                document.designMode = "off";
+            }
+        }
     };
 
     this.addFilterEventListeners = function () {

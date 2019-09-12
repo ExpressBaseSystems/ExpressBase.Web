@@ -433,11 +433,12 @@
 
         //should fire after all default value set
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
-            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
-                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-                let val = fun();
-                inpCtrl.setValue(val);
-            }
+            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+            //if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+            //    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+            //    let val = fun();
+            //    inpCtrl.setValue(val);
+            //}
         }.bind(this));
 
         return this.AllRowCtrls[rowid];
@@ -473,6 +474,7 @@
 
 
             let val = SingleColumn.Value;
+            ctrl.__eb_EditMode_val = val;
             if (val === null)
                 return true;
 
@@ -663,6 +665,7 @@
                 if (valExpFnStr) {
                     if (!depCtrl.IsDGCtrl) {
                         let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.ctrl.formObject, this.ctrl.__userObject)();
+                        depCtrl.__eb_ValueExpr_val = val;
                         depCtrl.setValue(val);
                     }
                     //else {

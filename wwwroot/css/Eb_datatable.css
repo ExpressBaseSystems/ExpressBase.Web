@@ -645,3 +645,11 @@ table.dataTable tr.group td {
 table.dataTable tbody > tr.selected > td.context-menu-active {
     background-color: #08C !important;
 }
+.display-none{
+    display:none;
+}
+div.dataTables_wrapper div.dataTables_filters {
+    text-align: right;
+    display: inline-block;
+    float: right;
+}

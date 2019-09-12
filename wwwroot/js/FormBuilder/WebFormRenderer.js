@@ -138,7 +138,8 @@ const WebFormRender = function (option) {
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.setDefaultvalsNC(this.flatControls);// order 2
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.FRC.setValueExpValsNC(this.flatControls);// order 3
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 4
         this.initDGs();
 
 

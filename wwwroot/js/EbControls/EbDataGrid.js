@@ -390,6 +390,7 @@
                 inpCtrl.setValue(inpCtrl.DefaultValue);
 
             // DefaultValueExpression
+
             if (this.Mode.isNew && inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
                 let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                 let val = fun();
@@ -433,11 +434,12 @@
 
         //should fire after all default value set
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
-            if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
-                let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-                let val = fun();
-                inpCtrl.setValue(val);
-            }
+            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+            //if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
+            //    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+            //    let val = fun();
+            //    inpCtrl.setValue(val);
+            //}
         }.bind(this));
 
         return this.AllRowCtrls[rowid];

@@ -32,6 +32,7 @@ const WebFormRender = function (option) {
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
+    this.IsPSsInitComplete = {};
     this.formValidationflag = true;
     this.isEditModeCtrlsSet = false;
     this.DGBuilderObjs = {};

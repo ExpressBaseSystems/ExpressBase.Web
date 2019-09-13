@@ -1037,7 +1037,7 @@ namespace ExpressBase.Web.Controllers
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 
-            string redirect = Common.Extensions.StringExtensions.ToBase64("/ImportExport/Import?Id=" + appid);
+            string redirect = Common.Extensions.StringExtensions.ToBase64("/Import/ImportToSln?appid=" + appid);
 
             string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
             string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
@@ -1047,10 +1047,10 @@ namespace ExpressBase.Web.Controllers
                 if (IsTokensValid(sRToken, sBToken, hostParts[0]))
                 {
                     JwtSecurityToken bToken = new JwtSecurityToken(sBToken);
-                    string cid = bToken.Payload[TokenConstants.CID].ToString();
-                    if (cid == TokenConstants.CID)
+                    string wc = bToken.Payload[TokenConstants.WC].ToString();
+                    if (wc == RoutingConstants.TC)
                     {
-                        return Redirect("MySolutions");
+                        return Redirect("/Import/ImportToSln?appid=" + appid);
                     }
                     else
                     {

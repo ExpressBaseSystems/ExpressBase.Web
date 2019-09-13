@@ -653,3 +653,18 @@ div.dataTables_wrapper div.dataTables_filters {
     display: inline-block;
     float: right;
 }
+.columnimage {
+    height: 20px;
+    width: 25px;
+    cursor:pointer;
+}
+#Imagemodal .modal-header, #Imagemodal .modal-body{
+    text-align:center;
+}
+#Imagemodal .close {
+    margin-top: -36px;
+}
+
+#Imagemodal img, #Imagemodal .modal-body {
+    width: 100%;
+}

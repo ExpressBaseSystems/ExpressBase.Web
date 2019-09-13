@@ -32,6 +32,7 @@ const WebFormRender = function (option) {
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.formValues = {};
+    this.IsPSsInitComplete = {};
     this.formValidationflag = true;
     this.isEditModeCtrlsSet = false;
     this.DGBuilderObjs = {};
@@ -99,7 +100,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-            else if (Obj.ObjType === "ManageUser" || Obj.ObjType === "ManageLocation")
+            else if (Obj.ObjType === "ProvisionUser" || Obj.ObjType === "ProvisionLocation")
                 opt.flatControls = this.flatControls;
             this.initControls.init(Obj, opt);
         }.bind(this));
@@ -203,6 +204,7 @@ const WebFormRender = function (option) {
                 return true;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+            ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect") {
                 //ctrl.setDisplayMember = this.j;
                 ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
@@ -266,6 +268,8 @@ const WebFormRender = function (option) {
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
         this.isEditModeCtrlsSet = true;
+
+        this.FRC.setValueExpValsNC(this.flatControls);
     };
 
     //this.getEditModeFormData = function (rowId) {
@@ -934,7 +938,7 @@ const WebFormRender = function (option) {
         if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
             $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
             $("#webformprint").on("click", this.printDocument.bind(this));
-        }        
+        }
     };
 
     this.printDocument = function () {
@@ -957,7 +961,10 @@ const WebFormRender = function (option) {
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.on("click", function () { window.parent.closeModal(); });
-        $("body").on("focus", "[ui-inp]", function () { $(event.target).select(); });
+        $("body").on("focus", "[ui-inp]", function () {
+            if (event && event.target)
+                $(event.target).select();
+        });
         $(window).off("keydown").on("keydown", this.windowKeyDown);
         this.initWebFormCtrls();
 

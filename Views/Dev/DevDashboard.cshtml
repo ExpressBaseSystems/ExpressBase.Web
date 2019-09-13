@@ -3,9 +3,7 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<script>
-    var cm = new EbHeader().setName("Developer Home");
-</script>
+
 @{
     List<AppWrapper> appList = ViewBag.apps;
     int appcount = 0;
@@ -145,6 +143,8 @@
             $(".mobcount").text('(@mobcount)');
             $(".webcount").text("(@webcount)");
             $(".botcount").text("(@botcount)");
+
+            ebcontext.header.setName("Developer Home");
 
             $("#appSearch").off("keyup").on("keyup", function (e) {
                 let curtab = $(".eb-styledTab li.active a").attr("href");

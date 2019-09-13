@@ -139,5 +139,20 @@ namespace ExpressBase.Web.Controllers
             ViewBag.appid = AppId;
             return View();
         }
+
+        [EbBreadCrumbFilter("Store/Import To Solution", new string[] { "/Store" })]
+        [HttpGet("Import/ImportToSln")]
+        public IActionResult ImportToSolution(int appid)
+        {
+            AppAndsolutionInfoResponse result = this.ServiceClient.Get(new AppAndsolutionInfoRequest
+            {
+                AppId = appid,
+                WhichConsole = ViewBag.wc
+            });
+            ViewBag.Solutions = result.Solutions;
+            ViewBag.AppData = result.AppData;
+            ViewBag.AppId = appid;
+            return View();
+        }
     }
 }

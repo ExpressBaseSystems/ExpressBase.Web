@@ -46,6 +46,12 @@
         }.bind(this));
     };
 
+    this.setValueExpValsNC = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            EbRunValueExpr(Obj, this.FO.formObject, this.FO.userObject);
+        }.bind(this));
+    };
+
 
     this.bindFnsToCtrl = function (Obj) {
         if (Obj.Required)

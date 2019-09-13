@@ -33,7 +33,7 @@
                     this.FO._allPSsInit = true;
             }.bind(this);
 
-            if (Obj.ObjType === "PowerSelect")
+            if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                 Obj.setValue(val, PSInitCompleteCallBFn.bind(this));
             else
                 Obj.setValue(val);
@@ -141,7 +141,7 @@
     };
 
     this.bindRequired = function (control) {
-        if (control.ObjType === "SimpleSelect")
+        if (control.ObjType === "SimpleSelect" && !control.RenderAsSimpleSelect)
             $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
         else
             $("#" + control.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
@@ -277,7 +277,7 @@
     };
 
     this.addInvalidStyle = function (ctrl, msg, type) {
-        if (ctrl.ObjType === "PowerSelect")
+        if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
             EbMakeInvalid(`#${ctrl.EbSid_CtxId}Container`, `#${ctrl.EbSid_CtxId}Wraper`, msg, type);
         else
             EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);

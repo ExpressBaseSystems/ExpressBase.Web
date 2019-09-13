@@ -372,6 +372,11 @@
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {
+        if (ctrl.RenderAsSimpleSelect) {
+            this.SimpleSelect(ctrl);
+            return;
+        }
+
         Vue.component('v-select', VueSelect.VueSelect);
         Vue.config.devtools = true;
 

@@ -100,7 +100,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-            else if (Obj.ObjType === "ManageUser" || Obj.ObjType === "ManageLocation")
+            else if (Obj.ObjType === "ProvisionUser" || Obj.ObjType === "ProvisionLocation")
                 opt.flatControls = this.flatControls;
             this.initControls.init(Obj, opt);
         }.bind(this));
@@ -138,8 +138,7 @@ const WebFormRender = function (option) {
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.setDefaultvalsNC(this.flatControls);// order 2
-        this.FRC.setValueExpValsNC(this.flatControls);// order 3
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 4
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
 
 
@@ -205,6 +204,7 @@ const WebFormRender = function (option) {
                 return true;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+            ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect") {
                 //ctrl.setDisplayMember = this.j;
                 ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
@@ -268,6 +268,8 @@ const WebFormRender = function (option) {
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
         this.isEditModeCtrlsSet = true;
+
+        this.FRC.setValueExpValsNC(this.flatControls);
     };
 
     //this.getEditModeFormData = function (rowId) {

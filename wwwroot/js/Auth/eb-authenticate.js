@@ -101,7 +101,8 @@
                 data: {
                     "uname": $("input[name='uname']").val().trim(),
                     "pass": $("input[name='pass']").val().trim(),
-                    "g-recaptcha-response": token || "nhjsnbnby-edrjewrh"
+                    "g-recaptcha-response": token || "nhjsnbnby-edrjewrh",
+                    "continue_with": $("input[name='continue_with']").val() || ""
                 },
                 success: function (auth) {
                     if (auth.authStatus) {

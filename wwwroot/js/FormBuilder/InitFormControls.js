@@ -505,8 +505,8 @@
 
     };
 
-    this.ManageUser = function (ctrl, ctrlopts) {
-        console.log('init ManageUser');
+    this.ProvisionUser = function (ctrl, ctrlopts) {
+        console.log('init ProvisionUser');
 
         $.each(ctrl.Fields.$values, function (i, obj) {
             if (obj.ControlName !== '') {
@@ -548,8 +548,8 @@
         }.bind(this));
     };
 
-    this.ManageLocation = function (ctrl, ctrlopts) {
-        console.log('init ManageLocation');
+    this.ProvisionLocation = function (ctrl, ctrlopts) {
+        console.log('init ProvisionLocation');
 
         $.each(ctrl.Fields.$values, function (i, obj) {
             if (obj.ControlName !== '') {

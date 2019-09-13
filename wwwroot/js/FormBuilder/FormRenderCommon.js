@@ -141,7 +141,7 @@
     };
 
     this.bindRequired = function (control) {
-        if (control.ObjType === "SimpleSelect" && !control.RenderAsSimpleSelect)
+        if (control.ObjType === "SimpleSelect" || control.RenderAsSimpleSelect)
             $("#cont_" + control.EbSid_CtxId + " .dropdown-toggle").on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));
         else
             $("#" + control.EbSid_CtxId).on("blur", this.isRequiredOK.bind(this, control)).on("focus", this.removeInvalidStyle.bind(this, control));

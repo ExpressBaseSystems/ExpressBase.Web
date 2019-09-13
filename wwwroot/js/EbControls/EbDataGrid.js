@@ -305,11 +305,20 @@
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr).hide();
-        if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
-            $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
+        if (this.ctrl.NewRowOnTop) {
+            if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {
+                $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
+            }
+            else
+                $(`#${this.TableId}>tbody`).prepend($tr);
         }
-        else
-            $(`#${this.TableId}>tbody`).append($tr);
+        else {
+            if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
+                $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
+            }
+            else
+                $(`#${this.TableId}>tbody`).append($tr);
+        }
         $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);

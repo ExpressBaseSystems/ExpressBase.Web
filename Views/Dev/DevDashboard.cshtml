@@ -3,9 +3,7 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<script>
-    var cm = new EbHeader().setName("Developer Home");
-</script>
+
 @{
     List<AppWrapper> appList = ViewBag.apps;
     int appcount = 0;
@@ -15,42 +13,6 @@
     }
 }
 <div class="row s-dash-container h-100">
-    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group eb-dashbord-sidebar">
-                <li class="list-group-item outer_li text-center pd-l-0 pd-r-0">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">apps</span>
-                        <span class="t__sidebar_text">Applications</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/AppStore">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">App Store</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Survey/SurveyHome">
-                        <span class="material-icons t__sidebar_icon">question_answer</span>
-                        <span class="t__sidebar_text">Survey</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12 pd-0">
@@ -181,6 +143,8 @@
             $(".mobcount").text('(@mobcount)');
             $(".webcount").text("(@webcount)");
             $(".botcount").text("(@botcount)");
+
+            ebcontext.header.setName("Developer Home");
 
             $("#appSearch").off("keyup").on("keyup", function (e) {
                 let curtab = $(".eb-styledTab li.active a").attr("href");

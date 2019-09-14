@@ -20,6 +20,7 @@ var SolutionDashBoard = function (connections, sid) {
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
         "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />",
         "GoogleDrive": "<img class='img- responsive image-vender' src='../images/Google-Drive-Logo.png' style='width:68%' />",
+        "AWSS3": "<img class='img- responsive image-vender' src='../images/amazon-s3.png' style='width:68%' />",
         "DropBox": "<img class='img- responsive image-vender' src='../images/Dropbox-logo.png' style='width:100%' />"
     }
     var venderdec = {
@@ -428,6 +429,26 @@ var SolutionDashBoard = function (connections, sid) {
         }.bind(this));
     };
 
+    this.AWSS3OnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddAWSS3",
+            data: postData,
+            beforeSend: function () {
+                $("#AWSS3_loader").EbLoader("show", { maskItem: { Id: "#AWSS3", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#AWSS3_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#AWSS3ConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
     this.ftpOnSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -685,6 +706,21 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#DropBoxInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#DropBoxInputAccessToken').val(temp1["AccessToken"]);
+            }
+        }
+    };
+    this.AWSS3inteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#AWSS3ConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#AWSS3InputNickname').val(temp[obj].NickName);
+                $('#AWSS3InputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#AWSS3InputBucketName').val(temp1["BucketName"]);
+                $('#AWSS3InputbucketRegion').val(temp1["BucketRegion"]);
+                $('#AWSS3InputAccessKeyID').val(temp1["AccessKeyID"]);
+                $('#AWSS3InputSecretAccessKey').val(temp1["SecretAccessKey"]);
             }
         }
     };
@@ -1115,6 +1151,11 @@ var SolutionDashBoard = function (connections, sid) {
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('DropBoxedit')) {
+                    options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('AWSS3edit')) {
                     options.items.EbFILES = { name: "Configure as File Store" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
@@ -1556,7 +1597,7 @@ var SolutionDashBoard = function (connections, sid) {
                                 if (data)
                                     EbMessage("show", { Message: "Versioning : On" });
                             }.bind(this));
-                        else if (name == "Cancel") {
+                        else if (name == "Cancel" || name =="close") {
                             $("#VersioningSwitch").bootstrapToggle('off');
                         }                            
                     }
@@ -1567,9 +1608,6 @@ var SolutionDashBoard = function (connections, sid) {
     this.init = function () {
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
-        if (this.Connections.SolutionInfo.IsVersioningEnabled) {
-            $("#VersioningSwitch").bootstrapToggle('on');
-        }
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
@@ -1582,6 +1620,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#GoogleDriveConnectionSubmit").on("submit", this.GoogleDriveOnSubmit.bind(this));
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));
+        $("#AWSS3ConnectionSubmit").on("submit", this.AWSS3OnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();

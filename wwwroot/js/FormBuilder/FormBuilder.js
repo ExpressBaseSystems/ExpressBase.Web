@@ -48,6 +48,8 @@
         let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
         if (ctrl.ObjType === "Approval")
             this.ApprovalCtrl = null;
+        else if (ctrl.ObjType === "ProvisionLocation")
+            this.ProvisionLocationCtrl = null;
         ControlTile.parent().focus();
         ControlTile.remove();
         this.PGobj.removeFromDD(ebsid);
@@ -322,6 +324,9 @@
                     ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
                     this.ApprovalCtrl = ctrlObj;
                 }
+                else if (type === "ProvisionLocation") {
+                    this.ProvisionLocationCtrl = ctrlObj;
+                }
                 else if (type === "SimpleSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
                 }
@@ -381,7 +386,7 @@
             success: function (ctrl, configObj) {
                 ctrl._locationConfig = JSON.parse(configObj);
                 $.each(ctrl._locationConfig, function (i, config) {
-                    let newo = new EbObjects.MngUsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
+                    let newo = new EbObjects.UsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
                     newo.DisplayName = config.Name;
                     ctrl.Fields.$values.push(newo);
                 });
@@ -446,6 +451,18 @@
                 id: "reviewCtrl",
                 head: "Form already contains a Review control.",
                 body: "You cannot add more than one approval control into the form",
+                type: "warning",
+                delay: 3000
+            });
+            return false;
+        }
+        
+        if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ProvisionLocation" && this.ProvisionLocationCtrl) {
+            this.EbAlert.clearAlert("mngLocCtrl");
+            this.EbAlert.alert({
+                id: "mngLocCtrl",
+                head: "Form already contains a provision location control.",
+                body: "You cannot add more than one provision location control into the form",
                 type: "warning",
                 delay: 3000
             });
@@ -661,6 +678,8 @@
                 let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
                 if (ctrl.ObjType === "Approval")
                     this.ApprovalCtrl = null;
+                else if (ctrl.ObjType === "ProvisionLocation")
+                    this.ProvisionLocationCtrl = null;
                 ControlTile.parent().focus();
                 ControlTile.remove();
                 this.PGobj.removeFromDD(ebsid);
@@ -710,6 +729,7 @@
             this.makeGBsDropable();
         }
         this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
+        this.ProvisionLocationCtrl = getFlatObjOfType(this.rootContainerObj, "ProvisionLocation")[0];
 
 
         this.EbAlert = new EbAlert({

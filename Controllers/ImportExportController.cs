@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using ExpressBase.Common;
+using ExpressBase.Common.Constants;
 using ExpressBase.Common.Objects;
 using ExpressBase.Common.Objects.Attributes;
 using ExpressBase.Common.ServiceClients;
@@ -30,12 +31,39 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult GetStore()
+        {
+            var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+            string[] hostParts = host.Split(CharConstants.DOT);
+            string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+            string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+            if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+            {
+                if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                {
+                    return Redirect("/AppStore");
+                }
+                else
+                {
+                    return Redirect("/Store");
+                }
+            }
+            else
+            {
+                return Redirect("/Store");
+            }
+        }
+
         [EbBreadCrumbFilter("Appstore")]
         [HttpGet("AppStore")]
         public IActionResult AppStore()
         {
-            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreInternalRequest { });
-            ViewBag.StoreApps = resp.Apps;
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreInternalRequest {
+                WhichConsole = ViewBag.wc
+            });
+            ViewBag.PrivateApps = resp.Apps;
+            ViewBag.PublicApps = resp.PublicApps;
             return View();
         }
         public EbObject GetObjfromDB(string _refid)
@@ -109,6 +137,21 @@ namespace ExpressBase.Web.Controllers
             EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
             ViewBag.objlist = resultlist.Data;
             ViewBag.appid = AppId;
+            return View();
+        }
+
+        [EbBreadCrumbFilter("Store/Import To Solution", new string[] { "/Store" })]
+        [HttpGet("Import/ImportToSln")]
+        public IActionResult ImportToSolution(int appid)
+        {
+            AppAndsolutionInfoResponse result = this.ServiceClient.Get(new AppAndsolutionInfoRequest
+            {
+                AppId = appid,
+                WhichConsole = ViewBag.wc
+            });
+            ViewBag.Solutions = result.Solutions;
+            ViewBag.AppData = result.AppData;
+            ViewBag.AppId = appid;
             return View();
         }
     }

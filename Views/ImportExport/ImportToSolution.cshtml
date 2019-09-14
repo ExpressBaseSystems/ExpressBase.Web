@@ -1,0 +1,81 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    AppStore appdata = ViewBag.AppData;
+}
+
+@section StyleSheet{
+    <style>
+        .eb-im2sln-wrpr {
+            padding: 0 15px;
+        }
+
+            .eb-im2sln-wrpr label {
+                font-weight: 500;
+            }
+
+        .eb-im2sln-tags {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+            .eb-im2sln-tags .tgs {
+                background: #eef9fe;
+                padding: 5px;
+                border-radius: 2px;
+                border: 1px solid #d7edf7;
+                margin-right: 5px;
+                color: #5f5d5d
+            }
+    </style>
+}
+
+<div class="row s-dash-container h-100">
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12 pd-0">
+                <h4 class="mr-t-0 mr-b-0">Import to Solution</h4>
+            </div>
+            <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 pd-0 s-dash-btnwraper">
+
+            </div>
+        </div>
+        <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+            <div class="eb-im2sln-wrpr">
+                <h3 style="font-weight:400;">@appdata.Title</h3>
+                <p>@appdata.ShortDesc</p>
+                <div class="eb-im2sln-tags">
+                    @{
+                        string[] tgs = appdata.Tags.Split(",");
+                        foreach (string t in tgs)
+                        { 
+                            <div class="tgs">@t</div>
+                        }
+                    }
+                </div>
+                <div class="eb-im2sln-sid col-md-6 pd-0">
+                    <div class="form-group">
+                        <label>Choose Solution</label>
+                        <select class="form-control">
+                            @{
+                                foreach (var sol in ViewBag.Solutions)
+                                {
+                                    <option value="@sol.IsolutionId">@sol.SolutionName (@sol.EsolutionId)</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section JsCode{
+    <script>
+        $(document).ready(function () {
+            ebcontext.header.setName("Import to solution");
+        });
+    </script>
+}

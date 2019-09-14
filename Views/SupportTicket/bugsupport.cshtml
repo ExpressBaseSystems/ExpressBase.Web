@@ -15,7 +15,7 @@
 <script src="~/js/SupportTicket/SupportTicketjs.js" type="text/javascript"></script>
 
 <div class="row s-dash-container h-100">
-   
+
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 col-lg-7 col-xs-12 col-sm-6 pd-0">
@@ -45,22 +45,22 @@
                                 </thead>
                                 <tbody id="bugtblbody">
                                     @*@for (int k = 0; k < ViewBag.tkttable2.supporttkt.Count; k++)
-                            {
-                                <tr id="k">
-                                    <td> @ViewBag.tkttable2.supporttkt[k].ticketid</td>
-                                    <td> @ViewBag.tkttable2.supporttkt[k].title</td>
-                                    <td> @ViewBag.tkttable2.supporttkt[k].solutionid</td>
-                                    <td> @ViewBag.tkttable2.supporttkt[k].priority</td>
-                                    <td> @ViewBag.tkttable2.supporttkt[k].lstmodified</td>
-                                    <td> @ViewBag.tkttable2.supporttkt[k].status</td>
-                                    <td> @ViewBag.tkttable2.supporttkt[k].support</td>
-                                    <td>
-                                        <button class="btn btn-default btn-xs" style="color:blue" >Edit <i class="fa fa-edit"></i></button>
-                                        <button class="btn btn-default btn-xs" style="color:red">Delete <i class="fa fa-trash-o"></i></button>
+                                        {
+                                            <tr id="k">
+                                                <td> @ViewBag.tkttable2.supporttkt[k].ticketid</td>
+                                                <td> @ViewBag.tkttable2.supporttkt[k].title</td>
+                                                <td> @ViewBag.tkttable2.supporttkt[k].solutionid</td>
+                                                <td> @ViewBag.tkttable2.supporttkt[k].priority</td>
+                                                <td> @ViewBag.tkttable2.supporttkt[k].lstmodified</td>
+                                                <td> @ViewBag.tkttable2.supporttkt[k].status</td>
+                                                <td> @ViewBag.tkttable2.supporttkt[k].support</td>
+                                                <td>
+                                                    <button class="btn btn-default btn-xs" style="color:blue" >Edit <i class="fa fa-edit"></i></button>
+                                                    <button class="btn btn-default btn-xs" style="color:red">Delete <i class="fa fa-trash-o"></i></button>
 
-                                    </td>
-                                </tr>
-                            }*@
+                                                </td>
+                                            </tr>
+                                        }*@
 
                                 </tbody>
                             </table>
@@ -84,26 +84,39 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title fw500">Add Ticket</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close mdlclose" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="m-bott10">
+                @*<div class="m-bott10">
                     <span class="fw500">Bug Report</span>
                     <label class="switch">
                         <input type="checkbox" id="check1">
                         <span class="slider round"></span>
                     </label>
                     <span class="fw500">Feature Request</span>
-                </div>
+                </div>*@
                 <div id="addbug" class="row">
                     <div class="col-sm-12 col-md-6 col-lg-6 ">
+                        <div class="">
+                            <label>Type</label>
+                            <div>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optradio" value="Bug" checked>Bug
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio" name="optradio" value="FeatureRequest">Feature Request
+                                </label>
+                            </div>
+                            <div id="typelbl" class="" style=" visibility :hidden">Select a value</div>
+                        </div>
+                        
                         <label>Title</label>
                         <div class=" ">
                             <input class="form-control w-100 " type="text" id="bugtitle">
                         </div>
-                        <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
+                        <div id="titlelbl" class="" style=" visibility :hidden;color:red"> Enter a title</div>
 
                         <div class="">
                             <label>Priority</label>
@@ -116,7 +129,7 @@
                             </div>
                             <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
                         </div>
-                       
+
                         @{if (ViewBag.wc.Equals("tc"))
                             {
                                 <div class="">
@@ -125,7 +138,7 @@
                                         <select id="soluid" class="form-control w-100">
                                             @for (int i = 0; i < ViewBag.soluids.Count; i++)
                                             {
-                                            <option  solu="@ViewBag.isolu[i]" value=@i +1>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
+                                                <option solu="@ViewBag.isolu[i]" value=@i +1>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
                                             }
 
                                         </select>
@@ -144,17 +157,26 @@
                     <div class="col-sm-12 col-md-6 col-lg-6">
                         <label>Description</label>
                         <div>
-                            <textarea rows="8" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                            <textarea rows="12" cols="60" class="form-control stprsiz " id="descriptionid"></textarea>
                         </div>
-                        <div id="descrlbl" class="" style=" visibility :hidden"> </div>
+                        <div id="descrlbl" class="" style=" visibility :hidden;color:red"> Enter some description</div>
                     </div>
 
                 </div>
-                <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="input-field">
+                            <label class="active">Images</label>
+                            <div class="input-images-2" style="padding-top: .5rem; max-height:200px;overflow-y:scroll;"></div>
+                        </div>
+                    </div>
+                    
+                </div>
+                @* <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>*@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" id="savebugid">Save Tickets</button>
+                <button type="button" class="btn btn-primary" id="savebugid">Save Tickets</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -168,30 +190,20 @@
          tktob = @Html.Raw(ViewBag.tkttable);
         var bugrpt = new BugReport();
 
+        
+        let preloaded = [
+            //{id: "photo", src: 'https://picsum.photos/500/500?random=1'},
+            //{id: 2, src: 'https://picsum.photos/500/500?random=2'},
+        ];
+
+        $('.input-images-2').imageUploader({
+            preloaded: preloaded,
+            imagesInputName: 'photos',
+            preloadedInputName: 'old'
+        });
+
     });
 
 
 </script>
 
-
-<script>
-     var imgup = new EbFileUpload({
-        Type: "image",
-        Context:"Support-ticket",
-        Toggle: "#btnUploadImg",
-        Container: "eb-wiki-uploader",
-        Multiple: true,
-        ServerEventUrl: 'https://se.eb-test.xyz',
-        EnableCrop: true,
-        MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes
-        CustomMenu: [{ name: "Copy link", icon: "fa-user" }]
-    });
-
-    imgup.uploadSuccess = function (fileid) {
-
-    }
-    imgup.windowClose = function () {
-
-        }
-
-</script>

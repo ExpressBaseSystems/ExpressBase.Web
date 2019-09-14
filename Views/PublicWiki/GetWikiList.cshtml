@@ -36,6 +36,7 @@
     body {
         overflow-x: initial !important;
     }
+
     .ext-pageheader .navbar {
         border-bottom: 1px solid #efe7e7;
     }
@@ -116,12 +117,18 @@
         </div>
         <div class="col-sm-9 col-md-9 col-lg-9 pd-0 eb-wiki-pane">
             <div class="eb-wiki-pane-inner">
+                
                 <div class="eb-wiki-pane-header">
                     <div class="eb-wiki-pane-brdcrmb">
-                        <span style="font-weight:500">Wiki</span>
-                        <span class="slash">/</span>
-                        <span id="ebwiki_panebrd">Getting started</span>
+                        <div class="addr-wiki">
+                            <span style="font-weight:500" class="hidden-xs">Wiki</span>
+                            <span class="slash hidden-xs">/</span>
+                            <span id="ebwiki_panebrd" class="hidden-xs">Getting started</span>
+                        </div>
+                            <button class="fa fa-bars mob-view" onclick="openNav()" id="mob-sid-view"></button>
                     </div>
+                    
+                  
                     <div class="eb-wiki-searchbox">
                         <input type="text" class="form-control w-100" placeholder="Search.." id="search_wiki">
                     </div>
@@ -150,6 +157,7 @@
                                 WikiIconClass1 = ViewBag.WikiCat[i + 1].WikiIconClass;
                                 WikiDescription1 = ViewBag.WikiCat[i + 1].WikiDescription;
                             }
+
                             <div class="GettingStartedWrapper">
                                 <div class="GettingStarted" val="@WikiCategory">
                                     <div class="divIcon"> <span class="@WikiIconClass i-con"></span></div>
@@ -176,6 +184,44 @@
     </div>
 
 </div>
+
+<div id="mySidenav" class="sidenav">
+    <span class="closebtn fa fa-times" onclick="closeNav()"></span>
+    <div class="sidebar h-100">
+        <div class="sidebar-item-wraper wraper-link" val="home">
+            <div class="sidebar-item">
+                <span class="fa fa-home i-con"></span>
+                <span class="text">Getting Started</span>
+            </div>
+        </div>
+        @foreach (WikiCat cat in ViewBag.WikiCat)
+        {
+            string WikiCategory = cat.WikiCategory;
+            string WikiIconClass = cat.WikiIconClass;
+
+            <div class="sidebar-item-wraper wraper-link" val="@WikiCategory">
+                <div class="sidebar-item">
+                    <span class="@WikiIconClass i-con"></span>
+                    <span class="menu text"> @WikiCategory </span>
+                </div>
+            </div>
+            <div id="@WikiCategory" class="sidebar-list-wraper" val="hide" show>
+                <ul style="list-style:none">
+                    @foreach (Wiki wiki in ViewBag.WikiList)
+                    {
+                        int link = wiki.Id;
+                        int order = wiki.Order;
+                        if (wiki.Category == WikiCategory)
+                        {
+                            <li order-id="@order"> <a data-id="@link" class="wikilist" val="@wiki.Title"> @wiki.Title </a></li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+</div>
+
 @section JsCode{
     <script>
         let obj;
@@ -223,3 +269,12 @@
 
 
 
+<script>
+    function openNav() {
+        document.getElementById("mySidenav").style.width = "250px";
+    }
+
+    function closeNav() {
+        document.getElementById("mySidenav").style.width = "0";
+    }
+</script>

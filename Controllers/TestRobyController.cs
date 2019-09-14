@@ -24,6 +24,10 @@ using ServiceStack.Stripe;
 using ServiceStack.Stripe.Types;
 using System.Threading;
 using WebApplication1.Pages;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
+using Google.Apis.Admin.Directory.directory_v1;
+using System.Threading.Tasks;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -79,224 +83,49 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             return View();
         }
-
-        public static UserCredential GetUserCredential(out string error)
-        {
-            UserCredential credential = null;
-            error = string.Empty;
-            try
-            {
-                credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    new ClientSecrets
-                    {
-                        ClientId = ClientId,
-                        ClientSecret = ClientSecret
-                    },
-                    Scopes,
-                    Environment.UserName,
-                    CancellationToken.None,
-                    new FileDataStore("12345")).Result;
-                Console.WriteLine("Success");
-            }
-            catch (Exception ex)
-            {
-                credential = null;
-                error = "Failed to UserCredential Initialization:" + ex.ToString();
-                Console.WriteLine("Failed : " + ex.ToString());
-            }
-            return credential;
-        }
-
-        public void btnAuthorize_Click(UserCredential credential)
-        {
-            //UserCredential credential = 
-            Console.WriteLine("Start ");
-            string credentialError = string.Empty;
-            string refreshToken = string.Empty;
-            //UserCredential credential = GetUserCredential(out credentialError);
-            Console.WriteLine(credential);
-            if (credential != null && string.IsNullOrWhiteSpace(credentialError))
-            {
-                refreshToken = credential.Token.RefreshToken;
-                var service = new DriveService(new BaseClientService.Initializer()
-                {
-                    HttpClientInitializer = credential,
-                    ApplicationName = ApplicationName,
-                });
-                Console.WriteLine("After Service create ");
-                var fileMetadata = new Google.Apis.Drive.v3.Data.File()
-                {
-                    Name = "photo.jpg"
-                };
-                FilesResource.CreateMediaUpload request;
-                using (var stream = new System.IO.FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
-                                        System.IO.FileMode.Open))
-                {
-                    request = service.Files.Create(
-                        fileMetadata, stream, "image/jpeg");
-                    request.Fields = "id";
-                    request.Upload();
-                }
-                var file = request.ResponseBody;
-                Console.WriteLine("File ID: " + file.Id);
-
-                // Define parameters of request.
-                FilesResource.ListRequest listRequest = service.Files.List();
-                listRequest.PageSize = 10;
-                listRequest.Fields = "nextPageToken, files(id, name)";
-
-                // List files.
-
-                //IList<Google.Apis.Drive.v3.Data.File> files = listRequest.Execute()
-                //    .Files;
-                //Console.WriteLine("Files:");
-                //if (files != null && files.Count > 0)
-                //{
-                //    foreach (var filee in files)
-                //    {
-                //        Console.WriteLine("{0} ({1})", filee.Name, filee.Id);
-                //    }
-                //}
-                //else
-                //{
-                //    Console.WriteLine("No files found.");
-                //}
-                //Console.Read();
-
-            }
-            Console.WriteLine("finished");
-        }
-
-
-        public void OnGet()
-        {
-            try
-            {
-                Console.WriteLine("Hello World!");
-                UploadFIle(@"./wwwroot/images/imageControlSampleImage.jpg");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
-
-        public void DownloadFile(string blobId, string savePath)
-        {
-            try
-            {
-                var service = GetDriveServiceInstance();
-                var request = service.Files.Get(blobId);
-                var stream = new MemoryStream();
-                // Add a handler which will be notified on progress changes.
-                // It will notify on each chunk download and when the
-                // download is completed or failed.
-                request.MediaDownloader.ProgressChanged += (Google.Apis.Download.IDownloadProgress progress) =>
-                {
-                    switch (progress.Status)
-                    {
-                        case Google.Apis.Download.DownloadStatus.Downloading:
-                            {
-                                Console.WriteLine(progress.BytesDownloaded);
-                                break;
-                            }
-                        case Google.Apis.Download.DownloadStatus.Completed:
-                            {
-                                Console.WriteLine("Download complete.");
-                                SaveStream(stream, savePath);
-                                break;
-                            }
-                        case Google.Apis.Download.DownloadStatus.Failed:
-                            {
-                                Console.WriteLine("Download failed.");
-                                break;
-                            }
-                    }
-                };
-                request.Download(stream);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-        }
-
-        public void UploadFIle(string path)
-        {
-
-            try
-            {
-                Console.WriteLine("upload started");
-                var service = GetDriveServiceInstance();
-                var fileMetadata = new Google.Apis.Drive.v3.Data.File();
-                fileMetadata.Name = Path.GetFileName(path);
-                fileMetadata.MimeType = "image/png";
-                FilesResource.CreateMediaUpload request;
-                Console.WriteLine("Path : " + path);
-                using (var stream = new FileStream(path, FileMode.Open))
-                {
-                    request = service.Files.Create(fileMetadata, stream, "image/png");
-                    request.Fields = "id";
-                    var x = request.Upload();
-                    Console.WriteLine("Upload Result" + x.Exception.Message + x.Status.ToString());
-                }
-
-                var file = request.ResponseBody;
-                if (file != null)
-                    Console.WriteLine(file.Id);
-                else
-                    Console.WriteLine("ResponseBody is null");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-        }
-
-        private DriveService GetDriveServiceInstance()
-        {
-            try
-            {
-                Console.WriteLine("Service started");
-                GoogleCredential credential = GoogleCredential.FromJson(json);
-
-                service = new DriveService(new BaseClientService.Initializer()
-                {
-                    ApiKey = "AIzaSyBrfVA8qXGtHso9vJ6DI_go9pHXIO-oS7U",
-                    ApplicationName = ApplicationName,
-                });
-                Console.WriteLine("service complete");
-                return service;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return service;
-            }
-
-        }
-
-        private void SaveStream(MemoryStream stream, string saveTo)
-        {
-            try
-            {
-                using (FileStream file = new FileStream(saveTo, FileMode.Create, FileAccess.Write))
-                {
-                    stream.WriteTo(file);
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-        }
+        
         public IActionResult Test()
         {
-            IndexModel m = new IndexModel();
-            m.OnGet();
-            return View();
+            //IndexModel m = new IndexModel();
+            //m.OnGet();
+            return View("test");
+        }
+        [HttpPost]
+        public void storeauthcode(string data12)
+        {
+            try
+            {
+                var init = new GoogleAuthorizationCodeFlow.Initializer
+                {
+                    ClientSecrets = new ClientSecrets
+                    {
+                        ClientId = "1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com",
+                        ClientSecret = "DwaDGHou5ghXrJ0EitwnIQWu"
+                    },
+                    Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
+                };
+                //var token = new TokenResponse { RefreshToken = data12 };
+                //var credential = new UserCredential(new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init), "", token);
+
+                var flow = new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init);
+                var url = flow.CreateAuthorizationCodeRequest(GoogleAuthConsts.InstalledAppRedirectUri).Build().AbsoluteUri;
+
+                var code = "4/rAFuHLQd2ZXcJcazQPl0E8HPfsKzf8hXVYW2tQN8AsL30a1x4xpk-Vw2DEL0ZCCKEU7oIxR5_D8VpYqYXhvkabU";
+
+
+                Console.WriteLine("Fetching token for code: _" + code + "_");
+                var r = flow.ExchangeCodeForTokenAsync("user", code, GoogleAuthConsts.AuthorizationUrl, CancellationToken.None).Result;
+                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("exception inside storeauth :" + e);
+            }
+
+            //if (credential.Token.IsExpired(Google.Apis.Util.SystemClock.Default))
+            //{
+            //    var refreshResult = credential.RefreshTokenAsync(CancellationToken.None).Result;
+            //}
         }
     }
 }

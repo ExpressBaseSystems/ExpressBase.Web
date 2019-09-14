@@ -1,104 +1,44 @@
-﻿<script>
-  var GoogleAuth;
-  var SCOPE = 'https://www.googleapis.com/auth/drive.metadata.readonly';
-  function handleClientLoad() {
-    // Load the API's client and auth2 modules.
-    // Call the initClient function after the modules load.
-    gapi.load('client:auth2', initClient);
-  }
-
-  function initClient() {
-    // Retrieve the discovery document for version 3 of Google Drive API.
-    // In practice, your app can retrieve one or more discovery documents.
-    var discoveryUrl = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-
-    // Initialize the gapi.client object, which app uses to make API requests.
-    // Get API key and client ID from API Console.
-    // 'scope' field specifies space-delimited list of access scopes.
-    gapi.client.init({
-        'apiKey': 'DwaDGHou5ghXrJ0EitwnIQWu',
-        'clientId': '1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com',
-        'scope': 'https://www.googleapis.com/auth/drive'
-    }).then(function () {
-        GoogleAuth = gapi.auth2.getAuthInstance();
-       
-
-      // Listen for sign-in state changes.
-        GoogleAuth.isSignedIn.listen(updateSigninStatus);
-         $.ajax({
-            type: 'POST',
-             url: "../TestRoby/btnAuthorize_Click",
-             data: JSON.stringify(GoogleAuth),
-            beforeSend: function () {
-            }
-        }).done(function (data) {
-            var data1 = data;
-        });
-
-      // Handle initial sign-in state. (Determine if user is already signed in.)
-      var user = GoogleAuth.currentUser.get();
-      setSigninStatus();
-
-      // Call handleAuthClick function when user clicks on
-      //      "Sign In/Authorize" button.
-      $('#sign-in-or-out-button').click(function() {
-        handleAuthClick();
-      });
-      $('#revoke-access-button').click(function() {
-        revokeAccess();
-      });
-    });
-  }
-
-  function handleAuthClick() {
-    if (GoogleAuth.isSignedIn.get()) {
-      // User is authorized and has clicked 'Sign out' button.
-      GoogleAuth.signOut();
-    } else {
-      // User is not signed in. Start Google auth flow.
-      GoogleAuth.signIn();
-    }
-  }
-
-  function revokeAccess() {
-    GoogleAuth.disconnect();
-  }
-
-  function setSigninStatus(isSignedIn) {
-    var user = GoogleAuth.currentUser.get();
-    var isAuthorized = user.hasGrantedScopes(SCOPE);
-    if (isAuthorized) {
-      $('#sign-in-or-out-button').html('Sign out');
-      $('#revoke-access-button').css('display', 'inline-block');
-      $('#auth-status').html('You are currently signed in and have granted ' +
-          'access to this app.');
-    } else {
-      $('#sign-in-or-out-button').html('Sign In/Authorize');
-      $('#revoke-access-button').css('display', 'none');
-      $('#auth-status').html('You have not authorized this app or you are ' +
-          'signed out.');
-    }
-  }
-
-  function updateSigninStatus(isSignedIn) {
-    setSigninStatus();
-  }
+﻿<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
 </script>
+<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
+    function start() {
+        gapi.load('auth2', function () {
+            
+        });
+        auth2.grantOfflineAccess().then(signInCallback);
+    }   
+</script>
+<button id="signinButton">Sign in with Google</button>
+<script>
+     $('#signinButton').on("click", function () {
+        // signInCallback defined in step 6.
+         auth2 = gapi.auth2.init({
+             client_id: '1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com',
+             scope: 'https://www.googleapis.com/auth/drive',
+                // Scopes to request in addition to 'profile' and 'email'
+                //scope: 'additional_scope'
+            });
+        auth2.grantOfflineAccess().then(signInCallback);
+    }.bind(this));
+    function signInCallback(authResult) {
+        if (authResult['code']) {
+            let ttt = authResult['code'];
+            // Hide the sign-in button now that the user is authorized, for example:
+            $('#signinButton').attr('style', 'display: none');
 
-<button id="sign-in-or-out-button"
-        style="margin-left: 25px">
-    Sign In/Authorize
-</button>
-<button id="revoke-access-button"
-        style="display: none; margin-left: 25px">
-    Revoke access
-</button>
-
-<div id="auth-status" style="display: inline; padding-left: 25px"></div>
-<hr>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+            // Send the code to the server
+            $.ajax({
+                type: 'POST',
+                url: "../TestRoby/storeauthcode",
+                data: { data12: ttt },                
+            });
+        } else {
+            // There was an error.
+        }
+    }
+</script>
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script async defer src="https://apis.google.com/js/api.js"
         onload="this.onload=function(){};handleClientLoad()"
         onreadystatechange="if (this.readyState === 'complete') this.onload()">
-</script>
+</script>*@

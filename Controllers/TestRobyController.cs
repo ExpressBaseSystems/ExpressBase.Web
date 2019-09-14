@@ -108,7 +108,7 @@ namespace ExpressBase.Web.Controllers
 
 
                 Console.WriteLine("Fetching token for code: _" + code + "_");
-                var r = flow.ExchangeCodeForTokenAsync("user", code, GoogleAuthConsts.AuthorizationUrl, CancellationToken.None).Result;
+                var r = flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None).Result;
                 Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
             }
             catch(Exception e)

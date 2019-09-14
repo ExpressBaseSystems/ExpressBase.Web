@@ -62,7 +62,8 @@ namespace ExpressBase.Web.Controllers
             GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreInternalRequest {
                 WhichConsole = ViewBag.wc
             });
-            ViewBag.StoreApps = resp.Apps;
+            ViewBag.PrivateApps = resp.Apps;
+            ViewBag.PublicApps = resp.PublicApps;
             return View();
         }
         public EbObject GetObjfromDB(string _refid)
@@ -136,6 +137,21 @@ namespace ExpressBase.Web.Controllers
             EbObjectObjListAllVerResponse resultlist = ServiceClient.Get(new EbAllObjNVerRequest { ObjectIds = ids });
             ViewBag.objlist = resultlist.Data;
             ViewBag.appid = AppId;
+            return View();
+        }
+
+        [EbBreadCrumbFilter("Store/Import To Solution", new string[] { "/Store" })]
+        [HttpGet("Import/ImportToSln")]
+        public IActionResult ImportToSolution(int appid)
+        {
+            AppAndsolutionInfoResponse result = this.ServiceClient.Get(new AppAndsolutionInfoRequest
+            {
+                AppId = appid,
+                WhichConsole = ViewBag.wc
+            });
+            ViewBag.Solutions = result.Solutions;
+            ViewBag.AppData = result.AppData;
+            ViewBag.AppId = appid;
             return View();
         }
     }

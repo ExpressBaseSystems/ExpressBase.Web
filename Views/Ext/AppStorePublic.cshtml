@@ -7,7 +7,6 @@
     <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.extended.css" asp-append-version="true" />
 }
 @Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetHeader/" + ViewBag.Env))
-
 <section class="slider eb-banner">
     <div class="container">
         <div class="row">
@@ -55,16 +54,6 @@
 
 
                         <div class="apPtiLe w-100">
-                            @{
-                                if (applist[i].Cost == 0)
-                                {
-                                    @*<div class="apptile-priceplan free">FREE</div>*@
-                                }
-                                else
-                                {
-                                    @*<div class="apptile-priceplan paid">$ @applist[i].Cost</div>*@
-                                }
-                            }
                             <div class="apTileInner">
                                 <div href="/AppInfo/@applist[i].Id" class="apTileInner-bdy">
                                     <div class="col1">
@@ -124,8 +113,8 @@
                                         }
                                     </div>
                                     <div class="ebapptile-ftr-btncont">
-                                        <a class="btn-mrdetail" href="">More Details</a>@*/AppInfo/@applist[i].Id*@
-                                        <a class="btn-Apstr btn eb_btnblue installbtn" href="../ImportExport/Import?Id=@(applist[i].Id)">Install</a>
+                                        <a class="btn-mrdetail" href="/AppInfo/@applist[i].Id">More Details</a>@*/AppInfo/@applist[i].Id*@
+                                        <a class="btn-Apstr btn eb_btnblue installbtn" href="/Ext/InstallFromStore?appid=@(applist[i].Id)">Install</a>
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +128,7 @@
 @Html.Raw(new System.Net.WebClient().DownloadString("https://expressbase.com/GetFooter/" + ViewBag.Env))
 <!-- Load Facebook SDK for JavaScript -->
 <div id="fb-root"></div>
-<!-- Your customer chat code -->
+<!-- Your customer chat code /pageid is facebook -->
 <div class="fb-customerchat"
      attribution=setup_tool
      page_id="1616632595309068">
@@ -154,7 +143,6 @@
                 version: 'v4.0'
             });
         };
-
         (function (d, s, id) {
             var js, fjs = d.getElementsByTagName(s)[0];
             if (d.getElementById(id)) return;

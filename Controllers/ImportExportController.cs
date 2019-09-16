@@ -140,7 +140,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Id = _appid,
                     IsDemoApp = false,
-                    SolutionId = _sid
+                    SelectedSolutionId = _sid,
                 });
             }
             else

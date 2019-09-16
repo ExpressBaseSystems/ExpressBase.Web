@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [EbBreadCrumbFilter("Applications/", "AppName")]
+        [EbBreadCrumbFilter("Applications/", "AppName",new string[] { "/MyApplications" })]
         [HttpGet]
         public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {

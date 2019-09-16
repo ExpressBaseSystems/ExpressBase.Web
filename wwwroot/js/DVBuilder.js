@@ -1171,7 +1171,7 @@ class DvBuilder {
         let visibleobjects = [];
         $.each(elemnts, function (i, item) {
             let name = $(item).attr("eb-name");
-            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; });
+            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name;});
             visibleobjects.push(obj[0]);
         }.bind(this));
 

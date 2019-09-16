@@ -22,6 +22,7 @@ using WebApplication1.Pages;
 using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
 using System.Threading.Tasks;
+using Google.Apis.Auth.OAuth2.Requests;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -85,7 +86,7 @@ namespace ExpressBase.Web.Controllers
             return View("test");
         }
         [HttpPost]
-        public void storeauthcode(string data12)
+        public async Task storeauthcodeAsync(string data12)
         {
             try
             {
@@ -98,18 +99,18 @@ namespace ExpressBase.Web.Controllers
                     },
                     Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
-                //var token = new TokenResponse { RefreshToken = data12 };
-                //var credential = new UserCredential(new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init), "", token);
-
                 var flow = new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init);
-                var url = flow.CreateAuthorizationCodeRequest(GoogleAuthConsts.InstalledAppRedirectUri).Build().AbsoluteUri;
+                var url = flow.CreateAuthorizationCodeRequest("https://myaccount.eb-test.xyz/");
 
-                var code = "4/rAFuHLQd2ZXcJcazQPl0E8HPfsKzf8hXVYW2tQN8AsL30a1x4xpk-Vw2DEL0ZCCKEU7oIxR5_D8VpYqYXhvkabU";
+                var code = data12;
 
 
                 Console.WriteLine("Fetching token for code: _" + code + "_");
-                var r = flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None).Result;
+
+
+             var r = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz/", CancellationToken.None);
                 Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
+                //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(t));
             }
             catch(Exception e)
             {

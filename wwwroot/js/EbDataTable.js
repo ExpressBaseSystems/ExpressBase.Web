@@ -1670,6 +1670,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
             if (!visibleChanges)
                 colobj.bVisible = true;
+            if (colobj.name === "id")
+                colobj.bVisible = false;
         }.bind(this));
 
     }

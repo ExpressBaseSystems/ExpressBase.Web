@@ -142,12 +142,12 @@ namespace ExpressBase.Web.Controllers
                     IsDemoApp = false,
                     SelectedSolutionId = _sid,
                 });
+                return true;
             }
             else
             {
                 return false;
             }
-            return true;
         }
 
         public IActionResult ExportOSE(string ids, int AppId)

@@ -382,7 +382,7 @@
         $.ajax({
             type: "POST",
             url: "../WebForm/GetLocationConfig",
-            data: { },
+            data: {},
             success: function (ctrl, configObj) {
                 ctrl._locationConfig = JSON.parse(configObj);
                 $.each(ctrl._locationConfig, function (i, config) {
@@ -456,7 +456,7 @@
             });
             return false;
         }
-        
+
         if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ProvisionLocation" && this.ProvisionLocationCtrl) {
             this.EbAlert.clearAlert("mngLocCtrl");
             this.EbAlert.alert({
@@ -576,11 +576,18 @@
             this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
         }
         if (ctrlType === "DataGrid") {
-            ebsid = $e.closest("th").attr("ebsid");
+            if ($e.closest("th").length === 1)
+                ebsid = $e.closest("th").attr("ebsid");// for TH label
+            else
+                ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");// for DG label
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
             let ColMeta = AllMetas["Eb" + ctrl.ObjType];
             ctrl["Title"] = val;
-            this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);
+
+            if ($e.closest("th").length === 1)
+                this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);// for TH label
+            else
+                this.PGobj.changePropertyValue("Label", val);// for DG label
         }
         else {
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);

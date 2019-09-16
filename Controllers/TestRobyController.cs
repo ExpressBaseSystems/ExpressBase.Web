@@ -23,6 +23,9 @@ using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Auth.OAuth2.Responses;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2.Requests;
+using System.Text;
+using System.Net;
+using Newtonsoft.Json;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -85,6 +88,7 @@ namespace ExpressBase.Web.Controllers
             //m.OnGet();
             return View("test");
         }
+        
         [HttpPost]
         public async Task storeauthcodeAsync(string data12)
         {
@@ -100,7 +104,7 @@ namespace ExpressBase.Web.Controllers
                     Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
                 var flow = new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init);
-                var url = flow.CreateAuthorizationCodeRequest("https://myaccount.eb-test.xyz/");
+                //var url = flow.CreateAuthorizationCodeRequest("https://myaccount.eb-test.xyz/");
 
                 var code = data12;
 
@@ -108,11 +112,11 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Fetching token for code: _" + code + "_");
 
 
-             var r = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz/", CancellationToken.None);
+                var r = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
                 Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
                 //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(t));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("exception inside storeauth :" + e);
             }
@@ -122,5 +126,7 @@ namespace ExpressBase.Web.Controllers
             //    var refreshResult = credential.RefreshTokenAsync(CancellationToken.None).Result;
             //}
         }
+
+
     }
 }

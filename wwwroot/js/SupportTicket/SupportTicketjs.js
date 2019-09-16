@@ -71,10 +71,12 @@
                 processData: false,
                 contentType: false,
                 success: function () {
-
+                    location.href = '/SupportTicket/bugsupport';
+                    alert("page reload");
                 }
             });
-            location.href = '/SupportTicket/bugsupport';
+
+            
         }
     }
 
@@ -455,7 +457,7 @@ var EditTicket = function () {
             $(files).each(function (i, file) {
 
                 filearray.push(file);
-                alert(filearray.length);
+                //alert(filearray.length);
                 // Add it to data transfer
                 dataTransfer.items.add(file);
 

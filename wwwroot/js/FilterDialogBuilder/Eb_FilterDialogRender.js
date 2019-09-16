@@ -97,7 +97,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         JsonToEbControls(this.FormObj);// here re-assign objectcoll with functions
         $.each(this.FormObj.Controls.$values, function (k, Obj) {
             let opt = {};
-            if (Obj.ObjType === "PowerSelect")
+            if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                 opt.getAllCtrlValuesFn = this.getFormVals;
             else if (Obj.ObjType === "Date") {
                 opt.formObject = this.formObject;

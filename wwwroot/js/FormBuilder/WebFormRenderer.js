@@ -69,6 +69,9 @@ const WebFormRender = function (option) {
         }.bind(this));
         this.FRC.setFormObjHelperfns();
         this.setFormObjectMode();
+        //if (this.Mode.isNew)
+        //    this.FRC.setValueExpValsNC(this.flatControls); // issue with powerselect 'initializer' not set on load
+
         this.FRC.setUpdateDependentControlsFn();
 
 
@@ -93,7 +96,7 @@ const WebFormRender = function (option) {
     this.initNCs = function () {
         $.each(this.flatControls, function (k, Obj) {
             let opt = {};
-            if (Obj.ObjType === "PowerSelect")
+            if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
             else if (Obj.ObjType === "FileUploader")
                 opt.FormDataExtdObj = this.FormDataExtdObj;
@@ -205,7 +208,7 @@ const WebFormRender = function (option) {
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             ctrl.__eb_EditMode_val = val;
-            if (ctrl.ObjType === "PowerSelect") {
+            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
                 //ctrl.setDisplayMember = this.j;
                 ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
             }

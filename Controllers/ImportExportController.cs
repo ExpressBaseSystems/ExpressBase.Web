@@ -16,6 +16,7 @@ using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
@@ -59,7 +60,8 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("AppStore")]
         public IActionResult AppStore()
         {
-            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreInternalRequest {
+            GetAllFromAppstoreResponse resp = ServiceClient.Get(new GetAllFromAppStoreInternalRequest
+            {
                 WhichConsole = ViewBag.wc
             });
             ViewBag.PrivateApps = resp.Apps;
@@ -126,10 +128,26 @@ namespace ExpressBase.Web.Controllers
             return RedirectToAction("AppStore");
         }
 
-        public IActionResult Import(int Id)
+        [HttpPost]
+        public bool Import(int i)
         {
-            ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationMqRequest { Id = Id, IsDemoApp = false });
-            return RedirectToAction("DevDashboard", "Dev");
+            IFormCollection req = this.HttpContext.Request.Form;
+            string _sid = req["solution_url"];
+            int _appid = Convert.ToInt32(req["appid"]);
+            if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, _sid)) != 0)
+            {
+                ImportApplicationResponse res = ServiceClient.Get<ImportApplicationResponse>(new ImportApplicationMqRequest
+                {
+                    Id = _appid,
+                    IsDemoApp = false,
+                    SelectedSolutionId = _sid,
+                });
+            }
+            else
+            {
+                return false;
+            }
+            return true;
         }
 
         public IActionResult ExportOSE(string ids, int AppId)

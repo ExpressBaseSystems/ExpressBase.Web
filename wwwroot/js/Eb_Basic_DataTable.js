@@ -223,7 +223,7 @@ var EbBasicDataTable = function (Option) {
         var _array = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this));
         if (_array.length > 0)
             this.hiddenIndex = _array[0].data;
-    }
+    };
 
     this.createTblObject = function () {
         var url = string.empty;

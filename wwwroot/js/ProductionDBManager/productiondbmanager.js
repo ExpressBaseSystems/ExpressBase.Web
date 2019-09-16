@@ -7,15 +7,16 @@
     }
 
     this.function2update = function (e) {
-        var $this = $('.change_function');
-        $this.button('loading');
         let key = $(e.target).siblings("input").val();
+        var $this = $(`#${key}subchange`);
+        $this.button('loading');
+        
         let val = dbdict[key];
         let db = $('#dbname').val();
         $.ajax({
             type: "POST",
             url: "../ProductionDBManager/UpdateDBFunctionByDB",
-            data: { data: val, db_name: db },
+            data: { data: val, db_name: key, solution: key },
             success: function (data) {
                 $this.button('reset').hide();
                 $(`#uptodate`).show();
@@ -28,9 +29,9 @@
     };
 
     this.ViewChanges = function (e) {
-        var $this = $('.change_integrity');
-        $this.button('loading');
         let val = $(e.target).siblings("input").val();
+        var $this = $(`#i_chk_${val}`);
+        $this.button('loading');
         $.ajax({
             type: "POST",
             url: "../ProductionDBManager/CheckChangesInFunction",
@@ -42,7 +43,14 @@
     this.changeajaxsuccess = function ($this, val, data) {
         var html = ``;
         $this.button('reset').hide();
-        dbdict = data;
+        if (jQuery.isEmptyObject(dbdict)) {
+            dbdict = data;
+        }
+        else {
+            if (!(val in dbdict)) {
+                dbdict[val] = data[val];
+            }
+        }
         for (key in data) {
             if (data[key].length > 0) {
                 html = html + `
@@ -74,8 +82,11 @@
                 $.each(data[key], function (i, vals) {
                     html = html + `<div class="row row-padding div-row-contents">
                                                         <div class="col-md-8">
-                                                            <label class="table-content-font">${vals['functionHeader']}</label>
-                                                        </div>
+                                                            <label class="table-content-font">${vals['functionHeader']}</label>`;
+                    if (vals['newItem'] == true) {
+                        html = html + `<label class="table-content-font" style="color: #4987fb;">New</label>`;
+                    }
+                                                     html=html+`   </div>
                                                         <div class="col-md-4">
                                                             <label class="table-content-font">${vals['filePath']}</label>
                                                         </div>
@@ -91,10 +102,24 @@
         $(`#${val}`).append(html);
     }
 
+    this.updateInfraWithSqlScripts = function () {
+        var $this = $(`#updateinfra`);
+        $this.button('loading');
+        $.ajax({
+            type: "POST",
+            url: "../ProductionDBManager/UpdateInfraWithSqlScripts",
+            success: function () {
+                $this.button('reset');
+                alert('Success');
+            },
+        });
+    }
+
     this.init = function () {
         $(".div-body").on("click", '.file_content_toggle', this.changesToggle.bind(this));
         $(".div-body").on("click", '.change_function', this.function2update.bind(this));
         $('.change_integrity').on('click', this.ViewChanges.bind(this));
+        $('#updateinfra').off('click').on('click', this.updateInfraWithSqlScripts.bind(this));
     };
     this.init();
 }

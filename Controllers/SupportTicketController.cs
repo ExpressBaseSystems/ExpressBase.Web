@@ -59,13 +59,16 @@ namespace ExpressBase.Web.Controllers
 						sd.Filecollection1.Add(imageDataURL);
 					}
 					ViewBag.ImageData = sd.Filecollection1;
+					ViewBag.ImageData1 = JsonConvert.SerializeObject(sd.Filecollection1);
 				}
 
 
 			}
+			//byte[] imgs1= sd.supporttkt[0].Filecollection[0];
 
 
 			ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
+			//return File(imgs1, "image/jpeg");
 			return View();
 		}
 

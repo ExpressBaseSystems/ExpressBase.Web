@@ -99,6 +99,9 @@
     <div class="row">
         <div class="col-md-12">
             <div class="div-body">
+                <div style="text-align:right">
+                    <button id="updateinfra" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Updating <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> "> Update Infra with SQL Script</button>
+                </div>
                 <div class="row div-label">
                     <label class="headings">CHANGES</label>
                 </div>
@@ -151,7 +154,7 @@
                                 <div class="col-md-2 align-center">
                                     <input type="hidden" value="@ViewBag.ChangesLog[i].Solution" id="solu_id" name="solu_id" />
                                     <label class="sub-headings row-padding" id="uptodate" style="display:none">Up to Date</label>
-                                    <button id="i_chk" name="i_chk" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
+                                    <button id="i_chk_@ViewBag.ChangesLog[i].Solution" name="i_chk_@ViewBag.ChangesLog[i].Solution" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
                                 </div>
                             </div>
                             <div id="@ViewBag.ChangesLog[i].Solution">

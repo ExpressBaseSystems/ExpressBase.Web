@@ -71,29 +71,7 @@ namespace ExpressBase.Web.Controllers
         
         public IActionResult Test()
         {
-            var fileMetadata = new File()
-            {
-                Name = "photo.jpg"
-            };
-            FilesResource.CreateMediaUpload request;
-            string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            using (Stream stream = new FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
-                                    FileMode.Open,FileAccess.Read))
-            {
-                byte[] buf = new byte[100];
-                var xx = stream.Read(buf, 0, 100);
-
-                request = service.Files.Create(
-                    fileMetadata, stream, "image/jpeg");
-                request.Fields = "id";
-                request.Upload();
-            }
-            Console.WriteLine("done");
-            var file = request.ResponseBody;
-            Console.WriteLine("File ID: " + file.Id);
-            //IndexModel m = new IndexModel();
-            //m.OnGet();
-            return View("test");
+           return View("test");
         }
         public class OAuth2AccessTokenReponse
         {

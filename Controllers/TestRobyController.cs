@@ -11,6 +11,7 @@ using System.Threading;
 using Google.Apis.Auth.OAuth2.Flows;
 using System.Threading.Tasks;
 using File = Google.Apis.Drive.v3.Data.File;
+using Google.Apis.Auth.OAuth2.Responses;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -116,10 +117,9 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Fetching token for code: _" + code + "_");
 
 
-                var r = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
-                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
-                string result = Newtonsoft.Json.JsonConvert.SerializeObject(r);
-                GoogleCredential credential = GoogleCredential.FromJson(result);
+                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
+                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+                GoogleCredential credential = GoogleCredential.FromAccessToken(result.AccessToken);
                 Console.WriteLine("credentials created");
                 var service = new DriveService(new BaseClientService.Initializer()
                 {

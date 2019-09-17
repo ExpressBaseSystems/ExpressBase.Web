@@ -268,6 +268,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     dsobj.AfterRedisGet(Redis);
                     ViewBag.dsObj = dsobj;
+
                 }
             }
 

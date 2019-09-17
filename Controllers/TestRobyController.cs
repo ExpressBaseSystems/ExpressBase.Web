@@ -1,31 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using ExpressBase.Common;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.Structures;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Scheduler.Jobs;
 using ExpressBase.Web.BaseControllers;
-using System.IO;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
-using ServiceStack.Stripe;
-using ServiceStack.Stripe.Types;
 using System.Threading;
-using WebApplication1.Pages;
 using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Auth.OAuth2.Responses;
-using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2.Requests;
-using System.Text;
-using System.Net;
-using Newtonsoft.Json;
+using System.Threading.Tasks
+using File = Google.Apis.Drive.v3.Data.File;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -88,7 +73,27 @@ namespace ExpressBase.Web.Controllers
             //m.OnGet();
             return View("test");
         }
-        
+        public class OAuth2AccessTokenReponse
+        {
+            public string AccessToken;
+            public int ExpiresInSeconds;
+            public string TokenType;
+        }
+        public static string refreshAccessToken()
+        {
+            using (System.Net.WebClient client = new System.Net.WebClient())
+            {
+                byte[] response = client.UploadValues("https://accounts.google.com/o/oauth2/token", new System.Collections.Specialized.NameValueCollection(){
+                {"client_id", ClientId},
+                {"client_secret", ClientSecret},
+                {"refresh_token", "XXXXX"},
+                {"grant_type", "refresh_token"}
+            });
+                string sresponse = System.Text.Encoding.Default.GetString(response);
+                OAuth2AccessTokenReponse o = (OAuth2AccessTokenReponse)Newtonsoft.Json.JsonConvert.DeserializeObject(sresponse, typeof(OAuth2AccessTokenReponse));
+                return o.AccessToken;
+            }
+        }
         [HttpPost]
         public async Task storeauthcodeAsync(string data12)
         {
@@ -104,7 +109,6 @@ namespace ExpressBase.Web.Controllers
                     Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
                 var flow = new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init);
-                //var url = flow.CreateAuthorizationCodeRequest("https://myaccount.eb-test.xyz/");
 
                 var code = data12;
 
@@ -114,7 +118,31 @@ namespace ExpressBase.Web.Controllers
 
                 var r = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
                 Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
-                //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(t));
+                string result = Newtonsoft.Json.JsonConvert.SerializeObject(r);
+                GoogleCredential credential = GoogleCredential.FromJson(result);
+                Console.WriteLine("credentials created");
+                var service = new DriveService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = ApplicationName,
+                });
+                Console.WriteLine("service created");
+                var fileMetadata = new File()
+                {
+                    Name = "photo.jpg"
+                };
+                FilesResource.CreateMediaUpload request;
+                using (var stream = new System.IO.FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
+                                        System.IO.FileMode.Open))
+                {
+                    request = service.Files.Create(
+                        fileMetadata, stream, "image/jpeg");
+                    request.Fields = "id";
+                    request.Upload();
+                }
+                Console.WriteLine("done");
+                var file = request.ResponseBody;
+                Console.WriteLine("File ID: " + file.Id);
             }
             catch (Exception e)
             {

@@ -38,6 +38,13 @@ namespace ExpressBase.Web.Filters
             this.Urls = urls;
         }
 
+        public EbBreadCrumbFilter(string param,string key, string[] urls)
+        {
+            this.Param = param;
+            this.Key = key;
+            this.Urls = urls;
+        }
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
             var _context = context.HttpContext;

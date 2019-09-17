@@ -1,7 +1,7 @@
 ﻿var FontEditor = function (params, fontEditobj) {
     this.ContainerId = params.ContainerId;
     this.ToggleId = params.ToggleId;
-    this.fontObject = $.isEmptyObject(fontEditobj) ? { Font: "Times-Roman", Size: 14, Style: 0, color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj;
+    this.fontObject = $.isEmptyObject(fontEditobj) ? { FontName: "Times-Roman", Size: 14, Style: 0, color: "#333333", Caps: false, Strikethrough: false, Underline: false } : fontEditobj;
     this.ItextFonts = [
         { Name: 'Arapey', Value: 'Arapey' },
         { Name: 'Arvo', Value: 'Arvo' },
@@ -104,7 +104,7 @@
         //        .append(
         //        $("<option tabindex='1' value='" + font.family + "'>" + font.family + "</option>"));
         //}); 
-        $(`[value='${this.fontObject.Font}']`).attr('selected', true);
+        $(`[value='${this.fontObject.FontName}']`).attr('selected', true);
     }
 
     this.loadFontSize = function () {
@@ -121,7 +121,7 @@
         fontName = $(`[value="${fontVal}"`).text();
         this.loadCSS('https://fonts.googleapis.com/css?family=' + fontVal);
         $('#font-preview').css('font-family', fontVal);
-        this.fontObject.Font = fontVal;
+        this.fontObject.FontName = fontVal;
     }
 
     this.loadCSS = function (href) {
@@ -222,7 +222,7 @@
 
     this.setDefault = function () {
         if (!$.isEmptyObject(this.fontObject)) {
-            $('#googleFont').children("option[value='" + this.fontObject.Font + "']").change().focus();
+            $('#googleFont').children("option[value='" + this.fontObject.FontName + "']").change().focus();
             $('#fontStyle').children("option[value='" + this.fontStyle[this.fontObject.Style] + "']").change().focus();
             $('#fontSize').children("option[value='" + this.fontObject.Size + "']").change().focus();
             $('#fontColor').val(this.fontObject.color).change();

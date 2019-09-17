@@ -33,14 +33,14 @@
 
 <div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
-        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
-            <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12 pd-0">
-                <h4 class="mr-t-0 mr-b-0">Import to Solution</h4>
-            </div>
-            <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 pd-0 s-dash-btnwraper">
+        @*<div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+                <div class="col-md-7 col-lg-7 col-sm-6 col-xs-12 pd-0">
+                    <h4 class="mr-t-0 mr-b-0">Import to Solution</h4>
+                </div>
+                <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 pd-0 s-dash-btnwraper">
 
-            </div>
-        </div>
+                </div>
+            </div>*@
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
             <div class="eb-im2sln-wrpr">
                 <h3 style="font-weight:400;">@appdata.Title</h3>
@@ -49,7 +49,7 @@
                     @{
                         string[] tgs = appdata.Tags.Split(",");
                         foreach (string t in tgs)
-                        { 
+                        {
                             <div class="tgs">@t</div>
                         }
                     }
@@ -57,7 +57,7 @@
                 <div class="eb-im2sln-sid col-md-6 pd-0">
                     <div class="form-group">
                         <label>Choose Solution</label>
-                        <select class="form-control">
+                        <select class="form-control" name="WhichSolution">
                             @{
                                 foreach (var sol in ViewBag.Solutions)
                                 {
@@ -66,6 +66,14 @@
                             }
                         </select>
                     </div>
+                    @{
+                        if (appdata.IsFree == "T")
+                        {
+                            <div class="eb-im2sln-footer">
+                                <button class="ebbtn eb_btnblue pull-right" id="import_btn">Import</button>
+                            </div>
+                        }
+                    }
                 </div>
             </div>
         </div>
@@ -76,6 +84,40 @@
     <script>
         $(document).ready(function () {
             ebcontext.header.setName("Import to solution");
+            var po = {
+                Message: "Importing application...",
+                Html: function ($selector) {
+                    $selector.html(`<span>Importing application...</span><span class="fa fa-spinner fa-spin" style="margin-left:30px;"></span>`);
+                },
+                ButtonStyle: {
+                    Text: "Close",
+                    Color: "white",
+                    Background: "#508bf9",
+                    Callback: function () {
+                        location.href = "/MySolutions";
+                    }
+                }
+            };
+
+            $("#import_btn").on("click", function () {
+                let sln = $("select[name='WhichSolution']").val();
+                $.ajax({
+                    url: "/ImportExport/Import",
+                    type:"POST",
+                    data: {
+                        solution_url: sln,
+                        appid:'@ViewBag.AppId'
+                    },
+                    beforeSend: function (xhr) {
+                        self.EbPopBox("show", po);
+                    },
+                    success: function (data) {
+                        if (data) {
+                            self.EbPopBox("show", { Message: "Import complted :)" });
+                        }
+                    }
+                })
+            });
         });
     </script>
 }

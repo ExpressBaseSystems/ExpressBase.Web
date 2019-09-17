@@ -11,6 +11,8 @@ using System.Threading;
 using Google.Apis.Auth.OAuth2.Flows;
 using System.Threading.Tasks;
 using File = Google.Apis.Drive.v3.Data.File;
+using Google.Apis.Auth.OAuth2.Responses;
+using System.IO;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -69,9 +71,7 @@ namespace ExpressBase.Web.Controllers
         
         public IActionResult Test()
         {
-            //IndexModel m = new IndexModel();
-            //m.OnGet();
-            return View("test");
+           return View("test");
         }
         public class OAuth2AccessTokenReponse
         {
@@ -116,10 +116,9 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Fetching token for code: _" + code + "_");
 
 
-                var r = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
-                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
-                string result = Newtonsoft.Json.JsonConvert.SerializeObject(r);
-                GoogleCredential credential = GoogleCredential.FromJson(result);
+                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
+                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+                GoogleCredential credential = GoogleCredential.FromAccessToken(result.AccessToken);
                 Console.WriteLine("credentials created");
                 var service = new DriveService(new BaseClientService.Initializer()
                 {
@@ -132,8 +131,10 @@ namespace ExpressBase.Web.Controllers
                     Name = "photo.jpg"
                 };
                 FilesResource.CreateMediaUpload request;
-                using (var stream = new System.IO.FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
-                                        System.IO.FileMode.Open))
+                string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                Console.WriteLine("dir : " + dir);
+                using (Stream stream = new FileStream("../430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
+                                        FileMode.Open, FileAccess.Read))
                 {
                     request = service.Files.Create(
                         fileMetadata, stream, "image/jpeg");
@@ -147,6 +148,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception e)
             {
                 Console.WriteLine("exception inside storeauth :" + e);
+                Console.WriteLine(" StackTrace :" + e.StackTrace);
             }
 
             //if (credential.Token.IsExpired(Google.Apis.Util.SystemClock.Default))

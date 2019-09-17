@@ -12,6 +12,7 @@ using Google.Apis.Auth.OAuth2.Flows;
 using System.Threading.Tasks;
 using File = Google.Apis.Drive.v3.Data.File;
 using Google.Apis.Auth.OAuth2.Responses;
+using System.IO;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -132,8 +133,8 @@ namespace ExpressBase.Web.Controllers
                     Name = "photo.jpg"
                 };
                 FilesResource.CreateMediaUpload request;
-                using (var stream = new System.IO.FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
-                                        System.IO.FileMode.Open))
+                using (Stream stream = new FileStream("/430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
+                                        FileMode.Open))
                 {
                     request = service.Files.Create(
                         fileMetadata, stream, "image/jpeg");

@@ -31,13 +31,7 @@
     background-color: rgba(76, 117, 137, 0.51);
 }
 
-.supporttkt .pdleft0 {
-    padding-left: 0px;
-}
 
-.supporttkt .pdright0 {
-    padding-right: 0px;
-}
 
 .supporttkt .fw500 {
     font-weight: 500;
@@ -70,8 +64,16 @@
 /*common css form edit command support page css*/
 
 
+.supporttkt .pdleft0, .edtsprt .pdleft0 {
+    padding-left: 0px;
+}
+
+.supporttkt .pdright0, .edtsprt .pdright0 {
+    padding-right: 0px;
+}
+
 .supporttkt .scrl, .edtsprt .scrl {
-    overflow: scroll;
+    overflow: auto;
 }
 
 .supporttkt .stprsiz, .edtsprt .stprsiz {

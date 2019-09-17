@@ -60,7 +60,6 @@
                 contentType: false,
                 success: function () {
                     location.href = '/SupportTicket/bugsupport';
-                    alert("page reload");
                 }
             });
 
@@ -268,7 +267,7 @@ var EditTicket = function () {
                 $input = $('<input>', {
                     type: 'file',
                     id: plugin.settings.imagesInputName,
-                    accept: 'image/*',
+                    accept: 'image/jpeg,image/png,image/jpg,application/pdf',
                     name: plugin.settings.imagesInputName + '[]',
                     multiple: ''
                 }).appendTo($container),
@@ -431,7 +430,7 @@ var EditTicket = function () {
 
             // Get the files
             let files = e.target.files || e.originalEvent.dataTransfer.files;
-
+           
 
             // Makes the upload
             setPreview($container, files);
@@ -450,14 +449,28 @@ var EditTicket = function () {
 
             // Run through the files
             $(files).each(function (i, file) {
+                if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
+                    if ((files[i].size) < 2097152) {
 
-                filearray.push(file);
-                //alert(filearray.length);
-                // Add it to data transfer
-                dataTransfer.items.add(file);
+                        //add it to file array
+                        filearray.push(file);
 
-                // Set preview
-                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                        // Add it to data transfer
+                        dataTransfer.items.add(file);
+
+                        // Set preview
+                        $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                    }
+                    else {
+                        EbMessage("show", { Message: "maximum file size is 2MB", Background: 'red' });
+                    }
+                }
+                else {
+                    EbMessage("show", { Message: "Only image and pdf are allowed", Background: 'red' });
+                }
+               
+
+               
 
             });
 

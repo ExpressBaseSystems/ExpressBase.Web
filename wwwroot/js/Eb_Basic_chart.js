@@ -50,13 +50,17 @@ var EbBasicChart = function (Option) {
 
     this.call2FD = function () {
         $.LoadingOverlay("show");
-        $.ajax({
-            type: "POST",
-            url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, flag: this.PcFlag },
-            success: this.ajaxSucc
-        });
-
+        if (this.EbObject.Columns === null) {
+            $.ajax({
+                type: "POST",
+                url: "../boti/dvView1",
+                data: { dvobj: JSON.stringify(this.EbObject) },
+                success: this.ajaxSucc.bind(this)
+            });
+        }
+        else {
+            this.init();
+        }
     };
 
     this.ajaxSucc = function (text) {
@@ -174,10 +178,10 @@ var EbBasicChart = function (Option) {
                 if (this.type !== "googlemap") {
                     if (this.type !== "pie") {
                         this.piedataFlag = false;
-                        this.dataset.push(new datasetObj(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].color, this.EbObject.LegendColor.$values[k].color, false));
+                        this.dataset.push(new datasetObj(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
                     }
                     else {
-                        this.dataset.push(new datasetObj4Pie(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].color, this.EbObject.LegendColor.$values[k].color, false));
+                        this.dataset.push(new datasetObj4Pie(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
                         this.piedataFlag = true;
                     }
                 }
@@ -373,7 +377,7 @@ var EbBasicChart = function (Option) {
         $("#canvasDiv" + this.tableId).children("iframe").remove();
         $("#myChart" + this.tableId).remove();
         //$("#graphcontainer_tab" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
-        $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
+        $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "' class='chart-div'></canvas>");
 
         if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0)
             this.drawGraph();
@@ -489,7 +493,7 @@ var EbBasicChart = function (Option) {
             }
             else {
                 $("#myChart" + this.tableId).remove();
-                $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "'></canvas>");
+                $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "' class='chart-div'></canvas>");
             }
             console.log(this.EbObject.Xaxis); console.log(this.EbObject.Yaxis);
             $("#X_col_name" + this.tableId + " button[class=close]").off("click").on("click", this.RemoveAndAddToColumns.bind(this));
@@ -561,7 +565,7 @@ var EbBasicChart = function (Option) {
         }
         else {
             $("#myChart" + this.tableId).remove();
-            $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto'></canvas>");
+            $("#canvasDiv" + this.tableId).append("<canvas id='myChart" + this.tableId + "' width='auto' height='auto' class='chart-div'></canvas>");
         }
     };
 

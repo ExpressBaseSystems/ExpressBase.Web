@@ -36,10 +36,15 @@
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
     }
     this.TileOptions = function (e) {
+        var tileid= e.target.parentElement.getAttribute("u-id"); 
         var id = e.target.getAttribute("id");
-        if (id === "i-opt-obj") { $("#propGrid_propGrid .pgCX-Editor-Btn").trigger("click");}
+        if (id === "i-opt-obj")  { 
+        $(".stickBtn").hide();
+        $("#ppt-dash").show(); 
+        $("#propGrid_propGrid .pgCX-Editor-Btn").trigger("click");
+        }
         else if (id === "i-opt-close") {
-            var abc = $(`#${id}`).closest(".grid-stack-item");
+            var abc = $(`#${tileid}`).closest(".grid-stack-item");
             var grid = $('.grid-stack').data('gridstack');
             grid.removeWidget(abc);
            }
@@ -57,10 +62,10 @@
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 $(".grid-stack").append(`<div class="grid-stack-item " data-gs-x=${x} data-gs-y=${y} data-gs-width=${dw} data-gs-height=${dh} id=${tile_id}>
-                    <div class="grid-stack-item-content movable-div" id=${t_id}>
+                    <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex"><i class="fa fa-object-group tile-opt" aria-hidden="true" id="i-opt-obj"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-object-group tile-opt" aria-hidden="true" id="i-opt-obj"></i>
                     <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper"></div>
@@ -86,7 +91,13 @@
             for (let i = 0; i < 2 ; i++) {
                 let tile_id = "t" + i;
                 let t_id = "tile" + i;          
-                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> <div class="grid-stack-item-content" id="${t_id}"> <div class="db-title" name-id="${t_id}"></div> <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
+                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> <div class="grid-stack-item-content" id="${t_id}"> 
+                     <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
+                    <div class="db-title" name-id="${t_id}" style="display:float"></div>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-object-group tile-opt" aria-hidden="true" id="i-opt-obj"></i>
+                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    </div></div>
+                 <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
                 //this.AddNewTile();
                 this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
             }
@@ -102,7 +113,13 @@
         let j = this.NewTileCount;
         let tile_id = "t" + j;
         let t_id = "tile" + j;
-        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}"><div class="db-title" name-id="${t_id}"></div> <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
+        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
+                    <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
+                    <div class="db-title" name-id="${t_id}" style="display:float"></div>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-object-group tile-opt" aria-hidden="true" id="i-opt-obj"></i>
+                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    </div></div>
+                 <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
         this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
     }
   
@@ -136,12 +153,12 @@
             $(`[name-id="${this.CurrentTile}"]`).empty();
             $(`[data-id="${this.CurrentTile}"]`).empty();
             $(`.eb-loader-prcbar`).remove();
-            let refid = newval;
+            this.VisRefid = newval;
             $.ajax(
                 {
                     url: '../DashBoard/DashBoardView',
                     type: 'POST',
-                    data: { refid: refid },
+                    data: { refid:  this.VisRefid },
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
@@ -175,7 +192,7 @@
     this.RemoveTile = function (name, selector, event) {
         var grid = $('.grid-stack').data('gridstack');
         el = selector.$trigger.parent();
-        grid.removeWidget(el);
+           grid.removeWidget(el);
     }
 
    
@@ -195,6 +212,13 @@
             o.IsPaging = false;
             o.showFilterRow = false; 
             var dt = new EbBasicDataTable(o);
+        }
+       else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
+            $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
+            var o = {};
+            o.tableId = "tb1" + id;
+            o.dvObject = obj;
+            var dt = new EbBasicChart(o);
         }
     }
 

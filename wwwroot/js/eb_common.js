@@ -505,6 +505,12 @@ function Test() {
     });
 }
 
+function EbConvertValue(val, type) {
+    if (type === 11)
+        return parseInt(val);
+    return val;
+}
+
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }

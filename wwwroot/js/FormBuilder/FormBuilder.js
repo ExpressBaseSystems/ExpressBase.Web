@@ -48,8 +48,8 @@
         let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
         if (ctrl.ObjType === "Approval")
             this.ApprovalCtrl = null;
-        else if (ctrl.ObjType === "ManageLocation")
-            this.ManageLocationCtrl = null;
+        else if (ctrl.ObjType === "ProvisionLocation")
+            this.ProvisionLocationCtrl = null;
         ControlTile.parent().focus();
         ControlTile.remove();
         this.PGobj.removeFromDD(ebsid);
@@ -324,8 +324,8 @@
                     ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
                     this.ApprovalCtrl = ctrlObj;
                 }
-                else if (type === "ManageLocation") {
-                    this.ManageLocationCtrl = ctrlObj;
+                else if (type === "ProvisionLocation") {
+                    this.ProvisionLocationCtrl = ctrlObj;
                 }
                 else if (type === "SimpleSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
@@ -382,11 +382,11 @@
         $.ajax({
             type: "POST",
             url: "../WebForm/GetLocationConfig",
-            data: { },
+            data: {},
             success: function (ctrl, configObj) {
                 ctrl._locationConfig = JSON.parse(configObj);
                 $.each(ctrl._locationConfig, function (i, config) {
-                    let newo = new EbObjects.MngUsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
+                    let newo = new EbObjects.UsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
                     newo.DisplayName = config.Name;
                     ctrl.Fields.$values.push(newo);
                 });
@@ -456,13 +456,13 @@
             });
             return false;
         }
-        
-        if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ManageLocation" && this.ManageLocationCtrl) {
+
+        if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ProvisionLocation" && this.ProvisionLocationCtrl) {
             this.EbAlert.clearAlert("mngLocCtrl");
             this.EbAlert.alert({
                 id: "mngLocCtrl",
-                head: "Form already contains a manage location control.",
-                body: "You cannot add more than one manage location control into the form",
+                head: "Form already contains a provision location control.",
+                body: "You cannot add more than one provision location control into the form",
                 type: "warning",
                 delay: 3000
             });
@@ -576,11 +576,18 @@
             this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
         }
         if (ctrlType === "DataGrid") {
-            ebsid = $e.closest("th").attr("ebsid");
+            if ($e.closest("th").length === 1)
+                ebsid = $e.closest("th").attr("ebsid");// for TH label
+            else
+                ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");// for DG label
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
             let ColMeta = AllMetas["Eb" + ctrl.ObjType];
             ctrl["Title"] = val;
-            this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);
+
+            if ($e.closest("th").length === 1)
+                this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);// for TH label
+            else
+                this.PGobj.changePropertyValue("Label", val);// for DG label
         }
         else {
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
@@ -678,8 +685,8 @@
                 let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
                 if (ctrl.ObjType === "Approval")
                     this.ApprovalCtrl = null;
-                else if (ctrl.ObjType === "ManageLocation")
-                    this.ManageLocationCtrl = null;
+                else if (ctrl.ObjType === "ProvisionLocation")
+                    this.ProvisionLocationCtrl = null;
                 ControlTile.parent().focus();
                 ControlTile.remove();
                 this.PGobj.removeFromDD(ebsid);
@@ -729,7 +736,7 @@
             this.makeGBsDropable();
         }
         this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
-        this.ManageLocationCtrl = getFlatObjOfType(this.rootContainerObj, "ManageLocation")[0];
+        this.ProvisionLocationCtrl = getFlatObjOfType(this.rootContainerObj, "ProvisionLocation")[0];
 
 
         this.EbAlert = new EbAlert({

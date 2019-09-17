@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Common;
 using ExpressBase.Common.ProductionDBManager;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
@@ -27,26 +28,45 @@ namespace ExpressBase.Web.Controllers
             {
                 SolutionId = solution_id
             });
-            return resp.Changes ;
+            return resp.Changes;
         }
 
-        public Object UpdateDBFunctionByDB(List<Eb_FileChanges> data , string db_name )
+        public Object UpdateDBFunctionByDB(List<Eb_FileChanges> data, string db_name, string solution)
         {
             UpdateDBFunctionByDBResponse resp = this.ServiceClient.Post<UpdateDBFunctionByDBResponse>(new UpdateDBFunctionByDBRequest
             {
                 Changes = data,
-                DBName = db_name
+                DBName = db_name,
+                Solution = solution
             });
             return resp;
         }
 
         public IActionResult DatabaseIntegrityCheck()
         {
-            DBIntegrityCheckResponse resp = this.ServiceClient.Post<DBIntegrityCheckResponse>(new DBIntegrityCheckRequest
-            {
-            });
-            ViewBag.ChangesLog = resp.ChangesLog;
-            return View("ChangesView");
+            if (ViewBag.cid == "admin")
+                if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                {
+                    GetSolutionForIntegrityCheckResponse resp = this.ServiceClient.Post<GetSolutionForIntegrityCheckResponse>(new GetSolutionForIntegrityCheckRequest
+                    {
+                    });
+                    ViewBag.ChangesLog = resp.ChangesLog;
+                    return View("ChangesView");
+                }
+            return Redirect("/StatusCode/401");
+        }
+
+        public bool UpdateInfraWithSqlScripts()
+        {
+            if (ViewBag.cid == "admin")
+                if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                {
+                    UpdateInfraWithSqlScriptsResponse resp = this.ServiceClient.Post<UpdateInfraWithSqlScriptsResponse>(new UpdateInfraWithSqlScriptsRequest
+                    {
+                    });
+                    return true;
+                }
+            return false;
         }
 
     }

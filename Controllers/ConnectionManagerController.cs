@@ -458,7 +458,6 @@ namespace ExpressBase.Web.Controllers
             TestConnectionResponse res = this.ServiceClient.Post<TestConnectionResponse>(new TestConnectionRequest { DataDBConfig = dbcon });
             return res.ConnectionStatus;
         }
-
         //[HttpPost]
         //public bool FilesDbTest()
         //{
@@ -616,17 +615,6 @@ namespace ExpressBase.Web.Controllers
                     IsSSL = (req["IsSSL"] == "on") ? true : false,
                     NickName = req["nickname"],
                     Id = Convert.ToInt32(req["Id"])
-                    //DatabaseName = "ebdbvmqh4i6coh20180427060153",
-                    //Server = "35.200.147.143",
-                    //Port = 5432,
-                    //UserName = "postgres",
-                    //Password = "m04P0N4t95p53bx5",
-                    //ReadWriteUserName = null,
-                    //ReadWritePassword = null,
-                    //ReadOnlyUserName = null,
-                    //ReadOnlyPassword = null,
-                    //Timeout = 500,
-                    //NickName = "ebdbvmqh4i6coh20180427060153_Initial"
                 };
             }
             if (vendor == DatabaseVendors.ORACLE)
@@ -676,7 +664,6 @@ namespace ExpressBase.Web.Controllers
             GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
             return JsonConvert.SerializeObject(resp);
         }
-
         [HttpPost]
         public string AddTwilio()
         {
@@ -684,13 +671,6 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 var req = this.HttpContext.Request.Form;
-                //EbTwilioConfig twilioCon = new EbTwilioConfig
-                //{
-                //    UserName = "Test",
-                //    From = "test",
-                //    Password = "testpw",
-                //    NickName = "nick",
-                //};
                 EbTwilioConfig twilioCon = new EbTwilioConfig
                 {
                     UserName = req["UserName"],
@@ -708,22 +688,13 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-
-
         public string AddExpertTexting()
         {
             AddETResponse res = new AddETResponse();
             try
             {
                 var req = this.HttpContext.Request.Form;
-                //EbExpertTextingConfig con = new EbExpertTextingConfig
-                //{
-                //    UserName = "Test",
-                //    From = "test",
-                //    Password = "testpw",
-                //    NickName = "nick",
-                //    Id = 0
-                //};
+                
                 EbExpertTextingConfig con = new EbExpertTextingConfig
                 {
                     UserName = req["UserName"],
@@ -743,23 +714,13 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-
         public string AddMongo()
         {
             AddMongoResponse res = new AddMongoResponse();
             var req = this.HttpContext.Request.Form;
             try
             {
-                //EbMongoConfig con = new EbMongoConfig
-                //{
-                //    UserName = "Test",
-                //    Password = "testpw",
-                //    Host = "test",
-                //    Port = 0,
-                //    Id = 0,
-                //    NickName = "nick"
-                //};
-                EbMongoConfig con = new EbMongoConfig
+               EbMongoConfig con = new EbMongoConfig
                 {
                     UserName = req["UserName"],
                     Password = req["Password"],
@@ -784,17 +745,6 @@ namespace ExpressBase.Web.Controllers
             var req = this.HttpContext.Request.Form;
             try
             {
-                //EbSmtpConfig con = new EbSmtpConfig
-                //{
-                //    EmailAddress = "sddsd",
-                //    EnableSsl = true,
-                //    ProviderName = SmtpProviders.Gmail,
-                //    Password = "testpw",
-                //    Host = "test",
-                //    Port = 0,
-                //    Id = 0,
-                //    NickName = "nick"
-                //};
                 EbSmtpConfig con = new EbSmtpConfig
                 {
                     ProviderName = (SmtpProviders)Convert.ToInt32(req["Emailvendor"]),
@@ -842,7 +792,6 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-
         public string AddGoogleMap()
         {
             AddGoogleMapResponse res = new AddGoogleMapResponse();
@@ -881,6 +830,38 @@ namespace ExpressBase.Web.Controllers
                     Type = EbIntegrations.DropBox
                 };
                 res = this.ServiceClient.Post<AddDropBoxResponse>(new AddDropBoxRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+        public string AddAWSS3()
+        {
+            AddAWSS3Response res = new AddAWSS3Response();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                //RegionEndpoint rt = RegionEndpoint.EnumerableAllRegions.FirstOrDefault(e => e.SystemName == req["bucketRegion"].ToString());
+                //RegionEndpoint r = RegionEndpoint.GetBySystemName(req["bucketRegion"].ToString());
+                //RegionEndpoint bucketRegion = RegionEndpoint.APSouth1;
+                //string rt = r.DisplayName;
+                //r = ParseRegion(rt);
+                //RegionEndpoint r = RegionEndpoint.r
+                EbAWSS3Config con = new EbAWSS3Config
+                {
+                    BucketName = req["BucketName"],
+                    AccessKeyID = req["AccessKeyID"],
+                    SecretAccessKey = req["SecretAccessKey"],
+                    BucketRegion = req["bucketRegion"].ToString(),
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    Type = EbIntegrations.AWSS3
+                };
+                res = this.ServiceClient.Post<AddAWSS3Response>(new AddAWSS3Request { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }

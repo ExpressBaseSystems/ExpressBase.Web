@@ -319,7 +319,7 @@ namespace ExpressBase.Web.Controllers
             {
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
                 obj.BeforeSave(ServiceClient, Redis);
-                string _rel_obj_tmp = obj.DiscoverRelatedRefids();
+                string _rel_obj_tmp = string.Join(",", obj.DiscoverRelatedRefids());
                 if (_rel_obj_tmp.Length > 0)
                     _rel_obj_tmp = _rel_obj_tmp.Substring(0, _rel_obj_tmp.Length - 1);//removing excess comma
                 if (obj is EbDataReader)
@@ -403,7 +403,7 @@ namespace ExpressBase.Web.Controllers
             {
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
                 obj.BeforeSave(ServiceClient, Redis);
-                string _rel_obj_tmp = obj.DiscoverRelatedRefids();
+                string _rel_obj_tmp = string.Join(",", obj.DiscoverRelatedRefids());
                 if (obj is EbDataReader)
                 {
                     bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);
@@ -760,7 +760,7 @@ namespace ExpressBase.Web.Controllers
             else if (_ObjType == (int)EbObjectTypes.TableVisualization)
             {
                 versionObj = Redis.Get<EbTableVisualization>(_refid);
-                return ViewComponent("DVBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl});
+                return ViewComponent("DVBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
             else if (_ObjType == (int)EbObjectTypes.TableVisualization)
             {
@@ -770,12 +770,12 @@ namespace ExpressBase.Web.Controllers
             else if (_ObjType == (int)EbObjectTypes.ChartVisualization)
             {
                 versionObj = Redis.Get<EbChartVisualization>(_refid);
-                return ViewComponent("DVChart", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl});
+                return ViewComponent("DVChart", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
             else if (_ObjType == (int)EbObjectTypes.GoogleMap)
             {
                 versionObj = Redis.Get<EbGoogleMap>(_refid);
-                return ViewComponent("GoogleMap", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl});
+                return ViewComponent("GoogleMap", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
             else if (_ObjType == (int)EbObjectTypes.BotForm)
             {

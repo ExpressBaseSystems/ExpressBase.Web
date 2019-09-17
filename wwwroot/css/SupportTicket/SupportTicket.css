@@ -1,12 +1,18 @@
-﻿.supporttkt .bdr {
+﻿
+/*support page css*/
+
+.supporttkt .bdr {
     border-right: 1px solid black;
 }
+
 .supporttkt .bd {
     border: 1px solid black;
 }
+
 .supporttkt .w-100 {
     width: 100%;
 }
+
 .supporttkt .m-top50, .edtsprt .m-top50 {
     margin-top: 50px;
 }
@@ -15,47 +21,35 @@
     float: right;
 }
 
-    .supporttkt .btnstl {
-        color: #fff;
-        background-color: #4987fb
-    }
+.supporttkt .btnstl {
+    color: #fff;
+    background-color: #4987fb
+}
+
 .supporttkt tbody tr:hover {
     color: #1f5cb7;
     background-color: rgba(76, 117, 137, 0.51);
 }
 
-.supporttkt .pdleft0{
-    padding-left:0px;
-}
-.supporttkt .pdright0{
-    padding-right:0px;
+.supporttkt .pdleft0 {
+    padding-left: 0px;
 }
 
-.supporttkt .fw500{
-    font-weight:500;
-}
-.supporttkt .fw600{
-    font-weight:600;
+.supporttkt .pdright0 {
+    padding-right: 0px;
 }
 
-.supporttkt .stprsiz, .edtsprt .stprsiz {
-        resize: none;
+.supporttkt .fw500 {
+    font-weight: 500;
 }
 
-    .supporttkt .pd_lft30, .edtsprt .pd_lft30 {
-        padding-left: 30px;
-    }
+.supporttkt .fw600 {
+    font-weight: 600;
+}
 
-    .supporttkt .lbl_lg , .edtsprt .lbl_lg {
-        font-size: large;
-        font-weight: 600;
-    }
-    .supporttkt .m-bott30, .edtsprt .m-bott30 {
-        margin-bottom: 30px;
-    }
-    .supporttkt .m-bott10, .edtsprt .m-bott10 {
-        margin-bottom: 10px;
-    }
+
+/*edit page css*/
+
 .edtsprt .shd {
     background-color: white;
     -webkit-box-shadow: 0px 1px 4px 0px rgba(0,0,0,0.26);
@@ -66,8 +60,39 @@
 .edtsprt .recdiv {
     margin: 10px;
     border-radius: 4px;
-    height:60px;
-    padding:10px
+    height: 60px;
+    padding: 10px
+}
+
+
+
+
+/*common css form edit command support page css*/
+
+
+.supporttkt .scrl, .edtsprt .scrl {
+    overflow: scroll;
+}
+
+.supporttkt .stprsiz, .edtsprt .stprsiz {
+    resize: none;
+}
+
+.supporttkt .pd_lft30, .edtsprt .pd_lft30 {
+    padding-left: 30px;
+}
+
+.supporttkt .lbl_lg, .edtsprt .lbl_lg {
+    font-size: large;
+    font-weight: 600;
+}
+
+.supporttkt .m-bott30, .edtsprt .m-bott30 {
+    margin-bottom: 30px;
+}
+
+.supporttkt .m-bott10, .edtsprt .m-bott10 {
+    margin-bottom: 10px;
 }
 
 
@@ -141,3 +166,108 @@ input:checked + .slider:before {
     .slider.round:before {
         border-radius: 50%;
     }
+
+
+
+
+
+/*image upload*/
+
+/*! Image Uploader - v1.0.0 - 15/07/2019
+ * Copyright (c) 2019 Christian Bayer; Licensed MIT */
+
+/* Base style */
+.image-uploader {
+    min-height: 16rem;
+    border: 1px solid #d9d9d9;
+    position: relative;
+}
+
+    /* Style on hover */
+    .image-uploader.drag-over {
+        background-color: #f3f3f3;
+    }
+
+    /* Hide the file input */
+    .image-uploader input[type="file"] {
+        width: 0;
+        height: 0;
+        position: absolute;
+        z-index: -1;
+        opacity: 0;
+    }
+
+    /* Text container */
+    .image-uploader .upload-text {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+        .image-uploader .upload-text i {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: .5rem;
+        }
+
+        .image-uploader .upload-text span {
+            display: block;
+        }
+
+    /* Hide the text if there is at least one uploaded image */
+    .image-uploader.has-files .upload-text {
+        display: none;
+    }
+
+    /* Uploaded images container */
+    .image-uploader .uploaded {
+        padding: .5rem;
+        line-height: 0;
+    }
+
+        .image-uploader .uploaded .uploaded-image {
+            display: inline-block;
+            width: calc(16.6666667% - 1rem);
+            padding-bottom: calc(16.6666667% - 1rem);
+            height: 0;
+            position: relative;
+            margin: .5rem;
+            background: #f3f3f3;
+            cursor: default;
+        }
+
+            .image-uploader .uploaded .uploaded-image img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: absolute;
+            }
+
+            /* Delete image button */
+            .image-uploader .uploaded .uploaded-image .delete-image {
+                display: none;
+                cursor: pointer;
+                position: absolute;
+                top: .2rem;
+                right: .2rem;
+                border-radius: 50%;
+                padding: .3rem;
+                background-color: rgba(0, 0, 0, .5);
+                -webkit-appearance: none;
+                border: none;
+            }
+
+            .image-uploader .uploaded .uploaded-image:hover .delete-image {
+                display: block;
+            }
+
+            .image-uploader .uploaded .uploaded-image .delete-image i {
+                color: #fff;
+                font-size: 1.4rem;
+            }

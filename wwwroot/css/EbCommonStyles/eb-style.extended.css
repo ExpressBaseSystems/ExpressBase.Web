@@ -6,13 +6,13 @@
     justify-content: center;
     align-items: center;
 }
-/*appstore*/
+/*****************************************appstore*********************************************/
 .dispRowWRpr{
     display:flex;
     flex-flow:row wrap;
 }
 .apStrH {
-    /*padding-top: 60px;*/
+    
 }
 .fWsearchBar {
     padding: 0;
@@ -67,7 +67,6 @@
 .apTileInner-bdy {
     display: flex;
     flex-flow: row nowrap;
-    /*padding: 15px;*/
     position: relative;
     overflow: hidden;
     color: inherit;
@@ -78,7 +77,6 @@
     display: flex;
     font-size: 25px;
     color: #6c63ff;
-    /*padding: 10px;*/
     z-index: 2;
 }
     .col1 .apptile-scshot {
@@ -111,33 +109,16 @@
         white-space: nowrap;
         overflow: hidden;
     }
-    .col2 p {
-        font-size: 14px;
-        font-weight: 400;
-        color: #636363;
-        line-height: 1.8em;
+    .col2 .detailed_content .col2 p, .col2 span, .col2 b {
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        color: #636363 !important;
+        line-height: 1.8em !important;
+        font-family: Montserrat !important;
     }
     .col2 .shortdesc {
         font-size: 14px;
         color: #696969;
-    }
-.apptile-priceplan {
-    position: absolute;
-    top: 0;
-    z-index: 10;
-    width: 60px;
-    height: 60px;
-    border-bottom-right-radius: 100%;
-    color: white;
-    padding: 8px 5px;
-    left: 0;
-    border-top-left-radius: 6px;
-}
-    .apptile-priceplan.free {
-        background: #add2b3;
-    }
-    .apptile-priceplan.paid {
-        background: #ffca7b;
     }
 .apTileInner-bdy-footer {
     padding: 15px 10px 0 0;
@@ -178,14 +159,107 @@
 .ebapptile-tagscontaner .app-tag {
     font-weight: 500;
 }
-/*.btn-Apstr {
-    padding: 6px 12px;
-    background: transparent;
-    border: none;
+    .ebapptile-tagscontaner .app-tag .app-tag-items {
+        background: #eef9fe;
+        padding: 5px;
+        border-radius: 2px;
+        border: 1px solid #d7edf7;
+        margin-right: 3px;
+        color: #5f5d5d;
+    }
+/**************************************appstore end***************************************/
+
+/***********************appstore detailed***************************/
+.eb-appstore-detailed{
+    padding:100px 0;
+    font-family:Montserrat;
 }
-.installbtn i {
-    color: #119c64;
-}*/
+    .eb-appstore-detailed .eb-asd-info {
+        display: flex;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        margin-bottom:25px;
+    }
+        .eb-appstore-detailed .eb-asd-info .eb-asd-info-scs {
+            width:40%;
+        }
+        .eb-appstore-detailed .eb-asd-info .eb-asd-info-desc {
+            flex: 1;
+            padding: 0 15px;
+            line-height: 28px;
+        }
+.eb-appstore-detailed .eb-asd-info .eb-asd-info-desc .eb-asd-info-scs-dc, .eb-asd-info-scs-dc p, .eb-asd-info-scs-dc span, .eb-asd-info-scs-dc b {
+    font-size: 14px !important;
+    font-weight: 400 !important;
+    color: #636363 !important;
+    line-height: 1.8em !important;
+    font-family: Montserrat !important;
+}
+    .eb-appstore-detailed .eb-asd-screenshot {
+        border: 1px solid #ccc;
+        border-radius: 6px;
+    }
+        .eb-appstore-detailed .eb-asd-screenshot .eb-asd-ssh {
+            padding: 5px;
+            background: #e4e4e4;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .eb-appstore-detailed .eb-asd-screenshot .eb-asd-ssg {
+            display: flex;
+            flex-flow: row wrap;
+        }
+            .eb-appstore-detailed .eb-asd-screenshot .eb-asd-ssg .eb-asd-thumbnails {
+                width: 33.3%;
+                padding: 10px;
+            }
+    .eb-appstore-detailed .eb-asd-tags {
+        display:flex;
+        margin-bottom:25px;
+    }
+        .eb-appstore-detailed .eb-asd-tags .eb-asd-tags-item {
+            padding: 5px;
+            background: #80c6fd;
+            margin-right: 15px;
+            color: white;
+            border-radius: 4px;
+        }
+    .eb-appstore-detailed .eb-asd-meta{
+        display:flex;
+        margin-bottom:25px;
+    }
+        .eb-appstore-detailed .eb-asd-meta .eb-asd-meta-at {
+            width: 25%;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+            .eb-appstore-detailed .eb-asd-meta .eb-asd-meta-at .eb-asd-meta-atinner {
+                padding: 20px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                height: 100%;
+                font-size: 19px;
+                font-weight: 400;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+    .eb-appstore-detailed .eb-asd-installcont .eb-asd-instlbtn {
+        border-style: none;
+        border-radius: 4px;
+        padding: 10px 25px;
+        font-size: 19px;
+        float: right;
+    }
+            .eb-appstore-detailed .eb-asd-meta .eb-asd-meta-at label {
+                font-size: 16px;
+                margin-bottom: 9px;
+                color: #545454;
+                font-weight: 500;
+            }
+/***********************appstore detailed end***************************/
 /*detail of pub app*/
 .wCmn {
     min-height: 100vh;

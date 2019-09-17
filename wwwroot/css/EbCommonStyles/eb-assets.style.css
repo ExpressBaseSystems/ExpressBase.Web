@@ -906,7 +906,7 @@ pd-10 {
 .raw-object-pane .empty-objects {
     position:absolute;
     width:100%;
-    top:49%;
+    top:20%;
     text-align:center;
 }
 

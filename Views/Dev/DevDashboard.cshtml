@@ -12,6 +12,14 @@
         appcount = appList.Count;
     }
 }
+@section JavaScript{
+    <script>
+        function resetStore() {
+            store.remove("EbMenuObjects_" + '@ViewBag.cid' + '@ViewBag.UId' + '@ViewBag.wc' + "mhtml");
+            store.remove("EbMenuObjects_" +'@ViewBag.cid' + '@ViewBag.UId' + '@ViewBag.wc');
+        }
+    </script>
+}
 <div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
@@ -138,11 +146,14 @@
     <script>
          if ('@ViewBag.Msg') {
             EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
-        }
+         }
         $(document).ready(function () {
             $(".mobcount").text('(@mobcount)');
             $(".webcount").text("(@webcount)");
             $(".botcount").text("(@botcount)");
+
+            //js function to reset store
+            @ViewBag.JavaScriptFunction;
 
             ebcontext.header.setName("Developer Home");
 

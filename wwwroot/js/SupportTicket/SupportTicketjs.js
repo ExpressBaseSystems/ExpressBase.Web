@@ -35,18 +35,6 @@
         let bfr = null
         let fill = this.validatefn();
         if (fill) {
-            //if ($("#check1").is(':checked')) {
-            //    bfr = "featurerequest";
-            //}
-            //else {
-            //    bfr = "bug";
-            //}
-
-
-            //$(".btn-mdlclose").click();
-
-           
-
             var data = new FormData();
             var totalFiles = window.filearray.length;
             for (var i = 0; i < totalFiles; i++) {
@@ -145,8 +133,8 @@ var EditTicket = function () {
 
         $.each(tktdtl.supporttkt, function (i, obj) {
             $("#tktid").text(obj.ticketid);
-            $("#stsid").text(obj.status);
-            $("#asgnid").text(obj.assignedto);
+            $("#stsid").val(obj.status);
+            $("#asgnid").val(obj.assignedto);
             $("#bugtitle").val(obj.title);
             $("#soluid").val(obj.solutionid);
             $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
@@ -160,26 +148,42 @@ var EditTicket = function () {
     }
 
     this.Updateticketfn = function () {
-        let fil = this.validatefn();
-
-        $.ajax({
-            url: "../SupportTicket/UpdateTicket",
-            data: {
-                title: $("#bugtitle").val().trim(),
-                descp: $("#descriptionid").val().trim(),
-                priority: $("#bugpriority option:selected").text().trim(),
-                tktid: $("#tktid").val(),
-            },
-            cache: false,
-            type: "POST",
-            success: function () {
-                location.reload();
+        //let fill = this.validatefn();
+        if (1) {
+            var data = new FormData();
+            var totalFiles = window.filearray.length;
+            for (var i = 0; i < totalFiles; i++) {
+                var file = window.filearray[i];
+                data.append("imageUploadForm" + i, file);
             }
+            var tlt = $("#bugtitle").val().trim();
+            var desc = $("#descriptionid").val().trim();
+            var priori = $("#bugpriority option:selected").text().trim();
+            var solu = $("#soluid").val();
+            var tktid = $("#tktid").text();
+            data.append("title", tlt);
+            data.append("descp", desc);
+            data.append("priority", priori);
+            data.append("solid", solu);
+            data.append("tktid", tktid);
+            data.append("filedelet", JSON.stringify(window.filedel));
 
-        });
+
+
+            $.ajax({
+                url: "../SupportTicket/UpdateTicket",
+                type: 'POST',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    location.href = '/SupportTicket/bugsupport';
+                    alert("page reload");
+                }
+            });
+        }
+
     }
-
-
 
 
     this.init1();
@@ -195,6 +199,7 @@ var EditTicket = function () {
 
 (function ($) {
     window.filearray = [];
+    window.filedel = [];
     $.fn.imageUploader = function (options) {
 
         // Default settings
@@ -242,7 +247,7 @@ var EditTicket = function () {
 
                     // Set preloaded images preview
                     for (let i = 0; i < plugin.settings.preloaded.length; i++) {
-                        $uploadedContainer.append(createImg(plugin.settings.preloaded[i].src, plugin.settings.preloaded[i].id, true));
+                        $uploadedContainer.append(createImg(plugin.settings.preloaded[i].src, plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].fileno, true));
                     }
 
                 }
@@ -310,7 +315,7 @@ var EditTicket = function () {
             e.stopPropagation();
         };
 
-        let createImg = function (src, id) {
+        let createImg = function (src, id,fileno) {
 
             // Create the upladed image container
             let $container = $('<div>', { class: 'uploaded-image' }),
@@ -319,7 +324,7 @@ var EditTicket = function () {
                 $img = $('<img>', { src: src }).appendTo($container),
 
                 // Create the delete button
-                $button = $('<button>', { class: 'delete-image', indx: filearray.length }).appendTo($container),
+                $button = $('<button>', { class: 'delete-image' }).appendTo($container),
 
                 // Create the delete icon
                 $i = $('<i>', { class: 'material-icons', text: 'clear' }).appendTo($button);
@@ -329,6 +334,8 @@ var EditTicket = function () {
 
                 // Set a identifier
                 $container.attr('data-preloaded', true);
+                $container.attr('data-index', id);
+                $container.attr('data-fileno', fileno);
 
                 // Create the preloaded input and append it to the container
                 let $preloaded = $('<input>', {
@@ -356,42 +363,30 @@ var EditTicket = function () {
                 prevent(e);
 
 
-                //var g = document.getElementById('upld');
-                //for (var i = 0; i < g.children.length; i++) {
-                //    button[i].addEventListener('click', ((j) => {
-                //        return function () {
-                //            alert(j)
-                //        }
-                //    })(i)
-                //    )
-                //}
-
-                $(".uploaded-image").click(function () {
-                    alert($(this).index());
-                });
-
+                let flno = parseInt($container.data('fileno'));
 
                 // If is not a preloaded image
-                if ($container.data('indx')) {
+                if (($container.data('index'))>=0) {
 
                     // Get the image index
-                    let index = parseInt($container.data('indx'));
+                    let index = parseInt($container.data('index'));
 
                     // Update other indexes
-                    $container.find('.uploaded-image[data-index]').each(function (i, cont) {
+                    $container.parent().find('.uploaded-image[data-index]').each(function (i, cont) {
                         if (i > index) {
                             $(cont).attr('data-index', i - 1);
                         }
                     });
 
-                    if (index > -1) {
-                        filearray.splice(index, 1);
-                    }
-                    alert(filearray.length)
+                    //remove from file array
+                    window.filearray.splice(index, 1);
+
 
                     // Remove the file from input
                     dataTransfer.items.remove(index);
-
+                }
+                if (flno>0) {
+                    window.filedel.push(flno);
                 }
 
                 // Remove this image from the container

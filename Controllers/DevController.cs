@@ -49,6 +49,8 @@ namespace ExpressBase.Web.Controllers
             ViewBag.apps = apps.Data;
             ViewBag.Msg = TempData[Msg];
             ViewBag.Title = "Developer Home";
+            ViewBag.JavaScriptFunction = TempData["ResetStore"] ?? "";
+            TempData.Remove("ResetStore");
             return View();
         }
 
@@ -352,7 +354,10 @@ namespace ExpressBase.Web.Controllers
             });
 
             if (resp.Status)
+            {
+                TempData["ResetStore"] = "resetStore()";
                 return Redirect("/MyApplications");
+            }
             return View();
         }
 

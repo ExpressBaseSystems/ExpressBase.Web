@@ -661,8 +661,11 @@
             objName = objName.replace(/ /g, "_");
         if (CurRefId) {
             let $objTile = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile[name=" + objName + "]");
-            if ($objTile.length > 0)
-                $objTile.focus()[0].click();
+            if ($objTile.length > 0) {
+                //setTimeout(function () {
+                    $objTile.focus()[0].click();
+                //}, 1);
+            }
             else
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
         }

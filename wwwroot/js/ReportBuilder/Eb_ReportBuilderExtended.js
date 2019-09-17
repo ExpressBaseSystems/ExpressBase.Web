@@ -164,7 +164,7 @@
             var decor = "";
             var style = "";
             var weight = "";
-            var font = _font.Font === null ? "Times-Roman" : _font.Font;
+            var font = _font.FontName === null ? "Times-Roman" : _font.FontName;
             var size = _font.Size === 0 ? "14px" : _font.Size + "px";
 
             if (_font.Strikethrough)

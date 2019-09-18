@@ -67,6 +67,9 @@
 .supporttkt .pdleft0, .edtsprt .pdleft0 {
     padding-left: 0px;
 }
+.supporttkt .pdtop20, .edtsprt .pdtop20 {
+    padding-top: 20px;
+}
 
 .supporttkt .pdright0, .edtsprt .pdright0 {
     padding-right: 0px;
@@ -78,6 +81,9 @@
 
 .supporttkt .stprsiz, .edtsprt .stprsiz {
     resize: none;
+}
+.supporttkt .bdrrds4, .edtsprt .bdrrds4 {
+    border-radius: 4px;
 }
 
 .supporttkt .pd_lft30, .edtsprt .pd_lft30 {

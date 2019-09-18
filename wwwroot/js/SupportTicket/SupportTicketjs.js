@@ -4,6 +4,7 @@
         this.AppendBugsfn();
         $("#savebugid").on("click", this.Savebug.bind(this));
         $(".edttkt").on("click", this.EditTicketfn.bind(this));
+        $(".cloissue").on("click", this.CloseTicketfn.bind(this));
 
 
 
@@ -22,8 +23,8 @@
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs edttkt" style="color:blue"  id="${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
-                    <button class="btn btn-default btn-xs" style="color:red">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
 
               </td>
          </tr>`;
@@ -60,7 +61,6 @@
                 contentType: false,
                 success: function () {
                     location.href = '/SupportTicket/bugsupport';
-                    alert("page reload");
                 }
             });
 
@@ -96,13 +96,28 @@
             //$('#name').removeClass('txthighlightred').addClass('txthighlight');
             $("#titlelbl").css("visibility", "hidden");
         }
-
         return sts;
     }
 
     this.EditTicketfn = function (ev) {
-        let idk = $(ev.target).attr("id");
-        location.href = `/SupportTicket/EditTicket?tktno=${idk}`;
+        let tktno = $(ev.target).attr("tktno");
+        location.href = `/SupportTicket/EditTicket?tktno=${tktno}`;
+
+    }
+
+    this.CloseTicketfn = function (ev) {
+        let tktno = $(ev.target).attr("tktno");
+         $.ajax({
+                url: "../SupportTicket/ChangeStatus",
+                data: { tktno: tktno, },
+                cache: false,
+                type: "POST",
+                success: function () {
+
+                }
+            });
+
+        location.href = '/SupportTicket/bugsupport';
 
     }
 
@@ -178,7 +193,6 @@ var EditTicket = function () {
                 contentType: false,
                 success: function () {
                     location.href = '/SupportTicket/bugsupport';
-                    alert("page reload");
                 }
             });
         }
@@ -262,13 +276,13 @@ var EditTicket = function () {
         let createContainer = function () {
 
             // Create the image uploader container
-            let $container = $('<div>', { class: 'image-uploader' }),
+            let $container = $('<div>', { class: 'image-uploader bdrrds4' }),
 
                 // Create the input type file and append it to the container
                 $input = $('<input>', {
                     type: 'file',
                     id: plugin.settings.imagesInputName,
-                    accept: 'image/*',
+                    accept: 'image/jpeg,image/png,image/jpg,application/pdf',
                     name: plugin.settings.imagesInputName + '[]',
                     multiple: ''
                 }).appendTo($container),
@@ -431,7 +445,7 @@ var EditTicket = function () {
 
             // Get the files
             let files = e.target.files || e.originalEvent.dataTransfer.files;
-
+           
 
             // Makes the upload
             setPreview($container, files);
@@ -450,14 +464,28 @@ var EditTicket = function () {
 
             // Run through the files
             $(files).each(function (i, file) {
+                if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
+                    if ((files[i].size) < 2097152) {
 
-                filearray.push(file);
-                //alert(filearray.length);
-                // Add it to data transfer
-                dataTransfer.items.add(file);
+                        //add it to file array
+                        filearray.push(file);
 
-                // Set preview
-                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                        // Add it to data transfer
+                        dataTransfer.items.add(file);
+
+                        // Set preview
+                        $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                    }
+                    else {
+                        EbMessage("show", { Message: "maximum file size is 2MB", Background: 'red' });
+                    }
+                }
+                else {
+                    EbMessage("show", { Message: "Only image and pdf are allowed", Background: 'red' });
+                }
+               
+
+               
 
             });
 

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using File = Google.Apis.Drive.v3.Data.File;
 using Google.Apis.Auth.OAuth2.Responses;
 using System.IO;
+using System.Text;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -71,29 +72,29 @@ namespace ExpressBase.Web.Controllers
         
         public IActionResult Test()
         {
-           return View("test");
+            return View("test");
         }
-        public class OAuth2AccessTokenReponse
-        {
-            public string AccessToken;
-            public int ExpiresInSeconds;
-            public string TokenType;
-        }
-        public static string refreshAccessToken()
-        {
-            using (System.Net.WebClient client = new System.Net.WebClient())
-            {
-                byte[] response = client.UploadValues("https://accounts.google.com/o/oauth2/token", new System.Collections.Specialized.NameValueCollection(){
-                {"client_id", ClientId},
-                {"client_secret", ClientSecret},
-                {"refresh_token", "XXXXX"},
-                {"grant_type", "refresh_token"}
-            });
-                string sresponse = System.Text.Encoding.Default.GetString(response);
-                OAuth2AccessTokenReponse o = (OAuth2AccessTokenReponse)Newtonsoft.Json.JsonConvert.DeserializeObject(sresponse, typeof(OAuth2AccessTokenReponse));
-                return o.AccessToken;
-            }
-        }
+        //public class OAuth2AccessTokenReponse
+        //{
+        //    public string AccessToken;
+        //    public int ExpiresInSeconds;
+        //    public string TokenType;
+        //}
+        //public static string refreshAccessToken()
+        //{
+        //    using (System.Net.WebClient client = new System.Net.WebClient())
+        //    {
+        //        byte[] response = client.UploadValues("https://accounts.google.com/o/oauth2/token", new System.Collections.Specialized.NameValueCollection(){
+        //        {"client_id", ClientId},
+        //        {"client_secret", ClientSecret},
+        //        {"refresh_token", "XXXXX"},
+        //        {"grant_type", "refresh_token"}
+        //    });
+        //        string sresponse = System.Text.Encoding.Default.GetString(response);
+        //        OAuth2AccessTokenReponse o = (OAuth2AccessTokenReponse)Newtonsoft.Json.JsonConvert.DeserializeObject(sresponse, typeof(OAuth2AccessTokenReponse));
+        //        return o.AccessToken;
+        //    }
+        //}
         [HttpPost]
         public async Task storeauthcodeAsync(string data12)
         {
@@ -126,21 +127,24 @@ namespace ExpressBase.Web.Controllers
                     ApplicationName = ApplicationName,
                 });
                 Console.WriteLine("service created");
+                byte[] byteArray = Encoding.ASCII.GetBytes("hagsd adhgasgd asdg assdghkajsgd asdgkasgd akjsgdka");
+                Stream str = new MemoryStream(byteArray);
                 var fileMetadata = new File()
                 {
-                    Name = "photo.jpg"
+                    Name = "photo.txt"
                 };
                 FilesResource.CreateMediaUpload request;
                 string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 Console.WriteLine("dir : " + dir);
-                using (Stream stream = new FileStream("../430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
-                                        FileMode.Open, FileAccess.Read))
-                {
+
+                //using (Stream stream = new FileStream("../430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
+                //                        FileMode.Open, FileAccess.Read))
+               // {
                     request = service.Files.Create(
-                        fileMetadata, stream, "image/jpeg");
+                        fileMetadata, str, "text");
                     request.Fields = "id";
                     request.Upload();
-                }
+               // }
                 Console.WriteLine("done");
                 var file = request.ResponseBody;
                 Console.WriteLine("File ID: " + file.Id);

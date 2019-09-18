@@ -64,7 +64,7 @@
                 }
             });
 
-            
+
         }
     }
 
@@ -107,15 +107,15 @@
 
     this.CloseTicketfn = function (ev) {
         let tktno = $(ev.target).attr("tktno");
-         $.ajax({
-                url: "../SupportTicket/ChangeStatus",
-                data: { tktno: tktno, },
-                cache: false,
-                type: "POST",
-                success: function () {
+        $.ajax({
+            url: "../SupportTicket/ChangeStatus",
+            data: { tktno: tktno, },
+            cache: false,
+            type: "POST",
+            success: function () {
 
-                }
-            });
+            }
+        });
 
         location.href = '/SupportTicket/bugsupport';
 
@@ -214,6 +214,7 @@ var EditTicket = function () {
 (function ($) {
     window.filearray = [];
     window.filedel = [];
+    var preloadedfile = null;
     $.fn.imageUploader = function (options) {
 
         // Default settings
@@ -329,7 +330,7 @@ var EditTicket = function () {
             e.stopPropagation();
         };
 
-        let createImg = function (src, id,fileno) {
+        let createImg = function (src, id, fileno) {
 
             // Create the upladed image container
             let $container = $('<div>', { class: 'uploaded-image' }),
@@ -380,7 +381,7 @@ var EditTicket = function () {
                 let flno = parseInt($container.data('fileno'));
 
                 // If is not a preloaded image
-                if (($container.data('index'))>=0) {
+                if (($container.data('index')) >= 0) {
 
                     // Get the image index
                     let index = parseInt($container.data('index'));
@@ -395,11 +396,10 @@ var EditTicket = function () {
                     //remove from file array
                     window.filearray.splice(index, 1);
 
-
                     // Remove the file from input
                     dataTransfer.items.remove(index);
                 }
-                if (flno>0) {
+                if (flno > 0) {
                     window.filedel.push(flno);
                 }
 
@@ -445,7 +445,7 @@ var EditTicket = function () {
 
             // Get the files
             let files = e.target.files || e.originalEvent.dataTransfer.files;
-           
+
 
             // Makes the upload
             setPreview($container, files);
@@ -462,30 +462,42 @@ var EditTicket = function () {
                 // Get the files input
                 $input = $container.find('input[type="file"]');
 
+            for (var p = 0; p < tktdtl.supporttkt.length; p++) {
+
+                preloadedfile= tktdtl.supporttkt[p].Fileuploadlst.length; 
+            }
+
+
+
             // Run through the files
             $(files).each(function (i, file) {
                 if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
                     if ((files[i].size) < 2097152) {
+                        if (((preloadedfile - window.filedel.length ) + filearray.length) < 10) {
 
-                        //add it to file array
-                        filearray.push(file);
+                            //add it to file array
+                            filearray.push(file);
 
-                        // Add it to data transfer
-                        dataTransfer.items.add(file);
+                            // Add it to data transfer
+                            dataTransfer.items.add(file);
 
-                        // Set preview
-                        $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                            // Set preview
+                            $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                        }
+                        else {
+                            EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
+                        }
                     }
                     else {
-                        EbMessage("show", { Message: "maximum file size is 2MB", Background: 'red' });
+                        EbMessage("show", { Message: "Maximum file size is 2MB", Background: 'red' });
                     }
                 }
                 else {
                     EbMessage("show", { Message: "Only image and pdf are allowed", Background: 'red' });
                 }
-               
 
-               
+
+
 
             });
 

@@ -20,6 +20,7 @@
 
     this.resetBuffers = function () {
         this.AllRowCtrls = {};
+        //this.AllRowHiddenCtrls = {};
         this.newRowCounter = 0;
         this.rowSLCounter = 0;
     }.bind(this);
@@ -234,14 +235,20 @@
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
                     <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.AllRowCtrls[rowid] = [];
+        //this.AllRowHiddenCtrls[rowid] = [];
 
         let visibleCtrlIdx = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
-            if (col.Hidden)
-                return true;
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + (Date.now() + visibleCtrlIdx).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+            if (col.Hidden) {
+                //inpCtrl.EbSid_CtxId = ctrlEbSid;
+                //inpCtrl.__rowid = rowid;
+                //inpCtrl.__Col = col;
+                //this.AllRowHiddenCtrls[rowid].push(inpCtrl);
+                return true;
+            }
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
@@ -925,6 +932,7 @@
 
     this.setCurRow = function (rowId) {
         this.ctrl.currentRow = [];
+        //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
             if (!this.AllRowCtrls[rowId][inpctrl.__Col.Name])
                 this.AllRowCtrls[rowId][inpctrl.__Col.Name] = inpctrl;

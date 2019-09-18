@@ -139,12 +139,12 @@ namespace ExpressBase.Web.Controllers
 
                 //using (Stream stream = new FileStream("../430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
                 //                        FileMode.Open, FileAccess.Read))
-                {
+               // {
                     request = service.Files.Create(
                         fileMetadata, str, "text");
                     request.Fields = "id";
                     request.Upload();
-                }
+               // }
                 Console.WriteLine("done");
                 var file = request.ResponseBody;
                 Console.WriteLine("File ID: " + file.Id);

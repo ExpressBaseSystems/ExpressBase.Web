@@ -216,7 +216,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 dfs = this.FileClient.Get<DownloadFileResponse>
-                        (new DownloadFileByIdRequest1234
+                        (new DownloadFileByIdRequest
                         {
                             FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
                         });
@@ -332,7 +332,7 @@ namespace ExpressBase.Web.Controllers
                 tags = String.IsNullOrEmpty(tags) ? "FileUpload" : tags;
 
                 var req = this.HttpContext.Request.Form;
-                UploadFileAsyncRequest1234 uploadFileRequest = new UploadFileAsyncRequest1234();
+                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
 
                 if (!String.IsNullOrEmpty(tags))

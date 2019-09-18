@@ -270,7 +270,7 @@ namespace ExpressBase.Web.Controllers
                 _context = req["Context"];
             try
             {
-                UploadFileAsyncRequest1234 uploadFileRequest = new UploadFileAsyncRequest1234();
+                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
                 foreach (var formFile in req.Files)
                 {
@@ -325,7 +325,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 dfs = this.FileClient.Get<DownloadFileResponse>
-                        (new DownloadFileByIdRequest1234
+                        (new DownloadFileByIdRequest
                         {
                             FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
                         });

@@ -137,8 +137,8 @@ namespace ExpressBase.Web.Controllers
                 string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 Console.WriteLine("dir : " + dir);
 
-                using (Stream stream = new FileStream("../430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
-                                        FileMode.Open, FileAccess.Read))
+                //using (Stream stream = new FileStream("../430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
+                //                        FileMode.Open, FileAccess.Read))
                 {
                     request = service.Files.Create(
                         fileMetadata, str, "text");

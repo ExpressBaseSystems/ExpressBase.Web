@@ -390,6 +390,7 @@
                     newo.DisplayName = config.Name;
                     ctrl.Fields.$values.push(newo);
                 });
+                EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
             }.bind(this, _ctrl)
         });
     };

@@ -338,6 +338,7 @@ class DvBuilder {
             if (obj.InfoWindow.$values.length > 0) {
                 this.RemoveFromInfoWindowObjects(obj);
             }
+            //not checked for customcolumn
         }.bind(this));
     }
 

@@ -430,7 +430,7 @@
     height: 100%;
 }
 #dashbord-view .dataTables_scrollBody {
-    height: calc(100% - 79px) !important; 
+    height: calc(100% - 45px) !important; 
 }
 #dashbord-view .dataTables_scrollHeadInner .table {
     margin-top: 0px !important;

@@ -76,7 +76,7 @@
                 if (refid !== "") {
                 $.ajax(
                     {
-                        url: '../DashBoard/DashBoardView',
+                        url: '../DashBoard/DashBoardGetObj',
                         type: 'POST',
                         data: { refid: refid },
                         success: this.TileRefidChangesuccess.bind(this , this.CurrentTile)
@@ -156,7 +156,7 @@
             this.VisRefid = newval;
             $.ajax(
                 {
-                    url: '../DashBoard/DashBoardView',
+                    url: '../DashBoard/DashBoardGetObj',
                     type: 'POST',
                     data: { refid:  this.VisRefid },
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)

@@ -436,8 +436,17 @@
     margin-top: 0px !important;
 }
 .tile-opt {
+    color: #909090;
     width: 30px;
-    font-size: 20px;
-    padding: 3px;
-    border: solid 1px #bbb7b7;
+    font-size: 18px;
+    padding: 5px;
+    border-left: solid 1px #bbb7b7;
+}
+#dashbord-view .CanvasDiv  {
+    height: 100% !important;
+}
+#dashbord-view .chart-div {
+    height: 100% !important;
+    width: 100% !important;
+    padding: 20px
 }

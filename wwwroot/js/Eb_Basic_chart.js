@@ -21,7 +21,7 @@ var EbBasicChart = function (Option) {
     this.relatedObjects = null;
     this.FD = false;
     this.piedataFlag = false;
-    this.MainData = (data === undefined) ? null : data;
+    this.MainData = (Option.data === undefined) ? null : data;
     this.isPipped = false;
     this.isContextual = false;
     this.filterValues = [];
@@ -49,7 +49,6 @@ var EbBasicChart = function (Option) {
     };
 
     this.call2FD = function () {
-        $.LoadingOverlay("show");
         if (this.EbObject.Columns === null) {
             $.ajax({
                 type: "POST",
@@ -73,7 +72,6 @@ var EbBasicChart = function (Option) {
         this.EbObject = this.EbObject;
         this.type = this.EbObject.Type;
         this.filterValues = this.getFilterValues();
-        $.LoadingOverlay("show");
         $.ajax({
             type: 'POST',
             url: "../DV/getdata",
@@ -140,7 +138,6 @@ var EbBasicChart = function (Option) {
     }
 
     this.getDataSuccess = function (result) {
-        $.LoadingOverlay("hide");
         //this.MainData = result.data; 
         if (this.login == "uc")
             dvcontainerObj.currentObj.data = result;
@@ -239,8 +236,6 @@ var EbBasicChart = function (Option) {
                 $("#map" + this.tableId).empty();
                 initMap();
             }
-
-            $.LoadingOverlay("hide");
             if (this.bot) {
                 $("#map" + this.tableId).css("height", "inherit");
                 $("#map" + this.tableId).css("margin-top", "10px");
@@ -323,8 +318,6 @@ var EbBasicChart = function (Option) {
             };
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Xaxis.$values.length > 0)
                 this.RemoveCanvasandCheckButton();
-
-            $.LoadingOverlay("hide");
         }
 
     };
@@ -407,7 +400,6 @@ var EbBasicChart = function (Option) {
             data: this.gdata,
             options: this.goptions,
         });
-        $.LoadingOverlay("hide");
     };
 
     this.ResetZoom = function () {

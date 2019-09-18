@@ -18,8 +18,8 @@ namespace ExpressBase.Web2
                     options.Limits.MinResponseDataRate = null;
                 })
                 .UseContentRoot(Directory.GetCurrentDirectory())
-				//.UseUrls("http://*:41500/", "https://*:41502/")
-				.UseUrls(urls: "http://*:41500/")
+                .UseUrls("http://*:41500/", "https://*:41502/")
+                //.UseUrls(urls: "http://*:41500/")
 				.UseStartup<Startup>()
                 .Build();
 

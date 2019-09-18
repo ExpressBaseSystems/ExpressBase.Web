@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using ExpressBase.Common;
+using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
@@ -26,8 +28,24 @@ namespace ExpressBase.Web.Controllers
 
             return Resp.Data[0].Json;
         }
-        public IActionResult DashBoardView()
+        public IActionResult DashBoardView(string refid)
         {
+            //var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+            //Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
+
+            //ViewBag.Meta = _jsResult.AllMetas;
+            //ViewBag.JsObjects = _jsResult.JsObjects;
+            //ViewBag.EbObjectType = _jsResult.EbObjectTypes;
+
+            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
+            {
+                RefId = refid
+            });
+            //ViewBag.Refid = refid;
+            ViewBag.VersionNumber = Resp.Data[0].VersionNumber;
+            ViewBag.ObjType = Resp.Data[0].EbObjectType;
+            ViewBag.dsObj = Resp.Data[0].Json;
+            ViewBag.Status = Resp.Data[0].Status;
             return View();
         }
     }

@@ -121,7 +121,7 @@ namespace ExpressBase.Web.Controllers
 			sbrequest.priority = httpreq["priority"].ToString();
 			sbrequest.solutionid = solid;
 			sbrequest.type_b_f = httpreq["type_f_b"].ToString();
-			sbrequest.status = "onhold";
+			sbrequest.status = "Onhold";
 			sbrequest.usertype = usrtyp;
 			sbrequest.fullname = this.LoggedInUser.FullName;
 			sbrequest.email = this.LoggedInUser.Email;
@@ -168,6 +168,17 @@ namespace ExpressBase.Web.Controllers
 			Uptkt.solution_id = solid;
 
 			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
+
+
+		}
+
+		public void ChangeStatus(string tktno )
+		{
+			ChangeStatusResponse sd = this.ServiceClient.Post<ChangeStatusResponse>(new ChangeStatusRequest
+			{
+				TicketNo = tktno,
+				NewStatus="Rectified"
+			});
 
 
 		}

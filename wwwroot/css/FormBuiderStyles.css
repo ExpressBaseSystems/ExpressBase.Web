@@ -194,6 +194,7 @@
 
     .form-buider-form table {
         width: 100%;
+        position: relative;
         /*table-layout: fixed;*/
     }
 

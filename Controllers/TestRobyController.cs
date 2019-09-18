@@ -70,7 +70,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             return View();
         }
-        
+
         public IActionResult Test()
         {
             return View("test");
@@ -142,9 +142,12 @@ namespace ExpressBase.Web.Controllers
                     request.Fields = "id";
                     response = request.Upload();
                 }
-                Console.WriteLine("Exception" +response.Exception.Message );
+                if (response != null)
+                    Console.WriteLine("Exception" + response.Status.ToString());
+                else if(response == null)
+                    Console.WriteLine("Null Response");
                 var file = request.ResponseBody;
-                if(file !=null)
+                if (file != null)
                     Console.WriteLine("File ID: " + file.Id);
             }
             catch (Exception e)

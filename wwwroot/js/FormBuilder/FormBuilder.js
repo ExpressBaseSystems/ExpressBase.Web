@@ -327,7 +327,7 @@
                 else if (type === "ProvisionLocation") {
                     this.ProvisionLocationCtrl = ctrlObj;
                 }
-                else if (type === "SimpleSelect") {
+                else if (type === "SimpleSelect" || type === "BooleanSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
                 }
 

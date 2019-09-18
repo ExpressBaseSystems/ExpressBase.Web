@@ -233,6 +233,10 @@
         $input.selectpicker();
     };
 
+    this.BooleanSelect= function (ctrl) {
+        this.SimpleSelect(ctrl);
+    };
+
     this.UserLocation = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.multiselect({

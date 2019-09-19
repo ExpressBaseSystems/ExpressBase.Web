@@ -430,11 +430,11 @@ var SolutionDashBoard = function (connections, sid) {
         auth2.grantOfflineAccess().then(signInCallback);
         function signInCallback(authresult) {
             if (authresult['code']) {
-                let code = authresult['code'];
+                postDataGoogleDrive[5].value = authresult['code'];
                 $.ajax({
                     type: 'POST',
-                    url: "../ConnectionManager/AddGoogleDrive",
-                    data: { preferancetype: JSON.stringify(postDataGoogleDrive), code: code },
+                    url: "../ConnectionManager/AddGoogleDriveAsync",
+                    data: postDataGoogleDrive,
                     beforeSend: function () {
                         $("#GoogleDrive_loader").EbLoader("show", { maskItem: { Id: "#GoogleDrive_mask", Style: { "left": "0" } } });
                     }

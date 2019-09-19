@@ -901,37 +901,46 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-        public async Task<string> AddGoogleDriveAsync(string preferancetype, string code)
+        public async Task<string> AddGoogleDriveAsync()
         {
             string RedirectUri ="";
             AddGoogleDriveResponse res = new AddGoogleDriveResponse();
-            EbGoogleDriveConfig req = JsonConvert.DeserializeObject<EbGoogleDriveConfig>(preferancetype);
-            Console.WriteLine(JsonConvert.SerializeObject(req));
+
+            IFormCollection req = this.HttpContext.Request.Form;
+            EbGoogleDriveConfig con = new EbGoogleDriveConfig {
+                ClientID = req["ClientID"],
+                Clientsecret = req["Clientsecret"],
+                ApplicationName = req["ApplicationName"],
+                Id = Convert.ToInt32(req["Id"]),
+                NickName = req["NickName"],
+                Type = EbIntegrations.GoogleDrive
+            };
+            Console.WriteLine(JsonConvert.SerializeObject(con));
             try
             {
                 var init = new GoogleAuthorizationCodeFlow.Initializer
                 {
                     ClientSecrets = new ClientSecrets
                     {
-                        ClientId = req.ClientID,
-                        ClientSecret = req.Clientsecret
+                        ClientId = con.ClientID,
+                        ClientSecret = con.Clientsecret
                     },
                     Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
                 Console.WriteLine(JsonConvert.SerializeObject(init));
                 var flow = new AuthorizationCodeFlow(init);
-                Console.WriteLine("Fetching token for code: _" + code + "_");
+                Console.WriteLine("Fetching token for code: _" + req["code"] + "_");
 
                 if (ViewBag.Env == "Staging")
                     RedirectUri = "https://myaccount.eb-test.xyz";
                 else if (ViewBag.Env == "Production")
                     RedirectUri = "https://myaccount.expressbase.com";
                 Console.WriteLine(RedirectUri);
-                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, RedirectUri, CancellationToken.None);
+                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", req["code"], RedirectUri, CancellationToken.None);
                 Console.WriteLine(JsonConvert.SerializeObject(result));
-                req.RefreshToken = result.RefreshToken;
-                res = this.ServiceClient.Post<AddGoogleDriveResponse>(new AddGoogleDriveRequest { Config = req, SolnId = req.SolutionId });
-                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req.SolutionId });
+                con.RefreshToken = result.RefreshToken;
+                res = this.ServiceClient.Post<AddGoogleDriveResponse>(new AddGoogleDriveRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)

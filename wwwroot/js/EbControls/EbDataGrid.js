@@ -513,7 +513,7 @@
                 ctrl.setValue(val);
 
         }.bind(this));
-    }
+    };
 
     this.getFormVals = function () {
         return getValsFromForm(this.formObject_Full);

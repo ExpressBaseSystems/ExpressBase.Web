@@ -14,6 +14,7 @@ using File = Google.Apis.Drive.v3.Data.File;
 using Google.Apis.Auth.OAuth2.Responses;
 using System.IO;
 using System.Text;
+using Google.Apis.Upload;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -69,7 +70,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             return View();
         }
-        
+
         public IActionResult Test()
         {
             return View("test");
@@ -110,13 +111,8 @@ namespace ExpressBase.Web.Controllers
                     Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
                 var flow = new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init);
-
                 var code = data12;
-
-
                 Console.WriteLine("Fetching token for code: _" + code + "_");
-
-
                 TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
                 Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
                 GoogleCredential credential = GoogleCredential.FromAccessToken(result.AccessToken);
@@ -131,23 +127,28 @@ namespace ExpressBase.Web.Controllers
                 Stream str = new MemoryStream(byteArray);
                 var fileMetadata = new File()
                 {
-                    Name = "photo.txt"
+                    Name = "photo.jpg",
+                    MimeType = "image/jpeg"
                 };
                 FilesResource.CreateMediaUpload request;
                 string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
                 Console.WriteLine("dir : " + dir);
-
+                IUploadProgress response;
                 using (Stream stream = new FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
                                         FileMode.Open, FileAccess.Read))
                 {
                     request = service.Files.Create(
-                        fileMetadata, stream, "TXT");
+                        fileMetadata, stream, "image/jpeg");
                     request.Fields = "id";
-                    request.Upload();
+                    response = request.Upload();
                 }
-                Console.WriteLine("done");
+                if (response != null)
+                    Console.WriteLine("Exception" + response.Status.ToString());
+                else if(response == null)
+                    Console.WriteLine("Null Response");
                 var file = request.ResponseBody;
-                Console.WriteLine("File ID: " + file.Id);
+                if (file != null)
+                    Console.WriteLine("File ID: " + file.Id);
             }
             catch (Exception e)
             {

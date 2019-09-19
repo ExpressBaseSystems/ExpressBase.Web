@@ -465,8 +465,6 @@
         $.each(SingleRow.Columns, function (j, SingleColumn) {// loop through column controls
             if (j === 0)// to skip id column
                 return true;
-            if (j === 3)
-                console.log(j);
             let ctrl = getObjByval(CurRowCtrls, "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
 
             if (ctrl === undefined) {
@@ -483,7 +481,7 @@
                 }.bind(this));
             }
 
-            if (!ctrl) {// to alert if no ctrl for such data
+            if (!ctrl && SingleColumn.Name === "eb_row_num") {// to alert if no ctrl for such data
                 console.warn(" no ctrl for such data");
                 return true;
             }

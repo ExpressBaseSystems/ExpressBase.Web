@@ -482,6 +482,7 @@ var EditTicket = function () {
                             // Add it to data transfer
                             dataTransfer.items.add(file);
 
+
                             // Set preview
                             if (files[i].type == "application/pdf") {
 

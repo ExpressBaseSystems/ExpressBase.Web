@@ -7,6 +7,7 @@ var SolutionDashBoard = function (connections, sid) {
     var Deleteid;
     var preferancetype = [];
     var preventContextMenu = 0;
+    var postDataGoogleDrive = "";
     var Imageurl = {
         "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:50px' />",
         "MSSQL": "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />",
@@ -411,7 +412,7 @@ var SolutionDashBoard = function (connections, sid) {
 
     this.GoogleDriveOnSubmit = function (e) {
         e.preventDefault();
-        var postData = $(e.target).serializeArray();
+        postDataGoogleDrive = $(e.target).serializeArray();
         auth2 = gapi.auth2.init({
             client_id: postData[3].value,
             access_type: 'offline',
@@ -420,36 +421,38 @@ var SolutionDashBoard = function (connections, sid) {
             // Scopes to request in addition to 'profile' and 'email'
             //scope: 'additional_scope'
         });
-        var authresult = auth2.grantOfflineAccess();
-        if (authresult['code']) {
-            let code = authresult['code'];
-            $.ajax({
-                type: 'POST',
-                url: "../ConnectionManager/AddGoogleDrive",
-                data: { preferancetype: JSON.stringify(postData), code : code },
-                beforeSend: function () {
-                    $("#GoogleDrive_loader").EbLoader("show", { maskItem: { Id: "#GoogleDrive_mask", Style: { "left": "0" } } });
-                }
-            }).done(function (data) {
-                this.Conf_obj_update(JSON.parse(data));
-                $("#GoogleDrive_loader").EbLoader("hide");
-                EbMessage("show", { Message: "Connection Added Successfully" });
-                $("#GoogleDriveConnectionEdit").modal("toggle");
-                $("#IntegrationsCall").trigger("click");
-                $("#MyIntegration").trigger("click");
-            }.bind(this));
-        } else {
-            EbDialog("show",
-                {
-                    Message: "Authorisation Code not found. ",
-                    Buttons: {                        
-                        "Cancel": {
-                            Background: "red",
-                            Align: "left",
-                            FontColor: "white;"
-                        }
+        auth2.grantOfflineAccess().then(signInCallback);
+        function signInCallback(authresult) {
+            if (authresult['code']) {
+                let code = authresult['code'];
+                $.ajax({
+                    type: 'POST',
+                    url: "../ConnectionManager/AddGoogleDrive",
+                    data: { preferancetype: JSON.stringify(postDataGoogleDrive), code: code },
+                    beforeSend: function () {
+                        $("#GoogleDrive_loader").EbLoader("show", { maskItem: { Id: "#GoogleDrive_mask", Style: { "left": "0" } } });
                     }
-                });
+                }).done(function (data) {
+                    this.Conf_obj_update(JSON.parse(data));
+                    $("#GoogleDrive_loader").EbLoader("hide");
+                    EbMessage("show", { Message: "Connection Added Successfully" });
+                    $("#GoogleDriveConnectionEdit").modal("toggle");
+                    $("#IntegrationsCall").trigger("click");
+                    $("#MyIntegration").trigger("click");
+                }.bind(this));
+            } else {
+                EbDialog("show",
+                    {
+                        Message: "Authorisation Code not found. ",
+                        Buttons: {
+                            "Cancel": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
+                        }
+                    });
+            }
         }
     }.bind(this);
 

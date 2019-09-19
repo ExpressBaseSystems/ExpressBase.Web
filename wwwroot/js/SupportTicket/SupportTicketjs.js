@@ -484,9 +484,8 @@ var EditTicket = function () {
 
                             // Set preview
                             if (files[i].type == "application/pdf") {
-                                var pth ="/images/pdf-image"
 
-                                $uploadedContainer.append(createImg(pth, dataTransfer.items.length - 1));
+                                $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
                             }
                             else {
                                 $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));

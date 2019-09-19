@@ -20,6 +20,7 @@
 
     this.resetBuffers = function () {
         this.AllRowCtrls = {};
+        //this.AllRowHiddenCtrls = {};
         this.newRowCounter = 0;
         this.rowSLCounter = 0;
     }.bind(this);
@@ -86,13 +87,12 @@
     //    let valMsArr = p1[0].split(',');
     //    let DMtable = p1[1];
 
-
     //    $.each(valMsArr, function (i, vm) {
     //        VMs.push(vm);
     //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            $.each(DMtable, function (j, r) {
-    //                if (getObjByval(r.Columns, 'Name', this.ValueMember.name).Value === vm) {
-    //                    let _dm = getObjByval(r.Columns, 'Name', dm.name).Value;
+    //            $.each(DMtable, function (j, row) {
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
     //                    DMs[dm.name].push(_dm);
     //                }
     //            }.bind(this));
@@ -101,18 +101,31 @@
 
 
     //    if (this.initializer.datatable === null) {//for aftersave actions
-    //        $.each(DMtable, function (j, r) {
-    //            $.each(r.Columns, function (j, item) {
-    //                if (!columnVals[item.Name]) {
-    //                    console.warn('Mismatch found in Colums in datasource and Colums in object');
-    //                    return true;
+    //        $.each(valMsArr, function (i, vm) {
+    //            $.each(DMtable, function (j, row) {
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    $.each(row.Columns, function (k, column) {
+    //                        if (!columnVals[column.Name]) {
+    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
+    //                            return true;
+    //                        }
+    //                        let val = EbConvertValue(column.Value, column.Type);
+    //                        columnVals[column.Name].push(val);
+    //                    }.bind(this));
     //                }
-    //                let val = EbConvertValue(item.Value, item.Type);
-    //                columnVals[item.Name].push(val);
+
+    //                //$.each(r.Columns, function (j, column) {
+    //                //    if (!columnVals[column.Name]) {
+    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                //        return true;
+    //                //    }
+    //                //    let val = EbConvertValue(column.Value, column.Type);
+    //                //    columnVals[column.Name].push(val);
+    //                //}.bind(this));
+
     //            }.bind(this));
     //        }.bind(this));
     //    }
-
     //};
 
     this.addEditModeRows = function (SingleTable) {
@@ -234,14 +247,20 @@
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
                     <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.AllRowCtrls[rowid] = [];
+        //this.AllRowHiddenCtrls[rowid] = [];
 
         let visibleCtrlIdx = 0;
         $.each(this.ctrl.Controls.$values, function (i, col) {
-            if (col.Hidden)
-                return true;
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + (Date.now() + visibleCtrlIdx).toString(36);
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
+            if (col.Hidden) {
+                //inpCtrl.EbSid_CtxId = ctrlEbSid;
+                //inpCtrl.__rowid = rowid;
+                //inpCtrl.__Col = col;
+                //this.AllRowHiddenCtrls[rowid].push(inpCtrl);
+                return true;
+            }
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
             this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
@@ -458,8 +477,6 @@
         $.each(SingleRow.Columns, function (j, SingleColumn) {// loop through column controls
             if (j === 0)// to skip id column
                 return true;
-            if (j === 3)
-                console.log(j);
             let ctrl = getObjByval(CurRowCtrls, "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
 
             if (ctrl === undefined) {
@@ -477,7 +494,8 @@
             }
 
             if (!ctrl) {// to alert if no ctrl for such data
-                console.warn(" no ctrl for such data");
+                if (SingleColumn.Name !== "eb_row_num")
+                    console.warn(" no ctrl for such data");
                 return true;
             }
 
@@ -488,7 +506,7 @@
                 return true;
 
             if (ctrl.ObjType === "PowerSelect") {
-                //ctrl.setDisplayMember = this.j;
+                ctrl.setDisplayMember = this.j;
                 ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
             }
             else
@@ -925,6 +943,7 @@
 
     this.setCurRow = function (rowId) {
         this.ctrl.currentRow = [];
+        //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
             if (!this.AllRowCtrls[rowId][inpctrl.__Col.Name])
                 this.AllRowCtrls[rowId][inpctrl.__Col.Name] = inpctrl;

@@ -8,6 +8,9 @@ using ExpressBase.Common.Messaging.Twilio;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Responses;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -15,6 +18,8 @@ using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -896,19 +901,44 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-        public string AddGoogleDrive()
+        public async Task<string> AddGoogleDriveAsync()
         {
+            string RedirectUri ="";
             AddGoogleDriveResponse res = new AddGoogleDriveResponse();
+
             IFormCollection req = this.HttpContext.Request.Form;
+            EbGoogleDriveConfig con = new EbGoogleDriveConfig {
+                ClientID = req["ClientID"],
+                Clientsecret = req["Clientsecret"],
+                ApplicationName = req["ApplicationName"],
+                Id = Convert.ToInt32(req["Id"]),
+                NickName = req["NickName"],
+                Type = EbIntegrations.GoogleDrive
+            };
+            Console.WriteLine(JsonConvert.SerializeObject(con));
             try
             {
-                EbGoogleDriveConfig con = new EbGoogleDriveConfig
+                var init = new GoogleAuthorizationCodeFlow.Initializer
                 {
-                    JsonString = req["JsonFile"],
-                    NickName = req["NickName"],
-                    AppName = req["ApplicationName"],
-                    Id = Convert.ToInt32(req["Id"]),
+                    ClientSecrets = new ClientSecrets
+                    {
+                        ClientId = con.ClientID,
+                        ClientSecret = con.Clientsecret
+                    },
+                    Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
+                Console.WriteLine(JsonConvert.SerializeObject(init));
+                var flow = new AuthorizationCodeFlow(init);
+                Console.WriteLine("Fetching token for code: _" + req["code"] + "_");
+
+                if (ViewBag.Env == "Staging")
+                    RedirectUri = "https://myaccount.eb-test.xyz";
+                else if (ViewBag.Env == "Production")
+                    RedirectUri = "https://myaccount.expressbase.com";
+                Console.WriteLine(RedirectUri);
+                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", req["code"], RedirectUri, CancellationToken.None);
+                Console.WriteLine(JsonConvert.SerializeObject(result));
+                con.RefreshToken = result.RefreshToken;
                 res = this.ServiceClient.Post<AddGoogleDriveResponse>(new AddGoogleDriveRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);

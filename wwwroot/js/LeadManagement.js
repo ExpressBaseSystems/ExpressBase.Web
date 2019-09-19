@@ -486,9 +486,8 @@
             });
         }.bind(this));
 
-        new ListViewCustom(this.divFeedback, this.FeedbackList, function (id, data) {
+        new ListViewCustom(this.divFeedback, this.FeedbackList, function (id, tempObj) {
             this.$MdlFeedBack.attr("data-id", id);
-            var tempObj = JSON.parse(window.atob(data));
 
             this.setFollowupStatus(tempObj.Status);
 
@@ -654,9 +653,8 @@
             });
         }.bind(this));
 
-        new ListViewCustom(this.divBilling, this.BillingList, function (id, data) {
+        new ListViewCustom(this.divBilling, this.BillingList, function (id, tempObj) {
             this.$MdlBilling.attr("data-id", id);
-            var tempObj = JSON.parse(window.atob(data));
             this.$BlngDate.val(tempObj.Date);
             this.$BlngTotal.val(tempObj.Total_Amount);
             this.$BlngRcvd.val(tempObj.Amount_Received);
@@ -780,9 +778,8 @@
             obj["Nurse"] = this.getKeyByValue(this.NurseInfo, obj["Nurse"]);
         }.bind(this));
 
-        new ListViewCustom(this.divSrgy, this.SurgeryList, function (id, data) {
+        new ListViewCustom(this.divSrgy, this.SurgeryList, function (id, tempObj) {
             this.$MdlSurgery.attr("data-id", id);
-            var tempObj = JSON.parse(window.atob(data));
             this.$SrgyDate.val(tempObj.Date);            
             $('#selSrgyBranch option').filter(function () { return $(this).html() === tempObj.Branch; }).prop("selected", true);
             $('#selSrgyExtrDnBy option').filter(function () { return $(this).html() === tempObj.Extract_By; }).prop("selected", true);
@@ -1043,7 +1040,7 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
     this.tblEditColumnRender = function (data, type, row, meta) {
         var myObj = this.findObjectByKey(this.itemList, 'Id', data[1]);
-        return `<i class="fa fa-pencil fa-2x editclass${this.ParentDivId}" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]} data-json=${window.btoa(JSON.stringify(myObj))}></i>`;
+        return `<i class="fa fa-pencil fa-2x editclass${this.ParentDivId}" aria-hidden="true" style="cursor:pointer;" data-id=${data[1]} data-json=${window.btoa(unescape(encodeURIComponent(JSON.stringify(myObj))))}></i>`;
     }.bind(this);
 
     this.findObjectByKey = function (array, key, value) {
@@ -1057,8 +1054,8 @@ var ListViewCustom = function (parentDiv, itemList, editFunc) {
 
     this.onClickEdit = function (e) {
         var id = $(e.target).attr("data-id");
-        var data = $(e.target).attr("data-json");
-        this.editFunction(id, data);
+        var tempObj = JSON.parse(decodeURIComponent(escape(window.atob($(e.target).attr("data-json")))));
+        this.editFunction(id, tempObj);
     };
 
     this.init();

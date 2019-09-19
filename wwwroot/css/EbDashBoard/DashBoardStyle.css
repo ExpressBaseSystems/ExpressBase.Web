@@ -4,7 +4,7 @@
 
 .grid-stack {
     min-height: 500px;
-    background-color: #f2f2f2;
+    background-color: transparent;
 }
 
     .grid-stack.grid-stack-rtl {
@@ -34,7 +34,7 @@
         position: absolute;
         padding: 0;
         border-radius: 5px;
-        background-color: #f2f2f2;
+        background-color: transparent;
         border: solid 0px;
     }
 
@@ -426,7 +426,14 @@
 .db-tbl-wraper {
    height: calc(100% - 25px);
 }
-#dashbord-view .dataTables_wrapper , #dashbord-view .dataTables_scroll {
+
+
+#dashbord-view {
+    margin-left: -15px;
+    margin-right: -15px;
+    padding: 20px 1px 35px 10px;
+}
+#dashbord-view .dataTables_wrapper, #dashbord-view .dataTables_scroll {
     height: 100%;
 }
 #dashbord-view .dataTables_scrollBody {

@@ -3,6 +3,7 @@ var SolutionDashBoard = function (connections, sid) {
     this.Connections = connections;
     this.whichModal = "";
     this.Sid = sid;
+    this.GoogleRedirecturi = GoogleRedirecturi;
     var postData;
     var Deleteid;
     var preferancetype = [];
@@ -413,10 +414,15 @@ var SolutionDashBoard = function (connections, sid) {
     this.GoogleDriveOnSubmit = function (e) {
         e.preventDefault();
         postDataGoogleDrive = $(e.target).serializeArray();
+        var uri = "";
+        if (GoogleRedirecturi == "Staging")
+            uri = "https://myaccount.eb-test.xyz";
+        else if (GoogleRedirecturi == "Production")
+            uri = "https://myaccount.expressbase.com";
         auth2 = gapi.auth2.init({
-            client_id: postData[3].value,
+            client_id: postDataGoogleDrive[3].value,
             access_type: 'offline',
-            redirect_uri: 'https://myaccount.eb-test.xyz',
+            redirect_uri: uri,
             scope: 'https://www.googleapis.com/auth/drive',
             // Scopes to request in addition to 'profile' and 'email'
             //scope: 'additional_scope'

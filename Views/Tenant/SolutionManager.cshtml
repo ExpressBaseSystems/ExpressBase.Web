@@ -10,7 +10,6 @@
     <script src="~/js/EbDashBoards/SolutionDashBoard.js" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" />
     <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
 }
 @{
@@ -281,7 +280,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" data-target="@*#GoogleDriveConnectionEdit*@" data-whatever="GoogleDrive">
+                                    <div id="googledrive" class="connection_wrap_outer" data-toggle="modal" data-target="#GoogleDriveConnectionEdit" data-whatever="GoogleDrive">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
@@ -1390,6 +1389,7 @@
 @section JsCode{
     <script>
         let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
+        let GoogleRedirecturi = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Env));
 	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
 	    $("#no_user").change(function (e) {
 		    $("#user_countForm").val(e.target.value);

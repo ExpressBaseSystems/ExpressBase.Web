@@ -214,7 +214,7 @@ var EditTicket = function () {
 (function ($) {
     window.filearray = [];
     window.filedel = [];
-    var preloadedfile = null;
+    var preloadedfile = 0;
     $.fn.imageUploader = function (options) {
 
         // Default settings
@@ -462,11 +462,12 @@ var EditTicket = function () {
                 // Get the files input
                 $input = $container.find('input[type="file"]');
 
-            for (var p = 0; p < tktdtl.supporttkt.length; p++) {
+            if (typeof(tktdtl) !== 'undefined' ) {
+                for (var p = 0; p < tktdtl.supporttkt.length; p++) {
 
-                preloadedfile= tktdtl.supporttkt[p].Fileuploadlst.length; 
+                    preloadedfile = tktdtl.supporttkt[p].Fileuploadlst.length;
+                }
             }
-
 
 
             // Run through the files
@@ -481,8 +482,16 @@ var EditTicket = function () {
                             // Add it to data transfer
                             dataTransfer.items.add(file);
 
+
                             // Set preview
-                            $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                            if (files[i].type == "application/pdf") {
+
+                                $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
+                            }
+                            else {
+                                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
+                            }
+                            
                         }
                         else {
                             EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });

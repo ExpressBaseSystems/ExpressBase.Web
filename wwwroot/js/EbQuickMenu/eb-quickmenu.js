@@ -201,6 +201,9 @@
             else if (_obj.EbType == "WebForm") {
                 _url = "../WebForm/Index?refid=" + _obj.Refid;
             }
+            else if (_obj.EbType == "DashBoard") {
+                _url = "../DashBoard/DashBoardView?refid=" + _obj.Refid;
+            }
         }
         return _url;
     };

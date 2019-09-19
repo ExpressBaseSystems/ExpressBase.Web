@@ -7,7 +7,7 @@
     this.fireInitOnchange = function (inpCtrl) {
         if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
             try {
-                console.eb_log(`>> Starting execution of OnChange function of 'form.${inpCtrl.Name}'`);
+                /*console.eb_log(`>> Starting execution of OnChange function of 'form.${inpCtrl.Name}'`);*/
                 inpCtrl.__onChangeFn();
             }
             catch (e) {
@@ -27,7 +27,6 @@
             let val = fun();
 
             let PSInitCompleteCallBFn = function (select) {
-                console.log("default == ps callb");
                 this.FO.IsPSsInitComplete[select.EbSid_CtxId] = true;
                 if (isAllValuesTrue(this.FO.IsPSsInitComplete))
                     this.FO._allPSsInit = true;
@@ -84,7 +83,7 @@
 
     this.bindOnChange = function (control) {
         try {
-            let FnString = `console.log('${control.__path || control.Name}');` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
+            let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.__onChangeFn = onChangeFn;
             control.bindOnChange(onChangeFn);

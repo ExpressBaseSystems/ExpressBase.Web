@@ -759,6 +759,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 0 0px 0 5px;
 }
 
+.ctrl-cover > .input-group > .nullable-check [type="checkbox"] {
+    margin-top: 4px;
+}
+
 .ctrl-cover > div > div > div.bs-searchbox > input {
     height: 21px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);

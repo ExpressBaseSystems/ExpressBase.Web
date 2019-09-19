@@ -10,6 +10,7 @@
     this.Cid = options.Cid;
     this.TileCollection = {};
     this.CurrentTile;
+    this.CurrentRefid;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2 ;
 
     this.GenerateButtons = function () {
@@ -51,7 +52,7 @@
     }
 
     this.DrawTiles = function () {
-      
+        $("#dashbord-view").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
             
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -162,6 +163,9 @@
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
+        if(pname === "BackgroundColor"){
+        $("#dashbord-view").css("background-color", "").css("background-color", newval);
+        }
     }
     this.addTilecontext = function () {
         $.contextMenu({
@@ -183,7 +187,10 @@
             trigger: 'right',
             items: {
                 "RemoveTile": {
-                    name: "Remove Tile", icon: "add", callback: this.RemoveTile.bind(this)
+                    name: "Remove Tile", icon: "add", callback: this.RemoveTile.bind(this),
+                }, 
+               "FullScreenView": {
+                    name: "Open in NewTab ", icon: "fa-external-link", callback: this.FullScreenViewTrigger.bind(this),
                 },
             }
         });
@@ -194,6 +201,11 @@
         el = selector.$trigger.parent();
            grid.removeWidget(el);
     }
+this.FullScreenViewTrigger = function (name, selector, event){
+    let id = selector.$trigger[0].getAttribute("id");
+    let TileRefid = this.TileCollection[id].TileRefId;
+    window.open(location.origin + "/DV/dv?refid=" +TileRefid , '_blank');
+}
 
    
     this.TileRefidChangesuccess = function ( id , data) {
@@ -220,6 +232,7 @@
             o.dvObject = obj;
             var dt = new EbBasicChart(o);
         }
+  
     }
 
     this.BeforeSave = function(){

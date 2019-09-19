@@ -262,7 +262,7 @@ var EditTicket = function () {
 
                     // Set preloaded images preview
                     for (let i = 0; i < plugin.settings.preloaded.length; i++) {
-                        $uploadedContainer.append(createImg(plugin.settings.preloaded[i].src, plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].fileno, true));
+                        $uploadedContainer.append(createImg(plugin.settings.preloaded[i].src, plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].fileno, plugin.settings.preloaded[i].cntype, true));
                     }
 
                 }
@@ -330,14 +330,19 @@ var EditTicket = function () {
             e.stopPropagation();
         };
 
-        let createImg = function (src, id, fileno) {
+        let createImg = function (src, id, fileno, cntype) {
 
             // Create the upladed image container
-            let $container = $('<div>', { class: 'uploaded-image' }),
+            let $container = $('<div>', { class: 'uploaded-image' });
 
-                // Create the img tag
-                $img = $('<img>', { src: src }).appendTo($container),
+           // Create the img tag
 
+            if(cntype == 'application/pdf') {
+
+                src = '/images/pdf-image.png';
+            }
+               
+            $img = $('<img>', { src: src }).appendTo($container),
                 // Create the delete button
                 $button = $('<button>', { class: 'delete-image' }).appendTo($container),
 
@@ -351,6 +356,7 @@ var EditTicket = function () {
                 $container.attr('data-preloaded', true);
                 $container.attr('data-index', id);
                 $container.attr('data-fileno', fileno);
+                $container.attr('data-cntype', cntype);
 
                 // Create the preloaded input and append it to the container
                 let $preloaded = $('<input>', {
@@ -405,6 +411,8 @@ var EditTicket = function () {
 
                 // Remove this image from the container
                 $container.remove();
+
+                var nm = (((preloadedfile - window.filedel.length) + filearray.length) < 10);
 
                 // If there is no more uploaded files
                 if (!$container.find('.uploaded-image').length) {

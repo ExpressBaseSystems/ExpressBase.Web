@@ -1051,7 +1051,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         var count = this.ebSettings.LeftFixedColumn;
         var visCount = 0;
         if (count > 1) {
-            $.each(this.Api.settings().init().aoColumns, function (i, col) {
+            $.each(this.EbObject.Columns.$values, function (i, col) {
                 if (!col.bVisible) {
                     if (this.ebSettings.LeftFixedColumn > visCount)
                         count++;

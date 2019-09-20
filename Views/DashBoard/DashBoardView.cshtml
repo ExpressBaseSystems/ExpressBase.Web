@@ -6,7 +6,13 @@
 <link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css">
 <link rel="stylesheet" href="~/css/ChartStyle.css">
 <link rel="stylesheet" href="~/css/Eb_datatable.css">
-<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css"  />
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" />
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
+
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" />
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js"></script>
 <script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
@@ -17,20 +23,32 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <script type="text/javascript" src="~/js/datatables.min.js"></script>
 <script src="~/js/Eb_Basic_DataTable.js"></script>
-    <script src="~/js/Eb_Basic_chart.js"></script>
- 
+<script src="~/js/Eb_Basic_chart.js"></script>
+<script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js"></script>
+<script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js"></script>
+<script type="text/javascript" src="~/js/FormBuilder/PGHelper.js"></script>
+<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
+
 <div class="container-fluid" style="margin-top:50px">
     <div class="row">
         <div class="col-sm-12">
-            <div id="dashbord-view">
+            <div id="dashbord-user-view">
                 <div class="grid-stack"></div>
             </div>
 
         </div>
     </div>
+
+    <div id="ppt-dash-view" class="PGgrid"> <div id="propGridView"> </div></div>
 </div>
 <script type="text/javascript">
-
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
         var DBobj = new DashBoardViewWrapper({
             Version: '@ViewBag.VersionNumber',
             ObjType: @ViewBag.ObjType,

@@ -779,8 +779,9 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#GoogleDriveInputNickname').val(temp[obj].NickName);
                 $('#GoogleDriveInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
-                $('#exampleTextarea').val(temp1["JsonString"]);
-                $('#GoogleDriveInputApplicationName').val(temp1["AppName"]);
+                $('#GoogleDriveInputApplicationName').val(temp1["ApplicationName"]);
+                $('#GoogleDriveInputClientID').val(temp1["ClientID"]);
+                $('#GoogleDriveInputClientsecret').val(temp1["Clientsecret"]);
             }
         }
     };

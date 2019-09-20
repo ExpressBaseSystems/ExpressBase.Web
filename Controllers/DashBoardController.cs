@@ -30,12 +30,12 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult DashBoardView(string refid)
         {
-            //var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
-            //Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
+            Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper));
 
-            //ViewBag.Meta = _jsResult.AllMetas;
-            //ViewBag.JsObjects = _jsResult.JsObjects;
-            //ViewBag.EbObjectType = _jsResult.EbObjectTypes;
+            ViewBag.Meta = _jsResult.AllMetas;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
             EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
             {

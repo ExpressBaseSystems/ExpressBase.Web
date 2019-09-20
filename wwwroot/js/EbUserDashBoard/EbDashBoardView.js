@@ -5,6 +5,8 @@
     this.Statu = options.Statu;
     this.TileCollection = {};
     this.CurrentTile;
+    this.Wc = options.Wc;
+    this.Cid = options.Cid;
 
     this.GenerateButtons = function () {
 
@@ -12,10 +14,19 @@
 
     this.init = function () {
         this.DrawTiles();
+        this.propGrid = new Eb_PropertyGrid({
+            id: "propGridView",
+            wc: this.Wc,
+            cid: this.Cid,
+            $extCont: $("#ppt-dash-view"),
+            isDraggable: true
+        });
+        this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
+        this.propGrid.PropertyChanged = this.popChanged.bind(this);
     }
 
     this.DrawTiles = function () {
-
+        $("#dashbord-user-view").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -29,10 +40,11 @@
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                   </div>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-object-group tile-opt" aria-hidden="true" id="i-opt-obj"></i>
+                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper"></div>
                     </div></div>`);
-                $('.grid-stack').gridstack();
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                 let refid = this.EbObject.Tiles.$values[i].TileRefId;
@@ -46,9 +58,30 @@
                         });
                 }
             }
+
+            this.Tilecontext()
+
         }
     }
 
+
+    this.Tilecontext = function () {
+        $.contextMenu({
+            selector: '.grid-stack-item-content',
+            trigger: 'right',
+            items: {
+                "FullScreenView": {
+                    name: "Open in NewTab ", icon: "fa-external-link", callback: this.FullScreenViewTrigger.bind(this),
+                },
+            }
+        });
+    }
+
+    this.FullScreenViewTrigger = function (name, selector, event) {
+        let id = selector.$trigger[0].getAttribute("id");
+        let TileRefid = this.TileCollection[id].TileRefId;
+        window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+    }
 
     this.TileRefidChangesuccess = function (id, data) {
         let obj = JSON.parse(data);
@@ -73,6 +106,32 @@
             o.tableId = "tb1" + id;
             o.dvObject = obj;
             var dt = new EbBasicChart(o);
+        }
+    }
+
+
+    this.popChanged = function (obj, pname, newval, oldval) {
+        if (pname === "TileCount") {
+            //   $(".grid-stack").append(`<div class="grid-stack-item ui-draggable ui-resizable" data-gs-x="0" data-gs-y="0" data-gs-width="5" data-gs-height="4">
+            //            <div class="grid-stack-item-content panel panel-primary ui-draggable-handle" id="tile1">
+            //            </div>uj
+            //        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: block;"></div></div>`)
+        }
+        if (pname == "TileRefId") {
+            $(`[name-id="${this.CurrentTile}"]`).empty();
+            $(`[data-id="${this.CurrentTile}"]`).empty();
+            $(`.eb-loader-prcbar`).remove();
+            this.VisRefid = newval;
+            $.ajax(
+                {
+                    url: '../DashBoard/DashBoardGetObj',
+                    type: 'POST',
+                    data: { refid: this.VisRefid },
+                    success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                });
+        }
+        if (pname === "BackgroundColor") {
+            $("#dashbord-user-view").css("background-color", "").css("background-color", newval);
         }
     }
 

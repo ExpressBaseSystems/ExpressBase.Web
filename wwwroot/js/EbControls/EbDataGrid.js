@@ -506,14 +506,14 @@
                 return true;
 
             if (ctrl.ObjType === "PowerSelect") {
-                ctrl.setDisplayMember = this.j;
+                //ctrl.setDisplayMember = this.j;
                 ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
             }
             else
                 ctrl.setValue(val);
 
         }.bind(this));
-    }
+    };
 
     this.getFormVals = function () {
         return getValsFromForm(this.formObject_Full);

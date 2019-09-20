@@ -134,7 +134,7 @@
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });
             }
-            ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+            //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
@@ -175,7 +175,7 @@
                 });
                 //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
-            this.setCurrentDate(ctrl, $input);
+            
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
@@ -190,13 +190,14 @@
             //}
 
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
-            $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
-            if (ctrl.IsNullable) {
-                if (!($('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
-                    $input.val('');
-                $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
-                $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
-            }
+            $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));            
+        }
+        this.setCurrentDate(ctrl, $input);
+        if (ctrl.IsNullable) {
+            if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+                $input.val('');
+            $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
+            $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
     };
 
@@ -211,13 +212,16 @@
             //ctrl.DoNotPersist = false;
         }
         else {
-            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
+            $ctrl.closest(".input-group").find("input[type='text']").val("").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             //ctrl.DoNotPersist = true;
         }
     };
 
     this.setCurrentDate = function (ctrl, $input) {
-        if (ctrl.EbDateType === 5) { //Date
+        if (ctrl.ShowDateAs_ === 1) {
+            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+        }
+        else if (ctrl.EbDateType === 5) { //Date
             $input.val(ebcontext.user.Preference.ShortDate);
         }
         else if (ctrl.EbDateType === 17) { //Time

@@ -327,7 +327,7 @@
                 else if (type === "ProvisionLocation") {
                     this.ProvisionLocationCtrl = ctrlObj;
                 }
-                else if (type === "SimpleSelect") {
+                else if (type === "SimpleSelect" || type === "BooleanSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
                 }
 
@@ -390,6 +390,7 @@
                     newo.DisplayName = config.Name;
                     ctrl.Fields.$values.push(newo);
                 });
+                EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
             }.bind(this, _ctrl)
         });
     };

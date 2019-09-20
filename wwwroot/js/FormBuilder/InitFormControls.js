@@ -233,6 +233,10 @@
         $input.selectpicker();
     };
 
+    this.BooleanSelect= function (ctrl) {
+        this.SimpleSelect(ctrl);
+    };
+
     this.UserLocation = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.multiselect({
@@ -490,25 +494,6 @@
     this.SysCreatedAt = function (ctrl) {
         //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
-    this.MuGetValue = function (p1, p2) {
-        if (!this.hasOwnProperty("_finalObj"))
-            this._finalObj = {};
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                this._finalObj[obj.Name] = obj.Control.getValue();
-            }            
-        }.bind(this));
-        return JSON.stringify(this._finalObj);
-    };
-    this.MuSetValue = function (p1, p2) {
-        this._finalObj = JSON.parse(p1);
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                obj.Control.setValue(this._finalObj[obj.Name]);
-            }
-        }.bind(this));
-
-    };
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
@@ -518,37 +503,6 @@
                 let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
                 if (c)
                     obj.Control = c;
-            }
-        }.bind(this));
-
-        $.extend(ctrl, { getValue: this.MuGetValue, setValue: this.MuSetValue });
-    };
-
-    this.MlGetValue = function (p1, p2) {
-        if (!this.hasOwnProperty("_finalObj"))
-            this._finalObj = {};
-        let metaObj = {};
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                if (obj.Name === 'shortname' || obj.Name === 'longname')
-                    this._finalObj[obj.Name] = obj.Control.getValue();
-                else
-                    metaObj[obj.DisplayName] = obj.Control.getValue();
-            }
-        }.bind(this));
-        this._finalObj['meta_json'] = JSON.stringify(metaObj);
-        return JSON.stringify(this._finalObj);
-    };
-
-    this.MlSetValue = function (p1, p2) {
-        this._finalObj = JSON.parse(p1);
-        let metaObj = JSON.parse(this._finalObj['meta_json']) || {};
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                if (obj.Name === 'shortname' || obj.Name === 'longname')
-                    obj.Control.setValue(this._finalObj[obj.Name]);
-                else if (metaObj.hasOwnProperty(obj.DisplayName))
-                    obj.Control.setValue(metaObj[obj.DisplayName]);
             }
         }.bind(this));
     };
@@ -563,10 +517,14 @@
                     obj.Control = c;
             }
         }.bind(this));
-
-        $.extend(ctrl, { getValue: this.MlGetValue, setValue: this.MlSetValue });
     };
 
+    this.DisplayPicture = function (ctrl, ctrlopts) {
+
+
+
+        //$.extend(ctrl, { getValue: this.MlGetValue, setValue: this.MlSetValue });
+    };
 
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;

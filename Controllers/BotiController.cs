@@ -322,7 +322,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                UploadFileAsyncRequest1234 uploadFileRequest = new UploadFileAsyncRequest1234();
+                UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
                 byte[] myFileContent;
                 myFileContent = System.Convert.FromBase64String(base64);

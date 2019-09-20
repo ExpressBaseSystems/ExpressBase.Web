@@ -161,8 +161,9 @@
               for (var j = 0; j < tktdtl.supporttkt[i].Fileuploadlst.length; j++) {
 
                   var item = tktdtl.supporttkt[i].Fileuploadlst[j].FileDataURL;
-                  var fileno =tktdtl.supporttkt[i].Fileuploadlst[j].FileId;
-                  preloaded.push({ id: "photo", src: item, fileno:fileno });
+                  var fileno = tktdtl.supporttkt[i].Fileuploadlst[j].FileId;
+                  var fltype=tktdtl.supporttkt[i].Fileuploadlst[j].ContentType;
+                  preloaded.push({ id: "photo", src: item, fileno:fileno ,cntype:fltype});
               }
           }
 

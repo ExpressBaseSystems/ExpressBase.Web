@@ -1325,7 +1325,7 @@ var EbBasicDataTable = function (Option) {
             this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             //var idpos = getObjByval(this.ebSettings.Columns.$values, "name", this.hiddenFieldName).data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + (row[this.hiddenIndex]!== null) ? row[this.hiddenIndex].toString(): null + "'/>";
+            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + ((row[this.hiddenIndex]!== null) ? row[this.hiddenIndex].toString(): null) + "'/>";
         }
         else
             return "<input type='checkbox' class='" + this.tableId + "_select'/>";

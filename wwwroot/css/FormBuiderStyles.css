@@ -755,7 +755,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [ctype=SimpleSelect] .ctrl-cover .dropdown-toggle,
 [ctype=PowerSelect] .ctrl-cover .dropdown-toggle,
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
-[tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle {
+[tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
+[tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle {
     padding: 0 0px 0 5px;
 }
 

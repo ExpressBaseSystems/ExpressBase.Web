@@ -520,10 +520,7 @@
     };
 
     this.DisplayPicture = function (ctrl, ctrlopts) {
-
-
-
-        //$.extend(ctrl, { getValue: this.MlGetValue, setValue: this.MlSetValue });
+        new DPFormControl(ctrl);
     };
 
     this.Numeric = function (ctrl) {

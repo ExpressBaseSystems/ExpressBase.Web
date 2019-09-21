@@ -30,7 +30,8 @@
         id: "propGrid",
         wc: this.wc,
         cid: this.Tenantid,
-        $extCont: $("#PGgrid-report")
+        $extCont: $("#PGgrid-report"),
+        isDraggable:true
     });
 
     this.idCounter = CtrlCounters; //from c# //this.RbCommon.EbidCounter;
@@ -425,6 +426,7 @@
             obj.Source = 'url(' + window.location.protocol + "//" + window.location.host + "/images/" + obj.ImageRefId + ".jpg" + ') center no-repeat';
         this.RefreshControl(obj);
     };
+
     this.onDrag_stop = function (event, ui) {
         $('#guid-v , #guid-h, #guid-vr, #guid-hb').remove();
         var dragId = $(event.target).attr("id");
@@ -715,6 +717,7 @@
         this.margin.Left = $(".track_line_vert1").position().left;
         this.margin.Right = $(".track_line_vert2").position().left;
     };//report execution start func
+
     this.init();
 };
 

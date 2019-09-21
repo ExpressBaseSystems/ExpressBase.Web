@@ -524,7 +524,8 @@
     };
 
     this.DisplayPicture = function (ctrl, ctrlopts) {
-        new DPFormControl(ctrl);
+        //new DPFormControl(ctrl);
+        new DisplayPictureControl(ctrl, {});
     };
 
     this.Numeric = function (ctrl) {

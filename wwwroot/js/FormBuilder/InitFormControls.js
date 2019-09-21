@@ -134,7 +134,7 @@
                     OnAfterChooseMonth: fun.bind(this, formObject, userObject)
                 });
             }
-            ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+            //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
@@ -175,28 +175,29 @@
                 });
                 //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
-            this.setCurrentDate(ctrl, $input);
+
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
             //if (ctrlOpts.source === "webform") {
-                //let maskPattern = "DD-MM-YYYY";
-                //$input.attr("placeholder", maskPattern);
-                //$input.inputmask(maskPattern);               
-                
+            //let maskPattern = "DD-MM-YYYY";
+            //$input.attr("placeholder", maskPattern);
+            //$input.inputmask(maskPattern);               
+
             //    if (!ctrl.IsNullable)
             //        $input.val(userObject.Preference.ShortDate);
             //}
 
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
-            if (ctrl.IsNullable) {
-                if (!($('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
-                    $input.val('');
-                $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
-                $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
-            }
+        }
+        this.setCurrentDate(ctrl, $input);
+        if (ctrl.IsNullable) {
+            if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+                $input.val('');
+            $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
+            $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
     };
 
@@ -211,13 +212,16 @@
             //ctrl.DoNotPersist = false;
         }
         else {
-            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
+            $ctrl.closest(".input-group").find("input[type='text']").val("").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
             //ctrl.DoNotPersist = true;
         }
     };
 
     this.setCurrentDate = function (ctrl, $input) {
-        if (ctrl.EbDateType === 5) { //Date
+        if (ctrl.ShowDateAs_ === 1) {
+            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+        }
+        else if (ctrl.EbDateType === 5) { //Date
             $input.val(ebcontext.user.Preference.ShortDate);
         }
         else if (ctrl.EbDateType === 17) { //Time
@@ -231,6 +235,10 @@
     this.SimpleSelect = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.selectpicker();
+    };
+
+    this.BooleanSelect = function (ctrl) {
+        this.SimpleSelect(ctrl);
     };
 
     this.UserLocation = function (ctrl) {
@@ -271,7 +279,7 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 0 ,long: 0};
+        ebcontext.userLoc = { lat: 0, long: 0 };
         if (_rowId === undefined || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
@@ -376,6 +384,9 @@
             this.SimpleSelect(ctrl);
             return;
         }
+        else if (ctrl.IsInsertable) {
+            ctrl.__AddButtonInit = this.Button;
+        }
 
         Vue.component('v-select', VueSelect.VueSelect);
         Vue.config.devtools = true;
@@ -446,7 +457,7 @@
     this.Button = function (ctrl) {
         $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
-    };
+    }.bind(this);
 
     this.iFrameOpen = function (ctrl) {
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
@@ -490,25 +501,6 @@
     this.SysCreatedAt = function (ctrl) {
         //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
-    this.MuGetValue = function (p1, p2) {
-        if (!this.hasOwnProperty("_finalObj"))
-            this._finalObj = {};
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                this._finalObj[obj.Name] = obj.Control.getValue();
-            }            
-        }.bind(this));
-        return JSON.stringify(this._finalObj);
-    };
-    this.MuSetValue = function (p1, p2) {
-        this._finalObj = JSON.parse(p1);
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                obj.Control.setValue(this._finalObj[obj.Name]);
-            }
-        }.bind(this));
-
-    };
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
         console.log('init ProvisionUser');
@@ -518,37 +510,6 @@
                 let c = getObjByval(ctrlopts.flatControls, "Name", obj.ControlName);
                 if (c)
                     obj.Control = c;
-            }
-        }.bind(this));
-
-        $.extend(ctrl, { getValue: this.MuGetValue, setValue: this.MuSetValue });
-    };
-
-    this.MlGetValue = function (p1, p2) {
-        if (!this.hasOwnProperty("_finalObj"))
-            this._finalObj = {};
-        let metaObj = {};
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                if (obj.Name === 'shortname' || obj.Name === 'longname')
-                    this._finalObj[obj.Name] = obj.Control.getValue();
-                else
-                    metaObj[obj.DisplayName] = obj.Control.getValue();
-            }
-        }.bind(this));
-        this._finalObj['meta_json'] = JSON.stringify(metaObj);
-        return JSON.stringify(this._finalObj);
-    };
-
-    this.MlSetValue = function (p1, p2) {
-        this._finalObj = JSON.parse(p1);
-        let metaObj = JSON.parse(this._finalObj['meta_json']) || {};
-        $.each(this.Fields.$values, function (i, obj) {
-            if (obj.ControlName !== '') {
-                if (obj.Name === 'shortname' || obj.Name === 'longname')
-                    obj.Control.setValue(this._finalObj[obj.Name]);
-                else if (metaObj.hasOwnProperty(obj.DisplayName))
-                    obj.Control.setValue(metaObj[obj.DisplayName]);
             }
         }.bind(this));
     };
@@ -563,10 +524,12 @@
                     obj.Control = c;
             }
         }.bind(this));
-
-        $.extend(ctrl, { getValue: this.MlGetValue, setValue: this.MlSetValue });
     };
 
+    this.DisplayPicture = function (ctrl, ctrlopts) {
+        //new DPFormControl(ctrl);
+        new DisplayPictureControl(ctrl, {});
+    };
 
     this.Numeric = function (ctrl) {
         var id = ctrl.EbSid_CtxId;

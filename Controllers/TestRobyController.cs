@@ -1,31 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
 using ExpressBase.Common;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.Structures;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using ExpressBase.Scheduler.Jobs;
 using ExpressBase.Web.BaseControllers;
-using System.IO;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
-using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
-using Google.Apis.Util.Store;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
-using ServiceStack.Stripe;
-using ServiceStack.Stripe.Types;
 using System.Threading;
-using WebApplication1.Pages;
 using Google.Apis.Auth.OAuth2.Flows;
-using Google.Apis.Auth.OAuth2.Responses;
 using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2.Requests;
+using File = Google.Apis.Drive.v3.Data.File;
+using Google.Apis.Auth.OAuth2.Responses;
+using System.IO;
 using System.Text;
-using System.Net;
-using Newtonsoft.Json;
+using Google.Apis.Upload;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -81,14 +70,32 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             return View();
         }
-        
+
         public IActionResult Test()
         {
-            //IndexModel m = new IndexModel();
-            //m.OnGet();
             return View("test");
         }
-        
+        //public class OAuth2AccessTokenReponse
+        //{
+        //    public string AccessToken;
+        //    public int ExpiresInSeconds;
+        //    public string TokenType;
+        //}
+        //public static string refreshAccessToken()
+        //{
+        //    using (System.Net.WebClient client = new System.Net.WebClient())
+        //    {
+        //        byte[] response = client.UploadValues("https://accounts.google.com/o/oauth2/token", new System.Collections.Specialized.NameValueCollection(){
+        //        {"client_id", ClientId},
+        //        {"client_secret", ClientSecret},
+        //        {"refresh_token", "XXXXX"},
+        //        {"grant_type", "refresh_token"}
+        //    });
+        //        string sresponse = System.Text.Encoding.Default.GetString(response);
+        //        OAuth2AccessTokenReponse o = (OAuth2AccessTokenReponse)Newtonsoft.Json.JsonConvert.DeserializeObject(sresponse, typeof(OAuth2AccessTokenReponse));
+        //        return o.AccessToken;
+        //    }
+        //}
         [HttpPost]
         public async Task storeauthcodeAsync(string data12)
         {
@@ -104,21 +111,49 @@ namespace ExpressBase.Web.Controllers
                     Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
                 var flow = new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init);
-                //var url = flow.CreateAuthorizationCodeRequest("https://myaccount.eb-test.xyz/");
-
                 var code = data12;
-
-
                 Console.WriteLine("Fetching token for code: _" + code + "_");
-
-
-                var r = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
-                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(r));
-                //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(t));
+                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
+                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+                GoogleCredential credential = GoogleCredential.FromAccessToken(result.AccessToken);
+                Console.WriteLine("credentials created");
+                var service = new DriveService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = ApplicationName,
+                });
+                Console.WriteLine("service created");
+                byte[] byteArray = Encoding.ASCII.GetBytes("hagsd adhgasgd asdg assdghkajsgd asdgkasgd akjsgdka");
+                Stream str = new MemoryStream(byteArray);
+                var fileMetadata = new File()
+                {
+                    Name = "photo.jpg",
+                    MimeType = "image/jpeg"
+                };
+                FilesResource.CreateMediaUpload request;
+                string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                Console.WriteLine("dir : " + dir);
+                IUploadProgress response;
+                using (Stream stream = new FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
+                                        FileMode.Open, FileAccess.Read))
+                {
+                    request = service.Files.Create(
+                        fileMetadata, stream, "image/jpeg");
+                    request.Fields = "id";
+                    response = request.Upload();
+                }
+                if (response != null)
+                    Console.WriteLine("Exception" + response.Status.ToString());
+                else if(response == null)
+                    Console.WriteLine("Null Response");
+                var file = request.ResponseBody;
+                if (file != null)
+                    Console.WriteLine("File ID: " + file.Id);
             }
             catch (Exception e)
             {
                 Console.WriteLine("exception inside storeauth :" + e);
+                Console.WriteLine(" StackTrace :" + e.StackTrace);
             }
 
             //if (credential.Token.IsExpired(Google.Apis.Util.SystemClock.Default))

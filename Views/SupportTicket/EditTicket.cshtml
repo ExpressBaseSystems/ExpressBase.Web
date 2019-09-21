@@ -32,18 +32,6 @@
                                         <span class="" id="tktid"> </span>
                                     </div>
                                 </div>
-                                <div class="col-sm-3 col-md-3 col-lg-3 shd recdiv">
-                                    <label>Status</label>
-                                    <div class=" ">
-                                        <span id="stsid"></span>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3 col-md-3 col-lg-3 shd recdiv">
-                                    <label>Assigned to</label>
-                                    <div class=" ">
-                                        <P id="asgnid"></P>
-                                    </div>
-                                </div>
                             </div>
 
 
@@ -64,7 +52,7 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="col-sm-4 col-md-4 col-lg-4 ">
                                     <label>Priority</label>
                                     <div>
                                         <select id="bugpriority" class="form-control  priori w-100">
@@ -75,29 +63,45 @@
                                     </div>
                                     <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
                                 </div>
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
-                                    <label>Date Created</label>
-                                    <div class=" ">
-                                        <input class="form-control w-100 " type="text" id="dtecrtd" disabled>
-                                    </div>
-                                </div>
-
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="col-sm-4 col-md-4 col-lg-4 ">
                                     <label>Issue type</label>
                                     <div class=" ">
                                         <input class="form-control w-100 " type="text" id="type_b_f" disabled>
                                     </div>
-
                                 </div>
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
+                                <div class="col-sm-4 col-md-4 col-lg-4 ">
+                                    <label>Status</label>
+                                    <div class=" ">
+                                        <input class="form-control w-100 " type="text" id="stsid" disabled>
+                                    </div>
+                                    <div id="stsidlbl" class="" style=" visibility :hidden"> status</div>
+                                </div>
+
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-sm-12 col-md-4 col-lg-4 ">
+                                    <label>Date Created</label>
+                                    <div class=" ">
+                                        <input class="form-control w-100 " type="text" id="dtecrtd" disabled>
+                                    </div>
+                                    <div id="dtecrtdlbl" class="" style=" visibility :hidden"> Date Created</div>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4 ">
                                     <div>
                                         <label>Date Modified</label>
                                         <div class=" ">
                                             <input class="form-control w-100 " type="text" id="dtemdfyd" disabled>
                                         </div>
+                                        <div id="dtemdfydlbl" class="" style=" visibility :hidden">Date Modified </div>
                                     </div>
+                                </div>
+                                <div class="col-sm-12 col-md-4 col-lg-4 ">
+                                    <label>Assigned to</label>
+                                    <div class=" ">
+                                        <input class="form-control w-100 " type="text" id="asgnid" disabled>
+                                    </div>
+                                    <div id="asgnidlbl" class="" style=" visibility :hidden"> assign</div>
                                 </div>
 
                             </div>
@@ -107,7 +111,7 @@
                                     <div>
                                         <textarea rows="8" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
                                     </div>
-                                    <div id="descrlbl" class="" style=" visibility :hidden"> </div>
+                                    <div id="descrlbl" class="" style=" visibility :hidden"> Enter some description</div>
                                 </div>
                             </div>
                             <div class="row ">
@@ -118,40 +122,25 @@
 
                         </div>
 
-                        <div class="col-sm-12 col-md-5 col-lg-5">
-                            <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
+                        <div class="col-sm-12 col-md-5 col-lg-5 pdtop20">
+
                             <div>
-                                <div class="input-field" >
-                                    <label class="active">Images</label>
-                                    <div class="input-images-2" style="padding-top: .5rem; max-height:200px;overflow-y:scroll;"></div>
+                                <div class="input-field">
+                                    <label class="active">Files</label>
+                                    <div class="input-images-2" style="padding-top: .5rem; max-height:250px;overflow-y:auto;"></div>
                                 </div>
 
                             </div>
-                        </div>
-
-                        <div class="row">
-
-                            <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="pdtop20">
                                 <label>Remarks</label>
                                 <div>
-
-                                    @{ if (ViewBag.ImageData != null)
-                                        {
-
-                                            @for (int i = 0; i < ViewBag.ImageData.Count; i++)
-                                            {
-                                                <img style="height:100px;width:100px;padding-left:5px" src="@ViewBag.ImageData[i]" />
-                                            }
-                                            @* <img style="height:100px;width:100px" src="@ViewBag.ImageData" />*@
-                                        }
-                                    }
-                                </div>
-                                <div>
-                                    <textarea rows="4" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
+                                    <textarea rows="10" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
                                 </div>
                             </div>
 
                         </div>
+
+
 
                     </div>
                 </div>
@@ -164,16 +153,19 @@
 <script>
       $(document).ready(function () {
           tktdtl = @Html.Raw(ViewBag.tktdetails);
-         filestore=@Html.Raw(ViewBag.ImageData1);
           var edt = new EditTicket();
-
           let preloaded = [];
-          filestore.forEach(function(item){
-  preloaded.push({id: "photo", src: item});
-});
+          
+          for (var i = 0; i < tktdtl.supporttkt.length; i++) {
 
+              for (var j = 0; j < tktdtl.supporttkt[i].Fileuploadlst.length; j++) {
 
-
+                  var item = tktdtl.supporttkt[i].Fileuploadlst[j].FileDataURL;
+                  var fileno = tktdtl.supporttkt[i].Fileuploadlst[j].FileId;
+                  var fltype=tktdtl.supporttkt[i].Fileuploadlst[j].ContentType;
+                  preloaded.push({ id: "photo", src: item, fileno:fileno ,cntype:fltype});
+              }
+          }
 
         $('.input-images-2').imageUploader({
             preloaded: preloaded,

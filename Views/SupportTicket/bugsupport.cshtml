@@ -30,7 +30,7 @@
                 <div class="supporttkt w-100">
                     <div class="w-100 supporttktwrp">
                         <div>
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover scrl">
                                 <thead class=" ">
                                     <tr>
                                         <th>Ticket Id</th>
@@ -44,23 +44,6 @@
                                     </tr>
                                 </thead>
                                 <tbody id="bugtblbody">
-                                    @*@for (int k = 0; k < ViewBag.tkttable2.supporttkt.Count; k++)
-                                        {
-                                            <tr id="k">
-                                                <td> @ViewBag.tkttable2.supporttkt[k].ticketid</td>
-                                                <td> @ViewBag.tkttable2.supporttkt[k].title</td>
-                                                <td> @ViewBag.tkttable2.supporttkt[k].solutionid</td>
-                                                <td> @ViewBag.tkttable2.supporttkt[k].priority</td>
-                                                <td> @ViewBag.tkttable2.supporttkt[k].lstmodified</td>
-                                                <td> @ViewBag.tkttable2.supporttkt[k].status</td>
-                                                <td> @ViewBag.tkttable2.supporttkt[k].support</td>
-                                                <td>
-                                                    <button class="btn btn-default btn-xs" style="color:blue" >Edit <i class="fa fa-edit"></i></button>
-                                                    <button class="btn btn-default btn-xs" style="color:red">Delete <i class="fa fa-trash-o"></i></button>
-
-                                                </td>
-                                            </tr>
-                                        }*@
 
                                 </tbody>
                             </table>
@@ -111,7 +94,7 @@
                             </div>
                             <div id="typelbl" class="" style=" visibility :hidden">Select a value</div>
                         </div>
-                        
+
                         <label>Title</label>
                         <div class=" ">
                             <input class="form-control w-100 " type="text" id="bugtitle">
@@ -148,6 +131,18 @@
                             }
 
                         }
+                        @{ if (ViewBag.wc.Equals("uc") || ViewBag.wc.Equals("dc"))
+                            {
+                                <div class="">
+                                    <label>Solution id</label>
+                                    <div>
+                                        <input class="form-control w-100 " type="text" value="@ViewBag.Cid" id="type_b_f" disabled>
+                                    </div>
+                                    <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
+                                </div>
+                            }
+
+                        }
                         <div>
 
                         </div>
@@ -166,8 +161,8 @@
                 <div class="row">
                     <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="input-field">
-                            <label class="active">Images</label>
-                            <div class="input-images-2" style="padding-top: .5rem; max-height:200px;overflow-y:scroll;"></div>
+                            <label class="active">Files</label>
+                            <div class="input-images-2" style="padding-top: .5rem; max-height:200px;overflow-y:auto;"></div>
                         </div>
                     </div>
                     

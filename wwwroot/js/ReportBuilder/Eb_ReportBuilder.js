@@ -306,7 +306,7 @@
                 obj.TableIndex = parseInt(this.col.parent().parent().siblings("a").text().slice(-1));
                 obj.ColumnName = this.col.text().trim();
             }
-            obj.Title = Title;
+            obj.Title = obj.Title || Title;
             obj.ParentName = this.dropLoc.attr("eb-type");
             this.pg.addToDD(obj);
             this.RefreshControl(obj);

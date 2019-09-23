@@ -108,6 +108,10 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
 
+            if (this.ComboObj.IsInsertable) {
+                this.ComboObj.__AddButtonInit(this.ComboObj.AddButton);
+            }
+
             //set id for searchBox
             $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
 
@@ -268,12 +272,9 @@ const EbSelect = function (ctrl, options) {
             callBFn();
     };
 
-
-
     this.popAllDmValues = function (i) {
         this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.Vobj.displayMembers[this.dmNames[i]].length); //// clears array without modifying array Object (watch)
     };
-
 
     this.getTypeForDT = function (type) {
         type = parseInt(type);
@@ -405,7 +406,6 @@ const EbSelect = function (ctrl, options) {
         //});
     };
 
-
     //this.xxx = function (e, dt, type, indexes) {
     //    console.log("keysssss");
     //};
@@ -478,7 +478,7 @@ const EbSelect = function (ctrl, options) {
         if (event.target.nodeName === "SPAN")// if clicked tagclose
             vmValue = this.ClosedItem;
         //if (!this.ComboObj.MultiSelect)
-            vmValue = parseInt(vmValue);
+        vmValue = parseInt(vmValue);
 
         if (this.columnVals[this.vmName].contains(vmValue)) {
             this.removeColVals(vmValue);
@@ -676,6 +676,7 @@ const EbSelect = function (ctrl, options) {
         this.Vobj.DDstate = false;
         this.RemoveRowFocusStyle();
     };
+
     this.getMaxLenVal = function () {
         let val = "";
         $.each(this.$searchBoxes, function (i, el) {

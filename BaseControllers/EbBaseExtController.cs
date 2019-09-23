@@ -33,7 +33,7 @@ namespace ExpressBase.Web.BaseControllers
             try
             {
                 var controller = context.Controller as Controller;
-                controller.ViewBag.SolutionId = solutionId;
+                controller.ViewBag.SolutionId = this.GetIsolutionId(solutionId);
                 controller.ViewBag.WhichConsole = hostParts[0].EndsWith(RoutingConstants.DASHDEV) ? RoutingConstants.DC : RoutingConstants.UC;
                 controller.ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
                 if (controller.ViewBag.Env == "Production")

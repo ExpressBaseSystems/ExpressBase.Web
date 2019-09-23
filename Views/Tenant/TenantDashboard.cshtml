@@ -16,36 +16,6 @@
     <script src="~/js/EbDashBoards/TenantDashBoard.js" type="text/javascript" asp-append-version=@bApnd></script>
 }
 <div class="row s-dash-container h-100">
-    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-            <div class="t-container">
-                <ul class="list-group eb-dashbord-sidebar">
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/MySolutions">
-                            <span class="material-icons t__sidebar_icon">highlight</span>
-                            <span class="t__sidebar_text">My Solutions</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Store">
-                            <span class="material-icons t__sidebar_icon">store</span>
-                            <span class="t__sidebar_text">App Store</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/Wiki">
-                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                            <span class="t__sidebar_text">Wiki</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a">
-                            <span class="material-icons t__sidebar_icon">contact_support</span>
-                            <span class="t__sidebar_text">Support</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 col-lg-7 col-xs-12 col-sm-6 pd-0">
@@ -78,15 +48,15 @@
                                 </div>
                                 <div class="sso_head text-center">
                                     <input name="WhichConsole" type="hidden" value="" />
-                                    <a sid="@s.IsolutionId" tour-for="userhome" wc="uc" class="sso-btn eb_btnblue single__sso" title="go to user console">
+                                    <a sid="@s.EsolutionId" tour-for="userhome" wc="uc" class="sso-btn eb_btnblue single__sso" title="go to user console">
                                         <i class="fa fa-user-o" aria-hidden="true"></i> User Login
                                     </a>
-                                    <a sid="@s.IsolutionId" tour-for="devhome" wc="dc" class="sso-btn eb_btnwhite  single__sso" title="go to dev console">
+                                    <a sid="@s.EsolutionId" tour-for="devhome" wc="dc" class="sso-btn eb_btnwhite  single__sso" title="go to dev console">
                                         <i class="fa fa-wrench" aria-hidden="true"></i> Dev Login
                                     </a>
                                 </div>
                                 <div class="sln-configLink">
-                                    <a href="MySolutions/@s.IsolutionId" class="pull-right sln_settings_link" title="configure solution">
+                                    <a href="MySolutions/@s.EsolutionId" class="pull-right sln_settings_link" title="configure solution">
                                         <i class="fa fa-cog" aria-hidden="true"></i> Settings
                                     </a>
                                 </div>

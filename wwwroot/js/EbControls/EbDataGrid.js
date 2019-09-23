@@ -507,7 +507,8 @@
 
             if (ctrl.ObjType === "PowerSelect") {
                 //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                if (val)
+                    ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
             }
             else
                 ctrl.setValue(val);
@@ -536,8 +537,6 @@
             this.FVWTObjColl.push(rowObjs);
         }.bind(this));
     }.bind(this);
-
-    t = this.getValues;
 
     this.ctrlToSpan_row = function (rowid) {
         let $tr = this.$table.find(`[rowid=${rowid}]`);

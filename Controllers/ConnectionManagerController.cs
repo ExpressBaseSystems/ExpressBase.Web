@@ -947,8 +947,8 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                res.ResponseStatus.Message = e.Message;
-                return null;
+                res.ResponseStatus = new ResponseStatus { Message = e.Message };
+                return JsonConvert.SerializeObject(res);
             }
         }
 

@@ -427,7 +427,7 @@ var SolutionDashBoard = function (connections, sid) {
             // Scopes to request in addition to 'profile' and 'email'
             //scope: 'additional_scope'
         });
-        auth2.grantOfflineAccess().then(signInCallback);
+        auth2.grantOfflineAccess().then(signInCallback.bind(this));
         function signInCallback(authresult) {
             if (authresult['code']) {
                 postDataGoogleDrive[5].value = authresult['code'];

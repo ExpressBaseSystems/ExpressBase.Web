@@ -2,6 +2,7 @@
 using ExpressBase.Common.Connections;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Data;
+using ExpressBase.Common.Helpers;
 using ExpressBase.Common.Messaging;
 using ExpressBase.Common.Messaging.ExpertTexting;
 using ExpressBase.Common.Messaging.Twilio;
@@ -901,7 +902,7 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-        public async Task<string> AddGoogleDriveAsync()
+        public string AddGoogleDriveAsync()
         {
             string RedirectUri ="";
             AddGoogleDriveResponse res = new AddGoogleDriveResponse();
@@ -915,7 +916,6 @@ namespace ExpressBase.Web.Controllers
                 NickName = req["NickName"],
                 Type = EbIntegrations.GoogleDrive
             };
-            Console.WriteLine(JsonConvert.SerializeObject(con));
             try
             {
                 var init = new GoogleAuthorizationCodeFlow.Initializer
@@ -927,8 +927,7 @@ namespace ExpressBase.Web.Controllers
                     },
                     Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
                 };
-                Console.WriteLine(JsonConvert.SerializeObject(init));
-                var flow = new AuthorizationCodeFlow(init);
+                AuthorizationCodeFlow flow = new AuthorizationCodeFlow(init);
                 Console.WriteLine("Fetching token for code: _" + req["code"] + "_");
 
                 if (ViewBag.Env == "Staging")
@@ -936,18 +935,25 @@ namespace ExpressBase.Web.Controllers
                 else if (ViewBag.Env == "Production")
                     RedirectUri = "https://myaccount.expressbase.com";
                 Console.WriteLine(RedirectUri);
-                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", req["code"], RedirectUri, CancellationToken.None);
+                TokenResponse result = AsyncHelper.RunSync(() => GetGoogleDriveKey(flow, req["code"], RedirectUri));
                 Console.WriteLine(JsonConvert.SerializeObject(result));
                 con.RefreshToken = result.RefreshToken;
                 res = this.ServiceClient.Post<AddGoogleDriveResponse>(new AddGoogleDriveRequest { Config = con, SolnId = req["SolutionId"] });
+                Console.WriteLine("After inserstion GD : ");
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                Console.WriteLine("After Solution info : " + JsonConvert.SerializeObject(resp));
                 return JsonConvert.SerializeObject(resp);
             }
             catch (Exception e)
             {
-                res.ResponseStatus.Message = e.Message;
-                return null;
+                res.ResponseStatus = new ResponseStatus { Message = e.Message };
+                return JsonConvert.SerializeObject(res);
             }
+        }
+        public  async Task<TokenResponse> GetGoogleDriveKey(AuthorizationCodeFlow flow, string code, string RedirectUri)
+        {
+            TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, RedirectUri, CancellationToken.None);
+            return result;
         }
 
         //[HttpGet("SolutionManager/{Sid}")]

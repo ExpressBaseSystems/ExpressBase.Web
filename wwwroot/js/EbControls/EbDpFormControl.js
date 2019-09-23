@@ -82,7 +82,7 @@ class DisplayPictureControl {
             //UploadToEb: false,
             Container: `cont_${ctrl.EbSid_CtxId}`,
             Toggle: `#cont_${ctrl.EbSid_CtxId} .dpctrl-options-cont .dpctrl-change`,
-            ResizeViewPort: this.control.CropAspectRatio === 4 ? true : false,
+            ResizeViewPort: this.control.CropAspectRatio === 0 ? true : false,
             Context: 'location',
             Multiple: false,
             EnableCrop: true
@@ -114,12 +114,14 @@ class DisplayPictureControl {
         let $img = $(`#cont_${this.control.EbSid_CtxId} .ebimg-cont img`);
         $img.attr('onerror', "this.style.opacity='0.5'; this.src='/images/image.png';");
         $img.css('height', $img.css('height'));
-        $(`#cont_${this.control.EbSid_CtxId}`).hover(function (e) { $img.parent().next().show(); }, function (e) { $img.parent().next().hide(); });
+        $(`#cont_${this.control.EbSid_CtxId}`).hover(function (e) { $img.parent().next().css('visibility', 'visible'); }, function (e) { $img.parent().next().css('visibility', 'hidden'); });
     }
 
     cropfyFlow() {      //cropy flow
+        if (this.control.CropAspectRatio === 1)
+            this.Options.Context = 'dp';
         this._typeRatio = {
-            'doc': {
+            'dp': {
                 width: 200,
                 height: 200
             },
@@ -319,8 +321,7 @@ class DisplayPictureControl {
 
     uploadSuccess(refId) {
         this.SingleRefid = refId;
-        //alert('upload success : ' + refId);
-        EbMessage("show", { Message: "Uploaded Successfully" });
+        EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
         setTimeout(function () {
             this.control.setValue(this.SingleRefid.toString());
         }.bind(this), 2500);
@@ -391,7 +392,7 @@ class DisplayPictureControl {
 
     SetValue(p1) {
         this._fileRefids = p1.split(',');
-        $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).attr('src', `../images/${this._fileRefids[0]}.jpg`);
+        $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).attr('src', `/images/${this._fileRefids[0]}.jpg`);
         $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).css('opacity', `1`);
     }
 }

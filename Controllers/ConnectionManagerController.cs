@@ -940,7 +940,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(JsonConvert.SerializeObject(result));
                 con.RefreshToken = result.RefreshToken;
                 res = this.ServiceClient.Post<AddGoogleDriveResponse>(new AddGoogleDriveRequest { Config = con, SolnId = req["SolutionId"] });
-                Console.WriteLine("After inserstion GD : " +res.ResponseStatus.Message);
+                Console.WriteLine("After inserstion GD : ");
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 Console.WriteLine("After Solution info : " + JsonConvert.SerializeObject(resp));
                 return JsonConvert.SerializeObject(resp);

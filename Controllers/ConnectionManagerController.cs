@@ -932,7 +932,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("Fetching token for code: _" + req["code"] + "_");
 
                 if (ViewBag.Env == "Staging")
-                    RedirectUri = "https://myaccount.eb-test.xyz";
+                    RedirectUri = "https://myaccount.eb-test.xyz/MySolutions";
                 else if (ViewBag.Env == "Production")
                     RedirectUri = "https://myaccount.expressbase.com";
                 Console.WriteLine(RedirectUri);

@@ -416,7 +416,7 @@ var SolutionDashBoard = function (connections, sid) {
         postDataGoogleDrive = $(e.target).serializeArray();
         var uri = "";
         if (GoogleRedirecturi == "Staging")
-            uri = "https://myaccount.eb-test.xyz";
+            uri = "https://myaccount.eb-test.xyz/MySolutions";
         else if (GoogleRedirecturi == "Production")
             uri = "https://myaccount.expressbase.com";
         auth2 = gapi.auth2.init({

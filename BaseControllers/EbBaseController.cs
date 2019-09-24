@@ -124,7 +124,8 @@ namespace ExpressBase.Web.BaseControllers
                         isvalid = true;
                     else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
                     {
-                        if (subParts[0] == subdomain.Replace(RoutingConstants.DASHDEV, string.Empty) && rSub.EndsWith(TokenConstants.DC))
+                        string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
+                        if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
                             isvalid = true;
                     }
                     else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
@@ -182,5 +183,12 @@ namespace ExpressBase.Web.BaseControllers
             return Convert.FromBase64String(base64);
         }
 
+        public string GetIsolutionId(string esid)
+        {
+            if (this.Redis != null)
+                return this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+            else
+                return string.Empty;
+        }
     }
 }

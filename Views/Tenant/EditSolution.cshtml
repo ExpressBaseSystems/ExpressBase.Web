@@ -1,0 +1,92 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    EbSolutionsWrapper _sln = ViewBag.SolutionInfo;
+}
+<div class="row s-dash-container h-100">
+    <div class="s-dash-workplace tenant_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
+            <div class="tdash-box-body">
+                <div class="eb-nesol-wraper col-md-5 col-sm-6 col-xs-12 col-lg-5">
+                    <form class="subscript-submit w-100" id="sol-form-submit">
+                        <label>Solution URL</label>
+                        <div class="client-id-sec">
+                            <input type="text" id="ebsid" name="newesid" class="form-control input-clientId" value="@_sln.EsolutionId" required style="height:45px" />
+                            <div class="clientId-auto">.expressbase.com</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Solution Name</label>
+                            <input type="text" id="solutionname" name="sname" class="form-control" value="@_sln.SolutionName" required style="height:45px" />
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea class="form-control" id="desc" name="desc" required>@_sln.Description</textarea>
+                        </div>
+                        <input type="submit" id="sol-form-sub" style="display:none;" />
+                    </form>
+                    <div class="form-group">
+                        <a id="save-subscrip" onclick="$('#sol-form-sub').click();" class="ebbtn eb_btnblue eb_btn_md pull-right">Create</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section JsCode{
+    <script>
+        $(document).ready(function () {
+            window.ebcontext.header.setName("Upgrade Solution");
+
+            $("#sol-form-submit").on("submit", function (e) {
+                e.preventDefault();
+
+                let newsid = $("input[name='newesid']").val().trim();
+                let sname = $("input[name='sname']").val().trim();
+                let desc = $("textarea[name='desc']").val().trim();
+
+                if (newsid === "" || sname === "" || desc === "") {
+                    return false;
+                }
+
+                $.ajax({
+                    url: "/Tenant/UpgradeSolution",
+                    type: "POST",
+                    data: {
+                        "newesid": newsid,
+                        "sname": sname,
+                        "desc": desc,
+                        "oldesid": "@_sln.EsolutionId",
+                        "isid":"@_sln.IsolutionId"
+                    },
+                    beforeSend: function () {
+                        $("#eb_common_loader").EbLoader("show");
+                    },
+                    success: function (data) {
+                        $("#eb_common_loader").EbLoader("hide");
+                        if (data.status) {
+                            window.EbPopBox("show", {
+                                Message: data.message,
+                                ButtonStyle: {
+                                    Text: "Close",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                        location.href = "/MySolutions";
+                                    }
+                                }
+                            });
+                            setTimeout(function () {
+                                location.href = "/MySolutions";
+                            }, 1000)
+                        }
+                        else {
+                            window.EbPopBox("show", { Message: data.message });
+                        }
+                    }
+                })
+            });
+
+        });
+    </script>
+}

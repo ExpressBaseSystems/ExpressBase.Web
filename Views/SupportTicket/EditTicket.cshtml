@@ -24,17 +24,23 @@
             <div class="tdash-box-body">
                 <div class="edtsprt w-100">
                     <div class="row  pd_lft30 w-100 ">
-                        <div class="col-sm-12 col-md-7 col-lg-7 bdr">
-                            <div class="row">
-                                <div class="col-sm-3 col-md-3 col-lg-3 shd recdiv">
-                                    <label>Ticket Id</label>
-                                    <div class=" ">
-                                        <span class="" id="tktid"> </span>
-                                    </div>
-                                </div>
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            <div class="row pdbtm15">
+                                @{if (ViewBag.chktkt == false)
+
+                                    {
+
+                                        <div class="col-sm-3 col-md-3 col-lg-3 ">
+                                            <label>Ticket Id</label>
+                                            <div class=" ">
+                                                <input class="form-control w-100 " type="text" id="tktid" disabled>
+                                            </div>
+                                        </div>
+                                    }
+                                }
                             </div>
-
-
+                        </div>
+                        <div class="col-sm-12 col-md-7 col-lg-7 bdr">
                             <div class="row">
                                 <div class="col-sm-6 col-md-6 col-lg-6 ">
                                     <label>Title</label>
@@ -44,9 +50,37 @@
                                     <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
                                 </div>
                                 <div class="col-sm-6 col-md-6 col-lg-6 ">
-                                    <label>Solution Id</label>
                                     <div class=" ">
-                                        <input class="form-control w-100 " type="text" id="soluid" disabled>
+                                        @{if (ViewBag.wc.Equals("tc"))
+                                            {
+                                                <div class="">
+                                                    <label>Solution id</label>
+                                                    <div>
+                                                        <select id="soluid" class="form-control w-100">
+                                                            @for (int i = 0; i < ViewBag.soluids.Count; i++)
+                                                            {
+                                                                <option  value=@ViewBag.soluids[i]>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
+                                                            }
+
+                                                        </select>
+                                                    </div>
+                                                    <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
+                                                </div>
+                                            }
+
+                                        }
+                                        @{ if (ViewBag.wc.Equals("uc") || ViewBag.wc.Equals("dc"))
+                                            {
+                                                <div class="">
+                                                    <label>Solution id</label>
+                                                    <div>
+                                                        <input class="form-control w-100 " type="text" value="@ViewBag.Cid" id="soluid" disabled>
+                                                    </div>
+                                                    <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
+                                                </div>
+                                            }
+
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -64,47 +98,75 @@
                                     <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
                                 </div>
                                 <div class="col-sm-4 col-md-4 col-lg-4 ">
-                                    <label>Issue type</label>
-                                    <div class=" ">
-                                        <input class="form-control w-100 " type="text" id="type_b_f" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-sm-4 col-md-4 col-lg-4 ">
                                     <label>Status</label>
                                     <div class=" ">
-                                        <input class="form-control w-100 " type="text" id="stsid" disabled>
+                                        @{ if (ViewBag.cid == "admin")
+                                            {
+                                                <input class="form-control w-100 " type="text" id="stsid">
+                                            }
+                                            else
+                                            {
+                                                <input class="form-control w-100 " type="text" id="stsid" disabled>
+                                            }
+
+                                        }
                                     </div>
                                     <div id="stsidlbl" class="" style=" visibility :hidden"> status</div>
                                 </div>
-
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-sm-12 col-md-4 col-lg-4 ">
-                                    <label>Date Created</label>
+                                <div class="col-sm-4 col-md-4 col-lg-4 ">
+                                    <label>Issue type</label>
                                     <div class=" ">
-                                        <input class="form-control w-100 " type="text" id="dtecrtd" disabled>
-                                    </div>
-                                    <div id="dtecrtdlbl" class="" style=" visibility :hidden"> Date Created</div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-lg-4 ">
-                                    <div>
-                                        <label>Date Modified</label>
-                                        <div class=" ">
-                                            <input class="form-control w-100 " type="text" id="dtemdfyd" disabled>
+                                        <div>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="optradio" id="Bug" value="Bug" checked>Bug
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="optradio" id="FeatureRequest" value="FeatureRequest">Feature Request
+                                            </label>
                                         </div>
-                                        <div id="dtemdfydlbl" class="" style=" visibility :hidden">Date Modified </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-12 col-md-4 col-lg-4 ">
-                                    <label>Assigned to</label>
-                                    <div class=" ">
-                                        <input class="form-control w-100 " type="text" id="asgnid" disabled>
-                                    </div>
-                                    <div id="asgnidlbl" class="" style=" visibility :hidden"> assign</div>
                                 </div>
 
                             </div>
+
+                            @{if (ViewBag.chktkt == false)
+                                {
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-4 col-lg-4 ">
+                                            <label>Date Created</label>
+                                            <div class=" ">
+                                                <input class="form-control w-100 " type="text" id="dtecrtd" disabled>
+                                            </div>
+                                            <div id="dtecrtdlbl" class="" style=" visibility :hidden"> Date Created</div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4 col-lg-4 ">
+                                            <div>
+                                                <label>Date Modified</label>
+                                                <div class=" ">
+                                                    <input class="form-control w-100 " type="text" id="dtemdfyd" disabled>
+                                                </div>
+                                                <div id="dtemdfydlbl" class="" style=" visibility :hidden">Date Modified </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-4 col-lg-4 ">
+                                            <label>Assigned to</label>
+                                            <div class=" ">
+                                                @{ if (ViewBag.cid == "admin")
+                                                    {
+                                                        <input class="form-control w-100 " type="text" id="asgnid">
+                                                    }
+                                                    else
+                                                    {
+                                                        <input class="form-control w-100 " type="text" id="asgnid" disabled>
+                                                    }
+                                                }
+                                            </div>
+                                            <div id="asgnidlbl" class="" style=" visibility :hidden"> assign</div>
+                                        </div>
+
+                                    </div>
+                                }
+                            }
                             <div class="row ">
                                 <div class="col-sm-12 col-md-12 col-lg-12">
                                     <label>Description</label>
@@ -114,34 +176,62 @@
                                     <div id="descrlbl" class="" style=" visibility :hidden"> Enter some description</div>
                                 </div>
                             </div>
-                            <div class="row ">
-                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                    <button id="btnupdate" class="btn btn-primary" type="button"> Update</button>
-                                </div>
-                            </div>
-
                         </div>
 
-                        <div class="col-sm-12 col-md-5 col-lg-5 pdtop20">
+                        <div class="col-sm-12 col-md-5 col-lg-5 ">
 
-                            <div>
+                            <div class="pdbtm15">
                                 <div class="input-field">
                                     <label class="active">Files</label>
-                                    <div class="input-images-2" style="padding-top: .5rem; max-height:250px;overflow-y:auto;"></div>
+                                    <div class="input-images-2" style=" max-height:200px;min-height:196px; "></div>
                                 </div>
 
                             </div>
-                            <div class="pdtop20">
-                                <label>Remarks</label>
-                                <div>
-                                    <textarea rows="10" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
-                                </div>
-                            </div>
+                            @{if (ViewBag.chktkt == false)
+                                {
+                                    <div class="">
+                                        <label>Remarks</label>
+                                        <div>
+                                            @{ if (ViewBag.cid == "admin")
+                                                {
+                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid" ></textarea>
+                                                }
+                                                else
+                                                {
+                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
 
                         </div>
 
+                        <div class="col-sm-12 col-md-12 col-lg-12">
+                            @{if (ViewBag.chktkt == true)
+                                {
+                                    <div class=" ">
+                                        <button id="savebugid" class="btn btn-primary" type="button"> Save</button>
+                                    </div>
+                                }
+                                else
+                                {
+                        <div class=" ">
+                            @{ if (ViewBag.cid == "admin")
+                                {
+                                    <button id="btnupdateadmin" class="btn btn-primary" type="button"> Update</button>
+                                }
+                                else
+                                {
+                                    <button id="btnupdate" class="btn btn-primary" type="button"> Update</button>
+                                }
+                            }
+                        </div>
+                                }
 
-
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -151,27 +241,37 @@
 
 
 <script>
-      $(document).ready(function () {
-          tktdtl = @Html.Raw(ViewBag.tktdetails);
-          var edt = new EditTicket();
-          let preloaded = [];
-          
-          for (var i = 0; i < tktdtl.supporttkt.length; i++) {
+    $(document).ready(function () {
 
-              for (var j = 0; j < tktdtl.supporttkt[i].Fileuploadlst.length; j++) {
+        ckecktkt = "@Html.Raw(ViewBag.chktkt)";
 
-                  var item = tktdtl.supporttkt[i].Fileuploadlst[j].FileDataURL;
-                  var fileno = tktdtl.supporttkt[i].Fileuploadlst[j].FileId;
-                  var fltype=tktdtl.supporttkt[i].Fileuploadlst[j].ContentType;
-                  preloaded.push({ id: "photo", src: item, fileno:fileno ,cntype:fltype});
-              }
-          }
+        let preloaded = [];
 
-        $('.input-images-2').imageUploader({
-            preloaded: preloaded,
-            imagesInputName: 'photos',
-            preloadedInputName: 'old'
-        });
+        if (ckecktkt == "False") {
+            tktdtl = @Html.Raw(ViewBag.tktdetails);
+            ebcontext.header.setName("Edit Ticket");
+            for (var i = 0; i < tktdtl.supporttkt.length; i++) {
+
+                for (var j = 0; j < tktdtl.supporttkt[i].Fileuploadlst.length; j++) {
+
+                    var item = tktdtl.supporttkt[i].Fileuploadlst[j].FileDataURL;
+                    var fileno = tktdtl.supporttkt[i].Fileuploadlst[j].FileId;
+                    var fltype = tktdtl.supporttkt[i].Fileuploadlst[j].ContentType;
+                    preloaded.push({ id: "photo", src: item, fileno: fileno, cntype: fltype });
+                }
+            }
+        }
+        else {
+             ebcontext.header.setName("Add Ticket");
+        }
+            $('.input-images-2').imageUploader({
+                preloaded: preloaded,
+                imagesInputName: 'photos',
+                preloadedInputName: 'old'
+            });
+
+         var edt = new EditTicket();
+
 
 
     });

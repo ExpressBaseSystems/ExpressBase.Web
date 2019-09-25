@@ -1306,7 +1306,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .form-buider-form .nav-tabs > li {
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .filter-box .input-group-addon, .form-buider-form .input-group-addon {

@@ -507,8 +507,16 @@
             this.pushToSections($(elements), this.j, eb_typeCntl);
     };
 
+    this.updateCntrolDimension = function (elemId) {
+        this.objCollection[elemId].Width = $(`#${elemId}`).width();
+        this.objCollection[elemId].Height = $(`#${elemId}`).height();
+        this.objCollection[elemId].Left = $(`#${elemId}`).position().left;
+        this.objCollection[elemId].Top = $(`#${elemId}`).position().top;
+    }
+
     this.pushToSections = function ($elements, index, eb_typeCntl) {
         var elemId = $elements.attr('id');
+        this.updateCntrolDimension(elemId);
         this.objCollection[elemId].WidthPt = this.repExtern.convertTopoints(this.objCollection[elemId].Width);
         this.objCollection[elemId].HeightPt = this.repExtern.convertTopoints(this.objCollection[elemId].Height);
         this.objCollection[elemId].LeftPt = this.repExtern.convertTopoints(this.objCollection[elemId].Left);

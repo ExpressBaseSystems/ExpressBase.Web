@@ -25,18 +25,14 @@ namespace ExpressBase.Web.Controllers
             //DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", DataSourceRefId));
             //if (columnresp == null || columnresp.Columns.Count == 0)
             //    columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = DataSourceRefId, SolnId = ViewBag.cid });
-            
+
             //var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
             var Columns = new DVColumnCollection();
             foreach (EbDataColumn column in __columns)
             {
                 DVBaseColumn _col = null;
-                if (column.Type == EbDbTypes.String && column.ColumnName == "socialid")
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight", RenderAs = StringRenderType.Image };
-                else if (column.Type == EbDbTypes.String && column.ColumnName == "latlong")
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight", RenderAs = StringRenderType.Marker };
-                else if (column.Type == EbDbTypes.String)
+                if (column.Type == EbDbTypes.String)
                     _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
                 else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
                     _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right" };
@@ -44,7 +40,9 @@ namespace ExpressBase.Web.Controllers
                     _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
                 else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
-
+                else if (column.Type == EbDbTypes.Bytea)
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
+                _col.RenderType = _col.Type;
                 Columns.Add(_col);
             }
             return Columns;
@@ -67,8 +65,8 @@ namespace ExpressBase.Web.Controllers
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 
             var Columns = GetColumns(__columns);
-           
-            return EbSerializers.Json_Serialize( Columns);
+
+            return EbSerializers.Json_Serialize(Columns);
         }
     }
 }

@@ -437,14 +437,14 @@ class DvBuilder {
         $.each(this.EbObject.ColumnsCollection.$values, function (i, columnCollection) {
             $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "' class='tablecolumns'></ul></li>");
             $.each(columnCollection.$values, function (j, obj) {
-                type = this.getType(obj.Type); icon = this.getIcon(obj.Type);
+                type = this.getType(obj.RenderType); icon = this.getIcon(obj.RenderType);
                 $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
             }.bind(this));
         }.bind(this));
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsCustomColumn) {
-                $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
-                    class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+                $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
+                    class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
             }
         }.bind(this));
         $('#data-table-list').killTree();
@@ -669,7 +669,7 @@ class DvBuilder {
         $("#columns-list-body").empty();
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.bVisible) {
-                let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='column' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
+                let element = $(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='column' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
                 this.ColumnDropRelated(element);
                 $("#columns-list-body").append(element);
                 $(element).off("click").on("click", this.elementOnFocus.bind(this));
@@ -683,7 +683,7 @@ class DvBuilder {
     OrderbyColumnDropped() {
         $("#columns-list-orderby").empty();
         $.each(this.EbObject.OrderBy.$values, function (i, obj) {
-            let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}"  eb-keyname="${obj.name}orderby" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsorderbyCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div></li>`);
+            let element = $(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}"  eb-keyname="${obj.name}orderby" class='columns textval' style='font-size: 13px;'><div id="${obj.name}_elemsorderbyCont" class="columnelemsCont"><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></div></li>`);
             this.OrderbyColumnDropRelated(element);
             $("#columns-list-orderby").append(element);
             $(element).find("span").after(`<span class="spancheck"><input id="${obj.name}_orderbyCheckbox" type="checkbox" class="orderbycheckbox" checked data-toggle="toggle" data-size="mini" data-onstyle="default"/></span>`);
@@ -1036,10 +1036,10 @@ class DvBuilder {
 
     drawRowgroupColumn(objOuter) {
         $.each(objOuter.RowGrouping.$values, function (i, obj) {
-            let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${objOuter.Name}" class='columns textval' style='font-size: 13px;'>
+            let element = $(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${objOuter.Name}" class='columns textval' style='font-size: 13px;'>
                 <div id="${objOuter.Name}_${obj.name}_elemsrowgroupCont" class="columnelemsCont">
                     <div id="${objOuter.Name}_${obj.name}_spanrowgroupCont" class="columnspanCont">
-                        <span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span>
+                        <span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span>
                     </div>
                     <input class="rowgroupcolumntitle" type="text" id="${objOuter.Name}_${obj.name}_rowgroupcolumntitle"/>
                 </div></li>`);
@@ -1060,9 +1060,9 @@ class DvBuilder {
     }
 
     ColumnAppendToRowgroupOrderByDiv(objOuter, obj, rowgrouped) {
-        let element = $(`<li eb-type='${obj.Type}' eb-name="${obj.name}" eb-keyname="${objOuter.Name}" class='columns textval' style='font-size: 13px;'>
+        let element = $(`<li eb-type='${obj.RenderType}' DbType='${obj.Type}' eb-name="${obj.name}" eb-keyname="${objOuter.Name}" class='columns textval' style='font-size: 13px;'>
             <div id="${objOuter.Name}_${obj.name}_elemsrowgrouporderbyCont" class="columnelemsCont">
-                <span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span>
+                <span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span>
             </div></li>`);
 
         $(`#Rowgroup_${this.RwogroupCounter}_OrderbyCont`).append(element);
@@ -1127,6 +1127,7 @@ class DvBuilder {
         let objid = type + this.calcfieldCounter++;
         let obj = new EbObjects[type](objid);
         obj.Type = result.Type;
+        obj.RenderType = result.Type;
         this.objCollection[name] = obj;
         obj.name = name;
         obj.Title = obj.name;

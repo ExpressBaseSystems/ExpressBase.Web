@@ -131,6 +131,8 @@
     this.addEditModeRows = function (SingleTable) {
         $(`#${this.TableId} tbody`).empty();
         this.resetBuffers();
+        let t0 = performance.now();
+
         $.each(SingleTable, function (i, SingleRow) {
             let rowid = SingleRow.RowId;
             this.addRow({ rowid: rowid, isAdded: false, editModeData: SingleRow });
@@ -142,6 +144,9 @@
                 }.bind(this), 1);
             }
         }.bind(this));
+
+        let t1 = performance.now();
+        console.dev_log("DataGrid : addEditModeRows took " + (t1 - t0) + " milliseconds.");
     };
 
     this.getRowWTs = function (rowId, inpCtrls) {
@@ -343,6 +348,7 @@
         this.setCurRow(rowid);
         this.updateAggCols(rowid);
         let rowCtrls = this.initRowCtrls(rowid, editModeData);
+        //let rowCtrls = this.AllRowCtrls[rowid];
         return [$tr, rowCtrls];
 
     }.bind(this);

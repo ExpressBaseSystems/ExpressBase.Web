@@ -572,6 +572,8 @@ const EbSelect = function (ctrl, options) {
     }.bind(this);
 
     this.Renderselect = function () {
+        if ($('#' + this.name + 'Container').length === 0)
+            console.eb_warn("no dom element with id " + this.name + 'Container');
         this.Vobj = new Vue({
             el: '#' + this.name + 'Container',
             data: {

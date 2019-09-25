@@ -380,6 +380,9 @@
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {
+
+        let t0 = performance.now();
+
         if (ctrl.RenderAsSimpleSelect) {
             this.SimpleSelect(ctrl);
             return;
@@ -400,6 +403,8 @@
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
+        let t1 = performance.now();
+        console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {

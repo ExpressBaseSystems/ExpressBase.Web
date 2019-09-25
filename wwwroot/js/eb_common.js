@@ -3,6 +3,12 @@
             padding:1px 2px;
             border-radius:2px;
             text-shadow: 1px 1px 1px #eef;`);
+
+};
+
+console.dev_log = function (msg) {
+    if (ebcontext.env === "Development")
+        console.log(msg);
 };
 
 console.eb_error = function (msg, color = "rgb(222, 0, 0)", bgcolor) {

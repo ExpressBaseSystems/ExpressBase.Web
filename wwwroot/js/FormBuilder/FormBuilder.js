@@ -219,7 +219,7 @@
 
     this.updateControlUI = function (ebsid, type) {
         let obj = this.rootContainerObj.Controls.GetByName(ebsid);
-        let _type = obj.ObjType
+        let _type = obj.ObjType;
         $.each(obj, function (propName, propVal) {
             let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
             if (meta && meta.IsUIproperty)
@@ -388,6 +388,8 @@
                 $.each(ctrl._locationConfig, function (i, config) {
                     let newo = new EbObjects.UsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
                     newo.DisplayName = config.Name;
+                    newo.IsRequired = config.IsRequired;
+                    newo.Type = config.Type;
                     ctrl.Fields.$values.push(newo);
                 });
                 EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);

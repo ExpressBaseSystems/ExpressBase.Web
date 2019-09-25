@@ -386,7 +386,7 @@ function RecurFlatControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
         dest_coll.push(obj);
         if (obj.IsContainer) {
-            getFlatControls(obj, dest_coll);
+            RecurFlatControls(obj, dest_coll);
         }
     });
 }

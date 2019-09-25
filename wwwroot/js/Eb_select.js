@@ -737,8 +737,10 @@ const EbSelect = function (ctrl, options) {
             //alert('valueMember and displayMembers length miss match found !!!!');
             //console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
             console.eb_warn('valueMember and displayMembers length miss match found !!!!');
-            console.log('valueMembers=' + this.Vobj.valueMember);
-            console.log('displayMember[0] = ' + this.Vobj.displayMember[this.dmNames[0]]);
+            if (this.Vobj.valueMember)
+                console.log('valueMembers=' + this.Vobj.valueMember);
+            if (this.Vobj.displayMembers && this.Vobj.displayMembers[this.dmNames[0]])
+                console.log('displayMember[0] = ' + this.Vobj.displayMembers[this.dmNames[0]]);
         }
     };
 

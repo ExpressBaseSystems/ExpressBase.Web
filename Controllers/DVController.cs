@@ -124,11 +124,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     DVBaseColumn _col = null;
 
-                    if (column.Type == EbDbTypes.String && column.ColumnName == "socialid")
-                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, RenderAs = StringRenderType.Image };
-                    else if (column.Type == EbDbTypes.String && column.ColumnName == "latlong")
-                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos, RenderAs = StringRenderType.Marker };
-                    else if (column.Type == EbDbTypes.String)
+                    if (column.Type == EbDbTypes.String)
                         _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
                     else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
                         _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
@@ -137,6 +133,7 @@ namespace ExpressBase.Web.Controllers
                     else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
                         _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
                     _col.EbSid = column.Type.ToString() + column.ColumnIndex;
+                    _col.RenderType = _col.Type;
                     Columns.Add(_col);
                     indx = column.ColumnIndex;
                 }

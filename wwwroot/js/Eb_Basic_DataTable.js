@@ -429,11 +429,12 @@ var EbBasicDataTable = function (Option) {
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';
-                    var type = $(textid).attr('data-coltyp');
-                    if (type === 'boolean') {
+                    var type = api.settings().init().aoColumns[i].Type;
+                    var Rtype = api.settings().init().aoColumns[i].RenderType;
+                    if (Rtype === 3) {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj(colum, "=", val1));
+                            filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
                     }
                     else {
                         oper = $('#' + table + '_' + colum + '_hdr_sel').text();
@@ -443,18 +444,18 @@ var EbBasicDataTable = function (Option) {
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
-                                        if (type === 'number') {
+                                        if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2),type));
                                         }
-                                        else if (type === 'date') {
+                                        else if (Rtype === 5 || Rtype === 6) {
                                             if (val2 > val1) {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, type));
                                             }
                                             else {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, type));
                                             }
                                         }
                                     }

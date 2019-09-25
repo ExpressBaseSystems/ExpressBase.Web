@@ -33,8 +33,16 @@ namespace ExpressBase.Web.Controllers
 			}
 
 			//to fetch all details of tickets of corresponding user of that corresponding solution to show as tables
-			FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest { });
-			ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
+			if (ViewBag.cid.Equals("admin")){
+				AdminSupportResponse asr = this.ServiceClient.Post<AdminSupportResponse>(new AdminSupportRequest { });
+				ViewBag.tkttable = JsonConvert.SerializeObject(asr);
+			}
+			else
+			{
+				FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest { });
+				ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
+			}
+			
 
 
 			return View();
@@ -42,29 +50,36 @@ namespace ExpressBase.Web.Controllers
 
 		public IActionResult EditTicket(string tktno)
 		{
-			// fectch complete details of ticket and show it in edit /view ticket
-			SupportDetailsResponse sd = this.ServiceClient.Post<SupportDetailsResponse>(new SupportDetailsRequest
+			if (ViewBag.wc.Equals("tc"))
 			{
-				ticketno = tktno
-			});
-
-			for (var i = 0; i < sd.supporttkt.Count; i++)
-			{
-				var filecolect = sd.supporttkt[i].Fileuploadlst;
+				//to fetch solution id,name from tenant table  to show in dropdown
+				TenantSolutionsResponse ts = this.ServiceClient.Post<TenantSolutionsResponse>(new TenantSolutionsRequest { });
+				ViewBag.soluids = ts.soldispid;
+				ViewBag.solunames = ts.solname;
+				ViewBag.isolu = ts.solid;
 			}
-			ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
-			return View();
-		}
 
+			if (tktno == "newticket")
+			{
+				ViewBag.chktkt = true;
+				ViewBag.tktdetails = ("sd");
+			}
+			else {
+				// fectch complete details of ticket and show it in edit /view ticket
+				SupportDetailsResponse sd = this.ServiceClient.Post<SupportDetailsResponse>(new SupportDetailsRequest
+				{
+					ticketno = tktno,
+					Usertype = this.LoggedInUser.wc
 
-		public IActionResult imgtest()
-		{
+				});
 
-			return View();
-		}
-		public IActionResult imgtest1()
-		{
-
+				for (var i = 0; i < sd.supporttkt.Count; i++)
+				{
+					var filecolect = sd.supporttkt[i].Fileuploadlst;
+				}
+				ViewBag.chktkt = false;
+				ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
+			}
 			return View();
 		}
 
@@ -99,20 +114,25 @@ namespace ExpressBase.Web.Controllers
 
 				for (int i = 0; i < httpreq.Files.Count; i++)
 				{
-					FileUploadCls flup = new FileUploadCls();
 					var file = httpreq.Files[i];
-
-					using (var memoryStream = new MemoryStream())
+					if ((file.ContentType == "image/jpeg") || (file.ContentType == "application/pdf"))
 					{
-						file.CopyTo(memoryStream);
-						memoryStream.Seek(0, SeekOrigin.Begin);
-						fileData = new byte[memoryStream.Length];
-						memoryStream.ReadAsync(fileData, 0, fileData.Length);
-						flup.Filecollection = fileData;
+						if(file.Length< 2097152) { 
+						
+						FileUploadCls flup = new FileUploadCls();
+						using (var memoryStream = new MemoryStream())
+						{
+							file.CopyTo(memoryStream);
+							memoryStream.Seek(0, SeekOrigin.Begin);
+							fileData = new byte[memoryStream.Length];
+							memoryStream.ReadAsync(fileData, 0, fileData.Length);
+							flup.Filecollection = fileData;
+						}
+						flup.FileName = file.FileName;
+						flup.ContentType = file.ContentType;
+						sbrequest.Fileuploadlst.Add(flup);
+						}
 					}
-					flup.FileName = file.FileName;
-					flup.ContentType = file.ContentType;
-					sbrequest.Fileuploadlst.Add(flup);
 				}
 			}
 
@@ -131,7 +151,7 @@ namespace ExpressBase.Web.Controllers
 		}
 
 
-		public void UpdateTicket(string title, string descp,string filedelet, string priority, string tktid,string solid, object fileCollection)
+		public void UpdateTicket(string title, string descp,string filedelet, string priority, string tktid,string solid,string type_f_b, object fileCollection)
 		{
 
 			UpdateTicketRequest Uptkt = new UpdateTicketRequest();
@@ -143,20 +163,26 @@ namespace ExpressBase.Web.Controllers
 
 				for (int i = 0; i < httpreq.Files.Count; i++)
 				{
-					FileUploadCls flup = new FileUploadCls();
+					
 					var file = httpreq.Files[i];
-
-					using (var memoryStream = new MemoryStream())
+					if ((file.ContentType == "image/jpeg") || (file.ContentType == "application/pdf"))
 					{
-						file.CopyTo(memoryStream);
-						memoryStream.Seek(0, SeekOrigin.Begin);
-						fileData = new byte[memoryStream.Length];
-						memoryStream.ReadAsync(fileData, 0, fileData.Length);
-						flup.Filecollection = fileData;
+						if (file.Length < 2097152)
+						{
+							FileUploadCls flup = new FileUploadCls();
+							using (var memoryStream = new MemoryStream())
+							{
+								file.CopyTo(memoryStream);
+								memoryStream.Seek(0, SeekOrigin.Begin);
+								fileData = new byte[memoryStream.Length];
+								memoryStream.ReadAsync(fileData, 0, fileData.Length);
+								flup.Filecollection = fileData;
+							}
+							flup.FileName = file.FileName;
+							flup.ContentType = file.ContentType;
+							Uptkt.Fileuploadlst.Add(flup);
+						}
 					}
-					flup.FileName = file.FileName;
-					flup.ContentType = file.ContentType;
-					Uptkt.Fileuploadlst.Add(flup);
 				}
 			}
 
@@ -166,6 +192,8 @@ namespace ExpressBase.Web.Controllers
 			Uptkt.description = descp;
 			Uptkt.priority = priority;
 			Uptkt.solution_id = solid;
+			Uptkt.type_f_b = type_f_b;
+
 
 			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
 

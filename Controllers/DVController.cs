@@ -267,7 +267,7 @@ namespace ExpressBase.Web.Controllers
                     foreach (TFilters para in request.TFilters)
                     {
 
-                        if (para.Type == "date")
+                        if (para.Type ==EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
                         {
                             para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
                         }
@@ -330,7 +330,7 @@ namespace ExpressBase.Web.Controllers
                     foreach (TFilters para in request.TFilters)
                     {
 
-                        if (para.Type == "date")
+                        if (para.Type == EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
                         {
                             para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
                         }

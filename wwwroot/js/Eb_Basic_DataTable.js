@@ -429,8 +429,8 @@ var EbBasicDataTable = function (Option) {
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';
-                    var type = $(textid).attr('data-coltyp');
-                    if (type === 'boolean') {
+                    var type = api.settings().init().aoColumns[i].Type;
+                    if (type === 3) {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
                         if (!($(textid).is(':indeterminate')))
                             filter_obj_arr.push(new filter_obj(colum, "=", val1));

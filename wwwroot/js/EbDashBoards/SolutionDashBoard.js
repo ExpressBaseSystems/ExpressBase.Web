@@ -427,7 +427,7 @@ var SolutionDashBoard = function (connections, sid) {
             // Scopes to request in addition to 'profile' and 'email'
             //scope: 'additional_scope'
         });
-        auth2.grantOfflineAccess().then(signInCallback);
+        auth2.grantOfflineAccess().then(signInCallback.bind(this));
         function signInCallback(authresult) {
             if (authresult['code']) {
                 postDataGoogleDrive[5].value = authresult['code'];
@@ -779,8 +779,9 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#GoogleDriveInputNickname').val(temp[obj].NickName);
                 $('#GoogleDriveInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
-                $('#exampleTextarea').val(temp1["JsonString"]);
-                $('#GoogleDriveInputApplicationName').val(temp1["AppName"]);
+                $('#GoogleDriveInputApplicationName').val(temp1["ApplicationName"]);
+                $('#GoogleDriveInputClientID').val(temp1["ClientID"]);
+                $('#GoogleDriveInputClientsecret').val(temp1["Clientsecret"]);
             }
         }
     };

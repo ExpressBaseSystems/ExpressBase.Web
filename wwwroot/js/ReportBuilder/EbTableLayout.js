@@ -38,10 +38,10 @@
         this.Report.pg.setObject(this.Report.objCollection[id], AllMetas["EbTable_Layout"]);
         this.Table = $(`#${id}`);
         this.Table.css({
-            left: this.EbCtrl.Left,
-            top: this.EbCtrl.Top,
-            width: this.EbCtrl.Width,
-            height: this.EbCtrl.Height
+            "left": this.EbCtrl.Left + "px",
+            "top": this.EbCtrl.Top + "px",
+            "width": this.EbCtrl.Width,
+            "height": this.EbCtrl.Height
         });
         this.ColCount = this.EbCtrl.ColoumCount;
         this.RowCount = this.EbCtrl.RowCount;

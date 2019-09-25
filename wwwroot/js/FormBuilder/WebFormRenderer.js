@@ -98,8 +98,10 @@ const WebFormRender = function (option) {
             let opt = {};
             if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
-            else if (Obj.ObjType === "FileUploader")
+            else if (Obj.ObjType === "FileUploader") {
                 opt.FormDataExtdObj = this.FormDataExtdObj;
+                opt.DpControlsList = getFlatObjOfType(this.FormObj, "DisplayPicture");
+            }
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }

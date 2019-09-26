@@ -115,6 +115,13 @@ class DisplayPictureControl {
         $img.attr('onerror', "this.style.opacity='0.5'; this.src='/images/image.png';");
         $img.css('height', $img.css('height'));
         $(`#cont_${this.control.EbSid_CtxId}`).hover(function (e) { $img.parent().next().css('visibility', 'visible'); }, function (e) { $img.parent().next().css('visibility', 'hidden'); });
+        if (this.control.EnableFullScreen === true) {
+            this.$FullScreen = this.appendFSHtml();
+            $img.on('click', function (evt) {
+                this.$FullScreen.find('.FupimgIcon').attr('src', $(evt.target).attr('src'));
+                this.$FullScreen.show();
+            }.bind(this));
+        }
     }
 
     cropfyFlow() {      //cropy flow
@@ -381,6 +388,17 @@ class DisplayPictureControl {
                </div>`;
         }
         return html;
+    }
+
+    appendFSHtml() {
+        $("body").append(`<div class="ebDpFullscreen_wraper-fade"></div>
+                        <div class="ebDpFullscreen_wraper" style='padding: 20px 60px 20px 60px;'>
+                            <button class="FsClse" onclick="$('.ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade').hide();"><i class="fa fa-close"></i></button>
+                            <div class="ebDpFullscreen_inner">
+                                <img src="~/images/web.png" class="FupimgIcon" />                                
+                            </div>
+                        </div>`);
+        return $(".ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade");
     }
 
     GetValue(p1) {

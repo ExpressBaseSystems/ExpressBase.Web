@@ -72,7 +72,6 @@ namespace ExpressBase.Web.Controllers
             ViewBag.DvList = JsonConvert.SerializeObject(resultlist.DvList);
             ViewBag.DvTaggedList = JsonConvert.SerializeObject(resultlist.DvTaggedList);
             ViewBag.TypeRegister = _jsResult.TypeRegister;
-            ViewBag.MapApiKey = this.ServiceClient.Get<string>(new GetDefaultMapApiKeyFromConnectionRequest());
             return View();
         }
 

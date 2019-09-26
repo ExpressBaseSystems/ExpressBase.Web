@@ -28,7 +28,7 @@
                             <div class="row pdbtm15">
                                 @{if (ViewBag.chktkt == false)
 
-                                    {
+    {
 
                                         <div class="col-sm-3 col-md-3 col-lg-3 ">
                                             <label>Ticket Id</label>
@@ -36,7 +36,7 @@
                                                 <input class="form-control w-100 " type="text" id="tktid" disabled>
                                             </div>
                                         </div>
-                                    }
+    }
                                 }
                             </div>
                         </div>
@@ -45,32 +45,40 @@
                                 <div class="col-sm-6 col-md-6 col-lg-6 ">
                                     <label>Title</label>
                                     <div class=" ">
-                                        <input class="form-control w-100 " type="text" id="bugtitle">
+                                        @{ if (ViewBag.cid == "admin")
+    {
+                                                <input class="form-control w-100 " type="text" id="bugtitle" disabled>
+    }
+    else
+    {
+                                                <input class="form-control w-100 " type="text" id="bugtitle">
+    }
+                                        }
                                     </div>
                                     <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
                                 </div>
                                 <div class="col-sm-6 col-md-6 col-lg-6 ">
                                     <div class=" ">
                                         @{if (ViewBag.wc.Equals("tc"))
-                                            {
+    {
                                                 <div class="">
                                                     <label>Solution id</label>
                                                     <div>
                                                         <select id="soluid" class="form-control w-100">
                                                             @for (int i = 0; i < ViewBag.soluids.Count; i++)
-                                                            {
-                                                                <option  value=@ViewBag.soluids[i]>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
-                                                            }
+{
+                                                                <option value=@ViewBag.soluids[i]>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
+}
 
                                                         </select>
                                                     </div>
                                                     <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
                                                 </div>
-                                            }
+    }
 
                                         }
                                         @{ if (ViewBag.wc.Equals("uc") || ViewBag.wc.Equals("dc"))
-                                            {
+    {
                                                 <div class="">
                                                     <label>Solution id</label>
                                                     <div>
@@ -78,22 +86,29 @@
                                                     </div>
                                                     <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
                                                 </div>
-                                            }
+    }
 
                                         }
                                     </div>
                                 </div>
                             </div>
-
                             <div class="row">
                                 <div class="col-sm-4 col-md-4 col-lg-4 ">
                                     <label>Priority</label>
                                     <div>
-                                        <select id="bugpriority" class="form-control  priori w-100">
-                                            <option value="1">High</option>
-                                            <option value="2">Mid</option>
-                                            <option value="3">Low</option>
-                                        </select>
+                                        @{ if (ViewBag.cid == "admin")
+                                            {
+                                                <input class="form-control w-100 " type="text" id="bugpriority" value="New" disabled>
+                                            }
+                                            else
+                                            {
+                                                <select id="bugpriority" class="form-control  priori w-100">
+                                                    <option value="1">High</option>
+                                                    <option value="2">Medium</option>
+                                                    <option value="3">Low</option>
+                                                </select>
+                                            }
+                                        }
                                     </div>
                                     <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
                                 </div>
@@ -102,11 +117,17 @@
                                     <div class=" ">
                                         @{ if (ViewBag.cid == "admin")
                                             {
-                                                <input class="form-control w-100 " type="text" id="stsid">
+
+                                                <select id="stsid" class="form-control  priori w-100">
+                                                    <option value="1">New</option>
+                                                    <option value="2">Deferred</option>
+                                                    <option value="3">Closed</option>
+                                                    <option value="4">Rejected</option>
+                                                </select>
                                             }
                                             else
                                             {
-                                                <input class="form-control w-100 " type="text" id="stsid" disabled>
+                                                <input class="form-control w-100 " type="text" id="stsid" value="New" disabled>
                                             }
 
                                         }
@@ -153,7 +174,15 @@
                                             <div class=" ">
                                                 @{ if (ViewBag.cid == "admin")
                                                     {
-                                                        <input class="form-control w-100 " type="text" id="asgnid">
+
+                                                        <select id="asgnid" class="form-control w-100">
+                                                            @for (int i = 0; i < ViewBag.AdminNames.Count; i++)
+                                                            {
+                                                                <option value=@ViewBag.AdminNames[i]>@ViewBag.AdminNames[i]</option>
+                                                            }
+
+                                                        </select>
+                                                        
                                                     }
                                                     else
                                                     {
@@ -194,7 +223,7 @@
                                         <div>
                                             @{ if (ViewBag.cid == "admin")
                                                 {
-                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid" ></textarea>
+                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid"></textarea>
                                                 }
                                                 else
                                                 {
@@ -217,17 +246,17 @@
                                 }
                                 else
                                 {
-                        <div class=" ">
-                            @{ if (ViewBag.cid == "admin")
-                                {
-                                    <button id="btnupdateadmin" class="btn btn-primary" type="button"> Update</button>
-                                }
-                                else
-                                {
-                                    <button id="btnupdate" class="btn btn-primary" type="button"> Update</button>
-                                }
-                            }
-                        </div>
+                                    <div class=" ">
+                                        @{ if (ViewBag.cid == "admin")
+                                            {
+                                                <button id="btnupdateadmin" class="btn btn-primary" type="button"> Update</button>
+                                            }
+                                            else
+                                            {
+                                                <button id="btnupdate" class="btn btn-primary" type="button"> Update</button>
+                                            }
+                                        }
+                                    </div>
                                 }
 
                             }

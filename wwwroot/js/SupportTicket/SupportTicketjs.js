@@ -85,6 +85,7 @@ var EditTicket = function () {
     this.init1 = function () {
         this.AppendTicketfn();
         $("#btnupdate").on("click", this.Updateticketfn.bind(this));
+        $("#btnupdateadmin").on("click", this.UpdateAdminTicketfn.bind(this));
         $("#savebugid").on("click", this.Savebug.bind(this));
 
     };
@@ -96,15 +97,28 @@ var EditTicket = function () {
         else {
             $.each(tktdtl.supporttkt, function (i, obj) {
                 $("#tktid").val(obj.ticketid);
-                $("#stsid").val(obj.status);
+                if (ebcontext.sid == "admin") {
+                    $("#stsid").append(` <option selected="selected" hidden >${obj.status}</option>`);
+                }
+                else {
+                    $("#stsid").val(obj.status);
+                }
                 $("#asgnid").val(obj.assignedto);
                 $("#bugtitle").val(obj.title);
                 if (ebcontext.user.wc == "tc") {
                     $("#soluid").append(` <option selected="selected" hidden >${obj.solutionid}</option>`);
-                } else {
+                }
+                else {
                     $("#soluid").val(obj.solutionid);
                 }
-                $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
+                if (ebcontext.sid == "admin") {
+                    $("#bugpriority").val(obj.priority);
+                }
+                else {
+                    $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
+                }
+
+              
                 $("#dtecrtd").val(obj.createdat);
                 $("#dtemdfyd").val(obj.lstmodified);
                 $("#descriptionid").val(obj.description);
@@ -135,13 +149,15 @@ var EditTicket = function () {
                 data.append("imageUploadForm" + i, file);
             }
             var tlt = $("#bugtitle").val().trim();
+            var sts = $("#stsid").val().trim();
             var desc = $("#descriptionid").val().trim();
             var priori = $("#bugpriority option:selected").text().trim();
             var solu = $("#soluid option:selected").attr('value');
             var typ = $('input[name=optradio]:checked').val();
             data.append("title", tlt);
-            data.append("descp", $("#descriptionid").val().trim());
+            data.append("descp", desc);
             data.append("priority", priori);
+            data.append("stats", sts);
             data.append("solid", solu);
             data.append("type_f_b", typ);
 
@@ -220,6 +236,54 @@ var EditTicket = function () {
 
             $.ajax({
                 url: "../SupportTicket/UpdateTicket",
+                type: 'POST',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    location.href = '/SupportTicket/bugsupport';
+                    $("#eb_common_loader").EbLoader("hide");
+                }
+            });
+        }
+
+    }
+
+
+    this.UpdateAdminTicketfn = function () {
+        let fill = this.validatefn();
+        if (fill) {
+            var data = new FormData();
+            $("#eb_common_loader").EbLoader("show");
+            //var totalFiles = window.filearray.length;
+            //for (var i = 0; i < totalFiles; i++) {
+            //    var file = window.filearray[i];
+            //    data.append("imageUploadForm" + i, file);
+            //}
+            //var tlt = $("#bugtitle").val().trim();
+            //var desc = $("#descriptionid").val().trim();
+            //var priori = $("#bugpriority option:selected").text().trim();
+            var solu = $("#soluid").val();
+            var tktid = $("#tktid").val();
+            var typ = $('input[name=optradio]:checked').val();
+            var sts = $("#stsid option:selected").text().trim();
+            var asgned = $("#asgnid option:selected").text().trim();
+            var rmrk = $("#remarkid").val();
+            //data.append("title", tlt);
+            //data.append("descp", desc);
+            //data.append("priority", priori);
+            data.append("solid", solu);
+            data.append("tktid", tktid);
+           // data.append("filedelet", JSON.stringify(window.filedel));
+            data.append("type_f_b", typ);
+            data.append("stats", sts);
+            data.append("asgnedto", asgned);
+            data.append("remark", rmrk);
+
+
+
+            $.ajax({
+                url: "../SupportTicket/UpdateTicketAdmin",
                 type: 'POST',
                 data: data,
                 processData: false,
@@ -340,7 +404,9 @@ var EditTicket = function () {
             // Listen to container click and trigger input file click
             $container.on('click', function (e) {
                 // Prevent browser default event and stop propagation
-                prevent(e);
+                //prevent(e);
+                e.preventDefault();
+                e.stopPropagation();
 
                 // Trigger input click
                 $input.trigger('click');
@@ -360,8 +426,12 @@ var EditTicket = function () {
 
         let prevent = function (e) {
             // Prevent browser default event and stop propagation
-            e.preventDefault();
-            e.stopPropagation();
+
+            var src1 = $(e.target).closest('img').attr('src');
+            
+            //e.preventDefault();
+          //  e.stopPropagation();
+
         };
 
         let createImg = function (src, id, cntype, fileno) {
@@ -374,10 +444,11 @@ var EditTicket = function () {
             if (cntype == 'application/pdf') {
 
                 src = '/images/pdf-image.png';
-                $img = $('<iframe>', { src: src }).appendTo($container);
+                $img = $('<img>', { src: src, cntype: cntype }).appendTo($container);
+               // $img = $('<iframe>', { src: src }).appendTo($container);
             }
             else {
-                $img = $('<img>', { src: src }).appendTo($container);
+                $img = $('<img>', { src: src, cntype: cntype}).appendTo($container);
             }
 
 
@@ -529,8 +600,8 @@ var EditTicket = function () {
                             // Add it to data transfer
                             dataTransfer.items.add(file);
 
-
                             // Set preview
+
                             //if (files[i].type == "application/pdf") {
 
                             //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));

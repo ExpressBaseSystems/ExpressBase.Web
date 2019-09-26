@@ -28,7 +28,7 @@
         Countrptfooter: 1
     };
 
-    this.RbObjProps = ["ReportHeaders", "ReportFooters", "PageHeaders", "PageFooters", "Detail"];
+    this.RbObjProps = ["ReportHeaders", "ReportFooters", "PageHeaders", "PageFooters", "Detail","ReportGroups"];
 
     this.EbObjectSections = ["ReportHeader", "PageHeader", "ReportDetail", "PageFooter", "ReportFooter"];
 

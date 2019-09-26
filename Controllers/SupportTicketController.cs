@@ -23,14 +23,7 @@ namespace ExpressBase.Web.Controllers
 		// GET: /<controller>/
 		public IActionResult bugsupport()
 		{
-			if (ViewBag.wc.Equals("tc"))
-			{
-				//to fetch solution id,name from tenant table  to show in dropdown
-				TenantSolutionsResponse ts = this.ServiceClient.Post<TenantSolutionsResponse>(new TenantSolutionsRequest { });
-				ViewBag.soluids = ts.soldispid;
-				ViewBag.solunames = ts.solname;
-				ViewBag.isolu = ts.solid;
-			}
+			
 
 			//to fetch all details of tickets of corresponding user of that corresponding solution to show as tables
 			if (ViewBag.cid.Equals("admin")){
@@ -57,6 +50,11 @@ namespace ExpressBase.Web.Controllers
 				ViewBag.soluids = ts.soldispid;
 				ViewBag.solunames = ts.solname;
 				ViewBag.isolu = ts.solid;
+			}
+			if (ViewBag.cid.Equals("admin"))
+			{
+				FetchAdminsResponse far = this.ServiceClient.Post<FetchAdminsResponse>(new FetchAdminsRequest { });
+				ViewBag.AdminNames=far.AdminNames;
 			}
 
 			if (tktno == "newticket")
@@ -87,7 +85,7 @@ namespace ExpressBase.Web.Controllers
 
 		[HttpPost]
 
-		public void SaveBugDetails(string title, string descp, string priority, string solid, string type_f_b, object fileCollection)
+		public void SaveBugDetails(string title,string stats, string descp, string priority, string solid, string type_f_b, object fileCollection)
 		{
 			string usrtyp = null;
 			SaveBugRequest sbrequest = new SaveBugRequest();
@@ -115,7 +113,7 @@ namespace ExpressBase.Web.Controllers
 				for (int i = 0; i < httpreq.Files.Count; i++)
 				{
 					var file = httpreq.Files[i];
-					if ((file.ContentType == "image/jpeg") || (file.ContentType == "application/pdf"))
+					if ((file.ContentType == "image/jpeg") || (file.ContentType == "image/jpg") || (file.ContentType == "image/png") || (file.ContentType == "application/pdf"))
 					{
 						if(file.Length< 2097152) { 
 						
@@ -141,7 +139,7 @@ namespace ExpressBase.Web.Controllers
 			sbrequest.priority = httpreq["priority"].ToString();
 			sbrequest.solutionid = solid;
 			sbrequest.type_b_f = httpreq["type_f_b"].ToString();
-			sbrequest.status = "Onhold";
+			sbrequest.status = httpreq["stats"].ToString(); ;
 			sbrequest.usertype = usrtyp;
 			sbrequest.fullname = this.LoggedInUser.FullName;
 			sbrequest.email = this.LoggedInUser.Email;
@@ -191,9 +189,35 @@ namespace ExpressBase.Web.Controllers
 			Uptkt.title = title;
 			Uptkt.description = descp;
 			Uptkt.priority = priority;
-			Uptkt.solution_id = solid;
+			if (this.LoggedInUser.wc.Equals("tc"))
+			{
+				Uptkt.solution_id = solid;
+			}
+			else
+			{
+				Uptkt.solution_id = ViewBag.cid;
+			}
+			
 			Uptkt.type_f_b = type_f_b;
 
+
+			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
+
+
+		}
+
+		public void UpdateTicketAdmin(string stats, string asgnedto, string remark, string tktid, string solid, string type_f_b)
+		{
+
+			UpdateTicketAdminRequest Uptkt = new UpdateTicketAdminRequest();
+			var httpreq = this.HttpContext.Request.Form;
+						
+			Uptkt.Ticketid = tktid;
+			Uptkt.Status = stats;
+			Uptkt.Remarks = remark;
+			Uptkt.AssignTo = asgnedto;
+			Uptkt.Solution_id = solid;
+			Uptkt.Type_f_b = type_f_b;
 
 			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
 

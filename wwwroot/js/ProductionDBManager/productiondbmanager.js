@@ -10,20 +10,28 @@
         let key = $(e.target).siblings("input").val();
         var $this = $(`#${key}subchange`);
         $this.button('loading');
-        
-        let val = dbdict[key];
-        let db = $('#dbname').val();
+
+        //let val = dbdict[key];
+        //let db = $('#dbname').val();
         $.ajax({
             type: "POST",
             url: "../ProductionDBManager/UpdateDBFunctionByDB",
-            data: { data: val, db_name: key, solution: key },
+            data: { db_name: key, solution: key },
             success: function (data) {
                 $this.button('reset').hide();
-                $(`#uptodate`).show();
-                $(`#i_chk`).hide();
-                $(`#${key}`).empty();
-                $('#modified_date').empty();
-                $('#modified_date').append(` <label class="sub-headings row-padding">${data.modifiedDate}</label>`);
+                if (jQuery.isEmptyObject(data.changes) || data.changes.length == 0) {
+                    $(`#uptodate_${key}`).show();
+                    $(`#i_chk_${key}`).hide();
+                    $(`#${key}`).empty();
+                    $(`#modified_date_${key}`).empty();
+                    $(`#modified_date_${key}`).append(` <label class="sub-headings row-padding">${data.modifiedDate}</label>`);
+                }
+                else {
+                    $(`#i_chk_${key}`).show();
+                    $(`#${key}`).empty();
+                    $(`#modified_date_${key}`).empty();
+                    $(`#modified_date_${key}`).append(` <label class="sub-headings row-padding">${data.modifiedDate}</label>`);
+                }
             }.bind(this)
         });
     };
@@ -43,32 +51,31 @@
     this.changeajaxsuccess = function ($this, val, data) {
         var html = ``;
         $this.button('reset').hide();
-        if (jQuery.isEmptyObject(dbdict)) {
-            dbdict = data;
-        }
-        else {
-            if (!(val in dbdict)) {
-                dbdict[val] = data[val];
-            }
-        }
-        for (key in data) {
-            if (data[key].length > 0) {
-                html = html + `
+        //if (jQuery.isEmptyObject(dbdict)) {
+        //    dbdict = data;
+        //}
+        //else {
+        //    if (!(val in dbdict)) {
+        //        dbdict[val] = data[val];
+        //    }
+        //}
+        if (data.length > 0) {
+            html = html + `
                                 <div class="row row-padding div-row-heading">
                                     <div class="col-md-4 ">
                                         <label class="sub-headings row-padding">
-                                            <a data-toggle="collapse" class="file_content_toggle" role="button" val="${key}sub"  style="text-decoration:none;color: #4987fb">
-                                                ${data[key].length} Changes
+                                            <a data-toggle="collapse" class="file_content_toggle" role="button" val="${val}sub"  style="text-decoration:none;color: #4987fb">
+                                                ${data.length} Changes
                                                 <i class="fa fa-chevron-down"></i>
                                             </a>
                                         </label>
                                     </div>
                                     <div class="col-md-offset-6 col-md-2 align-center">
-                                        <input type="hidden" value="${key}" id="data_${key}" name="data"/>
-                                        <button type="button" class="btn btn-change btn-sm change_function" id="${key}subchange" data-loading-text="Changing <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;'  ></i> " style="display: none;">Change</button>
+                                        <input type="hidden" value="${val}" id="data_${val}" name="data"/>
+                                        <button type="button" class="btn btn-change btn-sm change_function" id="${val}subchange" data-loading-text="Changing <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;'  ></i> " style="display: none;">Change</button>
                                     </div>
                                 </div>
-                                <div class="collapse" id="${key}sub" hidden>
+                                <div class="collapse" id="${val}sub" hidden>
                                 <div class=" div-sub-headings-main">
                                     <div class="div-sub-headings">
                                         <div class="col-md-8">
@@ -79,25 +86,24 @@
                                         </div>
                                     </div>
                                 </div>`;
-                $.each(data[key], function (i, vals) {
-                    html = html + `<div class="row row-padding div-row-contents">
+            $.each(data, function (i, vals) {
+                html = html + `<div class="row row-padding div-row-contents">
                                                         <div class="col-md-8">
                                                             <label class="table-content-font">${vals['functionHeader']}</label>`;
-                    if (vals['newItem'] == true) {
-                        html = html + `<label class="table-content-font" style="color: #4987fb;">New</label>`;
-                    }
-                                                     html=html+`   </div>
+                if (vals['newItem'] == true) {
+                    html = html + `<label class="table-content-font" style="color: #4987fb;">New</label>`;
+                }
+                html = html + `   </div>
                                                         <div class="col-md-4">
                                                             <label class="table-content-font">${vals['filePath']}</label>
                                                         </div>
                                                     </div>`;
-                });
-                html = html + `</div>`;
-            }
-            else {
-                $(`#uptodate`).show();
-                $(`#i_chk`).hide();
-            }
+            });
+            html = html + `</div>`;
+        }
+        else if (data.length == 0) {
+            $(`#uptodate_${val}`).show();
+            $(`#i_chk_${val}`).hide();
         }
         $(`#${val}`).append(html);
     }

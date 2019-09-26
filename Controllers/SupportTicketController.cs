@@ -51,6 +51,11 @@ namespace ExpressBase.Web.Controllers
 				ViewBag.solunames = ts.solname;
 				ViewBag.isolu = ts.solid;
 			}
+			if (ViewBag.cid.Equals("admin"))
+			{
+				FetchAdminsResponse far = this.ServiceClient.Post<FetchAdminsResponse>(new FetchAdminsRequest { });
+				ViewBag.AdminNames=far.AdminNames;
+			}
 
 			if (tktno == "newticket")
 			{
@@ -184,9 +189,35 @@ namespace ExpressBase.Web.Controllers
 			Uptkt.title = title;
 			Uptkt.description = descp;
 			Uptkt.priority = priority;
-			Uptkt.solution_id = solid;
+			if (this.LoggedInUser.wc.Equals("tc"))
+			{
+				Uptkt.solution_id = solid;
+			}
+			else
+			{
+				Uptkt.solution_id = ViewBag.cid;
+			}
+			
 			Uptkt.type_f_b = type_f_b;
 
+
+			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
+
+
+		}
+
+		public void UpdateTicketAdmin(string stats, string asgnedto, string remark, string tktid, string solid, string type_f_b)
+		{
+
+			UpdateTicketAdminRequest Uptkt = new UpdateTicketAdminRequest();
+			var httpreq = this.HttpContext.Request.Form;
+						
+			Uptkt.Ticketid = tktid;
+			Uptkt.Status = stats;
+			Uptkt.Remarks = remark;
+			Uptkt.AssignTo = asgnedto;
+			Uptkt.Solution_id = solid;
+			Uptkt.Type_f_b = type_f_b;
 
 			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
 

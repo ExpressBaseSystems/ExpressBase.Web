@@ -219,7 +219,7 @@
 
     this.updateControlUI = function (ebsid, type) {
         let obj = this.rootContainerObj.Controls.GetByName(ebsid);
-        let _type = obj.ObjType
+        let _type = obj.ObjType;
         $.each(obj, function (propName, propVal) {
             let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
             if (meta && meta.IsUIproperty)
@@ -327,7 +327,7 @@
                 else if (type === "ProvisionLocation") {
                     this.ProvisionLocationCtrl = ctrlObj;
                 }
-                else if (type === "SimpleSelect") {
+                else if (type === "SimpleSelect" || type === "BooleanSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
                 }
 
@@ -382,14 +382,17 @@
         $.ajax({
             type: "POST",
             url: "../WebForm/GetLocationConfig",
-            data: { },
+            data: {},
             success: function (ctrl, configObj) {
                 ctrl._locationConfig = JSON.parse(configObj);
                 $.each(ctrl._locationConfig, function (i, config) {
                     let newo = new EbObjects.UsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
                     newo.DisplayName = config.Name;
+                    newo.IsRequired = config.IsRequired;
+                    newo.Type = config.Type;
                     ctrl.Fields.$values.push(newo);
                 });
+                EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
             }.bind(this, _ctrl)
         });
     };
@@ -456,7 +459,7 @@
             });
             return false;
         }
-        
+
         if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ProvisionLocation" && this.ProvisionLocationCtrl) {
             this.EbAlert.clearAlert("mngLocCtrl");
             this.EbAlert.alert({
@@ -576,11 +579,18 @@
             this.PGobj.execUiChangeFn(getObjByval(paneMeta, "name", "Title").UIChangefn, ctrl);
         }
         if (ctrlType === "DataGrid") {
-            ebsid = $e.closest("th").attr("ebsid");
+            if ($e.closest("th").length === 1)
+                ebsid = $e.closest("th").attr("ebsid");// for TH label
+            else
+                ebsid = $e.closest(".Eb-ctrlContainer").attr("ebsid");// for DG label
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);
             let ColMeta = AllMetas["Eb" + ctrl.ObjType];
             ctrl["Title"] = val;
-            this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);
+
+            if ($e.closest("th").length === 1)
+                this.PGobj.execUiChangeFn(getObjByval(ColMeta, "name", "Title").UIChangefn, ctrl);// for TH label
+            else
+                this.PGobj.changePropertyValue("Label", val);// for DG label
         }
         else {
             let ctrl = this.rootContainerObj.Controls.GetByName(ebsid);

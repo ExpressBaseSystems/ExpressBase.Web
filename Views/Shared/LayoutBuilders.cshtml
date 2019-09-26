@@ -1,10 +1,12 @@
 ﻿@using ExpressBase.Web.Filters;
+@using ExpressBase.Common;
+@using Newtonsoft.Json;
 @{
     var bApnd = true;
-    if (ViewBag.Env == "Development")
-    {
-        bApnd = false;
-    }
+ if (ViewBag.Env == "Development")
+ {
+     bApnd = false;
+ }
 }
 <!DOCTYPE html>
 <html>
@@ -158,66 +160,67 @@
 
     @Html.RenderScripts()
     <script>
-        var _uo = @Html.Raw(@ViewBag.UserObject);
         window.ebcontext= {
             sid: "@ViewBag.cid",
-            user: _uo || null,
+            user: @Html.Raw(ViewBag.UserObject) || null,
             menu: {},
             locations: {},
-            header: {}
+            header: {},
+            env:'@ViewBag.Env',
+            font:@Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
         }
     </script>
 </head>
 <body>
     <div class="html-root">
         @{
-            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-            {
-                <div id="eb-common-menu">
-                    @{ Html.RenderPartial("EbQuickMenu");}
-                </div>
-            }
-            if (ViewBag.wc == "uc")
-            {
-                <div id="eb-locswitch_wraper">
-                    <div class="loc_switchModal_fade"></div>
-                    <div class="loc_switchModal" id="loc_switchModal">
-                        <div class="loc_switchModal_outer">
-                            <div class="loc_switchModal_box">
-                                <div class="locs_head">
-                                    <h4>Switch Location</h4>
-                                    <div class="loc_searchInput w-100">
-                                        <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
-                                    </div>
+                        if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+                        {
+            <div id="eb-common-menu">
+                @{ Html.RenderPartial("EbQuickMenu");}
+            </div>
+                        }
+                        if (ViewBag.wc == "uc")
+                        {
+            <div id="eb-locswitch_wraper">
+                <div class="loc_switchModal_fade"></div>
+                <div class="loc_switchModal" id="loc_switchModal">
+                    <div class="loc_switchModal_outer">
+                        <div class="loc_switchModal_box">
+                            <div class="locs_head">
+                                <h4>Switch Location</h4>
+                                <div class="loc_searchInput w-100">
+                                    <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
                                 </div>
-                                <div class="locs_bdy"></div>
-                                <div class="locs_foot">
-                                    <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
-                                </div>
-                                <div class="no_loc_config">No Locations.</div>
                             </div>
+                            <div class="locs_bdy"></div>
+                            <div class="locs_foot">
+                                <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
+                            </div>
+                            <div class="no_loc_config">No Locations.</div>
                         </div>
                     </div>
                 </div>
-            }
+            </div>
+                        }
         }
         <div id="layout_div" class="container-fluid html-root-layout">
             @RenderBody()
         </div>
     </div>
     @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
-    {
-        <script>
+        {
+    <script>
             window.ebcontext.menu = new EbMenu({
                 Console: '@ViewBag.wc',
                 Sid: '@ViewBag.cid',
                 Uid: '@ViewBag.UId'
             });
-        </script>
-    }
+    </script>
+        }
     @if (ViewBag.wc == "uc")
-    {
-        <script>
+        {
+    <script>
             let loc__ = new LocSwitch({
                 Location: '@Html.Raw(ViewBag.Locations)',
                 Tid: '@ViewBag.cid',
@@ -228,15 +231,15 @@
             //loc__.Listener.ChangeLocation = function (o) {
             //    console.error(o);
             //}
-        </script>
-    }
+    </script>
+        }
     <script>
         $('.Eb_Image').Lazy();
     </script>
     @if (IsSectionDefined("JsCode"))
-    {
-        @RenderSection("JsCode")
-    }
+        {
+    @RenderSection("JsCode")
+        }
     @Html.RenderJsCode()
 </body>
 </html>

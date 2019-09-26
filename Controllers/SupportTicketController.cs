@@ -23,16 +23,19 @@ namespace ExpressBase.Web.Controllers
 		// GET: /<controller>/
 		public IActionResult bugsupport()
 		{
-			if (ViewBag.wc.Equals("tc"))
-			{
+			
 
-				TenantSolutionsResponse ts = this.ServiceClient.Post<TenantSolutionsResponse>(new TenantSolutionsRequest { });
-				ViewBag.soluids = ts.soldispid;
-				ViewBag.solunames = ts.solname;
-				ViewBag.isolu = ts.solid;
+			//to fetch all details of tickets of corresponding user of that corresponding solution to show as tables
+			if (ViewBag.cid.Equals("admin")){
+				AdminSupportResponse asr = this.ServiceClient.Post<AdminSupportResponse>(new AdminSupportRequest { });
+				ViewBag.tkttable = JsonConvert.SerializeObject(asr);
 			}
-			FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest { });
-			ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
+			else
+			{
+				FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest { });
+				ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
+			}
+			
 
 
 			return View();
@@ -40,47 +43,41 @@ namespace ExpressBase.Web.Controllers
 
 		public IActionResult EditTicket(string tktno)
 		{
-			SupportDetailsResponse sd = this.ServiceClient.Post<SupportDetailsResponse>(new SupportDetailsRequest
+			if (ViewBag.wc.Equals("tc"))
 			{
-				ticketno = tktno
-			});
-
-
-			for (var i = 0; i < sd.supporttkt.Count; i++)
-			{
-				var imgbyt = sd.supporttkt[i].Filecollection;
-				if (imgbyt.Count > 0)
-				{
-					for (var j = 0; j < imgbyt.Count; j++)
-					{
-						byte[] imgs = imgbyt[j];
-						string imageBase64Data = Convert.ToBase64String(imgs);
-						string imageDataURL = string.Format("data:image/png;base64,{0}", imageBase64Data);
-						sd.Filecollection1.Add(imageDataURL);
-					}
-					ViewBag.ImageData = sd.Filecollection1;
-					ViewBag.ImageData1 = JsonConvert.SerializeObject(sd.Filecollection1);
-				}
-
-
+				//to fetch solution id,name from tenant table  to show in dropdown
+				TenantSolutionsResponse ts = this.ServiceClient.Post<TenantSolutionsResponse>(new TenantSolutionsRequest { });
+				ViewBag.soluids = ts.soldispid;
+				ViewBag.solunames = ts.solname;
+				ViewBag.isolu = ts.solid;
 			}
-			//byte[] imgs1= sd.supporttkt[0].Filecollection[0];
+			if (ViewBag.cid.Equals("admin"))
+			{
+				FetchAdminsResponse far = this.ServiceClient.Post<FetchAdminsResponse>(new FetchAdminsRequest { });
+				ViewBag.AdminNames=far.AdminNames;
+			}
 
+			if (tktno == "newticket")
+			{
+				ViewBag.chktkt = true;
+				ViewBag.tktdetails = ("sd");
+			}
+			else {
+				// fectch complete details of ticket and show it in edit /view ticket
+				SupportDetailsResponse sd = this.ServiceClient.Post<SupportDetailsResponse>(new SupportDetailsRequest
+				{
+					ticketno = tktno,
+					Usertype = this.LoggedInUser.wc
 
-			ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
-			//return File(imgs1, "image/jpeg");
-			return View();
-		}
+				});
 
-
-		public IActionResult imgtest()
-		{
-
-			return View();
-		}
-		public IActionResult imgtest1()
-		{
-
+				for (var i = 0; i < sd.supporttkt.Count; i++)
+				{
+					var filecolect = sd.supporttkt[i].Fileuploadlst;
+				}
+				ViewBag.chktkt = false;
+				ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
+			}
 			return View();
 		}
 
@@ -88,13 +85,7 @@ namespace ExpressBase.Web.Controllers
 
 		[HttpPost]
 
-
-
-
-
-
-
-		public void SaveBugDetails(string title, string descp, string priority, string solid, string type_f_b, object fileCollection)
+		public void SaveBugDetails(string title,string stats, string descp, string priority, string solid, string type_f_b, object fileCollection)
 		{
 			string usrtyp = null;
 			SaveBugRequest sbrequest = new SaveBugRequest();
@@ -118,17 +109,27 @@ namespace ExpressBase.Web.Controllers
 			if (httpreq.Files.Count > 0)
 			{
 				byte[] fileData = null;
+
 				for (int i = 0; i < httpreq.Files.Count; i++)
 				{
 					var file = httpreq.Files[i];
-
-					using (var memoryStream = new MemoryStream())
+					if ((file.ContentType == "image/jpeg") || (file.ContentType == "image/jpg") || (file.ContentType == "image/png") || (file.ContentType == "application/pdf"))
 					{
-						file.CopyTo(memoryStream);
-						memoryStream.Seek(0, SeekOrigin.Begin);
-						fileData = new byte[memoryStream.Length];
-						memoryStream.ReadAsync(fileData, 0, fileData.Length);
-						sbrequest.Filecollection.Add(fileData);
+						if(file.Length< 2097152) { 
+						
+						FileUploadCls flup = new FileUploadCls();
+						using (var memoryStream = new MemoryStream())
+						{
+							file.CopyTo(memoryStream);
+							memoryStream.Seek(0, SeekOrigin.Begin);
+							fileData = new byte[memoryStream.Length];
+							memoryStream.ReadAsync(fileData, 0, fileData.Length);
+							flup.Filecollection = fileData;
+						}
+						flup.FileName = file.FileName;
+						flup.ContentType = file.ContentType;
+						sbrequest.Fileuploadlst.Add(flup);
+						}
 					}
 				}
 			}
@@ -138,7 +139,7 @@ namespace ExpressBase.Web.Controllers
 			sbrequest.priority = httpreq["priority"].ToString();
 			sbrequest.solutionid = solid;
 			sbrequest.type_b_f = httpreq["type_f_b"].ToString();
-			sbrequest.status = "onhold";
+			sbrequest.status = httpreq["stats"].ToString(); ;
 			sbrequest.usertype = usrtyp;
 			sbrequest.fullname = this.LoggedInUser.FullName;
 			sbrequest.email = this.LoggedInUser.Email;
@@ -148,15 +149,90 @@ namespace ExpressBase.Web.Controllers
 		}
 
 
-		public void UpdateTicket(string title, string descp, string priority, string tktid)
+		public void UpdateTicket(string title, string descp,string filedelet, string priority, string tktid,string solid,string type_f_b, object fileCollection)
 		{
-			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(new UpdateTicketRequest
+
+			UpdateTicketRequest Uptkt = new UpdateTicketRequest();
+			var httpreq = this.HttpContext.Request.Form;
+
+			if (httpreq.Files.Count > 0)
 			{
-				ticketid = tktid,
-				title = title,
-				description = descp,
-				priority = priority
+				byte[] fileData = null;
+
+				for (int i = 0; i < httpreq.Files.Count; i++)
+				{
+					
+					var file = httpreq.Files[i];
+					if ((file.ContentType == "image/jpeg") || (file.ContentType == "application/pdf"))
+					{
+						if (file.Length < 2097152)
+						{
+							FileUploadCls flup = new FileUploadCls();
+							using (var memoryStream = new MemoryStream())
+							{
+								file.CopyTo(memoryStream);
+								memoryStream.Seek(0, SeekOrigin.Begin);
+								fileData = new byte[memoryStream.Length];
+								memoryStream.ReadAsync(fileData, 0, fileData.Length);
+								flup.Filecollection = fileData;
+							}
+							flup.FileName = file.FileName;
+							flup.ContentType = file.ContentType;
+							Uptkt.Fileuploadlst.Add(flup);
+						}
+					}
+				}
+			}
+
+			Uptkt.Filedel =JsonConvert.DeserializeObject<int[]>(filedelet);
+			Uptkt.ticketid = tktid;
+			Uptkt.title = title;
+			Uptkt.description = descp;
+			Uptkt.priority = priority;
+			if (this.LoggedInUser.wc.Equals("tc"))
+			{
+				Uptkt.solution_id = solid;
+			}
+			else
+			{
+				Uptkt.solution_id = ViewBag.cid;
+			}
+			
+			Uptkt.type_f_b = type_f_b;
+
+
+			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
+
+
+		}
+
+		public void UpdateTicketAdmin(string stats, string asgnedto, string remark, string tktid, string solid, string type_f_b)
+		{
+
+			UpdateTicketAdminRequest Uptkt = new UpdateTicketAdminRequest();
+			var httpreq = this.HttpContext.Request.Form;
+						
+			Uptkt.Ticketid = tktid;
+			Uptkt.Status = stats;
+			Uptkt.Remarks = remark;
+			Uptkt.AssignTo = asgnedto;
+			Uptkt.Solution_id = solid;
+			Uptkt.Type_f_b = type_f_b;
+
+			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
+
+
+		}
+
+		public void ChangeStatus(string tktno )
+		{
+			ChangeStatusResponse sd = this.ServiceClient.Post<ChangeStatusResponse>(new ChangeStatusRequest
+			{
+				TicketNo = tktno,
+				NewStatus="Rectified"
 			});
+
+
 		}
 
 	}

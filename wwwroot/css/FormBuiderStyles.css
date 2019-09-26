@@ -194,6 +194,7 @@
 
     .form-buider-form table {
         width: 100%;
+        position: relative;
         /*table-layout: fixed;*/
     }
 
@@ -751,8 +752,16 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
-[ctype=SimpleSelect] .ctrl-cover .dropdown-toggle,[ctype=PowerSelect] .ctrl-cover .dropdown-toggle, [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle {
-    padding: 0 12px 0 5px
+[ctype=SimpleSelect] .ctrl-cover .dropdown-toggle,
+[ctype=PowerSelect] .ctrl-cover .dropdown-toggle,
+[ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
+[tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
+[tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle {
+    padding: 0 0px 0 5px;
+}
+
+.ctrl-cover > .input-group > .nullable-check [type="checkbox"] {
+    margin-top: 4px;
 }
 
 .ctrl-cover > div > div > div.bs-searchbox > input {
@@ -1297,7 +1306,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .form-buider-form .nav-tabs > li {
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .filter-box .input-group-addon, .form-buider-form .input-group-addon {
@@ -1438,6 +1448,45 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     .btn-select .dropdown-menu {
         border-radius: 2px !important;
     }
+
+/*-----------------Display picture control Start-----------------*/
+.ebDpFullscreen_wraper-fade {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #000;
+    opacity: 0.8;
+    -webkit-transition: opacity .15s linear;
+    -o-transition: opacity .15s linear;
+    transition: opacity .15s linear;
+    display: none;
+}
+.ebDpFullscreen_wraper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 104;
+    padding: 20px 60px 20px 60px;
+    display: none;
+}
+.ebDpFullscreen_inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+/*-----------------Display picture control End-----------------*/
+
+
+
+
 /*animations*/
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes dim_border {

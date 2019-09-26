@@ -3,6 +3,12 @@
             padding:1px 2px;
             border-radius:2px;
             text-shadow: 1px 1px 1px #eef;`);
+
+};
+
+console.dev_log = function (msg) {
+    if (ebcontext.env === "Development")
+        console.log(msg);
 };
 
 console.eb_error = function (msg, color = "rgb(222, 0, 0)", bgcolor) {
@@ -386,7 +392,7 @@ function RecurFlatControls(src_obj, dest_coll) {
     $.each(src_obj.Controls.$values, function (i, obj) {
         dest_coll.push(obj);
         if (obj.IsContainer) {
-            getFlatControls(obj, dest_coll);
+            RecurFlatControls(obj, dest_coll);
         }
     });
 }
@@ -513,4 +519,52 @@ function EbConvertValue(val, type) {
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+var default_colors = ['#3366CC', '#DC3912', '#FF9900', '#109618', '#990099', '#3B3EAC', '#0099C6', '#DD4477', '#66AA00', '#B82E2E', '#316395', '#994499', '#22AA99', '#AAAA11', '#6633CC', '#E67300', '#8B0707', '#329262', '#5574A6', '#3B3EAC']
+
+var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
+    this.label = label;
+    this.data = data;
+    this.backgroundColor = backgroundColor;
+    this.borderColor = borderColor;
+    this.fill = fill;
+};
+
+var datasetObj4Pie = function (label, data, backgroundColor, borderColor, fill) {
+    this.label = label;
+    this.data = data;
+    var color = [], width = [];
+    $.each(this.data, function (i, obj) {
+        color.push(randomColor());
+        width.push(1);
+    });
+    this.backgroundColor = color;
+    this.borderColor = color;
+    this.borderWidth = width;
+};
+
+var ChartColor = function (name, color) {
+    this.Name = name;
+    this.Color = color;
+};
+
+var animateObj = function (duration) {
+    this.duration = duration;
+    this.onComplete = function () {
+        var chartInstance = this.chart,
+            ctx = chartInstance.ctx;
+
+        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontSize, Chart.defaults.global.defaultFontStyle, Chart.defaults.global.defaultFontFamily);
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+
+        this.data.datasets.forEach(function (dataset, i) {
+            var meta = chartInstance.controller.getDatasetMeta(i);
+            meta.data.forEach(function (bar, index) {
+                var data = dataset.data[index];
+                ctx.fillText(data, bar._model.x, bar._model.y - 5);
+            });
+        });
+    };
 }

@@ -235,6 +235,8 @@ var EbBasicDataTable = function (Option) {
             url = "../CE/getDataCollcetion";
         else if (this.source === "powerselect")
             url = "../dv/getData4PowerSelect";
+        else
+            url = "../dv/getData";
         var o = new Object();
         o.scrollY = this.scrollHeight;
         o.scrollX = "100%";
@@ -276,8 +278,8 @@ var EbBasicDataTable = function (Option) {
         dq.TFilters = this.columnSearch;
         //if (this.filterValues.length === 0)
         this.filterValues = this.getFilterValues();
-        dq.Params = this.filterValues;
-        dq.rowData = this.rowData;
+        dq.Params = this.filterValues || [];
+        dq.rowData = this.rowData || "";
         //if (this.orderColl.length > 0)
         //    dq.OrderBy = this.orderColl;
         if (this.order_info.col !== "")
@@ -427,11 +429,12 @@ var EbBasicDataTable = function (Option) {
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';
-                    var type = $(textid).attr('data-coltyp');
-                    if (type === 'boolean') {
+                    var type = api.settings().init().aoColumns[i].Type;
+                    var Rtype = api.settings().init().aoColumns[i].RenderType;
+                    if (Rtype === 3) {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj(colum, "=", val1));
+                            filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
                     }
                     else {
                         oper = $('#' + table + '_' + colum + '_hdr_sel').text();
@@ -441,18 +444,18 @@ var EbBasicDataTable = function (Option) {
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
-                                        if (type === 'number') {
+                                        if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2)));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2),type));
                                         }
-                                        else if (type === 'date') {
+                                        else if (Rtype === 5 || Rtype === 6) {
                                             if (val2 > val1) {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, type));
                                             }
                                             else {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, type));
                                             }
                                         }
                                     }
@@ -1323,7 +1326,7 @@ var EbBasicDataTable = function (Option) {
             this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             //var idpos = getObjByval(this.ebSettings.Columns.$values, "name", this.hiddenFieldName).data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[this.hiddenIndex].toString() + "'/>";
+            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + ((row[this.hiddenIndex]!== null) ? row[this.hiddenIndex].toString(): null) + "'/>";
         }
         else
             return "<input type='checkbox' class='" + this.tableId + "_select'/>";

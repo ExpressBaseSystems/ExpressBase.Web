@@ -14,6 +14,8 @@
         // signInCallback defined in step 6.
          auth2 = gapi.auth2.init({
              client_id: '1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com',
+             access_type: 'offline',
+             redirect_uri: 'https://myaccount.eb-test.xyz',
              scope: 'https://www.googleapis.com/auth/drive',
                 // Scopes to request in addition to 'profile' and 'email'
                 //scope: 'additional_scope'
@@ -29,7 +31,7 @@
             // Send the code to the server
             $.ajax({
                 type: 'POST',
-                url: "../TestRoby/storeauthcode",
+                url: "../TestRoby/storeauthcodeAsync",
                 data: { data12: ttt },                
             });
         } else {

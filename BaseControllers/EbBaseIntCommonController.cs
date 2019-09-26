@@ -112,6 +112,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.UId = Convert.ToInt32(bToken.Payload[TokenConstants.UID]);
                     controller.ViewBag.UAuthId = context.HttpContext.Request.Cookies[TokenConstants.USERAUTHID];
                     controller.ViewBag.cid = bToken.Payload[TokenConstants.CID];
+                    controller.ViewBag.cide = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
                     controller.ViewBag.wc = bToken.Payload[TokenConstants.WC];
                     controller.ViewBag.email = bToken.Payload[TokenConstants.EMAIL];
                     

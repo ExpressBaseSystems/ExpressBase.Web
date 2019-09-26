@@ -33,6 +33,7 @@ using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Data;
 using ExpressBase.Objects.Helpers;
 using Newtonsoft.Json.Linq;
+using ExpressBase.Common.Constants;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -49,10 +50,12 @@ namespace ExpressBase.Web.Controllers
             ViewBag.apps = apps.Data;
             ViewBag.Msg = TempData[Msg];
             ViewBag.Title = "Developer Home";
+            ViewBag.JavaScriptFunction = TempData["ResetStore"] ?? "";
+            TempData.Remove("ResetStore");
             return View();
         }
 
-        [EbBreadCrumbFilter("Applications/", "AppName")]
+        [EbBreadCrumbFilter("Applications/", "AppName",new string[] { "/MyApplications" })]
         [HttpGet]
         public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {
@@ -70,6 +73,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.AppInfo = _objects.AppInfo;
             this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
             ViewBag.Title = _objects.AppInfo.Name;
+            ViewBag.ObjectsCount = _objects.ObjectsCount;
             return View();
         }
 
@@ -339,6 +343,21 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Op = "New Application";
                 HttpContext.Items["link"] = "New";
                 ViewBag.AppInfo = new AppWrapper { Id=0,AppType = 1, Icon = "fa-home" };
+            }
+            return View();
+        }
+
+        public IActionResult DeleteApplication(int Id)
+        {
+            DeleteAppResponse resp = this.ServiceClient.Post(new DeleteAppRequest
+            {
+                AppId = Id
+            });
+
+            if (resp.Status)
+            {
+                TempData["ResetStore"] = "resetStore()";
+                return Redirect("/MyApplications");
             }
             return View();
         }

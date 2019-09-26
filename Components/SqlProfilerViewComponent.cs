@@ -57,6 +57,7 @@ namespace ExpressBase.Web.Components
                 else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
                     _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px" };
                 _col.EbSid = column.Type.ToString() + column.ColumnIndex;
+                _col.RenderType = column.Type;
                 Columns.Add(_col);
             }
             return Columns;

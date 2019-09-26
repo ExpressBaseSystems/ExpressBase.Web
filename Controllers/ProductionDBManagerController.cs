@@ -26,18 +26,18 @@ namespace ExpressBase.Web.Controllers
         {
             CheckChangesInFunctionResponse resp = this.ServiceClient.Post<CheckChangesInFunctionResponse>(new CheckChangesInFunctionRequest
             {
-                SolutionId = solution_id
+                SolutionId = solution_id,
+                IsUpdate = false
             });
             return resp.Changes;
         }
 
-        public Object UpdateDBFunctionByDB(List<Eb_FileChanges> data, string db_name, string solution)
+        public Object UpdateDBFunctionByDB(string db_name, string solution)
         {
-            UpdateDBFunctionByDBResponse resp = this.ServiceClient.Post<UpdateDBFunctionByDBResponse>(new UpdateDBFunctionByDBRequest
+            CheckChangesInFunctionResponse resp = this.ServiceClient.Post<CheckChangesInFunctionResponse>(new CheckChangesInFunctionRequest
             {
-                Changes = data,
-                DBName = db_name,
-                Solution = solution
+                SolutionId = solution,
+                IsUpdate = true
             });
             return resp;
         }
@@ -68,6 +68,5 @@ namespace ExpressBase.Web.Controllers
                 }
             return false;
         }
-
     }
 }

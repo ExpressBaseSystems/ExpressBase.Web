@@ -336,7 +336,7 @@
                 //inpCtrl.__rowid = rowid;
                 //inpCtrl.__Col = col;
                 //this.AllRowHiddenCtrls[rowid].push(inpCtrl);
-                return true;
+                continue;
             }
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);

@@ -241,7 +241,7 @@
             t1 = performance.now();
             console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
 
-        }.bind(this), 1);
+        }.bind(this), 0);
     };
 
     //created by amal
@@ -279,7 +279,7 @@
         setTimeout(function () {
             let $input = $("#" + ctrl.EbSid_CtxId);
             $input.selectpicker();
-        },1);
+        },0);
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -716,7 +716,7 @@
             //        }
             //    }
             //});
-        }.bind(this), 1);
+        }.bind(this), 0);
     };
 
     this.getKeyByValue = function (Obj, value) {

@@ -240,7 +240,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.stickBtn.minimise();
     };
 
-    this.tmpPropertyChanged = function (obj, Pname) {
+    this.tmpPropertyChanged = function (obj, Pname, newval, oldval) {
         //this.isSecondTime = true;
         if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
@@ -1078,7 +1078,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
+        if (col.bVisible && (col.RenderType == parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Double")) || col.RenderType == parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
             _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces, col.data));
             this.NumericIndex.push(col.data);
         }
@@ -1118,11 +1118,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';
-                    var type = $(textid).attr('data-coltyp');
-                    if (type === 'boolean') {
-                        val1 = ($(textid).is(':checked')) ? "true" : "false";
+                    //var type = $(textid).attr('data-coltyp');
+                    var type = api.settings().init().aoColumns[i].Type;
+                    var Rtype = api.settings().init().aoColumns[i].RenderType;
+                    if (Rtype === 3) {
+                        var obj = this.EbObject.Columns.$values.find(x => x.name === colum);
+                        val1 = ($(textid).is(':checked')) ? obj.TrueValue : obj.FalseValue;
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj(colum, "=", val1, "boolean"));
+                            filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
                     }
                     else {
                         oper = $('#' + table + '_' + colum + '_hdr_sel').text().trim();
@@ -1132,28 +1135,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
-                                        if (type === 'number') {
+                                        if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), "number"));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), type));
                                         }
-                                        else if (type === 'date') {
+                                        else if (Rtype === 5 || Rtype === 6) {
                                             //val1 = this.changeDateOrder(val1);
                                             //val2 = this.changeDateOrder(val2);
                                             if (val2 > val1) {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, "date"));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, "date"));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, type));
                                             }
                                             else {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, "date"));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, "date"));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, type));
                                             }
                                         }
                                     }
                                 }
                                 else {
                                     var data = $(textid).val();
-                                    //if (type === "date")
-                                    //    data = this.changeDateOrder(data);
                                     filter_obj_arr.push(new filter_obj(colum, oper, data, type));
                                 }
                             }
@@ -2976,7 +2977,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 _ls += span;
             }
             else {
-                if (col.Type === parseInt(gettypefromString("Int32")) || col.Type === parseInt(gettypefromString("Decimal")) || col.Type === parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+                if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType === parseInt(gettypefromString("Decimal")) || col.RenderType === parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Double")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
                     if (parseInt(EbEnums.ControlType.Text) === col.filterControl)
                         _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                     else if (parseInt(EbEnums.ControlType.Date) === col.filterControl)
@@ -2984,7 +2985,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     else
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                 }
-                else if (col.Type === parseInt(gettypefromString("String"))) {
+                else if (col.RenderType === parseInt(gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
                     if (parseInt(EbEnums.ControlType.Numeric) === col.filterControl)
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
@@ -2995,7 +2996,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
-                else if (col.Type === parseInt(gettypefromString("DateTime")) || col.Type === parseInt(gettypefromString("Date"))) {
+                else if (col.RenderType === parseInt(gettypefromString("DateTime")) || col.RenderType === parseInt(gettypefromString("Date"))) {
                     if (parseInt(EbEnums.ControlType.Numeric) === col.filterControl)
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                     else if (parseInt(EbEnums.ControlType.Text) === col.filterControl)
@@ -3003,7 +3004,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     else
                         _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                 }
-                else if (col.Type === parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
+                else if (col.RenderType === parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
                 else
                     _ls += (span);
@@ -3655,12 +3656,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings.Columns.$values[i].sClass = "";
         this.ebSettings.Columns.$values[i].className = "";
 
-        if (col.Type === parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+        if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
 
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
-        if (col.Type === parseInt(gettypefromString("Boolean"))) {
+        if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "eb_void" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
@@ -3682,7 +3683,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight text-center";
         }
-        if (col.Type === parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
+        if (col.RenderType === parseInt(gettypefromString("String")) || col.RenderType == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
@@ -3699,7 +3700,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
-        if (col.Type === parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
+        if (col.RenderType === parseInt(gettypefromString("Date")) || col.RenderType == parseInt(gettypefromString("DateTime"))) {
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
@@ -3744,7 +3745,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === true || data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === "T" ) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {

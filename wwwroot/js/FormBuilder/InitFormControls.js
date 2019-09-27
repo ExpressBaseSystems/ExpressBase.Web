@@ -124,7 +124,7 @@
                     }
                 });
             }
-            
+
         }.bind(this, ctrlOpts.DpControlsList);
 
     };
@@ -155,6 +155,9 @@
     this.SetDateFormatter();
 
     this.Date = function (ctrl, ctrlOpts) {
+        //setTimeout(function () {
+        let t0 = performance.now();
+        let t1 = performance.now();
         let formObject = ctrlOpts.formObject;
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
@@ -234,6 +237,11 @@
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
+
+        t1 = performance.now();
+        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+
+        //}.bind(this), 0);
     };
 
     //created by amal
@@ -268,8 +276,10 @@
     };
 
     this.SimpleSelect = function (ctrl) {
+        //setTimeout(function () {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.selectpicker();
+        //},0);
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -571,6 +581,7 @@
     };
 
     this.Numeric = function (ctrl) {
+        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         let initValue = "0";
@@ -705,6 +716,7 @@
         //        }
         //    }
         //});
+        //}.bind(this), 0);
     };
 
     this.getKeyByValue = function (Obj, value) {

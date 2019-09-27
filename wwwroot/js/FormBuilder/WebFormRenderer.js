@@ -1024,5 +1024,12 @@ const WebFormRender = function (option) {
         }.bind(this);
     };
 
+    let t0 = performance.now();
+
+    this.showLoader();
     this.init();
+    this.hideLoader();
+
+    let t1 = performance.now();
+    console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
 };

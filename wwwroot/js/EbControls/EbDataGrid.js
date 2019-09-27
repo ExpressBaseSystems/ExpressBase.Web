@@ -127,7 +127,7 @@
     //        }.bind(this));
     //    }
     //};
-        
+
     this.j = function (p1) {
         let VMs = this.initializer.Vobj.valueMembers;
         let DMs = this.initializer.Vobj.displayMembers;
@@ -416,6 +416,9 @@
             else
                 $(`#${this.TableId}>tbody`).append($tr);
         }
+        if (!this.ctrl.AscendingOrder)
+            this.UpdateSlNo();
+
         $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
@@ -489,11 +492,10 @@
             }
 
             let t0 = performance.now();
-
-            this.initControls.init(inpCtrl, opt);
+                this.initControls.init(inpCtrl, opt);
 
             let t1 = performance.now();
-            console.dev_log("initControls : " + inpCtrl.ObjType + " took " + (t1 - t0) + " milliseconds.");
+            //console.dev_log("initControls : " + inpCtrl.ObjType + " took " + (t1 - t0) + " milliseconds.");
 
         }
 
@@ -821,6 +823,15 @@
         this.removeTr($tr);
         this.resetRowSlNoUnder($tr);
     }.bind(this);
+
+    this.UpdateSlNo = function () {
+        let $rows = $(`#${this.TableId}>tbody>tr`);
+        for (let i = 0; i < $rows.length; i++) {     
+            let $row = $($rows[i]);
+            let SlNo = i + 1;
+            $row.find("td.row-no-td").attr("idx", SlNo).text(SlNo);
+        }
+    };
 
     this.resetRowSlNoUnder = function ($tr) {
         let curIdx = parseInt($tr.find(".row-no-td").attr("idx"));

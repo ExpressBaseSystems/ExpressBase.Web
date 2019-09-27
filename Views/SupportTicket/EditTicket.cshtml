@@ -28,7 +28,7 @@
                             <div class="row pdbtm15">
                                 @{if (ViewBag.chktkt == false)
 
-    {
+                                    {
 
                                         <div class="col-sm-3 col-md-3 col-lg-3 ">
                                             <label>Ticket Id</label>
@@ -36,7 +36,7 @@
                                                 <input class="form-control w-100 " type="text" id="tktid" disabled>
                                             </div>
                                         </div>
-    }
+                                    }
                                 }
                             </div>
                         </div>
@@ -46,13 +46,13 @@
                                     <label>Title</label>
                                     <div class=" ">
                                         @{ if (ViewBag.cid == "admin")
-    {
+                                            {
                                                 <input class="form-control w-100 " type="text" id="bugtitle" disabled>
-    }
-    else
-    {
+                                            }
+                                            else
+                                            {
                                                 <input class="form-control w-100 " type="text" id="bugtitle">
-    }
+                                            }
                                         }
                                     </div>
                                     <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
@@ -60,25 +60,25 @@
                                 <div class="col-sm-6 col-md-6 col-lg-6 ">
                                     <div class=" ">
                                         @{if (ViewBag.wc.Equals("tc"))
-    {
+                                            {
                                                 <div class="">
                                                     <label>Solution id</label>
                                                     <div>
                                                         <select id="soluid" class="form-control w-100">
                                                             @for (int i = 0; i < ViewBag.soluids.Count; i++)
-{
+                                                            {
                                                                 <option value=@ViewBag.soluids[i]>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
-}
+                                                            }
 
                                                         </select>
                                                     </div>
                                                     <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
                                                 </div>
-    }
+                                            }
 
                                         }
                                         @{ if (ViewBag.wc.Equals("uc") || ViewBag.wc.Equals("dc"))
-    {
+                                            {
                                                 <div class="">
                                                     <label>Solution id</label>
                                                     <div>
@@ -86,7 +86,7 @@
                                                     </div>
                                                     <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
                                                 </div>
-    }
+                                            }
 
                                         }
                                     </div>
@@ -182,7 +182,7 @@
                                                             }
 
                                                         </select>
-                                                        
+
                                                     }
                                                     else
                                                     {
@@ -262,6 +262,26 @@
                             }
                         </div>
                     </div>
+
+                    <!-- The Modal -->
+                    <div class="modal fade" id="diplay_modal">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <!-- Modal body -->
+                                <div class="modal-body" style="padding-top: 0px; padding-bottom: 0px;padding-left: 0px; padding-right: 0px;">
+                                    <button type="button" class="close" data-dismiss="modal" style="">&times; </button>
+                                    <div id="file_disp">
+                                        @*<iframe id="display_pdf" src="" frameborder="0" style=" display: block; border:none; height:100%; width:100%"></iframe>
+                                        <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block;  ">*@
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
                 </div>
             </div>
         </div>

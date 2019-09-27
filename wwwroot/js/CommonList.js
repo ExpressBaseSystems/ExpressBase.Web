@@ -113,7 +113,10 @@
                         "><i class="fa fa-eye-slash" aria-hidden="true"></i></button>`);
 
             $("#btnNewCmnList").text("Create User");
-            $("#btnNewCmnList").on("click", function () { window.open('../Security/ManageUser', '_blank'); });
+            if (this.metadata.indexOf("_disableNewUser") !== -1)
+                $("#btnNewCmnList").on("click", function () { EbMessage("show", { Message: 'Unable to create new user. Reached maximum user limit.', AutoHide: true, Background: '#1e1ebf' }); });
+            else
+                $("#btnNewCmnList").on("click", function () { window.open('../Security/ManageUser', '_blank'); });
         }
         else if (this.metadata.indexOf("_userGroup") !== -1) {
             $("#btnNewCmnList").text("Create UserGroup");

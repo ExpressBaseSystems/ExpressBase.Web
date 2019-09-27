@@ -40,9 +40,13 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.ListType = type;
 			if (type == "users")
 			{
-				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
+                ViewBag.DisableNewUser = "false";
+                var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
-			}
+                Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
+                if (_solu.PlanUserCount <= _solu.NumberOfUsers)
+                    ViewBag.DisableNewUser = "true";
+            }
 			else if (type == "roles")
 			{
 				var fr = this.ServiceClient.Get<GetRolesResponse1>(new GetRolesRequest1());
@@ -262,8 +266,15 @@ namespace ExpressBase.Web.Controllers
 					}
 				}
 			}
- 
-			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
+
+            if (ViewBag.Env == "Production")
+            {
+                Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
+                if (_solu.PlanUserCount <= _solu.NumberOfUsers)
+                    return -1;
+            }
+
+            SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
 				Id = userid,
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],

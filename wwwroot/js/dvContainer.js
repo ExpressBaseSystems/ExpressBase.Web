@@ -325,7 +325,7 @@ var DvContainerObj = function (settings) {
                 input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = "_locId";
-                input.value = store.get("Eb_Loc-" + TenantId + UserId);
+                input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
                 _form.appendChild(input);
 
                 document.body.appendChild(_form);

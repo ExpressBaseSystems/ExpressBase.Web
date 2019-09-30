@@ -426,30 +426,36 @@ var EditTicket = function () {
 
         let prevent = function (e) {
             // Prevent browser default event and stop propagation
-
-            var src1 = $(e.target).closest('img').attr('src');
-            
-            //e.preventDefault();
-          //  e.stopPropagation();
-
+           e.preventDefault();
+           e.stopPropagation();
+           
         };
 
-        let createImg = function (src, id, cntype, fileno) {
+        $(".uploaded-image").on("click", function (e) {
+        
+            alert("The paragraph was clicked.");
+        });
 
+        let createImg = function (src, id, cntype, fileno) {
+            var flurl = src;
             // Create the upladed image container
             let $container = $('<div>', { class: 'uploaded-image' });
 
             // Create the img tag
 
             if (cntype == 'application/pdf') {
-
+                
                 src = '/images/pdf-image.png';
-                $img = $('<img>', { src: src, cntype: cntype }).appendTo($container);
+
+                $img = $('<img>', { src: src, cntype: cntype, pd64: flurl }).appendTo($container);
                // $img = $('<iframe>', { src: src }).appendTo($container);
+
             }
             else {
                 $img = $('<img>', { src: src, cntype: cntype}).appendTo($container);
             }
+
+            $img.data('file_url', flurl);
 
 
 
@@ -484,8 +490,29 @@ var EditTicket = function () {
 
             // Stop propagation on click
             $container.on("click", function (e) {
+                var cntyp = $(e.target).closest('img').attr('cntype');
+                if (cntyp == "application/pdf") {
+                    $('#file_disp').html(` <iframe id="display_file" src="" frameborder="0" style=" display: block; border:none; height:600px; width:100%"></iframe>`);
+                    var src1 = $(e.target).closest('img').attr('pd64');
+                    //var src1 = $img.data('file_url');
+                    $('#display_file').attr('src', src1);
+                    $('#diplay_modal').modal('show');
+                }
+                else {
+                    $('#file_disp').html(`   <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block;  ">`);
+                    var src1 = $(e.target).closest('img').attr('src');
+                    $('#display_file').attr('src', src1)
+                    $('#diplay_modal').modal('show');
+                }
+               
+                 //if (typeof (src1) !== 'undefined') {
+                 //    $('.edtsprt').html(`<iframe id="iframe" src=${src1}></iframe>`);
+                    //}
+
+
                 // Prevent browser default event and stop propagation
                 prevent(e);
+
             });
 
             // Set delete action

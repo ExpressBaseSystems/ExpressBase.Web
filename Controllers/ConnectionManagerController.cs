@@ -902,6 +902,31 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
+
+        public string AddSlack()
+        {
+            AddSlackResponse res = new AddSlackResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbSlackConfig con = new EbSlackConfig
+                {
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    OAuthAccessToken = req["OAuthAccessToken"],
+                    Channel = req["Channel"],
+                    Type = EbIntegrations.Slack
+                };
+                res = this.ServiceClient.Post < AddSlackResponse>(new AddSlackRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
         public string AddGoogleDriveAsync()
         {
             string RedirectUri ="";

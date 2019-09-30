@@ -155,93 +155,93 @@
     this.SetDateFormatter();
 
     this.Date = function (ctrl, ctrlOpts) {
-        setTimeout(function () {
-            let t0 = performance.now();
-            let t1 = performance.now();
-            let formObject = ctrlOpts.formObject;
-            let userObject = ebcontext.user;
-            let $input = $("#" + ctrl.EbSid_CtxId);
-            let fun = null;
-            if (ctrl.ShowDateAs_ === 1) {
-                $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
-                $input.MonthPicker('option', 'ShowOn', 'both');
-                $input.MonthPicker('option', 'UseInputMask', true);
-                if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
-                    fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
-                    $input.MonthPicker({
-                        OnAfterChooseMonth: fun.bind(this, formObject, userObject)
-                    });
-                }
-                //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+        //setTimeout(function () {
+        let t0 = performance.now();
+        let t1 = performance.now();
+        let formObject = ctrlOpts.formObject;
+        let userObject = ebcontext.user;
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        let fun = null;
+        if (ctrl.ShowDateAs_ === 1) {
+            $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
+            $input.MonthPicker('option', 'ShowOn', 'both');
+            $input.MonthPicker('option', 'UseInputMask', true);
+            if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
+                fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
+                $input.MonthPicker({
+                    OnAfterChooseMonth: fun.bind(this, formObject, userObject)
+                });
+            }
+            //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+        }
+        else {
+            let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
+            let stp = userObject.Preference.ShortTimePattern;//"HH mm"
+
+            if (typeof ctrl === typeof "")
+                ctrl = { name: ctrl, ebDateType: 5 };
+            var settings = { timepicker: false };
+
+            if (ctrl.EbDateType === 5) { //Date
+                $input.datetimepicker({
+                    format: sdp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: false,
+                    datepicker: true,
+                    mask: true
+                });
+                //$input.val(userObject.Preference.ShortDate);
+            }
+            else if (ctrl.EbDateType === 17) { //Time
+                $input.datetimepicker({
+                    format: stp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: true,
+                    datepicker: false
+                });
+                //$input.val(userObject.Preference.ShortTime);
             }
             else {
-                let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
-                let stp = userObject.Preference.ShortTimePattern;//"HH mm"
-
-                if (typeof ctrl === typeof "")
-                    ctrl = { name: ctrl, ebDateType: 5 };
-                var settings = { timepicker: false };
-
-                if (ctrl.EbDateType === 5) { //Date
-                    $input.datetimepicker({
-                        format: sdp,
-                        formatTime: stp,
-                        formatDate: sdp,
-                        timepicker: false,
-                        datepicker: true,
-                        mask: true
-                    });
-                    //$input.val(userObject.Preference.ShortDate);
-                }
-                else if (ctrl.EbDateType === 17) { //Time
-                    $input.datetimepicker({
-                        format: stp,
-                        formatTime: stp,
-                        formatDate: sdp,
-                        timepicker: true,
-                        datepicker: false
-                    });
-                    //$input.val(userObject.Preference.ShortTime);
-                }
-                else {
-                    $input.datetimepicker({ //DateTime
-                        format: sdp + " " + stp,
-                        formatTime: stp,
-                        formatDate: sdp,
-                        timepicker: true,
-                        datepicker: true
-                    });
-                    //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
-                }
-
-
-                //settings.minDate = ctrl.Min;
-                //settings.maxDate = ctrl.Max;
-
-                //if (ctrlOpts.source === "webform") {
-                //let maskPattern = "DD-MM-YYYY";
-                //$input.attr("placeholder", maskPattern);
-                //$input.inputmask(maskPattern);               
-
-                //    if (!ctrl.IsNullable)
-                //        $input.val(userObject.Preference.ShortDate);
-                //}
-
-                //$input.mask(ctrl.MaskPattern || '00/00/0000');
-                $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
-            }
-            this.setCurrentDate(ctrl, $input);
-            if (ctrl.IsNullable) {
-                if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
-                    $input.val('');
-                $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
-                $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
+                $input.datetimepicker({ //DateTime
+                    format: sdp + " " + stp,
+                    formatTime: stp,
+                    formatDate: sdp,
+                    timepicker: true,
+                    datepicker: true
+                });
+                //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
 
-            t1 = performance.now();
-            console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
 
-        }.bind(this), 0);
+            //settings.minDate = ctrl.Min;
+            //settings.maxDate = ctrl.Max;
+
+            //if (ctrlOpts.source === "webform") {
+            //let maskPattern = "DD-MM-YYYY";
+            //$input.attr("placeholder", maskPattern);
+            //$input.inputmask(maskPattern);               
+
+            //    if (!ctrl.IsNullable)
+            //        $input.val(userObject.Preference.ShortDate);
+            //}
+
+            //$input.mask(ctrl.MaskPattern || '00/00/0000');
+            $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
+        }
+        this.setCurrentDate(ctrl, $input);
+        if (ctrl.IsNullable) {
+            if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+                $input.val('');
+            $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
+            $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
+        }
+
+        t1 = performance.now();
+        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+
+        //}.bind(this), 0);
     };
 
     //created by amal
@@ -276,10 +276,10 @@
     };
 
     this.SimpleSelect = function (ctrl) {
-        setTimeout(function () {
-            let $input = $("#" + ctrl.EbSid_CtxId);
-            $input.selectpicker();
-        },0);
+        //setTimeout(function () {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        $input.selectpicker();
+        //},0);
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -581,142 +581,142 @@
     };
 
     this.Numeric = function (ctrl) {
-        setTimeout(function () {
-            var id = ctrl.EbSid_CtxId;
-            let $input = $("#" + ctrl.EbSid_CtxId);
-            let initValue = "0";
-            if (ctrl.DecimalPlaces > 0)
-                initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
-            $input.val(initValue);
+        //setTimeout(function () {
+        var id = ctrl.EbSid_CtxId;
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        let initValue = "0";
+        if (ctrl.DecimalPlaces > 0)
+            initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
+        $input.val(initValue);
 
-            $input.inputmask("currency", {
-                radixPoint: ".",
-                allowMinus: ctrl.AllowNegative,
-                groupSeparator: "",
-                digits: ctrl.DecimalPlaces,
-                prefix: '',
-                autoGroup: true
+        $input.inputmask("currency", {
+            radixPoint: ".",
+            allowMinus: ctrl.AllowNegative,
+            groupSeparator: "",
+            digits: ctrl.DecimalPlaces,
+            prefix: '',
+            autoGroup: true
+        });
+
+        $input.focus(function () { $(this).select(); });
+
+        //$input.focusout(function () {
+        //    var val = $(this).val().toString();
+        //    var l = 'SZZZZZZZZZZZ'.length - 1;
+        //    var ndp = ctrl.DecimalPlaces;
+        //    if (val === "0" || val === '' || val === '.')
+        //        $(this).val('');
+        //    else {
+        //        if (ndp !== 0) {
+        //            if ((!val.includes('.')) && (l !== val.length))
+        //                val = val + '.';
+        //            if ((val.includes('.'))) {
+        //                var pi = val.indexOf('.');
+        //                var lmt = pi + ndp;
+        //                for (pi; pi <= l; pi++) {
+        //                    if (val[pi] === null)
+        //                        val += '0';
+        //                    if (pi === lmt)
+        //                        break;
+        //                }
+        //            }
+        //        }
+        //        if (val[0] === '.')
+        //            val = '0' + val;
+        //        $(this).val(val);
+        //    }
+        //});
+
+        {// temp for hairo craft
+            $input.blur(function () {
+                var val = $input.val();
+                let decLen = 2;
+
+                if (val.trim() === "") {
+                    $input.val("0.00");
+                }
+                else if (!val.trim().includes(".")) {
+                    let newVal = val + ".00";
+                    $input.val(newVal);
+                }
+                else {
+                    let p1 = val.split(".")[0];
+                    let p2 = val.split(".")[1];
+                    zerolen = decLen - p2.length;
+                    let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
+                    $input.val(newVal);
+                }
             });
+        }
+        //$input.keypress(function (e) {
 
-            $input.focus(function () { $(this).select(); });
+        //    var val = $input.val();
+        //    var cs = document.getElementById(id).selectionStart;
+        //    var ce = document.getElementById(id).selectionEnd;
 
-            //$input.focusout(function () {
-            //    var val = $(this).val().toString();
-            //    var l = 'SZZZZZZZZZZZ'.length - 1;
-            //    var ndp = ctrl.DecimalPlaces;
-            //    if (val === "0" || val === '' || val === '.')
-            //        $(this).val('');
-            //    else {
-            //        if (ndp !== 0) {
-            //            if ((!val.includes('.')) && (l !== val.length))
-            //                val = val + '.';
-            //            if ((val.includes('.'))) {
-            //                var pi = val.indexOf('.');
-            //                var lmt = pi + ndp;
-            //                for (pi; pi <= l; pi++) {
-            //                    if (val[pi] === null)
-            //                        val += '0';
-            //                    if (pi === lmt)
-            //                        break;
-            //                }
-            //            }
-            //        }
-            //        if (val[0] === '.')
-            //            val = '0' + val;
-            //        $(this).val(val);
-            //    }
-            //});
+        //    if (e.which === 46 && val.includes('.')) {
+        //        setTimeout(function () {
+        //            $input.val(val);
+        //        }, 1);
+        //    }
 
-            {// temp for hairo craft
-                $input.blur(function () {
-                    var val = $input.val();
-                    let decLen = 2;
+        //    //// containes '.' and no selection
+        //    //if (val.includes('.') && cs === ce) {
+        //    //    setTimeout(function () {
+        //    //        var pi = val.indexOf('.');
+        //    //        //prevents exceeding decimal part length when containes '.'
+        //    //        if ((val.length - pi) === (ctrl.DecimalPlaces + 1) && (e.which >= 48) && (e.which <= 57) && ce > pi)
+        //    //            $input.val(val);
+        //    //        //prevents exceeding integer part length when containes '.'
+        //    //        if (pi === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
+        //    //            $input.val(val);
+        //    //    }, 1);
+        //    //}
+        //    ////prevents exceeding integer-part length when no '.'
+        //    //if (!(val.includes('.')) && val.length === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57)) {
+        //    //    setTimeout(function () {
+        //    //        $input.val(val + '.' + String.fromCharCode(e.which));
 
-                    if (val.trim() === "") {
-                        $input.val("0.00");
-                    }
-                    else if (!val.trim().includes(".")) {
-                        let newVal = val + ".00";
-                        $input.val(newVal);
-                    }
-                    else {
-                        let p1 = val.split(".")[0];
-                        let p2 = val.split(".")[1];
-                        zerolen = decLen - p2.length;
-                        let newVal = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
-                        $input.val(newVal);
-                    }
-                });
-            }
-            //$input.keypress(function (e) {
+        //    //    }, 1);
+        //    //}
+        //    ////prevents del before '.'if it leads to exceed integerpart limit
+        //    //if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === val.indexOf('.') && e.which === 0) {
+        //    //    setTimeout(function () {
+        //    //        $input.val(val);
+        //    //    }, 1);
+        //    //}
+        //    ////prevents <- after '.' if it leads to exceed integerpart limit
+        //    //if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === (val.indexOf('.') + 1) && e.which === 8) {
+        //    //    setTimeout(function () {
+        //    //        $input.val(val);
+        //    //    }, 1);
+        //    //}
+        //    ////prevents deletion of selection when containes '.' if it leads to exceed integerpart limit
+        //    //if ((val.includes('.') && val.length - (ce - cs)) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs <= val.indexOf('.') && ce > val.indexOf('.')) {
+        //    //    setTimeout(function () {
+        //    //        $input.val(val);
+        //    //    }, 1);
+        //    //}
+        //});
 
-            //    var val = $input.val();
-            //    var cs = document.getElementById(id).selectionStart;
-            //    var ce = document.getElementById(id).selectionEnd;
+        //let sPattern = /[0-9.]/;
+        //if (!ctrl.AllowNegative)
+        //    sPattern = /[0-9]/;
 
-            //    if (e.which === 46 && val.includes('.')) {
-            //        setTimeout(function () {
-            //            $input.val(val);
-            //        }, 1);
-            //    }
-
-            //    //// containes '.' and no selection
-            //    //if (val.includes('.') && cs === ce) {
-            //    //    setTimeout(function () {
-            //    //        var pi = val.indexOf('.');
-            //    //        //prevents exceeding decimal part length when containes '.'
-            //    //        if ((val.length - pi) === (ctrl.DecimalPlaces + 1) && (e.which >= 48) && (e.which <= 57) && ce > pi)
-            //    //            $input.val(val);
-            //    //        //prevents exceeding integer part length when containes '.'
-            //    //        if (pi === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57) && ce <= pi)
-            //    //            $input.val(val);
-            //    //    }, 1);
-            //    //}
-            //    ////prevents exceeding integer-part length when no '.'
-            //    //if (!(val.includes('.')) && val.length === (ctrl.MaxLength - ctrl.DecimalPlaces) && (e.which >= 48) && (e.which <= 57)) {
-            //    //    setTimeout(function () {
-            //    //        $input.val(val + '.' + String.fromCharCode(e.which));
-
-            //    //    }, 1);
-            //    //}
-            //    ////prevents del before '.'if it leads to exceed integerpart limit
-            //    //if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === val.indexOf('.') && e.which === 0) {
-            //    //    setTimeout(function () {
-            //    //        $input.val(val);
-            //    //    }, 1);
-            //    //}
-            //    ////prevents <- after '.' if it leads to exceed integerpart limit
-            //    //if (val.includes('.') && (val.length - 1) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs === (val.indexOf('.') + 1) && e.which === 8) {
-            //    //    setTimeout(function () {
-            //    //        $input.val(val);
-            //    //    }, 1);
-            //    //}
-            //    ////prevents deletion of selection when containes '.' if it leads to exceed integerpart limit
-            //    //if ((val.includes('.') && val.length - (ce - cs)) > (ctrl.MaxLength - ctrl.DecimalPlaces) && cs <= val.indexOf('.') && ce > val.indexOf('.')) {
-            //    //    setTimeout(function () {
-            //    //        $input.val(val);
-            //    //    }, 1);
-            //    //}
-            //});
-
-            //let sPattern = /[0-9.]/;
-            //if (!ctrl.AllowNegative)
-            //    sPattern = /[0-9]/;
-
-            //$input.mask('SZZZZZZZZZZZ', {
-            //    //reverse: true,
-            //    translation: {
-            //        'S': {
-            //            pattern: sPattern,
-            //            optional: true
-            //        },
-            //        'Z': {
-            //            pattern: /[0-9.]/,
-            //            optional: true
-            //        }
-            //    }
-            //});
-        }.bind(this), 0);
+        //$input.mask('SZZZZZZZZZZZ', {
+        //    //reverse: true,
+        //    translation: {
+        //        'S': {
+        //            pattern: sPattern,
+        //            optional: true
+        //        },
+        //        'Z': {
+        //            pattern: /[0-9.]/,
+        //            optional: true
+        //        }
+        //    }
+        //});
+        //}.bind(this), 0);
     };
 
     this.getKeyByValue = function (Obj, value) {

@@ -163,7 +163,7 @@ namespace ExpressBase.Web.Controllers
 				{
 					
 					var file = httpreq.Files[i];
-					if ((file.ContentType == "image/jpeg") || (file.ContentType == "application/pdf"))
+					if ((file.ContentType == "image/jpeg") || (file.ContentType == "image/jpg") || (file.ContentType == "image/png") || (file.ContentType == "application/pdf"))
 					{
 						if (file.Length < 2097152)
 						{

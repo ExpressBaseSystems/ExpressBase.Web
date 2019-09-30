@@ -3,24 +3,28 @@
 const arrayColumn = (arr, n) => arr.map(x => x[n]);
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
-var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl, login, counter, data, rowData, filterValues, url, cellData, PGobj, datePattern, TenantId, UserId) {
-    this.propGrid = PGobj;
+var EbDataTable = function (Option) {
+    this.propGrid = Option.PGobj;
     this.Api = null;
     this.order_info = new Object();
     this.order_info.col = '';
     this.order_info.dir = 0;
-    this.MainData = (data === undefined) ? null : data;
+    this.MainData = (Option.data === undefined) ? null : Option.data;
     this.isPipped = false;
     this.isContextual = false;
     this.chartJs = null;
-    this.url = url;
-    this.EbObject = dsobj;
-    this.tabNum = tabNum;
-    this.Refid = refid;
+    this.url = Option.url;
+    this.EbObject = Option.dsobj;
+    this.tabNum = Option.tabNum;
+    this.Refid = Option.refid;
     this.tableId = null;
     this.ebSettings = null;
-    this.ssurl = ssurl;
-    this.login = login;
+    this.ssurl = Option.ssurl;
+    this.login = Option.login;
+    this.counter = Option.counter;
+    this.datePattern = Option.datePattern;
+    this.TenantId = Option.TenantId;
+    this.UserId = Option.UserId;
     this.relatedObjects = null;
     this.FD = false;
     //Controls & Buttons
@@ -48,8 +52,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.linkDV = null;
     this.filterFlag = false;
     //if (index !== 1)
-    this.rowData = (rowData !== undefined && rowData !== null && rowData !== "") ? JSON.parse(decodeURIComponent(escape(window.atob(rowData)))) : null;
-    this.filterValues = (filterValues !== "" && filterValues !== undefined && filterValues !== null) ? JSON.parse(decodeURIComponent(escape(window.atob(filterValues)))) : [];
+    this.rowData = (Option.rowData !== undefined && Option.rowData !== null && Option.rowData !== "") ? JSON.parse(decodeURIComponent(escape(window.atob(Option.rowData)))) : null;
+    this.filterValues = (Option.filterValues !== "" && Option.filterValues !== undefined && Option.filterValues !== null) ? JSON.parse(decodeURIComponent(escape(window.atob(Option.filterValues)))) : [];
     this.FlagPresentId = false;
     this.flagAppendColumns = false;
     this.drake = null;
@@ -67,7 +71,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.isTagged = false;
     //this.filterChanged = false;
     this.isRun = false;
-    this.cellData = cellData;
+    this.cellData = Option.cellData;
     this.columnSearch = [];
     this.isSecondTime = false;
     this.tempColumns = [];
@@ -96,7 +100,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     var split = new splitWindow("parent-div0", "contBox");
 
     this.init = function () {
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
+        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter;
         this.ContextId = "filterWindow_" + this.tableId;
         this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
         $("#parent-div0").before(this.FDCont);
@@ -134,7 +138,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         $.ajax({
             type: "POST",
             url: "../DV/dvCommon",
-            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + TenantId + UserId), submitId: this.submitId },
+            data: { dvobj: JSON.stringify(this.EbObject), dvRefId: this.Refid, _flag: this.PcFlag, login: this.login, contextId: this.ContextId, customcolumn: isCustom, _curloc: store.get("Eb_Loc-" + this.TenantId + this.UserId), submitId: this.submitId },
             success: this.ajaxSucc
         });
     };
@@ -152,8 +156,8 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else
             this.isTagged = true;
-        var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter;
-        $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + counter).empty();
+        var subDivId = "#sub_window_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter;
+        $("#content_dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter).empty();
         this.filterHtml = text;
         if (this.login === "uc") {
             this.stickBtn = new EbStickButton({
@@ -240,7 +244,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.stickBtn.minimise();
     };
 
-    this.tmpPropertyChanged = function (obj, Pname) {
+    this.tmpPropertyChanged = function (obj, Pname, newval, oldval) {
         //this.isSecondTime = true;
         if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
@@ -318,7 +322,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     this.start = function () {
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
-            split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
+            split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
             if (this.login === "dc") {
                 //this.propGrid = new Eb_PropertyGrid("pp_inner", "dc");
                 this.propGrid = new Eb_PropertyGrid({
@@ -336,9 +340,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         }
         else {
             if (this.MainData !== null)
-                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization", prevfocusedId);
+                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization", prevfocusedId);
             else
-                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbTableVisualization");
+                split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
             if (this.login === "dc") {
                 //this.propGrid = new Eb_PropertyGrid("pp_inner", "dc");
 
@@ -1078,7 +1082,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
     };
 
     this.getAgginfo_inner = function (_ls, i, col) {
-        if (col.bVisible && (col.Type == parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
+        if (col.bVisible && (col.RenderType == parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Double")) || col.RenderType == parseInt(gettypefromString("Numeric"))) && col.name !== "serial") {
             _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces, col.data));
             this.NumericIndex.push(col.data);
         }
@@ -1118,11 +1122,14 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colum + '_hdr_txt1';
-                    var type = $(textid).attr('data-coltyp');
-                    if (type === 'boolean') {
-                        val1 = ($(textid).is(':checked')) ? "true" : "false";
+                    //var type = $(textid).attr('data-coltyp');
+                    var type = api.settings().init().aoColumns[i].Type;
+                    var Rtype = api.settings().init().aoColumns[i].RenderType;
+                    if (Rtype === 3) {
+                        var obj = this.EbObject.Columns.$values.find(x => x.name === colum);
+                        val1 = ($(textid).is(':checked')) ? obj.TrueValue : obj.FalseValue;
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj(colum, "=", val1, "boolean"));
+                            filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
                     }
                     else {
                         oper = $('#' + table + '_' + colum + '_hdr_sel').text().trim();
@@ -1132,28 +1139,26 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                                     val1 = $(textid).val();
                                     val2 = $(textid).siblings('input').val();
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
-                                        if (type === 'number') {
+                                        if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), "number"));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), type));
                                         }
-                                        else if (type === 'date') {
+                                        else if (Rtype === 5 || Rtype === 6) {
                                             //val1 = this.changeDateOrder(val1);
                                             //val2 = this.changeDateOrder(val2);
                                             if (val2 > val1) {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, "date"));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, "date"));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, type));
                                             }
                                             else {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, "date"));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, "date"));
+                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, type));
+                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, type));
                                             }
                                         }
                                     }
                                 }
                                 else {
                                     var data = $(textid).val();
-                                    //if (type === "date")
-                                    //    data = this.changeDateOrder(data);
                                     filter_obj_arr.push(new filter_obj(colum, oper, data, type));
                                 }
                             }
@@ -1331,7 +1336,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -2306,7 +2311,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         //$('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
         $("[data-coltyp=date]").datepicker({
-            dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
+            dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
             beforeShow: function (elem, obj) {
                 $(".ui-datepicker").addClass("datecolumn-picker");
             }
@@ -2492,7 +2497,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../webform/index?refid=${obj.Refid}&_params=""&_mode=2&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${obj.Refid}&_params=""&_mode=2&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -2503,7 +2508,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2528,7 +2533,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -2542,7 +2547,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=12&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2567,7 +2572,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -2581,7 +2586,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.GroupFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2606,7 +2611,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -2620,7 +2625,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.ItemFormLink}&_params=${filterparams}&_mode=11&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -2645,7 +2650,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             input = document.createElement('input');
             input.type = 'hidden';
             input.name = "_locId";
-            input.value = store.get("Eb_Loc-" + TenantId + UserId);
+            input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
             _form.appendChild(input);
 
             document.body.appendChild(_form);
@@ -2976,7 +2981,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                 _ls += span;
             }
             else {
-                if (col.Type === parseInt(gettypefromString("Int32")) || col.Type === parseInt(gettypefromString("Decimal")) || col.Type === parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Double")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+                if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType === parseInt(gettypefromString("Decimal")) || col.RenderType === parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Double")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
                     if (parseInt(EbEnums.ControlType.Text) === col.filterControl)
                         _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                     else if (parseInt(EbEnums.ControlType.Date) === col.filterControl)
@@ -2984,7 +2989,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     else
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                 }
-                else if (col.Type === parseInt(gettypefromString("String"))) {
+                else if (col.RenderType === parseInt(gettypefromString("String"))) {
                     //if (this.dtsettings.filterParams === null || this.dtsettings.filterParams === undefined)
                     if (parseInt(EbEnums.ControlType.Numeric) === col.filterControl)
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
@@ -2995,7 +3000,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     //else
                     //   _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, this.dtsettings.filterParams));
                 }
-                else if (col.Type === parseInt(gettypefromString("DateTime")) || col.Type === parseInt(gettypefromString("Date"))) {
+                else if (col.RenderType === parseInt(gettypefromString("DateTime")) || col.RenderType === parseInt(gettypefromString("Date"))) {
                     if (parseInt(EbEnums.ControlType.Numeric) === col.filterControl)
                         _ls += (span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                     else if (parseInt(EbEnums.ControlType.Text) === col.filterControl)
@@ -3003,7 +3008,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
                     else
                         _ls += (span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
                 }
-                else if (col.Type === parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
+                else if (col.RenderType === parseInt(gettypefromString("Boolean")) && col.name !== "checkbox")
                     _ls += (span + this.getFilterForBoolean(col.name, this.tableId, this.zindex));
                 else
                     _ls += (span);
@@ -3071,7 +3076,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             " <li class='filterli'><a href='#' class='eb_fsel" + this.tableId + "' " + data_table + data_colum + "> B </a><span class='filtertext eb_fsel" + this.tableId + "' style='margin-left: 6px;'> Between</span></li>" +
             " </ul>" +
             " </div>" +
-            " <input type='text' placeholder='" + datePattern + "' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
+            " <input type='text' placeholder='" + this.datePattern + "' data-toggle='tooltip' class='no-spin form-control eb_finput " + htext_class + "' id='" + header_text1 + "' " + data_table + data_colum + coltype + ">" +
             //" <span class='input-group-btn'></span>" +
             //" <input type='date' class='form-control eb_finput " + htext_class + "' id='" + header_text2 + "' style='visibility: hidden' " + data_table + data_colum + coltype + ">" +
             " </div> ";
@@ -3154,9 +3159,9 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         if (selText.trim() === 'B') {
             if ($(elemnt).parents('.input-group').find("input").length == 1) {
                 if (ctype === "date") {
-                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='" + datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
+                    $(elemnt).parents('.input-group').append("<input type='text' placeholder='" + this.datePattern + "' class='" + dateclas + " between-inp form-control eb_finput " + this.tableId + "_htext' id='" + this.tableId + "_" + colum + "_hdr_txt2' data-coltyp='" + ctype + "'>");
                     $("#" + this.tableId + "_" + colum + "_hdr_txt2").datepicker({
-                        dateFormat: datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
+                        dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
                         beforeShow: function (elem, obj) {
                             $(".ui-datepicker").addClass("datecolumn-picker");
                         }
@@ -3257,11 +3262,11 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
 
     this.changeDateOrder = function (data) {
         var dt = data.split("/");
-        var dtp = datePattern.split("/");
+        var dtp = this.datePattern.split("/");
         if (dt.length === 1)
             dt = data.split("-");
         if (dtp.length === 1)
-            dtp = datePattern.split("-");
+            dtp = this.datePattern.split("-");
 
         if (dt[0].length <= 2)
             return [dt[2].trim(), dt[1].trim(), dt[0].trim()].join("-");
@@ -3434,7 +3439,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         else if (this.popup) {
             this.popup = false;
             $("#iFrameFormPopupModal").modal("show");
-            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + TenantId + UserId)}`;
+            let url = `../webform/index?refid=${this.linkDV}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm))))}&_mode=1${this.dvformMode}&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $("#iFrameFormPopup").attr("src", url);
         }
         else {
@@ -3516,7 +3521,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             o.source = "inline";
             o.scrollHeight = "200px";
             o.dvObject = Dvobj;
-            o.data = result.formattedData;
+            o.data = result;
             o.keys = false;
             this.datatable = new EbBasicDataTable(o);
             if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
@@ -3626,7 +3631,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         chartobj.DSColumns = JSON.parse(JSON.stringify(this.EbObject.DSColumns));
         chartobj.DataSourceRefId = this.EbObject.DataSourceRefId;
         chartobj.Pippedfrom = this.EbObject.Name;
-        let chartapi = eb_chart(chartobj.DataSourceRefId, null, null, chartobj, null, this.tabNum, this.ssurl, this.login, counter, this.MainData, btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), this.cellData, this.propGrid);
+        let chartapi = eb_chart(chartobj.DataSourceRefId, null, null, chartobj, null, this.tabNum, this.ssurl, this.login, this.counter, this.MainData, btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), this.cellData, this.propGrid);
     };
 
     this.openColumnTooltip = function (e, i) {
@@ -3655,12 +3660,12 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         this.ebSettings.Columns.$values[i].sClass = "";
         this.ebSettings.Columns.$values[i].className = "";
 
-        if (col.Type === parseInt(gettypefromString("Int32")) || col.Type == parseInt(gettypefromString("Decimal")) || col.Type == parseInt(gettypefromString("Int64")) || col.Type == parseInt(gettypefromString("Numeric"))) {
+        if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
 
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-right";
         }
-        if (col.Type === parseInt(gettypefromString("Boolean"))) {
+        if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
             if (this.ebSettings.Columns.$values[i].name === "eb_void" || this.ebSettings.Columns.$values[i].name === "sys_cancelled") {
                 this.ebSettings.Columns.$values[i].render = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = (this.ebSettings.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
@@ -3682,7 +3687,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight text-center";
         }
-        if (col.Type === parseInt(gettypefromString("String")) || col.Type == parseInt(gettypefromString("Double"))) {
+        if (col.RenderType === parseInt(gettypefromString("String")) || col.RenderType == parseInt(gettypefromString("Double"))) {
             if (this.ebSettings.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
                 this.ebSettings.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.ebSettings.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
@@ -3699,7 +3704,7 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
-        if (col.Type === parseInt(gettypefromString("Date")) || col.Type == parseInt(gettypefromString("DateTime"))) {
+        if (col.RenderType === parseInt(gettypefromString("Date")) || col.RenderType == parseInt(gettypefromString("DateTime"))) {
             if (this.ebSettings.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.ebSettings.Columns.$values[i].className += " tdheight dt-left";
         }
@@ -3739,12 +3744,17 @@ var EbDataTable = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssu
         return (data === true) ? "<input type='checkbox' data-toggle='toggle' data-size='mini' checked>" : "<input type='checkbox' data-toggle='toggle' data-size='mini'>";
     };
 
-    this.renderIconCol = function (data) {
-        return (data === true || data === "Yes" || data === "true") ? "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>" : "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
+    this.renderIconCol = function (data, type, row, meta) {
+        if (meta.settings.aoColumns[meta.col].TrueValue.toLowerCase() === data.toLowerCase())
+            return "<i class='fa fa-check' aria-hidden='true'  style='color:green'></i>";
+        else if (meta.settings.aoColumns[meta.col].FalseValue.toLowerCase() === data.toLowerCase())
+            return "<i class='fa fa-times' aria-hidden='true' style='color:red'></i>";
+        else
+            return data;
     };
 
     this.renderEbVoidCol = function (data) {
-        return (data === true || data === "T") ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
+        return (data === "T" ) ? "<i class='fa fa-ban' aria-hidden='true'></i>" : "";
     };
 
     this.renderLockCol = function (data) {

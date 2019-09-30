@@ -2,9 +2,10 @@
 
     this.init2 = function () {
         this.AppendBugsfn();
-        $("#savebugid").on("click", this.Savebug.bind(this));
+
         $(".edttkt").on("click", this.EditTicketfn.bind(this));
         $(".cloissue").on("click", this.CloseTicketfn.bind(this));
+        $("#newticket").on("click", this.NewTicketfn.bind(this));
 
 
 
@@ -32,24 +33,131 @@
         $("#bugtblbody").empty().append(html1);
     }
 
+
+
+    this.EditTicketfn = function (ev) {
+
+        let tktno = $(ev.target).closest('button').attr("tktno");
+        $("#eb_common_loader").EbLoader("show");
+        location.href = `/SupportTicket/EditTicket?tktno=${tktno}`;
+
+    }
+
+    this.CloseTicketfn = function (ev) {
+        let tktno = $(ev.target).attr("tktno");
+        $("#eb_common_loader").EbLoader("show");
+        $.ajax({
+            url: "../SupportTicket/ChangeStatus",
+            data: { tktno: tktno, },
+            cache: false,
+            type: "POST",
+            success: function () {
+                $("#eb_common_loader").EbLoader("hide");
+            }
+        });
+
+        location.href = '/SupportTicket/bugsupport';
+    }
+
+    this.NewTicketfn = function () {
+        $("#eb_common_loader").EbLoader("show");
+        let tktno = "newticket";
+        location.href = `/SupportTicket/EditTicket?tktno=${tktno}`;
+    }
+
+
+    this.init2();
+};
+
+
+
+
+
+//for editticket.cshtml
+
+
+
+
+
+
+var EditTicket = function () {
+
+    this.init1 = function () {
+        this.AppendTicketfn();
+        $("#btnupdate").on("click", this.Updateticketfn.bind(this));
+        $("#btnupdateadmin").on("click", this.UpdateAdminTicketfn.bind(this));
+        $("#savebugid").on("click", this.Savebug.bind(this));
+
+    };
+
+    this.AppendTicketfn = function () {
+        if (ckecktkt == "True") {
+
+        }
+        else {
+            $.each(tktdtl.supporttkt, function (i, obj) {
+                $("#tktid").val(obj.ticketid);
+                if (ebcontext.sid == "admin") {
+                    $("#stsid").append(` <option selected="selected" hidden >${obj.status}</option>`);
+                }
+                else {
+                    $("#stsid").val(obj.status);
+                }
+                $("#asgnid").val(obj.assignedto);
+                $("#bugtitle").val(obj.title);
+                if (ebcontext.user.wc == "tc") {
+                    $("#soluid").append(` <option selected="selected" hidden >${obj.solutionid}</option>`);
+                }
+                else {
+                    $("#soluid").val(obj.solutionid);
+                }
+                if (ebcontext.sid == "admin") {
+                    $("#bugpriority").val(obj.priority);
+                }
+                else {
+                    $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
+                }
+
+              
+                $("#dtecrtd").val(obj.createdat);
+                $("#dtemdfyd").val(obj.lstmodified);
+                $("#descriptionid").val(obj.description);
+                $("#remarkid").val(obj.remarks);
+                $("#type_b_f").val(obj.type_b_f);
+                document.getElementById('Bug').checked = false;
+                if (obj.type_b_f == "Bug") {
+                    document.getElementById("Bug").checked = true;
+                }
+                else {
+                    document.getElementById("FeatureRequest").checked = true;
+                }
+
+            });
+        }
+    }
+
+
     this.Savebug = function () {
         let bfr = null
         let fill = this.validatefn();
         if (fill) {
             var data = new FormData();
+            $("#eb_common_loader").EbLoader("show");
             var totalFiles = window.filearray.length;
             for (var i = 0; i < totalFiles; i++) {
                 var file = window.filearray[i];
                 data.append("imageUploadForm" + i, file);
             }
             var tlt = $("#bugtitle").val().trim();
+            var sts = $("#stsid").val().trim();
             var desc = $("#descriptionid").val().trim();
             var priori = $("#bugpriority option:selected").text().trim();
-            var solu = $("#soluid option:selected").attr('solu');
+            var solu = $("#soluid option:selected").attr('value');
             var typ = $('input[name=optradio]:checked').val();
             data.append("title", tlt);
-            data.append("descp", $("#descriptionid").val().trim());
+            data.append("descp", desc);
             data.append("priority", priori);
+            data.append("stats", sts);
             data.append("solid", solu);
             data.append("type_f_b", typ);
 
@@ -61,6 +169,7 @@
                 contentType: false,
                 success: function () {
                     location.href = '/SupportTicket/bugsupport';
+                    $("#eb_common_loader").EbLoader("hide");
                 }
             });
 
@@ -99,73 +208,11 @@
         return sts;
     }
 
-    this.EditTicketfn = function (ev) {
-        let tktno = $(ev.target).attr("tktno");
-        location.href = `/SupportTicket/EditTicket?tktno=${tktno}`;
-
-    }
-
-    this.CloseTicketfn = function (ev) {
-        let tktno = $(ev.target).attr("tktno");
-        $.ajax({
-            url: "../SupportTicket/ChangeStatus",
-            data: { tktno: tktno, },
-            cache: false,
-            type: "POST",
-            success: function () {
-
-            }
-        });
-
-        location.href = '/SupportTicket/bugsupport';
-
-    }
-
-
-    this.init2();
-};
-
-
-
-
-
-//for editticket.cshtml
-
-
-
-
-
-
-var EditTicket = function () {
-
-    this.init1 = function () {
-        this.AppendTicketfn();
-        $("#btnupdate").on("click", this.Updateticketfn.bind(this));
-
-    };
-
-    this.AppendTicketfn = function () {
-
-        $.each(tktdtl.supporttkt, function (i, obj) {
-            $("#tktid").text(obj.ticketid);
-            $("#stsid").val(obj.status);
-            $("#asgnid").val(obj.assignedto);
-            $("#bugtitle").val(obj.title);
-            $("#soluid").val(obj.solutionid);
-            $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
-            $("#dtecrtd").val(obj.createdat);
-            $("#dtemdfyd").val(obj.lstmodified);
-            $("#descriptionid").val(obj.description);
-            $("#remarkid").val(obj.remarks);
-            $("#type_b_f").val(obj.type_b_f);
-
-        });
-    }
-
     this.Updateticketfn = function () {
-        //let fill = this.validatefn();
-        if (1) {
+        let fill = this.validatefn();
+        if (fill) {
             var data = new FormData();
+            $("#eb_common_loader").EbLoader("show");
             var totalFiles = window.filearray.length;
             for (var i = 0; i < totalFiles; i++) {
                 var file = window.filearray[i];
@@ -175,13 +222,15 @@ var EditTicket = function () {
             var desc = $("#descriptionid").val().trim();
             var priori = $("#bugpriority option:selected").text().trim();
             var solu = $("#soluid").val();
-            var tktid = $("#tktid").text();
+            var tktid = $("#tktid").val();
+            var typ = $('input[name=optradio]:checked').val();
             data.append("title", tlt);
             data.append("descp", desc);
             data.append("priority", priori);
             data.append("solid", solu);
             data.append("tktid", tktid);
             data.append("filedelet", JSON.stringify(window.filedel));
+            data.append("type_f_b", typ);
 
 
 
@@ -193,6 +242,55 @@ var EditTicket = function () {
                 contentType: false,
                 success: function () {
                     location.href = '/SupportTicket/bugsupport';
+                    $("#eb_common_loader").EbLoader("hide");
+                }
+            });
+        }
+
+    }
+
+
+    this.UpdateAdminTicketfn = function () {
+        let fill = this.validatefn();
+        if (fill) {
+            var data = new FormData();
+            $("#eb_common_loader").EbLoader("show");
+            //var totalFiles = window.filearray.length;
+            //for (var i = 0; i < totalFiles; i++) {
+            //    var file = window.filearray[i];
+            //    data.append("imageUploadForm" + i, file);
+            //}
+            //var tlt = $("#bugtitle").val().trim();
+            //var desc = $("#descriptionid").val().trim();
+            //var priori = $("#bugpriority option:selected").text().trim();
+            var solu = $("#soluid").val();
+            var tktid = $("#tktid").val();
+            var typ = $('input[name=optradio]:checked').val();
+            var sts = $("#stsid option:selected").text().trim();
+            var asgned = $("#asgnid option:selected").text().trim();
+            var rmrk = $("#remarkid").val();
+            //data.append("title", tlt);
+            //data.append("descp", desc);
+            //data.append("priority", priori);
+            data.append("solid", solu);
+            data.append("tktid", tktid);
+           // data.append("filedelet", JSON.stringify(window.filedel));
+            data.append("type_f_b", typ);
+            data.append("stats", sts);
+            data.append("asgnedto", asgned);
+            data.append("remark", rmrk);
+
+
+
+            $.ajax({
+                url: "../SupportTicket/UpdateTicketAdmin",
+                type: 'POST',
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    location.href = '/SupportTicket/bugsupport';
+                    $("#eb_common_loader").EbLoader("hide");
                 }
             });
         }
@@ -262,7 +360,7 @@ var EditTicket = function () {
 
                     // Set preloaded images preview
                     for (let i = 0; i < plugin.settings.preloaded.length; i++) {
-                        $uploadedContainer.append(createImg(plugin.settings.preloaded[i].src, plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].fileno, plugin.settings.preloaded[i].cntype, true));
+                        $uploadedContainer.append(createImg(plugin.settings.preloaded[i].src, plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].cntype, plugin.settings.preloaded[i].fileno, true));
                     }
 
                 }
@@ -306,7 +404,9 @@ var EditTicket = function () {
             // Listen to container click and trigger input file click
             $container.on('click', function (e) {
                 // Prevent browser default event and stop propagation
-                prevent(e);
+                //prevent(e);
+                e.preventDefault();
+                e.stopPropagation();
 
                 // Trigger input click
                 $input.trigger('click');
@@ -326,25 +426,41 @@ var EditTicket = function () {
 
         let prevent = function (e) {
             // Prevent browser default event and stop propagation
-            e.preventDefault();
-            e.stopPropagation();
+           e.preventDefault();
+           e.stopPropagation();
+           
         };
 
-        let createImg = function (src, id, fileno, cntype) {
+        $(".uploaded-image").on("click", function (e) {
+        
+            alert("The paragraph was clicked.");
+        });
 
+        let createImg = function (src, id, cntype, fileno) {
+            var flurl = src;
             // Create the upladed image container
             let $container = $('<div>', { class: 'uploaded-image' });
 
-           // Create the img tag
+            // Create the img tag
 
-            if(cntype == 'application/pdf') {
-
+            if (cntype == 'application/pdf') {
+                
                 src = '/images/pdf-image.png';
+
+                $img = $('<img>', { src: src, cntype: cntype, pd64: flurl }).appendTo($container);
+               // $img = $('<iframe>', { src: src }).appendTo($container);
+
             }
-               
-            $img = $('<img>', { src: src }).appendTo($container),
-                // Create the delete button
-                $button = $('<button>', { class: 'delete-image' }).appendTo($container),
+            else {
+                $img = $('<img>', { src: src, cntype: cntype}).appendTo($container);
+            }
+
+            $img.data('file_url', flurl);
+
+
+
+            // Create the delete button
+            $button = $('<button>', { class: 'delete-image' }).appendTo($container),
 
                 // Create the delete icon
                 $i = $('<i>', { class: 'material-icons', text: 'clear' }).appendTo($button);
@@ -374,8 +490,29 @@ var EditTicket = function () {
 
             // Stop propagation on click
             $container.on("click", function (e) {
+                var cntyp = $(e.target).closest('img').attr('cntype');
+                if (cntyp == "application/pdf") {
+                    $('#file_disp').html(` <iframe id="display_file" src="" frameborder="0" style=" display: block; border:none; height:600px; width:100%"></iframe>`);
+                    var src1 = $(e.target).closest('img').attr('pd64');
+                    //var src1 = $img.data('file_url');
+                    $('#display_file').attr('src', src1);
+                    $('#diplay_modal').modal('show');
+                }
+                else {
+                    $('#file_disp').html(`   <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block;  ">`);
+                    var src1 = $(e.target).closest('img').attr('src');
+                    $('#display_file').attr('src', src1)
+                    $('#diplay_modal').modal('show');
+                }
+               
+                 //if (typeof (src1) !== 'undefined') {
+                 //    $('.edtsprt').html(`<iframe id="iframe" src=${src1}></iframe>`);
+                    //}
+
+
                 // Prevent browser default event and stop propagation
                 prevent(e);
+
             });
 
             // Set delete action
@@ -470,7 +607,7 @@ var EditTicket = function () {
                 // Get the files input
                 $input = $container.find('input[type="file"]');
 
-            if (typeof(tktdtl) !== 'undefined' ) {
+            if (typeof (tktdtl) !== 'undefined') {
                 for (var p = 0; p < tktdtl.supporttkt.length; p++) {
 
                     preloadedfile = tktdtl.supporttkt[p].Fileuploadlst.length;
@@ -482,7 +619,7 @@ var EditTicket = function () {
             $(files).each(function (i, file) {
                 if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
                     if ((files[i].size) < 2097152) {
-                        if (((preloadedfile - window.filedel.length ) + filearray.length) < 10) {
+                        if (((preloadedfile - window.filedel.length) + filearray.length) < 10) {
 
                             //add it to file array
                             filearray.push(file);
@@ -490,16 +627,17 @@ var EditTicket = function () {
                             // Add it to data transfer
                             dataTransfer.items.add(file);
 
-
                             // Set preview
-                            if (files[i].type == "application/pdf") {
 
-                                $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
+                            //if (files[i].type == "application/pdf") {
+
+                            //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
+                            //}
+                            //else
+                            {
+                                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1, files[i].type));
                             }
-                            else {
-                                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1));
-                            }
-                            
+
                         }
                         else {
                             EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });

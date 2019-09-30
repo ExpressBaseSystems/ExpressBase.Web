@@ -71,3 +71,19 @@
     cursor: n-resize;
     z-index: 5;
 }
+.pageGroups_header {
+    border-bottom: 1px solid #b5a9a9;
+    background: #eaf8fd;
+    border: 1px dashed #2d75bf;
+}
+.pageGroups_footer {
+    border-bottom: 1px solid #b5a9a9;
+    background: #f7e6e6;
+    border: 1px dashed #f98585;
+}
+.GroupFooter_sub {
+    background: #f7e6e6;
+}
+.GroupHeader_sub {
+    background: #eaf8fd;
+}

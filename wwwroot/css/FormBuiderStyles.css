@@ -1485,6 +1485,72 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 /*-----------------Display picture control End-----------------*/
 
 
+/*-----------------Item List control Start-----------------*/
+.user-list-ctrl {
+    border: 1px solid #ccc;
+    position: relative;
+}
+
+.ulstc-disp-c {
+    display: flex;
+    user-select: none;
+}
+
+.ulstc-disp-img-c {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 26px;
+    width: 26px;
+}
+
+.ulstc-disp-txt {
+    padding: 3px 10px;
+}
+
+.ulstc-list-c {
+    position: absolute;
+    width: 100%;
+    box-shadow: 1px 1px 4px #ccc;
+    background-color: white;
+    display: none;
+    user-select: none;
+}
+
+.ulstc-list-srch > span {
+    position: absolute;
+    padding: 5px 10px;
+}
+
+.ulstc-list-srch > input {
+    width: 100%;
+    border: none;
+    padding: 5px 35px;
+    outline: none;
+}
+
+.ulstc-list-ul {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+    .ulstc-list-ul > .active {
+        background-color: #eef;
+    }
+
+.ulstc-list-li {
+    display: flex;
+    padding: 2px;
+}
+
+    .ulstc-list-li:hover {
+        background-color: #ddd;
+    }
+/*-----------------Item List control End-----------------*/
+
+
+
+
 
 
 /*animations*/

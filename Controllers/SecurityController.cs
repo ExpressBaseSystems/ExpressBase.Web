@@ -267,7 +267,7 @@ namespace ExpressBase.Web.Controllers
 				}
 			}
 
-            if (ViewBag.Env == "Production")
+            if (userid <= 0 && ViewBag.Env == "Production")
             {
                 Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
                 if (_solu.PlanUserCount <= _solu.NumberOfUsers)

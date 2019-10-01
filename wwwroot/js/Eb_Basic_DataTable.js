@@ -5,9 +5,9 @@ var EbBasicDataTable = function (Option) {
     this.contId = Option.containerId;
     this.dsid = Option.dsid || null;
     this.tableId = Option.tableId;
-    this.showSerialColumn = (typeof Option.showSerialColumn !== "undefined" && Option.showSerialColumn !== "" && Option.showSerialColumn !== null) ? Option.showSerialColumn : true;
-    this.showCheckboxColumn = (typeof Option.showCheckboxColumn !== "undefined" && Option.showCheckboxColumn !== "" && Option.showCheckboxColumn !== null) ? Option.showCheckboxColumn : true;
-    this.showFilterRow = (typeof Option.showFilterRow !== "undefined" && Option.showFilterRow !== "" && Option.showFilterRow !== null) ? Option.showFilterRow : true;
+    this.showSerialColumn = Option.showSerialColumn || true;
+    this.showCheckboxColumn = Option.showCheckboxColumn || true;
+    this.showFilterRow =  Option.showFilterRow || true;
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
@@ -32,7 +32,7 @@ var EbBasicDataTable = function (Option) {
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
     this.data = Option.data || null;
-    this.headerDisplay = (typeof Option.headerDisplay !== "undefined") ? Option.headerDisplay : true;
+    this.headerDisplay = Option.headerDisplay || true;
     this.getFilterValues = Option.getFilterValuesFn || function () { };
     this.source = Option.source || "";
     this.IsQuery = Option.IsQuery || false;
@@ -72,7 +72,6 @@ var EbBasicDataTable = function (Option) {
     this.call2FD = function () {
         this.EbObject.DataSourceRefId = this.dsid;
         this.showLoader();
-        //console.log($.cookie());
         if (this.columns === null) {
             $.ajax({
                 type: "POST",

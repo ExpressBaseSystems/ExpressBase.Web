@@ -74,6 +74,9 @@
     }.bind(this);
 
     this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
+        let parentObj = this.rootContainerObj.Controls.getParent(ctrlObj);
+        ctrlObj.TableName = parentObj.TableName;
+        ctrlObj.isTableNameFromParent = true;
         if (ctrlObj.ObjType === "TableLayout") {
             this.makeTdsDropable_Resizable();
             let tds = $ctrl.find("td");
@@ -341,12 +344,11 @@
                     $target.append($ctrl);
                     this.rootContainerObj.Controls.Append(ctrlObj);
                 }
-
-                $ctrl.focus();
                 ctrlObj.Label = ebsid;
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
+                $ctrl.focus();
                 this.updateControlUI(ebsid);
             }
             let $parent = $target.closest(".ebcont-ctrl");
@@ -545,9 +547,24 @@
         }
     }.bind(this);
 
-    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-
+    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {        
+        if (CurProp === "TableName" && PropsObj.IsContainer) {
+            let TblName = PropsObj.TableName;
+            PropsObj.isTableNameFromParent = false;
+            this.updateChildTablesName(PropsObj, TblName);
+        }
     }.bind(this);
+
+    this.updateChildTablesName = function (PropsObj, TblName) {
+        for (var i = 0; i < PropsObj.Controls.$values.length; i++) {
+            let ctrl = PropsObj.Controls.$values[i];
+            if (ctrl.IsContainer && ctrl.isTableNameFromParent) {
+                ctrl.TableName = TblName;
+                if (ctrl.isTableNameFromParent)
+                    this.updateChildTablesName(ctrl, TblName);
+            }
+        }
+    };
 
     this.lbltxtbBlur = function (e) {
         $e = $(event.target);

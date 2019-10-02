@@ -4034,10 +4034,10 @@ $.fn.setCursorPosition = function (pos) {
 function splitval(val) {
     return val.split(/\|\s*/);
 }
+
 function extractLast(term) {
     return splitval(term).pop();
 }
-
 
 if (!String.prototype.splice) {
     String.prototype.splice = function (start, delCount, newSubStr) {

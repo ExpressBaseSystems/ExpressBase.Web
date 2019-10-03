@@ -201,6 +201,8 @@
         $(`#${this.TableId} tbody [is-editing=true]`).remove();
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "view");
         this.mode_s = "view";
+        if (!this.ctrl.AscendingOrder)
+            this.UpdateSlNo();
     };
 
     //this.j = function (p1) {
@@ -344,6 +346,8 @@
             let editModeDataRow = EditModeDataTable[rowId];
             Trs.push(this.getTr_E({ rowid: rowId, isAdded: false, editModeDataRow: editModeDataRow }));
         }
+        if (!this.ctrl.AscendingOrder)
+            Trs.reverse();
         return Trs.join();
     };
 

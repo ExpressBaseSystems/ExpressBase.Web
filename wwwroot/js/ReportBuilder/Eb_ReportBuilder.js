@@ -523,6 +523,8 @@
 
     this.BeforeSave = function () {
         this.repExtern.emptyControlCollection(this.EbObject);
+        this.repExtern.emptyGroups(this.EbObject);// empty groupheaders and group footers
+
         this.EbObject.DesignPageHeight = this.repExtern.convertTopoints($("#page").outerHeight());
         this.EbObject.HeightPt = this.repExtern.convertTopoints(parseFloat(this.height));
         this.EbObject.WidthPt = this.repExtern.convertTopoints(parseFloat(this.width));

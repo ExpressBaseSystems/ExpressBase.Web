@@ -69,10 +69,10 @@ namespace ExpressBase.Web.Controllers
                 if (settings == null)
                     settings = new EbBotSettings() 
                     { 
-                        Name = "Appliaction Name",
-                        ThemeColor = "#336689",
+                        Name = "- Application Name -",
+                        ThemeColor = "#055c9b",
                         DpUrl = "../images/demobotdp4.png",
-                        WelcomeMessage = "Hi,"
+                        WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
                     };
                 PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';

@@ -91,11 +91,11 @@ var DvContainerObj = function (settings) {
         this.MainData = (this.currentObj.Pippedfrom !== null && this.currentObj.Pippedfrom !== "") ? this.previousObj.data : null;
 
         if (this.currentObj.$type.indexOf("EbTableVisualization") !== -1) {
-            this.dvcol[focusedId] = new EbDataTable({
+            this.dvcol[focusedId] = new EbCommonDataTable({
                 refid : this.dvRefid,
                 ver_num : this.ver_num,
                 type : this.type,
-                dsobj : this.currentObj,
+                dvObject : this.currentObj,
                 cur_status : this.cur_status,
                 tabNum : this.tabnum,
                 ss_url : this.ssurl,
@@ -109,7 +109,8 @@ var DvContainerObj = function (settings) {
                 PGobj : this.PGobj,
                 datePattern : settings.datePattern,
                 TenantId : this.TenantId,
-                UserId : this.UserId
+                UserId: this.UserId,
+                showCheckboxColumn:false
             }
             );
         }

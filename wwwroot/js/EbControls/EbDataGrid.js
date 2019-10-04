@@ -201,6 +201,8 @@
         $(`#${this.TableId} tbody [is-editing=true]`).remove();
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "view");
         this.mode_s = "view";
+        if (!this.ctrl.AscendingOrder)
+            this.UpdateSlNo();
     };
 
     //this.j = function (p1) {
@@ -344,6 +346,8 @@
             let editModeDataRow = EditModeDataTable[rowId];
             Trs.push(this.getTr_E({ rowid: rowId, isAdded: false, editModeDataRow: editModeDataRow }));
         }
+        if (!this.ctrl.AscendingOrder)
+            Trs.reverse();
         return Trs.join();
     };
 
@@ -378,9 +382,10 @@
         $.each(this.AllRowCtrls, function (rowId, inpCtrls) {
             if (parseInt(rowId) < 0 && $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to skip newly added and then deleted rows
                 return true;
-            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true" || /* - if checked*/
-                $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to manage deleted row
+            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true") /* - if checked*/
                 SingleTable.push(this.getRowWTs(rowId, inpCtrls));
+            else if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to manage deleted row
+                SingleTable.push({ RowId: rowId, IsDelete: true });
         }.bind(this));
         console.log(SingleTable);
         return SingleTable;
@@ -1041,6 +1046,9 @@
         let rowId = $tr.attr("rowid");
         $tr.find("td *").hide(200);
         setTimeout(function () { $tr.remove(); }, 201);
+        if ($tr.attr("is-initialised") === 'false')
+            this.AllRowCtrls[rowId] = {};
+
         this.AllRowCtrls[rowId].IsDelete = true;
     };
 

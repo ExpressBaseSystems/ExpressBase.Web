@@ -10,9 +10,9 @@
     this.chartJs = null;
     this.url = Option.url;
     this.EbObject = Option.dvObject;
-    this.showFilterRow = Option.showFilterRow || true;
-    this.showSerialColumn = Option.showSerialColumn || true;
-    this.showCheckboxColumn = Option.showCheckboxColumn || false;
+    this.showFilterRow = typeof Option.showFilterRow !== 'undefined' ? Option.showFilterRow: true;
+    this.showSerialColumn = typeof Option.showSerialColumn !== 'undefined' ? Option.showSerialColumn : true;
+    this.showCheckboxColumn = typeof Option.showCheckboxColumn !== 'undefined' ? Option.showCheckboxColumn : true;
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.tabNum = Option.tabNum;
     this.Refid = Option.refid;
@@ -20,7 +20,7 @@
     this.ssurl = Option.ssurl;
     this.login = Option.login;
     this.counter = Option.counter;
-    this.datePattern = Option.datePattern;
+    this.datePattern = Option.datePattern || "dd-MM-yyyy";
     this.TenantId = Option.TenantId;
     this.UserId = Option.UserId;
     this.relatedObjects = null;
@@ -89,9 +89,10 @@
     this.movefromId = null;
     this.columnCount = null;
     this.Source = Option.Source || "EbDataTable";
-    this.columns = Option.columns || (this.EbObject) ? this.EbObject.Columns :null;
+    this.columns = Option.columns || (this.EbObject) ? this.EbObject.Columns.$values :null;
     this.contId = Option.containerId;
     this.scrollHeight = Option.scrollHeight || "inherit";
+    this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.showCheckboxColumn : true;
 
     if (this.Source === "EbDataTable") {
         this.split = new splitWindow("parent-div0", "contBox");
@@ -240,6 +241,8 @@
             this.PcFlag = false;
         }
         else {
+            if (this.MainData !== null) 
+                this.isPipped = true;
             $("#" + this.contId).append(text);////////////////        
             this.EbObject = dvGlobal.Current_obj;
             this.getColumnsSuccess();
@@ -372,40 +375,17 @@
         else {
             this.EbObject.Columns.$values = this.columns;
         }
+        if (this.MainData !== null)
+            this.isPipped = true;
         this.getColumnsSuccess();
     };
 
     this.getColumnsSuccess = function (e) {
-        this.propGrid.ClosePG();
-        if (this.FD)
-            this.stickBtn.minimise();
-        else
-            this.stickBtn.hide();
-        $("#objname").text(this.EbObject.DisplayName);
-        this.validateFD = this.FilterDialog.IsFDValidationOK;
-        if (this.isContextual) {
-            if (this.isSecondTime) {
-                if (this.validateFD && !this.validateFD())
-                    return;
-                this.filterValues = this.getFilterValues("filter");
-            }
-        }
-        else {
-            if (this.validateFD && !this.validateFD())
-                return;
-            this.filterValues = this.getFilterValues("filter");
-        }
-        this.isSecondTime = false;
-        if (this.login === "uc")
-            $(".dv-body1").show();
-        $("#eb_common_loader").EbLoader("show");
-        this.extraCol = [];
-        $.extend(this.tempColumns, this.EbObject.Columns.$values);
-        //this.tempColumns.sort(this.ColumnsComparer);
-        this.dsid = this.EbObject.DataSourceRefId;//not sure..
-        this.dvName = this.EbObject.Name;
+        if (this.Source === "EbDataTable")
+            this.Do4EbdataTable();
         this.initCompleteflag = false;
-
+        this.EbObject.IsPaging = this.IsPaging;
+        this.extraCol = [];
         this.check4Customcolumn();
         this.CheckforTree();
         this.addSerialAndCheckboxColumns();
@@ -446,6 +426,38 @@
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
             this.Init();
         }
+    };
+
+    this.Do4EbdataTable = function () {
+        if (this.isSecondTime)
+            this.MainData = null;
+        this.propGrid.ClosePG();
+        if (this.FD)
+            this.stickBtn.minimise();
+        else
+            this.stickBtn.hide();
+        $("#objname").text(this.EbObject.DisplayName);
+        this.validateFD = this.FilterDialog.IsFDValidationOK;
+        if (this.isContextual) {
+            if (this.isSecondTime) {
+                if (this.validateFD && !this.validateFD())
+                    return;
+                this.filterValues = this.getFilterValues("filter");
+            }
+        }
+        else {
+            if (this.validateFD && !this.validateFD())
+                return;
+            this.filterValues = this.getFilterValues("filter");
+        }
+        this.isSecondTime = false;
+        if (this.login === "uc")
+            $(".dv-body1").show();
+        $("#eb_common_loader").EbLoader("show");
+        $.extend(this.tempColumns, this.EbObject.Columns.$values);
+        //this.tempColumns.sort(this.ColumnsComparer);
+        this.dsid = this.EbObject.DataSourceRefId;//not sure..
+        this.dvName = this.EbObject.Name;
     };
 
     this.check4Customcolumn = function () {
@@ -612,7 +624,14 @@
 
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
-        var serialObj = (JSON.parse('{ "data":' + this.EbObject.Columns.$values.length + ', "searchable": false, "orderable": false, "bVisible":true, "name":"serial", "title":"#", "Type":11}'));
+        var serialObj = new Object();
+        serialObj.data = this.EbObject.Columns.$values.length;
+        serialObj.searchable = false;
+        serialObj.orderable = false;
+        serialObj.bVisible = true;
+        serialObj.name = "serial";
+        serialObj.title = "#";
+        serialObj.Type = 11;
         if (this.IsTree) {
             serialObj.bVisible = false;
         }
@@ -633,7 +652,7 @@
 
     this.addcheckbox = function () {
         var chkObj = new Object();
-        chkObj.data = null;
+        //chkObj.data = this.EbObject.Columns.$values.length;
         chkObj.title = "<input id='{0}_select-all' class='eb_selall" + this.tableId + "' type='checkbox' data-table='{0}'/>".replace("{0}", this.tableId);
         chkObj.sWidth = "10px";
         chkObj.orderable = false;
@@ -652,8 +671,10 @@
         o.scrollX = "100%";
         //o.scrollXInner = "110%";
         o.scrollCollapse = true;
-        if (this.EbObject.PageLength !== 0) {
-            o.lengthMenu = this.generateLengthMenu();
+        if (this.Source === "EbDataTable") {
+            if (this.EbObject.PageLength !== 0) {
+                o.lengthMenu = this.generateLengthMenu();
+            }
         }
         if (this.EbObject.LeftFixedColumn > 0 || this.EbObject.RightFixedColumn > 0)
             o.fixedColumns = { leftColumns: this.fixedColumnCount(), rightColumns: this.EbObject.RightFixedColumn };
@@ -661,7 +682,7 @@
         o.buttons = ['copy', 'csv', 'excel', 'pdf', 'print', { extend: 'print', exportOptions: { modifier: { selected: true } } }];
         o.bAutoWidth = false;
         o.autowidth = false;
-        o.serverSide = true;
+        o.serverSide = (this.MainData === null) ? true : false;
         o.processing = true;
         o.pageResize = true;
         //o.deferRender = true;
@@ -688,25 +709,30 @@
         //else
         //    filterChanged = true;
         //o.rowReorder = this.IsTree;
-        if (this.MainData !== null && this.login == "uc" && !filterChanged && this.isPipped) {
-            //o.serverSide = false;
-            o.dom = "<'col-md-10 noPadding'B><'col-md-2 noPadding'f>rt";
-            dvcontainerObj.currentObj.data = this.MainData;
-            o.ajax = function (data, callback, settings) {
-                setTimeout(function () {
-                    callback({
-                        draw: dvcontainerObj.currentObj.data.draw,
-                        data: dvcontainerObj.currentObj.data.data,
-                        recordsTotal: dvcontainerObj.currentObj.data.recordsTotal,
-                        recordsFiltered: dvcontainerObj.currentObj.data.recordsFiltered,
-                    });
-                }, 50);
+        if (this.MainData !== null && this.isPipped) {
+            if (this.Source === "EbDataTable") {
+                o.dom = "<'col-md-10 noPadding'B><'col-md-2 noPadding'f>rt";
+                dvcontainerObj.currentObj.data = this.MainData;
+                o.ajax = function (data, callback, settings) {
+                    setTimeout(function () {
+                        callback({
+                            draw: dvcontainerObj.currentObj.data.draw,
+                            data: dvcontainerObj.currentObj.data.data,
+                            recordsTotal: dvcontainerObj.currentObj.data.recordsTotal,
+                            recordsFiltered: dvcontainerObj.currentObj.data.recordsFiltered,
+                        });
+                    }, 50);
+                }
+                o.data = this.receiveAjaxData(this.MainData);
             }
-            o.data = this.receiveAjaxData(this.MainData);
+            else {
+                o.dom = "<'col-md-12 noPadding display_none'>rt";                
+                o.data = this.receiveAjaxData(this.MainData);
+            }
         }
         else {
             o.dom = "<'pagination-wrapper'liBp>rt";
-            o.paging = true;
+            o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
                 if (this.IsTree) {
@@ -783,6 +809,7 @@
         if (this.CurrentRowGroup !== null)
             dq.CurrentRowGroup = JSON.stringify(this.CurrentRowGroup);
         dq.dvRefId = this.Refid;
+        dq.TableId = this.tableId;
         return dq;
     };
 
@@ -1034,11 +1061,13 @@
     };
 
     this.receiveAjaxData = function (dd) {
-        if (dd.responseStatus.message !== null) {
-            EbPopBox("show", { Message: dd.responseStatus.message, Title: "Error" });
+        if (dd.responseStatus) {
+            if (dd.responseStatus.message !== null) {
+                EbPopBox("show", { Message: dd.responseStatus.message, Title: "Error" });
+            }
         }
         this.isRun = true;
-        if (this.login === "uc") {
+        if (this.login === "uc" && this.Source === "EbDataTable") {
             dvcontainerObj.currentObj.data = dd;
         }
         this.MainData = dd;
@@ -1051,7 +1080,6 @@
         this.tableName = dd.tableName;
         this.treeData = dd.tree;
         this.SetColumnRef();
-        this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         return dd.formattedData;
     };
 
@@ -1212,7 +1240,7 @@
         $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
-
+            
         this.addFilterEventListeners();
         this.arrangeFooterWidth();
         //this.arrangefixedHedaerWidth();
@@ -1236,6 +1264,15 @@
                 $(" .wrapper-cont").removeClass("userselect");
         }
         this.isSecondTime = true;
+
+        if (this.Source !== "EbDataTable") {
+            if (this.MainData.data.length > 7) {
+                $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
+                $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "174px", "important");
+            }
+            if (this.eb_agginfo.length === 0)
+                $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
+        }
     }
 
     this.contextMenu = function () {
@@ -1602,6 +1639,8 @@
     }
 
     this.drawCallBackFunc = function (settings) {
+        if(this.Source === "EbDataTable")
+            this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.EbObject.RowGroupCollection.$values.length > 0)
             this.doRowgrouping();
@@ -1617,6 +1656,8 @@
             this.summarize2();
             this.arrangeWindowHeight();
         }
+        if (this.Api === null)
+            this.Api = $("#" + this.tableId).DataTable();
         this.Api.columns.adjust();
     };
 
@@ -1630,6 +1671,7 @@
     };
 
     this.rowGroupHandler = function (e) {
+        this.MainData = null;
         this.orderColl = [];
         let name = $(e.target).val().trim();
         if (!(name === "None")) {
@@ -2276,7 +2318,7 @@
         $(".eb_selall" + this.tableId).off("click").on("click", this.clickAlSlct.bind(this));
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
-        $(".tablelink").off("click").on("click", this.link2NewTable.bind(this));
+        $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
@@ -2298,7 +2340,7 @@
         this.csvbtn.off("click").on("click", this.ExportToCsv.bind(this));
         this.pdfbtn.off("click").on("click", this.ExportToPdf.bind(this));
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
-        $(".columnMarker_" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".columnMarker" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".columnimage").off("click").on("click", this.ViewImage.bind(this));
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
@@ -3493,7 +3535,7 @@
 
     this.GetData4InlineDv = function (rows, idx, colindex, result) {
         var Dvobj = JSON.parse(result).DsObj;
-        var param = this.Params4InlineTable(Dvobj);
+        var param = this.Params4InlineTable(Dvobj, idx);
         $.ajax({
             type: "POST",
             url: "../DV/getData4Inline",
@@ -3522,11 +3564,12 @@
             o.showFilterRow = false;
             o.showSerialColumn = true;
             o.showCheckboxColumn = false;
-            o.source = "inline";
+            o.Source = "inline";
             o.scrollHeight = "200px";
             o.dvObject = Dvobj;
             o.data = result;
             o.keys = false;
+            o.IsPaging = false;
             this.datatable = new EbBasicDataTable(o);
             if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
                 $(".inlinetable").css("width", $(window).width() - 115);
@@ -3555,7 +3598,7 @@
         this.Api.columns.adjust();
     };
 
-    this.Params4InlineTable = function (Dvobj) {
+    this.Params4InlineTable = function (Dvobj, idx) {
         var dq = new Object();
         dq.RefId = Dvobj.DataSourceRefId;
         dq.TFilters = [];
@@ -3563,6 +3606,7 @@
         dq.Start = 0;
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
+        dq.TableId = "tbl" + idx;
         return dq;
     };
 

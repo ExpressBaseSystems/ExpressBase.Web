@@ -57,13 +57,18 @@
     height: 60px;
     padding: 10px
 }
-
-
-
-
+.edtsprt .hstry {
+    background-color: #f3f3f3;
+    color: black;
+    margin-bottom: 3px;
+    border-radius:4px;
+    padding:10px;
+}
+.edtsprt .hst{
+    max-height:200px;
+    overflow-y:auto;
+}
 /*common css form edit command support page css*/
-
-
 .supporttkt .pdleft0, .edtsprt .pdleft0 {
     padding-left: 0px;
 }
@@ -195,8 +200,8 @@ input:checked + .slider:before {
 
 /* Base style */
 .image-uploader {
-    min-height: 190px;
-    max-height: 190px;
+    min-height: 200px;
+    max-height: 200px;
     overflow:auto;
     border: 1px solid #d9d9d9;
     position: relative;

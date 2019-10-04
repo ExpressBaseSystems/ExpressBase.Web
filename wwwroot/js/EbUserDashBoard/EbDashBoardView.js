@@ -98,6 +98,8 @@
             o.dvObject = obj;
             o.IsPaging = false;
             o.showFilterRow = false;
+            o.showCheckboxColumn = false;
+            o.Source = "DashBoard";
             var dt = new EbBasicDataTable(o);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {

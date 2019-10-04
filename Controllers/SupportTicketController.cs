@@ -23,10 +23,11 @@ namespace ExpressBase.Web.Controllers
 		// GET: /<controller>/
 		public IActionResult bugsupport()
 		{
-			
+
 
 			//to fetch all details of tickets of corresponding user of that corresponding solution to show as tables
-			if (ViewBag.cid.Equals("admin")){
+			if (ViewBag.cid.Equals("admin"))
+			{
 				AdminSupportResponse asr = this.ServiceClient.Post<AdminSupportResponse>(new AdminSupportRequest { });
 				ViewBag.tkttable = JsonConvert.SerializeObject(asr);
 			}
@@ -35,7 +36,7 @@ namespace ExpressBase.Web.Controllers
 				FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest { });
 				ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
 			}
-			
+
 
 
 			return View();
@@ -54,15 +55,17 @@ namespace ExpressBase.Web.Controllers
 			if (ViewBag.cid.Equals("admin"))
 			{
 				FetchAdminsResponse far = this.ServiceClient.Post<FetchAdminsResponse>(new FetchAdminsRequest { });
-				ViewBag.AdminNames=far.AdminNames;
+				ViewBag.AdminNames = far.AdminNames;
 			}
 
 			if (tktno == "newticket")
 			{
-				ViewBag.chktkt = true;
+				ViewBag.new_mode = true;
 				ViewBag.tktdetails = ("sd");
+				ViewBag.SptHstry = ("hk");
 			}
-			else {
+			else
+			{
 				// fectch complete details of ticket and show it in edit /view ticket
 				SupportDetailsResponse sd = this.ServiceClient.Post<SupportDetailsResponse>(new SupportDetailsRequest
 				{
@@ -75,8 +78,19 @@ namespace ExpressBase.Web.Controllers
 				{
 					var filecolect = sd.supporttkt[i].Fileuploadlst;
 				}
-				ViewBag.chktkt = false;
+				ViewBag.new_mode = false;
 				ViewBag.tktdetails = JsonConvert.SerializeObject(sd);
+				if (sd.SdrStatus == true)
+				{
+					SupportHistoryResponse Sh = this.ServiceClient.Post<SupportHistoryResponse>(new SupportHistoryRequest
+					{
+						TicketNo = tktno,
+						UserType = this.LoggedInUser.wc
+					});
+					ViewBag.SptHstry = JsonConvert.SerializeObject(Sh);
+				}
+
+
 			}
 			return View();
 		}
@@ -85,7 +99,7 @@ namespace ExpressBase.Web.Controllers
 
 		[HttpPost]
 
-		public void SaveBugDetails(string title,string stats, string descp, string priority, string solid, string type_f_b, object fileCollection)
+		public void SaveBugDetails(string title, string stats, string descp, string priority, string solid, string type_f_b, object fileCollection)
 		{
 			string usrtyp = null;
 			SaveBugRequest sbrequest = new SaveBugRequest();
@@ -115,20 +129,21 @@ namespace ExpressBase.Web.Controllers
 					var file = httpreq.Files[i];
 					if ((file.ContentType == "image/jpeg") || (file.ContentType == "image/jpg") || (file.ContentType == "image/png") || (file.ContentType == "application/pdf"))
 					{
-						if(file.Length< 2097152) { 
-						
-						FileUploadCls flup = new FileUploadCls();
-						using (var memoryStream = new MemoryStream())
+						if (file.Length < 2097152)
 						{
-							file.CopyTo(memoryStream);
-							memoryStream.Seek(0, SeekOrigin.Begin);
-							fileData = new byte[memoryStream.Length];
-							memoryStream.ReadAsync(fileData, 0, fileData.Length);
-							flup.Filecollection = fileData;
-						}
-						flup.FileName = file.FileName;
-						flup.ContentType = file.ContentType;
-						sbrequest.Fileuploadlst.Add(flup);
+
+							FileUploadCls flup = new FileUploadCls();
+							using (var memoryStream = new MemoryStream())
+							{
+								file.CopyTo(memoryStream);
+								memoryStream.Seek(0, SeekOrigin.Begin);
+								fileData = new byte[memoryStream.Length];
+								memoryStream.ReadAsync(fileData, 0, fileData.Length);
+								flup.Filecollection = fileData;
+							}
+							flup.FileName = file.FileName;
+							flup.ContentType = file.ContentType;
+							sbrequest.Fileuploadlst.Add(flup);
 						}
 					}
 				}
@@ -149,19 +164,20 @@ namespace ExpressBase.Web.Controllers
 		}
 
 
-		public void UpdateTicket(string title, string descp,string filedelet, string priority, string tktid,string solid,string type_f_b, object fileCollection)
+		public void UpdateTicket(string filedelet,string solu_id, string tktid, string updtkt)
 		{
 
 			UpdateTicketRequest Uptkt = new UpdateTicketRequest();
 			var httpreq = this.HttpContext.Request.Form;
 
+			Dictionary<string, string> chngtkt = JsonConvert.DeserializeObject<Dictionary<string, string>>(updtkt);
 			if (httpreq.Files.Count > 0)
 			{
 				byte[] fileData = null;
 
 				for (int i = 0; i < httpreq.Files.Count; i++)
 				{
-					
+
 					var file = httpreq.Files[i];
 					if ((file.ContentType == "image/jpeg") || (file.ContentType == "image/jpg") || (file.ContentType == "image/png") || (file.ContentType == "application/pdf"))
 					{
@@ -184,25 +200,19 @@ namespace ExpressBase.Web.Controllers
 				}
 			}
 
-			Uptkt.Filedel =JsonConvert.DeserializeObject<int[]>(filedelet);
+			Uptkt.Filedel = JsonConvert.DeserializeObject<int[]>(filedelet);
+			Uptkt.usrname = this.LoggedInUser.FullName;
+			Uptkt.chngedtkt = chngtkt;
 			Uptkt.ticketid = tktid;
-			Uptkt.title = title;
-			Uptkt.description = descp;
-			Uptkt.priority = priority;
 			if (this.LoggedInUser.wc.Equals("tc"))
 			{
-				Uptkt.solution_id = solid;
+				Uptkt.solution_id = solu_id;
 			}
 			else
 			{
 				Uptkt.solution_id = ViewBag.cid;
 			}
-			
-			Uptkt.type_f_b = type_f_b;
-
-
 			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
-
 
 		}
 
@@ -211,7 +221,7 @@ namespace ExpressBase.Web.Controllers
 
 			UpdateTicketAdminRequest Uptkt = new UpdateTicketAdminRequest();
 			var httpreq = this.HttpContext.Request.Form;
-						
+
 			Uptkt.Ticketid = tktid;
 			Uptkt.Status = stats;
 			Uptkt.Remarks = remark;
@@ -224,13 +234,27 @@ namespace ExpressBase.Web.Controllers
 
 		}
 
-		public void ChangeStatus(string tktno )
+		public void ChangeStatus(string tktno)
 		{
 			ChangeStatusResponse sd = this.ServiceClient.Post<ChangeStatusResponse>(new ChangeStatusRequest
 			{
 				TicketNo = tktno,
-				NewStatus="Rectified"
-			});
+				NewStatus = "Closed",
+				UserName = this.LoggedInUser.FirstName,
+				Solution_id = ViewBag.cid
+			}); 
+
+
+		}
+		public void Comment(string tktno,string cmnt)
+		{
+			CommentResponse Cr = this.ServiceClient.Post<CommentResponse>(new CommentRequest
+			{
+				TicketNo = tktno,
+				Comments = cmnt,
+				UserName = this.LoggedInUser.FullName,
+				Solution_id = ViewBag.cid
+			}); 
 
 
 		}

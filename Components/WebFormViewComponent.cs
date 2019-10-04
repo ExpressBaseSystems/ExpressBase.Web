@@ -84,6 +84,10 @@ namespace ExpressBase.Web.Components
                                 control.IsDisable = true;
                         }
                     }
+                    else if(control is EbUserSelect)
+                    {
+                        (control as EbUserSelect).InitOptions(WebForm.SolutionObj.Users);
+                    }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();

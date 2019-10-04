@@ -1487,7 +1487,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 /*-----------------Item List control Start-----------------*/
 .user-list-ctrl {
-    border: 1px solid #ccc;
+    /*border: 1px solid #ccc;*/
     position: relative;
 }
 
@@ -1523,10 +1523,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .ulstc-list-srch > input {
-    width: 100%;
-    border: none;
-    padding: 5px 35px;
-    outline: none;
+    width: 100% !important;
+    border: none !important;
+    padding: 5px 35px !important;
+    outline: none !important;
 }
 
 .ulstc-list-ul {

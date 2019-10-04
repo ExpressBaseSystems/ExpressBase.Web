@@ -580,6 +580,18 @@
         new DisplayPictureControl(ctrl, {});
     };
 
+    this.UserSelect = function (ctrl, ctrlopts) {
+        
+        let itemList = new EbItemListControl({
+            contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
+            itemList: ctrl.UserList.$values
+        });
+
+        ctrl.setValue = itemList.setValue;
+        ctrl.getValue = itemList.getValue;
+
+    };
+
     this.Numeric = function (ctrl) {
         //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;

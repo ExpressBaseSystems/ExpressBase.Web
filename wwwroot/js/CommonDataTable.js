@@ -3570,7 +3570,7 @@
             o.data = result;
             o.keys = false;
             o.IsPaging = false;
-            this.datatable = new EbCommonDataTable(o);
+            this.datatable = new EbBasicDataTable(o);
             if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
                 $(".inlinetable").css("width", $(window).width() - 115);
             else

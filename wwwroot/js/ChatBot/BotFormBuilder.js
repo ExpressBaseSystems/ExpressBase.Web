@@ -492,6 +492,11 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
+        if (this.rootContainerObj.TableName.trim() === "")
+            this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
+        if (this.rootContainerObj.DisplayName.trim() === "")
+            this.rootContainerObj.DisplayName = this.rootContainerObj.Name;
+        this.$form.focus();
 
         this.DSchangeCallBack = function (PropsObj) {
             if (PropsObj.constructor.name === "EbDynamicCardSet")

@@ -1005,23 +1005,25 @@ const WebFormRender = function (option) {
 
         }
 
-        ebcontext.locations.Listener.ChangeLocation = function (o) {
-            if (this.rowId > 0) {
-                EbDialog("show", {
-                    Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                    Buttons: {
-                        "Ok": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: function (name) {
-                        reloadFormPage();
-                    }.bind(this)
-                });
-            }
-        }.bind(this);
+        if (ebcontext.locations.Listener) {
+            ebcontext.locations.Listener.ChangeLocation = function (o) {
+                if (this.rowId > 0) {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+        }
     };
 
     let t0 = performance.now();

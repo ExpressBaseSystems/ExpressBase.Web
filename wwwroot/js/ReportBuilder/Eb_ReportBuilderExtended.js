@@ -145,9 +145,17 @@
             if (this.ControlCollection.indexOf(objPropIndex) >= 0)
                 this.emptyCConESec(rptObj[objPropIndex]);
             else if (objPropIndex === "ReportObjects")
-                rptObj[objPropIndex].$values.length = 0
+                rptObj[objPropIndex].$values.length = 0;
         }
     };
+
+    this.emptyGroups = function (o) {
+        for (let i = 0; i < o.ReportGroups.$values.length; i++) {
+            o.ReportGroups.$values[i].GroupFooter.Fields.$values.length = 0;
+            o.ReportGroups.$values[i].GroupHeader.Fields.$values.length = 0;
+        }
+    };
+
     this.emptyCConESec = function (rptObjsubsec) {
         for (var i = 0; i < rptObjsubsec.$values.length; i++) {
             rptObjsubsec.$values[i].Fields.$values.length = 0;

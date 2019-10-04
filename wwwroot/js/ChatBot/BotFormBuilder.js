@@ -14,7 +14,7 @@
     this.ssurl = url;
     this.clipboard = {};
     this.toolContClass = "tool-sec-cont";
-    this.botDpURL = 'url(https\:\/\/expressbase\.com\/images\/assistant\.png)center center no-repeat';
+    this.botDpURL = 'url(https\:\/\/myaccount.expressbase\.com\/images\/assistant\.png)center center no-repeat';
 
     this.controlCounters = CtrlCounters;//Global
 
@@ -188,25 +188,33 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        var formId = this.formid;
-        if ($(source).attr("ebclass") === this.toolContClass && $(target).attr("class") === this.toolContClass) {
-            return false;
-        }
-        // allow copy except toolbox
-        if ($(source).attr("ebclass") === this.toolContClass && target.id === formId) {
-            return true;
-        }
-        if (source.id === formId && $(target).attr("ebclass") === this.toolContClass) {
-            return false;
-        }
-        // sortable with in the container
-        if (source.id === formId && target.id === formId) {
-            return true;
-        }
-        else {
-            return true;
-        }
 
+        if (el.contains(target))
+            return;
+        let _class = $(target).attr("ebclass");
+        if (_class !== this.toolContClass)
+            return true;
+        else
+            return false;
+
+        //var formId = this.formid;
+        //if ($(source).attr("ebclass") === this.toolContClass && $(target).attr("class") === this.toolContClass) {
+        //    return false;
+        //}
+        //// allow copy except toolbox
+        //if ($(source).attr("ebclass") === this.toolContClass && target.id === formId) {
+        //    return true;
+        //}
+        //if (source.id === formId && $(target).attr("ebclass") === this.toolContClass) {
+        //    return false;
+        //}
+        //// sortable with in the container
+        //if (source.id === formId && target.id === formId) {
+        //    return true;
+        //}
+        //else {
+        //    return true;
+        //}
     };
 
     this.makeTdsDropable = function () {

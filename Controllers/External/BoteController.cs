@@ -66,6 +66,14 @@ namespace ExpressBase.Web.Controllers
             {
                 int appid = Convert.ToInt32(args[1]);
                 EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}_app_settings", id));
+                if (settings == null)
+                    settings = new EbBotSettings() 
+                    { 
+                        Name = "Appliaction Name",
+                        ThemeColor = "#336689",
+                        DpUrl = "../images/demobotdp4.png",
+                        WelcomeMessage = "Hi,"
+                    };
                 PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
                     window.EXPRESSbase_APP_ID = {1};

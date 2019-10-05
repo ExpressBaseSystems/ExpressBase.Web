@@ -1,9 +1,10 @@
 ﻿
-var SolutionDashBoard = function (connections, sid) {
+var SolutionDashBoard = function (connections, sid, versioning) {
     this.Connections = connections;
     this.whichModal = "";
     this.Sid = sid;
     this.GoogleRedirecturi = GoogleRedirecturi;
+    this.versioning = versioning;
     var postData;
     var Deleteid;
     var preferancetype = [];
@@ -1668,19 +1669,22 @@ var SolutionDashBoard = function (connections, sid) {
 
     this.VersioningSwitch = function (e) {
         postData = e.target.checked;
+        SolutionId = e.target.attributes.solutionid.nodeValue;
         if (this.Connections.SolutionInfo.IsVersioningEnabled) {
-            $("#VersioningSwitch").bootstrapToggle('on');
-            EbDialog("show",
-                {
-                    Message: "The Versioning cannot is turend off !!!!",
-                    Buttons: {
-                        "Cancel": {
-                            Background: "red",
-                            Align: "left",
-                            FontColor: "white;"
+            if (!$('#VersioningSwitch').is(':checked')) {
+                $("#VersioningSwitch").bootstrapToggle('on');
+                EbDialog("show",
+                    {
+                        Message: "The Versioning cannot is turend off !!!!",
+                        Buttons: {
+                            "Cancel": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
                         }
-                    }
-                });
+                    });
+            }                
         }
         else {
             EbDialog("show",
@@ -1699,19 +1703,24 @@ var SolutionDashBoard = function (connections, sid) {
                         }
                     },
                     CallBack: function (name) {
-                        if (name == "Confirm")
+                        if (name == "Confirm") {
                             $.ajax({
                                 type: 'POST',
                                 url: "../Tenant/VersioningSwitch",
-                                data: { data: postData, SolnId: this.Sid }
+                                data: { data: postData, SolnId: SolutionId }
                                 //beforeSend: function () {
                                 //    $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
                                 //}
                             }).done(function (data) {
                                 //$("#Integration_loder").EbLoader("hide");
-                                if (data)
+                                if (data) {
+                                    this.Connections.SolutionInfo.IsVersioningEnabled = 'True';
                                     EbMessage("show", { Message: "Versioning : On" });
+                                }                                    
+
                             }.bind(this));
+
+                        }
                         else if (name == "Cancel" || name == "close") {
                             $("#VersioningSwitch").bootstrapToggle('off');
                         }
@@ -1720,7 +1729,10 @@ var SolutionDashBoard = function (connections, sid) {
         }
     };
 
-    this.init = function () {
+    this.init = function () {        
+        if (this.versioning === 'True') {
+            $("#VersioningSwitch").bootstrapToggle('on');            
+        }   
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));

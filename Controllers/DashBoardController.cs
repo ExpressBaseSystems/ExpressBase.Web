@@ -9,6 +9,7 @@ using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 
@@ -47,6 +48,12 @@ namespace ExpressBase.Web.Controllers
             ViewBag.dsObj = Resp.Data[0].Json;
             ViewBag.Status = Resp.Data[0].Status;
             return View();
+        }
+
+        public string UserControlGetObj(string refid)
+        {
+            GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid });
+            return JsonConvert.SerializeObject(Resp);
         }
     }
 }

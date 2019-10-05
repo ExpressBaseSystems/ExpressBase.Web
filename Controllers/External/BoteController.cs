@@ -43,7 +43,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.tid = tid;
             ViewBag.appid = appid;
             ViewBag.settings = JsonConvert.SerializeObject(settings);
-            ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+            //ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(new EbBotForm() as EbControlContainer, BuilderType.BotForm);
             return View();
 
@@ -205,6 +205,8 @@ namespace ExpressBase.Web.Controllers
                 returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
                 returnlist.Add(authResponse.RefreshToken);
                 returnlist.Add(formlist.BotForms);
+                if (user.UserId == 1)
+                    user.Preference.Locale = "en-IN";
                 returnlist.Add(JsonConvert.SerializeObject(user));
                 return returnlist;
 
@@ -242,13 +244,13 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("Bots")]
         public IActionResult Bots()
         {
-            var host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split(CharConstants.DOT);
-            if (!(hostParts.Length > 1))
-            {
-                return RedirectToAction("SignIn", "Common");
-            }
-            this.ServiceClient.Headers.Add("SolId", hostParts[0]);
+            //var host = this.HttpContext.Request.Host;
+            //string[] hostParts = host.Host.Split(CharConstants.DOT);
+            //if (!(hostParts.Length > 1))
+            //{
+            //    return RedirectToAction("SignIn", "Common");
+            //}
+            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
             var BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { });
             ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
             return View();

@@ -723,6 +723,18 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
             this.callGetControl(this.nxtCtrlIdx);
         }
+        else if (this.curCtrl.ObjType === "Date" || this.curCtrl.ObjType === "DateTime" || this.curCtrl.ObjType === "Time") {
+            this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            if (this.curCtrl.ObjType === "Date")
+                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern).format('YYYY-MM-DD');
+            else if (this.curCtrl.ObjType === "DateTime")
+                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
+            else if (this.curCtrl.ObjType === "Time")
+                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+            this.callGetControl(this.nxtCtrlIdx);
+        }
         else {
             this.curVal = this.curVal || $('#' + id).val();
             if (!this.checkRequired()) { return; }

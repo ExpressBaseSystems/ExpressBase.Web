@@ -160,7 +160,7 @@ namespace ExpressBase.Web.Controllers
             HttpClient client = new HttpClient();
             string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
             IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-
+            cid = this.GetIsolutionId(cid);
             Dictionary<string, string> _Meta;
             _Meta = new Dictionary<string, string> {
                     { TokenConstants.WC, wc },
@@ -181,6 +181,9 @@ namespace ExpressBase.Web.Controllers
                     { "timezone", IpApi.Timezone},
                     { "iplocationjson", result}
                 };
+
+            this.ServiceClient.Headers.Add("SolId", cid);
+
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,
@@ -338,6 +341,8 @@ namespace ExpressBase.Web.Controllers
                     { "anonymous", "true" },
                     { "user_name", Name }
             };
+
+            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
 
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {

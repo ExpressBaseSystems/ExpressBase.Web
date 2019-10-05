@@ -225,7 +225,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.createTblObject = function () {
-        var url = string.empty;
+        var url = "";
         if (Option.wc === 'bc')
             url = "../boti/getData";
         else if (this.IsQuery)

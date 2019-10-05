@@ -668,3 +668,6 @@ div.dataTables_wrapper div.dataTables_filters {
 #Imagemodal img, #Imagemodal .modal-body {
     width: 100%;
 }
+.group-All {
+    background-color: #f2f2f2 !important;
+}

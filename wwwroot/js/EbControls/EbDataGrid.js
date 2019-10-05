@@ -501,7 +501,10 @@
             let col = this.ctrl.Controls.$values[i];
             if (col.Hidden)
                 continue;
-            tr += this.getTdHtml_E(col, visibleCtrlIdx, editModeDataRow[col.Name]);
+            let editModeDataCellObj = editModeDataRow[col.Name];
+            if (!editModeDataCellObj)
+                continue;
+            tr += this.getTdHtml_E(col, visibleCtrlIdx, editModeDataCellObj);
             if (col.IsEditable)
                 isAnyColEditable = true;
             visibleCtrlIdx++;

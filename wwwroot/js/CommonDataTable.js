@@ -726,7 +726,8 @@
                 o.data = this.receiveAjaxData(this.MainData);
             }
             else {
-                o.dom = "<'col-md-12 noPadding display_none'>rt";                
+                o.dom = "<'col-md-12 noPadding display_none'>rt"; 
+                o.paging = false;
                 o.data = this.receiveAjaxData(this.MainData);
             }
         }
@@ -1234,7 +1235,8 @@
             this.createFilterforTree();
         this.filterDisplay();
         this.createFooter();
-        this.arrangeWindowHeight();
+        if (this.Source === "EbDataTable")
+            this.arrangeWindowHeight();
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
         $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
         $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
@@ -1266,12 +1268,17 @@
         this.isSecondTime = true;
 
         if (this.Source !== "EbDataTable") {
-            if (this.MainData.data.length > 7) {
+            if ($("#"+this.tableId+" tr").length > 7) {
                 $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
-                $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "174px", "important");
+                $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "155px", "important");
+
+                if ($.isEmptyObject(this.summary)) {
+                    $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
+                    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "174px", "important");
+                }
+                else
+                    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "142px", "important");
             }
-            if (this.eb_agginfo.length === 0)
-                $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
         }
     }
 
@@ -1654,7 +1661,8 @@
             this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
-            this.arrangeWindowHeight();
+            if(this.Source === "EbDataTable")
+                this.arrangeWindowHeight();
         }
         if (this.Api === null)
             this.Api = $("#" + this.tableId).DataTable();
@@ -1728,6 +1736,8 @@
     }
 
     this.doRowgrouping = function () {
+        if (this.Api === null)
+            this.Api = $("#" + this.tableId).DataTable();
         var rows = this.Api.rows().nodes();
         var count = this.Api.columns()[0].length;
         $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'></tr>`);
@@ -1914,9 +1924,10 @@
             }
             this.Api.columns.adjust();
         }
-
-        $(".containerrow").hide();
-        $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+        if ($(e.target).parents(".containerrow").length === 0) {
+            $(".containerrow").hide();
+            $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+        }
     }.bind(this);
 
     this.collapseGroup = function (e) {
@@ -1936,8 +1947,10 @@
         }
         this.checkHeaderCollapse($group, groupnum);
 
-        $(".containerrow").hide();
-        $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+        if ($(e.target).parents(".containerrow").length === 0) {
+            $(".containerrow").hide();
+            $(".containerrow").prev().children().find("I").removeClass("fa-caret-up").addClass("fa-caret-down");
+        }
         this.Api.columns.adjust();
     }.bind(this);
 
@@ -3538,7 +3551,7 @@
         var param = this.Params4InlineTable(Dvobj, idx);
         $.ajax({
             type: "POST",
-            url: "../DV/getData4Inline",
+            url: "../DV/getData",
             data: param,
             success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex)
         });
@@ -3557,8 +3570,8 @@
 
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><table id='tbl" + idx + "' class='table display table-bordered compact'></table></td></tr></div>");
-
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx+"'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
+            
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -3570,7 +3583,8 @@
             o.data = result;
             o.keys = false;
             o.IsPaging = false;
-            this.datatable = new EbBasicDataTable(o);
+            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValues))));
+            this.datatable = new EbCommonDataTable(o);
             if (this.EbObject.DisableRowGrouping || this.EbObject.RowGroupCollection.$values.length === 0)
                 $(".inlinetable").css("width", $(window).width() - 115);
             else
@@ -3607,6 +3621,13 @@
         dq.Length = 500;
         dq.DataVizObjString = JSON.stringify(Dvobj);
         dq.TableId = "tbl" + idx;
+        if (Dvobj.RowGroupCollection.$values.length > 0) {
+            dq.CurrentRowGroup = JSON.stringify(Dvobj.RowGroupCollection.$values[0]);
+            this.CurrentRowGroup = Dvobj.RowGroupCollection.$values[0]
+        }
+        else
+            this.CurrentRowGroup = null;
+        dq.OrderBy = this.getOrderByInfo();
         return dq;
     };
 

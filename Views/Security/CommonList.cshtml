@@ -190,7 +190,7 @@
                 document.title = "Users";
                 //metadata format - [0]=size; [1-size]=data name; [size-...]=additional info
                 var _metadata = ["7", "Id", "Name", "Nick_Name", "Sex", "Email", "Phone_Number", "Status", "_user", "_profPic"];
-                if (@ViewBag.DisableNewUser)
+                if ('@ViewBag.DisableNewUser' === 'true')
                     _metadata.push('_disableNewUser');
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
                 $($(".eb-dashbord-sidebar").children()[0]).hide();

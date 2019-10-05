@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ExpressBase.Common;
+using ExpressBase.Objects;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +12,11 @@ namespace ExpressBase.Web.Components
     {
         public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
         {
+            if (dsobj != "null")
+            {// if edit mode
+                EbBotForm botForm = EbSerializers.Json_Deserialize(dsobj);
+                ViewBag.Html = botForm.GetHtml();
+            }
             ViewBag.dsObj = dsobj;
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;

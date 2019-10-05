@@ -43,6 +43,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.tid = tid;
             ViewBag.appid = appid;
             ViewBag.settings = JsonConvert.SerializeObject(settings);
+            ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             return View();
 
             //this.ServiceClient.Headers.Add("SolId", tid);
@@ -203,6 +204,7 @@ namespace ExpressBase.Web.Controllers
                 returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
                 returnlist.Add(authResponse.RefreshToken);
                 returnlist.Add(formlist.BotForms);
+                returnlist.Add(JsonConvert.SerializeObject(user));
                 return returnlist;
 
                 //CookieOptions options = new CookieOptions();

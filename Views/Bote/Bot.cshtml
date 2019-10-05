@@ -69,6 +69,18 @@
 </style>
 
 <script>
+        window.ebcontext = {
+            sid: "@ViewBag.tid",
+            user: null,
+            //menu: {},
+            //locations: {},
+            //header: {},
+            //setup:new Setup(),
+            env:'@ViewBag.Env'
+        }
+</script>
+
+<script>
     var solid = "@ViewBag.tid";
     var appid = "@ViewBag.appid";
     var settings = @Html.Raw(ViewBag.settings);

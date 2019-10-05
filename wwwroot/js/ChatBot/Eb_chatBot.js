@@ -644,7 +644,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
         else if (this.curCtrl.ObjType === "PowerSelect") {
             //inpVal = this.curCtrl.tempValue;
-            inpVal = this.curCtrl.selectedRow;
+            //inpVal = this.curCtrl.selectedRow;
+            inpVal = this.curCtrl.getValue();
             console.log("inp");
             console.log(inpVal);
             this.curDispValue = this.curCtrl._DisplayMembers[Object.keys(this.curCtrl._DisplayMembers)[0]].toString().replace(/,/g, ", ");

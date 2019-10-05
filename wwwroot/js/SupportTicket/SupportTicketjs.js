@@ -14,7 +14,7 @@
     this.AppendBugsfn = function () {
         let html1 = null;
         $('#spt_table').find('thead tr').append('<th>Ticket Id</th>');
-        $('#spt_table').find('thead tr').append('<th style="width: 450px;">Title</th>');
+        $('#spt_table').find('thead tr').append('<th style="width: 400px;">Title</th>');
         if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
             $('#spt_table').find('thead tr').append('<th>Solution Id</th>');
         }
@@ -202,29 +202,29 @@ var EditTicket = function () {
                 if (stval == 0) {
                     htm2 = ` <div class="hstry">
                                 <div>
-                                 <strong> ${ob.UserName} </strong> changed  ${ftemp} to " ${ob.Value} " on  at ${ob.CreatedDate} at ${ob.CreatedTime}
+                                 <strong> ${ob.UserName} </strong> changed  ${ftemp} to " ${ob.Value} "  on  ${ob.CreatedDate} at ${ob.CreatedTime}
                                 </div>
                              </div>`
                 }
                 if (stval == 1) {
                     htm2 = ` <div class="hstry">
                                 <div>
-                                <strong>  ${ob.UserName} </strong> created issue  on  at ${ob.CreatedDate} at ${ob.CreatedTime}
+                                <strong>  ${ob.UserName} </strong> created issue   on  ${ob.CreatedDate} at ${ob.CreatedTime}
                                 </div>
                             </div>`
                 }
                 if (stval == 2) {
                     htm2 = ` <div class="hstry">
                                 <div>
-                                 <strong> ${ob.UserName} </strong> :   ${ob.Value}
+                                 <strong> ${ob.UserName} : </strong>    "${ob.Value}"  on  ${ob.CreatedDate} at ${ob.CreatedTime}
                                 </div>
                                 <div class="hstdt">
-                                    ${ob.CreatedDate} at ${ob.CreatedTime}
+                                 
                                 </div>
                              </div>`
                 }
                
-                $("#hist_id").append(htm2);
+                $("#hist_id").prepend(htm2);
             });
         }
     }
@@ -457,7 +457,7 @@ var EditTicket = function () {
                              </div>`
                 
                
-                    $("#hist_id").append(htm2);
+                    $("#hist_id").prepend(htm2);
                     
                     $("#eb_common_loader").EbLoader("hide");
                 }
@@ -663,14 +663,14 @@ var EditTicket = function () {
             $container.on("click", function (e) {
                 var cntyp = $(e.target).closest('img').attr('cntype');
                 if (cntyp == "application/pdf") {
-                    $('#file_disp').html(` <iframe id="display_file" src="" frameborder="0" style=" display: block; border:none; height:600px; width:100%"></iframe>`);
+                    $('#file_disp').html(` <iframe id="display_file" src="" frameborder="0" style=" display: block; border:none; height:550px; width:100%"></iframe>`);
                     var src1 = $(e.target).closest('img').attr('pd64');
                     //var src1 = $img.data('file_url');
                     $('#display_file').attr('src', src1);
                     $('#diplay_modal').modal('show');
                 }
                 else {
-                    $('#file_disp').html(`   <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block;  ">`);
+                    $('#file_disp').html(`   <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block; max-height:550px; width:100%" ">`);
                     var src1 = $(e.target).closest('img').attr('src');
                     $('#display_file').attr('src', src1)
                     $('#diplay_modal').modal('show');

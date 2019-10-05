@@ -188,7 +188,7 @@
                                     <div class="col-sm-12 col-md-12 col-lg-12">
                                         <label>Description</label>
                                         <div>
-                                            <textarea rows="4" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                                            <textarea rows="3" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
                                         </div>
                                         <div id="descrlbl" class="" style=" visibility :hidden"> Enter some description</div>
                                     </div>
@@ -197,31 +197,33 @@
 
 
 
-                            <div class="row">
+                            <div class="row tabcls">
                                 <!-- Nav tabs -->
-                                <ul class="nav nav-tabs" id="mySptTab" role="tablist">
+                                <ul class="nav nav-tabs navtbscls" id="mySptTab" role="tablist">
                                     <li class="nav-item active">
-                                        <a class="nav-link " href="#Attachments" id="Attachments-tab" role="tab" data-toggle="tab">Attachments</a>
+                                        <a class="nav-link " href="#Attachments" id="Attachments-tab" role="tab" data-toggle="tab"><strong>Attachments</strong></a>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#History" role="tab" data-toggle="tab">History</a>
+                                        <a class="nav-link" href="#History" role="tab" data-toggle="tab"><strong>History</strong></a>
                                     </li>
                                 </ul>
-                                <div class="tab-content">
-                                    <div role="tabpanel" class="tab-pane fade in active" id="Attachments">
+                                <div class="tab-content tabcntcls">
 
-                                        <div class="input-field">
-                                            <label class="">Files</label>
-                                            <div class="input-images-2" style=" max-height:300px;min-height:200px; "></div>
+                                    <div role="tabpanel" class="tab-pane fade in active" id="Attachments">
+                                        <div class="tabpan">
+                                            <div class="input-field">
+                                                <label class="">Files</label>
+                                                <div class="input-images-2" style=" max-height:250px;min-height:175px; "></div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div role="tabpanel" class="tab-pane fade " id="History">
-                                        
-                                            @{if (ViewBag.new_mode == false)
-                                                {
-                                                    <div class="row bdr">
 
-                                                        @*<div class="row">
+                                    <div role="tabpanel" class="tab-pane fade " id="History">
+
+                                        @{if (ViewBag.new_mode == false)
+                                            {
+                                                @*<div class="row bdr">
+                                                        <div class="row">
                                                                 <div class="col-sm-12 col-md-4 col-lg-4 ">
                                                                     <label>Date Created</label>
                                                                     <div class=" ">
@@ -238,45 +240,32 @@
                                                                         <div id="dtemdfydlbl" class="" style=" visibility :hidden">Date Modified </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
+                                                    </div>*@
+                                                <div class="tabpan">
+                                                    <div class=" hscls ">
+                                                        <div id="hscmnt_id" class="row" style=" padding-top: 8px;">
+                                                            <div>
+                                                                <textarea rows="2" cols="50" class="form-control stprsiz" id="cmntid"></textarea>
+                                                            </div>
+                                                            <div>
+                                                                <button id="btncomment" class="ebbtn eb_btnblue eb_btn-xs " style="float: right;margin:3px 0 10px 0;" type="button"> Comment</button>
+                                                            </div>
+
+                                                        </div>
 
 
-                                                            </div>*@
-
-
-                                                    </div>
-                                                    <div class="row ">
-                                                        <div id="hist_id" class="hst">
+                                                        <div id="hist_id" class="hst row">
 
 
                                                         </div>
-                                                        <div id="hscmnt_id">
-                                                            <input class="form-control w-100 "style="margin-bottom:3px" type="text" id="cmntid">
-                                                            <button id="btncomment" class="ebbtn eb_btnblue eb_btn-sm " style="float: left" type="button"> Comment</button>
-                                                        </div>
                                                     </div>
-                                                } }
-                                       
 
-                                        @*@{if (ViewBag.new_mode == false)
-                                                {
-                                                    <div class="">
-                                                        <label>Remarks</label>
-                                                        <div>
-                                                            @{ if (ViewBag.cid == "admin")
-                                                                {
-                                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid"></textarea>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
-                                                                }
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                }
-                                            }*@
-
+                                                </div>
+                                            }
+                                        }
                                     </div>
+
                                 </div>
                             </div>
                         </div>

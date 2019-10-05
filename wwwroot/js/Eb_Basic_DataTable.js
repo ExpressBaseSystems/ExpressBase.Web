@@ -262,9 +262,9 @@ var EbBasicDataTable = function (Option) {
             };
         }
         else {
-            o.data = this.MainData.formatteddata || this.MainData.data;
-            this.data = this.MainData.data;
-            this.formatteddata = this.MainData.formattedData || this.MainData.data;
+            o.data = this.MainData.formattedData || this.MainData.data || this.MainData;
+            this.data = this.MainData.data || this.MainData;
+            this.formatteddata = this.MainData.formattedData || this.MainData.data || this.MainData;
         }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);

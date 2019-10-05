@@ -569,8 +569,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.setFormControls = function () {
         this.formControls = [];
         $.each(this.curForm.Controls.$values, function (i, control) {
-            if (control.VisibleIf && control.VisibleIf.trim())//if visibleIf is Not empty
-                this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.VisibleIf));
+            if (control.VisibleExpr && control.VisibleExpr.Code.trim())//if visibleIf is Not empty
+                this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.VisibleExpr.Code));
             if (control.ValueExpression && control.ValueExpression.trim())//if valueExpression is Not empty
                 this.formFunctions.valueExpressions[control.Name] = new Function("form", "user", atob(control.ValueExpression));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.BareControlHtml4Bot}</div>`));

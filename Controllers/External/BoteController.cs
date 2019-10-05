@@ -181,6 +181,9 @@ namespace ExpressBase.Web.Controllers
                     { "timezone", IpApi.Timezone},
                     { "iplocationjson", result}
                 };
+
+            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
+
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,
@@ -338,6 +341,8 @@ namespace ExpressBase.Web.Controllers
                     { "anonymous", "true" },
                     { "user_name", Name }
             };
+
+            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
 
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {

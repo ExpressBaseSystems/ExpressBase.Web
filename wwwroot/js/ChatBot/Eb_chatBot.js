@@ -700,7 +700,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             if (this.curCtrl.ObjType === "PowerSelect")//////////////////////////-------////////////
-                this.formValuesWithType[id] = [this.curCtrl.tempValue, this.curCtrl.EbDbType];
+                this.formValuesWithType[id] = [this.curCtrl.TempValue, this.curCtrl.EbDbType];
             else
                 this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
             this.callGetControl(this.nxtCtrlIdx);
@@ -1086,7 +1086,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
                 this.formValues[name] = curval;
                 if (control.ObjType === "PowerSelect")
-                    this.formValuesWithType[name] = [control.tempValue, control.EbDbType];
+                    this.formValuesWithType[name] = [control.TempValue, control.EbDbType];
                 else
                     this.formValuesWithType[name] = [curval, control.EbDbType];
                 html += `<tr><td style='padding: 5px;'>${control.Label}</td> <td style='padding-left: 10px;'>${this.formValuesWithType[name][0]}</td></tr>`;

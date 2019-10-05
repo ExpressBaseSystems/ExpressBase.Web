@@ -205,6 +205,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 success: function (data) {
                     this.hideTypingAnim();
                     data = JSON.parse(data);
+                    JsonToEbControls(data);
 
                     //if (typeof data === "string") {
                     //    data = JSON.parse(data);

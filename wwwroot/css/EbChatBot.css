@@ -531,6 +531,20 @@
     color: white;
 }
 
+.ctrl-wraper .dropdown-toggle[data-toggle="dropdown"] {
+    border-radius: 1px;
+    font-size: 13px;
+    background-color: white;
+    box-shadow: none !important;
+    border: none;
+    height: 28px;
+    padding-top: 3px;
+}
+
+.ctrl-wraper .open li {
+    font-size: 13px;
+}
+
 /*.eb-chatBox .card-header-cont {
 	width: 400px;
 	height: 40px;

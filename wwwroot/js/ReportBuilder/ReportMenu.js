@@ -63,22 +63,34 @@
     };
 
     this.contextMenudelete = function (eType, selector, action, originalEvent) {
-        if (!$(selector.$trigger).hasClass("pageHeaders")) {
-            delete this.Rep.objCollection[$(selector.$trigger).attr("id")];
-            this.Rep.pg.removeFromDD($(selector.$trigger).attr("id"));
-            $(selector.$trigger).remove();
-        }
-        else {
+        if ($(selector.$trigger).hasClass("pageHeaders")) {
             if ($(selector.$trigger).index() !== 0) {
                 let sec = $(selector.$trigger).attr("eb-type");
                 delete this.Rep.objCollection[$(selector.$trigger).attr("id")];
                 this.removeSecEbobject(sec, $(selector.$trigger).attr("id"));
-                $(selector.$trigger).remove();
                 this.Rep.pg.removeFromDD($(selector.$trigger).attr("id"));
                 $(".multiSplit ." + sec).find(".multiSplitHboxSub").eq($(selector.$trigger).index()).remove();
-                this.Rep.syncHeight();
+                $(selector.$trigger).remove();
             }
         }
+        else if ($(selector.$trigger).hasClass("pageGroups_header") || $(selector.$trigger).hasClass("pageGroups_footer")) {
+            let o = this.Rep.objCollection[$(selector.$trigger).attr("id")];
+            delete this.Rep.objCollection[`Group${o.Order}_header`];
+            delete this.Rep.objCollection[`Group${o.Order}_footer`];
+            this.removeSecEbobject("ReportGroups", "ReportGroup" + o.Order);
+            this.Rep.pg.removeFromDD(`Group${o.Order}_header`);
+            this.Rep.pg.removeFromDD(`Group${o.Order}_footer`);
+            $(`.multiSplit .ReportDetail #GroupHeader_ms${o.Order}`).remove();
+            $(`.multiSplit .ReportDetail #GroupFooter_ms${o.Order}`).remove();
+            $(`#Group${o.Order}_header`).remove();
+            $(`#Group${o.Order}_footer`).remove();
+        }
+        else {
+            delete this.Rep.objCollection[$(selector.$trigger).attr("id")];
+            this.Rep.pg.removeFromDD($(selector.$trigger).attr("id"));
+            $(selector.$trigger).remove();
+        }
+        this.Rep.syncHeight();
     };
 
     this.removeSecEbobject = function (sections, id) {
@@ -93,6 +105,8 @@
             array = this.Rep.EbObject.PageFooters.$values;
         else if (sections === 'ReportDetail')
             array = this.Rep.EbObject.Detail.$values;
+        else if (sections === 'ReportGroups')
+            array = this.Rep.EbObject.ReportGroups.$values;
 
         for (let j = 0; j < array.length; j++) {
             let o = array[j];
@@ -177,13 +191,15 @@
     this.options = {
         "copy": { name: "Copy", icon: "copy", callback: this.contextMenucopy.bind(this) },
         "cut": { name: "Cut", icon: "cut", callback: this.contextMenucut.bind(this) },
-        "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this), disabled: this.disableMenuItem.bind(this)},
+        "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this), disabled: this.disableMenuItem.bind(this) },
         "lock": {
             name: "Lock", icon: "fa-lock", callback: this.lockControl.bind(this),
-            disabled: this.disableMenuItem.bind(this) },
+            disabled: this.disableMenuItem.bind(this)
+        },
         "unlock": {
             name: "unlock", icon: "fa-unlock", callback: this.unLockControl.bind(this),
-            disabled: this.disableMenuItem.bind(this) },
+            disabled: this.disableMenuItem.bind(this)
+        },
         "fold2": {
             "name": "Align", icon: "",
             "items": {
@@ -221,17 +237,22 @@
         });
 
         $.contextMenu({
-            selector: '.pageHeaders',
+            selector: '.pageHeaders,.pageGroups_header,.pageGroups_footer',
             autoHide: true,
             build: function ($trigger, e) {
                 this.L = e.offsetX; this.T = e.offsetY;
                 return {
                     items: {
                         "delete": {
-                            name: "Delete",icon: "delete",callback: this.contextMenudelete.bind(this),
+                            name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this),
                             disabled: function (key, opt) {
-                                if (opt.$trigger.parent().children().length <= 1 || opt.$trigger.hasClass("locked"))
+                                if (opt.$trigger.hasClass("locked"))
                                     return !opt.$trigger.data('cutDisabled');
+
+                                if (opt.$trigger.hasClass("pageHeaders")) {
+                                    if (opt.$trigger.parent().find(".pageHeaders").length <= 1)
+                                        return !opt.$trigger.data('cutDisabled');
+                                }
                             }
                         },
                         "paste": {
@@ -283,14 +304,22 @@
             build: function ($trigger, e) {
                 return {
                     items: {
-                        "AddSubSection":{
+                        "AddSubSection": {
                             "name": "Add SubSection",
-                            icon: "fa-text",
                             icon: "fa-plus",
                             callback: function (eType, selector, action, originalEvent) {
                                 let _sec = selector.$trigger.attr("data-sec");
                                 this.Rep.appendNewSubDiv(_sec);
                             }.bind(this)
+                        },
+                        "AddGroup": {
+                            name: "Add Group",
+                            icon: "fa-object-group",
+                            callback: this.Rep.AddGroupSection.bind(this.Rep),
+                            disabled: function (key, opt) {
+                                if (opt.$trigger.attr("data-sec") !== "ReportDetail")
+                                    return !opt.$trigger.data('cutDisabled');
+                            }
                         }
                     }
                 };
@@ -310,7 +339,7 @@
         if ($trigger.hasClass("EbCol") || $trigger.hasClass("CalcField"))
             $.extend(m, this.dyOpt["DF"], this.dyOpt["TA"]);
         else {
-            $.extend(m,this.dyOpt["TA"]);
+            $.extend(m, this.dyOpt["TA"]);
         }
         return m;
     };

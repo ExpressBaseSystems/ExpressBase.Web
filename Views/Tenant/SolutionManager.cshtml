@@ -1,4 +1,4 @@
-﻿k@{
+﻿@{
     @using System;
     @using Newtonsoft.Json;
     @using ExpressBase.Common;
@@ -62,43 +62,6 @@
     }
 </style>
 <div class="row s-dash-container h-100">
-    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-            <div class="t-container">
-                <ul class="list-group eb-dashbord-sidebar">
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/MySolutions">
-                            <span class="material-icons t__sidebar_icon">highlight</span>
-                            <span class="t__sidebar_text">My Solutions</span>
-                        </a>
-                    </li>
-                    @*
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a">
-                            <span class="material-icons t__sidebar_icon">attach_money</span>
-                            <span class="t__sidebar_text">Billing</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a" href="/AppStore" target="_blank">
-                            <span class="material-icons t__sidebar_icon">store</span>
-                            <span class="t__sidebar_text">App Store</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a">
-                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                            <span class="t__sidebar_text">Wiki</span>
-                        </a>
-                    </li>
-                    <li class="list-group-item outer_li text-center">
-                        <a class="t_a">
-                            <span class="material-icons t__sidebar_icon">contact_support</span>
-                            <span class="t__sidebar_text">Support</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-9 col-lg-9 col-xs-12 pd-0">
@@ -285,7 +248,17 @@
                                             <div class="connection_wrap_header w-100 image-hover" id="googledriveConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/Google-Drive-Logo.png" style="width:80%" />
                                                 <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="slack" class="connection_wrap_outer" data-toggle="modal" data-target="#SlackConnectionEdit" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="slackConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/slack.png" style="width:100%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -304,16 +277,6 @@
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
-                                                <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="slack" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="slackConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/slack.png" style="width:100%" />
                                                 <div class="image-add">
                                                     <div class="text fa-coming-soon">Coming Soon</div>
                                                 </div>
@@ -454,6 +417,20 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_ICHAT" data-toggle="collapse" data-parent="#MyIntegrations" href="#ICHAT">
+                                                        Chat
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="ICHAT" class="panel-collapse collapse">
+                                                <div id="ICHAT-all" class="panel-body">
+
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -471,6 +448,16 @@
                 </div>
                 <div class="tab-pane" id="home" role="tabpanel">
                     <div class="eb-sdash-general-container flex-center">
+                        @*<div class="eb-sdash-longdiv w-100" style="margin-bottom:20px;">
+                            <div class="eb-sdash-upgradecont">
+                                <div class="col-md-8">
+                                    <p>Change your solution info</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
+                                </div>
+                            </div>
+                        </div>*@
                         <div class="eb-sdash-longdiv" style="margin-bottom:20px;">
                             <div class="eb-sdash-longdivhead">
                                 <label>Solution Logo</label>
@@ -1367,6 +1354,65 @@
                         </div>
                         <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="AWSS3InputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm AWSS3Connection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="SlackConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="Slack_mask">
+            <form action="" method="post" id="SlackConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Slack</h4>
+                    <div id="Slack_loader" class="SlackConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:35%">
+                        <img class='img-responsive' src='~/images/slack.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Integration is what takes Slack from a normal online instant messaging and collaboration system to a solution that enables you to centralize all your notifications, from sales to tech support, social media and more, into one searchable place where your team can discuss and take action on each.  </span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="SlackVendor" type="hidden" value="Slack" class="form-control Vendor" readonly />
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="SlackInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>OAuth Access Token</label>
+                                        <input id="SlackInputOAuthAccessToken" name="OAuthAccessToken" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>Channel</label>
+                                        <input id="SlackInputChannel" name="Channel" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="SlackInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
 

@@ -308,6 +308,8 @@
             o.dvObject = obj;
             o.IsPaging = false;
             o.showFilterRow = false;
+            o.showCheckboxColumn = false;
+            o.Source = "DashBoard";
             var dt = new EbBasicDataTable(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
         }

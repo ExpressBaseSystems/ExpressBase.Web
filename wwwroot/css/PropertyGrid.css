@@ -973,21 +973,30 @@
 
 /*FontStyle Editor Styles*/
 .FEhead {
-    background: #abd7ec;
+    background: #4987fb;
     height: 30px;
     text-align: center;
     padding: 3px;
     font-size: 15px;
+    color: white;
+}
+.FE-preview .font-preview-wrpr {
+    border: 1px solid rgb(204, 204, 204);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: normal;
+    min-height: 50px;
 }
 
 .FEhead-font {
-    background: #abd7ec;
+    background: #4987fb;
     height: 30px;
 }
 
 .FEcol {
-    border: 1px solid #ccc;
-    margin-left: 20px;
+    padding:5px;
 }
 
 .FEfont-family {
@@ -1031,12 +1040,14 @@
     float: right;
     margin: 2px;
     display: inline-block;
+    border-radius: 4px;
+    border: 2px solid #4987fb;
 }
 
 .FE-sectionMprop {
     width: inherit;
     height: 50px;
-    margin-left: 20px;
+    padding: 0 5px;
 }
 
 .FE-section select {
@@ -1049,11 +1060,12 @@
         padding: 0 5px;
     }
 
-.font-text {
+.FEhead-font .font-text {
     display: inline-block;
     height: 30px;
     padding: 3px;
     font-size: 15px;
+    color:white;
 }
 
 .font-editor-contaner {

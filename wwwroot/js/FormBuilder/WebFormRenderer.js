@@ -98,8 +98,10 @@ const WebFormRender = function (option) {
             let opt = {};
             if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
                 opt.getAllCtrlValuesFn = this.getWebFormVals;
-            else if (Obj.ObjType === "FileUploader")
+            else if (Obj.ObjType === "FileUploader") {
                 opt.FormDataExtdObj = this.FormDataExtdObj;
+                opt.DpControlsList = getFlatObjOfType(this.FormObj, "DisplayPicture");
+            }
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
@@ -1003,24 +1005,33 @@ const WebFormRender = function (option) {
 
         }
 
-        ebcontext.locations.Listener.ChangeLocation = function (o) {
-            if (this.rowId > 0) {
-                EbDialog("show", {
-                    Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                    Buttons: {
-                        "Ok": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: function (name) {
-                        reloadFormPage();
-                    }.bind(this)
-                });
-            }
-        }.bind(this);
+        if (ebcontext.locations.Listener) {
+            ebcontext.locations.Listener.ChangeLocation = function (o) {
+                if (this.rowId > 0) {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+        }
     };
 
+    let t0 = performance.now();
+
+    this.showLoader();
     this.init();
+    this.hideLoader();
+
+    let t1 = performance.now();
+    console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
 };

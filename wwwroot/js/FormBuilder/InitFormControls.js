@@ -15,6 +15,8 @@
     this.FileUploader = function (ctrl, ctrlOpts) {
         let files = [];
         let catTitle = [];
+        let customMenu = [{ name: "Delete", icon: "fa-trash" }];
+        let fileType = this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString());
         $.each(ctrl.Categories.$values, function (i, obj) {
             catTitle.push(obj.CategoryTitle);
         }.bind(catTitle));
@@ -22,8 +24,15 @@
         if (ctrlOpts.FormDataExtdObj.val !== null) {
             files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.EbSid][0].Columns[0].Value);
         }
+
+        if (fileType === 'image') {
+            $.each(ctrlOpts.DpControlsList, function (i, obj) {
+                customMenu.push({ name: "Set as " + obj.Label, icon: "fa-user" });
+            });
+        }
+
         let imgup = new FUPFormControl({
-            Type: this.getKeyByValue(EbEnums.FileClass, ctrl.FileType.toString()),
+            Type: fileType,
             ShowGallery: true,
             Categories: catTitle,
             Files: files,
@@ -35,7 +44,7 @@
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
-            CustomMenu: [{ name: "Delete", icon: "fa-trash" }]
+            CustomMenu: customMenu
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -50,11 +59,8 @@
                 EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
         };
 
-        imgup.customTrigger = function (name, refids) {
-            if (name === "Set as DP") {
-                EbMessage("show", { Message: 'Not Implemented', AutoHide: true, Background: '#0000aa' });
-            }
-            else if (name === "Delete") {
+        imgup.customTrigger = function (DpControlsList, name, refids) {
+            if (name === "Delete") {
                 if (name === "Delete") {
                     EbDialog("show",
                         {
@@ -88,9 +94,38 @@
                             }
                         });
                 }
-
             }
-        };
+            else {
+                $.each(DpControlsList, function (i, dpObj) {
+                    if (name === 'Set as ' + dpObj.Label) {
+                        EbDialog("show",
+                            {
+                                Message: "Are you sure? Changes Affect only if Form is Saved.",
+                                Buttons: {
+                                    "Yes": {
+                                        Background: "green",
+                                        Align: "left",
+                                        FontColor: "white;"
+                                    },
+                                    "No": {
+                                        Background: "violet",
+                                        Align: "right",
+                                        FontColor: "white;"
+                                    }
+                                },
+                                CallBack: function (name) {
+                                    if (name === "Yes") {
+                                        if (refids.length > 0) {
+                                            dpObj.setValue(refids[0].toString());/////////////need to handle when multiple images selected 
+                                        }
+                                    }
+                                }.bind()
+                            });
+                    }
+                });
+            }
+
+        }.bind(this, ctrlOpts.DpControlsList);
 
     };
 
@@ -120,6 +155,9 @@
     this.SetDateFormatter();
 
     this.Date = function (ctrl, ctrlOpts) {
+        //setTimeout(function () {
+        let t0 = performance.now();
+        let t1 = performance.now();
         let formObject = ctrlOpts.formObject;
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
@@ -175,22 +213,22 @@
                 });
                 //$input.val(userObject.Preference.ShortDate + " " + userObject.Preference.ShortTime);
             }
-            
+
 
             //settings.minDate = ctrl.Min;
             //settings.maxDate = ctrl.Max;
 
             //if (ctrlOpts.source === "webform") {
-                //let maskPattern = "DD-MM-YYYY";
-                //$input.attr("placeholder", maskPattern);
-                //$input.inputmask(maskPattern);               
-                
+            //let maskPattern = "DD-MM-YYYY";
+            //$input.attr("placeholder", maskPattern);
+            //$input.inputmask(maskPattern);               
+
             //    if (!ctrl.IsNullable)
             //        $input.val(userObject.Preference.ShortDate);
             //}
 
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
-            $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));            
+            $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
         }
         this.setCurrentDate(ctrl, $input);
         if (ctrl.IsNullable) {
@@ -199,6 +237,11 @@
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
+
+        t1 = performance.now();
+        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+
+        //}.bind(this), 0);
     };
 
     //created by amal
@@ -233,11 +276,13 @@
     };
 
     this.SimpleSelect = function (ctrl) {
+        //setTimeout(function () {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.selectpicker();
+        //},0);
     };
 
-    this.BooleanSelect= function (ctrl) {
+    this.BooleanSelect = function (ctrl) {
         this.SimpleSelect(ctrl);
     };
 
@@ -279,7 +324,7 @@
     };
 
     this.InputGeoLocation = function (ctrl) {
-        ebcontext.userLoc = { lat: 0 ,long: 0};
+        ebcontext.userLoc = { lat: 0, long: 0 };
         if (_rowId === undefined || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
@@ -380,9 +425,15 @@
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {
+
+        let t0 = performance.now();
+
         if (ctrl.RenderAsSimpleSelect) {
             this.SimpleSelect(ctrl);
             return;
+        }
+        else if (ctrl.IsInsertable) {
+            ctrl.__AddButtonInit = this.Button;
         }
 
         Vue.component('v-select', VueSelect.VueSelect);
@@ -397,6 +448,8 @@
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
+        let t1 = performance.now();
+        console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {
@@ -454,7 +507,7 @@
     this.Button = function (ctrl) {
         $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
-    };
+    }.bind(this);
 
     this.iFrameOpen = function (ctrl) {
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
@@ -524,13 +577,23 @@
     };
 
     this.DisplayPicture = function (ctrl, ctrlopts) {
+        new DisplayPictureControl(ctrl, {});
+    };
 
+    this.UserSelect = function (ctrl, ctrlopts) {
+        
+        let itemList = new EbItemListControl({
+            contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
+            itemList: ctrl.UserList.$values
+        });
 
+        ctrl.setValue = itemList.setValue;
+        ctrl.getValue = itemList.getValue;
 
-        //$.extend(ctrl, { getValue: this.MlGetValue, setValue: this.MlSetValue });
     };
 
     this.Numeric = function (ctrl) {
+        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         let initValue = "0";
@@ -665,6 +728,7 @@
         //        }
         //    }
         //});
+        //}.bind(this), 0);
     };
 
     this.getKeyByValue = function (Obj, value) {

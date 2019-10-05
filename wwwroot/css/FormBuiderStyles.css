@@ -81,6 +81,7 @@
 .bot-form-buider-cont {
     width: inherit;
     padding: 0.3vw 2vw;
+    height: calc(100vh - 72px);
 }
 
 .contol-settings-window {
@@ -482,7 +483,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-top: solid 1px #585858;
 }
 
-[eb-form='true'] .bootstrap-select {
+[eb-form='true'] .bootstrap-select, .chat-ctrl-cont .bootstrap-select {
     width: 100% !important;
 }
 
@@ -755,7 +756,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [ctype=SimpleSelect] .ctrl-cover .dropdown-toggle,
 [ctype=PowerSelect] .ctrl-cover .dropdown-toggle,
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
-[tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle {
+[tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
+[tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle {
     padding: 0 0px 0 5px;
 }
 
@@ -1050,7 +1052,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
     .dev-chat-cont .eb-chatBox-dev {
-        height: 600px;
+        height: calc( 100vh - 130px );
+        width: 100%;
+        padding-bottom: 0px;
     }
 
     .dev-chat-cont .Eb-ctrlContainer {
@@ -1305,14 +1309,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .form-buider-form .nav-tabs > li {
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 500;
 }
 
-.filter-box .input-group-addon, .form-buider-form .input-group-addon {
+.filter-box .input-group-addon, .form-buider-form .input-group-addon, [eb-type="BotForm"] .input-group-addon {
     padding: 0px !important;
 }
 
-    .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa {
+    .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa, [eb-type="BotForm"] .input-group-addon > .fa {
         padding: 3px 7px !important;
     }
 
@@ -1446,6 +1451,113 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     .btn-select .dropdown-menu {
         border-radius: 2px !important;
     }
+
+/*-----------------Display picture control Start-----------------*/
+.ebDpFullscreen_wraper-fade {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: #000;
+    opacity: 0.8;
+    -webkit-transition: opacity .15s linear;
+    -o-transition: opacity .15s linear;
+    transition: opacity .15s linear;
+    display: none;
+}
+
+.ebDpFullscreen_wraper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 104;
+    padding: 20px 60px 20px 60px;
+    display: none;
+}
+
+.ebDpFullscreen_inner {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+/*-----------------Display picture control End-----------------*/
+
+
+/*-----------------Item List control Start-----------------*/
+.user-list-ctrl {
+    /*border: 1px solid #ccc;*/
+    position: relative;
+}
+
+.ulstc-disp-c {
+    display: flex;
+    user-select: none;
+}
+
+.ulstc-disp-img-c {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 26px;
+    width: 26px;
+}
+
+.ulstc-disp-txt {
+    padding: 3px 10px;
+}
+
+.ulstc-list-c {
+    position: absolute;
+    width: 100%;
+    box-shadow: 1px 1px 4px #ccc;
+    background-color: white;
+    display: none;
+    user-select: none;
+}
+
+.ulstc-list-srch > span {
+    position: absolute;
+    padding: 5px 10px;
+}
+
+.ulstc-list-srch > input {
+    width: 100% !important;
+    border: none !important;
+    padding: 5px 35px !important;
+    outline: none !important;
+}
+
+.ulstc-list-ul {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+    .ulstc-list-ul > .active {
+        background-color: #eef;
+    }
+
+.ulstc-list-li {
+    display: flex;
+    padding: 2px;
+}
+
+    .ulstc-list-li:hover {
+        background-color: #ddd;
+    }
+/*-----------------Item List control End-----------------*/
+
+
+
+
+
+
 /*animations*/
 /* Safari 4.0 - 8.0 */
 @-webkit-keyframes dim_border {

@@ -26,6 +26,7 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
 
+        public string ESolutionId { set; get; }
         public string SultionId { set; get; }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -35,7 +36,8 @@ namespace ExpressBase.Web.BaseControllers
 
             string sBToken = context.HttpContext.Request.Headers[RoutingConstants.BEARER_TOKEN];
             string sRToken = context.HttpContext.Request.Headers[RoutingConstants.REFRESH_TOKEN];
-            this.SultionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty); ;
+            this.ESolutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
+            this.SultionId = this.GetIsolutionId(this.ESolutionId);
             var controller = context.Controller as Controller;
 
             if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, this.SultionId)) == 0)

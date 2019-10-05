@@ -301,10 +301,10 @@ namespace ExpressBase.Web.Controllers
                 return 0;
             }
         }
-        private bool isAvailSolution(string url)
+        private bool isAvailSolution()
         {
-            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, url.Split(CharConstants.DASH)[0]));
-            if (resp.Any() || ((url.Split(CharConstants.DASH)[0]) == CoreConstants.ADMIN))
+            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
+            if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
                 return true;
             else
                 return false;
@@ -314,7 +314,7 @@ namespace ExpressBase.Web.Controllers
         {
             var host = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
-            if (isAvailSolution(hostParts[0]))
+            if (isAvailSolution())
             {
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
                 string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
@@ -395,7 +395,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult GoogleLogin(string name, string goglid, string email)
         {
-            Console.WriteLine("reached contoller / facebooklogin");
+            Console.WriteLine("reached contoller / GoogleLogin");
 
 
             try
@@ -416,7 +416,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("reached exception FacebookLogin");
+                Console.WriteLine("reached exception GoogleLogin");
                 TempData["socloginerr"] = "Something went wrong. Please try later";
                 Console.WriteLine("Exception: " + e.Message + e.StackTrace);
                 return Redirect("/Platform/OnBoarding");
@@ -803,7 +803,7 @@ namespace ExpressBase.Web.Controllers
             {
                 if (subDomain.EndsWith(RoutingConstants.DASHBOT) || subDomain.EndsWith(RoutingConstants.DASHMOB) || subDomain.EndsWith(RoutingConstants.DASHDEV))
                 {
-                    cid = subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.DASH));
+                    cid = this.GetIsolutionId(subDomain.Substring(0, subDomain.LastIndexOf(CharConstants.DASH)));
 
                     if (subDomain.EndsWith(RoutingConstants.DASHBOT))
                         whichconsole = EbAuthContext.BotUserContext;
@@ -814,7 +814,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else //User Console
                 {
-                    cid = subDomain;
+                    cid = this.GetIsolutionId(subDomain);
                     whichconsole = EbAuthContext.WebUserContext;
                 }
             }
@@ -1063,6 +1063,13 @@ namespace ExpressBase.Web.Controllers
                 return RedirectToAction("TenantSignIn", new { continue_with = redirect });
             }
             return View();
+        }
+
+        [HttpGet("/UpdateSolutionMap")]
+        public IActionResult UpdateSidMap()
+        {
+           UpdateSidMapResponse resp = this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest());
+           return Redirect("/");
         }
     }
 }

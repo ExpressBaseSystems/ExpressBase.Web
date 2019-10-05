@@ -7,10 +7,8 @@
     this.GroupSelect = [];
 
 
-    if (!this.Rpt.isNew) {
-        ['Courier', 'Helvetica', 'Times', 'Times-Roman', 'ZapfDingbats'].forEach(function (item) {
-            $("head").append($("<link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family='" + item + "'/>"));
-        });
+    this.appendFontLink = function (cssfont) {
+        $("head").append("<link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family='" + cssfont + "'/>");
     }
 
     this.keyInteractions = function (event) {
@@ -147,9 +145,17 @@
             if (this.ControlCollection.indexOf(objPropIndex) >= 0)
                 this.emptyCConESec(rptObj[objPropIndex]);
             else if (objPropIndex === "ReportObjects")
-                rptObj[objPropIndex].$values.length = 0
+                rptObj[objPropIndex].$values.length = 0;
         }
     };
+
+    this.emptyGroups = function (o) {
+        for (let i = 0; i < o.ReportGroups.$values.length; i++) {
+            o.ReportGroups.$values[i].GroupFooter.Fields.$values.length = 0;
+            o.ReportGroups.$values[i].GroupHeader.Fields.$values.length = 0;
+        }
+    };
+
     this.emptyCConESec = function (rptObjsubsec) {
         for (var i = 0; i < rptObjsubsec.$values.length; i++) {
             rptObjsubsec.$values[i].Fields.$values.length = 0;
@@ -164,7 +170,11 @@
             var decor = "";
             var style = "";
             var weight = "";
-            var font = _font.FontName === null ? "Times-Roman" : _font.FontName;
+
+            var font = _font.CSSFontName === null ? "Times" : _font.CSSFontName;
+            if (!this.Rpt.isNew)
+                this.appendFontLink(font);
+
             var size = _font.Size === 0 ? "14px" : _font.Size + "px";
 
             if (_font.Strikethrough)

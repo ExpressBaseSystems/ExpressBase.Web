@@ -75,6 +75,9 @@
     }.bind(this);
 
     this.InitContCtrl = function (ctrlObj, $ctrl) {///////////////////////////////////////////////////////////////////////////////////////////////////
+        let parentObj = this.rootContainerObj.Controls.getParent(ctrlObj);
+        ctrlObj.TableName = parentObj.TableName;
+        ctrlObj.isTableNameFromParent = true;
         if (ctrlObj.ObjType === "TableLayout") {
             this.makeTdsDropable_Resizable();
             let tds = $ctrl.find("td");
@@ -226,7 +229,7 @@
 
     this.updateControlUI = function (ebsid, type) {
         let obj = this.rootContainerObj.Controls.GetByName(ebsid);
-        let _type = obj.ObjType
+        let _type = obj.ObjType;
         $.each(obj, function (propName, propVal) {
             let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
             if (meta && meta.IsUIproperty)
@@ -361,6 +364,7 @@
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
+                $ctrl.focus();
                 this.updateControlUI(ebsid);
             }
             //drop from blk-cont to form(Eb Data object control)
@@ -456,6 +460,8 @@
                 $.each(ctrl._locationConfig, function (i, config) {
                     let newo = new EbObjects.UsrLocField(config.Name.replace(/\s/g, '').toLowerCase());
                     newo.DisplayName = config.Name;
+                    newo.IsRequired = config.IsRequired;
+                    newo.Type = config.Type;
                     ctrl.Fields.$values.push(newo);
                 });
                 EbOnChangeUIfns.EbProvisionLocation.mapping(ctrl.EbSid, ctrl);
@@ -611,23 +617,24 @@
         }
     }.bind(this);
 
-    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-        let Refid = PropsObj[CurProp];
-        let ObjType = PropsObj.ObjType;
-        if (ObjType === "DataObject" && CurProp === "DataSource") {
-            $.LoadingOverlay('show');
-            $.ajax({
-                type: "POST",
-                url: "../DS/GetColumns4Control",
-                data: { DataSourceRefId: Refid },
-                success: function (Columns) {
-                    PropsObj["Columns"] = JSON.parse(Columns);
-                    $.LoadingOverlay('hide');
-                    this.updateControlUI(PropsObj.EbSid_CtxId);
-                }.bind(this)
-            });
+    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {        
+        if (CurProp === "TableName" && PropsObj.IsContainer) {
+            let TblName = PropsObj.TableName;
+            PropsObj.isTableNameFromParent = false;
+            this.updateChildTablesName(PropsObj, TblName);
         }
     }.bind(this);
+
+    this.updateChildTablesName = function (PropsObj, TblName) {
+        for (var i = 0; i < PropsObj.Controls.$values.length; i++) {
+            let ctrl = PropsObj.Controls.$values[i];
+            if (ctrl.IsContainer && ctrl.isTableNameFromParent) {
+                ctrl.TableName = TblName;
+                if (ctrl.isTableNameFromParent)
+                    this.updateChildTablesName(ctrl, TblName);
+            }
+        }
+    };
 
     this.lbltxtbBlur = function (e) {
         $e = $(event.target);

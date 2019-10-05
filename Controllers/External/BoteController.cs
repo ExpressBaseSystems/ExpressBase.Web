@@ -43,6 +43,8 @@ namespace ExpressBase.Web.Controllers
             ViewBag.tid = tid;
             ViewBag.appid = appid;
             ViewBag.settings = JsonConvert.SerializeObject(settings);
+            ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(new EbBotForm() as EbControlContainer, BuilderType.BotForm);
             return View();
 
             //this.ServiceClient.Headers.Add("SolId", tid);
@@ -66,6 +68,14 @@ namespace ExpressBase.Web.Controllers
             {
                 int appid = Convert.ToInt32(args[1]);
                 EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}_app_settings", id));
+                if (settings == null)
+                    settings = new EbBotSettings() 
+                    { 
+                        Name = "- Application Name -",
+                        ThemeColor = "#055c9b",
+                        DpUrl = "../images/demobotdp4.png",
+                        WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
+                    };
                 PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
                     window.EXPRESSbase_APP_ID = {1};
@@ -195,6 +205,7 @@ namespace ExpressBase.Web.Controllers
                 returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
                 returnlist.Add(authResponse.RefreshToken);
                 returnlist.Add(formlist.BotForms);
+                returnlist.Add(JsonConvert.SerializeObject(user));
                 return returnlist;
 
                 //CookieOptions options = new CookieOptions();

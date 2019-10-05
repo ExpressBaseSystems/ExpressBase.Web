@@ -9,8 +9,8 @@
         else if (ebmod === 'Staging')
             return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.xyz/";
         else
-            return "http://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41500/";
-    }   
+            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41502/";
+    };
 
     var AppId;
     if (d.appIdColl) {
@@ -72,20 +72,20 @@
     chatbtn.className = "chatbtn";
     //var chatIcon = d.getElementsByClassName('boticon')[0];
     var chatIcon = d.createElement("img");
-    chatIcon.className = "boticon"
+    chatIcon.className = "boticon";
     chatIcon.id = "boticon" + AppId;
     chatIcon.src = (d.botdpURL || d.botdpURLColl[d.appIdCount]);
 
 
     var closeDiv = d.createElement("div");
-    closeDiv.className = "chatclose"
+    closeDiv.className = "chatclose";
     closeDiv.id = "closediv" + AppId;
     closeDiv.innerHTML = '&#10006;';
 
     chatHead.appendChild(closeDiv);
 
     var maximizeDiv = d.createElement("div");
-    maximizeDiv.className = "chatmaximize"
+    maximizeDiv.className = "chatmaximize";
     maximizeDiv.id = "maximizediv" + AppId;
     maximizeDiv.innerHTML = '&#128470;';
     chatHead.appendChild(maximizeDiv);
@@ -123,10 +123,10 @@
             this.style.display = "none";
             iframecont.style.display = "flex";
         } else {
-            this.className = ""
+            this.className = "";
             iframecont.style.display = "none";
         }
-    }
+    };
 
 
     if (!d.appIdColl) {

@@ -108,6 +108,10 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
 
+            if (this.ComboObj.IsInsertable) {
+                this.ComboObj.__AddButtonInit(this.ComboObj.AddButton);
+            }
+
             //set id for searchBox
             $('#' + this.name + 'Wraper  [type=search]').each(this.srchBoxIdSetter.bind(this));
 
@@ -268,12 +272,9 @@ const EbSelect = function (ctrl, options) {
             callBFn();
     };
 
-
-
     this.popAllDmValues = function (i) {
         this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.Vobj.displayMembers[this.dmNames[i]].length); //// clears array without modifying array Object (watch)
     };
-
 
     this.getTypeForDT = function (type) {
         type = parseInt(type);
@@ -405,7 +406,6 @@ const EbSelect = function (ctrl, options) {
         //});
     };
 
-
     //this.xxx = function (e, dt, type, indexes) {
     //    console.log("keysssss");
     //};
@@ -478,7 +478,7 @@ const EbSelect = function (ctrl, options) {
         if (event.target.nodeName === "SPAN")// if clicked tagclose
             vmValue = this.ClosedItem;
         //if (!this.ComboObj.MultiSelect)
-            vmValue = parseInt(vmValue);
+        vmValue = parseInt(vmValue);
 
         if (this.columnVals[this.vmName].contains(vmValue)) {
             this.removeColVals(vmValue);
@@ -572,6 +572,8 @@ const EbSelect = function (ctrl, options) {
     }.bind(this);
 
     this.Renderselect = function () {
+        if ($('#' + this.name + 'Container').length === 0)
+            console.eb_warn("no dom element with id " + this.name + 'Container');
         this.Vobj = new Vue({
             el: '#' + this.name + 'Container',
             data: {
@@ -676,6 +678,7 @@ const EbSelect = function (ctrl, options) {
         this.Vobj.DDstate = false;
         this.RemoveRowFocusStyle();
     };
+
     this.getMaxLenVal = function () {
         let val = "";
         $.each(this.$searchBoxes, function (i, el) {
@@ -736,8 +739,10 @@ const EbSelect = function (ctrl, options) {
             //alert('valueMember and displayMembers length miss match found !!!!');
             //console.error('Ebselect error : valueMember and displayMembers length miss match found !!!!');
             console.eb_warn('valueMember and displayMembers length miss match found !!!!');
-            console.log('valueMembers=' + this.Vobj.valueMember);
-            console.log('displayMember[0] = ' + this.Vobj.displayMember[this.dmNames[0]]);
+            if (this.Vobj.valueMember)
+                console.log('valueMembers=' + this.Vobj.valueMember);
+            if (this.Vobj.displayMembers && this.Vobj.displayMembers[this.dmNames[0]])
+                console.log('displayMember[0] = ' + this.Vobj.displayMembers[this.dmNames[0]]);
         }
     };
 

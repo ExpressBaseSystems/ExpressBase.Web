@@ -388,7 +388,8 @@
     }
 
 [name=ctrlsend] .fa {
-    margin-left: -5px
+    margin-left: -5.5px;
+    margin-top: -1px;
 }
 
 /*.poweredby-cont {

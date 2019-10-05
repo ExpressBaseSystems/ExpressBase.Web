@@ -14,7 +14,7 @@
     this.ssurl = url;
     this.clipboard = {};
     this.toolContClass = "tool-sec-cont";
-    this.botDpURL = 'url(https\:\/\/expressbase\.com\/images\/assistant\.png)center center no-repeat';
+    this.botDpURL = 'url(https\:\/\/myaccount.expressbase\.com\/images\/assistant\.png)center center no-repeat';
 
     this.controlCounters = CtrlCounters;//Global
 
@@ -23,6 +23,13 @@
     this.CurColCount = 2;
     this.movingObj = {};
     this.DraggableConts = [...(document.querySelectorAll("[ebclass=tool-sec-cont]")), document.getElementById(this.formid)];
+
+    this.PGobj = new Eb_PropertyGrid({
+        id: "pgWraper",
+        wc: this.wc,
+        cid: this.cid,
+        $extCont: $(".property-grid-cont")
+    });
 
     this.controlOnFocus = function (e) {
         window.scrollTo(0, 0);
@@ -45,9 +52,59 @@
         this.rootContainerObj = editModeObj;
         //setTimeout(function () {
         Proc(editModeObj, this.rootContainerObj);
-        this.renderCtrls();
+        $(".Eb-ctrlContainer").each(function (i, el) {
+            if (el.getAttribute("childOf") === 'EbUserControl')
+                return true;
+            this.initCtrl_(el);
+        }.bind(this));
+
+        //this.renderCtrls();
 
         //}.bind(this), 1000);
+    };
+
+    this.initCtrl_ = function (el) {
+        let $el = $(el);
+        let type = $el.attr("ctype").trim();
+        let attr_ebsid = $el.attr("ebsid");
+        let attrEbsid_Dgt = parseInt(attr_ebsid.match(/\d+$/)[0]);
+        let attrEbsid_Except_Dgt = attr_ebsid.substring(0, attr_ebsid.length - attrEbsid_Dgt.toString().length);
+
+        let ctrlCount = this.controlCounters[type + "Counter"];
+        this.controlCounters[type + "Counter"] = (attrEbsid_Dgt > ctrlCount) ? attrEbsid_Dgt : ctrlCount;
+        let ebsid = attrEbsid_Except_Dgt + attrEbsid_Dgt;// inc counter
+        $el.attr("tabindex", "1");
+        $el.attr("onclick", "event.stopPropagation();$(this).focus()");
+        //this.ctrlOnClickBinder($el, type);
+        $el.on("focus", this.controlOnFocus.bind(this));
+        $el.attr("eb-type", type);
+        $el.attr("ebsid", ebsid);
+        //if (type !== "UserControl")
+        //    this.updateControlUI(ebsid);
+        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
+    };
+
+    this.ctrlOnClickBinder = function ($ctrl, type) {
+        if (type === "TabControl")
+            $ctrl.on("click", function myfunction() {
+                let $e = $(event.target);
+                if ($e.closest(".cont-prop-btn").length === 1 || $e.closest(".ebtab-add-btn").length === 1)// to skip event.stopPropagation()
+                    return;
+
+                if ($e.closest("a").attr("data-toggle") !== "tab")
+                    event.stopPropagation();
+                $(event.target).closest(".Eb-ctrlContainer").focus();
+            });
+        else
+            $ctrl.on("click", function myfunction() {
+                let $e = $(event.target);
+                if ($e.closest(".cont-prop-btn").length === 1)// to skip event.stopPropagation()
+                    return;
+
+                event.stopPropagation();
+                if ($e.attr("class") !== "eb-lbltxtb")
+                    $(this).focus();
+            });
     };
 
     this.initCtrl = function (ctrl) {
@@ -156,13 +213,6 @@
         }
     }
     //this.PGobj = new Eb_PropertyGrid("pgWraper", this.wc, this.cid);
-
-    this.PGobj = new Eb_PropertyGrid({
-        id: "pgWraper",
-        wc: this.wc,
-        cid: this.cid,
-        $extCont: $(".property-grid-cont")
-    });
     this.curControl = null;
     this.drake = null;
 
@@ -188,25 +238,33 @@
     };
 
     this.acceptFn = function (el, target, source, sibling) {
-        var formId = this.formid;
-        if ($(source).attr("ebclass") === this.toolContClass && $(target).attr("class") === this.toolContClass) {
-            return false;
-        }
-        // allow copy except toolbox
-        if ($(source).attr("ebclass") === this.toolContClass && target.id === formId) {
-            return true;
-        }
-        if (source.id === formId && $(target).attr("ebclass") === this.toolContClass) {
-            return false;
-        }
-        // sortable with in the container
-        if (source.id === formId && target.id === formId) {
-            return true;
-        }
-        else {
-            return true;
-        }
 
+        if (el.contains(target))
+            return;
+        let _class = $(target).attr("ebclass");
+        if (_class !== this.toolContClass)
+            return true;
+        else
+            return false;
+
+        //var formId = this.formid;
+        //if ($(source).attr("ebclass") === this.toolContClass && $(target).attr("class") === this.toolContClass) {
+        //    return false;
+        //}
+        //// allow copy except toolbox
+        //if ($(source).attr("ebclass") === this.toolContClass && target.id === formId) {
+        //    return true;
+        //}
+        //if (source.id === formId && $(target).attr("ebclass") === this.toolContClass) {
+        //    return false;
+        //}
+        //// sortable with in the container
+        //if (source.id === formId && target.id === formId) {
+        //    return true;
+        //}
+        //else {
+        //    return true;
+        //}
     };
 
     this.makeTdsDropable = function () {
@@ -492,6 +550,11 @@
         this.drake.on("dragend", this.onDragendFn.bind(this));
         this.$form.on("focus", this.controlOnFocus.bind(this));
         //$('.controls-dd-cont .selectpicker').on('change', function (e) { $("#" + $(this).find("option:selected").val()).focus(); });
+        if (this.rootContainerObj.TableName.trim() === "")
+            this.rootContainerObj.TableName = this.rootContainerObj.Name + "_tbl";
+        if (this.rootContainerObj.DisplayName.trim() === "")
+            this.rootContainerObj.DisplayName = this.rootContainerObj.Name;
+        this.$form.focus();
 
         this.DSchangeCallBack = function (PropsObj) {
             if (PropsObj.constructor.name === "EbDynamicCardSet")

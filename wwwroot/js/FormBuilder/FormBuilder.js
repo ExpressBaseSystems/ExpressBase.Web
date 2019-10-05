@@ -623,6 +623,21 @@
             PropsObj.isTableNameFromParent = false;
             this.updateChildTablesName(PropsObj, TblName);
         }
+        let Refid = PropsObj[CurProp];
+        let ObjType = PropsObj.ObjType;
+        if (ObjType === "DataObject" && CurProp === "DataSource") {
+            $.LoadingOverlay('show');
+            $.ajax({
+                type: "POST",
+                url: "../DS/GetColumns4Control",
+                data: { DataSourceRefId: Refid },
+                success: function (Columns) {
+                    PropsObj["Columns"] = JSON.parse(Columns);
+                    $.LoadingOverlay('hide');
+                    this.updateControlUI(PropsObj.EbSid_CtxId);
+                }.bind(this)
+            });
+        }
     }.bind(this);
 
     this.updateChildTablesName = function (PropsObj, TblName) {

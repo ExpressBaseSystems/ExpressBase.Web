@@ -563,7 +563,7 @@
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {
-                Eb_dataSourceInit(this.DSchangeCallBack);
+                //Eb_dataSourceInit(this.DSchangeCallBack);
             }
             if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
                 this.RefreshControl(PropsObj);

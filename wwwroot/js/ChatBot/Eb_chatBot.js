@@ -1222,6 +1222,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.bearerToken = result[0];
                 this.refreshToken = result[1];
                 this.formsDict = result[2];
+                ebcontext.user = JSON.parse(result[3]);
                 this.formNames = Object.values(this.formsDict);
                 this.AskWhatU();
                 this.ajaxSetup4Future();

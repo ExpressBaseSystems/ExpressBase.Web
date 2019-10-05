@@ -1005,7 +1005,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     }
 
                     if (this.curCtrl && ($msg.find(".ctrl-wraper").length === 1)) {
-                        if ($('#' + this.curCtrl.Name).length === 1)
+                        if ($('#' + this.curCtrl.EbSid).length === 1)
                             this.loadcontrol();
                         else
                             console.error("loadcontrol() called before rendering 'id = " + this.curCtrl.Name + "' element");
@@ -1037,7 +1037,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         if (!this.curCtrl)
             return;
         if (this.initControls[this.curCtrl.ObjType] !== undefined)
-            this.initControls[this.curCtrl.ObjType](this.curCtrl);
+            this.initControls[this.curCtrl.ObjType](this.curCtrl, {});
     };
 
     this.submitReqCheck = function () {

@@ -178,8 +178,6 @@ namespace ExpressBase.Web.Controllers
                     //{
                     //    (control as EbCards).InitFromDataBase(this.ServiceClient);
                     //}
-                    else
-                        control.BareControlHtml = control.GetBareHtml();
                 }
             }
             if (Obj is EbTableVisualization)

@@ -165,12 +165,12 @@ var EditTicket = function () {
 
             });
 
-            
+
             $.each(sptHistroy.SpHistory, function (j, ob, ) {
                 let stval = 0;
                 let ftemp = null;
                 let htm2 = null;
-                if (ob.Field =="title") {
+                if (ob.Field == "title") {
                     ftemp = "Title";
                 }
                 else if (ob.Field == "solution_id") {
@@ -196,9 +196,9 @@ var EditTicket = function () {
                     stval = 2;
                 }
                 else if (ob.Field == "assigned_to") {
-                    ftemp ="Assigned to"
+                    ftemp = "Assigned to"
                 }
-                
+
                 if (stval == 0) {
                     htm2 = ` <div class="hstry">
                                 <div>
@@ -223,7 +223,7 @@ var EditTicket = function () {
                                 </div>
                              </div>`
                 }
-               
+
                 $("#hist_id").prepend(htm2);
             });
         }
@@ -321,7 +321,7 @@ var EditTicket = function () {
             var typ = $('input[name=optradio]:checked').val();
 
             let updtkt = {};
-            
+
             $.each(tktdtl.supporttkt, function (j, obj) {
                 if (obj.title != tlt) {
                     updtkt.title = tlt;
@@ -339,7 +339,7 @@ var EditTicket = function () {
                     updtkt.solution_id = solu;
                     valchng = 1;
                 }
-                
+
                 if (obj.type_b_f != typ) {
                     updtkt.type_bg_fr = typ;
                     valchng = 1;
@@ -354,14 +354,14 @@ var EditTicket = function () {
 
             });
             if (ebcontext.user.wc == "tc") {
-                data.append("solu_id", solu );
+                data.append("solu_id", solu);
             }
-                       
+
             let updtkt1 = JSON.stringify(updtkt);
             data.append("updtkt", updtkt1);
             data.append("filedelet", JSON.stringify(window.filedel));
 
-            if ((valchng == 1)||(totalFiles>0)) {
+            if ((valchng == 1) || (totalFiles > 0)) {
                 $.ajax({
                     url: "../SupportTicket/UpdateTicket",
                     type: 'POST',
@@ -375,14 +375,14 @@ var EditTicket = function () {
                 });
             }
             else if (valchng == 0) {
-                    EbMessage("show", { Message: "No changes found", Background: 'red' });
-                    $("#eb_common_loader").EbLoader("hide");
-                }
+                EbMessage("show", { Message: "No changes found", Background: 'red' });
+                $("#eb_common_loader").EbLoader("hide");
+            }
             else if (valchng == 2) {
                 EbMessage("show", { Message: "Ticket id missmatch", Background: 'red' });
                 $("#eb_common_loader").EbLoader("hide");
-                    }
-           
+            }
+
         }
 
     }
@@ -390,6 +390,7 @@ var EditTicket = function () {
 
     this.UpdateAdminTicketfn = function () {
         let fill = this.validatefn();
+        var valchng = 0;
         if (fill) {
             var data = new FormData();
             $("#eb_common_loader").EbLoader("show");
@@ -398,38 +399,59 @@ var EditTicket = function () {
             //    var file = window.filearray[i];
             //    data.append("imageUploadForm" + i, file);
             //}
-            //var tlt = $("#bugtitle").val().trim();
-            //var desc = $("#descriptionid").val().trim();
-            //var priori = $("#bugpriority option:selected").text().trim();
+            // data.append("filedelet", JSON.stringify(window.filedel));
             var solu = $("#soluid").val();
             var tktid = $("#tktid").val();
             var typ = $('input[name=optradio]:checked').val();
             var sts = $("#stsid option:selected").text().trim();
             var asgned = $("#asgnid option:selected").text().trim();
-            var rmrk = $("#remarkid").val();
-            //data.append("title", tlt);
-            //data.append("descp", desc);
-            //data.append("priority", priori);
-            data.append("solid", solu);
-            data.append("tktid", tktid);
-            // data.append("filedelet", JSON.stringify(window.filedel));
-            data.append("type_f_b", typ);
-            data.append("stats", sts);
-            data.append("asgnedto", asgned);
-            data.append("remark", rmrk);
 
+            let updtkt = {};
 
-            $.ajax({
-                url: "../SupportTicket/UpdateTicketAdmin",
-                type: 'POST',
-                data: data,
-                processData: false,
-                contentType: false,
-                success: function () {
-                    location.href = '/SupportTicket/bugsupport';
-                    $("#eb_common_loader").EbLoader("hide");
+            $.each(tktdtl.supporttkt, function (j, obj) {
+                if (obj.assignedto != asgned) {
+                    updtkt.assigned_to = asgned;
+                    valchng = 1;
                 }
+                if (obj.status != sts) {
+                    updtkt.status = sts;
+                    valchng = 1;
+                }
+                if (obj.type_b_f != typ) {
+                    updtkt.type_bg_fr = typ;
+                    valchng = 1;
+                }
+                if (obj.solutionid == solu) {
+                    data.append("solid", solu);
+                }
+                else {
+                    valchng = 3
+
+                }
+                if (obj.ticketid == tktid) {
+                    data.append("tktid", tktid);
+                }
+                else {
+                    valchng = 2;
+                }
+
             });
+            let updtkt1 = JSON.stringify(updtkt);
+            data.append("updtkt", updtkt1);
+
+            if (valchng == 1) {
+                $.ajax({
+                    url: "../SupportTicket/UpdateTicketAdmin",
+                    type: 'POST',
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        location.href = '/SupportTicket/bugsupport';
+                        $("#eb_common_loader").EbLoader("hide");
+                    }
+                });
+            }
         }
 
     }
@@ -445,20 +467,20 @@ var EditTicket = function () {
             $.ajax({
                 url: "../SupportTicket/Comment",
                 type: 'POST',
-                data: { cmnt: cmnt, tktno:tkt},
-               
+                data: { cmnt: cmnt, tktno: tkt },
+
                 success: function () {
-                    $("#cmntid").val('') ;
-                   var htm2 = ` <div class="hstry">
+                    $("#cmntid").val('');
+                    var htm2 = ` <div class="hstry">
                                 <div>
                                  <strong> ${ebcontext.user.FullName} </strong> :   ${cmnt} 
                                 </div>
                                 
                              </div>`
-                
-               
+
+
                     $("#hist_id").prepend(htm2);
-                    
+
                     $("#eb_common_loader").EbLoader("hide");
                 }
             });

@@ -216,19 +216,17 @@ namespace ExpressBase.Web.Controllers
 
 		}
 
-		public void UpdateTicketAdmin(string stats, string asgnedto, string remark, string tktid, string solid, string type_f_b)
+		public void UpdateTicketAdmin( string updtkt,  string tktid, string solid)
 		{
 
 			UpdateTicketAdminRequest Uptkt = new UpdateTicketAdminRequest();
+			Dictionary<string, string> chngtkt = JsonConvert.DeserializeObject<Dictionary<string, string>>(updtkt);
 			var httpreq = this.HttpContext.Request.Form;
 
+			Uptkt.chngedtkt = chngtkt;
 			Uptkt.Ticketid = tktid;
-			Uptkt.Status = stats;
-			Uptkt.Remarks = remark;
-			Uptkt.AssignTo = asgnedto;
 			Uptkt.Solution_id = solid;
-			Uptkt.Type_f_b = type_f_b;
-
+			Uptkt.usrname = this.LoggedInUser.FullName;
 			UpdateTicketResponse upr = this.ServiceClient.Post<UpdateTicketResponse>(Uptkt);
 
 

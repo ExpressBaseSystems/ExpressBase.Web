@@ -1488,3 +1488,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         border: 1px solid #ffa190;
     }
 }
+
+/*data Reader Style*/
+.Dt-Rdr-col-cont .col-div-blk {
+    padding: 5px;
+    width: auto;
+    display: inline-block;
+    border: 1px solid #ccc;
+    margin: 5px;
+    border-radius: 3px;
+}

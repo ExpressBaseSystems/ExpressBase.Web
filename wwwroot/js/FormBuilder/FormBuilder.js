@@ -26,6 +26,7 @@
 
     this.DraggableConts = [...(document.querySelectorAll("[ebclass=tool-sec-cont]")), document.getElementById(this.formId)];
 
+
     this.GenerateButtons = function () {
         if (options.builderType === 'WebForm' && options.objInEditMode !== null) {
             $("#obj_icons").empty().append(`<button class='btn' id= 'form_preview' data-toggle='tooltip' data-placement='bottom' title= 'Preview'>
@@ -101,6 +102,12 @@
             this.makeElementDropable(el);
         }.bind(this));
     };
+
+    this.makeDataObjectDropable = function () {
+        $.each($("#" + this.formId + " .Dt-Rdr-col-cont"), function (i, el) {
+            this.makeElementDropable(el);
+        }.bind(this));
+    }
 
     this.makeElementDropable = function (el) {
         if (this.drake) {
@@ -191,7 +198,7 @@
         $el.attr("ebsid", ebsid);
         if (type !== "UserControl")
             this.updateControlUI(ebsid);
-        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
+        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));     
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -342,6 +349,13 @@
                     this.rootContainerObj.Controls.Append(ctrlObj);
                 }
 
+                if (type === "DataObject" && this.builderType === "UserControl") {
+                    //this.DraggableConts.push(document.querySelectorAll(".Dt-Rdr-col-cont")[1]);
+
+                    this.DraggableConts.push($(`#cont_${ctrlObj.EbSid_CtxId} .Dt-Rdr-col-cont`)[0]);
+
+                }
+
                 $ctrl.focus();
                 ctrlObj.Label = ebsid;
                 ctrlObj.HelpText = "";
@@ -349,6 +363,60 @@
                     this.InitContCtrl(ctrlObj, $ctrl);
                 this.updateControlUI(ebsid);
             }
+            //drop from blk-cont to form(Eb Data object control)
+            if ($(source).attr("ebclass") === "blk-cont") {
+                let $el = $(el);
+                let type = $el.attr("eb-type").trim();
+                let CntrlName = $el.attr("data-ctrl").trim();
+                let ColumnlName = $el.attr("data-column").trim();
+                let ebsid = type + ++(this.controlCounters[type + "Counter"]);
+                let $sibling = $(sibling);
+                $el.remove();
+                let ctrlObj = new EbObjects["Eb" + type](ebsid);
+                ctrlObj.DataObjCtrlName = CntrlName;
+                ctrlObj.DataObjColName = ColumnlName;
+                ctrlObj.Label = ColumnlName;
+                let $ctrl = ctrlObj.$Control;
+
+                if (type === "UserControl") {///user control refid set on ctrlobj
+                    ctrlObj["RefId"] = $(el).find("option:selected").attr('refid');
+                    this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]);
+                }
+                else if (type === "Approval") {
+                    ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
+                    this.ApprovalCtrl = ctrlObj;
+                }
+                else if (type === "ProvisionLocation") {
+                    this.ProvisionLocationCtrl = ctrlObj;
+                }
+                else if (type === "SimpleSelect" || type === "BooleanSelect") {
+                    $ctrl.find(".selectpicker").selectpicker();
+                }
+
+                this.dropedCtrlInit($ctrl, type, ebsid);
+                if (sibling) {
+                    $ctrl.insertBefore($sibling);
+                    let idx = $sibling.index() - 1;
+                    this.rootContainerObj.Controls.InsertAt(idx, ctrlObj);
+                }
+                else {
+                    $target.append($ctrl);
+                    this.rootContainerObj.Controls.Append(ctrlObj);
+                }
+
+                if (type === "DataObject" && this.builderType === "UserControl") {
+                    this.DraggableConts.push(document.querySelectorAll(".Dt-Rdr-col-cont")[0]);
+                }
+
+                $ctrl.focus();
+              
+                ctrlObj.HelpText = "";
+                if (ctrlObj.IsContainer)
+                    this.InitContCtrl(ctrlObj, $ctrl);
+                this.updateControlUI(ebsid);
+            }
+
+
             let $parent = $target.closest(".ebcont-ctrl");
             if ($parent.attr("ctype") === "TabPane")
                 this.adjustPanesHeight($parent);
@@ -455,7 +523,7 @@
                 type: "warning",
                 delay: 3000
             });
-            return false;
+            return false;   
         }
 
         if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ProvisionLocation" && this.ProvisionLocationCtrl) {
@@ -471,7 +539,7 @@
         }
 
         let _class = $(target).attr("ebclass");
-        if (_class !== this.toolContClass)
+        if (_class !== this.toolContClass && _class !== "blk-cont")
             return true;
         else
             return false;
@@ -495,7 +563,7 @@
 
     this.drake = new dragula(this.DraggableConts, {
         revertOnSpill: true,
-        copy: function (el, source) { return (source.className.includes('tool-sec-cont')); },
+        copy: function (el, source) { return (source.className.includes('tool-sec-cont') || source.className.includes('Dt-Rdr-col-cont') ); },
         copySortSource: true,
         moves: this.movesfn.bind(this),
         accepts: this.acceptFn.bind(this)
@@ -544,7 +612,21 @@
     }.bind(this);
 
     this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
-
+        let Refid = PropsObj[CurProp];
+        let ObjType = PropsObj.ObjType;
+        if (ObjType === "DataObject" && CurProp === "DataSource") {
+            $.LoadingOverlay('show');
+            $.ajax({
+                type: "POST",
+                url: "../DS/GetColumns4Control",
+                data: { DataSourceRefId: Refid },
+                success: function (Columns) {
+                    PropsObj["Columns"] = JSON.parse(Columns);
+                    $.LoadingOverlay('hide');
+                    this.updateControlUI(PropsObj.EbSid_CtxId);
+                }.bind(this)
+            });
+        }
     }.bind(this);
 
     this.lbltxtbBlur = function (e) {
@@ -735,6 +817,7 @@
             this.makeTdsDropable_Resizable();
             this.makeTabsDropable();
             this.makeGBsDropable();
+            this.makeDataObjectDropable();
         }
         this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
         this.ProvisionLocationCtrl = getFlatObjOfType(this.rootContainerObj, "ProvisionLocation")[0];

@@ -560,7 +560,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var Html = `<div class='form-wraper'>`;
         $.each(this.curForm.Controls.$values, function (i, control) {
             if (!control.hidden)
-                Html += `<label>${control.Label}</label><div for='${control.Name}'><div class='ctrl-wraper'>${control.bareControlHtml}</div></div><br/>`;
+                Html += `<label>${control.Label}</label><div for='${control.Name}'><div class='ctrl-wraper'>${control.BareControlHtml}</div></div><br/>`;
         });
         this.msgFromBot($(Html + '<div class="btn-box"><button name="formsubmit_fm" class="btn formname-btn">Submit</button><button name="formcancel_fm" class="btn formname-btn">Cancel</button></div></div>'), this.initFormCtrls_fm);
     };
@@ -572,7 +572,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.VisibleIf));
             if (control.ValueExpression && control.ValueExpression.trim())//if valueExpression is Not empty
                 this.formFunctions.valueExpressions[control.Name] = new Function("form", "user", atob(control.ValueExpression));
-            this.formControls.push($(`<div class='ctrl-wraper'>${control.bareControlHtml}</div>`));
+            this.formControls.push($(`<div class='ctrl-wraper'>${control.BareControlHtml}</div>`));
         }.bind(this));
 
         if (this.curForm.RenderAsForm)
@@ -680,7 +680,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $msgDiv = $btn.closest('.msg-cont');
         this.sendBtnIdx = parseInt($btn.attr('idx'));
         this.curCtrl = this.curForm.Controls.$values[this.sendBtnIdx];
-        var id = this.curCtrl.Name;
+        var id = this.curCtrl.EbSid;
         var next_idx = this.sendBtnIdx + 1;
         this.nxtCtrlIdx = (next_idx > this.nxtCtrlIdx) ? next_idx : this.nxtCtrlIdx;
         var $input = $('#' + id);

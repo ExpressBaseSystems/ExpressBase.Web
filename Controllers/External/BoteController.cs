@@ -44,6 +44,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.appid = appid;
             ViewBag.settings = JsonConvert.SerializeObject(settings);
             ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(new EbBotForm() as EbControlContainer, BuilderType.BotForm);
             return View();
 
             //this.ServiceClient.Headers.Add("SolId", tid);

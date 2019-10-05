@@ -483,7 +483,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-top: solid 1px #585858;
 }
 
-[eb-form='true'] .bootstrap-select {
+[eb-form='true'] .bootstrap-select, .chat-ctrl-cont .bootstrap-select {
     width: 100% !important;
 }
 

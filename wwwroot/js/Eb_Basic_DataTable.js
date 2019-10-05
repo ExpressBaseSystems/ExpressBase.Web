@@ -262,7 +262,7 @@ var EbBasicDataTable = function (Option) {
             };
         }
         else {
-            o.data = this.MainData.formatteddata || this.MainData.data;
+            o.data = this.MainData.formattedData || this.MainData.data;
             this.data = this.MainData.data;
             this.formatteddata = this.MainData.formattedData || this.MainData.data;
         }

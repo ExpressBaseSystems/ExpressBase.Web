@@ -102,7 +102,7 @@
             $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
             $(".eb_iframecont").hide();
             $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex"); $(this).animate({ opacity: '1' }, 400); });
-            setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);//////////
+            //setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);//////////
             d.latestAppid = appid;
         }
     </script>

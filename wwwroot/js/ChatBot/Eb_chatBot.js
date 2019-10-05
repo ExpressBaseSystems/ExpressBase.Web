@@ -682,10 +682,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $msgDiv = $btn.closest('.msg-cont');
         this.sendBtnIdx = parseInt($btn.attr('idx'));
         this.curCtrl = this.curForm.Controls.$values[this.sendBtnIdx];
-        var id = this.curCtrl.EbSid;
+        var id = this.curCtrl.Name;
         var next_idx = this.sendBtnIdx + 1;
         this.nxtCtrlIdx = (next_idx > this.nxtCtrlIdx) ? next_idx : this.nxtCtrlIdx;
-        var $input = $('#' + id);
+        var $input = $('#' + this.curCtrl.EbSid);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         this.curVal = this.getValue($input);
         if (this.curCtrl.ObjType === "ImageUploader") {

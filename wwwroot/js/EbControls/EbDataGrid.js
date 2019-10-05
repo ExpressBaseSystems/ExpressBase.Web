@@ -28,7 +28,9 @@
 
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         this.SetEditModeDataTable(SingleTable);
-        return this.setEditModeRows(this.EditModeDataTable);
+        this.setEditModeRows(this.EditModeDataTable);
+
+        return this.updateAggCols();
     }.bind(this);
 
     this.getPSDispMembrs = function (cellObj, rowId, col) {
@@ -964,10 +966,20 @@
 
     }.bind(this);
 
+    //this.updateAggCols = function (rowId) {
+    //    $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
+    //        if (inpctrl.IsAggragate) {
+    //            let colname = inpctrl.Name;
+    //            $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+    //        }
+    //    }.bind(this));
+
+    //};
+
     this.updateAggCols = function (rowId) {
-        $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
-            if (inpctrl.IsAggragate) {
-                let colname = inpctrl.Name;
+        $.each(this.ctrl.Controls.$values, function (i, col) {
+            if (col.IsAggragate) {
+                let colname = col.Name;
                 $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
             }
         }.bind(this));
@@ -997,17 +1009,39 @@
         return num;
     };
 
+    //this.getAggOfCol = function (colname) {
+    //    let sum = 0;
+    //    $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
+    //        let val;
+
+    //        if (event && event.target === Iter_Inp) {
+    //            let typing_inp = event.target;
+    //            val = typing_inp.value;
+    //        }
+    //        else {
+    //            val = $(Iter_Inp).val() || 0;
+    //        }
+
+    //        sum += parseFloat(val) || 0;
+    //        sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
+    //    }.bind(this));
+    //    this.ctrl[colname + "_sum"] = sum;
+    //    this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
+    //    return this.appendDecZeros(sum);
+    //};
+
     this.getAggOfCol = function (colname) {
         let sum = 0;
-        $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
+        $.each($(`#${this.TableId} > tbody [colname='${colname}'] .tdtxt span`), function (i, Iter_span) {
             let val;
+            let Iter_Inp = $(Iter_span).closest(`[colname='${colname}']`).find("[ui-inp]")[0];
 
             if (event && event.target === Iter_Inp) {
                 let typing_inp = event.target;
                 val = typing_inp.value;
             }
             else {
-                val = $(Iter_Inp).val() || 0;
+                val = $(Iter_span).text() || 0;
             }
 
             sum += parseFloat(val) || 0;
@@ -1048,7 +1082,10 @@
     this.removeTr = function ($tr) {
         let rowId = $tr.attr("rowid");
         $tr.find("td *").hide(200);
-        setTimeout(function () { $tr.remove(); }, 201);
+        setTimeout(function () {
+            $tr.remove();
+            this.updateAggCols();
+        }.bind(this), 201);
         if ($tr.attr("is-initialised") === 'false')
             this.AllRowCtrls[rowId] = {};
 

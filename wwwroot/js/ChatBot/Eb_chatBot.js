@@ -97,7 +97,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let email = $("#anon_mail").val().trim();
         let phone = $("#anon_phno").val().trim();
         if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e' });
+            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000  });
             return;
         }
         this.msgFromBot("Thank you.");
@@ -1153,11 +1153,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.hideTypingAnim();
         let msg = '';
         if (rowAffected > 0) {
-            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay:4000 });
             msg = `Your ${this.curForm.Name} form submitted successfully`;
         }
         else {
-            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000  });
             msg = `Your ${this.curForm.Name} form submission failed`;
         }
         this.msgFromBot(msg);

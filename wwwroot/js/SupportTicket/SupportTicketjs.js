@@ -361,7 +361,7 @@ var EditTicket = function () {
             data.append("updtkt", updtkt1);
             data.append("filedelet", JSON.stringify(window.filedel));
 
-            if (valchng == 1) {
+            if ((valchng == 1)||(totalFiles>0)) {
                 $.ajax({
                     url: "../SupportTicket/UpdateTicket",
                     type: 'POST',
@@ -378,7 +378,7 @@ var EditTicket = function () {
                     EbMessage("show", { Message: "No changes found", Background: 'red' });
                     $("#eb_common_loader").EbLoader("hide");
                 }
-            else if (valchng == 0) {
+            else if (valchng == 2) {
                 EbMessage("show", { Message: "Ticket id missmatch", Background: 'red' });
                 $("#eb_common_loader").EbLoader("hide");
                     }

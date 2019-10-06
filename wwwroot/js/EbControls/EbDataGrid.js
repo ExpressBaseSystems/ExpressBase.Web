@@ -29,7 +29,6 @@
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         this.SetEditModeDataTable(SingleTable);
         this.setEditModeRows(this.EditModeDataTable);
-
         return this.updateAggCols();
     }.bind(this);
 

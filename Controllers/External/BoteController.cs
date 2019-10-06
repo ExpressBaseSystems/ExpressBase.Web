@@ -211,6 +211,7 @@ namespace ExpressBase.Web.Controllers
                 if (user.UserId == 1)
                     user.Preference.Locale = "en-IN";
                 returnlist.Add(JsonConvert.SerializeObject(user));
+                returnlist.Add(formlist.BotFormsDisp);
                 return returnlist;
 
                 //CookieOptions options = new CookieOptions();

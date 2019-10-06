@@ -22,7 +22,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.refreshToken = null;
     this.initControls = new InitControls({
         botBuilder: this,
-        wc:"bc"
+        wc: "bc"
     });
     this.typeDelay = 200;
     this.ChartCounter = 0;
@@ -97,7 +97,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let email = $("#anon_mail").val().trim();
         let phone = $("#anon_phno").val().trim();
         if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000  });
+            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
             return;
         }
         this.msgFromBot("Thank you.");
@@ -134,7 +134,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.refreshToken = result[1];
                 this.formsDict = result[2];
                 window.ebcontext.user = JSON.parse(result[3]);
-                this.formNames = Object.values(this.formsDict);
+                //this.formNames = Object.values(this.formsDict);
+                this.formNames = Object.values(result[4]);
                 this.AskWhatU();
                 this.ajaxSetup4Future();
                 /////////////////////////////////////////////////
@@ -1167,11 +1168,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.hideTypingAnim();
         let msg = '';
         if (rowAffected > 0) {
-            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay:4000 });
+            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
             msg = `Your ${this.curForm.Name} form submitted successfully`;
         }
         else {
-            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000  });
+            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
             msg = `Your ${this.curForm.Name} form submission failed`;
         }
         this.msgFromBot(msg);
@@ -1238,7 +1239,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.refreshToken = result[1];
                 this.formsDict = result[2];
                 window.ebcontext.user = JSON.parse(result[3]);
-                this.formNames = Object.values(this.formsDict);
+                //this.formNames = Object.values(this.formsDict););
+                this.formNames = Object.values(result[4]);
                 this.AskWhatU();
                 this.ajaxSetup4Future();
                 /////////////////////////////////////////////////Form click

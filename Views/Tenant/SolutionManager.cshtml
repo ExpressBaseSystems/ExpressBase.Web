@@ -72,7 +72,7 @@
                 </p>
             </div>
             <div class="col-md-3 col-lg-3 col-xs-12 pd-0 form-inline s-dash-btnwraper">
-                <form method="post" action="@sso_dev.Replace(" myaccount.", "" )" target="_blank">
+                <form method="post" action="@sso_dev.Replace("myaccount.", "")" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="dc" />
@@ -80,7 +80,7 @@
                         <i class="fa fa-wrench"></i> Dev Login
                     </button>
                 </form>
-                <form method="post" action="@sso_user.Replace(" myaccount.", "" )" target="_blank">
+                <form method="post" action="@sso_user.Replace("myaccount.", "")" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="uc" />

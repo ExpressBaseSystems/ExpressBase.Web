@@ -325,7 +325,7 @@
 
     this.InputGeoLocation = function (ctrl) {
         ebcontext.userLoc = { lat: 0, long: 0 };
-        if (_rowId === undefined || _rowId === 0) {
+        if (typeof _rowId === 'undefined' || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
             }.bind(this));

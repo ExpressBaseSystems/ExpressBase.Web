@@ -873,3 +873,7 @@
     transform: translate(-50%,0px);
     z-index: 9999;
 }
+
+.eb-chat-cont .locinp-span {
+    line-height: 2;
+}

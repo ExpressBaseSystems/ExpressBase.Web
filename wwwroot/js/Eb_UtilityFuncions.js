@@ -58,7 +58,7 @@ function isAllValuesTrue(Obj) {
     return all_true;
 }
 
-function EbRunValueExpr(ctrl, formObject, userObject) {
+function EbRunValueExpr(ctrl, formObject, userObject, updateSpan) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Code) {
         let fun = new Function("form", "user", `event`, atob(ctrl.ValueExpr.Code)).bind(ctrl, formObject, userObject);
         let val = fun();
@@ -73,6 +73,8 @@ function EbRunValueExpr(ctrl, formObject, userObject) {
             if (ctrl.__eb_ValueExpr_val)
                 ctrl.setValue(ctrl.__eb_ValueExpr_val);
         }
+        if (updateSpan)
+            $(`#td_${ctrl.EbSid_CtxId} .tdtxt>span`).text(ctrl.__eb_ValueExpr_val);
     }
 }
 

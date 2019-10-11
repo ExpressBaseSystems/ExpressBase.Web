@@ -597,9 +597,11 @@
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         let initValue = "0";
-        if (ctrl.DecimalPlaces > 0)
-            initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
-        $input.val(initValue);
+        if ($input.val() === "") {
+            if (ctrl.DecimalPlaces > 0)
+                initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
+            $input.val(initValue);
+        }
 
         $input.inputmask("currency", {
             radixPoint: ".",

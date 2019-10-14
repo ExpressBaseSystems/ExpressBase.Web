@@ -592,6 +592,12 @@
 
     };
 
+    this.TextBox = function (ctrl, ctrlopts) {
+        if (ctrl.AutoSuggestion === true) {
+            $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
+        }   
+    };
+
     this.Numeric = function (ctrl) {
         //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;

@@ -9,12 +9,12 @@ var BuilderMode = {
 };
 var EbGoogleMap = function (option) {
     this.propGrid = option.PGobj || null;
-    this.data = option.data || null;
+    this.data =  null;
     this.ssurl = option.ssurl;
     this.EbObject = option.dsobj || null;
     this.Refid = option.refid || null;
     this.tabNum = option.tabNum || 0;
-    this.tableId = null;
+    this.tableId = option.tableId || null;
     this.drake = null;
     this.PcFlag = false;
     this.login = option.login || "dc";
@@ -35,83 +35,92 @@ var EbGoogleMap = function (option) {
     this.TenantId = option.TenantId;
     this.UserId = option.UserId;
     this.googlekey = option.googlekey;
-    let split_window = new splitWindow("parent-div0", "contBox");
+    this.Source = option.Source || "Visualization";
 
-    split_window.windowOnFocus = function (ev) {
-        $("#Relateddiv").hide();
-        if ($(ev.target).attr("class") !== undefined) {
-            if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
-                var id = $(ev.target).attr("id");
-                focusedId = id;
+    if (this.Source === "Visualization") {
+        let split_window = new splitWindow("parent-div0", "contBox");
+
+        split_window.windowOnFocus = function (ev) {
+            $("#Relateddiv").hide();
+            if ($(ev.target).attr("class") !== undefined) {
+                if ($(ev.target).attr("class").indexOf("sub-windows") !== -1) {
+                    var id = $(ev.target).attr("id");
+                    focusedId = id;
+                }
             }
-        }
-    }.bind(this);
+        }.bind(this);
 
-    this.init = function () {
-        if (this.EbObject === null) {
-            this.EbObject = new EbObjects["EbGoogleMap"]("Container_" + Date.now());
-            this.Mode = BuilderMode.NEW;
-        }
-        else
-            this.Mode = BuilderMode.EDIT;
-        if (this.MainData !== null)
-            split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap", prevfocusedId);
-        else
-            split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap");
-        if (this.propGrid === null) {
-            this.CreatePg();
-        }
-        this.InitParamWindow();
-        if (this.Mode === BuilderMode.EDIT)
-            this.call2FD();
-    };
-
-    this.CreatePg = function () {
-        this.propGrid = new Eb_PropertyGrid({
-            id: "pp_inner",
-            wc: "dc",
-            cid: this.cid,
-            $extCont: $(".ppcont")
-        });
-        this.propGrid.PropertyChanged = this.tmpPropertyChanged;
-        this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
-    };
-
-    this.InitParamWindow = function () {
-        this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter;
-        this.ContextId = "filterWindow_" + this.tableId;
-        this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
-        $("#parent-div0").before(this.FDCont);
-        this.FDCont.hide();
-
-        if (this.login === "dc") {
-            this.stickBtn = new EbStickButton({
-                $wraper: this.FDCont,
-                $extCont: this.FDCont,
-                //$scope: $(subDivId),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                //btnTop: 42,
-                style: { top: "112px" }
-            });
-        }
-    };
-
-    this.tmpPropertyChanged = function (obj, Pname) {
-        if (Pname === "DataSourceRefId") {
-            if (obj[Pname] !== null) {
-                this.PcFlag = true;
-                this.EbObject.Columns.$values = [];
-                this.EbObject.DSColumns.$values = [];
-                this.EbObject.LatLong = null;
+        this.init = function () {
+            if (this.EbObject === null) {
+                this.EbObject = new EbObjects["EbGoogleMap"]("Container_" + Date.now());
+                this.Mode = BuilderMode.NEW;
+            }
+            else
+                this.Mode = BuilderMode.EDIT;
+            if (this.MainData !== null)
+                split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap", prevfocusedId);
+            else
+                split_window.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbGoogleMap");
+            if (this.propGrid === null) {
+                this.CreatePg();
+            }
+            this.InitParamWindow();
+            if (this.Mode === BuilderMode.EDIT)
                 this.call2FD();
+        };
+
+        this.CreatePg = function () {
+            this.propGrid = new Eb_PropertyGrid({
+                id: "pp_inner",
+                wc: "dc",
+                cid: this.cid,
+                $extCont: $(".ppcont")
+            });
+            this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+            this.propGrid.setObject(this.EbObject, AllMetas["EbGoogleMap"]);
+        };
+
+        this.InitParamWindow = function () {
+            this.tableId = "dv" + this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter;
+            this.ContextId = "filterWindow_" + this.tableId;
+            this.FDCont = $(`<div id='${this.ContextId}' class='filterCont fd'></div>`);
+            $("#parent-div0").before(this.FDCont);
+            this.FDCont.hide();
+
+            if (this.login === "dc") {
+                this.stickBtn = new EbStickButton({
+                    $wraper: this.FDCont,
+                    $extCont: this.FDCont,
+                    //$scope: $(subDivId),
+                    icon: "fa-filter",
+                    dir: "left",
+                    label: "Parameters",
+                    //btnTop: 42,
+                    style: { top: "112px" }
+                });
             }
-        }
-        else if (Pname === "Name") {
-            $("#objname").text(obj.DisplayName);
-        }
-    }.bind(this);
+        };
+
+        this.tmpPropertyChanged = function (obj, Pname) {
+            if (Pname === "DataSourceRefId") {
+                if (obj[Pname] !== null) {
+                    this.PcFlag = true;
+                    this.EbObject.Columns.$values = [];
+                    this.EbObject.DSColumns.$values = [];
+                    this.EbObject.LatLong = null;
+                    this.call2FD();
+                }
+            }
+            else if (Pname === "Name") {
+                $("#objname").text(obj.DisplayName);
+            }
+        }.bind(this);
+    }
+
+    this.init4Other = function () {
+        this.Mode === BuilderMode.EDIT;
+        this.getDataCall();
+    }
 
     this.call2FD = function () {
         this.relatedObjects = this.EbObject.DataSourceRefId;
@@ -244,20 +253,24 @@ var EbGoogleMap = function (option) {
             }
             this.isSecondTime = false;
             $("#eb_common_loader").EbLoader("show");
-            $.ajax({
-                type: 'POST',
-                url: "../DV/getdata",
-                data: { DataVizObjString: JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues, dvRefId: this.Refid },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                },
-                success: this.getDataSuccess.bind(this),
-                error: function () { }
-            });
+            this.getDataCall();
         }
         this.GenerateButtons();
 
     };
+
+    this.getDataCall = function(){
+        $.ajax({
+            type: 'POST',
+            url: "../DV/getdata",
+            data: { DataVizObjString: JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues, dvRefId: this.Refid },
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + getToken());
+            //},
+            success: this.getDataSuccess.bind(this),
+            error: function () { }
+        });
+    }
 
     this.getFilterValues = function () {
         var fltr_collection = [];
@@ -297,9 +310,12 @@ var EbGoogleMap = function (option) {
     };
 
     this.getDataSuccess = function (result) {
-        $("#eb_common_loader").EbLoader("hide");
-        if (this.login === "uc")
-            dvcontainerObj.currentObj.data = result;
+        if (this.Source === "Visualization") {
+            $("#eb_common_loader").EbLoader("hide");
+            if (this.login === "uc")
+                dvcontainerObj.currentObj.data = result;
+        }
+        this.MainData = result;
         this.data = result.data;
         this.formatedData = result.formattedData;
         this.drawMapHelper();
@@ -632,8 +648,10 @@ var EbGoogleMap = function (option) {
             $("#canvasDiv" + this.tableId).css("height", "calc(100% - 67px)");
         }
     };
-
-    this.init();
+    if (this.Source === "Visualization")
+        this.init();
+    else
+        this.init4Other();
 
 };
 

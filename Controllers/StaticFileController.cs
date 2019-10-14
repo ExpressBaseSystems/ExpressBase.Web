@@ -320,28 +320,19 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> UploadFileAsync(int i, string tags)
+        public async Task<int> UploadFileAsync(int i)
         {
             UploadAsyncResponse res = new UploadAsyncResponse();
-            JsonResult resp = null;
-
             try
             {
-                string url = string.Empty;
-
-                tags = String.IsNullOrEmpty(tags) ? "FileUpload" : tags;
-
                 var req = this.HttpContext.Request.Form;
+
+                List<string> tags = string.IsNullOrEmpty(req["Tags"]) ? new List<string>() : req["Tags"].ToList<string>();
+                List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
+                string context = (req.ContainsKey("Context")) ? context = req["Context"] : StaticFileConstants.CONTEXT_DEFAULT;
+                
                 UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
-
-                if (!String.IsNullOrEmpty(tags))
-                {
-                    var tagarray = tags.ToString().Split(CharConstants.COMMA);
-                    List<string> Tags = new List<string>(tagarray);
-                    uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
-                    uploadFileRequest.FileDetails.MetaDataDictionary.Add(StaticFileConstants.TAGS, Tags);
-                }
 
                 foreach (var formFile in req.Files)
                 {
@@ -364,18 +355,25 @@ namespace ExpressBase.Web.Controllers
                         uploadFileRequest.FileDetails.Length = uploadFileRequest.FileByte.Length;
                         uploadFileRequest.FileDetails.FileCategory = EbFileCategory.File;
 
+                        uploadFileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
+                        uploadFileRequest.FileDetails.MetaDataDictionary.Add("Tags", tags);
+                        uploadFileRequest.FileDetails.MetaDataDictionary.Add("Category", catogory);
+                        uploadFileRequest.FileDetails.Context = context;
+
                         res = this.FileClient.Post<UploadAsyncResponse>(uploadFileRequest);
 
-                        return new JsonResult(res);
+                        if (res.FileRefId > 0)
+                            Console.WriteLine(String.Format("file Upload Success [RefId:{0}]", res.FileRefId));
+                        else
+                            Console.WriteLine("Exception: file Upload Failure");
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception:" + e.ToString());
-                resp = new JsonResult(new UploadFileMqError { Uploaded = "ERROR" + "\nResponse: " + res.ResponseStatus.Message });
+                Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
             }
-            return ((resp == null) ? new JsonResult("") : resp);
+            return res.FileRefId;
         }
 
         [HttpPost]

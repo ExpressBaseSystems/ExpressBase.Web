@@ -72,7 +72,7 @@
                 </p>
             </div>
             <div class="col-md-3 col-lg-3 col-xs-12 pd-0 form-inline s-dash-btnwraper">
-                <form method="post" action="@sso_dev.Replace(" myaccount.", "" )" target="_blank">
+                <form method="post" action="@sso_dev.Replace("myaccount.", "")" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="dc" />
@@ -80,7 +80,7 @@
                         <i class="fa fa-wrench"></i> Dev Login
                     </button>
                 </form>
-                <form method="post" action="@sso_user.Replace(" myaccount.", "" )" target="_blank">
+                <form method="post" action="@sso_user.Replace("myaccount.", "")" target="_blank">
                     <input type="hidden" name="Rtoken" value="@ViewBag.rToken" />
                     <input type="hidden" name="Btoken" value="@ViewBag.bToken" />
                     <input type="hidden" name="WhichConsole" value="uc" />
@@ -504,7 +504,7 @@
                                                 <span class="slider round"></span>
                                             </label>*@
                                         <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>
-                                        <input id="VersioningSwitch" type="checkbox" data-toggle="toggle" data-on="Versioning On" data-off="Versioning Off">
+                                        <input id="VersioningSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" data-on="Versioning On" data-off="Versioning Off">
                                     </div>
                                 </div>
                             </div>
@@ -1426,18 +1426,19 @@
 
 <div class="eb-cropie" id="cropsection"></div>
 @{
-    if (ViewBag.Connections.SolutionInfo.IsVersioningEnabled)
+    @*if (ViewBag.Connections.SolutionInfo.IsVersioningEnabled)
     {
         <script>
             $("#VersioningSwitch").bootstrapToggle('on');
+            $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         </script>
-    }
+    }*@
 }
 @section JsCode{
     <script>
         let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
         let GoogleRedirecturi = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Env));
-	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId');
+	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId', '@ViewBag.Connections.SolutionInfo.IsVersioningEnabled');
 	    $("#no_user").change(function (e) {
 		    $("#user_countForm").val(e.target.value);
         });

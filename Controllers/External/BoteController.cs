@@ -43,7 +43,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.tid = tid;
             ViewBag.appid = appid;
             ViewBag.settings = JsonConvert.SerializeObject(settings);
-            ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+            //ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(new EbBotForm() as EbControlContainer, BuilderType.BotForm);
             return View();
 
@@ -160,7 +160,7 @@ namespace ExpressBase.Web.Controllers
             HttpClient client = new HttpClient();
             string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
             IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-
+            cid = this.GetIsolutionId(cid);
             Dictionary<string, string> _Meta;
             _Meta = new Dictionary<string, string> {
                     { TokenConstants.WC, wc },
@@ -181,6 +181,9 @@ namespace ExpressBase.Web.Controllers
                     { "timezone", IpApi.Timezone},
                     { "iplocationjson", result}
                 };
+
+            this.ServiceClient.Headers.Add("SolId", cid);
+
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {
                 provider = CredentialsAuthProvider.Name,
@@ -205,7 +208,10 @@ namespace ExpressBase.Web.Controllers
                 returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
                 returnlist.Add(authResponse.RefreshToken);
                 returnlist.Add(formlist.BotForms);
+                if (user.UserId == 1)
+                    user.Preference.Locale = "en-IN";
                 returnlist.Add(JsonConvert.SerializeObject(user));
+                returnlist.Add(formlist.BotFormsDisp);
                 return returnlist;
 
                 //CookieOptions options = new CookieOptions();
@@ -242,13 +248,13 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("Bots")]
         public IActionResult Bots()
         {
-            var host = this.HttpContext.Request.Host;
-            string[] hostParts = host.Host.Split(CharConstants.DOT);
-            if (!(hostParts.Length > 1))
-            {
-                return RedirectToAction("SignIn", "Common");
-            }
-            this.ServiceClient.Headers.Add("SolId", hostParts[0]);
+            //var host = this.HttpContext.Request.Host;
+            //string[] hostParts = host.Host.Split(CharConstants.DOT);
+            //if (!(hostParts.Length > 1))
+            //{
+            //    return RedirectToAction("SignIn", "Common");
+            //}
+            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
             var BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { });
             ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
             return View();
@@ -336,6 +342,8 @@ namespace ExpressBase.Web.Controllers
                     { "anonymous", "true" },
                     { "user_name", Name }
             };
+
+            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
 
             MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
             {

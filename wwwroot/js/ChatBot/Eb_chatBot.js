@@ -22,7 +22,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.refreshToken = null;
     this.initControls = new InitControls({
         botBuilder: this,
-        wc:"bc"
+        wc: "bc"
     });
     this.typeDelay = 200;
     this.ChartCounter = 0;
@@ -97,7 +97,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let email = $("#anon_mail").val().trim();
         let phone = $("#anon_phno").val().trim();
         if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e' });
+            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
             return;
         }
         this.msgFromBot("Thank you.");
@@ -133,7 +133,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.bearerToken = result[0];
                 this.refreshToken = result[1];
                 this.formsDict = result[2];
-                this.formNames = Object.values(this.formsDict);
+                window.ebcontext.user = JSON.parse(result[3]);
+                //this.formNames = Object.values(this.formsDict);
+                this.formNames = Object.values(result[4]);
                 this.AskWhatU();
                 this.ajaxSetup4Future();
                 /////////////////////////////////////////////////
@@ -569,8 +571,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.setFormControls = function () {
         this.formControls = [];
         $.each(this.curForm.Controls.$values, function (i, control) {
-            if (control.VisibleIf && control.VisibleIf.trim())//if visibleIf is Not empty
-                this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.VisibleIf));
+            if (control.VisibleExpr && control.VisibleExpr.Code.trim())//if visibleIf is Not empty
+                this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.VisibleExpr.Code));
             if (control.ValueExpression && control.ValueExpression.trim())//if valueExpression is Not empty
                 this.formFunctions.valueExpressions[control.Name] = new Function("form", "user", atob(control.ValueExpression));
             this.formControls.push($(`<div class='ctrl-wraper'>${control.BareControlHtml4Bot}</div>`));
@@ -644,7 +646,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
         else if (this.curCtrl.ObjType === "PowerSelect") {
             //inpVal = this.curCtrl.tempValue;
-            inpVal = this.curCtrl.selectedRow;
+            //inpVal = this.curCtrl.selectedRow;
+            inpVal = this.curCtrl.getValue();
             console.log("inp");
             console.log(inpVal);
             this.curDispValue = this.curCtrl._DisplayMembers[Object.keys(this.curCtrl._DisplayMembers)[0]].toString().replace(/,/g, ", ");
@@ -681,10 +684,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $msgDiv = $btn.closest('.msg-cont');
         this.sendBtnIdx = parseInt($btn.attr('idx'));
         this.curCtrl = this.curForm.Controls.$values[this.sendBtnIdx];
-        var id = this.curCtrl.EbSid;
+        var id = this.curCtrl.Name;
         var next_idx = this.sendBtnIdx + 1;
         this.nxtCtrlIdx = (next_idx > this.nxtCtrlIdx) ? next_idx : this.nxtCtrlIdx;
-        var $input = $('#' + id);
+        var $input = $('#' + this.curCtrl.EbSid);
         //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
         this.curVal = this.getValue($input);
         if (this.curCtrl.ObjType === "ImageUploader") {
@@ -699,7 +702,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
             this.formValues[id] = this.curVal;
             if (this.curCtrl.ObjType === "PowerSelect")//////////////////////////-------////////////
-                this.formValuesWithType[id] = [this.curCtrl.tempValue, this.curCtrl.EbDbType];
+                this.formValuesWithType[id] = [this.curCtrl.TempValue, this.curCtrl.EbDbType];
             else
                 this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
             this.callGetControl(this.nxtCtrlIdx);
@@ -719,6 +722,18 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
         else if (this.curCtrl.ObjType === "Survey") {
             this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+            this.callGetControl(this.nxtCtrlIdx);
+        }
+        else if (this.curCtrl.ObjType === "Date" || this.curCtrl.ObjType === "DateTime" || this.curCtrl.ObjType === "Time") {
+            this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            if (this.curCtrl.ObjType === "Date")
+                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern).format('YYYY-MM-DD');
+            else if (this.curCtrl.ObjType === "DateTime")
+                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
+            else if (this.curCtrl.ObjType === "Time")
+                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
             this.callGetControl(this.nxtCtrlIdx);
@@ -1073,7 +1088,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
                 this.formValues[name] = curval;
                 if (control.ObjType === "PowerSelect")
-                    this.formValuesWithType[name] = [control.tempValue, control.EbDbType];
+                    this.formValuesWithType[name] = [control.TempValue, control.EbDbType];
                 else
                     this.formValuesWithType[name] = [curval, control.EbDbType];
                 html += `<tr><td style='padding: 5px;'>${control.Label}</td> <td style='padding-left: 10px;'>${this.formValuesWithType[name][0]}</td></tr>`;
@@ -1153,11 +1168,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.hideTypingAnim();
         let msg = '';
         if (rowAffected > 0) {
-            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e' });
+            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
             msg = `Your ${this.curForm.Name} form submitted successfully`;
         }
         else {
-            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e' });
+            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
             msg = `Your ${this.curForm.Name} form submission failed`;
         }
         this.msgFromBot(msg);
@@ -1223,8 +1238,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.bearerToken = result[0];
                 this.refreshToken = result[1];
                 this.formsDict = result[2];
-                ebcontext.user = JSON.parse(result[3]);
-                this.formNames = Object.values(this.formsDict);
+                window.ebcontext.user = JSON.parse(result[3]);
+                //this.formNames = Object.values(this.formsDict););
+                this.formNames = Object.values(result[4]);
                 this.AskWhatU();
                 this.ajaxSetup4Future();
                 /////////////////////////////////////////////////Form click

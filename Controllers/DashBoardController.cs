@@ -9,6 +9,7 @@ using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 
@@ -32,7 +33,7 @@ namespace ExpressBase.Web.Controllers
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper));
-
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
@@ -47,6 +48,12 @@ namespace ExpressBase.Web.Controllers
             ViewBag.dsObj = Resp.Data[0].Json;
             ViewBag.Status = Resp.Data[0].Status;
             return View();
+        }
+
+        public string UserControlGetObj(string refid)
+        {
+            GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid });
+            return JsonConvert.SerializeObject(Resp);
         }
     }
 }

@@ -154,8 +154,12 @@
         display: flex;
         justify-content: center;
     }
+        .upl-container-outer .eb-upl_thumb .eb-upl-thumb-bdy .thumb-icon {
+            font-size: 100px;
+            margin: 15px 0;
+        }
 
-        .upl-container-outer .eb-upl_thumb .eb-upl-thumb-bdy img {
+        .upl-container-outer .eb-upl_thumb .eb-upl-thumb-bdy img, .upl-container-outer .eb-upl_thumb .eb-upl-thumb-bdy iframe{
             height: 130px;
             width: auto;
             max-width: 100%;
@@ -212,7 +216,15 @@
     align-items: center;
     width: 100%;
 }
-
+    .upl-fullscreen .modal-body .upl-body-file {
+        position:absolute;
+        width:100%;
+        height:100%;
+    }
+    .upl-fullscreen .modal-body .upl-body-file iframe{
+        width: 100%;
+        height: 100%;
+    }
 .upl-fullscreen .modal-header .img-info {
     font-size: 16px;
     color: #696969;

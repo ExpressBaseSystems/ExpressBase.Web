@@ -365,6 +365,7 @@
         }
         $("#objname").text(this.EbObject.DisplayName);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+        this.EbObject.IsPaging = this.IsPaging;
         this.init();
         this.call2FD();
     };
@@ -377,6 +378,7 @@
         }
         if (this.MainData !== null)
             this.isPipped = true;
+        this.EbObject.IsPaging = this.IsPaging;
         this.getColumnsSuccess();
     };
 
@@ -384,7 +386,6 @@
         if (this.Source === "EbDataTable")
             this.Do4EbdataTable();
         this.initCompleteflag = false;
-        this.EbObject.IsPaging = this.IsPaging;
         this.extraCol = [];
         this.check4Customcolumn();
         this.CheckforTree();

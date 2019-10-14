@@ -28,7 +28,8 @@
 
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         this.SetEditModeDataTable(SingleTable);
-        return this.setEditModeRows(this.EditModeDataTable);
+        this.setEditModeRows(this.EditModeDataTable);
+        return this.updateAggCols(false);
     }.bind(this);
 
     this.getPSDispMembrs = function (cellObj, rowId, col) {
@@ -178,7 +179,45 @@
 
     this.setEditModeRows = function (EditModeDataTable) {
         this.addEditModeRows(EditModeDataTable);
+        this.setValueExpCols();
         this.tryAddRow();
+    };
+
+    this.setValueExpCols = function () {
+        $.each(this.AllRowCtrls, function (rowId, inpCtrls) {
+            this.setCurRow(rowId);
+
+            $.each(inpCtrls, function (i, inpCtrl) {
+                this.initCtrl4EditMode(inpCtrl);
+                if (!inpCtrl.DoNotPersist)
+                    inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
+            }.bind(this));
+
+            $.each(inpCtrls, function (i, inpCtrl) {
+                if (rowId === "41")
+                    console.log(555);
+                EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
+            }.bind(this));
+        }.bind(this));
+    };
+
+    this.initCtrl4EditMode = function (inpCtrl) {
+        if (inpCtrl.ObjType === "PowerSelect") {
+            inpCtrl.initializer = {};//temporary init
+            inpCtrl.initializer.setValues = function (p1, p2) {
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+            };
+
+            inpCtrl.getColumn = function (colName) {
+                let val = this.FormDataExtdObj.val[ctrl.EbSid];
+                return val;
+            }.bind(this);
+        }
+        else {
+            inpCtrl.setValue = function (p1) {
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+            };//temporary init
+        }
     };
 
     this.tryAddRow = function () {
@@ -407,7 +446,7 @@
 
         if (inpCtrl.ObjType === "DGUserControlColumn") {///////////
             $.each(col.Columns.$values, function (i, _inpCtrl) {
-                let _ctrlEbSid = "ctrl_" + (Date.now() + i).toString(36);
+                let _ctrlEbSid = "ctrl_" + Date.now().toString(36) + i;
                 let NewInpCtrl = $.extend({}, new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
                 NewInpCtrl.EbSid_CtxId = _ctrlEbSid;
                 inpCtrl.Columns.$values[i] = this.initInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
@@ -465,7 +504,7 @@
         for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
             let col = this.ctrl.Controls.$values[i];
             let inpCtrlType = col.InputControlType;
-            let ctrlEbSid = "ctrl_" + (Date.now() + visibleCtrlIdx).toString(36);
+            let ctrlEbSid = "ctrl_" + Date.now().toString(36) + visibleCtrlIdx;
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
             if (col.Hidden) {
                 //inpCtrl.EbSid_CtxId = ctrlEbSid;
@@ -495,16 +534,23 @@
         let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
                     <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
+        this.AllRowCtrls[rowid] = [];
 
         let visibleCtrlIdx = 0;
         for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
             let col = this.ctrl.Controls.$values[i];
+            let inpCtrlType = col.InputControlType;
+            let ctrlEbSid = "ctrl_" + Date.now().toString(36) + visibleCtrlIdx;
+            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
             if (col.Hidden)
                 continue;
             let editModeDataCellObj = editModeDataRow[col.Name];
-            if (!editModeDataCellObj)
+            if (!editModeDataCellObj && !col.DoNotPersist)
                 continue;
-            tr += this.getTdHtml_E(col, visibleCtrlIdx, editModeDataCellObj);
+            this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
+            inpCtrl = this.attachFns(inpCtrl, col.ObjType);
+            this.AllRowCtrls[rowid].push(inpCtrl);
+            tr += this.getTdHtml_E(inpCtrl, col, visibleCtrlIdx, editModeDataCellObj);
             if (col.IsEditable)
                 isAnyColEditable = true;
             visibleCtrlIdx++;
@@ -527,11 +573,13 @@
                 </div>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
-    this.getTdHtml_E = function (col, i, editModeDataCellObj) {
+    this.getTdHtml_E = function (inpCtrl, col, i, editModeDataCellObj) {
+        if (!inpCtrl.DoNotPersist)
+            inpCtrl.__eb_EditMode_val = editModeDataCellObj.Value;
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
-                    <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover'></div>
-                    <div class='tdtxt' style='display:block' coltype='${col.ObjType}'><span>${editModeDataCellObj.DisplayMember}</span></div>                        
-                </td>`;
+                    <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
+                    <div class='tdtxt' style='display:block' coltype='${col.ObjType}'><span>${col.DoNotPersist ? "" : editModeDataCellObj.DisplayMember}</span ></div >                         
+                </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getCogsTdHtml = function (isAnyColEditable) {
@@ -604,7 +652,7 @@
         $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
-        this.updateAggCols(rowid);
+        this.updateAggCols();
         let rowCtrls = this.initRowCtrls(rowid, editModeData);
         //let rowCtrls = this.AllRowCtrls[rowid];
         return [$tr, rowCtrls];
@@ -872,20 +920,14 @@
 
     this.rowInit_E = function ($tr) {
         let rowid = $tr.attr("rowid");
-        this.AllRowCtrls[rowid] = [];
         //this.AllRowHiddenCtrls[rowid] = [];
 
         let visibleCtrlIdx = 0;
 
         for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
             let col = this.ctrl.Controls.$values[i];
+            let inpCtrl = getObjByval(this.AllRowCtrls[rowid], "Name", col.Name);
             let inpCtrlType = col.InputControlType;
-            let ctrlEbSid = "ctrl_" + (Date.now() + visibleCtrlIdx).toString(36);
-            let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
-            this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
-            let ctrlHTML = this.getCtrlHTML(col, inpCtrl);
-            $tr.find(`[ctrltdidx=${visibleCtrlIdx}] .ctrl-cover`).replaceWith(ctrlHTML);
-            $tr.attr("id", "td_" + inpCtrl.EbSid_CtxId);
             if (col.Hidden) {
                 //inpCtrl.EbSid_CtxId = ctrlEbSid;
                 //inpCtrl.__rowid = rowid;
@@ -895,8 +937,6 @@
             }
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
-            inpCtrl = this.attachFns(inpCtrl, col.ObjType);
-            this.AllRowCtrls[rowid].push(inpCtrl);
             visibleCtrlIdx++;
         }
         this.initRowCtrls(rowid);
@@ -904,11 +944,6 @@
         let curRowCtrls = this.AllRowCtrls[rowid];
         let curRowData = this.EditModeDataTable[rowid];
         this.setRowValues_E(curRowCtrls, curRowData);
-        //for (var i = 0; i < curRowCtrls.length; i++) {
-        //    let ctrl = curRowData[i];
-        //    let cellData = getObjByval(this.EditModeDataTable[rowid], "Name", ctrl.Name);
-        //    ctrl.setValue(cellData);
-        //}
         $tr.attr("is-initialised", "true");
     };
 
@@ -923,6 +958,8 @@
     this.editRow_click = function (e) {
         let $td = $(e.target).closest("td");
         let $tr = $td.closest("tr");
+        let rowid = $tr.attr("rowid");
+        this.setCurRow(rowid);
         if ($tr.attr("is-initialised") === 'false')
             this.rowInit_E($tr);
         $td.find(".del-row").hide();
@@ -931,9 +968,7 @@
         $addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
         $tr.attr("is-editing", "true");
-        let rowid = $tr.attr("rowid");
         this.spanToCtrl_row($tr);
-        this.setCurRow(rowid);
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
     }.bind(this);
 
@@ -958,17 +993,27 @@
         else
             this.setCurRow($addRow.attr("rowid"));
         $tr.attr("is-checked", "true").attr("is-editing", "false");
-        this.updateAggCols($addRow.attr("rowid"));
+        this.updateAggCols();
         //$addRow.focus();
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
 
     }.bind(this);
 
-    this.updateAggCols = function (rowId) {
-        $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
-            if (inpctrl.IsAggragate) {
-                let colname = inpctrl.Name;
-                $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+    //this.updateAggCols = function (rowId) {
+    //    $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
+    //        if (inpctrl.IsAggragate) {
+    //            let colname = inpctrl.Name;
+    //            $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+    //        }
+    //    }.bind(this));
+
+    //};
+
+    this.updateAggCols = function (updateDpnt) {
+        $.each(this.ctrl.Controls.$values, function (i, col) {
+            if (col.IsAggragate) {
+                let colname = col.Name;
+                $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname, updateDpnt));
             }
         }.bind(this));
 
@@ -997,24 +1042,47 @@
         return num;
     };
 
-    this.getAggOfCol = function (colname) {
+    //this.getAggOfCol = function (colname) {
+    //    let sum = 0;
+    //    $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
+    //        let val;
+
+    //        if (event && event.target === Iter_Inp) {
+    //            let typing_inp = event.target;
+    //            val = typing_inp.value;
+    //        }
+    //        else {
+    //            val = $(Iter_Inp).val() || 0;
+    //        }
+
+    //        sum += parseFloat(val) || 0;
+    //        sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
+    //    }.bind(this));
+    //    this.ctrl[colname + "_sum"] = sum;
+    //    this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
+    //    return this.appendDecZeros(sum);
+    //};
+
+    this.getAggOfCol = function (colname, updateDpnt = true) {
         let sum = 0;
-        $.each($(`#${this.TableId} > tbody [colname='${colname}'] [ui-inp]`), function (i, Iter_Inp) {
+        $.each($(`#${this.TableId} > tbody [colname='${colname}'] .tdtxt span`), function (i, Iter_span) {
             let val;
+            let Iter_Inp = $(Iter_span).closest(`[colname='${colname}']`).find("[ui-inp]")[0];
 
             if (event && event.target === Iter_Inp) {
                 let typing_inp = event.target;
                 val = typing_inp.value;
             }
             else {
-                val = $(Iter_Inp).val() || 0;
+                val = $(Iter_span).text() || 0;
             }
 
             sum += parseFloat(val) || 0;
             sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
         }.bind(this));
         this.ctrl[colname + "_sum"] = sum;
-        this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
+        if (updateDpnt)
+            this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
         return this.appendDecZeros(sum);
     };
 
@@ -1048,7 +1116,10 @@
     this.removeTr = function ($tr) {
         let rowId = $tr.attr("rowid");
         $tr.find("td *").hide(200);
-        setTimeout(function () { $tr.remove(); }, 201);
+        setTimeout(function () {
+            $tr.remove();
+            this.updateAggCols();
+        }.bind(this), 201);
         if ($tr.attr("is-initialised") === 'false')
             this.AllRowCtrls[rowId] = {};
 
@@ -1236,7 +1307,7 @@
 
         if ($tr.attr("is-editing") === "false")
             this.ctrlToSpan_row(rowId);
-        this.updateAggCols(rowId);
+        this.updateAggCols();
     };
 
     this.disableRow = function (rowId) {

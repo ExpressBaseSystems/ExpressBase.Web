@@ -325,7 +325,7 @@
 
     this.InputGeoLocation = function (ctrl) {
         ebcontext.userLoc = { lat: 0, long: 0 };
-        if (_rowId === undefined || _rowId === 0) {
+        if (typeof _rowId === 'undefined' || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
                 $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
             }.bind(this));
@@ -592,14 +592,22 @@
 
     };
 
+    this.TextBox = function (ctrl, ctrlopts) {
+        if (ctrl.AutoSuggestion === true) {
+            $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
+        }   
+    };
+
     this.Numeric = function (ctrl) {
         //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         let initValue = "0";
-        if (ctrl.DecimalPlaces > 0)
-            initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
-        $input.val(initValue);
+        if ($input.val() === "") {
+            if (ctrl.DecimalPlaces > 0)
+                initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
+            $input.val(initValue);
+        }
 
         $input.inputmask("currency", {
             radixPoint: ".",

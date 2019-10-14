@@ -88,6 +88,10 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbUserSelect).InitOptions(WebForm.SolutionObj.Users);
                     }
+                    else if(control is EbTextBox)
+                    {
+                        (control as EbTextBox).InitFromDataBase(this.ServiceClient);
+                    }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();

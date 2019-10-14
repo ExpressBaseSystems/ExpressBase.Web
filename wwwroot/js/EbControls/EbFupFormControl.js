@@ -178,7 +178,7 @@
         let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
         this.GalleryFS.show();
         let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
-        let urls = "",urll = "";
+        let urls = "", urll = "";
 
         if (o.FileCategory === 0) {
             urls = `/files/${fileref}.jpg`;
@@ -258,6 +258,13 @@
         evt.originalEvent.dataTransfer.dropEffect = "copy"; // Explicitly show this is a copy.
     }
 
+    getFileType(file) {
+        if (file.type.match('image.*'))
+            return "image";
+        else
+            return "file";
+    }
+
     handleFileSelect(evt) {
         evt.stopPropagation();
         evt.preventDefault();
@@ -265,9 +272,9 @@
         let files = evt.target.files || evt.originalEvent.dataTransfer.files; // FileList object
 
         for (var i = 0; i < files.length; i++) {
-            if (!files[i].type.match('image.*')) {
-                continue;
-            }
+            //if (!files[i].type.match('image.*')) {
+            //    continue;
+            //}
             let reader = new FileReader();
             reader.onload = (function (file) {
                 return function (e) {
@@ -301,7 +308,7 @@
                                                         <div class="file-thumb-wraper">
                                                             <div class="eb-upl_thumb" exact="${file.name}" file="${this.replceSpl(file.name)}">
                                                                 <div class="eb-upl-thumb-bdy">
-                                                                    <img src="${e.target.result}"/>
+                                                                    ${this.getThumbNailHead(e.target.result, file)}
                                                                 </div>
                                                                 <div class="eb-upl-thumb-info">
                                                                     <h4 class="fname text-center">${file.name}</h4>
@@ -337,7 +344,20 @@
         else {
             EbMessage("show", { Background: "red", Message: "Image size should not exceed " + this.MaxSize + " Mb" });
         }
-    };
+    }
+
+    getThumbNailHead(b64, file) {
+        let t = this.getFileType(file);
+        if (t === "image") {
+            return `<img src="${b64}"/>`;
+        }
+        else {
+            if (file.type.match("pdf.*"))
+                return `<iframe src="${b64}" scrolling="no"></iframe>`;
+            else
+                return `<i src="${b64}" class="glyphicon glyphicon-file thumb-icon"></i>`;
+        }
+    }
 
     tagClick(e) {
         $(e.target).closest("button").siblings(".upl-thumbtag").toggle();
@@ -345,7 +365,7 @@
 
     thumbButtons(file) {
         let html = new Array();
-        html.push(`<button class="upl-thumb-btn" size="${parseFloat((file.size / (1024))).toFixed(3)}" fname="${file.name}" id="${this.replceSpl(file.name)}-fullscreen"><i class="fa fa-arrows-alt"></i></button>`);
+        html.push(`<button class="upl-thumb-btn" size="${parseFloat((file.size / (1024))).toFixed(3)}" ftype="${this.getFileType(file)}" fname="${file.name}" id="${this.replceSpl(file.name)}-fullscreen"><i class="fa fa-arrows-alt"></i></button>`);
         html.push(`<button class="upl-thumb-btn" fname="${file.name}" id="${this.replceSpl(file.name)}-del"><i class="fa fa-trash-o"></i></button>`);
 
         if (this.Options.EnableTag)
@@ -356,7 +376,7 @@
 
         if (this.Options.EnableCrop)
             html.push(` <button class="upl-thumb-btn _crop" fname="${file.name}" id="${this.replceSpl(file.name)}-crop"><i class="fa fa-crop"></i></button>`);
-        if (this.Options.Categories)
+        if (this.Options.Categories && this.Options.Categories.length > 0)
             html.push(`<select class="ebfup_catogories" id="${this.replceSpl(file.name)}-category">${this.getCategory()}</select>`);
         return html.join("");
     }
@@ -395,11 +415,22 @@
 
     setFullscreen(e) {
         let txt = $(e.target).closest("button").attr("fname") + " (" + $(e.target).closest("button").attr("size") + " Kb)";
-        this.FullScreen.modal("show");
+        let ft = $(e.target).closest("button").attr("ftype");
         let ctrl = $(e.target).closest(".eb-upl_thumb");
-        let img = ctrl.find("img").attr("src");
-        this.FullScreen.find("img").attr("src", img);
+        if (ft === "image") {
+            this.FullScreen.find(".upl-body-file").hide();
+            let img = ctrl.find("img").attr("src");
+            this.FullScreen.find("img").attr("src", img);
+            this.FullScreen.find(".upl-body").show();
+        }
+        else {
+            this.FullScreen.find(".upl-body").hide();
+            let iframe = ctrl.find("iframe").attr("src");
+            this.FullScreen.find(".upl-body-file iframe").attr("src", iframe);
+            this.FullScreen.find(".upl-body-file").show();
+        }
         this.FullScreen.find(".img-info").text(txt);
+        this.FullScreen.modal("show");
     }
 
     upload(e) {
@@ -407,38 +438,56 @@
     };
 
     comUpload() {
+        let url = "";
         for (let k = 0; k < this.Files.length; k++) {
-            let thumb = null;
-            let formData = new FormData();
-            formData.append("File", this.Files[k]);
-            formData.append("Tags", this.getTag(this.Files[k]));
-            formData.append("Category", this.readCategory(this.Files[k]));
+            let type = this.getFileType(this.Files[k]);
+            if (type === "image")
+                url = "../StaticFile/UploadImageAsync";
+            else
+                url = "../StaticFile/UploadFileAsync";
 
-            $.ajax({
-                url: "../StaticFile/UploadImageAsync",
-                type: "POST",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                beforeSend: function (evt) {
-                    thumb = $(`#${this.Options.Container}-eb-upl-bdy div[file='${this.replceSpl(this.Files[k].name)}']`);
-                    thumb.find(".eb-upl-loader").show();
-                }.bind(this)
-            }).done(function (refid) {
-                this.successOper(thumb, refid);
-            }.bind(this));
+            this.uploadItem(url,this.Files[k]);
         }
+    }
+
+    uploadItem(_url,file) {
+        let thumb = null;
+        let formData = new FormData();
+        formData.append("File", file);
+        formData.append("Tags", this.getTag(file));
+        formData.append("Category", this.readCategory(file));
+
+        $.ajax({
+            url: _url,
+            type: "POST",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function (evt) {
+                thumb = $(`#${this.Options.Container}-eb-upl-bdy div[file='${this.replceSpl(file.name)}']`);
+                thumb.find(".eb-upl-loader").show();
+            }.bind(this)
+        }).done(function (refid) {
+            this.successOper(thumb, refid);
+        }.bind(this));
     }
 
     getTag(file) {
         let f = this.replceSpl(file.name);
-        return $(`#${f}-tags_input`).tagsinput("items");
+        if ($(`#${f}-tags_input`).length > 0)
+            return $(`#${f}-tags_input`).tagsinput("items");
+        else
+            return "";
     }
 
     readCategory(file) {
         let f = this.replceSpl(file.name);
-        return $(`#${f}-category`).val().split();
+        if ($(`#${f}-category`).length > 0) {
+            return $(`#${f}-category`).val().split();
+        }
+        else
+            return "";
     }
 
     successOper(thumb, refid) {
@@ -517,6 +566,9 @@
                                   <div class="modal-body">
                                         <div class="upl-body">
                                             <img src=""/>
+                                        </div>
+                                        <div class="upl-body-file">
+                                            <iframe></iframe>
                                         </div>
                                   </div>
                                 </div>

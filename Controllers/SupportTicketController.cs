@@ -35,6 +35,7 @@ namespace ExpressBase.Web.Controllers
 			{
 				FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest { });
 				ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
+
 			}
 
 
@@ -85,7 +86,8 @@ namespace ExpressBase.Web.Controllers
 					SupportHistoryResponse Sh = this.ServiceClient.Post<SupportHistoryResponse>(new SupportHistoryRequest
 					{
 						TicketNo = tktno,
-						UserType = this.LoggedInUser.wc
+						UserType = this.LoggedInUser.wc,
+						UserObject = this.LoggedInUser
 					});
 					ViewBag.SptHstry = JsonConvert.SerializeObject(Sh);
 				}
@@ -232,14 +234,15 @@ namespace ExpressBase.Web.Controllers
 
 		}
 
-		public void ChangeStatus(string tktno)
+		public void ChangeStatus(string tktno,string reason)
 		{
 			ChangeStatusResponse sd = this.ServiceClient.Post<ChangeStatusResponse>(new ChangeStatusRequest
 			{
 				TicketNo = tktno,
 				NewStatus = "Closed",
-				UserName = this.LoggedInUser.FirstName,
-				Solution_id = ViewBag.cid
+				UserName = this.LoggedInUser.FullName,
+				Solution_id = ViewBag.cid,
+				Reason= reason
 			}); 
 
 

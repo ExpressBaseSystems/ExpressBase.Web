@@ -498,3 +498,6 @@
 .ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO .mark-thumb:checked {
     display: block;
 }
+.gallerythumbfile{
+    width:100%;
+}

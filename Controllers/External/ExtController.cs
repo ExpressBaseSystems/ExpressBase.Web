@@ -395,7 +395,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult GoogleLogin(string name, string goglid, string email)
         {
-            Console.WriteLine("reached contoller / facebooklogin");
+            Console.WriteLine("reached contoller / GoogleLogin");
 
 
             try
@@ -416,7 +416,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception e)
             {
-                Console.WriteLine("reached exception FacebookLogin");
+                Console.WriteLine("reached exception GoogleLogin");
                 TempData["socloginerr"] = "Something went wrong. Please try later";
                 Console.WriteLine("Exception: " + e.Message + e.StackTrace);
                 return Redirect("/Platform/OnBoarding");

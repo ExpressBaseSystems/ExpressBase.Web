@@ -268,8 +268,10 @@ namespace ExpressBase.Web.Controllers
                 {
                     dsobj.AfterRedisGet(Redis);
                     ViewBag.dsObj = dsobj;
-
                 }
+                EbObjAllVerForDashBoardResp result = this.ServiceClient.Get<EbObjAllVerForDashBoardResp>(new EbObjAllVerForDashBoardRqst());
+
+                ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
             }
 
             if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))

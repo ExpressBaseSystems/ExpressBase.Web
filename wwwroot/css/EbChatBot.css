@@ -388,7 +388,8 @@
     }
 
 [name=ctrlsend] .fa {
-    margin-left: -5px
+    margin-left: -5.5px;
+    margin-top: -1px;
 }
 
 /*.poweredby-cont {
@@ -528,6 +529,20 @@
     background-color: #555;
     height: 32px;
     color: white;
+}
+
+.ctrl-wraper .dropdown-toggle[data-toggle="dropdown"] {
+    border-radius: 1px;
+    font-size: 13px;
+    background-color: white;
+    box-shadow: none !important;
+    border: none;
+    height: 28px;
+    padding-top: 3px;
+}
+
+.ctrl-wraper .open li {
+    font-size: 13px;
 }
 
 /*.eb-chatBox .card-header-cont {
@@ -857,4 +872,8 @@
     opacity: 0;
     transform: translate(-50%,0px);
     z-index: 9999;
+}
+
+.eb-chat-cont .locinp-span {
+    line-height: 2;
 }

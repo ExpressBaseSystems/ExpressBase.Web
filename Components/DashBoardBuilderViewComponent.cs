@@ -17,12 +17,13 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string dsobj, int tabnum, int type, string refid, string ssurl)
+        public async Task<IViewComponentResult> InvokeAsync(string googlekey, string dsobj, int tabnum, int type, string refid, string ssurl)
         {
             ViewBag.dsObj = dsobj;
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;
             ViewBag.Refid = refid;
+            ViewBag.googlekey = googlekey;
             return View();
         }
     }

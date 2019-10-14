@@ -5,9 +5,9 @@ var EbBasicDataTable = function (Option) {
     this.contId = Option.containerId;
     this.dsid = Option.dsid || null;
     this.tableId = Option.tableId;
-    this.showSerialColumn = Option.showSerialColumn || true;
-    this.showCheckboxColumn = Option.showCheckboxColumn || true;
-    this.showFilterRow =  Option.showFilterRow || true;
+    this.showSerialColumn = typeof Option.showSerialColumn !== 'undefined' ? Option.showSerialColumn : true;
+    this.showCheckboxColumn = typeof Option.showCheckboxColumn !== 'undefined' ? Option.showCheckboxColumn : true;
+    this.showFilterRow = typeof Option.showFilterRow !== 'undefined' ? Option.showFilterRow : true;
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
@@ -31,11 +31,11 @@ var EbBasicDataTable = function (Option) {
     this.filterValues = Option.filterValues || [];
     this.FlagPresentId = false;
     this.columnSearch = Option.columnSearch || [];
-    this.data = Option.data || null;
-    this.headerDisplay = Option.headerDisplay || true;
+    this.MainData = Option.data || null;
+    this.headerDisplay = typeof Option.headerDisplay !== 'undefined' ? Option.headerDisplay : true;
     this.getFilterValues = Option.getFilterValuesFn || function () { };
     this.source = Option.source || "";
-    this.IsQuery = Option.IsQuery || false;
+    this.IsQuery = Option.IsQuery;
 
     this.extraCol = [];
     this.modifyDVFlag = false;
@@ -47,7 +47,7 @@ var EbBasicDataTable = function (Option) {
     this.eb_agginfo = [];
     this.Aggregateflag = false;
     this.QueryIndex = Option.QueryIndex || 0;
-    this.datetimeformat = Option.datetimeformat || false;
+    this.datetimeformat = Option.datetimeformat;
 
     this.init = function () {
         if (this.EbObject === null)
@@ -55,7 +55,7 @@ var EbBasicDataTable = function (Option) {
         this.EbObject.IsPaging = Option.IsPaging || false;
         this.$dtLoaderCont = $(`<div id='${this.tableId}dtloadercont' class='dt-loader-cont'></div>`);
         this.$dtLoaderCont.insertBefore($("#" + this.contId));
-        if (this.data === null)
+        if (this.MainData === null)
             this.call2FD();
         else {
             if (this.columns !== null)
@@ -225,7 +225,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.createTblObject = function () {
-        var url = string.empty;
+        var url = "";
         if (Option.wc === 'bc')
             url = "../boti/getData";
         else if (this.IsQuery)
@@ -241,7 +241,7 @@ var EbBasicDataTable = function (Option) {
         o.scrollX = "100%";
         o.bAutoWidth = false;
         o.autowidth = false;
-        o.serverSide = (this.data === null) ? true : false;
+        o.serverSide = (this.MainData === null) ? true : false;
         o.processing = true;
         o.language = {
             processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>",
@@ -253,7 +253,7 @@ var EbBasicDataTable = function (Option) {
         o.lengthChange = this.EbObject.IsPaging;
         o.select = true;
         o.keys = true;
-        if (this.data === null) {
+        if (this.MainData === null) {
             o.ajax = {
                 url: url,
                 type: 'POST',
@@ -261,8 +261,11 @@ var EbBasicDataTable = function (Option) {
                 dataSrc: this.receiveAjaxData.bind(this),
             };
         }
-        else
-            o.data = this.data;
+        else {
+            o.data = this.MainData.formattedData || this.MainData.data || this.MainData;
+            this.data = this.MainData.data || this.MainData;
+            this.formatteddata = this.MainData.formattedData || this.MainData.data || this.MainData;
+        }
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
@@ -293,6 +296,7 @@ var EbBasicDataTable = function (Option) {
         }
         dq.QueryIndex = this.QueryIndex;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
+        dq.TableId = this.tableId;
         return dq;
     };
 

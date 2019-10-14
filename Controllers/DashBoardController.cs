@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Controllers
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper));
-
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;

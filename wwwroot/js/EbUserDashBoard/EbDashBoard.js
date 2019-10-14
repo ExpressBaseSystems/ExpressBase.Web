@@ -1,4 +1,4 @@
-﻿let DashBoardWrapper = function (options) {
+﻿var DashBoardWrapper = function (options) {
     this.RefId = options.RefId;
     this.Version = options.Version;
     this.ObjType = options.ObjType;
@@ -11,9 +11,11 @@
     this.TileCollection = {};
     this.CurrentTile;
     this.CurrentRefid;
+    this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
     this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21:"GoogleMap"}
+    this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21:"fa fa-map-marker"}
 
 
     this.DrawObjectOnMenu = function () {
@@ -24,7 +26,8 @@
             $.each(Val, function (i, Obj) {
                 if (myarr.indexOf(Obj.EbObjectType) === -1) {
                     $("#Eb-obj-sidebar-cont").append(`<div> 
-                        <div class="sidebar-head" hs-id="${Obj.EbObjectType}">${this.ObjTypeName[Obj.EbObjectType]}</div>
+                        <div class="sidebar-head" hs-id="${Obj.EbObjectType}" style="display:flex;"> <div class="${this.ObjIcons[Obj.EbObjectType]} db-sidebar-icon"></div>
+                       ${this.ObjTypeName[Obj.EbObjectType]}</div>
                        <div id="${Obj.EbObjectType}" class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
                         </div>`);
                     myarr.push(Obj.EbObjectType);
@@ -168,27 +171,27 @@
                         });
                 }
             }
-            this.addTilecontext()
+            //this.addTilecontext()
             this.Tilecontext()
         }
         else {
             $('.grid-stack').gridstack();
-            for (let i = 0; i < 2; i++) {
-                let tile_id = "t" + i;
-                let t_id = "tile" + i;
-                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> <div class="grid-stack-item-content" id="${t_id}"> 
-                     <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
-                    <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
-                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
-                    </div></div>
-                 <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
-                //this.AddNewTile();
-                this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
-            }
+            //for (let i = 0; i < 2; i++) {
+            //    let tile_id = "t" + i;
+            //    let t_id = "tile" + i;
+            //    $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> <div class="grid-stack-item-content" id="${t_id}"> 
+            //         <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
+            //        <div class="db-title" name-id="${t_id}" style="display:float"></div>
+            //        <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
+            //        <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+            //        </div></div>
+            //     <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
+            //    //this.AddNewTile();
+            //    this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
+            //}
         }
         $(".grid-stack").on("click", this.TileSelectorJs.bind(this));
-        this.addTilecontext()
+        //this.addTilecontext()
         this.Tilecontext()
     }
 
@@ -252,17 +255,17 @@
             $("#dashbord-view").css("background-color", "").css("background-color", newval);
         }
     }
-    this.addTilecontext = function () {
-        $.contextMenu({
-            selector: '.grid-stack',
-            trigger: 'right',
-            items: {
-                "Add Tile": {
-                    name: "Add Tile", icon: "add", callback: this.AddNewTile.bind(this)
-                },
-            }
-        });
-    }
+    //this.addTilecontext = function () {
+    //    $.contextMenu({
+    //        selector: '.grid-stack',
+    //        trigger: 'right',
+    //        items: {
+    //            "Add Tile": {
+    //                name: "Add Tile", icon: "add", callback: this.AddNewTile.bind(this)
+    //            },
+    //        }
+    //    });
+    //}
 
 
 
@@ -312,6 +315,8 @@
             o.Source = "DashBoard";
             var dt = new EbBasicDataTable(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
+            let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
+            $(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -332,7 +337,16 @@
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[name-id="${id}"]`).empty();
         }
-
+        else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
+            $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
+            var o = {};
+            o.tableId = "tb1" + id;
+            o.dsobj = obj;
+            o.Source = "Dashboard";
+            o.googlekey = this.googlekey;
+            var dt = new EbGoogleMap(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
+        }
     }
 
     this.BeforeSave = function () {

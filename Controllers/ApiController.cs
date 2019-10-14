@@ -39,7 +39,7 @@ namespace ExpressBase.Web.Controllers
         public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
 
         [HttpGet("/api/{_name}/{_version}/{format?}")]
-        public object Api(string _name, string _version, string format="json")
+        public object Api(string _name, string _version, string format = "json")
         {
             var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
@@ -85,7 +85,7 @@ namespace ExpressBase.Web.Controllers
                     };
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.Message);
                 watch.Stop();
@@ -264,7 +264,7 @@ namespace ExpressBase.Web.Controllers
             ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>() };
             UploadAsyncResponse res = new UploadAsyncResponse();
             var req = this.HttpContext.Request.Form;
-            string fname = string.Empty,_context = string.Empty;
+            string fname = string.Empty, _context = string.Empty;
 
             if (req.ContainsKey("Context") && !string.IsNullOrEmpty(req["Context"]))
                 _context = req["Context"];
@@ -364,6 +364,19 @@ namespace ExpressBase.Web.Controllers
             XmlNode docNode = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
             doc.PrependChild(docNode);
             return doc.InnerXml;
+        }
+
+        [HttpGet("api/menu")]
+        public GetMobMenuResonse GetAppData4Mob()
+        {
+            if (ViewBag.IsValidSol)
+            {
+                return this.ServiceClient.Get(new GetMobMenuRequest());
+            }
+            else
+            {
+                return new GetMobMenuResonse();
+            }
         }
     }
 }

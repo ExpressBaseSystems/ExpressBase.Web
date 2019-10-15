@@ -7,7 +7,7 @@
     this.CurrentTile;
     this.Wc = options.Wc;
     this.Cid = options.Cid;
-
+    this.googlekey = options.googlekey || null;
     this.GenerateButtons = function () {
 
     }
@@ -23,6 +23,7 @@
         });
         this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
+        $("#dashbord-user-view").on("click", ".tile-opt", this.TileOptions.bind(this));
     }
 
     this.DrawTiles = function () {
@@ -40,14 +41,13 @@
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-object-group tile-opt" aria-hidden="true" id="i-opt-obj"></i>
-                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper"></div>
                     </div></div>`);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
-                let refid = this.EbObject.Tiles.$values[i].TileRefId;
+                let refid = this.EbObject.Tiles.$values[i].RefId;
                 if (refid !== "") {
                     $.ajax(
                         {
@@ -65,23 +65,33 @@
     }
 
 
-    this.Tilecontext = function () {
-        $.contextMenu({
-            selector: '.grid-stack-item-content',
-            trigger: 'right',
-            items: {
-                "FullScreenView": {
-                    name: "Open in NewTab ", icon: "fa-external-link", callback: this.FullScreenViewTrigger.bind(this),
-                },
-            }
-        });
+    this.TileOptions = function (e) {
+        var tileid = e.target.parentElement.getAttribute("u-id");
+        var id = e.target.getAttribute("id");
+        if (id === "i-opt-obj") {
+            let TileRefid = this.TileCollection[tileid].RefId;
+            window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+        }
     }
 
-    this.FullScreenViewTrigger = function (name, selector, event) {
-        let id = selector.$trigger[0].getAttribute("id");
-        let TileRefid = this.TileCollection[id].TileRefId;
-        window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+
+    this.Tilecontext = function () {
+        //$.contextMenu({
+        //    selector: '.grid-stack-item-content',
+        //    trigger: 'right',
+        //    items: {
+        //        "FullScreenView": {
+        //            name: "Open in NewTab ", icon: "fa-external-link", callback: this.FullScreenViewTrigger.bind(this),
+        //        },
+        //    }
+        //});
     }
+
+    //this.FullScreenViewTrigger = function (name, selector, event) {
+    //    let id = selector.$trigger[0].getAttribute("id");
+    //    let TileRefid = this.TileCollection[id].TileRefId;
+    //    window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+    //}
 
     this.TileRefidChangesuccess = function (id, data) {
         let obj = JSON.parse(data);
@@ -98,7 +108,12 @@
             o.dvObject = obj;
             o.IsPaging = false;
             o.showFilterRow = false;
+            o.showCheckboxColumn = false;
+            o.Source = "DashBoard";
             var dt = new EbBasicDataTable(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
+            let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
+            $(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -106,6 +121,28 @@
             o.tableId = "tb1" + id;
             o.dvObject = obj;
             var dt = new EbBasicChart(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
+        }
+        else if (obj.$type.indexOf("EbUserControl") >= 0) {
+            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl"></div>`);
+            let opts = {
+                parentDiv: '#' + id + '_UserCtrl',
+                refId: obj.RefId
+            }
+            new EbUserCtrlHelper(opts);
+            $(`[data-id="${id}"]`).parent().css("background", "transparent");
+            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            $(`[name-id="${id}"]`).empty();
+        }
+        else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
+            $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
+            var o = {};
+            o.tableId = "tb1" + id;
+            o.dsobj = obj;
+            o.Source = "Dashboard";
+            o.googlekey = this.googlekey;
+            var dt = new EbGoogleMap(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
         }
     }
 

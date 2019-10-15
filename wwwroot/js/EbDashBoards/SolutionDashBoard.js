@@ -1,9 +1,10 @@
 ﻿
-var SolutionDashBoard = function (connections, sid) {
+var SolutionDashBoard = function (connections, sid, versioning) {
     this.Connections = connections;
     this.whichModal = "";
     this.Sid = sid;
     this.GoogleRedirecturi = GoogleRedirecturi;
+    this.versioning = versioning;
     var postData;
     var Deleteid;
     var preferancetype = [];
@@ -23,7 +24,8 @@ var SolutionDashBoard = function (connections, sid) {
         "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />",
         "GoogleDrive": "<img class='img- responsive image-vender' src='../images/Google-Drive-Logo.png' style='width:68%' />",
         "AWSS3": "<img class='img- responsive image-vender' src='../images/amazon-s3.png' style='width:68%' />",
-        "DropBox": "<img class='img- responsive image-vender' src='../images/Dropbox-logo.png' style='width:100%' />"
+        "DropBox": "<img class='img- responsive image-vender' src='../images/Dropbox-logo.png' style='width:100%' />",
+        "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />"
     }
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -482,6 +484,26 @@ var SolutionDashBoard = function (connections, sid) {
         }.bind(this));
     };
 
+    this.SlackOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddSlack",
+            data: postData,
+            beforeSend: function () {
+                $("#Slack_loader").EbLoader("show", { maskItem: { Id: "#Slack", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#Slack_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#SlackConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
     this.ftpOnSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -782,6 +804,19 @@ var SolutionDashBoard = function (connections, sid) {
                 $('#GoogleDriveInputApplicationName').val(temp1["ApplicationName"]);
                 $('#GoogleDriveInputClientID').val(temp1["ClientID"]);
                 $('#GoogleDriveInputClientsecret').val(temp1["Clientsecret"]);
+            }
+        }
+    };
+    this.SlackinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#SlackConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#SlackInputNickname').val(temp[obj].NickName);
+                $('#SlackInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#SlackInputOAuthAccessToken').val(temp1["OAuthAccessToken"]);
+                $('#SlackInputChannel').val(temp1["Channel"]);
             }
         }
     };
@@ -1093,7 +1128,7 @@ var SolutionDashBoard = function (connections, sid) {
                                         EbMessage("show", { Message: "Please delete existing account and try again", Background: "red" });
                                     }
                                 }
-                                else if (key == "EbFILES" || key == "MAPS") {
+                                else if (key == "EbFILES" || key == "MAPS" || key == "Chat") {
                                     $.each(temp, function (i) {
                                         if (temp[i].Preference == 1) {
                                             postData.Preference = "OTHER";
@@ -1191,6 +1226,11 @@ var SolutionDashBoard = function (connections, sid) {
                 }
                 else if ($trigger.hasClass('AWSS3edit')) {
                     options.items.EbFILES = { name: "Configure as File Store" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('Slackedit')) {
+                    options.items.Chat = { name: "Configure as Chat" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
@@ -1319,6 +1359,18 @@ var SolutionDashBoard = function (connections, sid) {
                         options.items.RemoveDefault = { name: "Set as Default" }
 
                 } else if ($trigger.hasClass('EbFILESedit 1')) {
+                    options.items.RemoveP = { name: "Unset" },
+                        options.items.FALLBACK = {
+                            name: "Set as FALLBACK", disabled: function (key, opt) {
+                                // this references the trigger element
+                                return !this.data('cutDisabled');
+                            }
+                        }
+                } else if ($trigger.hasClass('Chatedit 3')) {
+                    options.items.Remove = { name: "Unset" },
+                        options.items.RemoveDefault = { name: "Set as Default" }
+
+                } else if ($trigger.hasClass('Chatedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
                         options.items.FALLBACK = {
                             name: "Set as FALLBACK", disabled: function (key, opt) {
@@ -1534,6 +1586,35 @@ var SolutionDashBoard = function (connections, sid) {
         $('#Integration_map').empty().append("Google Maps (" + count + ")");
     }.bind(this);
 
+    this.integration_IChat_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["Chat"];
+        $.each(Integrations, function (i, rows) {
+            //$.each(rows, function (j, rowss) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                <span>${rows.NickName}</span>
+                                `);
+            if (rows.Preference == "1") {
+                html.push(`<span  class="PF_span">PRIMARY</span>`);
+            }
+
+            html.push(`
+                            </div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`)
+            count += 1;
+        }.bind(this));
+        $('#ICHAT-all').empty().append(html.join(''));
+        $('#Integration_ICHAT').empty().append("Chat (" + count + ")");
+    }.bind(this);
+
     this.integration_config_all = function () {
         let html = [];
         var count = 0;
@@ -1575,6 +1656,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
         this.integration_Map_all();
+        this.integration_IChat_all();
     }.bind(this);
 
     this.db_modal_show_append = function (DatabaseName) {
@@ -1587,19 +1669,22 @@ var SolutionDashBoard = function (connections, sid) {
 
     this.VersioningSwitch = function (e) {
         postData = e.target.checked;
+        SolutionId = e.target.attributes.solutionid.nodeValue;
         if (this.Connections.SolutionInfo.IsVersioningEnabled) {
-            $("#VersioningSwitch").bootstrapToggle('on');
-            EbDialog("show",
-                {
-                    Message: "The Versioning cannot is turend off !!!!",
-                    Buttons: {
-                        "Cancel": {
-                            Background: "red",
-                            Align: "left",
-                            FontColor: "white;"
+            if (!$('#VersioningSwitch').is(':checked')) {
+                $("#VersioningSwitch").bootstrapToggle('on');
+                EbDialog("show",
+                    {
+                        Message: "The Versioning cannot is turend off !!!!",
+                        Buttons: {
+                            "Cancel": {
+                                Background: "red",
+                                Align: "left",
+                                FontColor: "white;"
+                            }
                         }
-                    }
-                });
+                    });
+            }                
         }
         else {
             EbDialog("show",
@@ -1618,19 +1703,24 @@ var SolutionDashBoard = function (connections, sid) {
                         }
                     },
                     CallBack: function (name) {
-                        if (name == "Confirm")
+                        if (name == "Confirm") {
                             $.ajax({
                                 type: 'POST',
                                 url: "../Tenant/VersioningSwitch",
-                                data: { data: postData, SolnId: this.Sid }
+                                data: { data: postData, SolnId: SolutionId }
                                 //beforeSend: function () {
                                 //    $("#dbConnection_loder").EbLoader("show", { maskItem: { Id: "#dbConnection_mask", Style: { "left": "0" } } });
                                 //}
                             }).done(function (data) {
                                 //$("#Integration_loder").EbLoader("hide");
-                                if (data)
+                                if (data) {
+                                    this.Connections.SolutionInfo.IsVersioningEnabled = 'True';
                                     EbMessage("show", { Message: "Versioning : On" });
+                                }                                    
+
                             }.bind(this));
+
+                        }
                         else if (name == "Cancel" || name == "close") {
                             $("#VersioningSwitch").bootstrapToggle('off');
                         }
@@ -1639,7 +1729,10 @@ var SolutionDashBoard = function (connections, sid) {
         }
     };
 
-    this.init = function () {
+    this.init = function () {        
+        if (this.versioning === 'True') {
+            $("#VersioningSwitch").bootstrapToggle('on');            
+        }   
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
@@ -1655,6 +1748,7 @@ var SolutionDashBoard = function (connections, sid) {
         $("#SendGridConnectionSubmit").on("submit", this.SendGridOnSubmit.bind(this));
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));
         $("#AWSS3ConnectionSubmit").on("submit", this.AWSS3OnSubmit.bind(this));
+        $("#SlackConnectionSubmit").on("submit", this.SlackOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();
@@ -1689,6 +1783,7 @@ var SolutionDashBoard = function (connections, sid) {
         this.integration_Cloudinary_all();
         this.integration_SMS_all();
         this.integration_Map_all();
+        this.integration_IChat_all();
 
 
 

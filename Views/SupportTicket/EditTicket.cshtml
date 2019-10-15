@@ -16,8 +16,32 @@
             <div class="col-md-7 col-lg-7 col-xs-12 col-sm-6 pd-0">
                 <h4 class="mr-t-0 mr-b-0">Support Ticket</h4>
             </div>
-            <div class="col-md-5 col-lg-5 col-sm-6 col-xs-12 pd-0 s-dash-btnwraper">
+            <div class="col-md-5 col-lg-5 col-sm-6  pd-0 s-dash-btnwraper">
 
+                @{if (ViewBag.new_mode == true)
+                    {
+                        <div class="saveclsdiv ">
+                            <button id="savebugid" class="ebbtn eb_btnblue eb_btn-sm" type="button"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="updateclsdiv ">
+                            @{ if (ViewBag.cid == "admin")
+                                {
+                                    <button id="btnupdateadmin" class="ebbtn eb_btnblue eb_btn-sm" type="button"> Update</button>
+                                }
+                                else
+                                {
+                                    <button id="btnupdate" class="ebbtn eb_btnblue eb_btn-sm" type="button"> Update</button>
+                                }
+                            }
+                        </div>
+                    }
+                }
+                <div class=" ">
+                    <button id="mytktbtn" class="ebbtn eb_btnblue eb_btn-sm" style="margin-right:10px;" type="button"><i class="fa fa-ticket"></i> My Tickets</button>
+                </div>
             </div>
         </div>
         <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
@@ -25,259 +49,275 @@
                 <div class="edtsprt w-100">
                     <div class="row  pd_lft30 w-100 ">
                         <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div class="row pdbtm15">
-                                @{if (ViewBag.chktkt == false)
-
-    {
-
-                                        <div class="col-sm-3 col-md-3 col-lg-3 ">
-                                            <label>Ticket Id</label>
-                                            <div class=" ">
-                                                <input class="form-control w-100 " type="text" id="tktid" disabled>
-                                            </div>
-                                        </div>
-    }
-                                }
-                            </div>
-                        </div>
-                        <div class="col-sm-12 col-md-7 col-lg-7 bdr">
-                            <div class="row">
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
-                                    <label>Title</label>
-                                    <div class=" ">
-                                        @{ if (ViewBag.cid == "admin")
-    {
-                                                <input class="form-control w-100 " type="text" id="bugtitle" disabled>
-    }
-    else
-    {
-                                                <input class="form-control w-100 " type="text" id="bugtitle">
-    }
-                                        }
-                                    </div>
-                                    <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
-                                </div>
-                                <div class="col-sm-6 col-md-6 col-lg-6 ">
-                                    <div class=" ">
-                                        @{if (ViewBag.wc.Equals("tc"))
-    {
-                                                <div class="">
-                                                    <label>Solution id</label>
-                                                    <div>
-                                                        <select id="soluid" class="form-control w-100">
-                                                            @for (int i = 0; i < ViewBag.soluids.Count; i++)
-{
-                                                                <option value=@ViewBag.soluids[i]>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
-}
-
-                                                        </select>
-                                                    </div>
-                                                    <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
-                                                </div>
-    }
-
-                                        }
-                                        @{ if (ViewBag.wc.Equals("uc") || ViewBag.wc.Equals("dc"))
-    {
-                                                <div class="">
-                                                    <label>Solution id</label>
-                                                    <div>
-                                                        <input class="form-control w-100 " type="text" value="@ViewBag.Cid" id="soluid" disabled>
-                                                    </div>
-                                                    <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
-                                                </div>
-    }
-
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-sm-4 col-md-4 col-lg-4 ">
-                                    <label>Priority</label>
-                                    <div>
-                                        @{ if (ViewBag.cid == "admin")
-                                            {
-                                                <input class="form-control w-100 " type="text" id="bugpriority" value="New" disabled>
-                                            }
-                                            else
-                                            {
-                                                <select id="bugpriority" class="form-control  priori w-100">
-                                                    <option value="1">High</option>
-                                                    <option value="2">Medium</option>
-                                                    <option value="3">Low</option>
-                                                </select>
-                                            }
-                                        }
-                                    </div>
-                                    <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
-                                </div>
-                                <div class="col-sm-4 col-md-4 col-lg-4 ">
-                                    <label>Status</label>
-                                    <div class=" ">
-                                        @{ if (ViewBag.cid == "admin")
-                                            {
-
-                                                <select id="stsid" class="form-control  priori w-100">
-                                                    <option value="1">New</option>
-                                                    <option value="2">Deferred</option>
-                                                    <option value="3">Closed</option>
-                                                    <option value="4">Rejected</option>
-                                                </select>
-                                            }
-                                            else
-                                            {
-                                                <input class="form-control w-100 " type="text" id="stsid" value="New" disabled>
-                                            }
-
-                                        }
-                                    </div>
-                                    <div id="stsidlbl" class="" style=" visibility :hidden"> status</div>
-                                </div>
-                                <div class="col-sm-4 col-md-4 col-lg-4 ">
-                                    <label>Issue type</label>
-                                    <div class=" ">
-                                        <div>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="optradio" id="Bug" value="Bug" checked>Bug
-                                            </label>
-                                            <label class="radio-inline">
-                                                <input type="radio" name="optradio" id="FeatureRequest" value="FeatureRequest">Feature Request
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-
-                            @{if (ViewBag.chktkt == false)
-                                {
-                                    <div class="row">
-                                        <div class="col-sm-12 col-md-4 col-lg-4 ">
-                                            <label>Date Created</label>
-                                            <div class=" ">
-                                                <input class="form-control w-100 " type="text" id="dtecrtd" disabled>
-                                            </div>
-                                            <div id="dtecrtdlbl" class="" style=" visibility :hidden"> Date Created</div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-4 col-lg-4 ">
-                                            <div>
-                                                <label>Date Modified</label>
-                                                <div class=" ">
-                                                    <input class="form-control w-100 " type="text" id="dtemdfyd" disabled>
-                                                </div>
-                                                <div id="dtemdfydlbl" class="" style=" visibility :hidden">Date Modified </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-4 col-lg-4 ">
-                                            <label>Assigned to</label>
-                                            <div class=" ">
-                                                @{ if (ViewBag.cid == "admin")
-                                                    {
-
-                                                        <select id="asgnid" class="form-control w-100">
-                                                            @for (int i = 0; i < ViewBag.AdminNames.Count; i++)
-                                                            {
-                                                                <option value=@ViewBag.AdminNames[i]>@ViewBag.AdminNames[i]</option>
-                                                            }
-
-                                                        </select>
-                                                        
-                                                    }
-                                                    else
-                                                    {
-                                                        <input class="form-control w-100 " type="text" id="asgnid" disabled>
-                                                    }
-                                                }
-                                            </div>
-                                            <div id="asgnidlbl" class="" style=" visibility :hidden"> assign</div>
-                                        </div>
-
-                                    </div>
-                                }
-                            }
                             <div class="row ">
-                                <div class="col-sm-12 col-md-12 col-lg-12">
-                                    <label>Description</label>
-                                    <div>
-                                        <textarea rows="8" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                                <div class="row">
+                                    <div class="col-sm-2 col-md-2 col-lg-2 ">
+                                        <label>Ticket Id</label>
+                                        <div class=" ">
+                                            <input class="form-control w-100 " type="text" id="tktid" disabled>
+                                        </div>
                                     </div>
-                                    <div id="descrlbl" class="" style=" visibility :hidden"> Enter some description</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-12 col-md-5 col-lg-5 ">
-
-                            <div class="pdbtm15">
-                                <div class="input-field">
-                                    <label class="active">Files</label>
-                                    <div class="input-images-2" style=" max-height:200px;min-height:196px; "></div>
-                                </div>
-
-                            </div>
-                            @{if (ViewBag.chktkt == false)
-                                {
-                                    <div class="">
-                                        <label>Remarks</label>
-                                        <div>
+                                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                                        <label>Title</label>
+                                        <div class=" ">
                                             @{ if (ViewBag.cid == "admin")
                                                 {
-                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid"></textarea>
+                                                    <input class="form-control w-100 " type="text" id="bugtitle" disabled>
                                                 }
                                                 else
                                                 {
-                                                    <textarea rows="8" cols="50" class="form-control stprsiz" id="remarkid" disabled></textarea>
+                                                    <input class="form-control w-100 " type="text" id="bugtitle">
                                                 }
                                             }
                                         </div>
+                                        <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
                                     </div>
-                                }
-                            }
+                                    <div class="col-sm-4 col-md-4 col-lg-4 ">
+                                        <div class=" ">
+                                            @{if (ViewBag.wc.Equals("tc"))
+                                                {
+                                                    <div class="">
+                                                        <label>Solution id</label>
+                                                        <div>
+                                                            <select id="soluid" class="form-control w-100">
+                                                                @for (int i = 0; i < ViewBag.soluids.Count; i++)
+                                                                {
+                                                                    <option value=@ViewBag.soluids[i]>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
+                                                                }
 
-                        </div>
+                                                            </select>
+                                                        </div>
+                                                        <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
+                                                    </div>
+                                                }
 
-                        <div class="col-sm-12 col-md-12 col-lg-12">
-                            @{if (ViewBag.chktkt == true)
-                                {
-                                    <div class=" ">
-                                        <button id="savebugid" class="btn btn-primary" type="button"> Save</button>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class=" ">
-                                        @{ if (ViewBag.cid == "admin")
-                                            {
-                                                <button id="btnupdateadmin" class="btn btn-primary" type="button"> Update</button>
                                             }
-                                            else
+                                            @{ if (ViewBag.wc.Equals("uc") || ViewBag.wc.Equals("dc"))
+                                                {
+                                                    <div class="">
+                                                        <label>Solution id</label>
+                                                        <div>
+                                                            <input class="form-control w-100 " type="text" value="@ViewBag.Cid" id="soluid" disabled>
+                                                        </div>
+                                                        <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
+                                                    </div>
+                                                }
+
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                                        <div class="col-sm-6 col-md-6 col-lg-6 pdleft0 ">
+
+                                            <div>
+                                                <label>Status</label>
+                                                <div class=" ">
+                                                    @{ if (ViewBag.cid == "admin")
+                                                        {
+
+                                                            <select id="stsid" class="form-control  priori w-100">
+                                                                <option value="1">New</option>
+                                                                <option value="2">In progress</option>
+                                                                <option value="3">Wating for info</option>
+                                                                <option value="4">Deferred</option>
+                                                                <option value="5">Closed</option>
+                                                                <option value="6">Rejected</option>
+                                                            </select>
+                                                        }
+                                                        else
+                                                        {
+                                                            <input class="form-control w-100 " type="text" id="stsid" value="New" disabled>
+                                                        }
+
+                                                    }
+                                                </div>
+                                                <div id="stsidlbl" class="" style=" visibility :hidden"> status</div>
+                                            </div>
+                                            <div>
+                                                <label>Issue type</label>
+                                                <div class=" ">
+                                                    <div>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="optradio" id="Bug" value="Bug" checked>Bug
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="optradio" id="FeatureRequest" value="FeatureRequest">Feature Request
+                                                        </label>
+                                                    </div>
+                                                    <div id="typelbl" class="" style=" visibility :hidden">Select a value</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6 col-md-6 col-lg-6 pdleft0">
+
+                                            <div>
+                                                <label>Priority</label>
+                                                <div>
+                                                    <select id="bugpriority" class="form-control  priori w-100">
+                                                        <option value="1">High</option>
+                                                        <option value="2">Medium</option>
+                                                        <option value="3">Low</option>
+                                                    </select>
+                                                </div>
+                                                <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
+                                            </div>
+                                            <div>
+                                                <label>Assigned to</label>
+                                                <div class=" ">
+                                                    @{ if (ViewBag.cid == "admin")
+                                                        {
+
+                                                            <select id="asgnid" class="form-control w-100">
+                                                                @for (int i = 0; i < ViewBag.AdminNames.Count; i++)
+                                                                {
+                                                                    <option value=@ViewBag.AdminNames[i]>@ViewBag.AdminNames[i]</option>
+                                                                }
+
+                                                            </select>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <input class="form-control w-100 " type="text" id="asgnid" disabled>
+                                                        }
+                                                    }
+                                                </div>
+                                                <div id="asgnidlbl" class="" style=" visibility :hidden"> assign</div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6 col-lg-6 pdleft0">
+                                        <div>
+                                            <label>Description</label>
+                                            <div>
+                                                <textarea rows="5" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
+                                            </div>
+                                            <div id="descrlbl" class="" style=" visibility :hidden"> Enter some description</div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+
+                            <div class="row tabcls">
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs navtbscls" id="mySptTab" role="tablist">
+                                    <li class="nav-item active">
+                                        <a class="nav-link " href="#Attachments" id="Attachments-tab" role="tab" data-toggle="tab"><strong>Attachments</strong></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#History" role="tab" data-toggle="tab"><strong>History</strong></a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content tabcntcls">
+
+                                    <div role="tabpanel" class="tab-pane fade in active" id="Attachments">
+                                        <div class="tabpan">
+                                            <div class="input-field">
+                                                <label class="">Files</label>
+                                                <div class="input-images-2" style=" max-height:250px;min-height:175px; "></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div role="tabpanel" class="tab-pane fade " id="History">
+
+                                        @{if (ViewBag.new_mode == false)
                                             {
-                                                <button id="btnupdate" class="btn btn-primary" type="button"> Update</button>
+                                                @*<div class="row bdr">
+                                                        <div class="row">
+                                                                <div class="col-sm-12 col-md-4 col-lg-4 ">
+                                                                    <label>Date Created</label>
+                                                                    <div class=" ">
+                                                                        <input class="form-control w-100 " type="text" id="dtecrtd" disabled>
+                                                                    </div>
+                                                                    <div id="dtecrtdlbl" class="" style=" visibility :hidden"> Date Created</div>
+                                                                </div>
+                                                                <div class="col-sm-12 col-md-4 col-lg-4 ">
+                                                                    <div>
+                                                                        <label>Date Modified</label>
+                                                                        <div class=" ">
+                                                                            <input class="form-control w-100 " type="text" id="dtemdfyd" disabled>
+                                                                        </div>
+                                                                        <div id="dtemdfydlbl" class="" style=" visibility :hidden">Date Modified </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                    </div>*@
+                                                <div class="tabpan">
+                                                    <div class=" hscls ">
+                                                        <div id="hscmnt_id" class="row" style=" padding-top: 8px; margin-bottom:5px">
+                                                            <div class="col-sm-11 col-md-11 col-lg-11 pdleft0 pdright0">
+                                                                <textarea rows="2" cols="50" class="form-control stprsiz" id="cmntid"></textarea>
+                                                            </div>
+                                                            <div class="col-sm-1 col-md-1 col-lg-1 " style="padding-top: 14px;padding-left: 5px;">
+                                                                <button id="btncomment" class="ebbtn eb_btnblue  "  type="button"> Comment</button>
+                                                            </div>
+
+                                                        </div>
+
+
+                                                        <div id="hist_id" class="hst row">
+
+
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             }
                                         }
                                     </div>
-                                }
 
-                            }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <!-- The Modal -->
+                <div class="modal fade" id="diplay_modal">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <!-- Modal body -->
+                            <div class="modal-body" style="padding-top: 0px; padding-bottom: 0px;padding-left: 0px; padding-right: 0px;">
+                                <button type="button" class="close" data-dismiss="modal" style="">&times; </button>
+                                <div id="file_disp">
+                                    @*file to display look supportticket js*@
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 
 
+
 <script>
     $(document).ready(function () {
+        // $('#mySptTab li:first-child a').tab('show')
 
-        ckecktkt = "@Html.Raw(ViewBag.chktkt)";
+        new_mode = "@Html.Raw(ViewBag.new_mode)";
 
         let preloaded = [];
 
-        if (ckecktkt == "False") {
+        if (new_mode == "False") {
             tktdtl = @Html.Raw(ViewBag.tktdetails);
+            sptHistroy = @Html.Raw(ViewBag.SptHstry);
             ebcontext.header.setName("Edit Ticket");
             for (var i = 0; i < tktdtl.supporttkt.length; i++) {
 
@@ -300,7 +340,7 @@
             });
 
          var edt = new EditTicket();
-
+       
 
 
     });

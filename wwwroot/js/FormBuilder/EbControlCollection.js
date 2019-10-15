@@ -41,6 +41,13 @@
 
     };
 
+    this.getParent = function (obj) {
+        let parentId = this.getParentId(obj.EbSid);
+        if ($(`[ebsid ="${parentId}"]`).attr("eb-form"))
+            return commonObj.Current_obj;
+        return this.GetByName(parentId);
+    };
+
     this.InsertAt = function (index, newObject) {
         let parentId = this.getParentId(newObject.EbSid);
         if ($(`[ebsid ="${parentId}"]`).attr("eb-form")) {

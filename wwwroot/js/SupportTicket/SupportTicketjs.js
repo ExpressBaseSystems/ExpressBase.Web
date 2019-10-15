@@ -4,23 +4,40 @@
         this.AppendBugsfn();
 
         $(".edttkt").on("click", this.EditTicketfn.bind(this));
-        $(".cloissue").on("click", this.CloseTicketfn.bind(this));
+        $(".cloissue").on("click", this.CloseIssueModal.bind(this));
+        $("#issueclosebtn").on("click", this.CloseTicketfn.bind(this));
         $("#newticket").on("click", this.NewTicketfn.bind(this));
+        $("#mytktbtn").on("click", this.MyTicketfn.bind(this));
 
 
 
     };
+    this.MyTicketfn=function () {
+            location.href = '/SupportTicket/bugsupport';
+        }
 
     this.AppendBugsfn = function () {
-        let html1 = null;
+       
+        $('#spt_table').find('thead tr').append('<th>Ticket Id</th>');
+        $('#spt_table').find('thead tr').append('<th style="width: 400px;">Title</th>');
+        if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
+            $('#spt_table').find('thead tr').append('<th>Solution Id</th>');
+        }
+        $('#spt_table').find('thead tr').append('<th>Priorty</th>');
+        $('#spt_table').find('thead tr').append('<th>Age</th>');
+        $('#spt_table').find('thead tr').append('<th>Status</th>');
+        $('#spt_table').find('thead tr').append('<th>Assigned to</th>');
+
         $.each(tktob.supporttkt, function (i, obj) {
             let p = "tkt" + i;
-            html1 += `<tr id="${p}" tabindex="${i}" class="tbltkt"> 
+            let html1 = null;
+            if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
+                html1 += `<tr id="${p}" tabindex="${i}" class="tbltkt "> 
             <td>${obj.ticketid}</td> 
             <td>${obj.title}</td> 
             <td>${obj.solutionid}</td> 
             <td>${obj.priority}</td> 
-            <td>${obj.lstmodified}</td> 
+            <td>${obj.NoDays}d ${obj.NoHour}h</td> 
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
@@ -29,8 +46,34 @@
 
               </td>
          </tr>`;
+            }
+            else {
+                html1 += `<tr id="${p}" tabindex="${i}" class="tbltkt"> 
+            <td>${obj.ticketid}</td> 
+            <td>${obj.title}</td>  
+            <td>${obj.priority}</td> 
+            <td>${obj.NoDays}d ${obj.NoHour}h</td> 
+            <td>${obj.status}</td> 
+            <td>${obj.assignedto}</td> 
+             <td> 
+                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
+              </td>
+         </tr>`;
+            }
+
+         $("#bugtblbody").append(html1);
+
+            if (((obj.priority == "High") && (obj.NoDays > 3)) || ((obj.priority == "Medium") && (obj.NoDays > 7)) ){
+                var lk = null;
+                 lk= '#' + p;
+                $(lk).addClass("trclr");
+            }
         });
-        $("#bugtblbody").empty().append(html1);
+       
+       
+        
+
     }
 
 
@@ -44,19 +87,29 @@
     }
 
     this.CloseTicketfn = function (ev) {
-        let tktno = $(ev.target).attr("tktno");
+
+
+        let tktno = $(ev.target).closest('button').attr("tktno");
+        var reason= $("#reasontxt").val().trim();
         $("#eb_common_loader").EbLoader("show");
         $.ajax({
             url: "../SupportTicket/ChangeStatus",
-            data: { tktno: tktno, },
+            data: { tktno: tktno,reason:reason },
             cache: false,
             type: "POST",
             success: function () {
                 $("#eb_common_loader").EbLoader("hide");
+                $('#modal_close').show();
             }
         });
 
         location.href = '/SupportTicket/bugsupport';
+    }
+
+    this.CloseIssueModal=function(ev){
+          let tktno = $(ev.target).closest('button').attr("tktno");
+          $("#issueclosebtn").attr("tktno",tktno);
+          $('#modal_close').modal('show');
     }
 
     this.NewTicketfn = function () {
@@ -87,11 +140,16 @@ var EditTicket = function () {
         $("#btnupdate").on("click", this.Updateticketfn.bind(this));
         $("#btnupdateadmin").on("click", this.UpdateAdminTicketfn.bind(this));
         $("#savebugid").on("click", this.Savebug.bind(this));
-
+        $("#btncomment").on("click", this.Commentfn.bind(this));
+        $("#mytktbtn").on("click", this.MyTicketfn.bind(this));
     };
 
+    this.MyTicketfn=function () {
+            location.href = '/SupportTicket/bugsupport';
+        }
+
     this.AppendTicketfn = function () {
-        if (ckecktkt == "True") {
+        if (new_mode == "True") {
 
         }
         else {
@@ -111,14 +169,8 @@ var EditTicket = function () {
                 else {
                     $("#soluid").val(obj.solutionid);
                 }
-                if (ebcontext.sid == "admin") {
-                    $("#bugpriority").val(obj.priority);
-                }
-                else {
-                    $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
-                }
-
-              
+                
+                $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
                 $("#dtecrtd").val(obj.createdat);
                 $("#dtemdfyd").val(obj.lstmodified);
                 $("#descriptionid").val(obj.description);
@@ -132,6 +184,83 @@ var EditTicket = function () {
                     document.getElementById("FeatureRequest").checked = true;
                 }
 
+            });
+
+
+            $.each(sptHistroy.SpHistory, function (j, ob, ) {
+                let stval = 0;
+                let ftemp = null;
+                let htm2 = null;
+                if (ob.Field == "title") {
+                    ftemp = "Title";
+                }
+                else if (ob.Field == "solution_id") {
+                    ftemp = "Solution id";
+                }
+                else if (ob.Field == "date_created") {
+                    ftemp = "Date created";
+                    stval = 1;
+                }
+                else if (ob.Field == "type_bg_fr") {
+                    ftemp = "Issue type";
+                }
+                else if (ob.Field == "priority") {
+                    ftemp = "Priority";
+                }
+                else if (ob.Field == "status") {
+                    ftemp = "Status";
+                }
+                else if (ob.Field == "description") {
+                    ftemp = "Description";
+                }
+                else if (ob.Field == "comment") {
+                    stval = 2;
+                }
+                else if (ob.Field == "assigned_to") {
+                    ftemp = "Assigned to"
+                }
+                else if (ob.Field == "reason") {
+                    stval = 3;
+
+                }
+
+                //if(ob.Field=="reason"){
+                //    return true;
+                //    }
+                if (stval == 3) {
+                    htm2 = ` <div class="hstry">
+                                <div>
+                                 <strong> ${ob.UserName} </strong>  has <b><i> closed  </i></b> the issue because of " ${ob.Value} "  on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                </div>
+                             </div>`
+                }
+
+               else if (stval == 0) {
+                    htm2 = ` <div class="hstry">
+                                <div>
+                                 <strong> ${ob.UserName} </strong> changed <b><i> ${ftemp} </i></b> to " ${ob.Value} "  on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                </div>
+                             </div>`
+                }
+                else  if (stval == 1) {
+                    htm2 = ` <div class="hstry">
+                                <div>
+                                <strong>  ${ob.UserName} </strong> <b><i> created issue </i></b>   on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                </div>
+                            </div>`
+                }
+                else if (stval == 2) {
+                    htm2 = ` <div class="hstry">
+                                <div>
+                                 <strong> ${ob.UserName} </strong>:     <b> " </b> ${ob.Value} <b> " </b> on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                </div>
+                                <div class="hstdt">
+                                 
+                                </div>
+                             </div>`
+                }
+
+                $("#hist_id").prepend(htm2);
             });
         }
     }
@@ -210,8 +339,10 @@ var EditTicket = function () {
 
     this.Updateticketfn = function () {
         let fill = this.validatefn();
+        var valchng = 0;
         if (fill) {
             var data = new FormData();
+
             $("#eb_common_loader").EbLoader("show");
             var totalFiles = window.filearray.length;
             for (var i = 0; i < totalFiles; i++) {
@@ -224,27 +355,70 @@ var EditTicket = function () {
             var solu = $("#soluid").val();
             var tktid = $("#tktid").val();
             var typ = $('input[name=optradio]:checked').val();
-            data.append("title", tlt);
-            data.append("descp", desc);
-            data.append("priority", priori);
-            data.append("solid", solu);
-            data.append("tktid", tktid);
-            data.append("filedelet", JSON.stringify(window.filedel));
-            data.append("type_f_b", typ);
 
+            let updtkt = {};
 
-
-            $.ajax({
-                url: "../SupportTicket/UpdateTicket",
-                type: 'POST',
-                data: data,
-                processData: false,
-                contentType: false,
-                success: function () {
-                    location.href = '/SupportTicket/bugsupport';
-                    $("#eb_common_loader").EbLoader("hide");
+            $.each(tktdtl.supporttkt, function (j, obj) {
+                if (obj.title != tlt) {
+                    updtkt.title = tlt;
+                    valchng = 1;
                 }
+                if (obj.description != desc) {
+                    updtkt.description = desc;
+                    valchng = 1;
+                }
+                if (obj.priority != priori) {
+                    updtkt.priority = priori;
+                    valchng = 1;
+                }
+                if (obj.solutionid != solu) {
+                    updtkt.solution_id = solu;
+                    valchng = 1;
+                }
+
+                if (obj.type_b_f != typ) {
+                    updtkt.type_bg_fr = typ;
+                    valchng = 1;
+                }
+
+                if (obj.ticketid == tktid) {
+                    data.append("tktid", tktid);
+                }
+                else {
+                    valchng = 2;
+                }
+
             });
+            if (ebcontext.user.wc == "tc") {
+                data.append("solu_id", solu);
+            }
+
+            let updtkt1 = JSON.stringify(updtkt);
+            data.append("updtkt", updtkt1);
+            data.append("filedelet", JSON.stringify(window.filedel));
+
+            if ((valchng == 1) || (totalFiles > 0)) {
+                $.ajax({
+                    url: "../SupportTicket/UpdateTicket",
+                    type: 'POST',
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        location.href = '/SupportTicket/bugsupport';
+                        $("#eb_common_loader").EbLoader("hide");
+                    }
+                });
+            }
+            else if (valchng == 0) {
+                EbMessage("show", { Message: "No changes found", Background: 'red' });
+                $("#eb_common_loader").EbLoader("hide");
+            }
+            else if (valchng == 2) {
+                EbMessage("show", { Message: "Ticket id missmatch", Background: 'red' });
+                $("#eb_common_loader").EbLoader("hide");
+            }
+
         }
 
     }
@@ -252,6 +426,7 @@ var EditTicket = function () {
 
     this.UpdateAdminTicketfn = function () {
         let fill = this.validatefn();
+        var valchng = 0;
         if (fill) {
             var data = new FormData();
             $("#eb_common_loader").EbLoader("show");
@@ -260,41 +435,108 @@ var EditTicket = function () {
             //    var file = window.filearray[i];
             //    data.append("imageUploadForm" + i, file);
             //}
-            //var tlt = $("#bugtitle").val().trim();
-            //var desc = $("#descriptionid").val().trim();
-            //var priori = $("#bugpriority option:selected").text().trim();
+            // data.append("filedelet", JSON.stringify(window.filedel));
             var solu = $("#soluid").val();
             var tktid = $("#tktid").val();
             var typ = $('input[name=optradio]:checked').val();
             var sts = $("#stsid option:selected").text().trim();
             var asgned = $("#asgnid option:selected").text().trim();
-            var rmrk = $("#remarkid").val();
-            //data.append("title", tlt);
-            //data.append("descp", desc);
-            //data.append("priority", priori);
-            data.append("solid", solu);
-            data.append("tktid", tktid);
-           // data.append("filedelet", JSON.stringify(window.filedel));
-            data.append("type_f_b", typ);
-            data.append("stats", sts);
-            data.append("asgnedto", asgned);
-            data.append("remark", rmrk);
+            var priori = $("#bugpriority option:selected").text().trim();
 
+            let updtkt = {};
 
+            $.each(tktdtl.supporttkt, function (j, obj) {
+                if (obj.assignedto != asgned) {
+                    updtkt.assigned_to = asgned;
+                    valchng = 1;
+                }
+                if (obj.status != sts) {
+                    updtkt.status = sts;
+                    valchng = 1;
+                }
+                if (obj.type_b_f != typ) {
+                    updtkt.type_bg_fr = typ;
+                    valchng = 1;
+                }
+                if (obj.priority != priori) {
+                updtkt.priority = priori;
+                valchng = 1;
+                }
+                if (obj.solutionid == solu) {
+                    data.append("solid", solu);
+                }
+                else {
+                    valchng = 3
 
+                }
+                if (obj.ticketid == tktid) {
+                    data.append("tktid", tktid);
+                }
+                else {
+                    valchng = 2;
+                }
+
+            });
+            let updtkt1 = JSON.stringify(updtkt);
+            data.append("updtkt", updtkt1);
+
+            if (valchng == 1) {
+                $.ajax({
+                    url: "../SupportTicket/UpdateTicketAdmin",
+                    type: 'POST',
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function () {
+                        location.href = '/SupportTicket/bugsupport';
+                        $("#eb_common_loader").EbLoader("hide");
+                    }
+                });
+            }
+             else if (valchng == 0) {
+                EbMessage("show", { Message: "No changes found", Background: 'red' });
+                $("#eb_common_loader").EbLoader("hide");
+            }
+            else if (valchng == 2) {
+                EbMessage("show", { Message: "Ticket id missmatch", Background: 'red' });
+                $("#eb_common_loader").EbLoader("hide");
+            }
+        }
+
+    }
+
+    this.Commentfn = function () {
+
+        var cmnt = $("#cmntid").val();
+        var tkt = null;
+        if (tktdtl.supporttkt[0].ticketid == $("#tktid").val()) {
+            tkt = $("#tktid").val();
+        }
+        if ((cmnt != null)&&(cmnt!="")){
             $.ajax({
-                url: "../SupportTicket/UpdateTicketAdmin",
+                url: "../SupportTicket/Comment",
                 type: 'POST',
-                data: data,
-                processData: false,
-                contentType: false,
+                data: { cmnt: cmnt, tktno: tkt },
+
                 success: function () {
-                    location.href = '/SupportTicket/bugsupport';
+                    $("#cmntid").val('');
+                    var htm2 = ` <div class="hstry">
+                                <div>
+                                 <strong> ${ebcontext.user.FullName} </strong> :   ${cmnt} 
+                                </div>
+                                
+                             </div>`
+
+
+                    $("#hist_id").prepend(htm2);
+
                     $("#eb_common_loader").EbLoader("hide");
                 }
             });
         }
-
+        else {
+            EbMessage("show", { Message: "comment field cannot be null", Background: 'red' });
+        }
     }
 
 
@@ -426,16 +668,18 @@ var EditTicket = function () {
 
         let prevent = function (e) {
             // Prevent browser default event and stop propagation
-
-            var src1 = $(e.target).closest('img').attr('src');
-            
-            //e.preventDefault();
-          //  e.stopPropagation();
+            e.preventDefault();
+            e.stopPropagation();
 
         };
 
-        let createImg = function (src, id, cntype, fileno) {
+        $(".uploaded-image").on("click", function (e) {
 
+            alert("The paragraph was clicked.");
+        });
+
+        let createImg = function (src, id, cntype, fileno) {
+            var flurl = src;
             // Create the upladed image container
             let $container = $('<div>', { class: 'uploaded-image' });
 
@@ -444,12 +688,16 @@ var EditTicket = function () {
             if (cntype == 'application/pdf') {
 
                 src = '/images/pdf-image.png';
-                $img = $('<img>', { src: src, cntype: cntype }).appendTo($container);
-               // $img = $('<iframe>', { src: src }).appendTo($container);
+
+                $img = $('<img>', { src: src, cntype: cntype, pd64: flurl }).appendTo($container);
+                // $img = $('<iframe>', { src: src }).appendTo($container);
+
             }
             else {
-                $img = $('<img>', { src: src, cntype: cntype}).appendTo($container);
+                $img = $('<img>', { src: src, cntype: cntype }).appendTo($container);
             }
+
+            $img.data('file_url', flurl);
 
 
 
@@ -484,8 +732,29 @@ var EditTicket = function () {
 
             // Stop propagation on click
             $container.on("click", function (e) {
+                var cntyp = $(e.target).closest('img').attr('cntype');
+                if (cntyp == "application/pdf") {
+                    $('#file_disp').html(` <iframe id="display_file" src="" frameborder="0" style=" display: block; border:none; height:550px; width:100%"></iframe>`);
+                    var src1 = $(e.target).closest('img').attr('pd64');
+                    //var src1 = $img.data('file_url');
+                    $('#display_file').attr('src', src1);
+                    $('#diplay_modal').modal('show');
+                }
+                else {
+                    $('#file_disp').html(`   <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block; max-height:550px; width:100%" ">`);
+                    var src1 = $(e.target).closest('img').attr('src');
+                    $('#display_file').attr('src', src1)
+                    $('#diplay_modal').modal('show');
+                }
+
+                //if (typeof (src1) !== 'undefined') {
+                //    $('.edtsprt').html(`<iframe id="iframe" src=${src1}></iframe>`);
+                //}
+
+
                 // Prevent browser default event and stop propagation
                 prevent(e);
+
             });
 
             // Set delete action

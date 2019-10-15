@@ -86,6 +86,11 @@ body, html,.html-root {
     font-size: 12px;
 }
 
+.eb_btn-xs {
+    padding: 1px 5px;
+    font-size: 12px;
+}
+
 .eb_btn_md {
     padding: 10px 20px;
 }

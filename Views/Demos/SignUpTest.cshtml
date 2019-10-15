@@ -70,14 +70,16 @@
         }
 
         function testAjax() {
-            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1NzkxMDk3MywiZXhwIjoxNTU3OTExMDYzLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.LO5jCVrHs8yw5QS8ivRXGOJCbiD78-5xko2dl0hLdPgt6uWZ4sdxlLZCn061nxDevXuM4ONPbOuGBgB7ZW6qLKPQCJ1h8tB-x2x-tuaQoGwC8ihlT4U-P3WiSruAcLpAtz6uNikU4wtbd6t3n1O_ynR9oWC_W9dMrnlUHkLuXUQ`;
-            r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTc5MTA5NzMsImV4cCI6MTU1Nzk5NzM3M30.UitKSw_jxJaV8rThgumMF2Y2IzkiiqkKB0g_pH-py0BlWUE8hR2_2KNytSlEsfNjehF8OwlNvQdtPjElXyGzKYwEgRWzL5vz7PLo6ASwwnTF14ejbtdiLx4XCAAQfaTr4ugGXopJ5SXIZJyD_xBJHQsflNZnwXHGKOMr0X_ocF4`;
+            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImhhaXJvY3JhZnRfc3RhZ2dpbmc6aGFpcm9jcmFmdDEyM0BnbWFpbC5jb206dWMiLCJpYXQiOjE1NzExMzU4NzYsImV4cCI6MTU3MTEzNTk2NiwiZW1haWwiOiJoYWlyb2NyYWZ0MTIzQGdtYWlsLmNvbSIsImNpZCI6ImhhaXJvY3JhZnRfc3RhZ2dpbmciLCJ1aWQiOjIsIndjIjoidWMifQ.I-xaOkO0SNtzNZ8aWNhiwfLOM6D_k7gnLKDguwg5lcu3D1RGZIt56OaMdSn-NdJdUJL9fhuGrO5rywKEAH3kBIdGFme5mjxL12tjxRd8NKf1-yRJ3n8NtF5Dj8UunRKjb6oP4DMUTgY-DkHr62hOxhPcVNYSrF8YkvykI6Y2D5g`;
+            r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJoYWlyb2NyYWZ0X3N0YWdnaW5nOmhhaXJvY3JhZnQxMjNAZ21haWwuY29tOnVjIiwiaWF0IjoxNTcxMTM1ODc2LCJleHAiOjE1NzEyMjIyNzZ9.gJL5kgOeVHoDmZQlZg4SPlaTuiE--VA8bmSV9T-1MbKTlXZhDcD7L5gfF3pOMLu9C-iJ4hLUCKMPNQDqSKw4JXYAR0G4fZmfeiBfQSeqZrMw_zu_QANZom0CN-XFo1RGx2h7UmXDLmp2FoXBjhiWRMlUrW41sbD3NAZsh6Q3vZw`;
             $.ajax({
-                url: "../api/files/6.jpg",
+                url: "../api/objects_by_app",
                 type: "GET",
                 cache: false,
-                contentType: false,
-                processData: false,
+                data: {
+                    "appid": 7,
+                    "locid":1
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", b);
                     xhr.setRequestHeader("rToken", r);
@@ -98,7 +100,7 @@
                 </span>
             </div>
         </form>
-        <input type="file" onchange="upload(this)" multiple/>
+        <input type="file" onchange="upload(this)" multiple />
         @*<button onclick="testAjax()">test</button>*@
     </div>
     <div id="div">

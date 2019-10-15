@@ -39,8 +39,8 @@ namespace ExpressBase.Web.Controllers
                 if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
                     Console.WriteLine("Webform Render - View mode request identified.");
-                    WebformData wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
-                    if (wfd.MultipleTables.Count == 0)
+                    WebformDataWrapper wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
+                    if (wfd.FormData == null)
                     {
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
                     }
@@ -48,8 +48,8 @@ namespace ExpressBase.Web.Controllers
                     {
                         ViewBag.rowId = ob[0].ValueTo;
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
-                        ViewBag.formData = JsonConvert.SerializeObject(wfd);
                     }
+                    ViewBag.formData = JsonConvert.SerializeObject(wfd);
                 }
                 else if((int)WebFormDVModes.New_Mode == _mode)
                 {
@@ -78,21 +78,38 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
                 
-        public WebformData getRowdata(string refid, int rowid, int currentloc)
+        public WebformDataWrapper getRowdata(string refid, int rowid, int currentloc)
         {
             try
             {
                 if(this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
                 {
                     GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
-                    return DataSet.FormData;
+                    return new WebformDataWrapper() { FormData = DataSet.FormData, Status = 101 };
                 }
-                throw new FormException("Access Denied for rowid " + rowid + " , current location " + currentloc);
+                throw new FormException("Error in loading data. Access Denied.", 302, "Access Denied for rowid " + rowid + " , current location " + currentloc, string.Empty);
+            }
+            catch (FormException ex)
+            {
+                Console.WriteLine("Form Exception in getRowdata. Message: " + ex.Message);
+                return new WebformDataWrapper() 
+                {
+                    Message = ex.Message,
+                    Status = ex.ExceptionCode,
+                    MessageInt = ex.MessageInternal,
+                    StackTraceInt = ex.StackTraceInternal
+                };
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-                return new WebformData();
+                return new WebformDataWrapper() 
+                {
+                    Message = "Error in loading data...",
+                    Status = 301,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                };
             }
         }
 

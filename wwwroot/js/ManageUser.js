@@ -735,6 +735,8 @@
                             }
                         });
                 }
+                else if (result === -1)
+                    EbMessage("show", { Message: 'Unable to create new user. Reached maximum user limit.', AutoHide: true, Background: '#1e1ebf' });
                 else
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $("#btnCreateUser").removeAttr("disabled");

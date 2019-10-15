@@ -1,18 +1,32 @@
 ﻿
 @using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common.Structures;
 
-<link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css">
-<link rel="stylesheet" href="~/css/ChartStyle.css">
-<link rel="stylesheet" href="~/css/Eb_datatable.css">
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+
+<link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js"></script>
 <script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
 <script src="~/js/EbUserDashBoard/EbDashBoard.js"></script>
+<script src="~/js/CommonDataTable.js"></script>
+<script src="~/js/GoogleMap/Googlemap.js"></script>
+<script src="~/js/EbUserDashBoard/EbDashBoard.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js" asp-append-version=@bApnd></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.all.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
-<script src="~/js/Eb_Basic_chart.js"></script>
+<script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+
 <script>
      @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -20,27 +34,67 @@
 
 </script>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            <div id="dashbord-view">
-                <div class="grid-stack"></div>
-            </div>
-
+    <div id="mySidenav" class="sidenav">
+        <div class="stickBtnHide">
+            <p>Toolbox</p> <i class="fa fa-thumb-tack " onclick="closeNav()" style="transform: rotate(90deg);"></i>
         </div>
+        <div id="Eb-obj-sidebar-cont">
+            
+        </div>
+            @*@{ 
+                List<int> abcd = new List<int>();
+                foreach(KeyValuePair<string,  List<EbObjectWrapper>> item in ViewBag.SideBarMenu)
+                {
+
+                    foreach(EbObjectWrapper obW in item.Value)
+                    {
+                        EbObjectType o = EbObjectTypes.Get(obW.EbObjectType);
+                        if (!abcd.Contains(obW.EbObjectType))
+                        {
+                            
+                        }
+
+
+                     <div refid="@obW.RefId" obj-id="@obW.Id"> @obW.Name</div>
+                    }
+                }
+            }*@
+    
+       
     </div>
+    <script>
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+            $(".stkMenu").hide(200);
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            $(".stkMenu").show(200);
+        }
+    </script>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="stkMenu" onclick="openNav()" style="display:flex"><i class="fa fa-wrench" style="padding: 5px 5px 0px 0px;"></i>  ToolBox </div>
+                <div id="dashbord-view" class="drop-target"> 
+                    <div class="grid-stack" id="grid-cont"></div>
+                </div>
+
+            </div>
+        </div>
 
 
 
-    <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
-</div>
-<script type="text/javascript">
-
+        <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
+    </div>
+    <script type="text/javascript">
 
         if (@ViewBag.tabnum === 0) {
             var commonO = $("#layout_div").data("commonObj");
         }
-
         var DBobj = new DashBoardWrapper({
             RefId: '@ViewBag.Refid',
             Version: '@ViewBag.VersionNumber',
@@ -50,30 +104,36 @@
             TabNum: @ViewBag.tabnum,
             ServiceUrl: '@ViewBag.ServiceUrl',
             Wc: '@ViewBag.wc',
-            Cid: '@ViewBag.cid'
+            Cid: '@ViewBag.cid',
+            EbObjList: @Html.Raw(ViewBag.SideBarMenu),
+            googlekey : '@ViewBag.googlekey'
         });
 
         commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DBobj;
 
+
         $(function () {
-            $('.grid-stack').gridstack();
+           $('.grid-stack').gridstack({
+    resizable: {
+        handles: 'e, se, s, n'
+    }
+});
         });
-</script>
+    </script>
 
-@*<div class="container-fluid">
-        <h1>knockout.js Demo</h1>
+    @*<div class="container-fluid">
+            <h1>knockout.js Demo</h1>
 
-        <div>
-            <button data-bind="click: add_new_widget">Add new widget</button>
-        </div>
+            <div>
+                <button data-bind="click: add_new_widget">Add new widget</button>
+            </div>
 
-        <br>
+            <br>
 
-        <div data-bind="component: {name: 'dashboard-grid', params: $data}"></div>
-    </div>*@
+            <div data-bind="component: {name: 'dashboard-grid', params: $data}"></div>
+        </div>*@
 
 
-<script type="text/javascript">
-
-</script>
-
+    <script type="text/javascript">
+      
+    </script>

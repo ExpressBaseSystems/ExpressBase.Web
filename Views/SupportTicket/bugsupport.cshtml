@@ -31,23 +31,36 @@
                 <div class="supporttkt w-100">
                     <div class="w-100 supporttktwrp">
                         <div>
-                            <table class="table table-striped table-hover scrl">
+                            <table class="table  scrl" id="spt_table">
                                 <thead class=" ">
                                     <tr>
-                                        <th>Ticket Id</th>
-                                        <th>Title</th>
-                                        <th>Solution Id</th>
-                                        <th>Priorty</th>
-                                        <th>Last Modified At</th>
-                                        <th>Status</th>
-                                        <th>Assigned to</th>
-                                        @*<th>Edit/Delete</th>*@
                                     </tr>
                                 </thead>
                                 <tbody id="bugtblbody">
-
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div class="modal fade" id="modal_close" role="dialog">
+                            <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        <h4 class="modal-title">Reason for closing issue?</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div>
+                                            <textarea rows="5" cols="50" class="form-control stprsiz" id="reasontxt"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" id="issueclosebtn" data-dismiss="modal">Save</button>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>

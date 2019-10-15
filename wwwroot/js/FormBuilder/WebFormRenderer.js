@@ -24,10 +24,12 @@ const WebFormRender = function (option) {
     this.isPartial = option.isPartial;//value is true if form is rendering in iframe
     this.headerObj = option.headerObj;//EbHeader
     this.formPermissions = option.formPermissions;
-    this.EditModeFormData = option.formData === null ? null : option.formData.MultipleTables;//EditModeFormData
-    this.FormDataExtended = option.formData === null ? null : option.formData.ExtendedTables;
-    this.DisableDeleteData = option.formData === null ? {} : option.formData.DisableDelete;
-    this.DisableCancelData = option.formData === null ? {} : option.formData.DisableCancel;
+    this.formDataWrapper = option.formData;
+    this.formData = option.formData === null ? null : option.formData.FormData;
+    this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
+    this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;
+    this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
+    this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
     this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
@@ -859,6 +861,7 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint"], currentLoc, reqstMode));
         }
         else if (reqstMode === "Fail Mode") {
+            //console.log(this.formDataWrapper);
             EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
         }
         else if (reqstMode === "Preview Mode") {
@@ -985,7 +988,7 @@ const WebFormRender = function (option) {
             this.SwitchToViewMode();
 
             let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
-            let nl = _formData.MultipleTables[_formData.MasterTable][0].LocId.toString();
+            let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
             if (ol !== nl) {
                 EbDialog("show", {
                     Message: "Switching from " + getObjByval(ebcontext.locations.Locations, "LocId", ol).LongName + " to " + getObjByval(ebcontext.locations.Locations, "LocId", nl).LongName,
@@ -997,7 +1000,7 @@ const WebFormRender = function (option) {
                         }
                     },
                     CallBack: function (name) {
-                        ebcontext.locations.SwitchLocation(_formData.MultipleTables[_formData.MasterTable][0].LocId);
+                        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
                         this.setHeader(this.mode);
                     }.bind(this)
                 });
@@ -1005,23 +1008,25 @@ const WebFormRender = function (option) {
 
         }
 
-        ebcontext.locations.Listener.ChangeLocation = function (o) {
-            if (this.rowId > 0) {
-                EbDialog("show", {
-                    Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
-                    Buttons: {
-                        "Ok": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: function (name) {
-                        reloadFormPage();
-                    }.bind(this)
-                });
-            }
-        }.bind(this);
+        if (ebcontext.locations.Listener) {
+            ebcontext.locations.Listener.ChangeLocation = function (o) {
+                if (this.rowId > 0) {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+            }.bind(this);
+        }
     };
 
     let t0 = performance.now();

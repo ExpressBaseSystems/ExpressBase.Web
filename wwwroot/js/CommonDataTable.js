@@ -92,7 +92,7 @@
     this.columns = Option.columns || (this.EbObject) ? this.EbObject.Columns.$values :null;
     this.contId = Option.containerId;
     this.scrollHeight = Option.scrollHeight || "inherit";
-    this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.showCheckboxColumn : true;
+    this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.IsPaging : true;
 
     if (this.Source === "EbDataTable") {
         this.split = new splitWindow("parent-div0", "contBox");
@@ -365,7 +365,6 @@
         }
         $("#objname").text(this.EbObject.DisplayName);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
-        this.EbObject.IsPaging = this.IsPaging;
         this.init();
         this.call2FD();
     };

@@ -204,14 +204,39 @@
     this.initCtrl4EditMode = function (inpCtrl) {
         if (inpCtrl.ObjType === "PowerSelect") {
             inpCtrl.initializer = {};//temporary init
+            inpCtrl.initializer.columnVals = {};//temporary init
             inpCtrl.initializer.setValues = function (p1, p2) {
                 $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
             };
 
-            inpCtrl.getColumn = function (colName) {
-                let val = this.FormDataExtdObj.val[ctrl.EbSid];
-                return val;
-            }.bind(this);
+            inpCtrl.getColumn = function (ctrl, colName) {
+                if (!ctrl.__eb_EditMode_val)
+                    return "";
+                if (!ctrl.__is_set_Disp) {
+                    let DMtable = this.FormDataExtdObj.val[ctrl.EbSid];
+
+                    let columnVals = ctrl.initializer.columnVals;
+
+                    let p1 = ctrl.__eb_EditMode_val;
+                    let valMsArr = ctrl.__eb_EditMode_val.split(',');
+
+                    $.each(valMsArr, function (i, vm) {
+                        $.each(DMtable, function (j, row) {
+                            if (getObjByval(row.Columns, 'Name', ctrl.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+                                $.each(row.Columns, function (k, column) {
+                                    let val = EbConvertValue(column.Value, column.Type);
+                                    if (!columnVals[column.Name])
+                                        columnVals[column.Name] = [];
+                                    columnVals[column.Name].push(val);
+                                }.bind(this));
+                            }
+                        }.bind(this));
+                    }.bind(this));
+                    ctrl.__is_set_Disp = true;
+                }
+
+                return ctrl.initializer.columnVals[colName];
+            }.bind(this, inpCtrl);
         }
         else {
             inpCtrl.setValue = function (p1) {

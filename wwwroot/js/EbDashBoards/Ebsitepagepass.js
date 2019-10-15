@@ -207,7 +207,6 @@ var PasswordValidation = function (RecaptchaCallbackreset) {
         }
     };
 
-
     this.initial();
 };
 

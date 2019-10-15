@@ -7,7 +7,7 @@
     this.CurrentTile;
     this.Wc = options.Wc;
     this.Cid = options.Cid;
-
+    this.googlekey = options.googlekey || null;
     this.GenerateButtons = function () {
 
     }
@@ -111,6 +111,9 @@
             o.showCheckboxColumn = false;
             o.Source = "DashBoard";
             var dt = new EbBasicDataTable(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
+            let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
+            $(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -118,6 +121,7 @@
             o.tableId = "tb1" + id;
             o.dvObject = obj;
             var dt = new EbBasicChart(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl"></div>`);
@@ -125,10 +129,20 @@
                 parentDiv: '#' + id + '_UserCtrl',
                 refId: obj.RefId
             }
-             EbUserCtrlHelper(opts);
+            new EbUserCtrlHelper(opts);
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[name-id="${id}"]`).empty();
+        }
+        else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
+            $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
+            var o = {};
+            o.tableId = "tb1" + id;
+            o.dsobj = obj;
+            o.Source = "Dashboard";
+            o.googlekey = this.googlekey;
+            var dt = new EbGoogleMap(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
         }
     }
 

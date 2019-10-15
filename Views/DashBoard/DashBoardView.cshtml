@@ -30,7 +30,7 @@
 <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js"></script>
 <script type="text/javascript" src="~/js/FormBuilder/PGHelper.js"></script>
 <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
-
+<script src="~/js/GoogleMap/Googlemap.js"></script>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
@@ -55,7 +55,8 @@
             Version: '@ViewBag.VersionNumber',
             ObjType: @ViewBag.ObjType,
             dvObj: @Html.Raw(ViewBag.dsObj),
-            Status: '@ViewBag.Status'
+            Status: '@ViewBag.Status',
+            googlekey : '@ViewBag.al_arz_map_key'
         });
 
       $(function () {

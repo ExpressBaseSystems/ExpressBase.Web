@@ -34,34 +34,16 @@
 
 </script>
 
-    <div id="mySidenav" class="sidenav">
-        <div class="stickBtnHide">
-            <p>Toolbox</p> <i class="fa fa-thumb-tack " onclick="closeNav()" style="transform: rotate(90deg);"></i>
-        </div>
-        <div id="Eb-obj-sidebar-cont">
-            
-        </div>
-            @*@{ 
-                List<int> abcd = new List<int>();
-                foreach(KeyValuePair<string,  List<EbObjectWrapper>> item in ViewBag.SideBarMenu)
-                {
-
-                    foreach(EbObjectWrapper obW in item.Value)
-                    {
-                        EbObjectType o = EbObjectTypes.Get(obW.EbObjectType);
-                        if (!abcd.Contains(obW.EbObjectType))
-                        {
-                            
-                        }
-
-
-                     <div refid="@obW.RefId" obj-id="@obW.Id"> @obW.Name</div>
-                    }
-                }
-            }*@
-    
-       
+<div id="mySidenav" class="sidenav">
+    <div class="stickBtnHide">
+        <p>Toolbox</p> <i class="fa fa-thumb-tack " onclick="closeNav()" style="transform: rotate(90deg);"></i>
     </div>
+    <div class="search-div"> <input type="search" id="DashB-Search" placeholder="search.."/> </div>
+    <div id="DashB-Searched-Obj" hidden> </div>
+    <div id="Eb-obj-sidebar-cont">   </div>
+
+
+</div>
     <script>
         function openNav() {
             document.getElementById("mySidenav").style.width = "250px";
@@ -80,7 +62,7 @@
             <div class="col-sm-12">
                 <div class="stkMenu" onclick="openNav()" style="display:flex"><i class="fa fa-wrench" style="padding: 5px 5px 0px 0px;"></i>  ToolBox </div>
                 <div id="dashbord-view" class="drop-target"> 
-                    <div class="grid-stack" id="grid-cont"></div>
+                    <div class="grid-stack" id="grid-cont" ></div>
                 </div>
 
             </div>

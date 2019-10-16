@@ -15,8 +15,7 @@
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
     this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21:"GoogleMap"}
-    this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21:"fa fa-map-marker"}
-
+    this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21: "fa fa-map-marker" }
 
     this.DrawObjectOnMenu = function () {
         let myarr = [];
@@ -32,11 +31,12 @@
                         </div>`);
                     myarr.push(Obj.EbObjectType);
                     containers.push(document.getElementById(`${Obj.EbObjectType}`));
+                   
                 }
                 else {
                     $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
+                  
                 }
-
             }.bind(this));
 
 
@@ -123,6 +123,7 @@
         //$(".grid-stack").on("click", this.DashBoardSelectorJs.bind(this));
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
+        $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
     }
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
@@ -366,8 +367,61 @@
         }.bind(this));
         return true;
     };
+    this.DashBoardSearch = function (e) {
+        $(`#DashB-Searched-Obj`).empty();
+        let val = $("#DashB-Search").val().trim();
+        if (val === "" || val === null) {
+            $(`#DashB-Searched-Obj`).hide().empty();
+            $("#Eb-obj-sidebar-cont").show();
+        }
+        else {
+            $(`#DashB-Searched-Obj`).show();
+            $("#Eb-obj-sidebar-cont").hide();
+            val = val.toLowerCase();
+            let myarr = [];
+            let count = 0;
+            let containers = [];
+            $.each(this.ebObjList, function (key, Val) {
+                $.each(Val, function (i, Obj) {
+                    if (Obj.DisplayName.toLowerCase().indexOf(val) != -1) {
+                        if (myarr.indexOf(Obj.EbObjectType) === -1) {
+                            $("#DashB-Searched-Obj").append(`<div> 
+                        <div class="sidebar-head" hs-id="${Obj.EbObjectType}" style="display:flex;"> <div class="${this.ObjIcons[Obj.EbObjectType]} db-sidebar-icon"></div>
+                       ${this.ObjTypeName[Obj.EbObjectType]}</div>
+                       <div id="${Obj.EbObjectType}" class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
+                        </div>`);
+                            myarr.push(Obj.EbObjectType);
+                            containers.push(document.getElementById(`${Obj.EbObjectType}`));
+
+                        }
+                        else {
+                            $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
+
+                        }
+                    }
+                }.bind(this));
+
+
+            }.bind(this));
+            //containers.push(document.getElementById('grid-cont'));
+            this.drake = dragula(containers, {
+                copy: true,
+                accepts: function (el, target, source, sibling) {
+                    if (source == target) {
+                        return false;
+                    }
+                    else
+                        return true; // elements can be dropped in any of the `containers` by default
+                },
+            });
+            this.drake.off("drag").on("drag", this.columnsdrag.bind(this));
+            this.drake.off("shadow").on("shadow", this.columnsshadow.bind(this));
+            this.drake.off("drop").on("drop", this.columnsdrop.bind(this));
+        }
+    };
     this.init();
     this.DrawObjectOnMenu();
+
 }
 
 

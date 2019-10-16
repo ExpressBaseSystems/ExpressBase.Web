@@ -411,5 +411,31 @@ namespace ExpressBase.Web.Controllers
             }
             return _objs;
         }
+
+        [HttpGet("/api/object_by_ref")]
+        public EbObjectWrapper GetObjectByRef(string refid)
+        {
+            if (string.IsNullOrEmpty(refid))
+                throw new Exception("refid cannot be null");
+
+            EbObjectWrapper wraper = null;
+
+            if (ViewBag.IsValidSol)
+            {
+                try
+                {
+                    EbObjectParticularVersionResponse resp =  this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
+                    if (resp.Data.Count > 0)
+                        wraper = resp.Data[0];
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                }
+                
+            }
+            return wraper;
+        }
     }
 }

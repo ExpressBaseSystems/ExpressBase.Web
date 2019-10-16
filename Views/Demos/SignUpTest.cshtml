@@ -70,21 +70,20 @@
         }
 
         function testAjax() {
-            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImhhaXJvY3JhZnRfc3RhZ2dpbmc6aGFpcm9jcmFmdDEyM0BnbWFpbC5jb206dWMiLCJpYXQiOjE1NzExMzU4NzYsImV4cCI6MTU3MTEzNTk2NiwiZW1haWwiOiJoYWlyb2NyYWZ0MTIzQGdtYWlsLmNvbSIsImNpZCI6ImhhaXJvY3JhZnRfc3RhZ2dpbmciLCJ1aWQiOjIsIndjIjoidWMifQ.I-xaOkO0SNtzNZ8aWNhiwfLOM6D_k7gnLKDguwg5lcu3D1RGZIt56OaMdSn-NdJdUJL9fhuGrO5rywKEAH3kBIdGFme5mjxL12tjxRd8NKf1-yRJ3n8NtF5Dj8UunRKjb6oP4DMUTgY-DkHr62hOxhPcVNYSrF8YkvykI6Y2D5g`;
-            r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJoYWlyb2NyYWZ0X3N0YWdnaW5nOmhhaXJvY3JhZnQxMjNAZ21haWwuY29tOnVjIiwiaWF0IjoxNTcxMTM1ODc2LCJleHAiOjE1NzEyMjIyNzZ9.gJL5kgOeVHoDmZQlZg4SPlaTuiE--VA8bmSV9T-1MbKTlXZhDcD7L5gfF3pOMLu9C-iJ4hLUCKMPNQDqSKw4JXYAR0G4fZmfeiBfQSeqZrMw_zu_QANZom0CN-XFo1RGx2h7UmXDLmp2FoXBjhiWRMlUrW41sbD3NAZsh6Q3vZw`;
+            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImhhaXJvY3JhZnRfc3RhZ2dpbmc6aGFpcm9jcmFmdDEyM0BnbWFpbC5jb206dWMiLCJpYXQiOjE1NzEyMTIxMDcsImV4cCI6MTU3MTIxMjE5NywiZW1haWwiOiJoYWlyb2NyYWZ0MTIzQGdtYWlsLmNvbSIsImNpZCI6ImhhaXJvY3JhZnRfc3RhZ2dpbmciLCJ1aWQiOjIsIndjIjoidWMifQ.GKzw_-Fv8Qjewy8te6nmRJ75ukIdvUlUVWDlB-V2asLq0GQCcVU2ct5iE4UVJcQnk_GTApntphar-WWRjRLOlSTe0MwMeMwc3NaesSeIPhyUk9Y3bbK12wZZLewJ3OSPtxS9VHbPmqA7bjU838YuqkGq5VPyF30Ex-EBCv2Q3XU`;
+            r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJoYWlyb2NyYWZ0X3N0YWdnaW5nOmhhaXJvY3JhZnQxMjNAZ21haWwuY29tOnVjIiwiaWF0IjoxNTcxMjEyMTA3LCJleHAiOjE1NzEyOTg1MDd9.eTHGasrXh-08-V7c8B0Ex8jToazx7uPwSwSy6k3-otnP-FjzCciLfnfceQ1hy5HlnfEcYoED2W30xT3JF7BZLR3tr0h9Ec6fAejoSMQqZnlsRcR-sODjTE-Zz7g2J2nZvPA7g4TIl0BtjsPqXbiqtNGYzGEzvqMoETulSYvCzlo`;
             $.ajax({
-                url: "../api/objects_by_app",
+                url: "/api/object_by_ref",
                 type: "GET",
                 cache: false,
                 data: {
-                    "appid": 7,
-                    "locid":1
+                    "refid": "hairocraft_stagging-hairocraft_stagging-0-180-227-180-227",
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", b);
                     xhr.setRequestHeader("rToken", r);
                 }
-            }).done(function (refid) {
+            }).done(function (data) {
 
             });
         }

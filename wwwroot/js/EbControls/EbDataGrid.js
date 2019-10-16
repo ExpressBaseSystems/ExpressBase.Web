@@ -184,24 +184,36 @@
     };
 
     this.setValueExpCols = function () {
+        let t0 = performance.now();
         $.each(this.AllRowCtrls, function (rowId, inpCtrls) {
-            this.setCurRow(rowId);
+            setTimeout(function () {// to make asynchronous
+                this.setCurRow(rowId);
 
-            $.each(inpCtrls, function (i, inpCtrl) {
-                this.initCtrl4EditMode(inpCtrl);
-                if (!inpCtrl.DoNotPersist)
-                    inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
-            }.bind(this));
+                let bt0 = performance.now();
+                $.each(inpCtrls, function (i, inpCtrl) {
+                    this.initCtrl4EditMode(inpCtrl);
+                    if (!inpCtrl.DoNotPersist)
+                        inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
+                }.bind(this));
+                let bt1 = performance.now();
+                //console.dev_log("DataGrid : 1st loop took " + (bt1 - bt0) + " milliseconds.");
 
-            $.each(inpCtrls, function (i, inpCtrl) {
-                if (rowId === "41")
-                    console.log(555);
-                EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
-            }.bind(this));
+                let at0 = performance.now();
+                $.each(inpCtrls, function (i, inpCtrl) {
+                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
+                }.bind(this));
+                let at1 = performance.now();
+                //console.dev_log("DataGrid : EbRunValueExpr took " + (at1 - at0) + " milliseconds.");
+
+            }.bind(this), 0);
+
         }.bind(this));
+        let t1 = performance.now();
+        console.dev_log("DataGrid : setValueExpCols took " + (t1 - t0) + " milliseconds.");
     };
 
     this.initCtrl4EditMode = function (inpCtrl) {
+        let t0 = performance.now();
         if (inpCtrl.ObjType === "PowerSelect") {
             inpCtrl.initializer = {};//temporary init
             inpCtrl.initializer.columnVals = {};//temporary init
@@ -243,6 +255,8 @@
                 $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
             };//temporary init
         }
+        let t1 = performance.now();
+        //console.dev_log("DataGrid : initCtrl4EditMode took " + (t1 - t0) + " milliseconds.");
     };
 
     this.tryAddRow = function () {
@@ -976,7 +990,8 @@
         for (let colName in curRowData) {
             let ctrl = getObjByval(curRowCtrls, "Name", curRowData[colName].Name);
             let Value = curRowData[colName].Value;
-            ctrl.setValue(Value);
+            if (Value !== null)
+                ctrl.setValue(Value);
         }
     };
 

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Security;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -65,8 +66,10 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     controller.ViewBag.IsValid = true;
                     controller.ViewBag.Message = "Authenticated";
-
                     var bToken = new JwtSecurityToken(sBToken);
+
+                    this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
+
                     Session = new CustomUserSession();
                     Session.Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID];
 
@@ -91,6 +94,19 @@ namespace ExpressBase.Web.BaseControllers
                 }
             }
             base.OnActionExecuting(context);
+        }
+
+        public List<string> GetAccessIds(int lid)
+        {
+            List<string> ObjIds = new List<string>();
+            foreach (string perm in this.LoggedInUser.Permissions)
+            {
+                int id = Convert.ToInt32(perm.Split(CharConstants.DASH)[2]);
+                int locid = Convert.ToInt32(perm.Split(CharConstants.COLON)[1]);
+                if ((lid == locid || locid == -1) && !ObjIds.Contains(id.ToString()))
+                    ObjIds.Add(id.ToString());
+            }
+            return ObjIds;
         }
     }
 }

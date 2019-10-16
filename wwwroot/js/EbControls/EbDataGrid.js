@@ -206,7 +206,7 @@
             inpCtrl.initializer = {};//temporary init
             inpCtrl.initializer.columnVals = {};//temporary init
             inpCtrl.initializer.setValues = function (p1, p2) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
             };
 
             inpCtrl.getColumn = function (ctrl, colName) {
@@ -240,7 +240,7 @@
         }
         else {
             inpCtrl.setValue = function (p1) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
             };//temporary init
         }
     };

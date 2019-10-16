@@ -31,6 +31,7 @@ using ServiceStack.Auth;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
+using ExpressBase.Common.Structures;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -377,6 +378,64 @@ namespace ExpressBase.Web.Controllers
             {
                 return new GetMobMenuResonse();
             }
+        }
+
+        [HttpGet("/api/objects_by_app")]
+        public ObjectListToMob GetObjectsByApp(int appid,int locid)
+        {
+            locid = locid == 0 ? 1 : locid;
+            ObjectListToMob _objs = new ObjectListToMob();
+
+            if (ViewBag.IsValidSol)
+            {
+                try
+                {
+                    var Ids = String.Join(",", this.GetAccessIds(locid));
+                    SidebarUserResponse resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest
+                    {
+                        Ids = Ids,
+                        SysRole = this.LoggedInUser.Roles
+                    });
+
+                    if (resultlist.Data.ContainsKey(appid))
+                    {
+                        foreach (KeyValuePair<int, TypeWrap> pair in resultlist.Data[appid].Types) {
+                            _objs.Objects.Add(EbObjectTypes.Get(pair.Key).Alias,pair.Value.Objects);
+                        } 
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+            return _objs;
+        }
+
+        [HttpGet("/api/object_by_ref")]
+        public EbObjectWrapper GetObjectByRef(string refid)
+        {
+            if (string.IsNullOrEmpty(refid))
+                throw new Exception("refid cannot be null");
+
+            EbObjectWrapper wraper = null;
+
+            if (ViewBag.IsValidSol)
+            {
+                try
+                {
+                    EbObjectParticularVersionResponse resp =  this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
+                    if (resp.Data.Count > 0)
+                        wraper = resp.Data[0];
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                }
+                
+            }
+            return wraper;
         }
     }
 }

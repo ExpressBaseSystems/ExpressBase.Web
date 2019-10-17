@@ -128,6 +128,9 @@
         else if (col.ObjType === "DGBooleanSelectColumn") {
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
+        else if (col.ObjType === "DGDateColumn") {
+            dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
+        }
         else
             dspMmbr = cellObj.Value;
 

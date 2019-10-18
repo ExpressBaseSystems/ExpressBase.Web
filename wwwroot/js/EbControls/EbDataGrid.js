@@ -1445,6 +1445,21 @@
         this.ctrl.getRowBySlno = this.getRowBySlno.bind(this);
     };
 
+    this.makeColsResizable = function () {
+        $(`#${this.TableId}_head .ebResizable`).resizable({
+            handles: 'e',
+            resize: function (event, ui) {
+                let $curTd = ui.element;
+                let tdWidth = $curTd.outerWidth();
+                let $bodyTbl = $curTd.closest(".grid-cont").closestInner(".Dg_body");
+                let $footerTbl = $curTd.closest(".grid-cont").closestInner(".grid-cont>.Dg_footer");
+
+                $bodyTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
+                $footerTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
+            }
+        });
+    };
+
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
@@ -1466,18 +1481,8 @@
                 col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));
 
-        $(`#${this.TableId}_head .ebResizable`).resizable({
-            handles: 'e',
-            resize: function (event, ui) {
-                let $curTd = ui.element;
-                let tdWidth = $curTd.outerWidth();
-                let $bodyTbl = $curTd.closest(".grid-cont").closestInner(".Dg_body");
-                let $footerTbl = $curTd.closest(".grid-cont").closestInner(".grid-cont>.Dg_footer");
-
-                $bodyTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
-                $footerTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
-            }
-        });
+        if (this.ctrl.IsColumnsResizable)
+            this.makeColsResizable();
 
         this.addUtilityFnsForUDF();
         this.tryAddRow();

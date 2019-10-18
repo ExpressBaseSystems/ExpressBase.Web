@@ -516,6 +516,16 @@
     };
 
     this.SysLocation = function (ctrl) {//all sys controls init commented to avoid confusion with the default value in new mode
+
+        if (!(ctrl.IsDisable)) {
+            $.each(ebcontext.locations.Locations, function (intex, obj) {
+                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`)
+            });
+            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
+        }
+       
+
+
         //if (_rowId === undefined || _rowId === 0) {
         //    setTimeout(function () {
         //        if (ctrl.DisplayMember === 1) {

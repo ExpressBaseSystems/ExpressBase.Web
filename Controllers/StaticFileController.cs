@@ -704,7 +704,7 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public bool ChangeCategory(string Category, string FileRefs)
         {
-            FileCategoryChangeResponse resp = this.FileClient.Post(new FileCategoryChangeRequest
+            FileCategoryChangeResponse resp = this.ServiceClient.Post(new FileCategoryChangeRequest
             {
                 Category = Category,
                 FileRefId = FileRefs.Split(CharConstants.COMMA).Select(n => int.Parse(n)).ToArray()

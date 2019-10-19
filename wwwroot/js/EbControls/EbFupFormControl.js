@@ -149,12 +149,24 @@
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));
         $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
-        $("body").off("click").on("click", this.rmChecked.bind(this));
+        $("body").off("click").on("click",".Col_apndBody_apndPort", this.rmChecked.bind(this));
+        $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
         this.contextMenu();
     }
 
     rmChecked(evt) {
-        this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
+        if ($(evt.target).closest(".eb_uplGal_thumbO").length <= 0) {
+            this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
+            $(".eb_uplGal_thumbO").find(".select-fade").hide();
+        }
+    }
+
+    setBGOnSelect(ev) {
+        let cb = $(ev.target).prop("checked");
+        if (cb)
+            $(ev.target).closest(".eb_uplGal_thumbO").find(".select-fade").show();
+        else
+            $(ev.target).closest(".eb_uplGal_thumbO").find(".select-fade").hide();
     }
 
     thumbNprevHtml(o) {
@@ -171,6 +183,7 @@
                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                 </div>
+                <div class="select-fade"></div>
             </div>`);
     }
 
@@ -190,6 +203,9 @@
     }
 
     galleryFullScreen(ev) {
+        if (ev.ctrlKey)
+            return this.thumbSelection(ev);
+
         let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
         this.GalleryFS.show();
         let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
@@ -229,6 +245,15 @@
             }
         }
         return html.join("");
+    }
+
+    thumbSelection(ev) {
+        let $div = $(ev.target).closest(".eb_uplGal_thumbO").find(".mark-thumb");
+        if ($div.prop("checked"))
+            $div.prop("checked", false);
+        else
+            $div.prop("checked", true);
+        $div.trigger("change");
     }
 
     initCropy() {
@@ -642,12 +667,20 @@
             "fold2": {
                 "name": "Move to Category", icon: "fa-list",
                 "items": this.getCateryLinks()
+            },
+            "fold3": {
+                "name": "Open in New Tab", icon: "fa-external-link", callback: function (eType, selector, action, originalEvent) {
+                    let url = $(selector.$trigger).find("img").attr("src") || $(selector.$trigger).find("iframe").attr("src");
+                    var win = window.open(url, '_blank');
+                    win.focus();
+                }
             }
-        }
+        };
 
         $.contextMenu({
             selector: ".eb_uplGal_thumbO",
             autoHide: true,
+            className:"ebfup-context-menu",
             build: function ($trigger, e) {
                 return {
                     items: $.extend({}, this.DefaultLinks, this.getCustomMenu())
@@ -727,7 +760,8 @@
             $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
         }
-        this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false)
+        this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
+        $(".eb_uplGal_thumbO").find(".select-fade").hide();
     }
 
     deleteFromGallery(filerefs) {

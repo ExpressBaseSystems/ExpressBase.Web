@@ -129,6 +129,17 @@
 
     };
 
+    //edit by amal for signature pad
+    this.SignaturePad = function (ctrl, ctrlOpts) {
+        var sign_pad = new SignaturePad({
+            Container: "#" + ctrl.EbSid + "Wraper"
+        });
+
+        sign_pad.getResult = function (b64, vendor) {
+            //alert(b64);
+        };
+    };
+
     this.getInitFileIds = function (files) {
         let ids = [];
         for (let i = 0; i < files.length; i++)

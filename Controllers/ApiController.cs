@@ -381,7 +381,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/objects_by_app")]
-        public ObjectListToMob GetObjectsByApp(int appid,int locid)
+        public ObjectListToMob GetObjectsByApp(int appid, int locid)
         {
             locid = locid == 0 ? 1 : locid;
             ObjectListToMob _objs = new ObjectListToMob();
@@ -399,9 +399,10 @@ namespace ExpressBase.Web.Controllers
 
                     if (resultlist.Data.ContainsKey(appid))
                     {
-                        foreach (KeyValuePair<int, TypeWrap> pair in resultlist.Data[appid].Types) {
-                            _objs.Objects.Add(EbObjectTypes.Get(pair.Key).Alias,pair.Value.Objects);
-                        } 
+                        foreach (KeyValuePair<int, TypeWrap> pair in resultlist.Data[appid].Types)
+                        {
+                            _objs.Objects.Add(EbObjectTypes.Get(pair.Key).Alias, pair.Value.Objects);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -413,29 +414,26 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/object_by_ref")]
-        public EbObjectWrapper GetObjectByRef(string refid)
+        public EbObjectToMobResponse GetObjectByRef(string refid)
         {
             if (string.IsNullOrEmpty(refid))
                 throw new Exception("refid cannot be null");
 
-            EbObjectWrapper wraper = null;
+            EbObjectToMobResponse resonse = null;
 
             if (ViewBag.IsValidSol)
             {
                 try
                 {
-                    EbObjectParticularVersionResponse resp =  this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refid });
-                    if (resp.Data.Count > 0)
-                        wraper = resp.Data[0];
+                    resonse = this.ServiceClient.Get(new EbObjectToMobRequest { RefId = refid, User = this.LoggedInUser });
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                     Console.WriteLine(e.StackTrace);
                 }
-                
             }
-            return wraper;
+            return resonse;
         }
     }
 }

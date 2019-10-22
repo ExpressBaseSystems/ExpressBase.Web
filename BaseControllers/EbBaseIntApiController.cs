@@ -65,7 +65,7 @@ namespace ExpressBase.Web.BaseControllers
                 controller.ViewBag.IsValid = false;
                 controller.ViewBag.Message = "Authentication token not present in request header";
             }
-            else if (!IsTokensValid(sRToken, sBToken, hostParts[0]))
+            else if (!IsTokensValid(sRToken, sBToken, hostParts[0]) && string.IsNullOrEmpty(sAPIKey))
             {
                 controller.ViewBag.IsValid = false;
                 controller.ViewBag.Message = "Authentication failed";
@@ -78,7 +78,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.Message = "Authenticated";
                     var bToken = new JwtSecurityToken(sBToken);
 
-                    //this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
+                    this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
 
                     Session = new CustomUserSession();
                     Session.Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID];

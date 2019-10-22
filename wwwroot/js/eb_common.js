@@ -568,3 +568,54 @@ var animateObj = function (duration) {
         });
     };
 }
+
+var EbTags = function (settings) {
+    this.displayFilterDialogArr = (typeof settings.displayFilterDialogArr !== "undefined") ? settings.displayFilterDialogArr : [];
+    this.displayColumnSearchArr = (typeof settings.displayColumnSearchArr !== "undefined") ? settings.displayColumnSearchArr : [];
+    this.id = $(settings.id);
+
+    this.show = function () {
+        this.id.empty();
+        var filter = "";
+        $.each(this.displayFilterDialogArr, function (i, ctrl) {
+            filter = ctrl.name + " " + ctrl.operator + " " + ctrl.value;
+            this.id.append(`<div class="tagstyle priorfilter">${filter}</div>`);
+            if (ctrl.logicOp !== "")
+                this.id.append(`<div class="tagstyle priorfilter">${ctrl.logicOp}</div>`);
+        }.bind(this));
+
+        if (this.displayFilterDialogArr.length > 0 && this.displayColumnSearchArr.length > 0)
+            this.id.append(`<div class="tagstyle op">AND</div>`);
+
+        $.each(this.displayColumnSearchArr, function (i, search) {
+            filter = search.name + " " + returnOperator(search.operator.trim());
+            filter += " " + search.value;
+            this.id.append(`<div class="tagstyle" data-col="${search.name}" data-val="${search.value}">${filter} <i class="fa fa-close"></i></div>`);
+            if (search.logicOp !== "")
+                this.id.append(`<div class="tagstyle op">${search.logicOp}</div>`);
+        }.bind(this));
+
+        if (this.id.children().length === 0)
+            this.id.hide();
+        else {
+            this.id.children().find(".fa-close").off("click").on("click", this.removeTag.bind(this));
+            this.id.show();
+        }
+    };
+
+    this.removeTag = function (e) {
+        var tempcol = $(e.target).parent().attr("data-col");
+        var tempval = $(e.target).parent().attr("data-val");
+        var temp = $.grep(this.displayColumnSearchArr, function (obj) {
+            if (typeof obj.value === "number")
+                return obj.name === tempcol && obj.value === parseInt(tempval)
+            else
+                return obj.name === tempcol && obj.value === tempval
+        });
+        $(e.target).parent().prev().remove();
+        $(e.target).parent().remove();
+        settings.remove(e, temp[0]);
+    };
+
+    this.show();
+}

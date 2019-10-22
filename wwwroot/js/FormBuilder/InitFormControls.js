@@ -44,7 +44,8 @@
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
-            CustomMenu: customMenu
+            CustomMenu: customMenu,
+            DisableUpload: ctrl.DisableUpload
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);

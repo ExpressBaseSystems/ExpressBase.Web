@@ -501,3 +501,25 @@
 .gallerythumbfile{
     width:100%;
 }
+.ebFupGalleryOt .ClpsGalItem_Sgl .Col_apndBody .eb_uplGal_thumbO .select-fade {
+    content: "";
+    background: #4383c3;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .3;
+    left: 0;
+    border-radius: 4px;
+    display: none;
+    z-index: -1;
+}
+.ebfup-context-menu {
+    padding: 10px 5px 10px 6px;
+    font-family: Roboto;
+}
+    .ebfup-context-menu .context-menu-item {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        border-radius:2px;
+    }

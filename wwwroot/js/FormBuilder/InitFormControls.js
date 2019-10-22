@@ -44,7 +44,8 @@
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
-            CustomMenu: customMenu
+            CustomMenu: customMenu,
+            DisableUpload: ctrl.DisableUpload
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -127,6 +128,17 @@
 
         }.bind(this, ctrlOpts.DpControlsList);
 
+    };
+
+    //edit by amal for signature pad
+    this.SignaturePad = function (ctrl, ctrlOpts) {
+        var sign_pad = new SignaturePad({
+            Container: "#" + ctrl.EbSid + "Wraper"
+        });
+
+        sign_pad.getResult = function (b64, vendor) {
+            //alert(b64);
+        };
     };
 
     this.getInitFileIds = function (files) {

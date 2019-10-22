@@ -403,9 +403,15 @@ namespace ExpressBase.Web.Controllers
             EbRootObjectResponse _response = new EbRootObjectResponse();
             try
             {
+                string _rel_obj_tmp = string.Empty;
                 EbObject obj = EbSerializers.Json_Deserialize(_json);
                 obj.BeforeSave(ServiceClient, Redis);
-                string _rel_obj_tmp = string.Join(",", obj.DiscoverRelatedRefids());
+
+                var temp = obj.DiscoverRelatedRefids();
+
+                if (temp != null)
+                    _rel_obj_tmp = string.Join(",", temp);
+
                 if (obj is EbDataReader)
                 {
                     bool ContainsRestricted = CheckRestricted((obj as EbDataReader).Sql);

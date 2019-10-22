@@ -467,7 +467,7 @@
     }
 
     #dashbord-user-view .dataTables_scrollBody {
-        height: calc(100% - 37px) !important;
+        /*height: calc(100% - 37px) !important;*/
     }
 
     #dashbord-user-view .dataTables_scrollHeadInner .table {
@@ -717,3 +717,10 @@
         border-radius: 3px;
         padding-left: 10px;
     }
+
+#dashbord-view .wrapper-cont, #dashbord-view .wrapper-cont_inner {
+    height:100% !important;
+}
+#dashbord-user-view .wrapper-cont, #dashbord-user-view .wrapper-cont_inner {
+    height: 100% !important;
+}

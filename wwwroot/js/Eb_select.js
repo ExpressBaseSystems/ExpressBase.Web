@@ -12,7 +12,7 @@
     this.RenderMe = function () {
         let NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
         $.each(metas, function (i, meta) {
-            let name = meta.name;
+            let name = meta.name; 
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
             }
@@ -784,6 +784,9 @@ const EbSelect = function (ctrl, options) {
             this.Vobj.displayMembers[name].splice(delid(), 1);
         }.bind(this));
         this.clearSearchBox();
+        this.filterArray = [];
+        this.datatable.columnSearch = [];
+        this.datatable.Api.ajax.reload();
     };
 
     this.checkBxClickEventHand = function (e) {

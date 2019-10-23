@@ -15,6 +15,9 @@ using Google.Apis.Auth.OAuth2.Responses;
 using System.IO;
 using System.Text;
 using Google.Apis.Upload;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using System.Collections.Generic;
+using ServiceStack.Auth;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace ExpressBase.Web.Controllers
@@ -144,7 +147,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 if (response != null)
                     Console.WriteLine("Exception" + response.Status.ToString());
-                else if(response == null)
+                else if (response == null)
                     Console.WriteLine("Null Response");
                 var file = request.ResponseBody;
                 if (file != null)
@@ -162,6 +165,21 @@ namespace ExpressBase.Web.Controllers
             //}
         }
 
+        public IActionResult GetAPIKey(int a)
+        {
+            GenerateAPIKeyResponse resp = this.ServiceClient.Get(new GenerateAPIKey());
+
+            List<string> apiSList = new List<string>();
+            
+            foreach(ApiKey key in resp.APIKeys)
+            {
+                apiSList.Add(key.ToJson());
+            }
+
+            ViewBag.APIKey = apiSList;
+
+            return View();
+        }
 
     }
 }

@@ -129,7 +129,12 @@
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGDateColumn") {
-            dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
+            if (col.EbDbType === 6)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
+            else if (col.EbDbType === 5)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
+            else if (col.EbDbType === 17)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
         }
         else
             dspMmbr = cellObj.Value;

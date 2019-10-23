@@ -47,17 +47,17 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
-   
 
 
-        [HttpGet("/apitest")]
-        public IActionResult Test()
-        {
-            this.ServiceClient.BearerToken = "HxSLXUHuM5X_pZDW_0_SvbpupByEIlCw";
-            ServiceClient.Get(new ApiTestReq());
 
-            return Redirect("/statuscode/404"); ;
-        }
+        //[HttpGet("/apitest")]
+        //public IActionResult Test()
+        //{
+        //    this.ServiceClient.BearerToken = "HxSLXUHuM5X_pZDW_0_SvbpupByEIlCw";
+        //    ServiceClient.Get(new ApiTestReq());
+
+        //    return Redirect("/statuscode/404"); ;
+        //}
 
 
         //[HttpGet("wiki/add/{}")]

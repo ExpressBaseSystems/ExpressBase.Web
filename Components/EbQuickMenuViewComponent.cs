@@ -38,25 +38,12 @@ namespace ExpressBase.Web.Components
                 return false;
         }
 
-        private List<string> GetAccessIds(int lid)
-        {
-            List<string> ObjIds = new List<string>();
-            foreach (string perm in this.UserObject.Permissions)
-            {
-                int id = Convert.ToInt32(perm.Split(CharConstants.DASH)[2]);
-                int locid = Convert.ToInt32(perm.Split(CharConstants.COLON)[1]);
-                if ((lid == locid || locid == -1) && !ObjIds.Contains(id.ToString()))
-                    ObjIds.Add(id.ToString());
-            }
-            return ObjIds;
-        }
-
         public async Task<IViewComponentResult> InvokeAsync(string solnid, string email, string console, int locid = 0)
         {
             if (console.Equals(RoutingConstants.DC))
                 this.DevConsole();
             else if (console.Equals(RoutingConstants.UC))
-                this.UserConsole(solnid,email,console,locid);
+                this.UserConsole(solnid, email, console, locid);
             return View("EbQuickMenu");
         }
 
@@ -68,9 +55,7 @@ namespace ExpressBase.Web.Components
 
             if (ValidateLocId(locid) || this.UserObject.Roles.Contains("SolutionOwner") || this.UserObject.Roles.Contains("SolutionAdmin"))
             {
-                var Ids = String.Join(",", GetAccessIds(locid));
-
-                resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { Ids = Ids, SysRole = this.UserObject.Roles });
+                resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest { LocationId = locid });
 
                 StringBuilder sb = new StringBuilder();
                 foreach (KeyValuePair<int, AppObject> obj in resultlist.AppList)

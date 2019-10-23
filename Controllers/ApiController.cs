@@ -252,6 +252,42 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
+        [HttpGet("/api/auth")]
+        [HttpPost("/api/auth")]
+        public ApiAuthResponse ApiLoginByMd5(string username, string password)
+        {
+            ApiAuthResponse response = new ApiAuthResponse();
+            try
+            {
+                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = username,
+                    Password = password,
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    RememberMe = true
+                    //UseTokenCookie = true
+                });
+
+                if (authResponse != null && authResponse.User != null)
+                {
+                    response.IsValid = true;
+                    response.BToken = authResponse.BearerToken;
+                    response.RToken = authResponse.RefreshToken;
+                    response.UserId = authResponse.User.UserId;
+                    response.DisplayName = authResponse.User.FullName;
+                }
+                else
+                    response.IsValid = false;
+            }
+            catch (Exception e)
+            {
+                response.IsValid = false;
+                Console.WriteLine("api auth request failed: " + e.Message);
+            }
+            return response;
+        }
+
         [HttpGet("/api/logout")]
         [HttpPost("/api/logout")]
         public void ApiLogOut()
@@ -390,11 +426,9 @@ namespace ExpressBase.Web.Controllers
             {
                 try
                 {
-                    var Ids = String.Join(",", this.GetAccessIds(locid));
                     SidebarUserResponse resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest
                     {
-                        Ids = Ids,
-                        SysRole = this.LoggedInUser.Roles
+                        LocationId = locid
                     });
 
                     if (resultlist.Data.ContainsKey(appid))

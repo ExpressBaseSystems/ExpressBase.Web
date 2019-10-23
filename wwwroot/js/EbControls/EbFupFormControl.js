@@ -1,7 +1,10 @@
 ﻿class FUPFormControl {
     constructor(options) {
         //super();
-        this.Options = $.extend({}, options);
+        this.Options = $.extend({
+            DisableUpload: false
+        }, options);
+
         this.MaxSize = this.Options.MaxSize || 5;
         this.Files = [];
         this.RefIds = [];
@@ -149,7 +152,7 @@
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));
         $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
-        $("body").off("click").on("click",".Col_apndBody_apndPort", this.rmChecked.bind(this));
+        $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
         $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
         this.contextMenu();
     }
@@ -179,7 +182,7 @@
         }
         return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                 <div class="eb_uplGal_thumbO_img">
-                    ${this.getThumbType(o,src)}
+                    ${this.getThumbType(o, src)}
                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                 </div>
@@ -486,11 +489,11 @@
             else
                 url = "../StaticFile/UploadFileAsync";
 
-            this.uploadItem(url,this.Files[k]);
+            this.uploadItem(url, this.Files[k]);
         }
     }
 
-    uploadItem(_url,file) {
+    uploadItem(_url, file) {
         let thumb = null;
         let formData = new FormData();
         formData.append("File", file);
@@ -551,8 +554,9 @@
     }
 
     outerHtml() {
+        let isVisible = (this.Options.DisableUpload) ? "none": "block";
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
-                                                     <div class="FUP_Head_W">
+                                                     <div class="FUP_Head_W" style="display:${isVisible}">
                                                         <button id="${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right"><i class="fa fa-upload"></i> Upload</button>
                                                      </div>
                                                      <div class="FUP_Bdy_W">
@@ -680,7 +684,7 @@
         $.contextMenu({
             selector: ".eb_uplGal_thumbO",
             autoHide: true,
-            className:"ebfup-context-menu",
+            className: "ebfup-context-menu",
             build: function ($trigger, e) {
                 return {
                     items: $.extend({}, this.DefaultLinks, this.getCustomMenu())

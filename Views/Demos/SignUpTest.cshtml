@@ -9,15 +9,14 @@
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/style.css" />
     <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />
 
     <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbFupFormControl.css" />
     <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbFileUpload.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbSignaturePad.css" />
 
     <script type="text/javascript" src="~/js/jquery.min.js"></script>
     <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="~/js/EbMsgBox.js"></script>
     <script type="text/javascript" src="~/js/EbControls/EbProgressBar.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 
@@ -27,6 +26,8 @@
     <script type="text/javascript" src="~/js/EbControls/EbFupFormControl.js"></script>
     <script type="text/javascript" src="~/js/EbControls/EbFileUpload.js"></script>
     <script type="text/javascript" src="~/js/EbControls/EbCropper.js"></script>
+    <script type="text/javascript" src="~/js/SignaturePadApis/SigWebTablet.js"></script>
+    <script type="text/javascript" src="~/js/EbControls/EbSignaturePad.js"></script>
 
     <script>
         function upload() {
@@ -70,55 +71,165 @@
         }
 
         function testAjax() {
-            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1NzkxMDk3MywiZXhwIjoxNTU3OTExMDYzLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.LO5jCVrHs8yw5QS8ivRXGOJCbiD78-5xko2dl0hLdPgt6uWZ4sdxlLZCn061nxDevXuM4ONPbOuGBgB7ZW6qLKPQCJ1h8tB-x2x-tuaQoGwC8ihlT4U-P3WiSruAcLpAtz6uNikU4wtbd6t3n1O_ynR9oWC_W9dMrnlUHkLuXUQ`;
-            r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTc5MTA5NzMsImV4cCI6MTU1Nzk5NzM3M30.UitKSw_jxJaV8rThgumMF2Y2IzkiiqkKB0g_pH-py0BlWUE8hR2_2KNytSlEsfNjehF8OwlNvQdtPjElXyGzKYwEgRWzL5vz7PLo6ASwwnTF14ejbtdiLx4XCAAQfaTr4ugGXopJ5SXIZJyD_xBJHQsflNZnwXHGKOMr0X_ocF4`;
+            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTp1YyIsImlhdCI6MTU3MTY0NjEzMiwiZXhwIjoxNTcxNjQ2MjIyLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6InVjIn0.DF9S3wzgkU_EqvQadtyVb1JqT2vqi-obcyWnrZDPGosMYf2xq2EPpS1lcaiT2zCqv1zr8he9al6FJ1aOP4GIm1t96T3bM6-zy8wIHhuPnUacn6vfyePLj5JehrNy4R19dPkkUXsvO9WqtEcR8yf4-JPV_2ovhFYXcwWXI3FeZw8`;
+            r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206dWMiLCJpYXQiOjE1NzE2NDYxMzIsImV4cCI6MTU3MTczMjUzMn0.d7Ip21QLH3nHlLphuDQYS3XMANaz1IbbGbgsAzqJofqzeNxPorT3sTUtdSlM1hzI_yh60KqKdFGzdsYje_XIm7mXlrtwpCDiXk3usTWUbmQ5MMtptCI_dNXvNgxReews7lQfKW1-k9sO-EMoM-Wi70ArtZYn6nt3CqukMjq_ChA`;
             $.ajax({
-                url: "../api/files/6.jpg",
+                url: "/api/object_by_ref",
                 type: "GET",
                 cache: false,
-                contentType: false,
-                processData: false,
+                data: {
+                    //"refid": "eb_dbpjl5pgxleq20180130063835-eb_dbpjl5pgxleq20180130063835-3-1712-2448",
+                    "refid": "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-16-2447-3232-2447-3232"
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", b);
                     xhr.setRequestHeader("rToken", r);
                 }
-            }).done(function (refid) {
-
+            }).done(function (data) {
+                //$("#test").attr("src", "data:application/pdf;base64," + data.reportResult);
             });
         }
     </script>
+
+    <script type="text/javascript">
+        var tmr;
+
+        function onSign() {
+            var ctx = document.getElementById('cnv').getContext('2d');
+            SetDisplayXSize(500);
+            SetDisplayYSize(100);
+            SetTabletState(0, tmr);
+            SetJustifyMode(0);
+            ClearTablet();
+            if (tmr == null) {
+                tmr = SetTabletState(1, ctx, 50);
+            }
+            else {
+                SetTabletState(0, tmr);
+                tmr = null;
+                tmr = SetTabletState(1, ctx, 50);
+            }
+        }
+
+        function onClear() {
+            ClearTablet();
+        }
+
+        function onDone() {
+            if (NumberOfTabletPoints() == 0) {
+                alert("Please sign before continuing");
+            }
+            else {
+                SetTabletState(0, tmr);
+                //RETURN TOPAZ-FORMAT SIGSTRING
+                SetSigCompressionMode(1);
+                document.FORM1.bioSigData.value = GetSigString();
+                document.FORM1.sigStringData.value += GetSigString();
+                //this returns the signature in Topaz's own format, with biometric information
+
+
+                //RETURN BMP BYTE ARRAY CONVERTED TO BASE64 STRING
+                SetImageXSize(500);
+                SetImageYSize(100);
+                SetImagePenWidth(5);
+                GetSigImageB64(SigImageCallback);
+            }
+        }
+
+        function SigImageCallback(str) {
+            document.FORM1.sigImageData.value = str;
+        }
+    </script>
+
+    <script type="text/javascript">
+        window.onunload = window.onbeforeunload = (function () {
+            closingSigWeb()
+        })
+
+        function closingSigWeb() {
+            ClearTablet();
+            SetTabletState(0, tmr);
+        }
+
+    </script>
 </head>
 <body>
-    <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
-        <form action="../Ext/TenantExtSignup" method="post">
-            <div class="input-group">
-                <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
-                <span class="input-group-btn">
-                    <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
-                </span>
-            </div>
-        </form>
-        <input type="file" onchange="upload(this)" multiple/>
-        @*<button onclick="testAjax()">test</button>*@
+    @*<div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
+            <form action="../Ext/TenantExtSignup" method="post">
+                <div class="input-group">
+                    <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
+                    <span class="input-group-btn">
+                        <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
+                    </span>
+                </div>
+            </form>
+            <input type="file" onchange="upload(this)" multiple />
+            <button onclick="testAjax()">test</button>
+        </div>
+        <div id="div">
+        </div>*@
+
+    @*<table border="1" cellpadding="0" width="500">
+            <tr>
+                <td height="100" width="500">
+                    <canvas id="cnv" name="cnv" width="500" height="100"></canvas>
+                </td>
+            </tr>
+        </table>*@
+
+    @*<canvas name="SigImg" id="SigImg" width="500" height="100"></canvas>*@
+
+    @*<form action="#" name=FORM1>
+            <p>
+                <input id="SignBtn" name="SignBtn" type="button" value="Sign" onclick="javascript:onSign()" />&nbsp;&nbsp;&nbsp;&nbsp;
+                <input id="button1" name="ClearBtn" type="button" value="Clear" onclick="javascript:onClear()" />&nbsp;&nbsp;&nbsp;&nbsp
+
+                <input id="button2" name="DoneBtn" type="button" value="Done" onclick="javascript:onDone()" />&nbsp;&nbsp;&nbsp;&nbsp
+
+                <INPUT TYPE=HIDDEN NAME="bioSigData">
+                <INPUT TYPE=HIDDEN NAME="sigImgData">
+                <BR>
+                <BR>
+                <TEXTAREA NAME="sigStringData" ROWS="20" COLS="50">SigString: </TEXTAREA>
+                <TEXTAREA NAME="sigImageData" ROWS="20" COLS="50">Base64 String: </TEXTAREA>
+            </p>
+        </form>*@
+    <div id="sp-container" style="width:400px;height:300px;">
+        @*<div class="ebsp-container">
+                <div class="ebsp-container-inner">
+                    <div class="ebsp-signature-pane">
+                        <canvas class="ebsp-signature-body">
+
+                        </canvas>
+                    </div>
+                    <div class="ebsp-btn-pane">
+                        <button class="ebsp-btn">Clear</button>
+                        <button class="ebsp-btn">Ok</button>
+                    </div>
+                </div>
+            </div>*@
     </div>
-    <div id="div">
-    </div>
+
+    <iframe id="test"></iframe>
+    @*<script>
+            var imgup = new FUPFormControl({
+                Type: "image",
+                ShowGallery: true,
+                Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],
+                Files: [],
+                TenantId:"@ViewBag.cid",
+                SolutionId: "@ViewBag.SolnId",
+                Container: "div",
+                Multiple: false,
+                ServerEventUrl: '',
+                EnableTag: false,
+                EnableCrop: true,
+                MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),
+                CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
+            });
+        </script>*@
+    <script>
+        var sp = new SignaturePad({ Container: "#sp-container" });
+    </script>
 </body>
-@*<script>
-        var imgup = new FUPFormControl({
-            Type: "image",
-            ShowGallery: true,
-            Categories: ["Pre consultation", "Consultation", "Hairline", "Post procedure", "Clot removal", "M2", "M4", "M6", "M8", "M10"],
-            Files: [],
-            TenantId:"@ViewBag.cid",
-            SolutionId: "@ViewBag.SolnId",
-            Container: "div",
-            Multiple: false,
-            ServerEventUrl: '',
-            EnableTag: false,
-            EnableCrop: true,
-            MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),
-            CustomMenu: [{ name: "Set as DP", icon: "fa-user" }, { name: "Delete", icon: "fa-trash" }]
-        });
-    </script>*@
 </html>

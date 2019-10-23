@@ -42,7 +42,7 @@
         $this.button('loading');
         $.ajax({
             type: "POST",
-            url: "../ProductionDBManager/CheckChangesInFunction",
+            url: "../ProductionDBManager/CheckChangesInFiles",
             data: { solution_id: val },
             success: this.changeajaxsuccess.bind(this, $this, val),
         });
@@ -78,24 +78,24 @@
                                 <div class="collapse" id="${val}sub" hidden>
                                 <div class=" div-sub-headings-main">
                                     <div class="div-sub-headings">
-                                        <div class="col-md-8">
-                                            <label>Function</label>
+                                        <div class="col-md-10">
+                                            <label>File Name</label>
                                         </div>
-                                        <div class="col-md-4">
-                                            <label>File Location</label>
+                                        <div class="col-md-2">
+                                            <label>File Type</label>
                                         </div>
                                     </div>
                                 </div>`;
             $.each(data, function (i, vals) {
                 html = html + `<div class="row row-padding div-row-contents">
-                                                        <div class="col-md-8">
-                                                            <label class="table-content-font">${vals['functionHeader']}</label>`;
+                                                        <div class="col-md-10">
+                                                            <label class="table-content-font">${vals['fileHeader']}</label>`;
                 if (vals['newItem'] == true) {
                     html = html + `<label class="table-content-font" style="color: #4987fb;">New</label>`;
                 }
                 html = html + `   </div>
-                                                        <div class="col-md-4">
-                                                            <label class="table-content-font">${vals['filePath']}</label>
+                                                        <div class="col-md-2">
+                                                            <label class="table-content-font align-center">${vals['type']}</label>
                                                         </div>
                                                     </div>`;
             });

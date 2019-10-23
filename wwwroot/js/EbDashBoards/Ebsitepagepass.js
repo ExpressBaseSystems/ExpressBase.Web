@@ -2,7 +2,7 @@
 
 //*************************************************** 
 
-//password filed validation for forgot password and signup page
+//password field validation for forgot password and signup page
 
 //**************************************************
 
@@ -18,7 +18,7 @@ var PasswordValidation = function (RecaptchaCallbackreset) {
         $("#inputPasswordConfirm").on("keyup", this.repeatpasswordcheck.bind(this));
         $(".toggle-password").on("click", this.Showpsdfn.bind(this));
         $("#btnpswreset").on("click", this.Pswresetfn.bind(this));
-
+        
     }
 
 
@@ -174,6 +174,7 @@ var PasswordValidation = function (RecaptchaCallbackreset) {
         psdcode = $("#elink").val();
         if (sts == true) {
             {
+                grecaptcha.execute();
                 $.ajax({
                     url: "../Ext/ResetPasswordAsync",
                     beforeSend: function () {
@@ -182,7 +183,7 @@ var PasswordValidation = function (RecaptchaCallbackreset) {
                     },
                     data: {
                         emcde: psdcode,
-                        token: respon,
+                        token: token,
                         psw: $("#inputPassword").val(),
                     },
                     cache: false,
@@ -205,7 +206,6 @@ var PasswordValidation = function (RecaptchaCallbackreset) {
             }
         }
     };
-
 
     this.initial();
 };

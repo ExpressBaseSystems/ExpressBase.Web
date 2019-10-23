@@ -44,7 +44,8 @@
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
-            CustomMenu: customMenu
+            CustomMenu: customMenu,
+            DisableUpload: ctrl.DisableUpload
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);
@@ -127,6 +128,17 @@
 
         }.bind(this, ctrlOpts.DpControlsList);
 
+    };
+
+    //edit by amal for signature pad
+    this.SignaturePad = function (ctrl, ctrlOpts) {
+        var sign_pad = new SignaturePad({
+            Container: "#" + ctrl.EbSid + "Wraper"
+        });
+
+        sign_pad.getResult = function (b64, vendor) {
+            //alert(b64);
+        };
     };
 
     this.getInitFileIds = function (files) {
@@ -516,6 +528,16 @@
     };
 
     this.SysLocation = function (ctrl) {//all sys controls init commented to avoid confusion with the default value in new mode
+
+        if (!(ctrl.IsDisable)) {
+            $.each(ebcontext.locations.Locations, function (intex, obj) {
+                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`)
+            });
+            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
+        }
+       
+
+
         //if (_rowId === undefined || _rowId === 0) {
         //    setTimeout(function () {
         //        if (ctrl.DisplayMember === 1) {
@@ -590,6 +612,12 @@
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
 
+    };
+
+    this.TextBox = function (ctrl, ctrlopts) {
+        if (ctrl.AutoSuggestion === true) {
+            $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
+        }   
     };
 
     this.Numeric = function (ctrl) {

@@ -31,6 +31,7 @@ using ServiceStack.Auth;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
+using ExpressBase.Common.Structures;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -39,7 +40,7 @@ namespace ExpressBase.Web.Controllers
         public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
 
         [HttpGet("/api/{_name}/{_version}/{format?}")]
-        public object Api(string _name, string _version, string format="json")
+        public object Api(string _name, string _version, string format = "json")
         {
             var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             ApiResponse resp = null;
@@ -85,7 +86,7 @@ namespace ExpressBase.Web.Controllers
                     };
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine("Exception:" + e.Message);
                 watch.Stop();
@@ -251,6 +252,42 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
+        [HttpGet("/api/auth")]
+        [HttpPost("/api/auth")]
+        public ApiAuthResponse ApiLoginByMd5(string username, string password)
+        {
+            ApiAuthResponse response = new ApiAuthResponse();
+            try
+            {
+                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = username,
+                    Password = password,
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    RememberMe = true
+                    //UseTokenCookie = true
+                });
+
+                if (authResponse != null && authResponse.User != null)
+                {
+                    response.IsValid = true;
+                    response.BToken = authResponse.BearerToken;
+                    response.RToken = authResponse.RefreshToken;
+                    response.UserId = authResponse.User.UserId;
+                    response.DisplayName = authResponse.User.FullName;
+                }
+                else
+                    response.IsValid = false;
+            }
+            catch (Exception e)
+            {
+                response.IsValid = false;
+                Console.WriteLine("api auth request failed: " + e.Message);
+            }
+            return response;
+        }
+
         [HttpGet("/api/logout")]
         [HttpPost("/api/logout")]
         public void ApiLogOut()
@@ -264,7 +301,7 @@ namespace ExpressBase.Web.Controllers
             ApiResponse ApiResp = new ApiResponse { Result = new List<ApiFileData>() };
             UploadAsyncResponse res = new UploadAsyncResponse();
             var req = this.HttpContext.Request.Form;
-            string fname = string.Empty,_context = string.Empty;
+            string fname = string.Empty, _context = string.Empty;
 
             if (req.ContainsKey("Context") && !string.IsNullOrEmpty(req["Context"]))
                 _context = req["Context"];
@@ -364,6 +401,73 @@ namespace ExpressBase.Web.Controllers
             XmlNode docNode = doc.CreateXmlDeclaration("1.0", "UTF-8", null);
             doc.PrependChild(docNode);
             return doc.InnerXml;
+        }
+
+        [HttpGet("api/menu")]
+        public GetMobMenuResonse GetAppData4Mob()
+        {
+            if (ViewBag.IsValidSol)
+            {
+                return this.ServiceClient.Get(new GetMobMenuRequest());
+            }
+            else
+            {
+                return new GetMobMenuResonse();
+            }
+        }
+
+        [HttpGet("/api/objects_by_app")]
+        public ObjectListToMob GetObjectsByApp(int appid, int locid)
+        {
+            locid = locid == 0 ? 1 : locid;
+            ObjectListToMob _objs = new ObjectListToMob();
+
+            if (ViewBag.IsValidSol)
+            {
+                try
+                {
+                    SidebarUserResponse resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest
+                    {
+                        LocationId = locid
+                    });
+
+                    if (resultlist.Data.ContainsKey(appid))
+                    {
+                        foreach (KeyValuePair<int, TypeWrap> pair in resultlist.Data[appid].Types)
+                        {
+                            _objs.Objects.Add(EbObjectTypes.Get(pair.Key).Alias, pair.Value.Objects);
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
+            return _objs;
+        }
+
+        [HttpGet("/api/object_by_ref")]
+        public EbObjectToMobResponse GetObjectByRef(string refid)
+        {
+            if (string.IsNullOrEmpty(refid))
+                throw new Exception("refid cannot be null");
+
+            EbObjectToMobResponse resonse = null;
+
+            if (ViewBag.IsValidSol)
+            {
+                try
+                {
+                    resonse = this.ServiceClient.Get(new EbObjectToMobRequest { RefId = refid, User = this.LoggedInUser });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                }
+            }
+            return resonse;
         }
     }
 }

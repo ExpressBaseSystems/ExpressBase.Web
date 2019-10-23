@@ -418,11 +418,11 @@
 
 .db-title {
     width: 100%;
-    font-size: 12px;
+    font-weight: 500;
+    font-size: 1em;
     padding: 2px 2px 2px 15px;
     height: 20px;
 }
-
 .db-tbl-wraper {
    height: calc(100% - 25px);
 }
@@ -656,7 +656,7 @@
     }
 #Eb-obj-sidebar-cont {
     width: 250px;
-    height: 85%;
+    height: 82%;
     overflow: auto;
 }
 

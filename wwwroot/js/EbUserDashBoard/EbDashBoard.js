@@ -359,7 +359,7 @@
 
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");
-        let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 5;
+        let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
         $(`#${id} .dataTables_scrollBody`).css("max-height", `calc(100% - ${a}px)`);
     }.bind(this);
 

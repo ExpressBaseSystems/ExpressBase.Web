@@ -32,6 +32,7 @@ using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
 using ExpressBase.Common.Structures;
+using ExpressBase.Web.Filters;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -406,7 +407,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("api/menu")]
         public GetMobMenuResonse GetAppData4Mob()
         {
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
                 return this.ServiceClient.Get(new GetMobMenuRequest());
             }
@@ -422,7 +423,7 @@ namespace ExpressBase.Web.Controllers
             locid = locid == 0 ? 1 : locid;
             ObjectListToMob _objs = new ObjectListToMob();
 
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
                 try
                 {
@@ -455,7 +456,7 @@ namespace ExpressBase.Web.Controllers
 
             EbObjectToMobResponse resonse = null;
 
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
                 try
                 {
@@ -468,6 +469,45 @@ namespace ExpressBase.Web.Controllers
                 }
             }
             return resonse;
+        }
+
+        [HttpPost("/api/webform_save")]
+        public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
+        {
+            InsertDataFromWebformResponse Resp = null;
+
+            if (ViewBag.IsValid)
+            {
+                try
+                {
+                    WebformData FormData = JsonConvert.DeserializeObject<WebformData>(form["webform_data"]);
+                    int RowId = Convert.ToInt32(form["rowid"]);
+                    string RefId = form["refid"];
+                    int LocId = Convert.ToInt32(form["locid"]);
+
+                    string Operation = OperationConstants.NEW;
+                    if (RowId > 0)
+                        Operation = OperationConstants.EDIT;
+
+                    if (!this.LoggedInUser.HasFormPermission(RefId, Operation, LocId))
+                        return new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 };
+
+                    Resp = ServiceClient.Post(new InsertDataFromWebformRequest
+                    {
+                        RefId = RefId,
+                        FormData = FormData,
+                        RowId = RowId,
+                        CurrentLoc = LocId,
+                        UserObj = this.LoggedInUser
+                    });
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
+                    Console.WriteLine(ex.StackTrace);
+                }
+            }
+            return Resp;
         }
     }
 }

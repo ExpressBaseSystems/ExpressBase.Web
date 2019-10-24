@@ -13,6 +13,17 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
+using System.Threading;
+using Google.Apis.Auth.OAuth2.Flows;
+using System.Threading.Tasks;
+using File = Google.Apis.Drive.v3.Data.File;
+using Google.Apis.Auth.OAuth2.Responses;
+using System.IO;
+using System.Text;
+using Google.Apis.Upload;
+using ExpressBase.Objects.ServiceStack_Artifacts;
+using System.Collections.Generic;
+using ServiceStack.Auth;
 //using Unifonic;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -249,6 +260,65 @@ namespace ExpressBase.Web.Controllers
         //        Console.Out.WriteLine(e.Message);
         //    }
         //}
+        [HttpPost]
+        public async Task storeauthcodeAsync(string data12)
+        {
+            try
+            {
+                var init = new GoogleAuthorizationCodeFlow.Initializer
+                {
+                    ClientSecrets = new ClientSecrets
+                    {
+                        ClientId = "1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com",
+                        ClientSecret = "DwaDGHou5ghXrJ0EitwnIQWu"
+                    },
+                    Scopes = new string[] { "https://www.googleapis.com/auth/drive" }
+                };
+                var flow = new Google.Apis.Auth.OAuth2.Flows.AuthorizationCodeFlow(init);
+                var code = data12;
+                Console.WriteLine("Fetching token for code: _" + code + "_");
+                TokenResponse result = await flow.ExchangeCodeForTokenAsync("user", code, "https://myaccount.eb-test.xyz", CancellationToken.None);
+                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result));
+                GoogleCredential credential = GoogleCredential.FromAccessToken(result.AccessToken);
+                Console.WriteLine("credentials created");
+                var service = new DriveService(new BaseClientService.Initializer()
+                {
+                    HttpClientInitializer = credential,
+                    ApplicationName = ApplicationName,
+                });
+                Console.WriteLine("service created");
+                byte[] byteArray = Encoding.ASCII.GetBytes("hagsd adhgasgd asdg assdghkajsgd asdgkasgd akjsgdka");
+                Stream str = new MemoryStream(byteArray);
+                var fileMetadata = new File()
+                {
+                    Name = "photo.jpg",
+                    MimeType = "image/jpeg"
+                };
+                FilesResource.CreateMediaUpload request;
+                string dir = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+                Console.WriteLine("dir : " + dir);
+                IUploadProgress response;
+                using (Stream stream = new FileStream("430831-most-popular-relaxing-desktop-background-1920x1080.jpg",
+                                        FileMode.Open, FileAccess.Read))
+                {
+                    request = service.Files.Create(
+                        fileMetadata, stream, "image/jpeg");
+                    request.Fields = "id";
+                    response = request.Upload();
+                }
+                if (response != null)
+                    Console.WriteLine("Exception" + response.Status.ToString());
+                else if (response == null)
+                    Console.WriteLine("Null Response");
+                var file = request.ResponseBody;
+                if (file != null)
+                    Console.WriteLine("File ID: " + file.Id);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("exception inside storeauth :" + e);
+                Console.WriteLine(" StackTrace :" + e.StackTrace);
+            }
 
 
     }
@@ -273,7 +343,27 @@ namespace ExpressBase.Web.Controllers
         }
     }
 
-    
+            //if (credential.Token.IsExpired(Google.Apis.Util.SystemClock.Default))
+            //{
+            //    var refreshResult = credential.RefreshTokenAsync(CancellationToken.None).Result;
+            //}
+        }
+
+        public IActionResult GetAPIKey(int a)
+        {
+            GenerateAPIKeyResponse resp = this.ServiceClient.Get(new GenerateAPIKey());
+
+            List<string> apiSList = new List<string>();
+            
+            foreach(ApiKey key in resp.APIKeys)
+            {
+                apiSList.Add(key.ToJson());
+            }
+
+            ViewBag.APIKey = apiSList;
+
+            return View();
+        }
 
     internal class memberobject
     {

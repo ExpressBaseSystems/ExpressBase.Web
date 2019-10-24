@@ -116,7 +116,6 @@ namespace ExpressBase.Web.Controllers
 
         public WebformDataWrapper getDGdata(string refid, List<Param> _params)
         {
-            SingleTable Table = new SingleTable();
             try
             {
                 EbDataReader dataReader = this.Redis.Get<EbDataReader>(refid);
@@ -128,36 +127,21 @@ namespace ExpressBase.Web.Controllers
                             _p.Type = item.Type;
                     }
                 }
-                DataSourceDataSetResponse response = this.ServiceClient.Get<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = refid, Params = _params });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = refid, Params = _params });
 
-                EbWebForm WebForm = new EbWebForm();
-                WebForm.GetFormattedData(response.DataSet.Tables[0], Table);
-            }
-            catch (FormException ex)
-            {
-                Console.WriteLine("Form Exception in getRowdata. Message: " + ex.Message);
-                return new WebformDataWrapper()
-                {
-                    Message = ex.Message,
-                    Status = ex.ExceptionCode,
-                    MessageInt = ex.MessageInternal,
-                    StackTraceInt = ex.StackTraceInternal
-                };
+                return new WebformDataWrapper { FormData = Resp.FormData, Status = 200};
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
+                Console.WriteLine("Exception in getDGdata. Message: " + ex.Message);
                 return new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = 301,
+                    Status = 500,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 };
             }
-            WebformDataWrapper WebformDataWrapper = new WebformDataWrapper();
-            WebformDataWrapper.FormData.MultipleTables.Add("asdfg", Table);
-            return WebformDataWrapper;
         }
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)

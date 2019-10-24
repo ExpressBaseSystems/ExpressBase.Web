@@ -82,12 +82,13 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if(this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                int targetloc = DataSet.FormData.MultipleTables[DataSet.FormData.MasterTable][0].LocId;
+                if (this.HasPermission(refid, OperationConstants.VIEW, targetloc) || this.HasPermission(refid, OperationConstants.NEW, targetloc) || this.HasPermission(refid, OperationConstants.EDIT, targetloc))
                 {
-                    GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
                     return new WebformDataWrapper() { FormData = DataSet.FormData, Status = 101 };
                 }
-                throw new FormException("Error in loading data. Access Denied.", 302, "Access Denied for rowid " + rowid + " , current location " + currentloc, string.Empty);
+                throw new FormException("Error in loading data. Access Denied.", 302, "Access Denied for rowid " + rowid + " , current location " + targetloc, string.Empty);
             }
             catch (FormException ex)
             {

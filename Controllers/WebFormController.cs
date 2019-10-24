@@ -33,10 +33,10 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;
-            if(_params != null)
+            if (_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
-                if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
+                if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
                     Console.WriteLine("Webform Render - View mode request identified.");
                     WebformDataWrapper wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
@@ -51,7 +51,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     ViewBag.formData = JsonConvert.SerializeObject(wfd);
                 }
-                else if((int)WebFormDVModes.New_Mode == _mode)
+                else if ((int)WebFormDVModes.New_Mode == _mode)
                 {
                     try
                     {
@@ -64,8 +64,8 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
-                                   
-            if(ViewBag.wc == TokenConstants.DC)
+
+            if (ViewBag.wc == TokenConstants.DC)
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
@@ -77,7 +77,7 @@ namespace ExpressBase.Web.Controllers
 
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
-                
+
         public WebformDataWrapper getRowdata(string refid, int rowid, int currentloc)
         {
             try
@@ -93,7 +93,7 @@ namespace ExpressBase.Web.Controllers
             catch (FormException ex)
             {
                 Console.WriteLine("Form Exception in getRowdata. Message: " + ex.Message);
-                return new WebformDataWrapper() 
+                return new WebformDataWrapper()
                 {
                     Message = ex.Message,
                     Status = ex.ExceptionCode,
@@ -104,7 +104,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-                return new WebformDataWrapper() 
+                return new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
                     Status = 301,
@@ -112,6 +112,52 @@ namespace ExpressBase.Web.Controllers
                     StackTraceInt = ex.StackTrace
                 };
             }
+        }
+
+        public WebformDataWrapper getDGdata(string refid, List<Param> _params)
+        {
+            SingleTable Table = new SingleTable();
+            try
+            {
+                EbDataReader dataReader = this.Redis.Get<EbDataReader>(refid);
+                foreach (Param item in dataReader.InputParams)
+                {
+                    foreach (Param _p in _params)
+                    {
+                        if (item.Name == _p.Name)
+                            _p.Type = item.Type;
+                    }
+                }
+                DataSourceDataSetResponse response = this.ServiceClient.Get<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = refid, Params = _params });
+
+                EbWebForm WebForm = new EbWebForm();
+                WebForm.GetFormattedData(response.DataSet.Tables[0], Table);
+            }
+            catch (FormException ex)
+            {
+                Console.WriteLine("Form Exception in getRowdata. Message: " + ex.Message);
+                return new WebformDataWrapper()
+                {
+                    Message = ex.Message,
+                    Status = ex.ExceptionCode,
+                    MessageInt = ex.MessageInternal,
+                    StackTraceInt = ex.StackTraceInternal
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
+                return new WebformDataWrapper()
+                {
+                    Message = "Error in loading data...",
+                    Status = 301,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                };
+            }
+            WebformDataWrapper WebformDataWrapper = new WebformDataWrapper();
+            WebformDataWrapper.FormData.MultipleTables.Add("asdfg", Table);
+            return WebformDataWrapper;
         }
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
@@ -177,7 +223,7 @@ namespace ExpressBase.Web.Controllers
                 this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) ||
                 this.LoggedInUser.Roles.Contains(SystemRoles.SolutionPM.ToString()))
                 return true;
-            
+
             EbOperation Op = EbWebForm.Operations.Get(ForWhat);
             if (!Op.IsAvailableInWeb)
                 return false;
@@ -190,7 +236,7 @@ namespace ExpressBase.Web.Controllers
                 if (!t.IsNullOrEmpty())
                     return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(string.Format("Exception when checking user permission: {0}\nRefId = {1}\nOperation = {2}\nLocId = {3}", e.Message, RefId, ForWhat, LocId));
             }
@@ -308,7 +354,8 @@ namespace ExpressBase.Web.Controllers
         //    return MLPair;
         //}
 
-        public string GetFormControlsFlat( string refId) {
+        public string GetFormControlsFlat(string refId)
+        {
             string SCtrls = string.Empty;
             SCtrls = EbSerializers.Json_Serialize(this.ServiceClient.Post<GetCtrlsFlatResponse>(new GetCtrlsFlatRequest() { RefId = refId }).Controls);
             return SCtrls;

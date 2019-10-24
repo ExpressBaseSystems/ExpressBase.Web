@@ -235,8 +235,13 @@ const WebFormRender = function (option) {
     this.getNCCSingleColumns_flat = function (EditModeFormData, NCCTblNames) {
         let NCCSingleColumns_flat = [];
         $.each(NCCTblNames, function (i, TblName) {
-            let SingleRowColums = EditModeFormData[TblName][0].Columns;
-            NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
+            try {
+                let SingleRowColums = EditModeFormData[TblName][0].Columns;
+                NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
+            }
+            catch (e) {
+                console.log(e.message);
+            }
         });
         return NCCSingleColumns_flat;
     };

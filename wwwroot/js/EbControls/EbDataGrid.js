@@ -128,6 +128,14 @@
         else if (col.ObjType === "DGBooleanSelectColumn") {
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
+        else if (col.ObjType === "DGDateColumn") {
+            if (col.EbDbType === 6)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
+            else if (col.EbDbType === 5)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
+            else if (col.EbDbType === 17)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
+        }
         else
             dspMmbr = cellObj.Value;
 
@@ -184,29 +192,41 @@
     };
 
     this.setValueExpCols = function () {
+        let t0 = performance.now();
         $.each(this.AllRowCtrls, function (rowId, inpCtrls) {
-            this.setCurRow(rowId);
+            setTimeout(function () {// to make asynchronous
+                this.setCurRow(rowId);
 
-            $.each(inpCtrls, function (i, inpCtrl) {
-                this.initCtrl4EditMode(inpCtrl);
-                if (!inpCtrl.DoNotPersist)
-                    inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
-            }.bind(this));
+                let bt0 = performance.now();
+                $.each(inpCtrls, function (i, inpCtrl) {
+                    this.initCtrl4EditMode(inpCtrl);
+                    if (!inpCtrl.DoNotPersist)
+                        inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
+                }.bind(this));
+                let bt1 = performance.now();
+                //console.dev_log("DataGrid : 1st loop took " + (bt1 - bt0) + " milliseconds.");
 
-            $.each(inpCtrls, function (i, inpCtrl) {
-                if (rowId === "41")
-                    console.log(555);
-                EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
-            }.bind(this));
+                let at0 = performance.now();
+                $.each(inpCtrls, function (i, inpCtrl) {
+                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
+                }.bind(this));
+                let at1 = performance.now();
+                //console.dev_log("DataGrid : EbRunValueExpr took " + (at1 - at0) + " milliseconds.");
+
+            }.bind(this), 0);
+
         }.bind(this));
+        let t1 = performance.now();
+        console.dev_log("DataGrid : setValueExpCols took " + (t1 - t0) + " milliseconds.");
     };
 
     this.initCtrl4EditMode = function (inpCtrl) {
+        let t0 = performance.now();
         if (inpCtrl.ObjType === "PowerSelect") {
             inpCtrl.initializer = {};//temporary init
             inpCtrl.initializer.columnVals = {};//temporary init
             inpCtrl.initializer.setValues = function (p1, p2) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
             };
 
             inpCtrl.getColumn = function (ctrl, colName) {
@@ -240,9 +260,11 @@
         }
         else {
             inpCtrl.setValue = function (p1) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
             };//temporary init
         }
+        let t1 = performance.now();
+        //console.dev_log("DataGrid : initCtrl4EditMode took " + (t1 - t0) + " milliseconds.");
     };
 
     this.tryAddRow = function () {
@@ -976,7 +998,8 @@
         for (let colName in curRowData) {
             let ctrl = getObjByval(curRowCtrls, "Name", curRowData[colName].Name);
             let Value = curRowData[colName].Value;
-            ctrl.setValue(Value);
+            if (Value !== null)
+                ctrl.setValue(Value);
         }
     };
 
@@ -1427,6 +1450,76 @@
         this.ctrl.getRowBySlno = this.getRowBySlno.bind(this);
     };
 
+    this.makeColsResizable = function () {
+        $(`#${this.TableId}_head .ebResizable`).resizable({
+            handles: 'e',
+            resize: function (event, ui) {
+                let $curTd = ui.element;
+                let tdWidth = $curTd.outerWidth();
+                let $bodyTbl = $curTd.closest(".grid-cont").closestInner(".Dg_body");
+                let $footerTbl = $curTd.closest(".grid-cont").closestInner(".grid-cont>.Dg_footer");
+
+                $bodyTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
+                $footerTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
+            }
+        });
+    };
+
+    this.setSuggestionVals = function () {
+        if (!this.ctrl.DataSourceId)
+            return;
+        let paramsColl = this.getParamsColl();
+        this.refreshDG(this.ctrl.DataSourceId, paramsColl);
+
+    };
+
+    this.getParamsColl = function () {
+        let dependantCtrls = this.ctrl.Eb__paramControls.$values;
+        params = [];
+        $.each(dependantCtrls, function (i, ctrlName) {
+            let ctrl = this.ctrl.formObject[ctrlName];
+            let val = ctrl.getValue();
+            //let obj = { Name: ctrlName, Value: val };
+            let obj = { Name: ctrlName, Value: "2026" };
+            params.push(obj);
+        }.bind(this));
+        return params;
+    };
+
+    this.showLoader = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    };
+
+    this.hideLoader = function () {
+        $("#eb_common_loader").EbLoader("hide");
+    };
+
+    this.refreshDG = function (refid, paramsColl) {
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/getDGdata",
+            data: {
+                refid: refid,
+                _params: paramsColl
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.reloadDG.bind(this)
+        });
+
+    }.bind(this);
+
+    this.reloadDG = function (_respObj) {// need cleanup
+        this.hideLoader();
+        console.log(_respObj);
+    };
+
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
@@ -1448,6 +1541,9 @@
                 col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));
 
+        if (this.ctrl.IsColumnsResizable)
+            this.makeColsResizable();
+
         this.addUtilityFnsForUDF();
         this.tryAddRow();
         if (this.isAggragateInDG) {
@@ -1463,6 +1559,7 @@
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
+        this.setSuggestionVals();
     };
 
     this.init();

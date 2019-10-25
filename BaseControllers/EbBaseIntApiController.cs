@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Security;
+using System.Net;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -36,6 +38,15 @@ namespace ExpressBase.Web.BaseControllers
 
             string sBToken = context.HttpContext.Request.Headers[RoutingConstants.BEARER_TOKEN];
             string sRToken = context.HttpContext.Request.Headers[RoutingConstants.REFRESH_TOKEN];
+
+            string authHeader = context.HttpContext.Request.Headers["Authorization"];
+            string sAPIKey = string.Empty;
+
+            if (authHeader != null && authHeader.StartsWith("APIKEY"))
+            {
+                sAPIKey = authHeader.Substring("APIKEY ".Length).Trim();
+            }
+
             this.ESolutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
             this.SultionId = this.GetIsolutionId(this.ESolutionId);
             var controller = context.Controller as Controller;
@@ -49,12 +60,12 @@ namespace ExpressBase.Web.BaseControllers
                 controller.ViewBag.IsValidSol = true;
             }
 
-            if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
+            if ((string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken)) && string.IsNullOrEmpty(sAPIKey))
             {
                 controller.ViewBag.IsValid = false;
                 controller.ViewBag.Message = "Authentication token not present in request header";
             }
-            else if (!IsTokensValid(sRToken, sBToken, hostParts[0]))
+            else if (!IsTokensValid(sRToken, sBToken, hostParts[0]) && string.IsNullOrEmpty(sAPIKey))
             {
                 controller.ViewBag.IsValid = false;
                 controller.ViewBag.Message = "Authentication failed";
@@ -65,18 +76,20 @@ namespace ExpressBase.Web.BaseControllers
                 {
                     controller.ViewBag.IsValid = true;
                     controller.ViewBag.Message = "Authenticated";
-
                     var bToken = new JwtSecurityToken(sBToken);
+
+                    this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
+
                     Session = new CustomUserSession();
                     Session.Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID];
 
-                    this.ServiceClient.BearerToken = sBToken;
+                    this.ServiceClient.BearerToken = (string.IsNullOrEmpty(sAPIKey)) ? sBToken : sAPIKey;
                     this.ServiceClient.RefreshToken = sRToken;
                     this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
 
                     if (this.FileClient != null)
                     {
-                        this.FileClient.BearerToken = sBToken;
+                        this.FileClient.BearerToken = (string.IsNullOrEmpty(sAPIKey)) ? sBToken : sAPIKey;
                         this.FileClient.RefreshToken = sRToken;
                         this.FileClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
                     }
@@ -91,6 +104,19 @@ namespace ExpressBase.Web.BaseControllers
                 }
             }
             base.OnActionExecuting(context);
+        }
+
+        public List<string> GetAccessIds(int lid)
+        {
+            List<string> ObjIds = new List<string>();
+            foreach (string perm in this.LoggedInUser.Permissions)
+            {
+                int id = Convert.ToInt32(perm.Split(CharConstants.DASH)[2]);
+                int locid = Convert.ToInt32(perm.Split(CharConstants.COLON)[1]);
+                if ((lid == locid || locid == -1) && !ObjIds.Contains(id.ToString()))
+                    ObjIds.Add(id.ToString());
+            }
+            return ObjIds;
         }
     }
 }

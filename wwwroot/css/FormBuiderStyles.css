@@ -538,7 +538,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .Eb-ctrlContainer .tab-content {
-    border: 1px solid #ddd;
+    border: 5px solid #ddd;
     border-top: none;
     overflow-y: auto;
 }
@@ -794,7 +794,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .form-buider-form .tab-btn-cont {
     padding: 0.75rem 0 0 0;
-    border: solid 1px #dddddd;
+    border: solid 4px #dddddd;
     border-bottom: none;
     background-color: rgba(0,0,0,.03);
 }

@@ -1180,6 +1180,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-right: 8px;
 }
 
+.grid-cont .ctrlth {
+    width: 50px;
+}
+
 .Dg_body .dgtbl {
     border-bottom: none;
 }

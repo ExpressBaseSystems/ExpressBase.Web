@@ -1466,8 +1466,6 @@
     };
 
     this.setSuggestionVals = function () {
-        if (!this.ctrl.DataSourceId)
-            return;
         let paramsColl = this.getParamsColl();
         this.refreshDG(this.ctrl.DataSourceId, paramsColl);
 
@@ -1515,9 +1513,16 @@
 
     }.bind(this);
 
-    this.reloadDG = function (_respObj) {// need cleanup
+    this.reloadDG = function (_respObjStr) {// need cleanup
         this.hideLoader();
+        let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
+        let SingleTable = _respObj.FormData.MultipleTables["Table1"];
+
+        $(`#${this.TableId}>tbody>.dgtr`).remove();
+        //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
+
+        this.ctrl.setEditModeRows(SingleTable);
     };
 
     this.init = function () {
@@ -1559,8 +1564,13 @@
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
-        this.setSuggestionVals();
     };
 
-    this.init();
+    this.preInit = function () {
+        if (this.ctrl.DataSourceId)
+            this.setSuggestionVals();
+        this.init();
+    }.bind(this);
+
+    this.preInit();
 };

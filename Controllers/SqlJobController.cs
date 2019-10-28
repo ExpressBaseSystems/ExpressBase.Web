@@ -1,4 +1,5 @@
-﻿using ExpressBase.Objects.ServiceStack_Artifacts;
+﻿using ExpressBase.Common;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
@@ -18,6 +19,23 @@ namespace ExpressBase.Web.Controllers
         {
             SqlJobResponse resp =  this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest());
             //return View("Index");
+        }
+
+        public IActionResult SqlJobConsole()
+        {
+            return View();
+        }
+        public SqlJobsListGetResponse Get_Jobs_List(string Refid , string Date)
+        {
+            SqlJobsListGetResponse resp = this.ServiceClient.Get(new SqlJobsListGetRequest()
+            {
+                Refid = Refid,
+                Date =  Date
+
+            });
+            var Temp = new DSController(this.ServiceClient , this.Redis);
+            resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumns(resp.SqlJobsColumns));
+            return resp;  
         }
     }
 }

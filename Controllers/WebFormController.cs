@@ -148,6 +148,31 @@ namespace ExpressBase.Web.Controllers
             return ObjStr;
         }
 
+        public string ImportFormData(string _refid, string _triggerctrl, List<Param> _params)
+        {
+            WebformDataWrapper _data = null;
+            try
+            {
+                if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
+                    throw new FormException("Refid and TriggerCtrl must be set");
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
+                _data = Resp.FormDataWrap;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
+                _data = new WebformDataWrapper()
+                {
+                    Message = "Error in loading data...",
+                    Status = 500,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                };
+            }
+
+            return JsonConvert.SerializeObject(_data);
+        }
+
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
             string Operation = OperationConstants.NEW;

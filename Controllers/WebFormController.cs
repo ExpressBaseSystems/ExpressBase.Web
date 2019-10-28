@@ -78,6 +78,7 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
 
+        // to get Table- // refid form refid, rowid - form table entry id, currentloc - location id
         public WebformDataWrapper getRowdata(string refid, int rowid, int currentloc)
         {
             try
@@ -114,8 +115,10 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public WebformDataWrapper getDGdata(string refid, List<Param> _params)
+        public string getDGdata(string refid, List<Param> _params)
         {
+            WebformDataWrapper WebformDataWrapper = new WebformDataWrapper();
+            string ObjStr = string.Empty;
             try
             {
                 EbDataReader dataReader = this.Redis.Get<EbDataReader>(refid);
@@ -128,13 +131,12 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
                 GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = refid, Params = _params });
-
-                return new WebformDataWrapper { FormData = Resp.FormData, Status = 200};
+                WebformDataWrapper = new WebformDataWrapper { FormData = Resp.FormData, Status = 200 };
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getDGdata. Message: " + ex.Message);
-                return new WebformDataWrapper()
+                WebformDataWrapper = new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
                     Status = 500,
@@ -142,6 +144,8 @@ namespace ExpressBase.Web.Controllers
                     StackTraceInt = ex.StackTrace
                 };
             }
+            ObjStr = JsonConvert.SerializeObject(WebformDataWrapper);
+            return ObjStr;
         }
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)

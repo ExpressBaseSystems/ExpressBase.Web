@@ -33,10 +33,10 @@ namespace ExpressBase.Web.Controllers
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;
-            if(_params != null)
+            if (_params != null)
             {
                 List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
-                if((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
+                if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
                     Console.WriteLine("Webform Render - View mode request identified.");
                     WebformDataWrapper wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
@@ -51,7 +51,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     ViewBag.formData = JsonConvert.SerializeObject(wfd);
                 }
-                else if((int)WebFormDVModes.New_Mode == _mode)
+                else if ((int)WebFormDVModes.New_Mode == _mode)
                 {
                     try
                     {
@@ -64,8 +64,8 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
-                                   
-            if(ViewBag.wc == TokenConstants.DC)
+
+            if (ViewBag.wc == TokenConstants.DC)
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
@@ -77,22 +77,24 @@ namespace ExpressBase.Web.Controllers
 
             return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
         }
-                
+
+        // to get Table- // refid form refid, rowid - form table entry id, currentloc - location id
         public WebformDataWrapper getRowdata(string refid, int rowid, int currentloc)
         {
             try
             {
-                if(this.HasPermission(refid, OperationConstants.VIEW, currentloc) || this.HasPermission(refid, OperationConstants.NEW, currentloc) || this.HasPermission(refid, OperationConstants.EDIT, currentloc))
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                int targetloc = DataSet.FormData.MultipleTables[DataSet.FormData.MasterTable][0].LocId;
+                if (this.HasPermission(refid, OperationConstants.VIEW, targetloc) || this.HasPermission(refid, OperationConstants.NEW, targetloc) || this.HasPermission(refid, OperationConstants.EDIT, targetloc))
                 {
-                    GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
                     return new WebformDataWrapper() { FormData = DataSet.FormData, Status = 101 };
                 }
-                throw new FormException("Error in loading data. Access Denied.", 302, "Access Denied for rowid " + rowid + " , current location " + currentloc, string.Empty);
+                throw new FormException("Error in loading data. Access Denied.", 302, "Access Denied for rowid " + rowid + " , current location " + targetloc, string.Empty);
             }
             catch (FormException ex)
             {
                 Console.WriteLine("Form Exception in getRowdata. Message: " + ex.Message);
-                return new WebformDataWrapper() 
+                return new WebformDataWrapper()
                 {
                     Message = ex.Message,
                     Status = ex.ExceptionCode,
@@ -103,7 +105,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-                return new WebformDataWrapper() 
+                return new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
                     Status = 301,
@@ -111,6 +113,39 @@ namespace ExpressBase.Web.Controllers
                     StackTraceInt = ex.StackTrace
                 };
             }
+        }
+
+        public string getDGdata(string refid, List<Param> _params)
+        {
+            WebformDataWrapper WebformDataWrapper = new WebformDataWrapper();
+            string ObjStr = string.Empty;
+            try
+            {
+                EbDataReader dataReader = this.Redis.Get<EbDataReader>(refid);
+                foreach (Param item in dataReader.InputParams)
+                {
+                    foreach (Param _p in _params)
+                    {
+                        if (item.Name == _p.Name)
+                            _p.Type = item.Type;
+                    }
+                }
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = refid, Params = _params });
+                WebformDataWrapper = new WebformDataWrapper { FormData = Resp.FormData, Status = 200 };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in getDGdata. Message: " + ex.Message);
+                WebformDataWrapper = new WebformDataWrapper()
+                {
+                    Message = "Error in loading data...",
+                    Status = 500,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                };
+            }
+            ObjStr = JsonConvert.SerializeObject(WebformDataWrapper);
+            return ObjStr;
         }
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
@@ -176,7 +211,7 @@ namespace ExpressBase.Web.Controllers
                 this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()) ||
                 this.LoggedInUser.Roles.Contains(SystemRoles.SolutionPM.ToString()))
                 return true;
-            
+
             EbOperation Op = EbWebForm.Operations.Get(ForWhat);
             if (!Op.IsAvailableInWeb)
                 return false;
@@ -189,7 +224,7 @@ namespace ExpressBase.Web.Controllers
                 if (!t.IsNullOrEmpty())
                     return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(string.Format("Exception when checking user permission: {0}\nRefId = {1}\nOperation = {2}\nLocId = {3}", e.Message, RefId, ForWhat, LocId));
             }
@@ -307,7 +342,8 @@ namespace ExpressBase.Web.Controllers
         //    return MLPair;
         //}
 
-        public string GetFormControlsFlat( string refId) {
+        public string GetFormControlsFlat(string refId)
+        {
             string SCtrls = string.Empty;
             SCtrls = EbSerializers.Json_Serialize(this.ServiceClient.Post<GetCtrlsFlatResponse>(new GetCtrlsFlatRequest() { RefId = refId }).Controls);
             return SCtrls;

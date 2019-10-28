@@ -1,4 +1,5 @@
-﻿using ExpressBase.Objects.ServiceStack_Artifacts;
+﻿using ExpressBase.Common.Data;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
@@ -16,8 +17,19 @@ namespace ExpressBase.Web.Controllers
 
         public void Index()
         {
-            SqlJobResponse resp =  this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest());
+            SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
+            {
+                GlobalParams = new List<Param> { new Param { Name = "date_to_consolidate", Type = "6", Value = "28-02-2015" } }
+            });
             //return View("Index");
+        }
+
+        public void JobRetry(int id)
+        {
+            id = 763;
+            RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id });
+
+
         }
     }
 }

@@ -41,8 +41,8 @@
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
-                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs edttkt iosclk" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue iosclk" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
 
               </td>
          </tr>`;
@@ -56,8 +56,8 @@
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
-                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs edttkt iosclk" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue iosclk" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
               </td>
          </tr>`;
             }
@@ -68,6 +68,11 @@
                 var lk = null;
                  lk= '#' + p;
                 $(lk).addClass("trclr");
+            }
+            if (obj.status == "Closed") {
+                var lk = null;
+                lk = '#' + p;
+                $(lk).removeClass("trclr");
             }
         });
        

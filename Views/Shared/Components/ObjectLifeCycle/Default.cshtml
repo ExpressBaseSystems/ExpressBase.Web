@@ -21,26 +21,26 @@
             });
             $('.selectpicker').selectpicker('refresh');
         $.each(@Html.Raw(dvobj), function (i, obj) {
-            
+
             $('#timeline@(ViewBag.tabNum)').append("<li class='timeline-item' id= 'stat" + i + "_" + @(ViewBag.tabNum) + "' > " +
                 "<div class='timeline-badge' id='timeline-badge" + i + "_" + @(ViewBag.tabNum) + "'><i class='glyphicon glyphicon-check'></i></div>" +
                 "<div class='timeline-panel' style='min-height: 92px;'> " +
                     "<div class='timeline-heading col-md-10'> " +
                         "<div class='col-md-12'>" +
-                            "<div class='timeline-title col-md-1' style='display:inline;font-weight:700;'>" + obj.Status + "</div>" +                                                     
+                            "<div class='timeline-title col-md-1' style='display:inline;font-weight:700;'>" + obj.Status + "</div>" +
                         "</div>" +
                         "<div class='timeline-body' id='timeline-body" + i + "_" + @(ViewBag.tabNum) + "'> " +
                             "<p class='timeline-body-clickmore'>" + obj.ChangeLog + "</p>" +
                         "</div>" +
                         "<a class='primary pull-right more' style='position:absolute; bottom: 0; right: 0;' id='more" + i + "_" + @(ViewBag.tabNum) + "'>more</a>" +
-                    "</div>" + 
+                    "</div>" +
                 "<div class='col-md-2'>" +
                         "<img class='img-circle img-thumbnail prof_dp pull-right' src= '../images/dp/" + obj.CommitUId + ".png" + "'/>" +
                         "<small class='col-md-2' style='display:inline;font-weight:700;' > " + obj.CommitUname + "</small></p >" +
                 "</div> " +
                 "<div class='timeline-time' style='display:inline'>" +
                     "<p style='backgroung-color:lightgrey'><small class='text-muted' style='font-size: 11px;'><i class='glyphicon glyphicon-time'></i>" + obj.CommitTs + "</small>" +
-                "</div> " +  
+                "</div> " +
             "</div> " +
             "</li>");
 
@@ -99,12 +99,19 @@
             $('#st_chnglog@(ViewBag.tabNum)').removeClass('has-error');
             $('#st_dd@(ViewBag.tabNum)').removeClass('has-error');
             $.LoadingOverlay("show");
-            $.post('../Eb_Object/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat }, function () {
-                $('#vernav@(ViewBag.tabNum)').empty();
-                $.post("../Eb_Object/GetLifeCycle", { _tabnum: @ViewBag.tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
-                    $('#vernav@(ViewBag.tabNum)').append(text);
-                    $.LoadingOverlay("hide");
-                });
+            $.post('../Eb_Object/ChangeStatus', { _refid: '@ViewBag.Curr_refid', _changelog: _chlog, _status: _stat },
+                function (result) {
+                    if (result === true) {
+                        EbMessage("show", { Message: "Status Changed", Background:  "#00AD6E", AutoHide: true });
+                    }
+                    else {
+                        EbMessage("show", { Message: "Something Went Wrong. Please Check Whether Any Version is Already Live", Background: "#aa0000", AutoHide: true });
+                    }
+                    $('#vernav@(ViewBag.tabNum)').empty();
+                    $.post("../Eb_Object/GetLifeCycle", { _tabnum: @ViewBag.tabNum, cur_status: _stat, refid: '@ViewBag.Curr_refid' }, function (text) {
+                        $('#vernav@(ViewBag.tabNum)').append(text);
+                        $.LoadingOverlay("hide");
+                    });
             });
         }
 
@@ -335,8 +342,8 @@
                                     if (cur_stat == "Test")
                                     {
                                         <option value='Dev'> Dev </option>
-                                            <option value='UAT' id='uat'> UAT </option>
-                                            <option value='Live'> Live </option>
+                                        <option value='UAT' id='uat'> UAT </option>
+                                        <option value='Live'> Live </option>
                                     }
                                     if (cur_stat == "UAT")
                                     {
@@ -345,14 +352,14 @@
                                     if (cur_stat == "Live")
                                     {
                                         <option value='Dev'> Dev </option>
-                                            <option value='Test'> Test </option>
-                                            <option value='Offline'> Offline </option>
+                                        <option value='Test'> Test </option>
+                                        <option value='Offline'> Offline </option>
                                     }
                                     if (cur_stat == "Offline")
                                     {
                                         <option value='Dev'> Dev </option>
-                                            <option value='Test'> Test </option>
-                                            <option value='Obsolete'> Obsolete </option>
+                                        <option value='Test'> Test </option>
+                                        <option value='Obsolete'> Obsolete </option>
                                     }
                                     if (cur_stat == "Obsolete")
                                     {

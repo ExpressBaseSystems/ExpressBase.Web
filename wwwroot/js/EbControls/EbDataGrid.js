@@ -1465,6 +1465,66 @@
         });
     };
 
+    this.setSuggestionVals = function () {
+        let paramsColl = this.getParamsColl();
+        this.refreshDG(this.ctrl.DataSourceId, paramsColl);
+
+    };
+
+    this.getParamsColl = function () {
+        let dependantCtrls = this.ctrl.Eb__paramControls.$values;
+        params = [];
+        $.each(dependantCtrls, function (i, ctrlName) {
+            let ctrl = this.ctrl.formObject[ctrlName];
+            let val = ctrl.getValue();
+            //let obj = { Name: ctrlName, Value: val };
+            let obj = { Name: ctrlName, Value: "2026" };
+            params.push(obj);
+        }.bind(this));
+        return params;
+    };
+
+    this.showLoader = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    };
+
+    this.hideLoader = function () {
+        $("#eb_common_loader").EbLoader("hide");
+    };
+
+    this.refreshDG = function (refid, paramsColl) {
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/getDGdata",
+            data: {
+                refid: refid,
+                _params: paramsColl
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.reloadDG.bind(this)
+        });
+
+    }.bind(this);
+
+    this.reloadDG = function (_respObjStr) {// need cleanup
+        this.hideLoader();
+        let _respObj = JSON.parse(_respObjStr);
+        console.log(_respObj);
+        let SingleTable = _respObj.FormData.MultipleTables["Table1"];
+
+        $(`#${this.TableId}>tbody>.dgtr`).remove();
+        //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
+
+        this.ctrl.setEditModeRows(SingleTable);
+    };
+
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
@@ -1506,5 +1566,11 @@
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
     };
 
-    this.init();
+    this.preInit = function () {
+        if (this.ctrl.DataSourceId)
+            this.setSuggestionVals();
+        this.init();
+    }.bind(this);
+
+    this.preInit();
 };

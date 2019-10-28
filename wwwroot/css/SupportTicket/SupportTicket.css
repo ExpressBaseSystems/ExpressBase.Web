@@ -152,6 +152,10 @@
 .supporttkt .m-bott10, .edtsprt .m-bott10 {
     margin-bottom: 10px;
 }
+.supporttkt .iosclk, .edtsprt .iosclk {
+    cursor: pointer;
+}
+
 
 
 /*modal close for file view*/

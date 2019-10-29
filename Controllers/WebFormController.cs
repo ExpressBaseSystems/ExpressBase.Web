@@ -173,6 +173,12 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(_data);
         }
 
+        public string ExecuteSqlValueExpr(string _refid, string _triggerctrl, List<Param> _params)
+        {
+            ExecuteSqlValueExprResponse Resp = this.ServiceClient.Post<ExecuteSqlValueExprResponse>(new ExecuteSqlValueExprRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
+            return Resp.Data;
+        }
+
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
             string Operation = OperationConstants.NEW;

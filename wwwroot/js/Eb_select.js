@@ -792,7 +792,10 @@ const EbSelect = function (ctrl, options) {
     this.checkBxClickEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         let $row = $(e.target).closest('tr');
-        let datas = $(this.DTSelector).DataTable().row($row).data();
+        //let datas = $(this.DTSelector).DataTable().row($row).data();
+        let datas =this.datatable.data[$row.index()];
+
+
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
             if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);

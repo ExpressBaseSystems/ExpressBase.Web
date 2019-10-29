@@ -119,42 +119,45 @@
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) {
-            $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
-                try {
-                    let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                    let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                    if (valExpFnStr) {
-                        if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                            depCtrl.setValue(val);
-                        }
-                        else {
-                            $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+            if (curCtrl.DependedValExp) {
+                $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                    try {
+                        let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                        if (valExpFnStr) {
+                            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                 let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                row[depCtrl.Name].setValue(val);
-                            }.bind(this));
+                                depCtrl.setValue(val);
+                            }
+                            else {
+                                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                                    let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                                    row[depCtrl.Name].setValue(val);
+                                }.bind(this));
+                            }
                         }
                     }
-                }
-                catch (e) {
-                    console.eb_log("eb error :");
-                    console.eb_log(e);
-                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                }
-            }.bind(this));
+                    catch (e) {
+                        console.eb_log("eb error :");
+                        console.eb_log(e);
+                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                    }
+                }.bind(this));
+            }
 
-
-            $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
-                try {
-                    let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
-                    depCtrl.__setSuggestionVals();
-                }
-                catch (e) {
-                    console.eb_log("eb error :");
-                    console.eb_log(e);
-                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                }
-            }.bind(this));
+            if (curCtrl.DependedDG) {
+                $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
+                    try {
+                        let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
+                        depCtrl.__setSuggestionVals();
+                    }
+                    catch (e) {
+                        console.eb_log("eb error :");
+                        console.eb_log(e);
+                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                    }
+                }.bind(this));
+            }
         }.bind(this);
     };
 

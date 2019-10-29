@@ -1471,7 +1471,9 @@
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
         this.refreshDG(paramsColl, lastCtrlName);
-    };
+    }.bind(this);
+
+    this.ctrl.__setSuggestionVals = this.setSuggestionVals;
 
     this.getParamsColl = function () {
         let dependantCtrls = this.ctrl.Eb__paramControls.$values;
@@ -1480,8 +1482,8 @@
         $.each(dependantCtrls, function (i, ctrlName) {
             let ctrl = this.ctrl.formObject[ctrlName];
             let val = ctrl.getValue();
-            //let obj = { Name: ctrlName, Value: val };
-            let obj = { Name: ctrlName, Value: "2026" };
+            let obj = { Name: ctrlName, Value: val };
+            //let obj = { Name: ctrlName, Value: "2026" };
             lastCtrlName = ctrlName;
             params.push(obj);
         }.bind(this));
@@ -1497,6 +1499,7 @@
     };
 
     this.refreshDG = function (paramsColl, lastCtrlName) {
+        this.showLoader();
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",

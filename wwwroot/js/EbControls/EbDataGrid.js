@@ -3,6 +3,7 @@
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
+    this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
@@ -147,7 +148,7 @@
         this.EditModeDataTable = {};
         for (let i = 0; i < SingleTable.length; i++) {
             let rowObj = SingleTable[i];
-            let rowId = rowObj.RowId;
+            let rowId = rowObj.RowId || ("row_" + i);
             let columns = rowObj.Columns;
             for (let j = 0; j < columns.length; j++) {
                 let cellObj = columns[j];
@@ -1465,6 +1466,70 @@
         });
     };
 
+    this.setSuggestionVals = function () {
+        let paramsColl__ = this.getParamsColl();
+        let paramsColl = paramsColl__[0];
+        let lastCtrlName = paramsColl__[1];
+        this.refreshDG(paramsColl, lastCtrlName);
+    };
+
+    this.getParamsColl = function () {
+        let dependantCtrls = this.ctrl.Eb__paramControls.$values;
+        params = [];
+        let lastCtrlName;
+        $.each(dependantCtrls, function (i, ctrlName) {
+            let ctrl = this.ctrl.formObject[ctrlName];
+            let val = ctrl.getValue();
+            //let obj = { Name: ctrlName, Value: val };
+            let obj = { Name: ctrlName, Value: "2026" };
+            lastCtrlName = ctrlName;
+            params.push(obj);
+        }.bind(this));
+        return [params, lastCtrlName];
+    };
+
+    this.showLoader = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    };
+
+    this.hideLoader = function () {
+        $("#eb_common_loader").EbLoader("hide");
+    };
+
+    this.refreshDG = function (paramsColl, lastCtrlName) {
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/ImportFormData",
+            data: {
+                _refid: this.formRefId,
+                _triggerctrl: lastCtrlName,
+                _params: paramsColl
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.reloadDG.bind(this)
+        });
+
+    }.bind(this);
+
+    this.reloadDG = function (_respObjStr) {// need cleanup
+        this.hideLoader();
+        let _respObj = JSON.parse(_respObjStr);
+        console.log(_respObj);
+        let SingleTable = _respObj.FormData.MultipleTables[this.ctrl.TableName];
+
+        $(`#${this.TableId}>tbody>.dgtr`).remove();
+        //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
+
+        this.ctrl.setEditModeRows(SingleTable);
+    };
+
     this.init = function () {
         this.ctrl.currentRow = [];
         this.isAggragateInDG = false;
@@ -1506,5 +1571,11 @@
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
     };
 
-    this.init();
+    this.preInit = function () {
+        if (this.ctrl.DataSourceId)
+            this.setSuggestionVals();
+        this.init();
+    }.bind(this);
+
+    this.preInit();
 };

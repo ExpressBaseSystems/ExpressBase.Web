@@ -41,8 +41,8 @@
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
-                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs edttkt iosclk" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue iosclk" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
 
               </td>
          </tr>`;
@@ -56,8 +56,8 @@
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
-                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs edttkt iosclk" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue iosclk" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
               </td>
          </tr>`;
             }
@@ -68,6 +68,11 @@
                 var lk = null;
                  lk= '#' + p;
                 $(lk).addClass("trclr");
+            }
+            if (obj.status == "Closed") {
+                var lk = null;
+                lk = '#' + p;
+                $(lk).removeClass("trclr");
             }
         });
        
@@ -397,7 +402,7 @@ var EditTicket = function () {
             data.append("updtkt", updtkt1);
             data.append("filedelet", JSON.stringify(window.filedel));
 
-            if ((valchng == 1) || (totalFiles > 0)) {
+            if ((valchng == 1) || (totalFiles > 0) || (window.filedel.length>0)) {
                 $.ajax({
                     url: "../SupportTicket/UpdateTicket",
                     type: 'POST',
@@ -612,7 +617,7 @@ var EditTicket = function () {
         };
 
 
-        let dataTransfer = new DataTransfer();
+     //   let dataTransfer = new DataTransfer();
 
         let createContainer = function () {
 
@@ -782,7 +787,7 @@ var EditTicket = function () {
                     window.filearray.splice(index, 1);
 
                     // Remove the file from input
-                    dataTransfer.items.remove(index);
+                  //  dataTransfer.items.remove(index);
                 }
                 if (flno > 0) {
                     window.filedel.push(flno);
@@ -867,7 +872,7 @@ var EditTicket = function () {
                             filearray.push(file);
 
                             // Add it to data transfer
-                            dataTransfer.items.add(file);
+                         //   dataTransfer.items.add(file);
 
                             // Set preview
 
@@ -877,7 +882,7 @@ var EditTicket = function () {
                             //}
                             //else
                             {
-                                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1, files[i].type));
+                                $uploadedContainer.append(createImg(URL.createObjectURL(file), filearray.length-1, files[i].type));
                             }
 
                         }
@@ -899,7 +904,7 @@ var EditTicket = function () {
             });
 
             // Update input files
-            $input.prop('files', dataTransfer.files);
+          //  $input.prop('files', dataTransfer.files);
 
         };
 

@@ -91,7 +91,7 @@ const WebFormRender = function (option) {
 
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId });
         }.bind(this));
     };
 
@@ -235,8 +235,13 @@ const WebFormRender = function (option) {
     this.getNCCSingleColumns_flat = function (EditModeFormData, NCCTblNames) {
         let NCCSingleColumns_flat = [];
         $.each(NCCTblNames, function (i, TblName) {
-            let SingleRowColums = EditModeFormData[TblName][0].Columns;
-            NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
+            try {
+                let SingleRowColums = EditModeFormData[TblName][0].Columns;
+                NCCSingleColumns_flat = NCCSingleColumns_flat.concat(SingleRowColums);
+            }
+            catch (e) {
+                console.log(e.message);
+            }
         });
         return NCCSingleColumns_flat;
     };
@@ -861,8 +866,8 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint"], currentLoc, reqstMode));
         }
         else if (reqstMode === "Fail Mode") {
-            //console.log(this.formDataWrapper);
             EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
+            console.error(this.formDataWrapper.Message);
         }
         else if (reqstMode === "Preview Mode") {
             this.mode = "New Mode";////////////
@@ -990,20 +995,39 @@ const WebFormRender = function (option) {
             let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
             let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
             if (ol !== nl) {
-                EbDialog("show", {
-                    Message: "Switching from " + getObjByval(ebcontext.locations.Locations, "LocId", ol).LongName + " to " + getObjByval(ebcontext.locations.Locations, "LocId", nl).LongName,
-                    Buttons: {
-                        "Ok": {
-                            Background: "green",
-                            Align: "right",
-                            FontColor: "white;"
-                        }
-                    },
-                    CallBack: function (name) {
-                        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                        this.setHeader(this.mode);
-                    }.bind(this)
-                });
+                let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
+                let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
+                if (typeof nwlocO === "undefined") {
+                    EbDialog("show", {
+                        Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            reloadFormPage();
+                        }.bind(this)
+                    });
+                }
+                else {
+                    EbDialog("show", {
+                        Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
+                        Buttons: {
+                            "Ok": {
+                                Background: "green",
+                                Align: "right",
+                                FontColor: "white;"
+                            }
+                        },
+                        CallBack: function (name) {
+                            ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                            this.setHeader(this.mode);
+                        }.bind(this)
+                    });
+                }                
             }
 
         }

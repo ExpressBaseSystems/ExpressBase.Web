@@ -47,7 +47,6 @@ namespace ExpressBase.Web.Controllers
             id = 3101;
             RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id });
 
-
         }
     }
 }

@@ -62,7 +62,7 @@
             this.bindRequired(Obj);
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
-        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0)
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0))
             this.bindOnChange(Obj);
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
@@ -88,7 +88,8 @@
 
     this.bindOnChange = function (control) {
         try {
-            let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
+            let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) +
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0) ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.__onChangeFn = onChangeFn;
             control.bindOnChange(onChangeFn);
@@ -134,6 +135,19 @@
                             }.bind(this));
                         }
                     }
+                }
+                catch (e) {
+                    console.eb_log("eb error :");
+                    console.eb_log(e);
+                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                }
+            }.bind(this));
+
+
+            $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
+                try {
+                    let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
+                    depCtrl.__setSuggestionVals();
                 }
                 catch (e) {
                     console.eb_log("eb error :");

@@ -38,13 +38,13 @@ namespace ExpressBase.Web.Controllers
 
             });
             var Temp = new DSController(this.ServiceClient , this.Redis);
-            resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumns(resp.SqlJobsColumns));
+            resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumnsForSqlJob(resp.SqlJobsColumns));
             return resp;  
         }
 
         public void JobRetry(int id)
         {
-            id = 763;
+            id = 3101;
             RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id });
 
 

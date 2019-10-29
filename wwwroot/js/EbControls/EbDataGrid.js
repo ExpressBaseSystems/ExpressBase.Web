@@ -3,6 +3,7 @@
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
+    this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
@@ -147,7 +148,7 @@
         this.EditModeDataTable = {};
         for (let i = 0; i < SingleTable.length; i++) {
             let rowObj = SingleTable[i];
-            let rowId = rowObj.RowId;
+            let rowId = rowObj.RowId || ("row_" + i);
             let columns = rowObj.Columns;
             for (let j = 0; j < columns.length; j++) {
                 let cellObj = columns[j];
@@ -1466,22 +1467,27 @@
     };
 
     this.setSuggestionVals = function () {
-        let paramsColl = this.getParamsColl();
-        this.refreshDG(this.ctrl.DataSourceId, paramsColl);
+        let paramsColl__ = this.getParamsColl();
+        let paramsColl = paramsColl__[0];
+        let lastCtrlName = paramsColl__[1];
+        this.refreshDG(paramsColl, lastCtrlName);
+    }.bind(this);
 
-    };
+    this.ctrl.__setSuggestionVals = this.setSuggestionVals;
 
     this.getParamsColl = function () {
         let dependantCtrls = this.ctrl.Eb__paramControls.$values;
         params = [];
+        let lastCtrlName;
         $.each(dependantCtrls, function (i, ctrlName) {
             let ctrl = this.ctrl.formObject[ctrlName];
             let val = ctrl.getValue();
-            //let obj = { Name: ctrlName, Value: val };
-            let obj = { Name: ctrlName, Value: "2026" };
+            let obj = { Name: ctrlName, Value: val };
+            //let obj = { Name: ctrlName, Value: "2026" };
+            lastCtrlName = ctrlName;
             params.push(obj);
         }.bind(this));
-        return params;
+        return [params, lastCtrlName];
     };
 
     this.showLoader = function () {
@@ -1492,13 +1498,15 @@
         $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.refreshDG = function (refid, paramsColl) {
+    this.refreshDG = function (paramsColl, lastCtrlName) {
+        this.showLoader();
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url: "/WebForm/getDGdata",
+            url: "/WebForm/ImportFormData",
             data: {
-                refid: refid,
+                _refid: this.formRefId,
+                _triggerctrl: lastCtrlName,
                 _params: paramsColl
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -1517,7 +1525,7 @@
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
-        let SingleTable = _respObj.FormData.MultipleTables["Table1"];
+        let SingleTable = _respObj.FormData.MultipleTables[this.ctrl.TableName];
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();

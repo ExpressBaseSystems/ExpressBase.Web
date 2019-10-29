@@ -402,7 +402,7 @@ var EditTicket = function () {
             data.append("updtkt", updtkt1);
             data.append("filedelet", JSON.stringify(window.filedel));
 
-            if ((valchng == 1) || (totalFiles > 0)) {
+            if ((valchng == 1) || (totalFiles > 0) || (window.filedel.length>0)) {
                 $.ajax({
                     url: "../SupportTicket/UpdateTicket",
                     type: 'POST',
@@ -617,7 +617,7 @@ var EditTicket = function () {
         };
 
 
-        let dataTransfer = new DataTransfer();
+     //   let dataTransfer = new DataTransfer();
 
         let createContainer = function () {
 
@@ -787,7 +787,7 @@ var EditTicket = function () {
                     window.filearray.splice(index, 1);
 
                     // Remove the file from input
-                    dataTransfer.items.remove(index);
+                  //  dataTransfer.items.remove(index);
                 }
                 if (flno > 0) {
                     window.filedel.push(flno);
@@ -872,7 +872,7 @@ var EditTicket = function () {
                             filearray.push(file);
 
                             // Add it to data transfer
-                            dataTransfer.items.add(file);
+                         //   dataTransfer.items.add(file);
 
                             // Set preview
 
@@ -882,7 +882,7 @@ var EditTicket = function () {
                             //}
                             //else
                             {
-                                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1, files[i].type));
+                                $uploadedContainer.append(createImg(URL.createObjectURL(file), filearray.length-1, files[i].type));
                             }
 
                         }
@@ -904,7 +904,7 @@ var EditTicket = function () {
             });
 
             // Update input files
-            $input.prop('files', dataTransfer.files);
+          //  $input.prop('files', dataTransfer.files);
 
         };
 

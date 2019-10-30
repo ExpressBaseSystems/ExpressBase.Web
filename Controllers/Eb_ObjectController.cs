@@ -273,6 +273,16 @@ namespace ExpressBase.Web.Controllers
 
                 ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
             }
+            else if (type.Equals(EbObjectTypes.CalendarView))
+            {
+                Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.Calendar, typeof(EbCalendarWrapper), typeof(EbObject));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
 
             if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
             {
@@ -763,11 +773,6 @@ namespace ExpressBase.Web.Controllers
             {
                 versionObj = Redis.Get<EbTableVisualization>(_refid);
                 return ViewComponent("DVBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
-            }
-            else if (_ObjType == (int)EbObjectTypes.TableVisualization)
-            {
-                versionObj = Redis.Get<EbTableVisualization>(_refid);
-                return ViewComponent("DVTable", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
             else if (_ObjType == (int)EbObjectTypes.ChartVisualization)
             {

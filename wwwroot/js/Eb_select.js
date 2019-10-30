@@ -12,7 +12,7 @@
     this.RenderMe = function () {
         let NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
         $.each(metas, function (i, meta) {
-            let name = meta.name; 
+            let name = meta.name;
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
             }
@@ -411,6 +411,8 @@ const EbSelect = function (ctrl, options) {
     //};
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
+        if ($(":focus").hasClass("eb_finput"))
+            return;
         if (key === 13)
             this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
         else if (key === 32) {
@@ -793,7 +795,7 @@ const EbSelect = function (ctrl, options) {
         this.$curEventTarget = $(e.target);
         let $row = $(e.target).closest('tr');
         //let datas = $(this.DTSelector).DataTable().row($row).data();
-        let datas =this.datatable.data[$row.index()];
+        let datas = this.datatable.data[$row.index()];
 
 
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {

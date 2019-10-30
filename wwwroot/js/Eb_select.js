@@ -779,7 +779,7 @@ const EbSelect = function (ctrl, options) {
     this.tagCloseBtnHand = function (e) {
         this.ClosedItem = this.Vobj.valueMembers.splice(delid(), 1)[0];
         if (this.ComboObj.MultiSelect)
-            $(this.DTSelector + ' [type=checkbox][value=' + this.ClosedItem + ']').prop("checked", false);
+            $(this.DTSelector + " [type=checkbox][value='" + this.ClosedItem + "']").prop("checked", false);
         //else
         //    var _v = this.Vobj.valueMembers.splice(delid(), 1);
         $.each(this.dmNames, function (i, name) {

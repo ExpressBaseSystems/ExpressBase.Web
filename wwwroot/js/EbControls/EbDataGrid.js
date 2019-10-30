@@ -1298,14 +1298,14 @@
         return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).attr('disabled', 'disabled').css('pointer-events', 'none').find('input').css('background-color', '#eee');
     };
 
-    this.clearDG = function () {
+    this.clearDG = function (isAddrow = true) {
         $(`#${this.TableId}>tbody>tr`).each(function (i, e) {
             //$(e).trigger("click");
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.resetBuffers();
-        if (!this.ctrl.IsDisable)
+        if (!this.ctrl.IsDisable && isAddrow)
             this.addRow();
     };
 
@@ -1470,14 +1470,21 @@
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
-        this.refreshDG(paramsColl, lastCtrlName);
+        let isFull = paramsColl__[2];
+
+        if (isFull)
+            this.refreshDG(paramsColl, lastCtrlName);
+        else
+            this.clearDG(false);
+
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;
 
     this.getParamsColl = function () {
         let dependantCtrls = this.ctrl.Eb__paramControls.$values;
-        params = [];
+        let isFull = true;
+        let params = [];
         let lastCtrlName;
         $.each(dependantCtrls, function (i, ctrlName) {
             let ctrl = this.ctrl.formObject[ctrlName];
@@ -1486,8 +1493,10 @@
             //let obj = { Name: ctrlName, Value: "2026" };
             lastCtrlName = ctrlName;
             params.push(obj);
+            if (isFull && (!val || val === ""))
+                isFull = false;
         }.bind(this));
-        return [params, lastCtrlName];
+        return [params, lastCtrlName, isFull];
     };
 
     this.showLoader = function () {

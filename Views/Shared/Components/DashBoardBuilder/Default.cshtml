@@ -18,6 +18,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
 <script src="~/js/EbUserDashBoard/EbDashBoard.js"></script>
 <script src="~/js/CommonDataTable.js"></script>
+<script src="~/js/GoogleMap/Googlemap.js"></script>
 <script src="~/js/EbUserDashBoard/EbDashBoard.js" asp-append-version=@bApnd></script>
 <script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js" asp-append-version=@bApnd></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>
@@ -33,41 +34,25 @@
 
 </script>
 
-    <div id="mySidenav" class="sidenav">
-        <div class="stickBtnHide">
-            <p>Toolbox</p> <i class="fa fa-thumb-tack " onclick="closeNav()" style="transform: rotate(90deg);"></i>
-        </div>
-        <div id="Eb-obj-sidebar-cont">
-            
-        </div>
-            @*@{ 
-                List<int> abcd = new List<int>();
-                foreach(KeyValuePair<string,  List<EbObjectWrapper>> item in ViewBag.SideBarMenu)
-                {
-
-                    foreach(EbObjectWrapper obW in item.Value)
-                    {
-                        EbObjectType o = EbObjectTypes.Get(obW.EbObjectType);
-                        if (!abcd.Contains(obW.EbObjectType))
-                        {
-                            
-                        }
-
-
-                     <div refid="@obW.RefId" obj-id="@obW.Id"> @obW.Name</div>
-                    }
-                }
-            }*@
-    
-       
+<div id="mySidenav" class="sidenav">
+    <div class="stickBtnHide">
+        <p>Toolbox</p> <i class="fa fa-thumb-tack " onclick="closeNav()" style="transform: rotate(90deg);"></i>
     </div>
+    <div class="search-div"> <input type="search" id="DashB-Search" placeholder="search.."/> </div>
+    <div id="DashB-Searched-Obj" hidden> </div>
+    <div id="Eb-obj-sidebar-cont">   </div>
+
+
+</div>
     <script>
         function openNav() {
             document.getElementById("mySidenav").style.width = "250px";
+            $(".stkMenu").hide(200);
         }
 
         function closeNav() {
             document.getElementById("mySidenav").style.width = "0";
+            $(".stkMenu").show(200);
         }
     </script>
 
@@ -75,9 +60,9 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <div class="stkMenu" onclick="openNav()">  ToolBox </div>
-                <div id="dashbord-view" class="drop-target">
-                    <div class="grid-stack" id="grid-cont"></div>
+                <div class="stkMenu" onclick="openNav()" style="display:flex"><i class="fa fa-wrench" style="padding: 5px 5px 0px 0px;"></i>  ToolBox </div>
+                <div id="dashbord-view" class="drop-target"> 
+                    <div class="grid-stack" id="grid-cont" ></div>
                 </div>
 
             </div>
@@ -103,14 +88,53 @@
             Wc: '@ViewBag.wc',
             Cid: '@ViewBag.cid',
             EbObjList: @Html.Raw(ViewBag.SideBarMenu),
+            googlekey : '@ViewBag.googlekey'
         });
 
         commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DBobj;
 
 
         $(function () {
-            $('.grid-stack').gridstack();
+           $('.grid-stack').gridstack({
+    resizable: {
+        handles: 'e, se, s, n'
+    }
+});
         });
+
+
+        
+     $("body").prepend(`
+<div class="modal fade" id="iFrameFormPopupModal" role="dialog">
+    <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
+        <div class="modal-content">
+            <div class="modal-body" style="height: 60vh; padding: 0px;">
+                <div>
+                    <div id="iFrameFormPopupOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
+                        <div style="position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>
+                    </div>
+                    <iframe id="iFrameFormPopup" style="width: 100%; height: 60vh; border: none; border-radius: 6px;" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+    window.closeModal = function (func) {// receives call from iFrame
+        //func();
+        $('#iFrameFormPopupModal').modal('hide');
+    };
+    $('#iFrameFormPopupModal').on('hidden.bs.modal', function () {
+        $('#iFrameFormPopup').removeAttr("src");
+        $("#iFrameFormPopupOverlay").show();
+    });
+    $("#iFrameFormPopup").on('load', function (evt) {
+        console.log(evt.target);
+        if ($(evt.target).attr("src") !== undefined)
+            $("#iFrameFormPopupOverlay").hide();
+    });
+
+
     </script>
 
     @*<div class="container-fluid">

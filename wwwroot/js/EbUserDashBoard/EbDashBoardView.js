@@ -7,7 +7,7 @@
     this.CurrentTile;
     this.Wc = options.Wc;
     this.Cid = options.Cid;
-
+    this.googlekey = options.googlekey || null;
     this.GenerateButtons = function () {
 
     }
@@ -24,9 +24,11 @@
         this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
         $("#dashbord-user-view").on("click", ".tile-opt", this.TileOptions.bind(this));
+        this.propGrid.ClosePG();
     }
 
     this.DrawTiles = function () {
+
         $("#dashbord-user-view").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
@@ -94,12 +96,13 @@
     //}
 
     this.TileRefidChangesuccess = function (id, data) {
+        this.GetFilterValues();
         let obj = JSON.parse(data);
         $(`[name-id="${id}"]`).append(obj.DisplayName);
         this.TileCollection[id].TileObject = obj;
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
 
-            $(`[data-id="${id}"]`).append(`<table id="tb1${id}" class="table display table-bordered compact"></table>`);
+            $(`[data-id="${id}"]`).append(`<div id="content_tb1${id}" class="wrapper-cont"><table id="tb1${id}" class="table display table-bordered compact"></table></div>`);
             var o = {};
             o.dsid = obj.DataSourceRefId;
             o.tableId = "tb1" + id;
@@ -110,14 +113,21 @@
             o.showFilterRow = false;
             o.showCheckboxColumn = false;
             o.Source = "DashBoard";
-            var dt = new EbBasicDataTable(o);
+            o.drawCallBack = this.drawCallBack.bind(this, id);
+            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            var dt = new EbCommonDataTable(o);
+            //$(`[data-id="${id}"]`).parent().removeAttr("style");
+            //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
+            //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
             var o = {};
             o.tableId = "tb1" + id;
             o.dvObject = obj;
+            o.filtervalues = this.filtervalues;
             var dt = new EbBasicChart(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl"></div>`);
@@ -125,13 +135,34 @@
                 parentDiv: '#' + id + '_UserCtrl',
                 refId: obj.RefId
             }
-             EbUserCtrlHelper(opts);
+            new EbUserCtrlHelper(opts);
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[name-id="${id}"]`).empty();
         }
+        else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
+            $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
+            var o = {};
+            o.tableId = "tb1" + id;
+            o.dsobj = obj;
+            o.Source = "Dashboard";
+            o.filtervalues = this.filtervalues;
+            o.googlekey = this.googlekey;
+            var dt = new EbGoogleMap(o);
+            $(`[data-id="${id}"]`).parent().removeAttr("style");
+        }
     }
 
+    this.drawCallBack = function (id) {
+        $(`[data-id="${id}"]`).parent().removeAttr("style");
+        let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 5;
+        $(`#${id} .dataTables_scrollBody`).css("max-height", `calc(100% - ${a}px)`);
+    }.bind(this);
+
+    this.GetFilterValues = function () {
+        this.filtervalues = [];
+        this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+    };
 
     this.popChanged = function (obj, pname, newval, oldval) {
         if (pname === "TileCount") {

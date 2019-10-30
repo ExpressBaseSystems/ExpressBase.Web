@@ -12,7 +12,7 @@
     this.RenderMe = function () {
         let NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
         $.each(metas, function (i, meta) {
-            let name = meta.name;
+            let name = meta.name; 
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
             }
@@ -784,12 +784,18 @@ const EbSelect = function (ctrl, options) {
             this.Vobj.displayMembers[name].splice(delid(), 1);
         }.bind(this));
         this.clearSearchBox();
+        this.filterArray = [];
+        this.datatable.columnSearch = [];
+        this.datatable.Api.ajax.reload();
     };
 
     this.checkBxClickEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         let $row = $(e.target).closest('tr');
-        let datas = $(this.DTSelector).DataTable().row($row).data();
+        //let datas = $(this.DTSelector).DataTable().row($row).data();
+        let datas =this.datatable.data[$row.index()];
+
+
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
             if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);

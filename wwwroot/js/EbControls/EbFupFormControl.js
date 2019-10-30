@@ -1,7 +1,10 @@
 ﻿class FUPFormControl {
     constructor(options) {
         //super();
-        this.Options = $.extend({}, options);
+        this.Options = $.extend({
+            DisableUpload: false
+        }, options);
+
         this.MaxSize = this.Options.MaxSize || 5;
         this.Files = [];
         this.RefIds = [];
@@ -131,7 +134,7 @@
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
-            if (this.FileList[i].Meta === null || this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
+            if ($.isEmptyObject(this.FileList[i].Meta) || this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
                 $portdef.append(this.thumbNprevHtml(this.FileList[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
@@ -149,36 +152,67 @@
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));
         $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
-        $("body").off("click").on("click", this.rmChecked.bind(this));
+        $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
+        $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
         this.contextMenu();
     }
 
     rmChecked(evt) {
-        this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
+        if ($(evt.target).closest(".eb_uplGal_thumbO").length <= 0) {
+            this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
+            $(".eb_uplGal_thumbO").find(".select-fade").hide();
+        }
+    }
+
+    setBGOnSelect(ev) {
+        let cb = $(ev.target).prop("checked");
+        if (cb)
+            $(ev.target).closest(".eb_uplGal_thumbO").find(".select-fade").show();
+        else
+            $(ev.target).closest(".eb_uplGal_thumbO").find(".select-fade").hide();
     }
 
     thumbNprevHtml(o) {
         let src = null;
         if (o.FileCategory === 0) {
-            src = `/files/${o.FileRefId}.jpg`;
+            src = `/files/${o.FileRefId}`;
         }
         else if (o.FileCategory === 1) {
             src = `/images/small/${o.FileRefId}.jpg`;
         }
         return (`<div class="eb_uplGal_thumbO trggrFprev" id="prev-thumb${o.FileRefId}" filref="${o.FileRefId}">
                 <div class="eb_uplGal_thumbO_img">
-                    <img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;">
+                    ${this.getThumbType(o, src)}
                 <div class="widthfull"><p class="fnamethumb text-center">${o.FileName}</p>
                 <input type="checkbox" refid="${o.FileRefId}" name="Mark" class="mark-thumb">
                 </div>
+                <div class="select-fade"></div>
             </div>`);
     }
 
+    getThumbType(o, src) {
+        if (o.FileCategory === 0) {
+            var arr = o.FileName.split('.');
+            var exten = arr[arr.length - 1];
+            if (exten !== 'pdf') {
+                return `<img src="${this.SpinImage}" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;">`;
+            }
+            else
+                return `<iframe src="${src}.${exten}" class="gallerythumbfile"></iframe>`;
+        }
+        else {
+            return `<img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;">`;
+        }
+    }
+
     galleryFullScreen(ev) {
+        if (ev.ctrlKey)
+            return this.thumbSelection(ev);
+
         let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
         this.GalleryFS.show();
         let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
-        let urls = "",urll = "";
+        let urls = "", urll = "";
 
         if (o.FileCategory === 0) {
             urls = `/files/${fileref}.jpg`;
@@ -214,6 +248,15 @@
             }
         }
         return html.join("");
+    }
+
+    thumbSelection(ev) {
+        let $div = $(ev.target).closest(".eb_uplGal_thumbO").find(".mark-thumb");
+        if ($div.prop("checked"))
+            $div.prop("checked", false);
+        else
+            $div.prop("checked", true);
+        $div.trigger("change");
     }
 
     initCropy() {
@@ -258,6 +301,13 @@
         evt.originalEvent.dataTransfer.dropEffect = "copy"; // Explicitly show this is a copy.
     }
 
+    getFileType(file) {
+        if (file.type.match('image.*'))
+            return "image";
+        else
+            return "file";
+    }
+
     handleFileSelect(evt) {
         evt.stopPropagation();
         evt.preventDefault();
@@ -265,9 +315,9 @@
         let files = evt.target.files || evt.originalEvent.dataTransfer.files; // FileList object
 
         for (var i = 0; i < files.length; i++) {
-            if (!files[i].type.match('image.*')) {
-                continue;
-            }
+            //if (!files[i].type.match('image.*')) {
+            //    continue;
+            //}
             let reader = new FileReader();
             reader.onload = (function (file) {
                 return function (e) {
@@ -301,7 +351,7 @@
                                                         <div class="file-thumb-wraper">
                                                             <div class="eb-upl_thumb" exact="${file.name}" file="${this.replceSpl(file.name)}">
                                                                 <div class="eb-upl-thumb-bdy">
-                                                                    <img src="${e.target.result}"/>
+                                                                    ${this.getThumbNailHead(e.target.result, file)}
                                                                 </div>
                                                                 <div class="eb-upl-thumb-info">
                                                                     <h4 class="fname text-center">${file.name}</h4>
@@ -337,7 +387,20 @@
         else {
             EbMessage("show", { Background: "red", Message: "Image size should not exceed " + this.MaxSize + " Mb" });
         }
-    };
+    }
+
+    getThumbNailHead(b64, file) {
+        let t = this.getFileType(file);
+        if (t === "image") {
+            return `<img src="${b64}"/>`;
+        }
+        else {
+            if (file.type.match("pdf.*"))
+                return `<iframe src="${b64}" scrolling="no"></iframe>`;
+            else
+                return `<i src="${b64}" class="glyphicon glyphicon-file thumb-icon"></i>`;
+        }
+    }
 
     tagClick(e) {
         $(e.target).closest("button").siblings(".upl-thumbtag").toggle();
@@ -345,7 +408,7 @@
 
     thumbButtons(file) {
         let html = new Array();
-        html.push(`<button class="upl-thumb-btn" size="${parseFloat((file.size / (1024))).toFixed(3)}" fname="${file.name}" id="${this.replceSpl(file.name)}-fullscreen"><i class="fa fa-arrows-alt"></i></button>`);
+        html.push(`<button class="upl-thumb-btn" size="${parseFloat((file.size / (1024))).toFixed(3)}" ftype="${this.getFileType(file)}" fname="${file.name}" id="${this.replceSpl(file.name)}-fullscreen"><i class="fa fa-arrows-alt"></i></button>`);
         html.push(`<button class="upl-thumb-btn" fname="${file.name}" id="${this.replceSpl(file.name)}-del"><i class="fa fa-trash-o"></i></button>`);
 
         if (this.Options.EnableTag)
@@ -356,7 +419,7 @@
 
         if (this.Options.EnableCrop)
             html.push(` <button class="upl-thumb-btn _crop" fname="${file.name}" id="${this.replceSpl(file.name)}-crop"><i class="fa fa-crop"></i></button>`);
-        if (this.Options.Categories)
+        if (this.Options.Categories && this.Options.Categories.length > 0)
             html.push(`<select class="ebfup_catogories" id="${this.replceSpl(file.name)}-category">${this.getCategory()}</select>`);
         return html.join("");
     }
@@ -395,11 +458,22 @@
 
     setFullscreen(e) {
         let txt = $(e.target).closest("button").attr("fname") + " (" + $(e.target).closest("button").attr("size") + " Kb)";
-        this.FullScreen.modal("show");
+        let ft = $(e.target).closest("button").attr("ftype");
         let ctrl = $(e.target).closest(".eb-upl_thumb");
-        let img = ctrl.find("img").attr("src");
-        this.FullScreen.find("img").attr("src", img);
+        if (ft === "image") {
+            this.FullScreen.find(".upl-body-file").hide();
+            let img = ctrl.find("img").attr("src");
+            this.FullScreen.find("img").attr("src", img);
+            this.FullScreen.find(".upl-body").show();
+        }
+        else {
+            this.FullScreen.find(".upl-body").hide();
+            let iframe = ctrl.find("iframe").attr("src");
+            this.FullScreen.find(".upl-body-file iframe").attr("src", iframe);
+            this.FullScreen.find(".upl-body-file").show();
+        }
         this.FullScreen.find(".img-info").text(txt);
+        this.FullScreen.modal("show");
     }
 
     upload(e) {
@@ -407,38 +481,56 @@
     };
 
     comUpload() {
+        let url = "";
         for (let k = 0; k < this.Files.length; k++) {
-            let thumb = null;
-            let formData = new FormData();
-            formData.append("File", this.Files[k]);
-            formData.append("Tags", this.getTag(this.Files[k]));
-            formData.append("Category", this.readCategory(this.Files[k]));
+            let type = this.getFileType(this.Files[k]);
+            if (type === "image")
+                url = "../StaticFile/UploadImageAsync";
+            else
+                url = "../StaticFile/UploadFileAsync";
 
-            $.ajax({
-                url: "../StaticFile/UploadImageAsync",
-                type: "POST",
-                data: formData,
-                cache: false,
-                contentType: false,
-                processData: false,
-                beforeSend: function (evt) {
-                    thumb = $(`#${this.Options.Container}-eb-upl-bdy div[file='${this.replceSpl(this.Files[k].name)}']`);
-                    thumb.find(".eb-upl-loader").show();
-                }.bind(this)
-            }).done(function (refid) {
-                this.successOper(thumb, refid);
-            }.bind(this));
+            this.uploadItem(url, this.Files[k]);
         }
+    }
+
+    uploadItem(_url, file) {
+        let thumb = null;
+        let formData = new FormData();
+        formData.append("File", file);
+        formData.append("Tags", this.getTag(file));
+        formData.append("Category", this.readCategory(file));
+
+        $.ajax({
+            url: _url,
+            type: "POST",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            beforeSend: function (evt) {
+                thumb = $(`#${this.Options.Container}-eb-upl-bdy div[file='${this.replceSpl(file.name)}']`);
+                thumb.find(".eb-upl-loader").show();
+            }.bind(this)
+        }).done(function (refid) {
+            this.successOper(thumb, refid);
+        }.bind(this));
     }
 
     getTag(file) {
         let f = this.replceSpl(file.name);
-        return $(`#${f}-tags_input`).tagsinput("items");
+        if ($(`#${f}-tags_input`).length > 0)
+            return $(`#${f}-tags_input`).tagsinput("items");
+        else
+            return "";
     }
 
     readCategory(file) {
         let f = this.replceSpl(file.name);
-        return $(`#${f}-category`).val().split();
+        if ($(`#${f}-category`).length > 0) {
+            return $(`#${f}-category`).val().split();
+        }
+        else
+            return "";
     }
 
     successOper(thumb, refid) {
@@ -462,8 +554,9 @@
     }
 
     outerHtml() {
+        let isVisible = (this.Options.DisableUpload) ? "none": "block";
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
-                                                     <div class="FUP_Head_W">
+                                                     <div class="FUP_Head_W" style="display:${isVisible}">
                                                         <button id="${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right"><i class="fa fa-upload"></i> Upload</button>
                                                      </div>
                                                      <div class="FUP_Bdy_W">
@@ -517,6 +610,9 @@
                                   <div class="modal-body">
                                         <div class="upl-body">
                                             <img src=""/>
+                                        </div>
+                                        <div class="upl-body-file">
+                                            <iframe></iframe>
                                         </div>
                                   </div>
                                 </div>
@@ -575,12 +671,20 @@
             "fold2": {
                 "name": "Move to Category", icon: "fa-list",
                 "items": this.getCateryLinks()
+            },
+            "fold3": {
+                "name": "Open in New Tab", icon: "fa-external-link", callback: function (eType, selector, action, originalEvent) {
+                    let url = $(selector.$trigger).find("img").attr("src") || $(selector.$trigger).find("iframe").attr("src");
+                    var win = window.open(url, '_blank');
+                    win.focus();
+                }
             }
-        }
+        };
 
         $.contextMenu({
             selector: ".eb_uplGal_thumbO",
             autoHide: true,
+            className: "ebfup-context-menu",
             build: function ($trigger, e) {
                 return {
                     items: $.extend({}, this.DefaultLinks, this.getCustomMenu())
@@ -660,7 +764,8 @@
             $t = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_head .FcnT`);
             $t.text("(" + $(`#${this.Options.Container}_GalleryUnq div[Catogory="${cat}"] .Col_apndBody_apndPort`).children().length + ")");
         }
-        this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false)
+        this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
+        $(".eb_uplGal_thumbO").find(".select-fade").hide();
     }
 
     deleteFromGallery(filerefs) {

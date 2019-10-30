@@ -4,19 +4,24 @@
         this.AppendBugsfn();
 
         $(".edttkt").on("click", this.EditTicketfn.bind(this));
-        $(".cloissue").on("click", this.CloseTicketfn.bind(this));
+        $(".cloissue").on("click", this.CloseIssueModal.bind(this));
+        $("#issueclosebtn").on("click", this.CloseTicketfn.bind(this));
         $("#newticket").on("click", this.NewTicketfn.bind(this));
+        $("#mytktbtn").on("click", this.MyTicketfn.bind(this));
 
 
 
     };
+    this.MyTicketfn=function () {
+            location.href = '/SupportTicket/bugsupport';
+        }
 
     this.AppendBugsfn = function () {
-        let html1 = null;
+       
         $('#spt_table').find('thead tr').append('<th>Ticket Id</th>');
         $('#spt_table').find('thead tr').append('<th style="width: 400px;">Title</th>');
         if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
-            $('#spt_table').find('thead tr').append('<th>Solution Id</th>');
+            $('#spt_table').find('thead tr').append('<th>Solution Name</th>');
         }
         $('#spt_table').find('thead tr').append('<th>Priorty</th>');
         $('#spt_table').find('thead tr').append('<th>Age</th>');
@@ -25,18 +30,19 @@
 
         $.each(tktob.supporttkt, function (i, obj) {
             let p = "tkt" + i;
+            let html1 = null;
             if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
-                html1 += `<tr id="${p}" tabindex="${i}" class="tbltkt"> 
+                html1 += `<tr id="${p}" tabindex="${i}" class="tbltkt "> 
             <td>${obj.ticketid}</td> 
             <td>${obj.title}</td> 
-            <td>${obj.solutionid}</td> 
+            <td>${obj.Solution_name}</td> 
             <td>${obj.priority}</td> 
-            <td>${obj.Age}</td> 
+            <td>${obj.NoDays}d ${obj.NoHour}h</td> 
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
-                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs edttkt iosclk" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue iosclk" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
 
               </td>
          </tr>`;
@@ -46,21 +52,33 @@
             <td>${obj.ticketid}</td> 
             <td>${obj.title}</td>  
             <td>${obj.priority}</td> 
-            <td>${obj.Age}</td> 
+            <td>${obj.NoDays}d ${obj.NoHour}h</td> 
             <td>${obj.status}</td> 
             <td>${obj.assignedto}</td> 
              <td> 
-                    <button class="btn btn-default btn-xs edttkt" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
-                    <button class="btn btn-default btn-xs cloissue" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
-
+                    <button class="btn btn-default btn-xs edttkt iosclk" style="color:blue" tktno="${obj.ticketid}" id="edt${obj.ticketid}">Edit <i class="fa fa-fw fa-edit  fa-lg fa-fw"></i></button>
+                    <button class="btn btn-default btn-xs cloissue iosclk" style="color:red" tktno="${obj.ticketid}" id="cl${obj.ticketid}">Close issue  <i class="fa fa-fw fa-close fa-lg fa-fw"></i></button>
               </td>
          </tr>`;
             }
 
+         $("#bugtblbody").append(html1);
 
-
+            if (((obj.priority == "High") && (obj.NoDays > 3)) || ((obj.priority == "Medium") && (obj.NoDays > 7)) ){
+                var lk = null;
+                 lk= '#' + p;
+                $(lk).addClass("trclr");
+            }
+            if (obj.status == "Closed") {
+                var lk = null;
+                lk = '#' + p;
+                $(lk).removeClass("trclr");
+            }
         });
-        $("#bugtblbody").empty().append(html1);
+       
+       
+        
+
     }
 
 
@@ -74,19 +92,29 @@
     }
 
     this.CloseTicketfn = function (ev) {
+
+
         let tktno = $(ev.target).closest('button').attr("tktno");
+        var reason= $("#reasontxt").val().trim();
         $("#eb_common_loader").EbLoader("show");
         $.ajax({
             url: "../SupportTicket/ChangeStatus",
-            data: { tktno: tktno, },
+            data: { tktno: tktno,reason:reason },
             cache: false,
             type: "POST",
             success: function () {
                 $("#eb_common_loader").EbLoader("hide");
+                $('#modal_close').show();
             }
         });
 
         location.href = '/SupportTicket/bugsupport';
+    }
+
+    this.CloseIssueModal=function(ev){
+          let tktno = $(ev.target).closest('button').attr("tktno");
+          $("#issueclosebtn").attr("tktno",tktno);
+          $('#modal_close').modal('show');
     }
 
     this.NewTicketfn = function () {
@@ -118,8 +146,12 @@ var EditTicket = function () {
         $("#btnupdateadmin").on("click", this.UpdateAdminTicketfn.bind(this));
         $("#savebugid").on("click", this.Savebug.bind(this));
         $("#btncomment").on("click", this.Commentfn.bind(this));
-
+        $("#mytktbtn").on("click", this.MyTicketfn.bind(this));
     };
+
+    this.MyTicketfn=function () {
+            location.href = '/SupportTicket/bugsupport';
+        }
 
     this.AppendTicketfn = function () {
         if (new_mode == "True") {
@@ -137,19 +169,15 @@ var EditTicket = function () {
                 $("#asgnid").val(obj.assignedto);
                 $("#bugtitle").val(obj.title);
                 if (ebcontext.user.wc == "tc") {
-                    $("#soluid").append(` <option selected="selected" hidden >${obj.solutionid}</option>`);
-                }
+                    $("#soluid").append(` <option selected="selected" sol_id= ${obj.solutionid} hidden >${obj.Esolution_id}(${obj.Solution_name})</option>`);
+                } 
                 else {
-                    $("#soluid").val(obj.solutionid);
+                    //$("#soluid").val(obj.solutionid);
+                    $("#soluid").val(`${obj.Esolution_id}(${obj.Solution_name})`);
+                    $("#soluid").attr("sol_id", obj.solutionid);
                 }
-                if (ebcontext.sid == "admin") {
-                    $("#bugpriority").val(obj.priority);
-                }
-                else {
-                    $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
-                }
-
-
+                
+                $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
                 $("#dtecrtd").val(obj.createdat);
                 $("#dtemdfyd").val(obj.lstmodified);
                 $("#descriptionid").val(obj.description);
@@ -198,25 +226,40 @@ var EditTicket = function () {
                 else if (ob.Field == "assigned_to") {
                     ftemp = "Assigned to"
                 }
+                else if (ob.Field == "reason") {
+                    stval = 3;
 
-                if (stval == 0) {
+                }
+
+                //if(ob.Field=="reason"){
+                //    return true;
+                //    }
+                if (stval == 3) {
                     htm2 = ` <div class="hstry">
                                 <div>
-                                 <strong> ${ob.UserName} </strong> changed  ${ftemp} to " ${ob.Value} "  on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                 <strong> ${ob.UserName} </strong>  has <b><i> closed  </i></b> the issue because of " ${ob.Value} "  on  ${ob.CreatedDate} at ${ob.CreatedTime}
                                 </div>
                              </div>`
                 }
-                if (stval == 1) {
+
+               else if (stval == 0) {
                     htm2 = ` <div class="hstry">
                                 <div>
-                                <strong>  ${ob.UserName} </strong> created issue   on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                 <strong> ${ob.UserName} </strong> changed <b><i> ${ftemp} </i></b> to " ${ob.Value} "  on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                </div>
+                             </div>`
+                }
+                else  if (stval == 1) {
+                    htm2 = ` <div class="hstry">
+                                <div>
+                                <strong>  ${ob.UserName} </strong> <b><i> created issue </i></b>   on  ${ob.CreatedDate} at ${ob.CreatedTime}
                                 </div>
                             </div>`
                 }
-                if (stval == 2) {
+                else if (stval == 2) {
                     htm2 = ` <div class="hstry">
                                 <div>
-                                 <strong> ${ob.UserName} : </strong>    "${ob.Value}"  on  ${ob.CreatedDate} at ${ob.CreatedTime}
+                                 <strong> ${ob.UserName} </strong>:     <b> " </b> ${ob.Value} <b> " </b> on  ${ob.CreatedDate} at ${ob.CreatedTime}
                                 </div>
                                 <div class="hstdt">
                                  
@@ -245,7 +288,7 @@ var EditTicket = function () {
             var sts = $("#stsid").val().trim();
             var desc = $("#descriptionid").val().trim();
             var priori = $("#bugpriority option:selected").text().trim();
-            var solu = $("#soluid option:selected").attr('value');
+            var solu = $("#soluid option:selected").attr('sol_id');
             var typ = $('input[name=optradio]:checked').val();
             data.append("title", tlt);
             data.append("descp", desc);
@@ -304,6 +347,7 @@ var EditTicket = function () {
     this.Updateticketfn = function () {
         let fill = this.validatefn();
         var valchng = 0;
+        let  solu = null;
         if (fill) {
             var data = new FormData();
 
@@ -316,7 +360,11 @@ var EditTicket = function () {
             var tlt = $("#bugtitle").val().trim();
             var desc = $("#descriptionid").val().trim();
             var priori = $("#bugpriority option:selected").text().trim();
-            var solu = $("#soluid").val();
+            if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
+                 solu = $("#soluid option:selected").attr('sol_id');
+            }
+            else
+                 solu = $("#soluid").attr('sol_id');
             var tktid = $("#tktid").val();
             var typ = $('input[name=optradio]:checked').val();
 
@@ -361,7 +409,8 @@ var EditTicket = function () {
             data.append("updtkt", updtkt1);
             data.append("filedelet", JSON.stringify(window.filedel));
 
-            if ((valchng == 1) || (totalFiles > 0)) {
+            if ((valchng == 1) || (totalFiles > 0) || (window.filedel.length > 0)) {
+
                 $.ajax({
                     url: "../SupportTicket/UpdateTicket",
                     type: 'POST',
@@ -405,6 +454,7 @@ var EditTicket = function () {
             var typ = $('input[name=optradio]:checked').val();
             var sts = $("#stsid option:selected").text().trim();
             var asgned = $("#asgnid option:selected").text().trim();
+            var priori = $("#bugpriority option:selected").text().trim();
 
             let updtkt = {};
 
@@ -420,6 +470,10 @@ var EditTicket = function () {
                 if (obj.type_b_f != typ) {
                     updtkt.type_bg_fr = typ;
                     valchng = 1;
+                }
+                if (obj.priority != priori) {
+                updtkt.priority = priori;
+                valchng = 1;
                 }
                 if (obj.solutionid == solu) {
                     data.append("solid", solu);
@@ -452,6 +506,14 @@ var EditTicket = function () {
                     }
                 });
             }
+             else if (valchng == 0) {
+                EbMessage("show", { Message: "No changes found", Background: 'red' });
+                $("#eb_common_loader").EbLoader("hide");
+            }
+            else if (valchng == 2) {
+                EbMessage("show", { Message: "Ticket id missmatch", Background: 'red' });
+                $("#eb_common_loader").EbLoader("hide");
+            }
         }
 
     }
@@ -463,7 +525,7 @@ var EditTicket = function () {
         if (tktdtl.supporttkt[0].ticketid == $("#tktid").val()) {
             tkt = $("#tktid").val();
         }
-        if (cmnt != null) {
+        if ((cmnt != null)&&(cmnt!="")){
             $.ajax({
                 url: "../SupportTicket/Comment",
                 type: 'POST',
@@ -486,7 +548,7 @@ var EditTicket = function () {
             });
         }
         else {
-            EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
+            EbMessage("show", { Message: "comment field cannot be null", Background: 'red' });
         }
     }
 
@@ -563,7 +625,7 @@ var EditTicket = function () {
         };
 
 
-        let dataTransfer = new DataTransfer();
+     //   let dataTransfer = new DataTransfer();
 
         let createContainer = function () {
 
@@ -733,7 +795,7 @@ var EditTicket = function () {
                     window.filearray.splice(index, 1);
 
                     // Remove the file from input
-                    dataTransfer.items.remove(index);
+                  //  dataTransfer.items.remove(index);
                 }
                 if (flno > 0) {
                     window.filedel.push(flno);
@@ -818,7 +880,7 @@ var EditTicket = function () {
                             filearray.push(file);
 
                             // Add it to data transfer
-                            dataTransfer.items.add(file);
+                         //   dataTransfer.items.add(file);
 
                             // Set preview
 
@@ -828,7 +890,7 @@ var EditTicket = function () {
                             //}
                             //else
                             {
-                                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1, files[i].type));
+                                $uploadedContainer.append(createImg(URL.createObjectURL(file), filearray.length-1, files[i].type));
                             }
 
                         }
@@ -850,7 +912,7 @@ var EditTicket = function () {
             });
 
             // Update input files
-            $input.prop('files', dataTransfer.files);
+          //  $input.prop('files', dataTransfer.files);
 
         };
 

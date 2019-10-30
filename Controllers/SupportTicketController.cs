@@ -35,6 +35,7 @@ namespace ExpressBase.Web.Controllers
 			{
 				FetchSupportResponse fsr = this.ServiceClient.Post<FetchSupportResponse>(new FetchSupportRequest { });
 				ViewBag.tkttable = JsonConvert.SerializeObject(fsr);
+
 			}
 
 
@@ -48,11 +49,9 @@ namespace ExpressBase.Web.Controllers
 			{
 				//to fetch solution id,name from tenant table  to show in dropdown
 				TenantSolutionsResponse ts = this.ServiceClient.Post<TenantSolutionsResponse>(new TenantSolutionsRequest { });
-				ViewBag.soluids = ts.soldispid;
-				ViewBag.solunames = ts.solname;
-				ViewBag.isolu = ts.solid;
+				ViewBag.sol_ids = ts;
 			}
-			if (ViewBag.cid.Equals("admin"))
+			 if (ViewBag.cid.Equals("admin"))
 			{
 				FetchAdminsResponse far = this.ServiceClient.Post<FetchAdminsResponse>(new FetchAdminsRequest { });
 				ViewBag.AdminNames = far.AdminNames;
@@ -85,7 +84,8 @@ namespace ExpressBase.Web.Controllers
 					SupportHistoryResponse Sh = this.ServiceClient.Post<SupportHistoryResponse>(new SupportHistoryRequest
 					{
 						TicketNo = tktno,
-						UserType = this.LoggedInUser.wc
+						UserType = this.LoggedInUser.wc,
+						UserObject = this.LoggedInUser
 					});
 					ViewBag.SptHstry = JsonConvert.SerializeObject(Sh);
 				}
@@ -109,12 +109,12 @@ namespace ExpressBase.Web.Controllers
 				solid = ViewBag.cid;
 				usrtyp = "developer";
 			}
-			if (ViewBag.wc.Equals("uc"))
+			else if (ViewBag.wc.Equals("uc"))
 			{
 				solid = ViewBag.cid;
 				usrtyp = "user";
 			}
-			if (ViewBag.wc.Equals("tc"))
+			else if (ViewBag.wc.Equals("tc"))
 			{
 				solid = httpreq["solid"].ToString();
 				usrtyp = "tenant";
@@ -232,14 +232,15 @@ namespace ExpressBase.Web.Controllers
 
 		}
 
-		public void ChangeStatus(string tktno)
+		public void ChangeStatus(string tktno,string reason)
 		{
 			ChangeStatusResponse sd = this.ServiceClient.Post<ChangeStatusResponse>(new ChangeStatusRequest
 			{
 				TicketNo = tktno,
 				NewStatus = "Closed",
-				UserName = this.LoggedInUser.FirstName,
-				Solution_id = ViewBag.cid
+				UserName = this.LoggedInUser.FullName,
+				Solution_id = ViewBag.cid,
+				Reason= reason
 			}); 
 
 

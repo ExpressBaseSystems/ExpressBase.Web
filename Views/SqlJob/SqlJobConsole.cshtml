@@ -1,0 +1,81 @@
+﻿
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
+}
+<script src="~/js/Eb_Basic_DataTable.js"></script>
+<script src="~/js/EbControls/EbProgressBar.js"></script>
+<script>
+    $(function () {
+        $("#date").datepicker({
+            dateFormat: "dd-mm-yy"
+        });
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        $("#show-sql-jobs").click(function () {
+            let id = $("#refid").val();
+            let date = $("#date").val();
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: "/SqlJob/Get_Jobs_List",
+                    data: {
+                        Refid: id,
+                        Date: date
+                    },
+                    success: function (result) {
+                        $("#list-of-jobs").empty();
+                        $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+                        var Retry = {Name : "Action" , Url : "/SqlJob/JobRetry" , BtnName : "Retry"}
+                        var o = new Object();
+                        o.tableId = "tbl";
+                        o.datetimeformat = true;
+                        //o.showFilterRow = false;
+                        o.showSerialColumn = false
+                        o.showCheckboxColumn = false;
+                        o.showFilterRow = false;
+                        o.IsPaging = true;
+                        //o.source = "inline";
+                        //o.scrollHeight = "200px";
+                        o.columns = JSON.parse(result.sqlJobsDvColumns).$values;
+                        o.data = result.sqlJobsRows;
+                        o.action = Retry;
+                        var data = new EbBasicDataTable(o);
+                    }
+                });
+        });
+    });
+</script>
+
+<div class="container-fluid" style="margin-top:50px">
+    <div class="row">
+        <div class="col-sm-12">
+            <input type="text" id="refid" />
+            <input type="text" id="date">
+            <button id="show-sql-jobs"> Show Jobs</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="list-of-jobs" > </div>
+        </div>
+    </div>
+</div>
+<style>
+    tbody{
+        padding: 10px;
+        border: solid 1px #2b2b2b;
+        background-color: #ffff;
+    }
+    thead{
+        padding: 10px;
+        border: solid 1px #2b2b2b;
+        background-color: #ffff;
+    }
+    dataTables_scroll{
+        height : 550px;
+    }
+</style>

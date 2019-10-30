@@ -3,37 +3,47 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-<link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css">
-<link rel="stylesheet" href="~/css/ChartStyle.css">
+
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/Eb_datatable.css">
-<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
-<link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" />
-<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" />
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd/>
+<link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd/>
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
 
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" />
+<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js"></script>
-<script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
+<script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js" ></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
-<script src="~/js/EbUserDashBoard/EbDashBoardView.js"></script>
-<script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js"></script>
+<script src="~/js/EbUserDashBoard/EbDashBoardView.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js" asp-append-version=@bApnd></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.all.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
-<script type="text/javascript" src="~/js/datatables.min.js"></script>
-<script src="~/js/Eb_Basic_DataTable.js"></script>
-<script src="~/js/Eb_Basic_chart.js"></script>
-<script src="~/js/CommonDataTable.js"></script>
-<script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js"></script>
-<script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js"></script>
-<script type="text/javascript" src="~/js/FormBuilder/PGHelper.js"></script>
-<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
-
+<script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+<script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
+<script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+<script src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/FormBuilder/PGHelper.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>
+<script src="~/js/GoogleMap/Googlemap.js" asp-append-version=@bApnd></script>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
+<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 
 <div class="container-fluid" style="margin-top:50px">
     <div class="row">
@@ -55,7 +65,8 @@
             Version: '@ViewBag.VersionNumber',
             ObjType: @ViewBag.ObjType,
             dvObj: @Html.Raw(ViewBag.dsObj),
-            Status: '@ViewBag.Status'
+            Status: '@ViewBag.Status',
+            googlekey : '@ViewBag.al_arz_map_key'
         });
 
       $(function () {
@@ -75,5 +86,35 @@
           $('.grid-stack').gridstack();
           $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
 });
-   
+
+     $("body").prepend(`
+<div class="modal fade" id="iFrameFormPopupModal" role="dialog">
+    <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
+        <div class="modal-content">
+            <div class="modal-body" style="height: 60vh; padding: 0px;">
+                <div>
+                    <div id="iFrameFormPopupOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
+                        <div style="position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>
+                    </div>
+                    <iframe id="iFrameFormPopup" style="width: 100%; height: 60vh; border: none; border-radius: 6px;" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+    window.closeModal = function (func) {// receives call from iFrame
+        //func();
+        $('#iFrameFormPopupModal').modal('hide');
+    };
+    $('#iFrameFormPopupModal').on('hidden.bs.modal', function () {
+        $('#iFrameFormPopup').removeAttr("src");
+        $("#iFrameFormPopupOverlay").show();
+    });
+    $("#iFrameFormPopup").on('load', function (evt) {
+        console.log(evt.target);
+        if ($(evt.target).attr("src") !== undefined)
+            $("#iFrameFormPopupOverlay").hide();
+    });
+
 </script>

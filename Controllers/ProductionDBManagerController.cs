@@ -22,9 +22,9 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public Object CheckChangesInFunction(string solution_id)
+        public Object CheckChangesInFiles(string solution_id)
         {
-            CheckChangesInFunctionResponse resp = this.ServiceClient.Post<CheckChangesInFunctionResponse>(new CheckChangesInFunctionRequest
+            CheckChangesInFilesResponse resp = this.ServiceClient.Post<CheckChangesInFilesResponse>((object)new CheckChangesInFilesRequest
             {
                 SolutionId = solution_id,
                 IsUpdate = false
@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Controllers
 
         public Object UpdateDBFunctionByDB(string db_name, string solution)
         {
-            CheckChangesInFunctionResponse resp = this.ServiceClient.Post<CheckChangesInFunctionResponse>(new CheckChangesInFunctionRequest
+            CheckChangesInFilesResponse resp = this.ServiceClient.Post<CheckChangesInFilesResponse>((object)new CheckChangesInFilesRequest
             {
                 SolutionId = solution,
                 IsUpdate = true

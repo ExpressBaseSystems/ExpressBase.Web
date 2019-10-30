@@ -49,6 +49,9 @@ var EbBasicDataTable = function (Option) {
     this.QueryIndex = Option.QueryIndex || 0;
     this.datetimeformat = Option.datetimeformat;
 
+    this.action = Option.action|| null ;
+
+
     this.init = function () {
         if (this.EbObject === null)
             this.EbObject = new EbTableVisualization(this.tableId);
@@ -134,7 +137,6 @@ var EbBasicDataTable = function (Option) {
             }
         }.bind(this));
 
-        jQuery.fn.dataTable.ext.errMode = 'alert';
 
         this.table_jQO.on('error.dt', function (settings, techNote, message) {
             console.log('An error has been reported by DataTables: ', message);
@@ -171,6 +173,9 @@ var EbBasicDataTable = function (Option) {
 
             return sum / data.length;
         });
+
+        jQuery.fn.dataTable.ext.errMode = 'alert';
+
         this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
         //this.table_jQO.off('order.dt').on('order.dt', this.doSerial.bind(this));
         ////this.table_jQO.off('init.dt').on('init.dt', this.doSerial.bind(this));

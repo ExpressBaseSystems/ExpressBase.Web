@@ -29,6 +29,7 @@
                     success: function (result) {
                         $("#list-of-jobs").empty();
                         $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+                        var Retry = {Name : "Action" , Url : "/SqlJob/JobRetry" , BtnName : "Retry"}
                         var o = new Object();
                         o.tableId = "tbl";
                         o.datetimeformat = true;
@@ -41,6 +42,7 @@
                         //o.scrollHeight = "200px";
                         o.columns = JSON.parse(result.sqlJobsDvColumns).$values;
                         o.data = result.sqlJobsRows;
+                        o.action = Retry;
                         var data = new EbBasicDataTable(o);
                     }
                 });

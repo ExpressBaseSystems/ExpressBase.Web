@@ -49,6 +49,9 @@ var EbBasicDataTable = function (Option) {
     this.QueryIndex = Option.QueryIndex || 0;
     this.datetimeformat = Option.datetimeformat;
 
+    this.action = Option.action|| null ;
+
+
     this.init = function () {
         if (this.EbObject === null)
             this.EbObject = new EbTableVisualization(this.tableId);

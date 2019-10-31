@@ -788,7 +788,7 @@ const EbSelect = function (ctrl, options) {
         this.clearSearchBox();
         this.filterArray = [];
         this.datatable.columnSearch = [];
-        this.datatable.Api.ajax.reload();
+        this.datatable.Api.ajax.reload();  
     };
 
     this.checkBxClickEventHand = function (e) {

@@ -1408,6 +1408,7 @@
     };
 
     this.setCurRow = function (rowId) {
+        this.curRowId = rowId;
         this.ctrl.currentRow = [];
         //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -1429,6 +1430,20 @@
             }.bind(this)
         });
     };
+
+    this.isCurRowEmpty = function () {
+        let isCurRowEmpty = true;
+        $.each(this.AllRowCtrls[this.curRowId], function (name, ctrl) {
+            console.log(name);
+            if (!ctrl.isEmpty()) {
+                isCurRowEmpty = false;
+                return false;
+            }
+        });
+        return isCurRowEmpty;
+    }.bind(this);
+
+    //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
         this.ctrl.addRow = this.AddRowWithData.bind(this);
@@ -1543,7 +1558,8 @@
     };
 
     this.init = function () {
-        this.ctrl.currentRow = [];
+        this.ctrl.currentRow = [];//try make obj
+        this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

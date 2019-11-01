@@ -3,6 +3,7 @@
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
+    this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
@@ -147,7 +148,7 @@
         this.EditModeDataTable = {};
         for (let i = 0; i < SingleTable.length; i++) {
             let rowObj = SingleTable[i];
-            let rowId = rowObj.RowId;
+            let rowId = rowObj.RowId || ("row_" + i);
             let columns = rowObj.Columns;
             for (let j = 0; j < columns.length; j++) {
                 let cellObj = columns[j];
@@ -1297,14 +1298,14 @@
         return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).attr('disabled', 'disabled').css('pointer-events', 'none').find('input').css('background-color', '#eee');
     };
 
-    this.clearDG = function () {
+    this.clearDG = function (isAddrow = true) {
         $(`#${this.TableId}>tbody>tr`).each(function (i, e) {
             //$(e).trigger("click");
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.resetBuffers();
-        if (!this.ctrl.IsDisable)
+        if (!this.ctrl.IsDisable && isAddrow)
             this.addRow();
     };
 
@@ -1407,6 +1408,7 @@
     };
 
     this.setCurRow = function (rowId) {
+        this.curRowId = rowId;
         this.ctrl.currentRow = [];
         //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -1428,6 +1430,20 @@
             }.bind(this)
         });
     };
+
+    this.isCurRowEmpty = function () {
+        let isCurRowEmpty = true;
+        $.each(this.AllRowCtrls[this.curRowId], function (name, ctrl) {
+            console.log(name);
+            if (!ctrl.isEmpty()) {
+                isCurRowEmpty = false;
+                return false;
+            }
+        });
+        return isCurRowEmpty;
+    }.bind(this);
+
+    //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
         this.ctrl.addRow = this.AddRowWithData.bind(this);
@@ -1466,22 +1482,36 @@
     };
 
     this.setSuggestionVals = function () {
-        let paramsColl = this.getParamsColl();
-        this.refreshDG(this.ctrl.DataSourceId, paramsColl);
+        let paramsColl__ = this.getParamsColl();
+        let paramsColl = paramsColl__[0];
+        let lastCtrlName = paramsColl__[1];
+        let isFull = paramsColl__[2];
 
-    };
+        if (isFull)
+            this.refreshDG(paramsColl, lastCtrlName);
+        else
+            this.clearDG(false);
+
+    }.bind(this);
+
+    this.ctrl.__setSuggestionVals = this.setSuggestionVals;
 
     this.getParamsColl = function () {
         let dependantCtrls = this.ctrl.Eb__paramControls.$values;
-        params = [];
+        let isFull = true;
+        let params = [];
+        let lastCtrlName;
         $.each(dependantCtrls, function (i, ctrlName) {
             let ctrl = this.ctrl.formObject[ctrlName];
             let val = ctrl.getValue();
-            //let obj = { Name: ctrlName, Value: val };
-            let obj = { Name: ctrlName, Value: "2026" };
+            let obj = { Name: ctrlName, Value: val };
+            //let obj = { Name: ctrlName, Value: "2026" };
+            lastCtrlName = ctrlName;
             params.push(obj);
+            if (isFull && (!val || val === ""))
+                isFull = false;
         }.bind(this));
-        return params;
+        return [params, lastCtrlName, isFull];
     };
 
     this.showLoader = function () {
@@ -1492,13 +1522,15 @@
         $("#eb_common_loader").EbLoader("hide");
     };
 
-    this.refreshDG = function (refid, paramsColl) {
+    this.refreshDG = function (paramsColl, lastCtrlName) {
+        this.showLoader();
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url: "/WebForm/getDGdata",
+            url: "/WebForm/ImportFormData",
             data: {
-                refid: refid,
+                _refid: this.formRefId,
+                _triggerctrl: lastCtrlName,
                 _params: paramsColl
             },
             error: function (xhr, ajaxOptions, thrownError) {
@@ -1517,7 +1549,7 @@
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
-        let SingleTable = _respObj.FormData.MultipleTables["Table1"];
+        let SingleTable = _respObj.FormData.MultipleTables[this.ctrl.TableName];
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
@@ -1526,7 +1558,8 @@
     };
 
     this.init = function () {
-        this.ctrl.currentRow = [];
+        this.ctrl.currentRow = [];//try make obj
+        this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

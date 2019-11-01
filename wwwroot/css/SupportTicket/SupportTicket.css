@@ -109,6 +109,10 @@
     padding-left: 0px;
 }
 
+.supporttkt .mrgbtm, .edtsprt .mrgbtm {
+     margin-bottom: 5px;
+  
+}
 .supporttkt .pdbtm15, .edtsprt .pdbtm15 {
     padding-bottom: 15px;
 }

@@ -21,7 +21,7 @@
         $('#spt_table').find('thead tr').append('<th>Ticket Id</th>');
         $('#spt_table').find('thead tr').append('<th style="width: 400px;">Title</th>');
         if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
-            $('#spt_table').find('thead tr').append('<th>Solution Id</th>');
+            $('#spt_table').find('thead tr').append('<th>Solution Name</th>');
         }
         $('#spt_table').find('thead tr').append('<th>Priorty</th>');
         $('#spt_table').find('thead tr').append('<th>Age</th>');
@@ -35,7 +35,7 @@
                 html1 += `<tr id="${p}" tabindex="${i}" class="tbltkt "> 
             <td>${obj.ticketid}</td> 
             <td>${obj.title}</td> 
-            <td>${obj.solutionid}</td> 
+            <td>${obj.Solution_name}</td> 
             <td>${obj.priority}</td> 
             <td>${obj.NoDays}d ${obj.NoHour}h</td> 
             <td>${obj.status}</td> 
@@ -169,10 +169,12 @@ var EditTicket = function () {
                 $("#asgnid").val(obj.assignedto);
                 $("#bugtitle").val(obj.title);
                 if (ebcontext.user.wc == "tc") {
-                    $("#soluid").append(` <option selected="selected" hidden >${obj.solutionid}</option>`);
-                }
+                    $("#soluid").append(` <option selected="selected" sol_id= ${obj.solutionid} hidden >${obj.Esolution_id}(${obj.Solution_name})</option>`);
+                } 
                 else {
-                    $("#soluid").val(obj.solutionid);
+                    //$("#soluid").val(obj.solutionid);
+                    $("#soluid").val(`${obj.Esolution_id}(${obj.Solution_name})`);
+                    $("#soluid").attr("sol_id", obj.solutionid);
                 }
                 
                 $("#bugpriority").append(` <option selected="selected" hidden >${obj.priority}</option>`);
@@ -286,7 +288,7 @@ var EditTicket = function () {
             var sts = $("#stsid").val().trim();
             var desc = $("#descriptionid").val().trim();
             var priori = $("#bugpriority option:selected").text().trim();
-            var solu = $("#soluid option:selected").attr('value');
+            var solu = $("#soluid option:selected").attr('sol_id');
             var typ = $('input[name=optradio]:checked').val();
             data.append("title", tlt);
             data.append("descp", desc);
@@ -345,6 +347,7 @@ var EditTicket = function () {
     this.Updateticketfn = function () {
         let fill = this.validatefn();
         var valchng = 0;
+        let  solu = null;
         if (fill) {
             var data = new FormData();
 
@@ -357,7 +360,11 @@ var EditTicket = function () {
             var tlt = $("#bugtitle").val().trim();
             var desc = $("#descriptionid").val().trim();
             var priori = $("#bugpriority option:selected").text().trim();
-            var solu = $("#soluid").val();
+            if ((ebcontext.sid == "admin") || (ebcontext.user.wc == "tc")) {
+                 solu = $("#soluid option:selected").attr('sol_id');
+            }
+            else
+                 solu = $("#soluid").attr('sol_id');
             var tktid = $("#tktid").val();
             var typ = $('input[name=optradio]:checked').val();
 
@@ -402,7 +409,8 @@ var EditTicket = function () {
             data.append("updtkt", updtkt1);
             data.append("filedelet", JSON.stringify(window.filedel));
 
-            if ((valchng == 1) || (totalFiles > 0)) {
+            if ((valchng == 1) || (totalFiles > 0) || (window.filedel.length > 0)) {
+
                 $.ajax({
                     url: "../SupportTicket/UpdateTicket",
                     type: 'POST',
@@ -617,7 +625,7 @@ var EditTicket = function () {
         };
 
 
-        let dataTransfer = new DataTransfer();
+     //   let dataTransfer = new DataTransfer();
 
         let createContainer = function () {
 
@@ -787,7 +795,7 @@ var EditTicket = function () {
                     window.filearray.splice(index, 1);
 
                     // Remove the file from input
-                    dataTransfer.items.remove(index);
+                  //  dataTransfer.items.remove(index);
                 }
                 if (flno > 0) {
                     window.filedel.push(flno);
@@ -872,7 +880,7 @@ var EditTicket = function () {
                             filearray.push(file);
 
                             // Add it to data transfer
-                            dataTransfer.items.add(file);
+                         //   dataTransfer.items.add(file);
 
                             // Set preview
 
@@ -882,7 +890,7 @@ var EditTicket = function () {
                             //}
                             //else
                             {
-                                $uploadedContainer.append(createImg(URL.createObjectURL(file), dataTransfer.items.length - 1, files[i].type));
+                                $uploadedContainer.append(createImg(URL.createObjectURL(file), filearray.length-1, files[i].type));
                             }
 
                         }
@@ -904,7 +912,7 @@ var EditTicket = function () {
             });
 
             // Update input files
-            $input.prop('files', dataTransfer.files);
+          //  $input.prop('files', dataTransfer.files);
 
         };
 

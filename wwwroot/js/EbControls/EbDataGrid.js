@@ -1508,7 +1508,7 @@
             //let obj = { Name: ctrlName, Value: "2026" };
             lastCtrlName = ctrlName;
             params.push(obj);
-            if (isFull && (!val || val === ""))
+            if (isFull && ctrl.isEmpty())
                 isFull = false;
         }.bind(this));
         return [params, lastCtrlName, isFull];

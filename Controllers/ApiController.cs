@@ -32,6 +32,7 @@ using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
 using ExpressBase.Common.Structures;
+using ExpressBase.Web.Filters;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -252,6 +253,42 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
+        [HttpGet("/api/auth")]
+        [HttpPost("/api/auth")]
+        public ApiAuthResponse ApiLoginByMd5(string username, string password)
+        {
+            ApiAuthResponse response = new ApiAuthResponse();
+            try
+            {
+                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = username,
+                    Password = password,
+                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    RememberMe = true
+                    //UseTokenCookie = true
+                });
+
+                if (authResponse != null && authResponse.User != null)
+                {
+                    response.IsValid = true;
+                    response.BToken = authResponse.BearerToken;
+                    response.RToken = authResponse.RefreshToken;
+                    response.UserId = authResponse.User.UserId;
+                    response.DisplayName = authResponse.User.FullName;
+                }
+                else
+                    response.IsValid = false;
+            }
+            catch (Exception e)
+            {
+                response.IsValid = false;
+                Console.WriteLine("api auth request failed: " + e.Message);
+            }
+            return response;
+        }
+
         [HttpGet("/api/logout")]
         [HttpPost("/api/logout")]
         public void ApiLogOut()
@@ -368,11 +405,14 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/menu")]
-        public GetMobMenuResonse GetAppData4Mob()
+        public GetMobMenuResonse GetAppData4Mob(int locid = 1)
         {
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
-                return this.ServiceClient.Get(new GetMobMenuRequest());
+                return this.ServiceClient.Get(new GetMobMenuRequest
+                {
+                    LocationId = locid
+                });
             }
             else
             {
@@ -381,35 +421,90 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/objects_by_app")]
-        public ObjectListToMob GetObjectsByApp(int appid,int locid)
+        public ObjectListToMob GetObjectsByApp(int appid, int locid)
         {
             locid = locid == 0 ? 1 : locid;
-            ObjectListToMob _objs = new ObjectListToMob();
+            ObjectListToMob _objs = null;
 
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
                 try
                 {
-                    var Ids = String.Join(",", this.GetAccessIds(locid));
-                    SidebarUserResponse resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest
+                    _objs = this.ServiceClient.Get<ObjectListToMob>(new ObjectListToMobRequest
                     {
-                        Ids = Ids,
-                        SysRole = this.LoggedInUser.Roles
+                        LocationId = locid,
+                        AppId = appid
                     });
-
-                    if (resultlist.Data.ContainsKey(appid))
-                    {
-                        foreach (KeyValuePair<int, TypeWrap> pair in resultlist.Data[appid].Types) {
-                            _objs.Objects.Add(EbObjectTypes.Get(pair.Key).Alias,pair.Value.Objects);
-                        } 
-                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    _objs = new ObjectListToMob();
                 }
             }
             return _objs;
+        }
+
+        [HttpGet("/api/object_by_ref")]
+        public EbObjectToMobResponse GetObjectByRef(string refid)
+        {
+            if (string.IsNullOrEmpty(refid))
+                throw new Exception("refid cannot be null");
+
+            EbObjectToMobResponse resonse = null;
+
+            if (ViewBag.IsValid)
+            {
+                try
+                {
+                    resonse = this.ServiceClient.Get(new EbObjectToMobRequest { RefId = refid, User = this.LoggedInUser });
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                }
+            }
+            return resonse;
+        }
+
+        [HttpPost("/api/webform_save")]
+        public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
+        {
+            InsertDataFromWebformResponse Resp = null;
+
+            if (ViewBag.IsValid)
+            {
+                try
+                {
+                    WebformData FormData = JsonConvert.DeserializeObject<WebformData>(form["webform_data"]);
+                    int RowId = Convert.ToInt32(form["rowid"]);
+                    string RefId = form["refid"];
+                    int LocId = Convert.ToInt32(form["locid"]);
+
+                    string Operation = OperationConstants.NEW;
+                    if (RowId > 0)
+                        Operation = OperationConstants.EDIT;
+
+                    if (!this.LoggedInUser.HasFormPermission(RefId, Operation, LocId))
+                        return new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 };
+
+                    Resp = ServiceClient.Post(new InsertDataFromWebformRequest
+                    {
+                        RefId = RefId,
+                        FormData = FormData,
+                        RowId = RowId,
+                        CurrentLoc = LocId,
+                        UserObj = this.LoggedInUser
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
+                    Console.WriteLine(ex.StackTrace);
+                }
+            }
+            return Resp;
         }
     }
 }

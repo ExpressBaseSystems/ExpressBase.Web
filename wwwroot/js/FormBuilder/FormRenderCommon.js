@@ -2,6 +2,11 @@
     this.FO = options.FO;
     this.$submitButton = options.submitButtonHtml;
 
+    Number.prototype.fixRounding = function (precision) {
+        var power = Math.pow(10, precision || 0);
+        return Math.round(this * power) / power;
+    };
+
 
 
     this.fireInitOnchange = function (inpCtrl) {
@@ -57,7 +62,7 @@
             this.bindRequired(Obj);
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
-        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0)
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0))
             this.bindOnChange(Obj);
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
@@ -83,7 +88,8 @@
 
     this.bindOnChange = function (control) {
         try {
-            let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) + (control.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
+            let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) +
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0) ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.__onChangeFn = onChangeFn;
             control.bindOnChange(onChangeFn);
@@ -113,29 +119,45 @@
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) {
-            $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
-                try {
-                    let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                    let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                    if (valExpFnStr) {
-                        if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                            depCtrl.setValue(val);
-                        }
-                        else {
-                            $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+            if (curCtrl.DependedValExp) {
+                $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                    try {
+                        let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                        if (valExpFnStr) {
+                            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                 let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                row[depCtrl.Name].setValue(val);
-                            }.bind(this));
+                                depCtrl.setValue(val);
+                            }
+                            else {
+                                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                                    let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                                    row[depCtrl.Name].setValue(val);
+                                }.bind(this));
+                            }
                         }
                     }
-                }
-                catch (e) {
-                    console.eb_log("eb error :");
-                    console.eb_log(e);
-                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                }
-            }.bind(this));
+                    catch (e) {
+                        console.eb_log("eb error :");
+                        console.eb_log(e);
+                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                    }
+                }.bind(this));
+            }
+
+            if (curCtrl.DependedDG) {
+                $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
+                    try {
+                        let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
+                        depCtrl.__setSuggestionVals();
+                    }
+                    catch (e) {
+                        console.eb_log("eb error :");
+                        console.eb_log(e);
+                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                    }
+                }.bind(this));
+            }
         }.bind(this);
     };
 

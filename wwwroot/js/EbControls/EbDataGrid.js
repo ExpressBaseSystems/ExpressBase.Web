@@ -3,6 +3,7 @@
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
+    this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
@@ -128,6 +129,14 @@
         else if (col.ObjType === "DGBooleanSelectColumn") {
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
+        else if (col.ObjType === "DGDateColumn") {
+            if (col.EbDbType === 6)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
+            else if (col.EbDbType === 5)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
+            else if (col.EbDbType === 17)
+                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
+        }
         else
             dspMmbr = cellObj.Value;
 
@@ -139,7 +148,7 @@
         this.EditModeDataTable = {};
         for (let i = 0; i < SingleTable.length; i++) {
             let rowObj = SingleTable[i];
-            let rowId = rowObj.RowId;
+            let rowId = rowObj.RowId || ("row_" + i);
             let columns = rowObj.Columns;
             for (let j = 0; j < columns.length; j++) {
                 let cellObj = columns[j];
@@ -184,29 +193,41 @@
     };
 
     this.setValueExpCols = function () {
+        let t0 = performance.now();
         $.each(this.AllRowCtrls, function (rowId, inpCtrls) {
-            this.setCurRow(rowId);
+            setTimeout(function () {// to make asynchronous
+                this.setCurRow(rowId);
 
-            $.each(inpCtrls, function (i, inpCtrl) {
-                this.initCtrl4EditMode(inpCtrl);
-                if (!inpCtrl.DoNotPersist)
-                    inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
-            }.bind(this));
+                let bt0 = performance.now();
+                $.each(inpCtrls, function (i, inpCtrl) {
+                    this.initCtrl4EditMode(inpCtrl);
+                    if (!inpCtrl.DoNotPersist)
+                        inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
+                }.bind(this));
+                let bt1 = performance.now();
+                //console.dev_log("DataGrid : 1st loop took " + (bt1 - bt0) + " milliseconds.");
 
-            $.each(inpCtrls, function (i, inpCtrl) {
-                if (rowId === "41")
-                    console.log(555);
-                EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
-            }.bind(this));
+                let at0 = performance.now();
+                $.each(inpCtrls, function (i, inpCtrl) {
+                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
+                }.bind(this));
+                let at1 = performance.now();
+                //console.dev_log("DataGrid : EbRunValueExpr took " + (at1 - at0) + " milliseconds.");
+
+            }.bind(this), 0);
+
         }.bind(this));
+        let t1 = performance.now();
+        console.dev_log("DataGrid : setValueExpCols took " + (t1 - t0) + " milliseconds.");
     };
 
     this.initCtrl4EditMode = function (inpCtrl) {
+        let t0 = performance.now();
         if (inpCtrl.ObjType === "PowerSelect") {
             inpCtrl.initializer = {};//temporary init
             inpCtrl.initializer.columnVals = {};//temporary init
             inpCtrl.initializer.setValues = function (p1, p2) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
             };
 
             inpCtrl.getColumn = function (ctrl, colName) {
@@ -240,9 +261,11 @@
         }
         else {
             inpCtrl.setValue = function (p1) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
             };//temporary init
         }
+        let t1 = performance.now();
+        //console.dev_log("DataGrid : initCtrl4EditMode took " + (t1 - t0) + " milliseconds.");
     };
 
     this.tryAddRow = function () {
@@ -976,7 +999,8 @@
         for (let colName in curRowData) {
             let ctrl = getObjByval(curRowCtrls, "Name", curRowData[colName].Name);
             let Value = curRowData[colName].Value;
-            ctrl.setValue(Value);
+            if (Value !== null)
+                ctrl.setValue(Value);
         }
     };
 
@@ -1274,14 +1298,14 @@
         return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).attr('disabled', 'disabled').css('pointer-events', 'none').find('input').css('background-color', '#eee');
     };
 
-    this.clearDG = function () {
+    this.clearDG = function (isAddrow = true) {
         $(`#${this.TableId}>tbody>tr`).each(function (i, e) {
             //$(e).trigger("click");
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.resetBuffers();
-        if (!this.ctrl.IsDisable)
+        if (!this.ctrl.IsDisable && isAddrow)
             this.addRow();
     };
 
@@ -1384,6 +1408,7 @@
     };
 
     this.setCurRow = function (rowId) {
+        this.curRowId = rowId;
         this.ctrl.currentRow = [];
         //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -1406,6 +1431,20 @@
         });
     };
 
+    this.isCurRowEmpty = function () {
+        let isCurRowEmpty = true;
+        $.each(this.AllRowCtrls[this.curRowId], function (name, ctrl) {
+            console.log(name);
+            if (!ctrl.isEmpty()) {
+                isCurRowEmpty = false;
+                return false;
+            }
+        });
+        return isCurRowEmpty;
+    }.bind(this);
+
+    //isCurRowEmpty = this.isCurRowEmpty;
+
     this.addUtilityFnsForUDF = function () {
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);
@@ -1427,8 +1466,100 @@
         this.ctrl.getRowBySlno = this.getRowBySlno.bind(this);
     };
 
+    this.makeColsResizable = function () {
+        $(`#${this.TableId}_head .ebResizable`).resizable({
+            handles: 'e',
+            resize: function (event, ui) {
+                let $curTd = ui.element;
+                let tdWidth = $curTd.outerWidth();
+                let $bodyTbl = $curTd.closest(".grid-cont").closestInner(".Dg_body");
+                let $footerTbl = $curTd.closest(".grid-cont").closestInner(".grid-cont>.Dg_footer");
+
+                $bodyTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
+                $footerTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
+            }
+        });
+    };
+
+    this.setSuggestionVals = function () {
+        let paramsColl__ = this.getParamsColl();
+        let paramsColl = paramsColl__[0];
+        let lastCtrlName = paramsColl__[1];
+        let isFull = paramsColl__[2];
+
+        if (isFull)
+            this.refreshDG(paramsColl, lastCtrlName);
+        else
+            this.clearDG(false);
+
+    }.bind(this);
+
+    this.ctrl.__setSuggestionVals = this.setSuggestionVals;
+
+    this.getParamsColl = function () {
+        let dependantCtrls = this.ctrl.Eb__paramControls.$values;
+        let isFull = true;
+        let params = [];
+        let lastCtrlName;
+        $.each(dependantCtrls, function (i, ctrlName) {
+            let ctrl = this.ctrl.formObject[ctrlName];
+            let val = ctrl.getValue();
+            let obj = { Name: ctrlName, Value: val };
+            //let obj = { Name: ctrlName, Value: "2026" };
+            lastCtrlName = ctrlName;
+            params.push(obj);
+            if (isFull && (!val || val === ""))
+                isFull = false;
+        }.bind(this));
+        return [params, lastCtrlName, isFull];
+    };
+
+    this.showLoader = function () {
+        $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
+    };
+
+    this.hideLoader = function () {
+        $("#eb_common_loader").EbLoader("hide");
+    };
+
+    this.refreshDG = function (paramsColl, lastCtrlName) {
+        this.showLoader();
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/ImportFormData",
+            data: {
+                _refid: this.formRefId,
+                _triggerctrl: lastCtrlName,
+                _params: paramsColl
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.reloadDG.bind(this)
+        });
+
+    }.bind(this);
+
+    this.reloadDG = function (_respObjStr) {// need cleanup
+        this.hideLoader();
+        let _respObj = JSON.parse(_respObjStr);
+        console.log(_respObj);
+        let SingleTable = _respObj.FormData.MultipleTables[this.ctrl.TableName];
+
+        $(`#${this.TableId}>tbody>.dgtr`).remove();
+        //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
+
+        this.ctrl.setEditModeRows(SingleTable);
+    };
+
     this.init = function () {
-        this.ctrl.currentRow = [];
+        this.ctrl.currentRow = [];//try make obj
+        this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";
@@ -1448,6 +1579,9 @@
                 col.__DGUCC = new DGUCColumn(col, this.ctrl.__userObject);
         }.bind(this));
 
+        if (this.ctrl.IsColumnsResizable)
+            this.makeColsResizable();
+
         this.addUtilityFnsForUDF();
         this.tryAddRow();
         if (this.isAggragateInDG) {
@@ -1465,5 +1599,11 @@
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
     };
 
-    this.init();
+    this.preInit = function () {
+        if (this.ctrl.DataSourceId)
+            this.setSuggestionVals();
+        this.init();
+    }.bind(this);
+
+    this.preInit();
 };

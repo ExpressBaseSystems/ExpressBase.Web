@@ -411,6 +411,8 @@ const EbSelect = function (ctrl, options) {
     //};
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
+        if ($(":focus").hasClass("eb_finput"))
+            return;
         if (key === 13)
             this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
         else if (key === 32) {
@@ -777,19 +779,25 @@ const EbSelect = function (ctrl, options) {
     this.tagCloseBtnHand = function (e) {
         this.ClosedItem = this.Vobj.valueMembers.splice(delid(), 1)[0];
         if (this.ComboObj.MultiSelect)
-            $(this.DTSelector + ' [type=checkbox][value=' + this.ClosedItem + ']').prop("checked", false);
+            $(this.DTSelector + " [type=checkbox][value='" + this.ClosedItem + "']").prop("checked", false);
         //else
         //    var _v = this.Vobj.valueMembers.splice(delid(), 1);
         $.each(this.dmNames, function (i, name) {
             this.Vobj.displayMembers[name].splice(delid(), 1);
         }.bind(this));
         this.clearSearchBox();
+        this.filterArray = [];
+        this.datatable.columnSearch = [];
+        this.datatable.Api.ajax.reload();  
     };
 
     this.checkBxClickEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         let $row = $(e.target).closest('tr');
-        let datas = $(this.DTSelector).DataTable().row($row).data();
+        //let datas = $(this.DTSelector).DataTable().row($row).data();
+        let datas = this.datatable.data[$row.index()];
+
+
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
             if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);

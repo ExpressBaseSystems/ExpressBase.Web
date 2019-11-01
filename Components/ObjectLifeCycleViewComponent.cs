@@ -23,8 +23,9 @@ namespace ExpressBase.Web.Components
         public async Task<IViewComponentResult> InvokeAsync(int _tabnum, string _cur_status, string _refid)
         {
             ViewBag.tabNum = _tabnum;
-            ViewBag.CurrStatus = _cur_status;
-            ViewBag.StatusHistory = GetStatusHistory(_refid);
+            List<EbObjectWrapper> _wrp = GetStatusHistory(_refid);
+            ViewBag.StatusHistory = _wrp;
+            ViewBag.CurrStatus = _wrp[0].Status;
             ViewBag.Curr_refid = _refid;
             return View();
         }

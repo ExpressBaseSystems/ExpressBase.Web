@@ -21,7 +21,7 @@
                 @{if (ViewBag.new_mode == true)
                     {
                         <div class="saveclsdiv ">
-                            <button id="savebugid" class="ebbtn eb_btnblue eb_btn-sm" type="button"><i class="fa fa-save"></i> Save</button>
+                            <button id="savebugid" class="ebbtn eb_btnblue eb_btn-sm iosclk " style=" margin-bottom: 5px;" type="button"><i class="fa fa-save"></i> Save</button>
                         </div>
                     }
                     else
@@ -29,18 +29,18 @@
                         <div class="updateclsdiv ">
                             @{ if (ViewBag.cid == "admin")
                                 {
-                                    <button id="btnupdateadmin" class="ebbtn eb_btnblue eb_btn-sm" type="button"> Update</button>
+                                    <button id="btnupdateadmin" class="ebbtn eb_btnblue eb_btn-sm iosclk " style=" margin-bottom: 5px;" type="button"> Update</button>
                                 }
                                 else
                                 {
-                                    <button id="btnupdate" class="ebbtn eb_btnblue eb_btn-sm" type="button"> Update</button>
+                                    <button id="btnupdate" class="ebbtn eb_btnblue eb_btn-sm iosclk " style="margin-bottom: 5px;" type="button"> Update</button>
                                 }
                             }
                         </div>
                     }
                 }
                 <div class=" ">
-                    <button id="mytktbtn" class="ebbtn eb_btnblue eb_btn-sm" style="margin-right:10px;" type="button"><i class="fa fa-ticket"></i> My Tickets</button>
+                    <button id="mytktbtn" class="ebbtn eb_btnblue eb_btn-sm iosclk " style="margin-right:10px;margin-bottom: 5px;" type="button"><i class="fa fa-ticket"></i> My Tickets</button>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
                                                 }
                                             }
                                         </div>
-                                        <div id="titlelbl" class="" style=" visibility :hidden"> Enter a title</div>
+                                        <div id="titlelbl" class="" style=" visibility :hidden ;color: rgb(245, 34, 45);"> Enter a title</div>
                                     </div>
                                     <div class="col-sm-4 col-md-4 col-lg-4 ">
                                         <div class=" ">
@@ -80,9 +80,9 @@
                                                         <label>Solution id</label>
                                                         <div>
                                                             <select id="soluid" class="form-control w-100">
-                                                                @for (int i = 0; i < ViewBag.soluids.Count; i++)
+                                                                @for (int i = 0; i < ViewBag.sol_ids.sol_id.Count; i++)
                                                                 {
-                                                                    <option value=@ViewBag.soluids[i]>@ViewBag.soluids[i] (@ViewBag.solunames[i])</option>
+                                                                    <option sol_id=@ViewBag.sol_ids.sol_id[i]>@ViewBag.sol_ids.sol_exid[i] (@ViewBag.sol_ids.solname[i])</option>
                                                                 }
 
                                                             </select>
@@ -97,9 +97,9 @@
                                                     <div class="">
                                                         <label>Solution id</label>
                                                         <div>
-                                                            <input class="form-control w-100 " type="text" value="@ViewBag.Cid" id="soluid" disabled>
+                                                            <input class="form-control w-100 " sol_id ="@ViewBag.Cid" type="text" value="@ViewBag.Cid" id="soluid" disabled>
                                                         </div>
-                                                        <div id="sollbl" class="" style=" visibility :hidden">Select an Id</div>
+                                                        <div id="sollbl" class="" style="color: rgb(245, 34, 45); visibility :hidden">Select an Id</div>
                                                     </div>
                                                 }
 
@@ -133,7 +133,7 @@
 
                                                     }
                                                 </div>
-                                                <div id="stsidlbl" class="" style=" visibility :hidden"> status</div>
+                                                <div id="stsidlbl" class="" style="color: rgb(245, 34, 45); visibility :hidden"> status</div>
                                             </div>
                                             <div>
                                                 <label>Issue type</label>
@@ -146,7 +146,7 @@
                                                             <input type="radio" name="optradio" id="FeatureRequest" value="FeatureRequest">Feature Request
                                                         </label>
                                                     </div>
-                                                    <div id="typelbl" class="" style=" visibility :hidden">Select a value</div>
+                                                    <div id="typelbl" class="" style="color: rgb(245, 34, 45); visibility :hidden">Select a value</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -161,7 +161,7 @@
                                                         <option value="3">Low</option>
                                                     </select>
                                                 </div>
-                                                <div id="prioritylbl" class="" style=" visibility :hidden">Select a value</div>
+                                                <div id="prioritylbl" class="" style="color: rgb(245, 34, 45); visibility :hidden">Select a value</div>
                                             </div>
                                             <div>
                                                 <label>Assigned to</label>
@@ -184,7 +184,7 @@
                                                         }
                                                     }
                                                 </div>
-                                                <div id="asgnidlbl" class="" style=" visibility :hidden"> assign</div>
+                                                <div id="asgnidlbl" class="" style="color: rgb(245, 34, 45); visibility :hidden"> assign</div>
                                             </div>
 
                                         </div>
@@ -197,7 +197,7 @@
                                             <div>
                                                 <textarea rows="5" cols="50" class="form-control stprsiz" id="descriptionid"></textarea>
                                             </div>
-                                            <div id="descrlbl" class="" style=" visibility :hidden"> Enter some description</div>
+                                            <div id="descrlbl" class="" style="color: rgb(245, 34, 45); visibility :hidden"> Enter some description</div>
                                         </div>
                                     </div>
 
@@ -259,7 +259,7 @@
                                                                 <textarea rows="2" cols="50" class="form-control stprsiz" id="cmntid"></textarea>
                                                             </div>
                                                             <div class="col-sm-1 col-md-1 col-lg-1 " style="padding-top: 14px;padding-left: 5px;">
-                                                                <button id="btncomment" class="ebbtn eb_btnblue  "  type="button"> Comment</button>
+                                                                <button id="btncomment" class="ebbtn eb_btnblue iosclk "  type="button"> Comment</button>
                                                             </div>
 
                                                         </div>
@@ -290,7 +290,7 @@
                         <div class="modal-content">
                             <!-- Modal body -->
                             <div class="modal-body" style="padding-top: 0px; padding-bottom: 0px;padding-left: 0px; padding-right: 0px;">
-                                <button type="button" class="close" data-dismiss="modal" style="">&times; </button>
+                                <button type="button" class="close iosclk" data-dismiss="modal" style="">&times; </button>
                                 <div id="file_disp">
                                     @*file to display look supportticket js*@
                                 </div>
@@ -340,8 +340,6 @@
             });
 
          var edt = new EditTicket();
-       
-
-
+           
     });
 </script>

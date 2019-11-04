@@ -173,7 +173,7 @@
 
         let con = $(`[data-id="${id}"]`).parent().parent().parent().attr("id");
         //$(`[data-id="${id}"]`).attr("val" ,wname);
-        wiki_name = wname.replace(/ /g, '-');
+        wiki_name = wname.replace(/ /g, '~');
         //let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
         $(`[data-id='${id}']`).addClass("CurrentSelection");
@@ -281,7 +281,7 @@
                 //alert(url);
                 let urlSplit = url.split("/");
                 let wiki_name = urlSplit[urlSplit.length - 1];
-                let wname = wiki_name.replace(/\-/g, ' ');
+                let wname = wiki_name.replace(/\~/g, ' ');
                 let id = $(`[val="${wname}"]`).attr("data-id");
                 $(".wikilist").removeClass("CurrentSelection");
                 $(`[data-id='${id}']`).addClass("CurrentSelection");

@@ -441,7 +441,7 @@ var EbBasicDataTable = function (Option) {
                     var Rtype = api.settings().init().aoColumns[i].RenderType;
                     if (Rtype === 3) {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
-                        if (!($(textid).is(':indeterminate')))
+                        if ($(textid)[0] && !($(textid).is(':indeterminate')))
                             filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
                     }
                     else {

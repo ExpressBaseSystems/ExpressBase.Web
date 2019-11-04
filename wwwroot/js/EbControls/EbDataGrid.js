@@ -1298,14 +1298,14 @@
         return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).attr('disabled', 'disabled').css('pointer-events', 'none').find('input').css('background-color', '#eee');
     };
 
-    this.clearDG = function () {
+    this.clearDG = function (isAddrow = true) {
         $(`#${this.TableId}>tbody>tr`).each(function (i, e) {
             //$(e).trigger("click");
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.resetBuffers();
-        if (!this.ctrl.IsDisable)
+        if (!this.ctrl.IsDisable && isAddrow)
             this.addRow();
     };
 
@@ -1408,6 +1408,7 @@
     };
 
     this.setCurRow = function (rowId) {
+        this.curRowId = rowId;
         this.ctrl.currentRow = [];
         //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -1429,6 +1430,20 @@
             }.bind(this)
         });
     };
+
+    this.isCurRowEmpty = function () {
+        let isCurRowEmpty = true;
+        $.each(this.AllRowCtrls[this.curRowId], function (name, ctrl) {
+            console.log(name);
+            if (!ctrl.isEmpty()) {
+                isCurRowEmpty = false;
+                return false;
+            }
+        });
+        return isCurRowEmpty;
+    }.bind(this);
+
+    //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
         this.ctrl.addRow = this.AddRowWithData.bind(this);
@@ -1470,14 +1485,21 @@
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
-        this.refreshDG(paramsColl, lastCtrlName);
+        let isFull = paramsColl__[2];
+
+        if (isFull)
+            this.refreshDG(paramsColl, lastCtrlName);
+        else
+            this.clearDG(false);
+
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;
 
     this.getParamsColl = function () {
         let dependantCtrls = this.ctrl.Eb__paramControls.$values;
-        params = [];
+        let isFull = true;
+        let params = [];
         let lastCtrlName;
         $.each(dependantCtrls, function (i, ctrlName) {
             let ctrl = this.ctrl.formObject[ctrlName];
@@ -1486,8 +1508,10 @@
             //let obj = { Name: ctrlName, Value: "2026" };
             lastCtrlName = ctrlName;
             params.push(obj);
+            if (isFull && ctrl.isEmpty())
+                isFull = false;
         }.bind(this));
-        return [params, lastCtrlName];
+        return [params, lastCtrlName, isFull];
     };
 
     this.showLoader = function () {
@@ -1534,7 +1558,8 @@
     };
 
     this.init = function () {
-        this.ctrl.currentRow = [];
+        this.ctrl.currentRow = [];//try make obj
+        this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

@@ -405,11 +405,14 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/menu")]
-        public GetMobMenuResonse GetAppData4Mob()
+        public GetMobMenuResonse GetAppData4Mob(int locid = 1)
         {
             if (ViewBag.IsValid)
             {
-                return this.ServiceClient.Get(new GetMobMenuRequest());
+                return this.ServiceClient.Get(new GetMobMenuRequest
+                {
+                    LocationId = locid
+                });
             }
             else
             {
@@ -421,28 +424,22 @@ namespace ExpressBase.Web.Controllers
         public ObjectListToMob GetObjectsByApp(int appid, int locid)
         {
             locid = locid == 0 ? 1 : locid;
-            ObjectListToMob _objs = new ObjectListToMob();
+            ObjectListToMob _objs = null;
 
             if (ViewBag.IsValid)
             {
                 try
                 {
-                    SidebarUserResponse resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest
+                    _objs = this.ServiceClient.Get<ObjectListToMob>(new ObjectListToMobRequest
                     {
-                        LocationId = locid
+                        LocationId = locid,
+                        AppId = appid
                     });
-
-                    if (resultlist.Data.ContainsKey(appid))
-                    {
-                        foreach (KeyValuePair<int, TypeWrap> pair in resultlist.Data[appid].Types)
-                        {
-                            _objs.Objects.Add(EbObjectTypes.Get(pair.Key).Alias, pair.Value.Objects);
-                        }
-                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    _objs = new ObjectListToMob();
                 }
             }
             return _objs;
@@ -501,7 +498,7 @@ namespace ExpressBase.Web.Controllers
                         UserObj = this.LoggedInUser
                     });
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
                     Console.WriteLine(ex.StackTrace);

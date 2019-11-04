@@ -647,8 +647,8 @@ var EbBasicDataTable = function (Option) {
         //    //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         //}
         //this.filterDisplay();
-        //if(this.Api !== null)
-        //    this.Api.columns.adjust();
+        if(this.Api !== null)
+            this.Api.columns.adjust();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {

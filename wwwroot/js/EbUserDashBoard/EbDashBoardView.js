@@ -107,7 +107,7 @@
             o.dsid = obj.DataSourceRefId;
             o.tableId = "tb1" + id;
             o.containerId = id;
-            o.columns = obj.Columns;
+            o.columns = obj.Columns.$values;
             o.dvObject = obj;
             o.IsPaging = false;
             o.showFilterRow = false;

@@ -1,0 +1,25 @@
+﻿
+@{
+    @using Newtonsoft.Json;
+    @using ExpressBase.Common;
+    @using ExpressBase.Objects;
+    @using ExpressBase.Common.Objects;
+    @using ServiceStack;
+    @using System.Runtime.Serialization;
+    var Cols = EbSerializers.Json_Serialize(ViewBag.Columns);
+    EbFilterDialog filterDialogObj = ViewBag.data.EbDataSource.FilterDialog;
+}
+
+@{
+    if (ViewBag.data.EbDataSource.FilterDialogRefId != null && ViewBag.data.EbDataSource.FilterDialogRefId != "")
+    {
+        @await Component.InvokeAsync("ParameterDiv", new { FilterDialogObj = filterDialogObj, _user = ViewBag.currentUser, _sol = ViewBag.solution, ParentRefid = ViewBag.dvRefId, wc = ViewBag.wc, curloc = ViewBag.curloc, submitId = ViewBag.submitId });
+
+    }
+}
+
+<script>
+    @Html.Raw(ViewBag.HtmlHead)
+    var CalendarColumns = @Html.Raw(Cols);
+</script>
+

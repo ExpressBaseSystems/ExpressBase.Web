@@ -89,7 +89,7 @@
     this.movefromId = null;
     this.columnCount = null;
     this.Source = Option.Source || "EbDataTable";
-    this.columns = Option.columns || (this.EbObject) ? this.EbObject.Columns.$values :null;
+    this.columns = Option.columns || ( (this.EbObject) ? this.EbObject.Columns.$values :null );
     this.contId = Option.containerId;
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.IsPaging : true;
@@ -367,9 +367,12 @@
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
         this.call2FD();
+        this.EbObject.IsPaging = this.IsPaging;
     };
 
     this.start4Other = function () {
+        if (!this.EbObject) 
+            this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
         if (this.columns === null)
             this.call2FD();
         else {
@@ -382,8 +385,13 @@
     };
 
     this.getColumnsSuccess = function (e) {
+        $("#eb_common_loader").EbLoader("show");
         if (this.Source === "EbDataTable")
             this.Do4EbdataTable();
+        else if (this.Source === "Calendar") {
+            $("#" + this.contId).empty();
+            $("#" + this.contId).append(`<table id="${this.tableId}" class="table display table-bordered compact"></table>`);
+        }
         this.initCompleteflag = false;
         this.extraCol = [];
         this.check4Customcolumn();
@@ -424,8 +432,9 @@
         if (this.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
-            this.Init();
+            
         }
+        this.Init();
     };
 
     this.Do4EbdataTable = function () {
@@ -453,7 +462,6 @@
         this.isSecondTime = false;
         if (this.login === "uc")
             $(".dv-body1").show();
-        $("#eb_common_loader").EbLoader("show");
         $.extend(this.tempColumns, this.EbObject.Columns.$values);
         //this.tempColumns.sort(this.ColumnsComparer);
         this.dsid = this.EbObject.DataSourceRefId;//not sure..
@@ -772,6 +780,7 @@
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
+        //o.headerCallback = this.headerCallback.bind(this);
         //o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
         return o;
     };
@@ -1242,7 +1251,8 @@
         $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
         $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
-            
+
+        this.CreateHeaderTooltip();
         this.addFilterEventListeners();
         this.arrangeFooterWidth();
         //this.arrangefixedHedaerWidth();
@@ -1280,7 +1290,7 @@
                 //    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "142px", "important");
             }
         }
-    }
+    };
 
     this.contextMenu = function () {
         $.contextMenu({
@@ -1289,7 +1299,7 @@
                 "OpenNewTab": { name: "Open in New Tab", icon: "fa-external-link-square", callback: this.OpeninNewTab.bind(this) }
             }
         });
-    }
+    };
 
     this.contextMenu4Label = function () {
         $.contextMenu({
@@ -1298,7 +1308,7 @@
                 "Copy": { name: "Copy", icon: "fa-external-link-square", callback: this.copyLabelData.bind(this) }
             }
         });
-    }
+    };
 
     this.contextMenu4Cell = function () {
         var isDisable = this.EbObject.DisableCopy;
@@ -1542,6 +1552,24 @@
         //}
     }
 
+    this.CreateHeaderTooltip = function () {
+        $.each($('#' + this.tableId + '_wrapper .dataTables_scrollHead th.holiday_class'), this.AddHeaderTooltip.bind(this));
+        this.DrawTooltipForHeader();
+    };
+
+    this.AddHeaderTooltip = function (i, _th) {
+        let hCol = this.EbObject.Columns.$values.filter(col => col.className.includes("holiday_class"));
+        $(_th).attr("title", hCol[i].HeaderTooltipText);
+    };
+
+    this.DrawTooltipForHeader = function () {
+        $('th.holiday_class').tooltip({
+            placement: 'bottom',
+            container:'body'
+       });
+    };
+
+
     this.check4Scroll = function () {
         var scrollBody = $('#' + this.tableId + '_wrapper .dataTables_scrollBody');
         if (scrollBody[0].scrollHeight > scrollBody.height()) {
@@ -1669,6 +1697,10 @@
         if (this.Api === null)
             this.Api = $("#" + this.tableId).DataTable();
         this.Api.columns.adjust();
+    };
+
+    this.headerCallback = function (thead, data, start, end, display) {
+        //$(thead).find('th').eq(0).html('Displaying ' + (end - start) + ' records');
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -2423,11 +2455,13 @@
     this.GenerateButtons = function () {
         $("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
-        $("#obj_icons").empty();
-        this.submitId = "btnGo" + this.tableId;
-        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-        $("#obj_icons").append(this.$submit);
-        this.$submit.click(this.getColumnsSuccess.bind(this));
+        if (this.Source === "EbDataTable") {
+            $("#obj_icons").empty();
+            this.submitId = "btnGo" + this.tableId;
+            this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+            $("#obj_icons").append(this.$submit);
+            this.$submit.click(this.getColumnsSuccess.bind(this));
+        }
 
         if (this.EbObject.FormLinks.$values.length > 0) {
             this.CreateNewFormLinks();
@@ -3728,8 +3762,8 @@
     };
 
     this.updateRenderFunc_Inner = function (i, col) {
-        this.EbObject.Columns.$values[i].sClass = "";
-        this.EbObject.Columns.$values[i].className = "";
+        //this.EbObject.Columns.$values[i].sClass = "";
+        //this.EbObject.Columns.$values[i].className = "";
 
         if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
 

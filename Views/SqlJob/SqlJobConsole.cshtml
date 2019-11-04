@@ -14,6 +14,15 @@
 
 </script>
 <script>
+     let chkObj = new Object();
+    chkObj.data = null;
+    chkObj.title = "Action";
+    chkObj.orderable = false;
+    chkObj.bVisible = true;
+    chkObj.name = "action";
+    chkObj.Type = 1;
+    chkObj.render = renderButtonCol;
+
     $(document).ready(function () {
         $("#show-sql-jobs").click(function () {
             let id = $("#refid").val();
@@ -27,9 +36,11 @@
                         Date: date
                     },
                     success: function (result) {
+                        let cols = JSON.parse(result.sqlJobsDvColumns).$values;
+                        cols.push(chkObj);
                         $("#list-of-jobs").empty();
                         $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
-                        var Retry = {Name : "Action" , Url : "/SqlJob/JobRetry" , BtnName : "Retry"}
+                        
                         var o = new Object();
                         o.tableId = "tbl";
                         o.datetimeformat = true;
@@ -40,14 +51,20 @@
                         o.IsPaging = true;
                         //o.source = "inline";
                         //o.scrollHeight = "200px";
-                        o.columns = JSON.parse(result.sqlJobsDvColumns).$values;
+                        o.columns = cols;
                         o.data = result.sqlJobsRows;
-                        o.action = Retry;
                         var data = new EbBasicDataTable(o);
                     }
                 });
         });
     });
+
+    function renderButtonCol(data, type, row, meta) {
+        if (data[4] === "SUCCESS")
+            return "<input type=button />";
+        else
+            return "<input type=button />"
+    }
 </script>
 
 <div class="container-fluid" style="margin-top:50px">

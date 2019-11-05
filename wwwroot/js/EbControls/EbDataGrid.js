@@ -1444,6 +1444,10 @@
         return isCurRowEmpty;
     }.bind(this);
 
+    this.B4saveActions = function () {
+        $(`[rowid='${this.curRowId}'] .check-row`) .trigger("click");
+    };
+
     //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {

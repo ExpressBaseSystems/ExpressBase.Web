@@ -3,6 +3,7 @@
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
+    this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
@@ -344,59 +345,59 @@
     //    }
     //};
 
-    this.j = function (p1) {
-        let VMs = this.initializer.Vobj.valueMembers;
-        let DMs = this.initializer.Vobj.displayMembers;
-        let columnVals = this.initializer.columnVals;
+    //this.j = function (p1) {
+    //    let VMs = this.initializer.Vobj.valueMembers;
+    //    let DMs = this.initializer.Vobj.displayMembers;
+    //    let columnVals = this.initializer.columnVals;
 
-        if (VMs.length > 0)// clear if already values there
-            this.initializer.clearValues();
+    //    if (VMs.length > 0)// clear if already values there
+    //        this.initializer.clearValues();
 
-        let valMsArr = p1[0].split(',');
-        let DMtable = p1[1];
+    //    let valMsArr = p1[0].split(',');
+    //    let DMtable = p1[1];
 
-        for (let i = 0; i < valMsArr.length; i++) {
-            let vm = valMsArr[i];
-            VMs.push(vm);
-            for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
-                let dm = this.DisplayMembers.$values[j];
-                for (var k = 0; k < DMtable.length; k++) {
-                    let row = DMtable[k];
-                    if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-                        let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-                        DMs[dm.name].push(_dm);
-                    }
-                }
-            }
-        }
+    //    for (let i = 0; i < valMsArr.length; i++) {
+    //        let vm = valMsArr[i];
+    //        VMs.push(vm);
+    //        for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
+    //            let dm = this.DisplayMembers.$values[j];
+    //            for (var k = 0; k < DMtable.length; k++) {
+    //                let row = DMtable[k];
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
+    //                    DMs[dm.name].push(_dm);
+    //                }
+    //            }
+    //        }
+    //    }
 
-        if (this.initializer.datatable === null) {//for aftersave actions
-            $.each(valMsArr, function (i, vm) {
-                $.each(DMtable, function (j, row) {
-                    if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-                        $.each(row.Columns, function (k, column) {
-                            if (!columnVals[column.Name]) {
-                                console.warn('Found mismatch in Columns from datasource and Colums in object');
-                                return true;
-                            }
-                            let val = EbConvertValue(column.Value, column.Type);
-                            columnVals[column.Name].push(val);
-                        }.bind(this));
-                    }
+    //    if (this.initializer.datatable === null) {//for aftersave actions
+    //        $.each(valMsArr, function (i, vm) {
+    //            $.each(DMtable, function (j, row) {
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    $.each(row.Columns, function (k, column) {
+    //                        if (!columnVals[column.Name]) {
+    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
+    //                            return true;
+    //                        }
+    //                        let val = EbConvertValue(column.Value, column.Type);
+    //                        columnVals[column.Name].push(val);
+    //                    }.bind(this));
+    //                }
 
-                    //$.each(r.Columns, function (j, column) {
-                    //    if (!columnVals[column.Name]) {
-                    //        console.warn('Mismatch found in Colums in datasource and Colums in object');
-                    //        return true;
-                    //    }
-                    //    let val = EbConvertValue(column.Value, column.Type);
-                    //    columnVals[column.Name].push(val);
-                    //}.bind(this));
+    //                //$.each(r.Columns, function (j, column) {
+    //                //    if (!columnVals[column.Name]) {
+    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                //        return true;
+    //                //    }
+    //                //    let val = EbConvertValue(column.Value, column.Type);
+    //                //    columnVals[column.Name].push(val);
+    //                //}.bind(this));
 
-                }.bind(this));
-            }.bind(this));
-        }
-    };
+    //            }.bind(this));
+    //        }.bind(this));
+    //    }
+    //};
 
     this.addEditModeRows = function (EditModeDataTable) {
         $(`#${this.TableId} tbody`).empty();
@@ -1298,14 +1299,14 @@
         return $('[ebsid=' + this.__DG.EbSid + ']').find(`tr[is-editing=true] [colname=${this.Name}] .ctrl-cover *`).attr('disabled', 'disabled').css('pointer-events', 'none').find('input').css('background-color', '#eee');
     };
 
-    this.clearDG = function () {
+    this.clearDG = function (isAddrow = true) {
         $(`#${this.TableId}>tbody>tr`).each(function (i, e) {
             //$(e).trigger("click");
             this.delRow_click({ target: e });
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.resetBuffers();
-        if (!this.ctrl.IsDisable)
+        if (!this.ctrl.IsDisable && isAddrow)
             this.addRow();
     };
 
@@ -1408,6 +1409,7 @@
     };
 
     this.setCurRow = function (rowId) {
+        this.curRowId = rowId;
         this.ctrl.currentRow = [];
         //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
         $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -1429,6 +1431,20 @@
             }.bind(this)
         });
     };
+
+    this.isCurRowEmpty = function () {
+        let isCurRowEmpty = true;
+        $.each(this.AllRowCtrls[this.curRowId], function (name, ctrl) {
+            console.log(name);
+            if (!ctrl.isEmpty()) {
+                isCurRowEmpty = false;
+                return false;
+            }
+        });
+        return isCurRowEmpty;
+    }.bind(this);
+
+    //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
         this.ctrl.addRow = this.AddRowWithData.bind(this);
@@ -1467,17 +1483,26 @@
     };
 
     this.setSuggestionVals = function () {
+        if (!this.formRenderer.isInitNCs)
+            return;
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
-        this.refreshDG(paramsColl, lastCtrlName);
+        let isFull = paramsColl__[2];
+
+        if (isFull)
+            this.refreshDG(paramsColl, lastCtrlName);
+        else
+            this.clearDG(false);
+
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;
 
     this.getParamsColl = function () {
         let dependantCtrls = this.ctrl.Eb__paramControls.$values;
-        params = [];
+        let isFull = true;
+        let params = [];
         let lastCtrlName;
         $.each(dependantCtrls, function (i, ctrlName) {
             let ctrl = this.ctrl.formObject[ctrlName];
@@ -1486,8 +1511,10 @@
             //let obj = { Name: ctrlName, Value: "2026" };
             lastCtrlName = ctrlName;
             params.push(obj);
+            if (isFull && ctrl.isEmpty())
+                isFull = false;
         }.bind(this));
-        return [params, lastCtrlName];
+        return [params, lastCtrlName, isFull];
     };
 
     this.showLoader = function () {
@@ -1534,7 +1561,8 @@
     };
 
     this.init = function () {
-        this.ctrl.currentRow = [];
+        this.ctrl.currentRow = [];//try make obj
+        this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

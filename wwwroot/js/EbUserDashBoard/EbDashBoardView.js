@@ -43,7 +43,7 @@
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" id=""></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper"></div>
                     </div></div>`);
@@ -107,7 +107,7 @@
             o.dsid = obj.DataSourceRefId;
             o.tableId = "tb1" + id;
             o.containerId = id;
-            o.columns = obj.Columns;
+            o.columns = obj.Columns.$values;
             o.dvObject = obj;
             o.IsPaging = false;
             o.showFilterRow = false;
@@ -139,6 +139,7 @@
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[name-id="${id}"]`).empty();
+            $("#tile5 .i-opt-obj").hide();
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);

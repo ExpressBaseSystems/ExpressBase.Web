@@ -49,6 +49,9 @@ var EbBasicDataTable = function (Option) {
     this.QueryIndex = Option.QueryIndex || 0;
     this.datetimeformat = Option.datetimeformat;
 
+    this.action = Option.action|| null ;
+
+
     this.init = function () {
         if (this.EbObject === null)
             this.EbObject = new EbTableVisualization(this.tableId);
@@ -438,7 +441,7 @@ var EbBasicDataTable = function (Option) {
                     var Rtype = api.settings().init().aoColumns[i].RenderType;
                     if (Rtype === 3) {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
-                        if (!($(textid).is(':indeterminate')))
+                        if ($(textid)[0] && !($(textid).is(':indeterminate')))
                             filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
                     }
                     else {
@@ -644,8 +647,8 @@ var EbBasicDataTable = function (Option) {
         //    //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         //}
         //this.filterDisplay();
-        //if(this.Api !== null)
-        //    this.Api.columns.adjust();
+        if(this.Api !== null)
+            this.Api.columns.adjust();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {

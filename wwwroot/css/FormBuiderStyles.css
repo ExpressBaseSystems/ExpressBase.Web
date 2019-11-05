@@ -1498,6 +1498,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .user-list-ctrl {
     /*border: 1px solid #ccc;*/
     position: relative;
+    z-index: 1;
 }
 
 .ulstc-disp-c {

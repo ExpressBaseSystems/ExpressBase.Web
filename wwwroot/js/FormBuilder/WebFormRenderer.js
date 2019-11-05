@@ -40,6 +40,7 @@ const WebFormRender = function (option) {
     this.DGBuilderObjs = {};
     this.uniqCtrlsInitialVals = {};
     this.PSsIsInit = {};
+    this.isInitNCs = false;
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -91,7 +92,7 @@ const WebFormRender = function (option) {
 
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId });
+            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
         }.bind(this));
     };
 
@@ -219,6 +220,7 @@ const WebFormRender = function (option) {
             else
                 ctrl.setValue(val);
         }.bind(this));
+        this.isInitNCs = true;
     };
 
     this.getNCCTblNames = function (FormData) {

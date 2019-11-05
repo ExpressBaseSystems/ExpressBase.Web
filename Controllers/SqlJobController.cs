@@ -48,5 +48,10 @@ namespace ExpressBase.Web.Controllers
             RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id });
 
         }
+
+        public void ProcessorLogic()
+        {
+            this.ServiceClient.Post <ProcessorResponse> (new ProcessorRequest()); ;
+        }
     }
 }

@@ -42,11 +42,10 @@ namespace ExpressBase.Web.Controllers
             return resp;  
         }
 
-        public void JobRetry(int id)
+        public RetryJobResponse JobRetry(int id)
         {
-            id = 3101;
             RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id });
-
+            return response;
         }
     }
 }

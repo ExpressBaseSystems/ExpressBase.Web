@@ -458,6 +458,53 @@ const WebFormRender = function (option) {
         return unique_flag;
     };
 
+    //this.IsDGsHavePartialEntry = function () {
+    //    let IsDGsHavePartialEntry = false;
+    //    $.each(this.DGBuilderObjs, function (k, DGB) {
+    //        if (!DGB.isCurRowEmpty()) {
+    //            IsDGsHavePartialEntry = true;
+    //            return false;
+    //        }
+    //    }.bind(this));
+    //    return IsDGsHavePartialEntry;
+    //};
+
+    //this.DGsB4Save = function () {
+    //    if (this.IsDGsHavePartialEntry()) {
+    //        EbDialog("show", {
+    //            Message: "Found uncommited entry in a row, continue without the change?",
+    //            Buttons: {
+    //                "Yes": {
+    //                    Background: "green",
+    //                    Align: "right",
+    //                    FontColor: "white;"
+    //                },
+    //                "No": {
+    //                    Background: "red",
+    //                    Align: "left",
+    //                    FontColor: "white;"
+    //                }
+    //            },
+    //            CallBack: this.dialogboxAction.bind(this)
+    //        });
+    //        return false;
+    //    }
+    //    else
+    //        return true;
+    //};
+
+    //this.dialogboxAction = function (value) {
+    //    if (value === "Yes")
+    //        this.saveForm_call();
+    //};
+
+    this.DGsB4SaveActions = function () {
+        $.each(this.DGBuilderObjs, function (k, DGB) {
+            DGB.B4saveActions();
+        }.bind(this));
+
+    };
+
     this.saveForm = function () {
         this.BeforeSave();
 
@@ -466,32 +513,37 @@ const WebFormRender = function (option) {
                 return;
             if (!this.isAllUniqOK())
                 return;
-            //if (!this.FRC.AllUnique_Check())
+            //if (!this.DGsB4Save())
             //    return;
-            this.showLoader();
-            let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
-            $.ajax({
-                type: "POST",
-                //url: this.ssurl + "/bots",
-                url: "/WebForm/InsertWebformData",
-                data: {
-                    TableName: this.FormObj.TableName,
-                    ValObj: this.getFormValuesObjWithTypeColl(),
-                    RefId: this.formRefId,
-                    RowId: this.rowId,
-                    CurrentLoc: currentLoc
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    this.hideLoader();
-                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-                }.bind(this),
-                //beforeSend: function (xhr) {
-                //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-                //}.bind(this),
-                success: this.saveSuccess.bind(this)
-            });
-        }.bind(this), 2);
+            this.DGsB4SaveActions();
 
+            this.saveForm_call();
+        }.bind(this), 2);
+    };
+
+    this.saveForm_call = function () {
+        this.showLoader();
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/InsertWebformData",
+            data: {
+                TableName: this.FormObj.TableName,
+                ValObj: this.getFormValuesObjWithTypeColl(),
+                RefId: this.formRefId,
+                RowId: this.rowId,
+                CurrentLoc: currentLoc
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.saveSuccess.bind(this)
+        });
     };
 
     //functions to be executed before save in frontend
@@ -1029,7 +1081,7 @@ const WebFormRender = function (option) {
                             this.setHeader(this.mode);
                         }.bind(this)
                     });
-                }                
+                }
             }
 
         }

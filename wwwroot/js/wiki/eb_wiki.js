@@ -323,7 +323,7 @@
                         $("#wiki_data_div").show(500);
                         $('.front_page_wiki').hide(100);
                         let $Report = $(`<div class="searchDiv"></div>`);
-                        $Report.append(`<a class="searchshow" data-id="${ob[i].id}"> ${ob[i].title} </a>`);
+                        $Report.append(`<a class="searchshow" data-id="${ob[i].id}" val=${ob[i].title}> ${ob[i].title} </a>`);
                         $Report.append(` ${ob[i].html}`);
                         let $Tags = $(`<h3>${ob[i].tags}</h3>`);
                         $("#wiki_data_div").append($Report);

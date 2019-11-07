@@ -168,9 +168,14 @@
                         @await Component.InvokeAsync("ApiBuilder", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                     }
+                    else if (ViewBag.ObjType == (int)EbObjectTypes.MobilePage)
+                    {
+                        @await Component.InvokeAsync("MobilePage", new { dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+
+                    }
                     else if (ViewBag.ObjType == (int)EbObjectTypes.DashBoard)
                     {
-                        @await Component.InvokeAsync("DashBoardBuilder", new { googlekey = ViewBag.al_arz_map_key,dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
+                        @await Component.InvokeAsync("DashBoardBuilder", new { googlekey = ViewBag.al_arz_map_key, dsobj = versionObj, tabnum = 0, type = ViewBag.ObjType, refid = ViewBag.Refid, ssurl = ViewBag.ServiceUrl })
 
                     }
                     else if (ViewBag.ObjType == (int)EbObjectTypes.CalendarView)

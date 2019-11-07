@@ -260,6 +260,16 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if (type.Equals(EbObjectTypes.MobilePage))
+            {
+                Type[] typeArray = typeof(EbMobilePageBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.ApiBuilder, typeof(EbMobilePageBase));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
             else if (type.Equals(EbObjectTypes.DashBoard))
             {
                 Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();

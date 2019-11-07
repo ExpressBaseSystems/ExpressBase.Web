@@ -1,0 +1,42 @@
+﻿.eb_mobpage_wraper {
+    width: 100%;
+    height: calc(100% - 73px);
+}
+    .eb_mobpage_wraper .eb_mobpage_toolbox {
+        width: 25%;
+        background: white;
+        height: 100%;
+        padding: 0 !important;
+        border: 1px solid #ccc;
+        overflow-y: auto;
+        border-top-right-radius: 4px;
+        height: calc(100% - 73px);
+        position: fixed;
+    }
+    .eb_mobpage_wraper .eb_mobpage_pane {
+        width: 50%;
+        min-height: 300px;
+        margin-left: 25%;
+        padding: 0 5px;
+    }
+
+    .eb_mobpage_wraper .eb_mobpage_properties {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 4;
+        padding-top: 37px;
+        border: 1px solid #ccc;
+        box-shadow: var(--eb-shadow);
+        height: 100%;
+        background-color: white;
+        width: 25%;
+    }
+
+    .eb_mobpage_wraper .eb_mobpage_toolbox .head {
+        padding: 2px 5px;
+        border-bottom: 1px solid #ddd;
+        background: #eee;
+        font-size: 13px;
+        cursor: pointer;
+    }

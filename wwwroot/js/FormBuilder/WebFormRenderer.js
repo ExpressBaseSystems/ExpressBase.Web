@@ -167,6 +167,43 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.psDataImport = function (PScontrol) {
+        this.showLoader();
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/ImportFormData",
+            data: {
+                _refid: this.formRefId,
+                _triggerctrl: PScontrol.Name,
+                _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
+                //_params: [{ Name: PScontrol.Name, Value: "29.00" }]
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.reloadForm.bind(this)
+        });
+
+    };
+
+    this.reloadForm = function (_respObjStr) {// need cleanup
+        this.hideLoader();
+        let _respObj = JSON.parse(_respObjStr);
+        console.log(_respObj);
+        let SingleTable = _respObj.FormData.MultipleTables[this.ctrl.TableName];
+        //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
+        //this.ctrl.setEditModeRows(this.removeRowIds(SingleTable));
+    };
+
+    //this.removeRowIds = function () {
+
+    //};
+
     //this.unbindUniqueCheck = function (control) {
     //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
     //};

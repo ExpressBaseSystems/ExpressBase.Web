@@ -1498,7 +1498,6 @@
             this.refreshDG(paramsColl, lastCtrlName);
         else
             this.clearDG(false);
-
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;

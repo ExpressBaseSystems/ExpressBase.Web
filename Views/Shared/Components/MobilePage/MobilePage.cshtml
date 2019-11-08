@@ -20,11 +20,34 @@
                     <div class="head">
                         Tools
                     </div>
+                    <div class="bdy" id="@("eb_mobpage_toolbox"+ViewBag.tabnum+"_draggable")">
+                        <div eb-type="MobileForm" ctrname="FormLayout" class="toolitems draggable">
+                            <div class="toolitems-inner">
+                                <i class="fa fa-database"></i>Form Layout
+                            </div>
+                        </div>
+                        <div eb-type="MobileTextBox" ctrname="TextBox" class="toolitems draggable">
+                            <div class="toolitems-inner">
+                                <i class="fa fa-database"></i>Text Box
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="eb_mobpage_pane" id="@("eb_mobpage_pane"+ViewBag.tabnum)">
                 <div class="eb_mobpage_pane_body">
-
+                    <div class="eb_mobpage_pane_layout">
+                        <div class="eb_mobpage_emulatorbody">
+                            <div class="eb_mobpage_drparea">
+                                <div class='eb_mob_formlayout' eb-type='MobileForm'>
+                                    <div class='eb_mob_formlayout_inner' id="eb_mob_layoutdrop">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="~/images/walls/emulator.png" class="eb_mobpage_pane_layout_emulator" />
+                    </div>
                 </div>
             </div>
             <div class="eb_mobpage_properties" id="@("eb_mobpage_property_wrapr"+ViewBag.tabnum)">

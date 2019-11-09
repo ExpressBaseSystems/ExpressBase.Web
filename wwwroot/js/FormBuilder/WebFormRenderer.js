@@ -168,6 +168,8 @@ const WebFormRender = function (option) {
     };
 
     this.psDataImport = function (PScontrol) {
+        if (PScontrol.isEmpty())
+            return;
         this.showLoader();
         $.ajax({
             type: "POST",
@@ -195,9 +197,13 @@ const WebFormRender = function (option) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
-        let SingleTable = _respObj.FormData.MultipleTables[this.ctrl.TableName];
-        //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        //this.ctrl.setEditModeRows(this.removeRowIds(SingleTable));
+        this.EditModeFormData = _respObj.FormData.MultipleTables;
+        let SourceEditModeFormData = this.EditModeFormData[Object.keys(_respObj.FormData.MultipleTables)[0]];
+
+        this.EditModeFormData[this.FormObj.TableName] = SourceEditModeFormData;
+        delete this.EditModeFormData[Object.keys(_respObj.FormData.MultipleTables)[0]];
+        this.isEditModeCtrlsSet = false;
+        this.setEditModeCtrls();
     };
 
     //this.removeRowIds = function () {

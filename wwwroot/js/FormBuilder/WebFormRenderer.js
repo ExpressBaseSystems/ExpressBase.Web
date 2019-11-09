@@ -193,18 +193,44 @@ const WebFormRender = function (option) {
 
     };
 
+    this.modifyFormData4Import = function (_respObj) {
+
+        this.EditModeFormData = _respObj.FormData.MultipleTables;
+        let SourceEditModeFormDataExceptDG = this.EditModeFormData[this.FormObj.Name];
+
+        $.each(this.EditModeFormData, function (CtrlName, Data) {
+            // data except DGs
+            if (CtrlName === this.FormObj.Name)
+            {
+                this.EditModeFormData[this.FormObj.TableName] = SourceEditModeFormDataExceptDG;
+                delete this.EditModeFormData[this.FormObj.Name];
+            }
+            // data DGs
+            else
+            {
+
+                let DG = getObjByval(this.DGs, "Name", CtrlName);
+                if (!DG)
+                    return true;
+                let DGTblName = DG.TableName;
+                this.EditModeFormData[DGTblName] = Data;
+                delete this.EditModeFormData[CtrlName];
+            }
+        }.bind(this));
+
+    };
+
     this.reloadForm = function (_respObjStr) {// need cleanup
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
-        this.EditModeFormData = _respObj.FormData.MultipleTables;
-        let SourceEditModeFormData = this.EditModeFormData[Object.keys(_respObj.FormData.MultipleTables)[0]];
 
-        this.EditModeFormData[this.FormObj.TableName] = SourceEditModeFormData;
-        delete this.EditModeFormData[Object.keys(_respObj.FormData.MultipleTables)[0]];
+        this.modifyFormData4Import(_respObj);
+
+
         this.isEditModeCtrlsSet = false;
         this.setEditModeCtrls();
-    };
+    }.bind(this);
 
     //this.removeRowIds = function () {
 

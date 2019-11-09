@@ -1445,7 +1445,8 @@
     }.bind(this);
 
     this.B4saveActions = function () {
-        $(`[rowid='${this.curRowId}'] .check-row`) .trigger("click");
+        if (!this.isCurRowEmpty())
+            $(`[rowid='${this.curRowId}'] .check-row`).trigger("click");
     };
 
     //isCurRowEmpty = this.isCurRowEmpty;

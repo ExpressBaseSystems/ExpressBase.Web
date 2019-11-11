@@ -660,15 +660,22 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"])
                 };
             }
-
-            response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
+            try
             {
-                DbConfig = con,
-                // IsNew = false,
-                SolnId = req["SolutionId"]
-            });
-            GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
-            return JsonConvert.SerializeObject(resp);
+                response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
+                {
+                    DbConfig = con,
+                    // IsNew = false,
+                    SolnId = req["SolutionId"]
+                });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("AddAB Controller :" + e + e.StackTrace);
+            }
+            return null;           
         }
         [HttpPost]
         public string AddTwilio()

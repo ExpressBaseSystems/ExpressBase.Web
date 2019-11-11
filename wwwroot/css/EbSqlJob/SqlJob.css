@@ -1,0 +1,31 @@
+﻿
+
+#ppt-dash {
+    top: 0px;
+    right: 0px;
+    width: 385px;
+    position: fixed;
+    display: block;
+    margin-top: 37px;
+    height: 100%;
+    z-index: 3;
+    border: 1px solid rgb(204, 204, 204);
+}
+.Sql-Job-Cont {
+    height: 650px;
+    background-color: white;
+    padding: 0px;
+    margin-left: -8px;
+    margin-right: -8px;
+    border-radius: 6px;
+    border: 1px solid #dedede;
+}
+.Sql-Job-left-pane {
+    height: 650px;
+    background-color: white;
+    padding: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    border-radius: 6px;
+    border: 1px solid #dedede;
+}

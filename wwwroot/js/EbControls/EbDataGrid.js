@@ -637,7 +637,7 @@
             .replace("@cogs@", !this.ctrl.IsDisable ? `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
-                    <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
+                    <button type='button' class='check-row rowc'><span class='fa fa-plus'></span></button>
                     <button type='button' class='del-row rowc @del-c@'><span class='fa fa-minus'></span></button>
                 </td>` : "")
             .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
@@ -1445,7 +1445,8 @@
     }.bind(this);
 
     this.B4saveActions = function () {
-        $(`[rowid='${this.curRowId}'] .check-row`) .trigger("click");
+        if (!this.isCurRowEmpty())
+            $(`[rowid='${this.curRowId}'] .check-row`).trigger("click");
     };
 
     //isCurRowEmpty = this.isCurRowEmpty;
@@ -1498,7 +1499,6 @@
             this.refreshDG(paramsColl, lastCtrlName);
         else
             this.clearDG(false);
-
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;

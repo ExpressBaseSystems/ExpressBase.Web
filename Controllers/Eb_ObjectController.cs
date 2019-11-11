@@ -26,6 +26,7 @@ using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Helpers;
+using ExpressBase.Objects;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -287,6 +288,16 @@ namespace ExpressBase.Web.Controllers
             {
                 Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                 _c2js = new Context2Js(typeArray, BuilderType.Calendar, typeof(EbCalendarWrapper), typeof(EbObject));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
+            else if (type.Equals(EbObjectTypes.SqlJob))
+            {
+                Type[] typeArray = typeof(EbSqlJobWrapper).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.SqlJob, typeof(EbSqlJobWrapper), typeof(EbObject));
                 if (dsobj != null)
                 {
                     dsobj.AfterRedisGet(Redis);

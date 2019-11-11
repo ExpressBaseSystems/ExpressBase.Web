@@ -67,6 +67,10 @@
     height: 100%;
     padding: 35px 14px 35px 16px;
 }
+    .eb_mobpage_pane_layout .eb_mobpage_drparea .eb_mobpage_drop {
+        width:100%;
+        height:100%;
+    }
 .eb_mobpage_wraper .eb_mobpage_toolbox .bdy .toolitems {
     width: 50%;
     display: inline-block;
@@ -87,10 +91,23 @@
     .eb_mobpage_wraper .eb_mobpage_toolbox .bdy .toolitems i {
         padding-right: 10px;
     }
+.eb_mobpage_toolbox_body .bdy {
+    display: flex;
+    flex-flow: column;
+}
+.eb_mobpage_tbxcategory {
+}
+.eb_mobpage_tbx_head {
+    padding: 5px;
+    font-weight: 500;
+}
+.eb_mobpage_tbxbdy{
 
+}
 /*ctrl layout*/
-.eb_stacklayout{
-    margin:10px 0;
+.eb_stacklayout {
+    margin: 10px 0;
+    cursor:pointer;
 }
 .ctrl_label {
     font-weight: 500;
@@ -101,11 +118,11 @@
 
 }
 /*form layout*/
-.eb_mob_formlayout {
+.eb_mob_formlayout, .eb_mob_vislayout {
     width: 100%;
     height: 100%;
 }
-.eb_mob_formlayout_inner {
+.eb_mob_layout_inner {
     width: 100%;
     height: 100%;
     border: 2px dashed #ccc;
@@ -115,6 +132,19 @@
 
 /*form ctrls*/
 .eb_mob_textbox {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    height: 25px;
+}
+
+.drop-hover{
+    border:1px solid red;
+}
+.drop-hover-layout {
+    border-color: #6969d4;
+}
+.eb_mob_select {
     width: 100%;
     border-radius: 4px;
     border: 1px solid #ccc;

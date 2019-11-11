@@ -3,6 +3,7 @@
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
+    this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
@@ -636,7 +637,7 @@
             .replace("@cogs@", !this.ctrl.IsDisable ? `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
-                    <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
+                    <button type='button' class='check-row rowc'><span class='fa fa-plus'></span></button>
                     <button type='button' class='del-row rowc @del-c@'><span class='fa fa-minus'></span></button>
                 </td>` : "")
             .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
@@ -1443,6 +1444,11 @@
         return isCurRowEmpty;
     }.bind(this);
 
+    this.B4saveActions = function () {
+        if (!this.isCurRowEmpty())
+            $(`[rowid='${this.curRowId}'] .check-row`).trigger("click");
+    };
+
     //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
@@ -1482,6 +1488,8 @@
     };
 
     this.setSuggestionVals = function () {
+        if (!this.formRenderer.isInitNCs)
+            return;
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
@@ -1491,7 +1499,6 @@
             this.refreshDG(paramsColl, lastCtrlName);
         else
             this.clearDG(false);
-
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;

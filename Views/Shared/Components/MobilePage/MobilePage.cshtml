@@ -1,0 +1,78 @@
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+</script>
+<link rel="stylesheet" href="~/css/MobilePageBuilder/mobile.style.css" asp-append-version=@bApnd />
+<script src="~/js/MobilePageBuilder/mobile.page.js" type="text/javascript" asp-append-version=@bApnd></script>
+<div class="container-fluid mob_body" id="@("mobviewversion-body"+ViewBag.tabnum)">
+    <div class="row">
+        <div class="eb_mobpage_wraper" id="@("eb_mobpage_wraper"+ViewBag.tabnum)">
+            <div class="eb_mobpage_toolbox" id="@("eb_mobpage_toolbox"+ViewBag.tabnum)">
+                <div class="eb_mobpage_toolbox_body">
+                    <div class="head">
+                        Tools
+                    </div>
+                    <div class="bdy" id="@("eb_mobpage_toolbox"+ViewBag.tabnum+"_draggable")">
+                        <div eb-type="MobileForm" ctrname="FormLayout" class="toolitems draggable">
+                            <div class="toolitems-inner">
+                                <i class="fa fa-database"></i>Form Layout
+                            </div>
+                        </div>
+                        <div eb-type="MobileTextBox" ctrname="TextBox" class="toolitems draggable">
+                            <div class="toolitems-inner">
+                                <i class="fa fa-database"></i>Text Box
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="eb_mobpage_pane" id="@("eb_mobpage_pane"+ViewBag.tabnum)">
+                <div class="eb_mobpage_pane_body">
+                    <div class="eb_mobpage_pane_layout">
+                        <div class="eb_mobpage_emulatorbody">
+                            <div class="eb_mobpage_drparea">
+                                <div class='eb_mob_formlayout' eb-type='MobileForm'>
+                                    <div class='eb_mob_formlayout_inner' id="eb_mob_layoutdrop">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <img src="~/images/walls/emulator.png" class="eb_mobpage_pane_layout_emulator" />
+                    </div>
+                </div>
+            </div>
+            <div class="eb_mobpage_properties" id="@("eb_mobpage_property_wrapr"+ViewBag.tabnum)">
+                <div class="eb_mobpage_properties_body" id="@("eb_mobpage_properties"+ViewBag.tabnum)">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+         if (@ViewBag.tabnum === 0) {
+            var commonO = $("#layout_div").data("commonObj");
+         }
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = EB_MobilePage({
+            Wc: '@ViewBag.wc',
+            TenantId: '@ViewBag.cid',
+            RefId: '@ViewBag.Refid',
+            Version: '@ViewBag.VersionNumber',
+            ObjType: @ViewBag.ObjType,
+            DsObj: @Html.Raw(ViewBag.dsObj),
+            Status: '@ViewBag.Status',
+            TabNum: @ViewBag.tabnum,
+            ServiceUrl: '@ViewBag.ServiceUrl'
+        });
+    });
+</script>

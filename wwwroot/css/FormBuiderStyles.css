@@ -275,10 +275,14 @@
     background-color: white;
 }
 
+.check-row > .fa {
+    margin-top: 3px;
+}
+
 .check-row {
     position: absolute;
     left: 11.5px;
-    top: -0.5px;
+    top: 0.5px;
     color: #019a01;
     height: 24px;
     width: 24px;
@@ -452,6 +456,10 @@
 
 .dgtbl > tbody > tr:nth-child(odd), .fs-tbl > tbody > tr:nth-child(odd) {
     background-color: rgb(249, 249, 249) !important;
+}
+
+.dgtbl > tbody > tr:last-child {
+    border-bottom: solid 1px #f8f8f8
 }
 
 .dgtbl > tbody > tr:nth-child(even) {
@@ -1498,6 +1506,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .user-list-ctrl {
     /*border: 1px solid #ccc;*/
     position: relative;
+    z-index: 1;
 }
 
 .ulstc-disp-c {

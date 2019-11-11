@@ -60,11 +60,29 @@
     });
 
     function renderButtonCol(data, type, row, meta) {
-        if (data[4] === "SUCCESS")
-            return "<input type=button />";
+        if (data[4] === "S")
+            return "";
         else
-            return "<input type=button />"
+            return `<button class="retryBtn" id="${data[5]}">Retry</button>`
     }
+
+   
+    $(document).ready(function () {
+        $("#list-of-jobs").on("click", ".retryBtn", function (e) {
+             let id = e.target.getAttribute("id");
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: "/SqlJob/JobRetry",
+                    data: {
+                        id : id
+                    },
+                    success: function (result) {   
+                             $("#show-sql-jobs").click();
+                    }
+                });
+        })
+    });
 </script>
 
 <div class="container-fluid" style="margin-top:50px">
@@ -95,4 +113,9 @@
     dataTables_scroll{
         height : 550px;
     }
+  .selected  {
+    background-color: #fff !important;
+    color:black !important;
+
+}
 </style>

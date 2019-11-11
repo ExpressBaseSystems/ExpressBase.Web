@@ -52,7 +52,7 @@
 
     this.setValueExpValsNC = function (flatControls) {
         $.each(flatControls, function (k, Obj) {
-            EbRunValueExpr(Obj, this.FO.formObject, this.FO.userObject);
+            EbRunValueExpr(Obj, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
         }.bind(this));
     };
 
@@ -125,17 +125,40 @@
                     try {
                         let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                         let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                        if (valExpFnStr) {
-                            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                                let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                depCtrl.setValue(val);
+                        if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
+                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                            if (valExpFnStr) {
+                                if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                                    depCtrl.setValue(val);
+                                }
+                                else {
+                                    $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                                        row[depCtrl.Name].setValue(val);
+                                    }.bind(this));
+                                }
                             }
-                            else {
-                                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                        }
+                        else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+                            let params = [];
+
+                            depCtrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
+
+                            $.each(depCtrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                                try {
+                                    let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                                    let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
                                     let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                    row[depCtrl.Name].setValue(val);
-                                }.bind(this));
-                            }
+                                    let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" }; // hard code
+                                    params.push(param);
+                                }
+                                catch (e) {
+                                    console.eb_log("eb error :");
+                                    console.eb_log(e);
+                                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                                }
+                            }.bind(this));
+
+                            ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
                         }
                     }
                     catch (e) {

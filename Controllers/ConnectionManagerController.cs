@@ -909,7 +909,6 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-
         public string AddSlack()
         {
             AddSlackResponse res = new AddSlackResponse();
@@ -925,6 +924,30 @@ namespace ExpressBase.Web.Controllers
                     Type = EbIntegrations.Slack
                 };
                 res = this.ServiceClient.Post < AddSlackResponse>(new AddSlackRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+        public string AddFacebook()
+        {
+            AddfacebookResponse res = new AddfacebookResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbfacebbokConfig con = new EbfacebbokConfig
+                {
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    AppId = req["AppId"],
+                    AppVersion = req["AppVersion"],
+                    Type = EbIntegrations.Facebook
+                };
+                res = this.ServiceClient.Post < AddfacebookResponse>(new AddfacebookRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }

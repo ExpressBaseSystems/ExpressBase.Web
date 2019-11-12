@@ -179,7 +179,6 @@ const WebFormRender = function (option) {
                 _refid: this.formRefId,
                 _triggerctrl: PScontrol.Name,
                 _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
-                //_params: [{ Name: PScontrol.Name, Value: "29.00" }]
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();

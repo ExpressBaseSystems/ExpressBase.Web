@@ -28,11 +28,11 @@
         <div class="col-sm-3 Sql-Job-left-pane" >
             <div> Resources</div>
             <div id="@("tb" + ViewBag.tabnum + "_SqlJob_drag_cont")">
-                <div>Sql Job Reader</div>
-                <div> Sql job Writer</div>
-                <div> Sql Job Processor </div>
-                <div> Eb Loop</div>
-                <div> Eb Transaction</div>
+                <div val="EbSqlJobReader">Sql Job Reader</div>
+                <div val="EbSqlJobWriter"> Sql job Writer</div>
+                <div val="SqlJobScript"> Sql Job Processor </div>
+                <div val="EbLoop"> Eb Loop</div>
+                <div val="EbTransaction" > Eb Transaction</div>
             </div>
         </div>
         <div class="col-sm-6" >
@@ -46,7 +46,7 @@
     </div>
 
 </div>
-<div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div> </div>
+<div id="@("tb" + ViewBag.tabnum + "_SqlJob_PGgrid")" class="PGgrid ppt-dash"> <div id="@("tb" + ViewBag.tabnum + "_SqlJob_PropGrid")"> </div> </div>
 
 
 <script>

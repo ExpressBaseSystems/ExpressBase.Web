@@ -47,6 +47,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjType = Resp.Data[0].EbObjectType;
             ViewBag.dsObj = Resp.Data[0].Json;
             ViewBag.Status = Resp.Data[0].Status;
+            //ViewBag.ObjectIds = this.LoggedInUser.EbObjectIds;
             return View();
         }
 

@@ -210,7 +210,7 @@
 
                 let at0 = performance.now();
                 $.each(inpCtrls, function (i, inpCtrl) {
-                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
+                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full, true);
                 }.bind(this));
                 let at1 = performance.now();
                 //console.dev_log("DataGrid : EbRunValueExpr took " + (at1 - at0) + " milliseconds.");
@@ -637,7 +637,7 @@
             .replace("@cogs@", !this.ctrl.IsDisable ? `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
-                    <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
+                    <button type='button' class='check-row rowc'><span class='fa fa-plus'></span></button>
                     <button type='button' class='del-row rowc @del-c@'><span class='fa fa-minus'></span></button>
                 </td>` : "")
             .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
@@ -841,7 +841,7 @@
 
         //should fire after all default value set
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
-            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full );
             //if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
             //    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
             //    let val = fun();
@@ -1444,6 +1444,11 @@
         return isCurRowEmpty;
     }.bind(this);
 
+    this.B4saveActions = function () {
+        if (!this.isCurRowEmpty())
+            $(`[rowid='${this.curRowId}'] .check-row`).trigger("click");
+    };
+
     //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
@@ -1494,7 +1499,6 @@
             this.refreshDG(paramsColl, lastCtrlName);
         else
             this.clearDG(false);
-
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;

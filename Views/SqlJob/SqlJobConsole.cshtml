@@ -60,7 +60,7 @@
     });
 
     function renderButtonCol(data, type, row, meta) {
-        if (data[4] === "SUCCESS")
+        if (data[4] === "S")
             return "";
         else
             return `<button class="retryBtn" id="${data[5]}">Retry</button>`
@@ -77,8 +77,8 @@
                     data: {
                         id : id
                     },
-                    success: function (result) {
-             
+                    success: function (result) {   
+                             $("#show-sql-jobs").click();
                     }
                 });
         })
@@ -113,4 +113,9 @@
     dataTables_scroll{
         height : 550px;
     }
+  .selected  {
+    background-color: #fff !important;
+    color:black !important;
+
+}
 </style>

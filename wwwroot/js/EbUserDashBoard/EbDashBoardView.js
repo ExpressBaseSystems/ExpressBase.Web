@@ -39,28 +39,39 @@
                 let y = this.EbObject.Tiles.$values[i].TileDiv.Data_y;
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
-                $(".grid-stack").append(`<div class="grid-stack-item " data-gs-x=${x} data-gs-y=${y} data-gs-width=${dw} data-gs-height=${dh} id=${tile_id}>
+                let flag = false;
+                if (ebcontext.user.Roles.indexOf("SolutionOwner") !== -1)
+                    flag = true;
+                else {
+                    var res = this.EbObject.Tiles.$values[i].RefId.split("-");
+                    for (var j = 0; j < ebcontext.user.EbObjectIds.length; j++) {
+                        if (parseInt(ebcontext.user.EbObjectIds[j]) == parseInt(res[3]))
+                            flag = true;
+                        }
+                }
+                if (flag == true) {
+                    $(".grid-stack").append(`<div class="grid-stack-item " data-gs-x=${x} data-gs-y=${y} data-gs-width=${dw} data-gs-height=${dh} id=${tile_id}>
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" id=""></i>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper"></div>
                     </div></div>`);
-                this.CurrentTile = t_id;
-                this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
-                let refid = this.EbObject.Tiles.$values[i].RefId;
-                if (refid !== "") {
-                    $.ajax(
-                        {
-                            url: '../DashBoard/DashBoardGetObj',
-                            type: 'POST',
-                            data: { refid: refid },
-                            success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
-                        });
+                    this.CurrentTile = t_id;
+                    this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
+                    let refid = this.EbObject.Tiles.$values[i].RefId;
+                    if (refid !== "") {
+                        $.ajax(
+                            {
+                                url: '../DashBoard/DashBoardGetObj',
+                                type: 'POST',
+                                data: { refid: refid },
+                                success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                            });
+                    }
                 }
             }
-
             this.Tilecontext()
 
         }
@@ -69,8 +80,8 @@
 
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
-        var id = e.target.getAttribute("id");
-        if (id === "i-opt-obj") {
+        var id = e.target.getAttribute("link");
+        if (id === "ext-link") {
             let TileRefid = this.TileCollection[tileid].RefId;
             window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
         }

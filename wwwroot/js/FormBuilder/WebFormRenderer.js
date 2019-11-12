@@ -167,6 +167,74 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.psDataImport = function (PScontrol) {
+        if (PScontrol.isEmpty())
+            return;
+        this.showLoader();
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/ImportFormData",
+            data: {
+                _refid: this.formRefId,
+                _triggerctrl: PScontrol.Name,
+                _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.reloadForm.bind(this)
+        });
+
+    };
+
+    this.modifyFormData4Import = function (_respObj) {
+
+        this.EditModeFormData = _respObj.FormData.MultipleTables;
+        let SourceEditModeFormDataExceptDG = this.EditModeFormData[this.FormObj.Name];
+
+        $.each(this.EditModeFormData, function (CtrlName, Data) {
+            // data except DGs
+            if (CtrlName === this.FormObj.Name)
+            {
+                this.EditModeFormData[this.FormObj.TableName] = SourceEditModeFormDataExceptDG;
+                delete this.EditModeFormData[this.FormObj.Name];
+            }
+            // data DGs
+            else
+            {
+
+                let DG = getObjByval(this.DGs, "Name", CtrlName);
+                if (!DG)
+                    return true;
+                let DGTblName = DG.TableName;
+                this.EditModeFormData[DGTblName] = Data;
+                delete this.EditModeFormData[CtrlName];
+            }
+        }.bind(this));
+
+    };
+
+    this.reloadForm = function (_respObjStr) {// need cleanup
+        this.hideLoader();
+        let _respObj = JSON.parse(_respObjStr);
+        console.log(_respObj);
+
+        this.modifyFormData4Import(_respObj);
+
+
+        this.isEditModeCtrlsSet = false;
+        this.setEditModeCtrls();
+    }.bind(this);
+
+    //this.removeRowIds = function () {
+
+    //};
+
     //this.unbindUniqueCheck = function (control) {
     //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
     //};

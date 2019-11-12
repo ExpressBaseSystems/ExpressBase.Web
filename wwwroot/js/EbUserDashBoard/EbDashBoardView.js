@@ -40,7 +40,7 @@
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 let flag = false;
-                if (ebcontext.user.Roles[0] == "SolutionOwner")
+                if (ebcontext.user.Roles.indexOf("SolutionOwner") !== -1)
                     flag = true;
                 else {
                     var res = this.EbObject.Tiles.$values[i].RefId.split("-");
@@ -54,7 +54,7 @@
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" id=""></i>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper"></div>
                     </div></div>`);
@@ -80,8 +80,8 @@
 
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
-        var id = e.target.getAttribute("id");
-        if (id === "i-opt-obj") {
+        var id = e.target.getAttribute("link");
+        if (id === "ext-link") {
             let TileRefid = this.TileCollection[tileid].RefId;
             window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
         }

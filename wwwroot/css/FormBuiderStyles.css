@@ -280,6 +280,7 @@
 }
 
 .check-row {
+    display:none;
     position: absolute;
     left: 11.5px;
     top: 0.5px;
@@ -335,6 +336,23 @@
         opacity: 0.85;
         box-shadow: 0px 1px 2px 0 #0000082;
     }
+
+.newrow-btn {
+    display: inline-block;
+    background-color: #00d036;
+    position: absolute;
+    top: 3.5px;
+    right: 0;
+    border: 1px solid #c1c1c1;
+    border-bottom: none;
+    color: white;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+[eb-form="true"][mode="view"] .newrow-btn {
+    display: none;
+}
 
 .dgtbl[is-disabled='true'] {
     filter: grayscale(60%);

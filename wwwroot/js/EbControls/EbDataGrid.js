@@ -1614,7 +1614,7 @@
 
         this.defineRowCount();
 
-        $(`#${this.ctrl.EbSid}Wraper`).on("click", ".newrow-btn", this.addRowBtn_click);
+        $(`#${this.ctrl.EbSid}Wraper`).on("click", ".addrow-btn", this.addRowBtn_click);
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

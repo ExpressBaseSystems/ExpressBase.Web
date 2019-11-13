@@ -337,7 +337,7 @@
         box-shadow: 0px 1px 2px 0 #0000082;
     }
 
-.newrow-btn {
+.addrow-btn {
     display: inline-block;
     background-color: #00d036;
     position: absolute;
@@ -350,7 +350,7 @@
     cursor: pointer;
 }
 
-[eb-form="true"][mode="view"] .newrow-btn {
+[eb-form="true"][mode="view"] .addrow-btn {
     display: none;
 }
 

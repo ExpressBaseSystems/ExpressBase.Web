@@ -145,6 +145,9 @@
 .drop-hover-layout {
     border-color: #6969d4;
 }
+.drop-hover-td {
+    border-color: #6969d4 !important;
+}
 .eb_mob_select {
     width: 100%;
     border-radius: 4px;
@@ -172,12 +175,17 @@
     .eb_mob_tablelayout .eb_mob_tablelayout_inner table{
         width:100%;
     }
+    .eb_mob_tablelayout .eb_tablelayout_td{
+        
+    }
     /*tree div*/
 .eb_mobtree_body {
     width: 270px;
     background: white;
     border: 1px solid #ccc;
     border-radius: 4px;
+    height: 550px;
+    overflow: auto;
 }
     .eb_mobtree_body .eb_mobtree_inner {
 
@@ -190,3 +198,41 @@
             font-size: 15px;
             font-weight: 500;
         }
+        /*data col*/
+.data_column {
+    display: flex;
+    width: 100%;
+    display: flex;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+    .data_column .data_column_inner {
+        display: flex;
+        justify-content: center;
+    }
+    /*visualization*/
+.eb_mob_vislayout .eb_mob_layout_inner {
+    display: flex;
+    flex-flow: column;
+}
+.eb_mob_vislayout .eb_mob_listprevwraper {
+    flex-grow:1;
+    margin-top:10px;
+}
+    .eb_mob_vislayout .eb_mob_listprevwraper .eb_mob_listprevwraper_inner {
+        display: flex;
+        height: 90%;
+        background: white;
+        border: 1px solid #ccc;
+    }
+    .eb_mob_vislayout .eb_mob_listprevwraper .list_view {
+        height:100%;
+        width:100%;
+    }
+    .eb_mob_vislayout .eb_mob_listprevwraper .list_item {
+        border-bottom: 1px solid #ccc;
+        min-height: 50px;
+        padding:5px;
+    }

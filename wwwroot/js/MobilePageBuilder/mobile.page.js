@@ -24,6 +24,8 @@ function EbMobStudio(config) {
     this.EbObject = null;
     this.Procs = {};
     this.droparea = `#eb_mobpage_pane${this.Conf.TabNum}`;
+    this.Controls = {};
+    this.Menu = {};
 
     this.GenerateButtons = function () { };
 
@@ -50,7 +52,7 @@ function EbMobStudio(config) {
 
     this.elementOnFocus = function (event) {
         event.stopPropagation();
-        var curControl = $(event.target).closest(".eb_stacklayout");
+        var curControl = $(event.target);//.closest(".eb_stacklayout")
         var curObject = this.Procs[curControl.attr("id")];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas[type]);
@@ -218,7 +220,9 @@ function EbMobStudio(config) {
                 success: function (result) {
                     $("#eb_common_loader").EbLoader("hide")
                     this.Controls.drawDsColTree(result.columns);
-                    $(`#eb_mobtree_body_${this.Conf.TabNum}`).animate({ width: ["toggle", "swing"] });
+                    $(".branch").click();
+                    if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
+                        $(`#eb_mobtree_body_${this.Conf.TabNum}`).animate({ width: ["toggle", "swing"] });
                 }.bind(this),
                 error: function () { $("#eb_common_loader").EbLoader("hide")}
             });
@@ -236,18 +240,21 @@ function EbMobStudio(config) {
     }.bind(this);
 
     this.exe = function () {
-        if (this.EditObj === null || this.EditObj === "undefined")
+        if (this.EditObj === null || this.EditObj === undefined)
             this.newMobPage();
         else
             this.editMobPage();
 
         this.makeDragable();
-        this.Controls = new MobileControls(this);
+
         $(this.droparea).droppable({
             accept: ".layout",
             hoverClass: "drop-hover",
             drop: this.OnLayoutDrop.bind(this)
-        })
+        });
+
+        this.Controls = new MobileControls(this);
+        this.Menu = new MobileMenu(this);
     };
 
     this.exe();

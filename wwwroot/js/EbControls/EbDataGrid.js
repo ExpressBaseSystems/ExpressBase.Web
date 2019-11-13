@@ -1006,6 +1006,10 @@
     };
 
     this.editRow_click = function (e) {
+        let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
+        let td = $addRow.find(".ctrlstd")[0];
+        this.checkRow_click({ target: td }, false); 
+
         let $td = $(e.target).closest("td");
         let $tr = $td.closest("tr");
         let rowid = $tr.attr("rowid");
@@ -1013,9 +1017,10 @@
         if ($tr.attr("is-initialised") === 'false')
             this.rowInit_E($tr);
         $td.find(".del-row").hide();
-        let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
-        $addRow.hide(300).attr("is-editing", "false");
+
+        //$addRow.hide(300).attr("is-editing", "false");
+
         $td.find(".check-row").show();
         $tr.attr("is-editing", "true");
         this.spanToCtrl_row($tr);
@@ -1024,11 +1029,13 @@
 
     this.addRowBtn_click = function () {
         let $curentRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
-        if ($curentRow.length === 0 || $curentRow.attr("is-editing") === "false")
+        if ($curentRow.length === 0 || $curentRow.attr("is-editing") === "false")// for editmode first click
             this.tryAddRow();
         else {
             let td = $curentRow.find(".ctrlstd")[0];
             this.checkRow_click({ target: td });
+            //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
+            //    this.tryAddRow();
         }
 
     }.bind(this);

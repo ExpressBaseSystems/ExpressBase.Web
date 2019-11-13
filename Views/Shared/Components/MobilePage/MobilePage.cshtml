@@ -10,8 +10,73 @@
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
 </script>
+
 <link rel="stylesheet" href="~/css/MobilePageBuilder/mobile.style.css" asp-append-version=@bApnd />
 <script src="~/js/MobilePageBuilder/mobile.page.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script src="~/js/MobilePageBuilder/mobile.page.controls.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script>
+    $.fn.extend({
+        treed: function (o) {
+            var openedClass = 'fa-minus-square-o';
+            var closedClass = 'fa-plus-square-o';
+            var ic = o || 'fa-plus-square-o';
+
+            if (typeof o !== 'undefined') {
+                if (typeof o.openedClass !== 'undefined') {
+                    //openedClass = o.openedClass;
+                }
+                if (typeof o.closedClass !== 'undefined') {
+                    //closedClass = o.closedClass;
+                }
+            }
+            var tree = $(this);
+            tree.addClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.prepend("<i class='indicator fa " + ic + "'></i>");
+                branch.addClass('branch');
+                branch.off("click").on('click', function (e) {
+                    if (this === e.target) {
+                        var icon = $(this).children('i:first');
+                        icon.toggleClass(openedClass + " " + closedClass);
+                        $(this).children().children().toggle();
+                    }
+                });
+                branch.children().children().toggle();
+            });
+            tree.find('.branch .indicator').each(function () {
+                $(this).off("click").on('click', function (e) {
+                    $(this).closest('li').click();
+                });
+            });
+            tree.find('.branch>a').each(function () {
+                $(this).off("click").on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+            tree.find('.branch>button').each(function () {
+                $(this).off("off").on('click', function (e) {
+                    $(this).closest('li').click();
+                    e.preventDefault();
+                });
+            });
+        }
+    });
+    $.fn.extend({
+        killTree: function (o) {
+            var tree = $(this);
+            tree.removeClass("tree");
+            tree.find('li').has("ul").each(function () {
+                var branch = $(this);
+                branch.children().children().show();
+                branch.children("i").remove();
+                branch.removeClass('branch');
+                branch.off("click");
+            });
+        }
+    });
+</script>
 <div class="container-fluid mob_body" id="@("mobviewversion-body"+ViewBag.tabnum)">
     <div class="row">
         <div class="eb_mobpage_wraper" id="@("eb_mobpage_wraper"+ViewBag.tabnum)">
@@ -23,10 +88,10 @@
                     <div class="bdy" id="@("eb_mobpage_toolbox"+ViewBag.tabnum+"_draggable")">
                         <div class="eb_mobpage_tbxcategory">
                             <div class="eb_mobpage_tbx_head">
-                                Layout
+                                Containers
                             </div>
                             <div class="eb_mobpage_tbxbdy">
-                                <div eb-type="EbMobileForm" ctrname="FormLayout" class="toolitems layout">
+                                <div eb-type="EbMobileForm" ctrname="Form" class="toolitems layout">
                                     <div class="toolitems-inner">
                                         <i class="fa fa-wpforms"></i> Form
                                     </div>
@@ -68,6 +133,24 @@
                                         <i class="fa fa-toggle-on"></i> Boolean
                                     </div>
                                 </div>
+                                <div eb-type="EbMobileFileUpload" ctrname="FileUpload" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-upload"></i> FileUploader
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="eb_mobpage_tbxcategory">
+                            <div class="eb_mobpage_tbx_head">
+                                Layout
+                            </div>
+                            <div class="eb_mobpage_tbxbdy">
+                                <div eb-type="EbMobileTableLayout" ctrname="TableLayout" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-th-large"></i> TableLayout
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -75,6 +158,18 @@
             </div>
             <div class="eb_mobpage_pane">
                 <div class="eb_mobpage_pane_body">
+                    <div class="eb_mobtree_body" style="display:none;" id="@("eb_mobtree_body_"+ViewBag.tabnum)">
+                        <div class="eb_mobtree_inner">
+                            <div class="eb_mobtree_ds">
+                                <ul id="@("ds_parameter_list" + ViewBag.tabnum)" class="tool-box-items" style="padding:10px">
+                                    <li>
+                                        <a>Colums</a>
+                                        <ul class="ds_cols"></ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                     <div class="eb_mobpage_pane_layout">
                         <div class="eb_mobpage_emulatorbody">
                             <div class="eb_mobpage_drparea">

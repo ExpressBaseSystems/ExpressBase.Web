@@ -26,18 +26,16 @@ namespace ExpressBase.Web.Controllers
         {
             CheckChangesInFilesResponse resp = this.ServiceClient.Post<CheckChangesInFilesResponse>((object)new CheckChangesInFilesRequest
             {
-                SolutionId = solution_id,
-                IsUpdate = false
+                SolutionId = solution_id
             });
             return resp.Changes;
         }
 
-        public Object UpdateDBFunctionByDB(string db_name, string solution)
+        public Object UpdateDBFilesByDB(string db_name, string solution)
         {
-            CheckChangesInFilesResponse resp = this.ServiceClient.Post<CheckChangesInFilesResponse>((object)new CheckChangesInFilesRequest
+            UpdateDBFilesByDBResponse resp = this.ServiceClient.Post<UpdateDBFilesByDBResponse>((object)new UpdateDBFileByDBRequest
             {
                 SolutionId = solution,
-                IsUpdate = true
             });
             return resp;
         }

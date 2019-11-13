@@ -42,15 +42,16 @@
     }
 .eb_mobpage_pane_body {
     height: 100%;
-    justify-content: center;
+    /*justify-content: center;*/
     display: flex;
-    padding: 10px 0;
+    /*padding: 10px 0;*/
 }
 .eb_mobpage_pane_layout {
     height: 550px;
     display: flex;
     justify-content: center;
-    position:relative;
+    position: relative;
+    margin: 0 auto;
 }
 .eb_mobpage_pane_layout_emulator{
     height:100%;
@@ -150,3 +151,42 @@
     border: 1px solid #ccc;
     height: 25px;
 }
+.eb_mob_fupbtn {
+    width: 49%;
+    border-radius: 4px;
+}
+
+/*table layout*/
+.eb_mob_tablelayout {
+    display:flex;
+}
+    .eb_mob_tablelayout .eb_mob_tablelayout_inner {
+        display: flex;
+        height: 100%;
+        width: 100%;
+    }
+        .eb_mob_tablelayout .eb_mob_tablelayout_inner td {
+            height: 30px;
+            border: 1px dashed #a5a4a4;
+        }
+    .eb_mob_tablelayout .eb_mob_tablelayout_inner table{
+        width:100%;
+    }
+    /*tree div*/
+.eb_mobtree_body {
+    width: 270px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+    .eb_mobtree_body .eb_mobtree_inner {
+
+    }
+
+    .eb_mobtree_body .eb_mobtree_inner ul{
+        list-style:none;
+    }
+        .eb_mobtree_body .eb_mobtree_inner .eb_mobtree_ds a {
+            font-size: 15px;
+            font-weight: 500;
+        }

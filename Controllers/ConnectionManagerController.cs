@@ -56,6 +56,13 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        //[Microsoft.AspNetCore.Mvc.Route("/sampletest")]
+        //public IActionResult SampleTest()
+        //{
+        //    this.ServiceClient.Post(new sampletest { });
+        //    return View("test");
+        //}
+
         // GET: /<controller>/
 
         //public IActionResult Index()
@@ -689,9 +696,34 @@ namespace ExpressBase.Web.Controllers
                     UserName = req["UserName"],
                     From = req["From"],
                     Password = req["Password"],
-                    NickName = req["nickname"]
+                    NickName = req["nickname"],
+                    Id = Convert.ToInt32(req["Id"])
                 };
                 res = this.ServiceClient.Post<AddTwilioResponse>(new AddTwilioRequest { Config = twilioCon, /*IsNew = true,*/ SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+        public string AddUnifonic()
+        {
+            AddUnifonicResponse res = new AddUnifonicResponse();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                EbUnifonicConfig UnifonicConf = new EbUnifonicConfig
+                {
+                    UserName = req["UserName"],
+                    From = req["From"],
+                    Password = req["Password"],
+                    NickName = req["nickname"],
+                    Id = Convert.ToInt32(req["Id"])
+                };
+                res = this.ServiceClient.Post<AddUnifonicResponse>(new AddUnifonicRequest { Config = UnifonicConf, /*IsNew = true,*/ SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }

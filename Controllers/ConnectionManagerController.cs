@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ConnectionManagerController : EbBaseIntCommonController
+    public class ConnectionManagerController : EbBaseIntTenantController
     {
         public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc)
         {

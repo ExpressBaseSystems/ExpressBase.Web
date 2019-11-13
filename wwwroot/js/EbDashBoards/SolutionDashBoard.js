@@ -18,7 +18,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "MongoDB": "<img class='img-responsive' src='../images/MongodB.png' align='middle' style='height:40px' />",
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/Expert Texting.png' align='middle' style='height:26px' />",
-        "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
+        "Twilio": "<img class='img-responsive' src='../images/Twilio.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
         "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />",
@@ -499,6 +499,26 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $("#Slack_loader").EbLoader("hide");
             EbMessage("show", { Message: "Connection Added Successfully" });
             $("#SlackConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
+    this.facebookOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddFacebook",
+            data: postData,
+            beforeSend: function () {
+                $("#facebook_loader").EbLoader("show", { maskItem: { Id: "#facebook", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#facebook_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#facebookConnectionEdit").modal("toggle");
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
         }.bind(this));
@@ -1729,10 +1749,21 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
     };
 
+    this.SMTPautoFill = function (e) {
+        var target = e.target.options.selectedIndex;
+        if (target == 0) {
+            $('#EmailInputSMTP').val("smtp.gmail.com");
+        } else if (target == 1) {
+            $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
+        }
+        $('#EmailInputPort').val("465");
+    }.bind(this);
+
     this.init = function () {        
         if (this.versioning === 'True') {
             $("#VersioningSwitch").bootstrapToggle('on');            
-        }   
+        }
+        $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
@@ -1749,6 +1780,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));
         $("#AWSS3ConnectionSubmit").on("submit", this.AWSS3OnSubmit.bind(this));
         $("#SlackConnectionSubmit").on("submit", this.SlackOnSubmit.bind(this));
+        $("#facebookConnectionSubmit").on("submit", this.facebookOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();

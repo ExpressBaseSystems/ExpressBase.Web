@@ -52,7 +52,7 @@
 
     this.setValueExpValsNC = function (flatControls) {
         $.each(flatControls, function (k, Obj) {
-            EbRunValueExpr(Obj, this.FO.formObject, this.FO.userObject);
+            EbRunValueExpr(Obj, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
         }.bind(this));
     };
 
@@ -62,7 +62,8 @@
             this.bindRequired(Obj);
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
-        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0))
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0
+            || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId)
             this.bindOnChange(Obj);
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
@@ -89,7 +90,7 @@
     this.bindOnChange = function (control) {
         try {
             let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) +
-                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0) ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.__onChangeFn = onChangeFn;
             control.bindOnChange(onChangeFn);
@@ -124,17 +125,40 @@
                     try {
                         let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                         let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                        if (valExpFnStr) {
-                            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                                let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                depCtrl.setValue(val);
+                        if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
+                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                            if (valExpFnStr) {
+                                if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                                    depCtrl.setValue(val);
+                                }
+                                else {
+                                    $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                                        row[depCtrl.Name].setValue(val);
+                                    }.bind(this));
+                                }
                             }
-                            else {
-                                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                        }
+                        else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+                            let params = [];
+
+                            depCtrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
+
+                            $.each(depCtrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                                try {
+                                    let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                                    let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
                                     let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                    row[depCtrl.Name].setValue(val);
-                                }.bind(this));
-                            }
+                                    let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" }; // hard code
+                                    params.push(param);
+                                }
+                                catch (e) {
+                                    console.eb_log("eb error :");
+                                    console.eb_log(e);
+                                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                                }
+                            }.bind(this));
+
+                            ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
                         }
                     }
                     catch (e) {
@@ -157,6 +181,10 @@
                         alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
                     }
                 }.bind(this));
+            }
+
+            if (curCtrl.DataImportId) {
+                this.FO.psDataImport(curCtrl);
             }
         }.bind(this);
     };

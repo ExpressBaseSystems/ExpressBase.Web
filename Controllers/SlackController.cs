@@ -9,6 +9,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using Newtonsoft.Json;
 using ExpressBase.Common;
 using ExpressBase.Web.BaseControllers;
+using ExpressBase.Common.Files;
 
 namespace ExpressBase.Web.Controllers
 {

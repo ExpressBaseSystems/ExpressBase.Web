@@ -3,6 +3,7 @@
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
+    this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
@@ -209,7 +210,7 @@
 
                 let at0 = performance.now();
                 $.each(inpCtrls, function (i, inpCtrl) {
-                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, true);
+                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full, true);
                 }.bind(this));
                 let at1 = performance.now();
                 //console.dev_log("DataGrid : EbRunValueExpr took " + (at1 - at0) + " milliseconds.");
@@ -344,59 +345,59 @@
     //    }
     //};
 
-    this.j = function (p1) {
-        let VMs = this.initializer.Vobj.valueMembers;
-        let DMs = this.initializer.Vobj.displayMembers;
-        let columnVals = this.initializer.columnVals;
+    //this.j = function (p1) {
+    //    let VMs = this.initializer.Vobj.valueMembers;
+    //    let DMs = this.initializer.Vobj.displayMembers;
+    //    let columnVals = this.initializer.columnVals;
 
-        if (VMs.length > 0)// clear if already values there
-            this.initializer.clearValues();
+    //    if (VMs.length > 0)// clear if already values there
+    //        this.initializer.clearValues();
 
-        let valMsArr = p1[0].split(',');
-        let DMtable = p1[1];
+    //    let valMsArr = p1[0].split(',');
+    //    let DMtable = p1[1];
 
-        for (let i = 0; i < valMsArr.length; i++) {
-            let vm = valMsArr[i];
-            VMs.push(vm);
-            for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
-                let dm = this.DisplayMembers.$values[j];
-                for (var k = 0; k < DMtable.length; k++) {
-                    let row = DMtable[k];
-                    if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-                        let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-                        DMs[dm.name].push(_dm);
-                    }
-                }
-            }
-        }
+    //    for (let i = 0; i < valMsArr.length; i++) {
+    //        let vm = valMsArr[i];
+    //        VMs.push(vm);
+    //        for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
+    //            let dm = this.DisplayMembers.$values[j];
+    //            for (var k = 0; k < DMtable.length; k++) {
+    //                let row = DMtable[k];
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
+    //                    DMs[dm.name].push(_dm);
+    //                }
+    //            }
+    //        }
+    //    }
 
-        if (this.initializer.datatable === null) {//for aftersave actions
-            $.each(valMsArr, function (i, vm) {
-                $.each(DMtable, function (j, row) {
-                    if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-                        $.each(row.Columns, function (k, column) {
-                            if (!columnVals[column.Name]) {
-                                console.warn('Found mismatch in Columns from datasource and Colums in object');
-                                return true;
-                            }
-                            let val = EbConvertValue(column.Value, column.Type);
-                            columnVals[column.Name].push(val);
-                        }.bind(this));
-                    }
+    //    if (this.initializer.datatable === null) {//for aftersave actions
+    //        $.each(valMsArr, function (i, vm) {
+    //            $.each(DMtable, function (j, row) {
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    $.each(row.Columns, function (k, column) {
+    //                        if (!columnVals[column.Name]) {
+    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
+    //                            return true;
+    //                        }
+    //                        let val = EbConvertValue(column.Value, column.Type);
+    //                        columnVals[column.Name].push(val);
+    //                    }.bind(this));
+    //                }
 
-                    //$.each(r.Columns, function (j, column) {
-                    //    if (!columnVals[column.Name]) {
-                    //        console.warn('Mismatch found in Colums in datasource and Colums in object');
-                    //        return true;
-                    //    }
-                    //    let val = EbConvertValue(column.Value, column.Type);
-                    //    columnVals[column.Name].push(val);
-                    //}.bind(this));
+    //                //$.each(r.Columns, function (j, column) {
+    //                //    if (!columnVals[column.Name]) {
+    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                //        return true;
+    //                //    }
+    //                //    let val = EbConvertValue(column.Value, column.Type);
+    //                //    columnVals[column.Name].push(val);
+    //                //}.bind(this));
 
-                }.bind(this));
-            }.bind(this));
-        }
-    };
+    //            }.bind(this));
+    //        }.bind(this));
+    //    }
+    //};
 
     this.addEditModeRows = function (EditModeDataTable) {
         $(`#${this.TableId} tbody`).empty();
@@ -636,7 +637,7 @@
             .replace("@cogs@", !this.ctrl.IsDisable ? `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
-                    <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
+                    <button type='button' class='check-row rowc'><span class='fa fa-plus'></span></button>
                     <button type='button' class='del-row rowc @del-c@'><span class='fa fa-minus'></span></button>
                 </td>` : "")
             .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
@@ -840,7 +841,7 @@
 
         //should fire after all default value set
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
-            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full );
             //if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
             //    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
             //    let val = fun();
@@ -1443,6 +1444,11 @@
         return isCurRowEmpty;
     }.bind(this);
 
+    this.B4saveActions = function () {
+        if (!this.isCurRowEmpty())
+            $(`[rowid='${this.curRowId}'] .check-row`).trigger("click");
+    };
+
     //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
@@ -1482,6 +1488,8 @@
     };
 
     this.setSuggestionVals = function () {
+        if (!this.formRenderer.isInitNCs)
+            return;
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
@@ -1491,7 +1499,6 @@
             this.refreshDG(paramsColl, lastCtrlName);
         else
             this.clearDG(false);
-
     }.bind(this);
 
     this.ctrl.__setSuggestionVals = this.setSuggestionVals;

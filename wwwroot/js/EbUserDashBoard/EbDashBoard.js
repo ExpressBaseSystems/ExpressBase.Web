@@ -123,18 +123,18 @@
         
         //$("body").on("click", this.EbObjectshow.bind(this));
         //$(".grid-stack").on("click", this.DashBoardSelectorJs.bind(this));
-        $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
+        $("#dashbord-view").on("click",".tile-opt" , this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
     }
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
-        var id = e.target.getAttribute("id");
-        if (id === "i-opt-obj") {
+        var id = e.target.getAttribute("link");
+        if (id === "ext-link") {
             let TileRefid = this.TileCollection[tileid].RefId;
             window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
         }
-        else if (id === "i-opt-close") {
+        else if (id === "close") {
             var abc = $(`#${tileid}`).closest(".grid-stack-item");
             var grid = $('.grid-stack').data('gridstack');
             grid.removeWidget(abc);
@@ -156,8 +156,8 @@
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
-                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper"></div>
                     </div></div>`);
@@ -172,6 +172,7 @@
                             data: { refid: refid },
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
+
                 }
             }
             //this.addTilecontext()
@@ -195,7 +196,8 @@
         }
         $(".grid-stack").on("click", this.TileSelectorJs.bind(this));
         //this.addTilecontext()
-        this.Tilecontext()
+        this.Tilecontext();
+
     }
 
     this.AddNewTile = function () {
@@ -207,8 +209,8 @@
         $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
                     <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
-                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
                  <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
         this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
@@ -317,12 +319,15 @@
             o.showFilterRow = false;
             o.showCheckboxColumn = false;
             o.Source = "DashBoard";
+            o.DisplayName = this.EbObject.DisplayName;
             o.drawCallBack = this.drawCallBack.bind(this, id);
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
             var dt = new EbCommonDataTable(o);
             //$(`[data-id="${id}"]`).parent().removeAttr("style");
             //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
             //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
+
+            $("#objname").empty().text(this.EbObject.DisplayName);
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -330,6 +335,7 @@
             o.tableId = "tb1" + id;
             o.dvObject = obj;
             o.filtervalues = this.filtervalues;
+            o.DisplayName = this.EbObject.DisplayName;
             var dt = new EbBasicChart(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
         }
@@ -343,6 +349,8 @@
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[name-id="${id}"]`).empty();
+            $("#tile5 .i-opt-obj").hide();
+            
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -352,6 +360,7 @@
             o.Source = "Dashboard";
             o.filtervalues = this.filtervalues;
             o.googlekey = this.googlekey;
+            o.DisplayName = this.EbObject.DisplayName;
             var dt = new EbGoogleMap(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
         }

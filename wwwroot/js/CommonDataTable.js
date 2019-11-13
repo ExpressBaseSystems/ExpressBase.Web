@@ -10,7 +10,7 @@
     this.chartJs = null;
     this.url = Option.url;
     this.EbObject = Option.dvObject;
-    this.showFilterRow = typeof Option.showFilterRow !== 'undefined' ? Option.showFilterRow: true;
+    this.showFilterRow = typeof Option.showFilterRow !== 'undefined' ? Option.showFilterRow : true;
     this.showSerialColumn = typeof Option.showSerialColumn !== 'undefined' ? Option.showSerialColumn : true;
     this.showCheckboxColumn = typeof Option.showCheckboxColumn !== 'undefined' ? Option.showCheckboxColumn : true;
     this.hiddenFieldName = Option.hiddenFieldName || "id";
@@ -89,7 +89,7 @@
     this.movefromId = null;
     this.columnCount = null;
     this.Source = Option.Source || "EbDataTable";
-    this.columns = Option.columns || ( (this.EbObject) ? this.EbObject.Columns.$values :null );
+    this.columns = Option.columns || ((this.EbObject) ? this.EbObject.Columns.$values : null);
     this.contId = Option.containerId;
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.IsPaging : true;
@@ -241,7 +241,7 @@
             this.PcFlag = false;
         }
         else {
-            if (this.MainData !== null) 
+            if (this.MainData !== null)
                 this.isPipped = true;
             $("#" + this.contId).append(text);////////////////        
             this.EbObject = dvGlobal.Current_obj;
@@ -343,13 +343,13 @@
     this.start4EbDataTable = function () {
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
-            this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");            
+            this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
         }
         else {
             if (this.MainData !== null)
                 this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization", prevfocusedId);
             else
-                this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");            
+                this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
         }
 
         if (this.login === "dc") {
@@ -371,7 +371,7 @@
     };
 
     this.start4Other = function () {
-        if (!this.EbObject) 
+        if (!this.EbObject)
             this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
         if (this.columns === null)
             this.call2FD();
@@ -432,7 +432,7 @@
         if (this.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
-            
+
         }
         this.Init();
     };
@@ -734,7 +734,7 @@
                 o.data = this.receiveAjaxData(this.MainData);
             }
             else {
-                o.dom = "<'col-md-12 noPadding display_none'>rt"; 
+                o.dom = "<'col-md-12 noPadding display_none'>rt";
                 o.paging = false;
                 o.data = this.receiveAjaxData(this.MainData);
             }
@@ -1231,7 +1231,8 @@
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        this.GenerateButtons();
+        if (this.Source === "EbDataTable")
+            this.GenerateButtons();
         if (this.login == "uc") {
             this.initCompleteflag = true;
             //if (this.isSecondTime) { }
@@ -1279,7 +1280,7 @@
 
         if (this.Source !== "EbDataTable") {
             $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
-            if ($("#"+this.tableId+" tr").length > 7) {
+            if ($("#" + this.tableId + " tr").length > 7) {
                 $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
                 $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "155px", "important");
 
@@ -1565,8 +1566,8 @@
     this.DrawTooltipForHeader = function () {
         $('th.holiday_class').tooltip({
             placement: 'bottom',
-            container:'body'
-       });
+            container: 'body'
+        });
     };
 
 
@@ -1674,7 +1675,7 @@
     }
 
     this.drawCallBackFunc = function (settings) {
-        if(this.Source === "EbDataTable")
+        if (this.Source === "EbDataTable")
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.EbObject.RowGroupCollection.$values.length > 0)
@@ -1689,7 +1690,7 @@
             this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
-            if(this.Source === "EbDataTable")
+            if (this.Source === "EbDataTable")
                 this.arrangeWindowHeight();
         }
         if (Option.drawCallBack)
@@ -2455,13 +2456,11 @@
     this.GenerateButtons = function () {
         $("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
-        if (this.Source === "EbDataTable") {
-            $("#obj_icons").empty();
-            this.submitId = "btnGo" + this.tableId;
-            this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-            $("#obj_icons").append(this.$submit);
-            this.$submit.click(this.getColumnsSuccess.bind(this));
-        }
+        $("#obj_icons").empty();
+        this.submitId = "btnGo" + this.tableId;
+        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#obj_icons").append(this.$submit);
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
         if (this.EbObject.FormLinks.$values.length > 0) {
             this.CreateNewFormLinks();
@@ -3606,8 +3605,8 @@
 
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx+"'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
-            
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
+
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -4020,7 +4019,7 @@
             }.bind(this)
         });
     };
-    if (this.Source === "EbDataTable") 
+    if (this.Source === "EbDataTable")
         this.start4EbDataTable();
     else
         this.start4Other();

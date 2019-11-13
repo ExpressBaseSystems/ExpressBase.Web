@@ -359,6 +359,11 @@
     pointer-events: none;
 }
 
+eb-disable {
+    color: gray;
+    pointer-events: none;
+}
+
     .dgtbl[is-disabled='true'] .rowc {
         color: gray;
         pointer-events: none;

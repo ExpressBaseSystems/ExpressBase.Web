@@ -190,7 +190,7 @@
     this.setEditModeRows = function (EditModeDataTable) {
         this.addEditModeRows(EditModeDataTable);
         this.setValueExpCols();
-        this.tryAddRow();
+        //this.tryAddRow();
     };
 
     this.setValueExpCols = function () {
@@ -282,7 +282,7 @@
         this.rowSLCounter = this.rowSLCounter - $(`#${this.TableId} tbody [is-editing=true]`).remove().length;
         $(`#${this.TableId} tbody>tr>.ctrlstd`).attr("mode", "edit");
         this.mode_s = "edit";
-        this.tryAddRow();
+        //this.tryAddRow();
     };
 
     this.SwitchToViewMode = function () {
@@ -637,7 +637,7 @@
             .replace("@cogs@", !this.ctrl.IsDisable ? `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
-                    <button type='button' class='check-row rowc'><span class='fa fa-plus'></span></button>
+                    <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
                     <button type='button' class='del-row rowc @del-c@'><span class='fa fa-minus'></span></button>
                 </td>` : "")
             .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
@@ -841,7 +841,7 @@
 
         //should fire after all default value set
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
-            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full );
+            EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full);
             //if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
             //    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
             //    let val = fun();
@@ -1021,6 +1021,28 @@
         this.spanToCtrl_row($tr);
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
     }.bind(this);
+
+    this.addRowBtn_click = function () {
+        let $curentRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
+        if ($curentRow.length === 0 || $curentRow.attr("is-editing") === "false")
+            this.tryAddRow();
+        else {
+            let td = $curentRow.find(".ctrlstd")[0];
+            this.checkRow_click({ target: td });
+        }
+
+    }.bind(this);
+
+    this.setCurRow = function (rowId) {
+        this.curRowId = rowId;
+        this.ctrl.currentRow = [];
+        //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
+        $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
+            if (!this.AllRowCtrls[rowId][inpctrl.__Col.Name])
+                this.AllRowCtrls[rowId][inpctrl.__Col.Name] = inpctrl;
+            this.ctrl.currentRow[inpctrl.__Col.Name] = inpctrl;
+        }.bind(this));
+    };
 
     this.checkRow_click = function (e, isAddRow = true) {
         let $td = $(e.target).closest("td");
@@ -1408,17 +1430,6 @@
             $(`#${this.TableId}>tbody>tr.dgtr:last`).hide(300);
     };
 
-    this.setCurRow = function (rowId) {
-        this.curRowId = rowId;
-        this.ctrl.currentRow = [];
-        //$.each(this.AllRowCtrls[rowId].concat(this.AllRowHiddenCtrls[rowId]), function (i, inpctrl) {
-        $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
-            if (!this.AllRowCtrls[rowId][inpctrl.__Col.Name])
-                this.AllRowCtrls[rowId][inpctrl.__Col.Name] = inpctrl;
-            this.ctrl.currentRow[inpctrl.__Col.Name] = inpctrl;
-        }.bind(this));
-    };
-
     this.defineRowCount = function () {
         this.ctrl.RowCount = 0;
         Object.defineProperty(this.ctrl, "RowCount", {
@@ -1445,8 +1456,11 @@
     }.bind(this);
 
     this.B4saveActions = function () {
-        if (!this.isCurRowEmpty())
-            $(`[rowid='${this.curRowId}'] .check-row`).trigger("click");
+        if (!this.isCurRowEmpty()) {
+            let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
+            let td = $addRow.find(".ctrlstd")[0];
+            this.checkRow_click({ target: td }, false);
+        }
     };
 
     //isCurRowEmpty = this.isCurRowEmpty;
@@ -1590,7 +1604,7 @@
             this.makeColsResizable();
 
         this.addUtilityFnsForUDF();
-        this.tryAddRow();
+        //this.tryAddRow();
         if (this.isAggragateInDG) {
             this.initAgg();
             $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).show();
@@ -1599,6 +1613,8 @@
             $(`#${this.ctrl.EbSid}Wraper`).attr("hideslno", "true");
 
         this.defineRowCount();
+
+        $(`#${this.ctrl.EbSid}Wraper`).on("click", ".newrow-btn", this.addRowBtn_click);
 
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

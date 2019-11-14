@@ -1349,7 +1349,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     margin: 0 0 0 6px;
 }
 
-.webform-cont .radio-wrap {
+.webform-cont .radio-wrap, .msg-wraper-bot .radio-wrap {
     padding: 5px;
     display: flex;
     align-items: center;

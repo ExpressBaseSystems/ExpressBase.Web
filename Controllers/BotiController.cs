@@ -160,10 +160,14 @@ namespace ExpressBase.Web.Controllers
                     if (control is EbSimpleSelect)
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-						(control as EbSimpleSelect).BareControlHtml = (control as EbSimpleSelect).GetBareHtml();
+						(control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
 
 					}
-                    else if (control is EbDynamicCardSet)
+					else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
+					{
+						(control as EbPowerSelect).EbSimpleSelect.InitFromDataBase(this.ServiceClient);
+					}
+					else if (control is EbDynamicCardSet)
                     {
                         EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
                         EbDynamicCards.InitFromDataBase(this.ServiceClient);

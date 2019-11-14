@@ -91,6 +91,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //});
     };
 
+
+    //if anonimous user /not loggegin using fb
     this.contactSubmit = function (e) {
         let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
         let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
@@ -105,6 +107,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $(e.target).closest('.msg-cont').remove();
     }.bind(this);
 
+    //check user is valid / is user authenticated
     this.ajaxSetup4Future = function () {
         $.ajaxSetup({
             beforeSend: function (xhr) { xhr.setRequestHeader('bToken', this.bearerToken); xhr.setRequestHeader('rToken', this.refreshToken); }.bind(this),
@@ -147,6 +150,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     }.bind(this);
 
+
+
     this.postmenuClick = function (e, reply) {
         var $e = $(e.target);
         if (reply === undefined)
@@ -157,6 +162,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $('.eb-chat-inp-cont').hide();
         this.CurFormIdx = idx;
     }.bind(this);
+
+
 
     this.FBlogin = function (e) {
         this.postmenuClick(e);
@@ -680,6 +687,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.ctrlSend = function (e) {
         this.curVal = null;
+        this.displayValue = null;
         var $btn = $(e.target).closest("button");
         var $msgDiv = $btn.closest('.msg-cont');
         this.sendBtnIdx = parseInt($btn.attr('idx'));
@@ -688,64 +696,80 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var next_idx = this.sendBtnIdx + 1;
         this.nxtCtrlIdx = (next_idx > this.nxtCtrlIdx) ? next_idx : this.nxtCtrlIdx;
         var $input = $('#' + this.curCtrl.EbSid);
-        //$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
-        this.curVal = this.getValue($input);
-        if (this.curCtrl.ObjType === "ImageUploader") {
-            if (!this.checkRequired()) { return; }
-            this.replyAsImage($msgDiv, $input[0], next_idx, id);
-            //if()
-            //this.formValues[id] = this.curVal;// last value set from outer fn
-            //this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
-        }
-        else if (this.curCtrl.ObjType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.ObjType === "PowerSelect") {
-            if (!this.checkRequired()) { return; }
-            this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-            this.formValues[id] = this.curVal;
-            if (this.curCtrl.ObjType === "PowerSelect")//////////////////////////-------////////////
-                this.formValuesWithType[id] = [this.curCtrl.TempValue, this.curCtrl.EbDbType];
-            else
-                this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
-            this.callGetControl(this.nxtCtrlIdx);
-        }
-        else if (this.curCtrl.ObjType === "StaticCardSet" || this.curCtrl.ObjType === "DynamicCardSet") {
-            if (!this.checkRequired()) { return; }
-            if (this.curCtrl.IsReadOnly) {
-                $btn.css('display', 'none');
-                $('#' + this.curCtrl.Name).attr('id', '');
-            }
-            else {
-                this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-                this.formValues[id] = this.curVal;
-                this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
-            }
-            this.callGetControl(this.nxtCtrlIdx);
-        }
-        else if (this.curCtrl.ObjType === "Survey") {
-            this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-            this.formValues[id] = this.curVal;
-            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
-            this.callGetControl(this.nxtCtrlIdx);
-        }
-        else if (this.curCtrl.ObjType === "Date" || this.curCtrl.ObjType === "DateTime" || this.curCtrl.ObjType === "Time") {
-            this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-            if (this.curCtrl.ObjType === "Date")
-                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern).format('YYYY-MM-DD');
-            else if (this.curCtrl.ObjType === "DateTime")
-                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
-            else if (this.curCtrl.ObjType === "Time")
-                this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
-            this.formValues[id] = this.curVal;
-            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
-            this.callGetControl(this.nxtCtrlIdx);
-        }
-        else {
-            this.curVal = this.curVal || $('#' + id).val();
-            if (!this.checkRequired()) { return; }
-            this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-            this.formValues[id] = this.curVal;
-            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
-            this.callGetControl(this.nxtCtrlIdx);
-        }
+//varghese
+        //for cards  this.curDispValue  is used
+       // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        this.curVal = this.curCtrl.getValue();
+        this.displayValue = this.curCtrl.getDisplayMember();
+        this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+this.formValues[id] = this.curVal;
+this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+this.callGetControl(this.nxtCtrlIdx);
+
+
+
+//old code
+
+
+        ////$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
+        //this.curVal = this.getValue($input);
+        //if (this.curCtrl.ObjType === "ImageUploader") {
+        //    if (!this.checkRequired()) { return; }
+        //    this.replyAsImage($msgDiv, $input[0], next_idx, id);
+        //    //if()
+        //    //this.formValues[id] = this.curVal;// last value set from outer fn
+        //    //this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.ebDbType];
+        //}
+        //else if (this.curCtrl.ObjType === "RadioGroup" || $input.attr("type") === "RadioGroup" || this.curCtrl.ObjType === "PowerSelect") {
+        //    if (!this.checkRequired()) { return; }
+        //    this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        //    this.formValues[id] = this.curVal;
+        //    if (this.curCtrl.ObjType === "PowerSelect")//////////////////////////-------////////////
+        //        this.formValuesWithType[id] = [this.curCtrl.TempValue, this.curCtrl.EbDbType];
+        //    else
+        //        this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        //    this.callGetControl(this.nxtCtrlIdx);
+        //}
+        //else if (this.curCtrl.ObjType === "StaticCardSet" || this.curCtrl.ObjType === "DynamicCardSet") {
+        //    if (!this.checkRequired()) { return; }
+        //    if (this.curCtrl.IsReadOnly) {
+        //        $btn.css('display', 'none');
+        //        $('#' + this.curCtrl.Name).attr('id', '');
+        //    }
+        //    else {
+        //        this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        //        this.formValues[id] = this.curVal;
+        //        this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        //    }
+        //    this.callGetControl(this.nxtCtrlIdx);
+        //}
+        //else if (this.curCtrl.ObjType === "Survey") {
+        //    this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        //    this.formValues[id] = this.curVal;
+        //    this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        //    this.callGetControl(this.nxtCtrlIdx);
+        //}
+        //else if (this.curCtrl.ObjType === "Date" || this.curCtrl.ObjType === "DateTime" || this.curCtrl.ObjType === "Time") {
+        //    this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        //    if (this.curCtrl.ObjType === "Date")
+        //        this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern).format('YYYY-MM-DD');
+        //    else if (this.curCtrl.ObjType === "DateTime")
+        //        this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
+        //    else if (this.curCtrl.ObjType === "Time")
+        //        this.curVal = moment(this.curVal, ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
+        //    this.formValues[id] = this.curVal;
+        //    this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        //    this.callGetControl(this.nxtCtrlIdx);
+        //}
+        //else {
+        //    this.curVal = this.curVal || $('#' + id).val();
+        //    if (!this.checkRequired()) { return; }
+        //    this.sendCtrlAfter($msgDiv.hide(), this.curVal + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        //    this.formValues[id] = this.curVal;
+        //    this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        //    this.callGetControl(this.nxtCtrlIdx);
+        //}
+
         this.IsEdtMode = false;
         this.IsDpndgCtrEdt = false;
         this.curVal = null;

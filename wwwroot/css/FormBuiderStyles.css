@@ -280,6 +280,7 @@
 }
 
 .check-row {
+    display: none;
     position: absolute;
     left: 11.5px;
     top: 0.5px;
@@ -336,15 +337,46 @@
         box-shadow: 0px 1px 2px 0 #0000082;
     }
 
+.addrow-btn {
+    display: inline-block;
+    background-color: #00d036;
+    position: absolute;
+    top: 3.5px;
+    right: 0;
+    border: 1px solid #c1c1c1;
+    border-bottom: none;
+    color: white;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+[eb-form="true"][mode="view"] .addrow-btn {
+    display: none;
+}
+
 .dgtbl[is-disabled='true'] {
     filter: grayscale(60%);
     pointer-events: none;
 }
 
-    .dgtbl[is-disabled='true'] .rowc {
-        color: gray;
-        pointer-events: none;
-    }
+eb-disable {
+    color: gray;
+    pointer-events: none;
+}
+
+/*[is-editing="true"] .del-row, [is-editing="true"] .edit-row {
+    display: block;
+}
+
+[is-editing="true"] .edit-row {
+    color: gray;
+    pointer-events: none;
+}*/
+
+.dgtbl[is-disabled='true'] .rowc {
+    color: gray;
+    pointer-events: none;
+}
 
 .ctrlstd[mode='view'] .rowc {
     color: gray;
@@ -1357,7 +1389,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     margin: 0 0 0 6px;
 }
 
-.webform-cont .radio-wrap {
+.webform-cont .radio-wrap, .msg-wraper-bot .radio-wrap {
     padding: 5px;
     display: flex;
     align-items: center;

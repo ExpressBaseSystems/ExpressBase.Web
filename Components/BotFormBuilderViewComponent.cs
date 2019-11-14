@@ -15,7 +15,8 @@ namespace ExpressBase.Web.Components
             if (dsobj != "null")
             {// if edit mode
                 EbBotForm botForm = EbSerializers.Json_Deserialize(dsobj);
-                ViewBag.Html = botForm.GetHtml();
+                //ViewBag.Html = botForm.GetHtml();
+                ViewBag.Html = botForm.GetHtml4Bot();
             }
             ViewBag.dsObj = dsobj;
             ViewBag.tabnum = tabnum;

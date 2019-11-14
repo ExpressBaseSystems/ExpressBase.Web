@@ -201,7 +201,7 @@
         $el.attr("ebsid", ebsid);
         if (type !== "UserControl")
             this.updateControlUI(ebsid);
-        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));     
+        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -413,7 +413,7 @@
                 }
 
                 $ctrl.focus();
-              
+
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
@@ -529,7 +529,7 @@
                 type: "warning",
                 delay: 3000
             });
-            return false;   
+            return false;
         }
 
         if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ProvisionLocation" && this.ProvisionLocationCtrl) {
@@ -617,7 +617,7 @@
         }
     }.bind(this);
 
-    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {        
+    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
         if (CurProp === "TableName" && PropsObj.IsContainer) {
             let TblName = PropsObj.TableName;
             PropsObj.isTableNameFromParent = false;
@@ -801,23 +801,26 @@
         }
     };
 
-    this.Init = function () {
-        $.contextMenu({
-            selector: '.Eb-ctrlContainer',
-            autoHide: true,
-            build: function ($trigger, e) {
-                return {
-                    items: {
-                        "Delete": {
-                            "name": "Remove",
-                            icon: "fa-trash",
-                            callback: this.del
-                        }
-                    }
-                };
-            }.bind(this)
-        });
+    this.ctxBuildFn = function ($trigger, e) {
+        return {
+            items: {
+                "Delete": {
+                    name: "Remove",
+                    icon: "fa-trash",
+                    callback: this.del
+                }
+            }
+        }
+    }.bind(this)
 
+    this.CtxSettingsObj = {
+        selector: '.Eb-ctrlContainer',
+        autoHide: true,
+        build: this.ctxBuildFn.bind(this)
+    }
+
+    this.Init = function () {
+        $.contextMenu(this.CtxSettingsObj);
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));

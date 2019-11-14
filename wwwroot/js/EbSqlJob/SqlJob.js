@@ -30,6 +30,17 @@ function EbSqlJob(options) {
     this.Version = options.Version;
     this.Wc = options.Wc;
     this.TabNum = options.TabNum;
+    this.Procs = {};
+    this.Lines = {};
+    this.process = [];
+    this.dropArea = "tb" + this.TabNum + "_SqlJob_drop_cont";
+    this.FlagRun = false;
+    this.ComponentRun = false;
+    this.Component = null;
+    this.ResultData = {};
+    this.Request = { Default: [], Custom: [] };
+    this.Customparams = {};
+    this.drg;
 
     this.pg = new Eb_PropertyGrid({
         id: "tb" + this.TabNum + "_SqlJob_PropGrid",
@@ -41,7 +52,7 @@ function EbSqlJob(options) {
 
     this.DragDrop_Items = function () {
         let dritem = `tb${this.TabNum}_SqlJob_drag_cont`;
-        var drg = dragula([document.getElementById(dritem), document.getElementById(`tb${this.TabNum}_SqlJob_drop_cont`)],
+        this.drg = dragula([$(`#${dritem}`)[0], $(`#tb${this.TabNum}_SqlJob_drop_cont`)[0]],
             {
                 copy: function (el, source) {
                     return source === document.getElementById(dritem);
@@ -50,26 +61,108 @@ function EbSqlJob(options) {
                     return target !== document.getElementById(dritem);
                 }
             });
-        drg.on("drop", this.onDropFn.bind(this));
+        this.drg.on("drop", this.onDropFn.bind(this));
     };//drag drop starting func
 
     this.onDropFn = function (el, target, source, yy) {
-
+        let o;
         if (!$(el).hasClass("dropped")) {
-            let o = this.makeElement(el);
+            o = this.makeElement(el);
             $(el).replaceWith(o.$Control.outerHTML());
             this.RefreshControl(o);
+            if ((o.Label == "Transaction" || o.Label == "Loop") && target !== null) {
+                this.drg.containers.push($(`#${o.EbSid} .Sql_Dropable`)[0]);
+            }
         }
+            this.resetLinks();
     };
-   
+
+    //this.Dropable_trigger = function (obj) {
+    //    let dritem = `tb${this.TabNum}_SqlJob_drag_cont`;
+
+    //    var drake = dragula([$(`#${dritem}`)[0], $(`#${obj.EbSid} .Sql_Dropable`)[0]],
+    //        {
+    //            copy: function (el, source) {
+    //                return source === $(`#${dritem}`)[0]
+    //            },
+    //            accepts: function (el, target) {
+    //                return target !== $(`#${dritem}`)[0]
+    //            }
+    //        });
+    //    drake.on("drop", this.onDropFn.bind(this));
+    //};
+
     this.makeElement = function (el) {
-        let ebtype = $(el).attr("val");
-        var id = "tb" + this.TabNum + ebtype;
-        this.Procs = new EbObjects.EbSqlJob("tb" + this.Conf.TabNum + "SqlJOb");
+        let ebtype = $(el).attr("eb-type");
+        var id = "tb" + this.TabNum + ebtype + CtrlCounters[$(el).attr("eb-type") + "Counter"]++;
+        this.Procs[id] = new EbObjects["Eb" + ebtype](id);
         this.Procs[id].Label = $(el).attr("ctrname");
         return this.Procs[id];
     };
 
+    this.RefreshControl = function (obj) {
+        var NewHtml = obj.$Control.outerHTML();
+        var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', obj[name]);
+            }
+        });
+        $("#" + obj.EbSid).replaceWith(NewHtml);
+        $("#" + obj.EbSid + " .drpbox").off("focus").on("focus", this.elementOnFocus.bind(this));
+        
+    };//render after pgchange
+
+    this.elementOnFocus = function (event) {
+        event.stopPropagation();
+        var curControl = $(event.target).closest(".SqlJobItem");
+        var curObject = this.Procs[curControl.attr("id")];
+        var type = curControl.attr('eb-type');
+        this.pg.setObject(curObject, AllMetas["Eb" + type]);
+    };
+
+
+
+    this.setLine = function (startid, endid) {
+        let name = startid + endid;
+        this.Lines[name] = new LeaderLine(
+            document.getElementById(startid),
+            document.getElementById(endid), {
+            color: "#316396"
+        }
+        );
+        this.Lines[name].position();
+    }
+
+    this.resetLinks = function () {
+        this.rmLines();
+        let n = 0;
+
+        this.process2 = $(`#${this.dropArea}`).children();
+        //this.process2 = {};
+        $(`#${this.dropArea}`).children().each(function (index, object) {
+            //this.process = $(`#${this.getAttribute("id")}`).children();
+            this.process[index] = object;
+        }.bind(this));
+       
+        while (n < this.process.length - 1) {
+            this.setLine(this.process[n].id, this.process[n + 1].id);
+            n = n + 1;
+        }
+    };
+
+    this.rmLines = function () {
+        try {
+            for (var line in this.Lines) {
+                this.Lines[line].remove();
+            }
+            this.Lines = {};
+        }
+        catch (exp) {
+            this.Lines = {};
+        }
+    };
 
     this.start = function () {
         this.DragDrop_Items();

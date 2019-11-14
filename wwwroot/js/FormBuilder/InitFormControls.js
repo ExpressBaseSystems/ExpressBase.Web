@@ -611,7 +611,9 @@
 
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
-
+        if (ctrl.LoadCurrentUser) {
+            ctrl.setValue(ebcontext.user.UserId.toString());
+        }
     };
 
     this.TextBox = function (ctrl, ctrlopts) {

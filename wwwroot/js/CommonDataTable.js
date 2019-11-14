@@ -865,7 +865,12 @@
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.FormObj);
 
-
+        let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });        
+        if (temp.length === 0)
+            fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         //if (this.isContextual && from !== "compare") {
         //    if (from === "filter" && prevfocusedId !== undefined) {
         //        $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
@@ -895,7 +900,7 @@
     this.rowObj2filter = function (fltr_collection, from, i, data) {
         if (i < this.EbObject.Columns.$values.length) {
             if (from === "link") {
-                var type = this.EbObject.Columns.$values[i].Type;
+                let type = this.EbObject.Columns.$values[i].Type;
                 //if (type === 5 || type === 6)
                 //    data = this.renderDateformat(data, "-");
                 if (data !== "")
@@ -903,7 +908,7 @@
             }
             else {
                 if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
-                    var type = dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].Type;
+                    let type = dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].Type;
                     fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].name, data));
                 }
             }
@@ -1042,14 +1047,15 @@
 
     this.closeTag = function (e, obj) {
         var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === obj.name; });
-        var index = this.columnSearch.findIndex(x => x.Column == obj.name);
+        var index = this.columnSearch.findIndex(x => x.Column === obj.name);
         if (searchObj.length === 1) {
             if (searchObj[0].Value.includes("|")) {
+                var val = "";
                 if (this.columnSearch[index].Value.includes(obj.value + "|"))
-                    var val = this.columnSearch[index].Value.replace(obj.value + "|", "");
+                    val = this.columnSearch[index].Value.replace(obj.value + "|", "");
                 else
-                    var val = this.columnSearch[index].Value.replace("|" + obj.value, "");
-                if (val.trim() != "")
+                    val = this.columnSearch[index].Value.replace("|" + obj.value, "");
+                if (val.trim() !== "")
                     this.columnSearch[index].Value = val;
                 else
                     this.columnSearch.splice(index, 1);
@@ -1447,14 +1453,14 @@
 
         if (this.EbObject.LeftFixedColumn > 0 || this.EbObject.RightFixedColumn > 0) {
             if (this.EbObject.LeftFixedColumn > 0) {
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++) {
                     $(lfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j).css("width"));
                 }
             }
 
             if (this.EbObject.RightFixedColumn > 0) {
                 var start = scrollfoot.find("tr").eq(0).children().length - this.EbObject.RightFixedColumn;
-                for (var j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
+                for (let j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
                     $(rfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j + start).css("width"));
                 }
             }
@@ -1470,7 +1476,7 @@
 
         if (this.EbObject.LeftFixedColumn > 0 || this.EbObject.RightFixedColumn.length > 0) {
             if (this.EbObject.LeftFixedColumn > 0) {
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++) {
                     $(lhead).children().find("tr").eq(0).children("th").eq(j).css("width", lbody.find("tbody").children("tr").eq(0).children("td").eq(j).css("width"));
                 }
             }
@@ -1693,6 +1699,7 @@
             if (this.Source === "EbDataTable")
                 this.arrangeWindowHeight();
         }
+        $("#" + this.tableId + " .tdheight").css("height", this.EbObject.RowHeight + "px");
         if (Option.drawCallBack)
             Option.drawCallBack();
         if (this.Api === null)
@@ -1900,10 +1907,11 @@
         //if (type === 5 || type === 6) {
         //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
         //}
+        let tempstr = "";
         if (tempobj[0].LinkRefId !== null)
-            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-colindex="${tempobj[0].data}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupString}</a></b>`;
+            tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-colindex="${tempobj[0].data}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupString}</a></b>`;
         else
-            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
+            tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
         str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
         return str;
     }.bind(this);
@@ -2164,7 +2172,7 @@
             }
         }
         else {
-            for (var j = 0; j < eb_footer_controls_scrollfoot.length; j++)
+            for (let j = 0; j < eb_footer_controls_scrollfoot.length; j++)
                 scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]);
         }
 
@@ -2172,7 +2180,7 @@
         if (lfoot.length !== 0 || rfoot.length !== 0) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
             if (lfoot.length !== 0) {
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++) {
                     $(lfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j]);
                     if (j === 0)
                         $(lfoot).children().find("tr").eq(ps).children("th").eq(j).html("");
@@ -2182,7 +2190,7 @@
 
             if (rfoot.length !== 0) {
                 var start = eb_footer_controls_lfoot.length - this.EbObject.RightFixedColumn;
-                for (var j = 0; (j + start) < eb_footer_controls_lfoot.length; j++) {
+                for (let j = 0; (j + start) < eb_footer_controls_lfoot.length; j++) {
                     $(rfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j + start]);
                     $(rfoot).children().find("tr").eq(ps).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j + start).css("width"));
                 }
@@ -2284,12 +2292,12 @@
             this.GetFiltersFromSettingsTbl(50);
             if (fc_lh_tbl.length !== 0) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++)
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++)
                     $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
             if (fc_rh_tbl.length !== 0) {
                 fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = this.eb_filter_controls_4fc.length - this.EbObject.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
+                for (let j = this.eb_filter_controls_4fc.length - this.EbObject.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
                     $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
         }
@@ -2299,7 +2307,7 @@
             this.GetFiltersFromSettingsTbl(1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
             if (this.EbObject.LeftFixedColumn + this.EbObject.RightFixedColumn > 0) {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++) {
                     if (j < this.EbObject.LeftFixedColumn) {
                         $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
                         $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
@@ -2315,7 +2323,7 @@
                 }
             }
             else {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++)
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++)
                     $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
             }
             sc_h_tbl.find("thead .addedbyeb").before($("<tr role='row' id='filterdisplayrow_" + this.tableId + "' class='filterdisplayrow'><td id='filterdisplayrowtd_" + this.tableId + "' colspan=" + this.columnCount + " style='padding: 2px!important;'></td></tr>"));
@@ -2510,75 +2518,86 @@
         }
 
         if (this.IsTree) {
-            $.contextMenu({
-                selector: ".groupform",
-                build: function ($trigger, e) {
-                    $("body").find("td").removeClass("focus");
-                    $("body").find("[role=row]").removeClass("selected");
-                    $trigger.closest("[role=row]").addClass("selected");
-                    if (this.GroupFormLink !== null) {
-                        if ($(e.currentTarget).children().hasClass("levelzero")) {
-                            return {
-                                items: {
-                                    "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                    "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                    "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
-                                }
-                            };
-                        }
-                        else {
-                            return {
-                                items: {
-                                    "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                    "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                    "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
-                                    "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                                }
-                            };
-                        }
-                    }
-                    else {
-                        if ($(e.currentTarget).hasClass("levelzero")) {
-                            return {};
-                        }
-                        else {
-                            return {
-                                items: {
-                                    "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                                }
-                            };
-                        }
-                    }
-                }.bind(this)
-
-            });
-
-            $.contextMenu({
-                selector: ".itemform",
-                build: function ($trigger, e) {
-                    $("body").find("td").removeClass("focus");
-                    $("body").find("[role=row]").removeClass("selected");
-                    $trigger.closest("[role=row]").addClass("selected");
-                    if (this.ItemFormLink !== null) {
-                        return {
-                            items: {
-                                "EditItem": { name: "View Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
-                                "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                            }
-                        };
-                    }
-                    else {
-                        return {
-                            items: {
-                                "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                            }
-                        };
-                    }
-                }.bind(this)
-
-            });
+            this.CreateContexmenu4Tree();
         }
+        if (this.Source === "Calendar")
+            this.CreateContexmenu4Calendar();
         $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
+    };
+
+    this.CreateContexmenu4Tree = function () {
+        $.contextMenu({
+            selector: ".groupform",
+            build: function ($trigger, e) {
+                $("body").find("td").removeClass("focus");
+                $("body").find("[role=row]").removeClass("selected");
+                $trigger.closest("[role=row]").addClass("selected");
+                if (this.GroupFormLink !== null) {
+                    if ($(e.currentTarget).children().hasClass("levelzero")) {
+                        return {
+                            items: {
+                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                            }
+                        };
+                    }
+                    else {
+                        return {
+                            items: {
+                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
+                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            }
+                        };
+                    }
+                }
+                else {
+                    if ($(e.currentTarget).hasClass("levelzero")) {
+                        return {};
+                    }
+                    else {
+                        return {
+                            items: {
+                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            }
+                        };
+                    }
+                }
+            }.bind(this)
+
+        });
+
+        $.contextMenu({
+            selector: ".itemform",
+            build: function ($trigger, e) {
+                $("body").find("td").removeClass("focus");
+                $("body").find("[role=row]").removeClass("selected");
+                $trigger.closest("[role=row]").addClass("selected");
+                if (this.ItemFormLink !== null) {
+                    return {
+                        items: {
+                            "EditItem": { name: "View Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
+                            "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                        }
+                    };
+                }
+                else {
+                    return {
+                        items: {
+                            "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                        }
+                    };
+                }
+            }.bind(this)
+
+        });
+    };
+
+
+    this.CreateContexmenu4Calendar = function () {
+
     };
 
     this.CreateNewFormLinks = function () {
@@ -4041,9 +4060,9 @@
         CSSStyleDeclaration.prototype.getPropertyValue = function (a) {
             return this.getAttribute(a);
         };
-        CSSStyleDeclaration.prototype.setProperty = function (styleName, value, priority) {
+        CSSStyleDeclaration.prototype.setProperty = function (styleName, value, _priority) {
             this.setAttribute(styleName, value);
-            var priority = typeof priority != 'undefined' ? priority : '';
+            let priority = typeof _priority != 'undefined' ? _priority : '';
             if (priority != '') {
                 // Add priority manually
                 var rule = new RegExp(escape(styleName) + '\\s*:\\s*' + escape(value) +

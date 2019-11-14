@@ -225,7 +225,7 @@
     position: absolute;
     height: 27px;
     top: 0px;
-    width: 16.5px;
+    /*width: 16.5px;*/
     padding-top: 5px;
 }
 
@@ -235,14 +235,18 @@
     color: red;
     border-radius: 0 50px 50px 0;
     direction: rtl;
+    padding-right: 0px;
+    padding-left: 5px;
 }
 
 .edit-row {
-    left: 7.5px;
-    color: rgb(192, 110, 3);
+    /*left: 7.5px;*/
+    color: blue;
     border-radius: 50px 0 0 50px;
-    padding-top: 0.5px !important;
-    padding-left: 4.5px;
+    /*padding-top: 0.5px !important;*/
+    padding-left: 0px;
+    padding-right: 0px !important;
+    
 }
 
 .tdtxt {
@@ -267,8 +271,8 @@
 
 .rowc:focus {
     outline: none;
-    box-shadow: 0px 0px 6px 0 !important;
-    background-color: white;
+    /*box-shadow: 0px 0px 6px 0 !important;*/
+    /*background-color: white;*/
 }
 
 .rowc:hover {
@@ -293,15 +297,11 @@
 }
 
 .edit-row:hover {
-    box-shadow: -1.5px 0 1px 0 !important;
-}
-
-.edit-row:hover {
-    box-shadow: -1.5px 0 1px 0 !important;
+    color: #0000af;
 }
 
 .del-row:hover {
-    box-shadow: 1.5px 0 1px 0 !important;
+    color: #ce0000;
 }
 
 .check-row:hover, .del-c:hover {
@@ -1389,7 +1389,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     margin: 0 0 0 6px;
 }
 
-.webform-cont .radio-wrap {
+.webform-cont .radio-wrap, .msg-wraper-bot .radio-wrap {
     padding: 5px;
     display: flex;
     align-items: center;

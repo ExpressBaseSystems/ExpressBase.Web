@@ -1699,6 +1699,7 @@
             if (this.Source === "EbDataTable")
                 this.arrangeWindowHeight();
         }
+        $("#" + this.tableId + " .tdheight").css("height", this.EbObject.RowHeight + "px");
         if (Option.drawCallBack)
             Option.drawCallBack();
         if (this.Api === null)

@@ -24,6 +24,8 @@ function EbMobStudio(config) {
     this.EbObject = null;
     this.Procs = {};
     this.droparea = `#eb_mobpage_pane${this.Conf.TabNum}`;
+    this.Controls = {};
+    this.Menu = {};
 
     this.GenerateButtons = function () { };
 
@@ -50,7 +52,7 @@ function EbMobStudio(config) {
 
     this.elementOnFocus = function (event) {
         event.stopPropagation();
-        var curControl = $(event.target).closest(".eb_stacklayout");
+        var curControl = $(event.target);//.closest(".eb_stacklayout")
         var curObject = this.Procs[curControl.attr("id")];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas[type]);
@@ -79,7 +81,7 @@ function EbMobStudio(config) {
 
     this.setLayoutOnEdit = function () {
         let ebtype = this.getType(this.EditObj.Layout.$type);
-        let id = "Tab" + this.Conf.TabNum + "_" + ebtype + CtrlCounters[ebtype.replace("Eb","") + "Counter"]++;
+        let id = "Tab" + this.Conf.TabNum + "_" + ebtype + CtrlCounters[ebtype.replace("Eb", "") + "Counter"]++;
         let o = new EbObjects[ebtype](id)
         $.extend(o, this.EditObj.Layout);
         this.Procs[id] = o;
@@ -131,7 +133,6 @@ function EbMobStudio(config) {
             hoverClass: "drop-hover-layout",
             drop: this.onDropFn.bind(this)
         });
-        $(`#${ebsid}`).on("click", this.LayoutOnClick.bind(this));
     };
 
     this.LayoutOnClick = function (evt) {
@@ -145,25 +146,36 @@ function EbMobStudio(config) {
             //axis: "y",
             appendTo: document.body
         });
-    }
+    };
 
     this.onDropFn = function (event, ui) {
         let dragged = $(ui.draggable);
+        let ebtype = dragged.attr("eb-type");
         let o = this.makeElement(dragged);
         $(event.target).append(o.$Control.outerHTML());
         this.RefreshControl(o);
         this.makeSortable(o.EbSid);
+        if (ebtype === "EbMobileTableLayout") {
+            this.Controls.InitTableLayout(o);
+        }
     };
 
     this.OnLayoutDrop = function (event, ui) {
         let dropLoc = $(event.target);
         if (dropLoc.find(".layout").length <= 0) {
             let draged = $(ui.draggable);
+            let ebtype = draged.attr("eb-type");
             let o = this.makeElement(draged);
             dropLoc.append(o.$Control.outerHTML());
-            this.makeDropable(o.EbSid);
+            if (ebtype === "EbMobileForm") {
+                this.makeDropable(o.EbSid);
+            }
+            else if (ebtype === "EbMobileVisualization") {
+                this.Controls.InitVis(o);
+            }
+            $(`#${o.EbSid}`).on("click", this.LayoutOnClick.bind(this));
         }
-    }
+    };
 
     this.makeElement = function (el) {
         let ebtype = $(el).attr("eb-type");
@@ -189,33 +201,60 @@ function EbMobStudio(config) {
         }
         commonO.Current_obj = this.EbObject;
         return true;
-    }
+    };
 
     //save
     this.findLayoutItems = function (i, o) {
         let jsobj = this.Procs[o.id];
         this.EbObject.Layout.ChiledControls.$values.push(jsobj);
-    }
+    };
+
+    this.getCol = function (ds_refid) {
+        if (ds_refid !== "") {
+            $.ajax({
+                url: "../RB/GetColumns",
+                type: "POST",
+                cache: false,
+                data: { refID: ds_refid },
+                beforeSend: function () { $("#eb_common_loader").EbLoader("show") },
+                success: function (result) {
+                    $("#eb_common_loader").EbLoader("hide")
+                    this.Controls.drawDsColTree(result.columns);
+                    $(".branch").click();
+                    if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
+                        $(`#eb_mobtree_body_${this.Conf.TabNum}`).animate({ width: ["toggle", "swing"] });
+                }.bind(this),
+                error: function () { $("#eb_common_loader").EbLoader("hide")}
+            });
+        }
+    };
 
     //pg onchange
     this.pg.PropertyChanged = function (obj, pname) {
         if (pname === "Label") {
             this.RefreshControl(obj);
         }
+        else if (pname === "DataSourceRefId") {
+            this.getCol(obj.DataSourceRefId);
+        }
     }.bind(this);
 
     this.exe = function () {
-        if (this.EditObj === null || this.EditObj === "undefined")
+        if (this.EditObj === null || this.EditObj === undefined)
             this.newMobPage();
         else
             this.editMobPage();
 
         this.makeDragable();
+
         $(this.droparea).droppable({
             accept: ".layout",
             hoverClass: "drop-hover",
             drop: this.OnLayoutDrop.bind(this)
-        })
+        });
+
+        this.Controls = new MobileControls(this);
+        this.Menu = new MobileMenu(this);
     };
 
     this.exe();

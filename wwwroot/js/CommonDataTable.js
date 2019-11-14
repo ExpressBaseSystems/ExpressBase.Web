@@ -10,7 +10,7 @@
     this.chartJs = null;
     this.url = Option.url;
     this.EbObject = Option.dvObject;
-    this.showFilterRow = typeof Option.showFilterRow !== 'undefined' ? Option.showFilterRow: true;
+    this.showFilterRow = typeof Option.showFilterRow !== 'undefined' ? Option.showFilterRow : true;
     this.showSerialColumn = typeof Option.showSerialColumn !== 'undefined' ? Option.showSerialColumn : true;
     this.showCheckboxColumn = typeof Option.showCheckboxColumn !== 'undefined' ? Option.showCheckboxColumn : true;
     this.hiddenFieldName = Option.hiddenFieldName || "id";
@@ -89,7 +89,7 @@
     this.movefromId = null;
     this.columnCount = null;
     this.Source = Option.Source || "EbDataTable";
-    this.columns = Option.columns || ( (this.EbObject) ? this.EbObject.Columns.$values :null );
+    this.columns = Option.columns || ((this.EbObject) ? this.EbObject.Columns.$values : null);
     this.contId = Option.containerId;
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.IsPaging : true;
@@ -241,7 +241,7 @@
             this.PcFlag = false;
         }
         else {
-            if (this.MainData !== null) 
+            if (this.MainData !== null)
                 this.isPipped = true;
             $("#" + this.contId).append(text);////////////////        
             this.EbObject = dvGlobal.Current_obj;
@@ -343,13 +343,13 @@
     this.start4EbDataTable = function () {
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
-            this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");            
+            this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
         }
         else {
             if (this.MainData !== null)
                 this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization", prevfocusedId);
             else
-                this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");            
+                this.split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + this.counter, "EbTableVisualization");
         }
 
         if (this.login === "dc") {
@@ -371,7 +371,7 @@
     };
 
     this.start4Other = function () {
-        if (!this.EbObject) 
+        if (!this.EbObject)
             this.EbObject = new EbObjects["EbTableVisualization"]("Container_" + Date.now());
         if (this.columns === null)
             this.call2FD();
@@ -432,7 +432,7 @@
         if (this.EbObject.$type.indexOf("EbTableVisualization") !== -1) {
             $("#content_" + this.tableId).empty();
             $("#content_" + this.tableId).append("<div id='" + this.tableId + "divcont' class='wrapper-cont_inner'><table id='" + this.tableId + "' class='table display table-bordered compact'></table></div>");
-            
+
         }
         this.Init();
     };
@@ -734,7 +734,7 @@
                 o.data = this.receiveAjaxData(this.MainData);
             }
             else {
-                o.dom = "<'col-md-12 noPadding display_none'>rt"; 
+                o.dom = "<'col-md-12 noPadding display_none'>rt";
                 o.paging = false;
                 o.data = this.receiveAjaxData(this.MainData);
             }
@@ -865,7 +865,12 @@
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.FormObj);
 
-
+        let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });        
+        if (temp.length === 0)
+            fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         //if (this.isContextual && from !== "compare") {
         //    if (from === "filter" && prevfocusedId !== undefined) {
         //        $.each(dvcontainerObj.dvcol[prevfocusedId].filterValues, function (i, obj) {
@@ -895,7 +900,7 @@
     this.rowObj2filter = function (fltr_collection, from, i, data) {
         if (i < this.EbObject.Columns.$values.length) {
             if (from === "link") {
-                var type = this.EbObject.Columns.$values[i].Type;
+                let type = this.EbObject.Columns.$values[i].Type;
                 //if (type === 5 || type === 6)
                 //    data = this.renderDateformat(data, "-");
                 if (data !== "")
@@ -903,7 +908,7 @@
             }
             else {
                 if (dvcontainerObj.dvcol[prevfocusedId].Api !== null) {
-                    var type = dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].Type;
+                    let type = dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].Type;
                     fltr_collection.push(new fltr_obj(type, dvcontainerObj.dvcol[prevfocusedId].EbObject.Columns.$values[i].name, data));
                 }
             }
@@ -1042,14 +1047,15 @@
 
     this.closeTag = function (e, obj) {
         var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === obj.name; });
-        var index = this.columnSearch.findIndex(x => x.Column == obj.name);
+        var index = this.columnSearch.findIndex(x => x.Column === obj.name);
         if (searchObj.length === 1) {
             if (searchObj[0].Value.includes("|")) {
+                var val = "";
                 if (this.columnSearch[index].Value.includes(obj.value + "|"))
-                    var val = this.columnSearch[index].Value.replace(obj.value + "|", "");
+                    val = this.columnSearch[index].Value.replace(obj.value + "|", "");
                 else
-                    var val = this.columnSearch[index].Value.replace("|" + obj.value, "");
-                if (val.trim() != "")
+                    val = this.columnSearch[index].Value.replace("|" + obj.value, "");
+                if (val.trim() !== "")
                     this.columnSearch[index].Value = val;
                 else
                     this.columnSearch.splice(index, 1);
@@ -1231,7 +1237,8 @@
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        this.GenerateButtons();
+        if (this.Source === "EbDataTable")
+            this.GenerateButtons();
         if (this.login == "uc") {
             this.initCompleteflag = true;
             //if (this.isSecondTime) { }
@@ -1279,7 +1286,7 @@
 
         if (this.Source !== "EbDataTable") {
             $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
-            if ($("#"+this.tableId+" tr").length > 7) {
+            if ($("#" + this.tableId + " tr").length > 7) {
                 $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
                 $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "155px", "important");
 
@@ -1446,14 +1453,14 @@
 
         if (this.EbObject.LeftFixedColumn > 0 || this.EbObject.RightFixedColumn > 0) {
             if (this.EbObject.LeftFixedColumn > 0) {
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++) {
                     $(lfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j).css("width"));
                 }
             }
 
             if (this.EbObject.RightFixedColumn > 0) {
                 var start = scrollfoot.find("tr").eq(0).children().length - this.EbObject.RightFixedColumn;
-                for (var j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
+                for (let j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
                     $(rfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j + start).css("width"));
                 }
             }
@@ -1469,7 +1476,7 @@
 
         if (this.EbObject.LeftFixedColumn > 0 || this.EbObject.RightFixedColumn.length > 0) {
             if (this.EbObject.LeftFixedColumn > 0) {
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++) {
                     $(lhead).children().find("tr").eq(0).children("th").eq(j).css("width", lbody.find("tbody").children("tr").eq(0).children("td").eq(j).css("width"));
                 }
             }
@@ -1565,8 +1572,8 @@
     this.DrawTooltipForHeader = function () {
         $('th.holiday_class').tooltip({
             placement: 'bottom',
-            container:'body'
-       });
+            container: 'body'
+        });
     };
 
 
@@ -1674,7 +1681,7 @@
     }
 
     this.drawCallBackFunc = function (settings) {
-        if(this.Source === "EbDataTable")
+        if (this.Source === "EbDataTable")
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.EbObject.RowGroupCollection.$values.length > 0)
@@ -1689,7 +1696,7 @@
             this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
-            if(this.Source === "EbDataTable")
+            if (this.Source === "EbDataTable")
                 this.arrangeWindowHeight();
         }
         if (Option.drawCallBack)
@@ -1899,10 +1906,11 @@
         //if (type === 5 || type === 6) {
         //    groupArray[j] = this.renderDateformat(groupArray[j], "/");
         //}
+        let tempstr = "";
         if (tempobj[0].LinkRefId !== null)
-            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-colindex="${tempobj[0].data}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupString}</a></b>`;
+            tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'><a href="#" oncontextmenu="return false" class="tablelink" data-colindex="${tempobj[0].data}" data-link="${tempobj[0].LinkRefId}" tabindex="0">${groupString}</a></b>`;
         else
-            var tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
+            tempstr = tempobj[0].sTitle + `: <b data-rowgroup="true" data-colname='${tempobj[0].name}' data-coltype='${tempobj[0].Type}' data-data='${groupString}'>${groupString}</b>`;
         str += "<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td><td colspan=" + count + ">" + tempstr + "</td></tr>";
         return str;
     }.bind(this);
@@ -2163,7 +2171,7 @@
             }
         }
         else {
-            for (var j = 0; j < eb_footer_controls_scrollfoot.length; j++)
+            for (let j = 0; j < eb_footer_controls_scrollfoot.length; j++)
                 scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).append(eb_footer_controls_scrollfoot[j]);
         }
 
@@ -2171,7 +2179,7 @@
         if (lfoot.length !== 0 || rfoot.length !== 0) {
             var eb_footer_controls_lfoot = this.GetAggregateControls(ps, 50);
             if (lfoot.length !== 0) {
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++) {
                     $(lfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j]);
                     if (j === 0)
                         $(lfoot).children().find("tr").eq(ps).children("th").eq(j).html("");
@@ -2181,7 +2189,7 @@
 
             if (rfoot.length !== 0) {
                 var start = eb_footer_controls_lfoot.length - this.EbObject.RightFixedColumn;
-                for (var j = 0; (j + start) < eb_footer_controls_lfoot.length; j++) {
+                for (let j = 0; (j + start) < eb_footer_controls_lfoot.length; j++) {
                     $(rfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j + start]);
                     $(rfoot).children().find("tr").eq(ps).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j + start).css("width"));
                 }
@@ -2283,12 +2291,12 @@
             this.GetFiltersFromSettingsTbl(50);
             if (fc_lh_tbl.length !== 0) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = 0; j < this.EbObject.LeftFixedColumn; j++)
+                for (let j = 0; j < this.EbObject.LeftFixedColumn; j++)
                     $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
             if (fc_rh_tbl.length !== 0) {
                 fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = this.eb_filter_controls_4fc.length - this.EbObject.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
+                for (let j = this.eb_filter_controls_4fc.length - this.EbObject.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
                     $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
         }
@@ -2298,7 +2306,7 @@
             this.GetFiltersFromSettingsTbl(1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
             if (this.EbObject.LeftFixedColumn + this.EbObject.RightFixedColumn > 0) {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++) {
                     if (j < this.EbObject.LeftFixedColumn) {
                         $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
                         $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
@@ -2314,7 +2322,7 @@
                 }
             }
             else {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++)
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++)
                     $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
             }
             sc_h_tbl.find("thead .addedbyeb").before($("<tr role='row' id='filterdisplayrow_" + this.tableId + "' class='filterdisplayrow'><td id='filterdisplayrowtd_" + this.tableId + "' colspan=" + this.columnCount + " style='padding: 2px!important;'></td></tr>"));
@@ -2455,13 +2463,11 @@
     this.GenerateButtons = function () {
         $("#objname").text(this.EbObject.DisplayName);
         $(".toolicons").show();
-        if (this.Source === "EbDataTable") {
-            $("#obj_icons").empty();
-            this.submitId = "btnGo" + this.tableId;
-            this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
-            $("#obj_icons").append(this.$submit);
-            this.$submit.click(this.getColumnsSuccess.bind(this));
-        }
+        $("#obj_icons").empty();
+        this.submitId = "btnGo" + this.tableId;
+        this.$submit = $("<button id='" + this.submitId + "' class='btn commonControl'><i class='fa fa-play' aria-hidden='true'></i></button>");
+        $("#obj_icons").append(this.$submit);
+        this.$submit.click(this.getColumnsSuccess.bind(this));
 
         if (this.EbObject.FormLinks.$values.length > 0) {
             this.CreateNewFormLinks();
@@ -2511,75 +2517,86 @@
         }
 
         if (this.IsTree) {
-            $.contextMenu({
-                selector: ".groupform",
-                build: function ($trigger, e) {
-                    $("body").find("td").removeClass("focus");
-                    $("body").find("[role=row]").removeClass("selected");
-                    $trigger.closest("[role=row]").addClass("selected");
-                    if (this.GroupFormLink !== null) {
-                        if ($(e.currentTarget).children().hasClass("levelzero")) {
-                            return {
-                                items: {
-                                    "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                    "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                    "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
-                                }
-                            };
-                        }
-                        else {
-                            return {
-                                items: {
-                                    "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                    "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                    "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
-                                    "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                                }
-                            };
-                        }
-                    }
-                    else {
-                        if ($(e.currentTarget).hasClass("levelzero")) {
-                            return {};
-                        }
-                        else {
-                            return {
-                                items: {
-                                    "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                                }
-                            };
-                        }
-                    }
-                }.bind(this)
-
-            });
-
-            $.contextMenu({
-                selector: ".itemform",
-                build: function ($trigger, e) {
-                    $("body").find("td").removeClass("focus");
-                    $("body").find("[role=row]").removeClass("selected");
-                    $trigger.closest("[role=row]").addClass("selected");
-                    if (this.ItemFormLink !== null) {
-                        return {
-                            items: {
-                                "EditItem": { name: "View Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
-                                "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                            }
-                        };
-                    }
-                    else {
-                        return {
-                            items: {
-                                "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
-                            }
-                        };
-                    }
-                }.bind(this)
-
-            });
+            this.CreateContexmenu4Tree();
         }
+        if (this.Source === "Calendar")
+            this.CreateContexmenu4Calendar();
         $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
+    };
+
+    this.CreateContexmenu4Tree = function () {
+        $.contextMenu({
+            selector: ".groupform",
+            build: function ($trigger, e) {
+                $("body").find("td").removeClass("focus");
+                $("body").find("[role=row]").removeClass("selected");
+                $trigger.closest("[role=row]").addClass("selected");
+                if (this.GroupFormLink !== null) {
+                    if ($(e.currentTarget).children().hasClass("levelzero")) {
+                        return {
+                            items: {
+                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                            }
+                        };
+                    }
+                    else {
+                        return {
+                            items: {
+                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
+                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            }
+                        };
+                    }
+                }
+                else {
+                    if ($(e.currentTarget).hasClass("levelzero")) {
+                        return {};
+                    }
+                    else {
+                        return {
+                            items: {
+                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            }
+                        };
+                    }
+                }
+            }.bind(this)
+
+        });
+
+        $.contextMenu({
+            selector: ".itemform",
+            build: function ($trigger, e) {
+                $("body").find("td").removeClass("focus");
+                $("body").find("[role=row]").removeClass("selected");
+                $trigger.closest("[role=row]").addClass("selected");
+                if (this.ItemFormLink !== null) {
+                    return {
+                        items: {
+                            "EditItem": { name: "View Item", icon: "fa-external-link-square", callback: this.FormEditItem.bind(this) },
+                            "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                        }
+                    };
+                }
+                else {
+                    return {
+                        items: {
+                            "Move": { name: "Move Item", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                        }
+                    };
+                }
+            }.bind(this)
+
+        });
+    };
+
+
+    this.CreateContexmenu4Calendar = function () {
+
     };
 
     this.CreateNewFormLinks = function () {
@@ -3606,8 +3623,8 @@
 
         $(rows).eq(idx).next(".containerrow").remove();
         if (Dvobj.$type.indexOf("EbTableVisualization") !== -1) {
-            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx+"'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
-            
+            $(rows).eq(idx).after("<tr class='containerrow' id='containerrow" + colindex + "'>" + str + "<td colspan='" + colspan + "'><div class='inlinetable '><div class='close' type='button' title='Close'>x</div><div class='Obj_title' id='objName" + idx + "'>" + Dvobj.DisplayName + "</div><div id='content_tbl" + idx + "'><table id='tbl" + idx + "' class='table display table-bordered compact'></table></div></td></tr></div>");
+
             var o = new Object();
             o.tableId = "tbl" + idx;
             o.showFilterRow = false;
@@ -4020,7 +4037,7 @@
             }.bind(this)
         });
     };
-    if (this.Source === "EbDataTable") 
+    if (this.Source === "EbDataTable")
         this.start4EbDataTable();
     else
         this.start4Other();
@@ -4042,9 +4059,9 @@
         CSSStyleDeclaration.prototype.getPropertyValue = function (a) {
             return this.getAttribute(a);
         };
-        CSSStyleDeclaration.prototype.setProperty = function (styleName, value, priority) {
+        CSSStyleDeclaration.prototype.setProperty = function (styleName, value, _priority) {
             this.setAttribute(styleName, value);
-            var priority = typeof priority != 'undefined' ? priority : '';
+            let priority = typeof _priority != 'undefined' ? _priority : '';
             if (priority != '') {
                 // Add priority manually
                 var rule = new RegExp(escape(styleName) + '\\s*:\\s*' + escape(value) +

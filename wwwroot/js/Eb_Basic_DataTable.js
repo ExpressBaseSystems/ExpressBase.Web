@@ -582,7 +582,7 @@ var EbBasicDataTable = function (Option) {
         }
         else {
             this.tabNum++;
-            var url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;
+            let url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;
 
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
@@ -851,12 +851,12 @@ var EbBasicDataTable = function (Option) {
             this.GetFiltersFromSettingsTbl(50);
             if (fc_lh_tbl.length !== 0) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++)
+                for (let j = 0; j < this.ebSettings.LeftFixedColumn; j++)
                     $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
             if (fc_rh_tbl.length !== 0) {
                 fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
+                for (let j = this.eb_filter_controls_4fc.length - this.ebSettings.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
                     $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
         }
@@ -866,7 +866,7 @@ var EbBasicDataTable = function (Option) {
             this.GetFiltersFromSettingsTbl(1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
             if (this.ebSettings.LeftFixedColumn + this.ebSettings.RightFixedColumn > 0) {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++) {
                     if (j < this.ebSettings.LeftFixedColumn) {
                         $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
                         $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
@@ -882,7 +882,7 @@ var EbBasicDataTable = function (Option) {
                 }
             }
             else {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++)
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++)
                     $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
             }
         }
@@ -1313,14 +1313,14 @@ var EbBasicDataTable = function (Option) {
 
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0) {
             if (this.ebSettings.LeftFixedColumn > 0) {
-                for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
                     $(lfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j).css("width"));
                 }
             }
 
             if (this.ebSettings.RightFixedColumn > 0) {
                 var start = scrollfoot.find("tr").eq(0).children().length - this.ebSettings.RightFixedColumn;
-                for (var j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
+                for (let j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
                     $(rfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j + start).css("width"));
                 }
             }

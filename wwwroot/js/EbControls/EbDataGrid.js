@@ -1008,7 +1008,7 @@
     this.editRow_click = function (e) {
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
-        this.checkRow_click({ target: td }, false); 
+        this.checkRow_click({ target: td }, false);
 
         let $td = $(e.target).closest("td");
         let $tr = $td.closest("tr");
@@ -1463,9 +1463,10 @@
     }.bind(this);
 
     this.B4saveActions = function () {
-        if (!this.isCurRowEmpty()) {
-            let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
-            let td = $addRow.find(".ctrlstd")[0];
+        let $curRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
+        //if (!this.isCurRowEmpty()) {
+        if ($curRow.length === 1 && $curRow.attr("is-editing") === "true") {
+            let td = $curRow.find(".ctrlstd")[0];
             this.checkRow_click({ target: td }, false);
         }
     };
@@ -1600,7 +1601,7 @@
             col.setValue = this.ColSetvalueFn;
             col.enable = this.EnableFn;
             col.disable = this.DisableFn;
-            col.__updateAggCol= this.updateAggCol;
+            col.__updateAggCol = this.updateAggCol;
             if (col.IsAggragate)
                 this.isAggragateInDG = true;
             if (col.ObjType === "DGPowerSelectColumn")

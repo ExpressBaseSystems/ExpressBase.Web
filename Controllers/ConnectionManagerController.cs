@@ -25,7 +25,7 @@ using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class ConnectionManagerController : EbBaseIntCommonController
+    public class ConnectionManagerController : EbBaseIntTenantController
     {
         public ConnectionManagerController(IServiceClient _ssclient, IRedisClient _redis, IEbMqClient _mqc, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _mqc, _sfc)
         {
@@ -55,6 +55,13 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
+
+        //[Microsoft.AspNetCore.Mvc.Route("/sampletest")]
+        //public IActionResult SampleTest()
+        //{
+        //    this.ServiceClient.Post(new sampletest { });
+        //    return View("test");
+        //}
 
         // GET: /<controller>/
 
@@ -660,15 +667,22 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"])
                 };
             }
-
-            response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
+            try
             {
-                DbConfig = con,
-                // IsNew = false,
-                SolnId = req["SolutionId"]
-            });
-            GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
-            return JsonConvert.SerializeObject(resp);
+                response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
+                {
+                    DbConfig = con,
+                    // IsNew = false,
+                    SolnId = req["SolutionId"]
+                });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("AddAB Controller :" + e + e.StackTrace);
+            }
+            return null;           
         }
         [HttpPost]
         public string AddTwilio()
@@ -682,9 +696,34 @@ namespace ExpressBase.Web.Controllers
                     UserName = req["UserName"],
                     From = req["From"],
                     Password = req["Password"],
-                    NickName = req["nickname"]
+                    NickName = req["nickname"],
+                    Id = Convert.ToInt32(req["Id"])
                 };
                 res = this.ServiceClient.Post<AddTwilioResponse>(new AddTwilioRequest { Config = twilioCon, /*IsNew = true,*/ SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+        public string AddUnifonic()
+        {
+            AddUnifonicResponse res = new AddUnifonicResponse();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+                EbUnifonicConfig UnifonicConf = new EbUnifonicConfig
+                {
+                    UserName = req["UserName"],
+                    From = req["From"],
+                    Password = req["Password"],
+                    NickName = req["nickname"],
+                    Id = Convert.ToInt32(req["Id"])
+                };
+                res = this.ServiceClient.Post<AddUnifonicResponse>(new AddUnifonicRequest { Config = UnifonicConf, /*IsNew = true,*/ SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }
@@ -902,7 +941,6 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
-
         public string AddSlack()
         {
             AddSlackResponse res = new AddSlackResponse();
@@ -918,6 +956,30 @@ namespace ExpressBase.Web.Controllers
                     Type = EbIntegrations.Slack
                 };
                 res = this.ServiceClient.Post < AddSlackResponse>(new AddSlackRequest { Config = con, SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+        public string AddFacebook()
+        {
+            AddfacebookResponse res = new AddfacebookResponse();
+            IFormCollection req = this.HttpContext.Request.Form;
+            try
+            {
+                EbfacebbokConfig con = new EbfacebbokConfig
+                {
+                    NickName = req["NickName"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    AppId = req["AppId"],
+                    AppVersion = req["AppVersion"],
+                    Type = EbIntegrations.Facebook
+                };
+                res = this.ServiceClient.Post < AddfacebookResponse>(new AddfacebookRequest { Config = con, SolnId = req["SolutionId"] });
                 GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
                 return JsonConvert.SerializeObject(resp);
             }

@@ -15,7 +15,7 @@
         //let db = $('#dbname').val();
         $.ajax({
             type: "POST",
-            url: "../ProductionDBManager/UpdateDBFunctionByDB",
+            url: "../ProductionDBManager/UpdateDBFilesByDB",
             data: { db_name: key, solution: key },
             success: function (data) {
                 $this.button('reset').hide();
@@ -95,7 +95,7 @@
                 }
                 html = html + `   </div>
                                                         <div class="col-md-2">
-                                                            <label class="table-content-font align-center">${vals['type']}</label>
+                                                            <label class="table-content-font align-center">${vals['fileType']}</label>
                                                         </div>
                                                     </div>`;
             });

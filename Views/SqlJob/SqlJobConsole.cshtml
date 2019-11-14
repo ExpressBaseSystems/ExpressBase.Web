@@ -14,6 +14,15 @@
 
 </script>
 <script>
+     let chkObj = new Object();
+    chkObj.data = null;
+    chkObj.title = "Action";
+    chkObj.orderable = false;
+    chkObj.bVisible = true;
+    chkObj.name = "action";
+    chkObj.Type = 1;
+    chkObj.render = renderButtonCol;
+
     $(document).ready(function () {
         $("#show-sql-jobs").click(function () {
             let id = $("#refid").val();
@@ -27,24 +36,52 @@
                         Date: date
                     },
                     success: function (result) {
+                        let cols = JSON.parse(result.sqlJobsDvColumns).$values;
+                        cols.push(chkObj);
                         $("#list-of-jobs").empty();
                         $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+                        
                         var o = new Object();
                         o.tableId = "tbl";
                         o.datetimeformat = true;
                         //o.showFilterRow = false;
-                        o.showSerialColumn = false
+                        o.showSerialColumn = false;
                         o.showCheckboxColumn = false;
                         o.showFilterRow = false;
                         o.IsPaging = true;
                         //o.source = "inline";
                         //o.scrollHeight = "200px";
-                        o.columns = JSON.parse(result.sqlJobsDvColumns).$values;
+                        o.columns = cols;
                         o.data = result.sqlJobsRows;
                         var data = new EbBasicDataTable(o);
                     }
                 });
         });
+    });
+
+    function renderButtonCol(data, type, row, meta) {
+        if (data[4] === "S")
+            return "";
+        else
+            return `<button class="retryBtn" id="${data[5]}">Retry</button>`
+    }
+
+   
+    $(document).ready(function () {
+        $("#list-of-jobs").on("click", ".retryBtn", function (e) {
+             let id = e.target.getAttribute("id");
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: "/SqlJob/JobRetry",
+                    data: {
+                        id : id
+                    },
+                    success: function (result) {   
+                             $("#show-sql-jobs").click();
+                    }
+                });
+        })
     });
 </script>
 
@@ -76,4 +113,9 @@
     dataTables_scroll{
         height : 550px;
     }
+  .selected  {
+    background-color: #fff !important;
+    color:black !important;
+
+}
 </style>

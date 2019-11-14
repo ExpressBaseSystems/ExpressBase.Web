@@ -173,7 +173,7 @@
 
         let con = $(`[data-id="${id}"]`).parent().parent().parent().attr("id");
         //$(`[data-id="${id}"]`).attr("val" ,wname);
-        wiki_name = wname.replace(/ /g, '-');
+        wiki_name = wname.replace(/ /g, '~');
         //let orderId = $(`[data-id="${id}"]`).parent().attr("order-id");
         $(".wikilist").removeClass("CurrentSelection");
         $(`[data-id='${id}']`).addClass("CurrentSelection");
@@ -281,7 +281,7 @@
                 //alert(url);
                 let urlSplit = url.split("/");
                 let wiki_name = urlSplit[urlSplit.length - 1];
-                let wname = wiki_name.replace(/\-/g, ' ');
+                let wname = wiki_name.replace(/\~/g, ' ');
                 let id = $(`[val="${wname}"]`).attr("data-id");
                 $(".wikilist").removeClass("CurrentSelection");
                 $(`[data-id='${id}']`).addClass("CurrentSelection");
@@ -323,7 +323,7 @@
                         $("#wiki_data_div").show(500);
                         $('.front_page_wiki').hide(100);
                         let $Report = $(`<div class="searchDiv"></div>`);
-                        $Report.append(`<a class="searchshow" data-id="${ob[i].id}"> ${ob[i].title} </a>`);
+                        $Report.append(`<a class="searchshow" data-id="${ob[i].id}" val=${ob[i].title}> ${ob[i].title} </a>`);
                         $Report.append(` ${ob[i].html}`);
                         let $Tags = $(`<h3>${ob[i].tags}</h3>`);
                         $("#wiki_data_div").append($Report);

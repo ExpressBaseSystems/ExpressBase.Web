@@ -1,0 +1,69 @@
+﻿
+
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common.Structures;
+
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+
+<link rel="stylesheet" href="~/css/EbSqlJob/SqlJob.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.css">
+<script src="~/js/EbSqlJob/SqlJob.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.js'></script>
+<script>
+     @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+
+</script>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 Sql-Job-left-pane" >
+            <div> Resources</div>
+            <div id="@("tb" + ViewBag.tabnum + "_SqlJob_drag_cont")">
+                <div val="EbSqlJobReader">Sql Job Reader</div>
+                <div val="EbSqlJobWriter"> Sql job Writer</div>
+                <div val="SqlJobScript"> Sql Job Processor </div>
+                <div val="EbLoop"> Eb Loop</div>
+                <div val="EbTransaction" > Eb Transaction</div>
+            </div>
+        </div>
+        <div class="col-sm-6" >
+            <div class="Sql-Job-Cont" id="@("tb" + ViewBag.tabnum + "_SqlJob_drop_cont")">
+                
+            </div>
+        </div>
+        <div class="col-sm-3" >
+
+        </div>
+    </div>
+
+</div>
+<div id="@("tb" + ViewBag.tabnum + "_SqlJob_PGgrid")" class="PGgrid ppt-dash"> <div id="@("tb" + ViewBag.tabnum + "_SqlJob_PropGrid")"> </div> </div>
+
+
+<script>
+       if (@ViewBag.tabnum === 0) {
+       var commonO = $("#layout_div").data("commonObj");
+        }
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = EB_SqlJob_entry({
+            RefId: '@ViewBag.Refid',
+            Version: '@ViewBag.VersionNumber',
+            ObjType: @ViewBag.ObjType,
+            sqlJobObj: @Html.Raw(ViewBag.dsObj),
+            Status: '@ViewBag.Status',
+            TabNum: @ViewBag.tabnum,
+            ServiceUrl: '@ViewBag.ServiceUrl',
+            Wc: '@ViewBag.wc',
+            Cid: '@ViewBag.cid',
+            TabNum: @ViewBag.tabnum,
+    });
+   
+</script>

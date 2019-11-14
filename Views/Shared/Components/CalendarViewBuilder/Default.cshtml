@@ -1,0 +1,47 @@
+﻿
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common.Structures;
+
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" />
+<link rel="stylesheet" type="text/css" href="~/css/CalendarStyles.css" />
+<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" />
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />
+<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
+<script src="~/js/EbCalendar/EbCalendarView.js"></script>
+<script src="~/js/CommonDataTable.js"></script>
+<script src="~/js/EbDataTable.js"></script>
+<script src="~/js/splitWindow.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+<script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
+
+<div class="container-fluid calendar_wrapper" style="height: calc( 100vh - 87px )">
+    <div class="row calendar-user-view-cont" style="height:inherit">
+        <div class="col-sm-12" id="calendar-user-view" style="height:inherit">
+        </div>
+    </div>
+
+    <div id="ppt-calendar-view" class="PGgrid"> <div id="propGridView"> </div></div>
+</div>
+<script type="text/javascript">
+
+        if (@ViewBag.tabnum === 0) {
+            var commonO = $("#layout_div").data("commonObj");
+        }
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectType);
+    var DBobj = new EbCalendar({
+         RefId: '@ViewBag.Refid',
+        Version: '@ViewBag.VersionNumber',
+        ObjType: @ViewBag.ObjType,
+        dvObj: @Html.Raw(ViewBag.dsObj),
+        Status: '@ViewBag.Status',
+        TabNum: @ViewBag.tabnum,
+        ServiceUrl: '@ViewBag.ServiceUrl',
+        Wc: '@ViewBag.wc',
+        Cid: '@ViewBag.cid',
+    });
+
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DBobj;
+</script>

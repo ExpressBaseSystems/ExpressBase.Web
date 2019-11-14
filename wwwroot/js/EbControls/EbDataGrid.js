@@ -1504,7 +1504,8 @@
 
                 $bodyTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
                 $footerTbl.find(`td[colname=${$curTd.attr("name")}]`).outerWidth(tdWidth);
-            }
+                getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = (tdWidth / $bodyTbl.outerWidth()) * 100;
+            }.bind(this)
         });
     };
 

@@ -92,6 +92,10 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbTextBox).InitFromDataBase(this.ServiceClient);
                     }
+					else if (control is EbDGStringColumn)
+					{
+						(control as EbDGStringColumn).InitFromDataBase(this.ServiceClient);
+					}
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();

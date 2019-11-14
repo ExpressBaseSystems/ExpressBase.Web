@@ -41,6 +41,11 @@
         $(`#${this.Options.Container}-file-input`).off("change").on("change", this.browse.bind(this));
         $(`#${this.Options.Container}-upload-lin`).off("click").on("click", this.upload.bind(this));
         this.Modal.on("show.bs.modal", this.onToggleM.bind(this));
+        $(document).keypress(function (e) {
+            if ((e.which == 13) || (e.keyCode === 13)) {
+                e.stopPropagation(); e.preventDefault();
+            }
+        });
     };
 
     multiThumbFlow() {

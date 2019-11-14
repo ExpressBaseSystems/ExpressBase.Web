@@ -132,7 +132,24 @@
         var id = e.target.getAttribute("link");
         if (id === "ext-link") {
             let TileRefid = this.TileCollection[tileid].RefId;
-            window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+            //window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+            let url = "../DV/dv?refid=" + TileRefid;
+
+            let _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
+
+            let input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = "filterValues";
+            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            _form.appendChild(input1);
+
+            document.body.appendChild(_form);
+
+            _form.submit();
+            document.body.removeChild(_form);
         }
         else if (id === "close") {
             var abc = $(`#${tileid}`).closest(".grid-stack-item");
@@ -446,6 +463,7 @@
     this.GetFilterValues = function () {
         this.filtervalues = [];
         this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     };
 
     //this.RemoveColumnRef = function () {

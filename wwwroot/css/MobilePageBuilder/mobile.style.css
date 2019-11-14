@@ -118,12 +118,12 @@
 .eb_ctrlhtml{
 
 }
-/*form layout*/
-.eb_mob_formlayout, .eb_mob_vislayout {
+/*container*/
+.eb_mob_form_container, .eb_mob_vis_container {
     width: 100%;
     height: 100%;
 }
-.eb_mob_layout_inner {
+.eb_mob_container_inner {
     width: 100%;
     height: 100%;
     border: 2px dashed #ccc;
@@ -175,8 +175,8 @@
     .eb_mob_tablelayout .eb_mob_tablelayout_inner table{
         width:100%;
     }
-    .eb_mob_tablelayout .eb_tablelayout_td{
-        
+    .eb_mob_tablelayout .eb_tablelayout_tr .eb_tablelayout_td:not(:last-child) {
+      
     }
     /*tree div*/
 .eb_mobtree_body {
@@ -213,26 +213,29 @@
         justify-content: center;
     }
     /*visualization*/
-.eb_mob_vislayout .eb_mob_layout_inner {
+.eb_mob_vis_container .eb_mob_container_inner {
     display: flex;
     flex-flow: column;
 }
-.eb_mob_vislayout .eb_mob_listprevwraper {
+.eb_mob_vis_container .eb_mob_listprevwraper {
     flex-grow:1;
     margin-top:10px;
 }
-    .eb_mob_vislayout .eb_mob_listprevwraper .eb_mob_listprevwraper_inner {
+    .eb_mob_vis_container .eb_mob_listprevwraper .eb_mob_listprevwraper_inner {
         display: flex;
         height: 90%;
         background: white;
         border: 1px solid #ccc;
     }
-    .eb_mob_vislayout .eb_mob_listprevwraper .list_view {
-        height:100%;
-        width:100%;
+    .eb_mob_vis_container .eb_mob_listprevwraper .list_view {
+        height: 100%;
+        width: 100%;
     }
-    .eb_mob_vislayout .eb_mob_listprevwraper .list_item {
+    .eb_mob_vis_container .eb_mob_listprevwraper .list_item {
         border-bottom: 1px solid #ccc;
         min-height: 50px;
-        padding:5px;
+        padding: 5px;
     }
+        .eb_mob_vis_container .eb_mob_listprevwraper .list_item .eb_tablelayout_table {
+           width:100%;
+        }

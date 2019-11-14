@@ -1102,7 +1102,7 @@
         let $td = $(e.target).closest("td");
         let colname = $td.attr("colname");
         $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
-    };
+    }.bind(this);
 
     this.appendDecZeros = function (num) {
         let decCharector = ".";
@@ -1599,6 +1599,7 @@
             col.setValue = this.ColSetvalueFn;
             col.enable = this.EnableFn;
             col.disable = this.DisableFn;
+            col.__updateAggCol= this.updateAggCol;
             if (col.IsAggragate)
                 this.isAggragateInDG = true;
             if (col.ObjType === "DGPowerSelectColumn")

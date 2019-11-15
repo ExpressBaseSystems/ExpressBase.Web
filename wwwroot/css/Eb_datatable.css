@@ -363,6 +363,7 @@ table.dataTable tbody td.dt-body-right {
     white-space: nowrap;
     padding: 3px 4px !important;
     -webkit-tap-highlight-color: white;
+    vertical-align: middle;
 }
 
 

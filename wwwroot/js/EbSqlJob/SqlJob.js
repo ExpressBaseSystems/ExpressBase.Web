@@ -33,6 +33,7 @@ function EbSqlJob(options) {
     this.Procs = {};
     this.Lines = {};
     this.process = [];
+    this.process2 = [];
     this.dropArea = "tb" + this.TabNum + "_SqlJob_drop_cont";
     this.FlagRun = false;
     this.ComponentRun = false;
@@ -123,6 +124,25 @@ function EbSqlJob(options) {
     };
 
 
+    this.resetLinks = function () {
+        this.rmLines();
+        let n = 0;
+
+        this.process = $(`#${this.dropArea}`).find(".lineDrp");
+        ////this.process2 = {};
+        //$(`#${this.dropArea}`).children().each(function (index, object) {
+        //    //this.process = $(`#${this.getAttribute("id")}`).children();
+        //    this.process[index] = object;
+        //    if (object.getAttribute("eb-type") == "Transaction" || object.getAttribute("eb-type")== "Loop") {
+
+        //    }
+        //}.bind(this));
+       
+        while (n < this.process.length - 1) {
+            this.setLine(this.process[n].id, this.process[n + 1].id);
+            n = n + 1;
+        }
+    };
 
     this.setLine = function (startid, endid) {
         let name = startid + endid;
@@ -134,23 +154,6 @@ function EbSqlJob(options) {
         );
         this.Lines[name].position();
     }
-
-    this.resetLinks = function () {
-        this.rmLines();
-        let n = 0;
-
-        this.process2 = $(`#${this.dropArea}`).children();
-        //this.process2 = {};
-        $(`#${this.dropArea}`).children().each(function (index, object) {
-            //this.process = $(`#${this.getAttribute("id")}`).children();
-            this.process[index] = object;
-        }.bind(this));
-       
-        while (n < this.process.length - 1) {
-            this.setLine(this.process[n].id, this.process[n + 1].id);
-            n = n + 1;
-        }
-    };
 
     this.rmLines = function () {
         try {

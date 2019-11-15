@@ -3816,8 +3816,8 @@
                 this.EbObject.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
             }
             else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
-                this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this);
-                this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this);
+                this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+                this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
             }
             else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
                 this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
@@ -3995,13 +3995,13 @@
             return null;
     };
 
-    this.renderFBImage = function (data) {
+    this.renderFBImage = function (col, data) {
         //if (typeof (data) === "string")
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         //else
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
 
-        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg'/>`;
+        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg' style="height: ${col.ImageHeight}px;width: ${col.ImageWidth}px;"/>`;
     };
 
     this.renderDataAsLabel = function (data) {

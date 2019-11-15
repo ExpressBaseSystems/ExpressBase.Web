@@ -14,69 +14,8 @@
 <link rel="stylesheet" href="~/css/MobilePageBuilder/mobile.style.css" asp-append-version=@bApnd />
 <script src="~/js/MobilePageBuilder/mobile.page.js" type="text/javascript" asp-append-version=@bApnd></script>
 <script src="~/js/MobilePageBuilder/mobile.page.controls.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script>
-    $.fn.extend({
-        treed: function (o) {
-            var openedClass = 'fa-minus-square-o';
-            var closedClass = 'fa-plus-square-o';
-            var ic = o || 'fa-plus-square-o';
+<script src="~/js/EbControls/eb_html.tree.js" type="text/javascript" asp-append-version="@bApnd"></script>
 
-            if (typeof o !== 'undefined') {
-                if (typeof o.openedClass !== 'undefined') {
-                    //openedClass = o.openedClass;
-                }
-                if (typeof o.closedClass !== 'undefined') {
-                    //closedClass = o.closedClass;
-                }
-            }
-            var tree = $(this);
-            tree.addClass("tree");
-            tree.find('li').has("ul").each(function () {
-                var branch = $(this);
-                branch.prepend("<i class='indicator fa " + ic + "'></i>");
-                branch.addClass('branch');
-                branch.off("click").on('click', function (e) {
-                    if (this === e.target) {
-                        var icon = $(this).children('i:first');
-                        icon.toggleClass(openedClass + " " + closedClass);
-                        $(this).children().children().toggle();
-                    }
-                });
-                branch.children().children().toggle();
-            });
-            tree.find('.branch .indicator').each(function () {
-                $(this).off("click").on('click', function (e) {
-                    $(this).closest('li').click();
-                });
-            });
-            tree.find('.branch>a').each(function () {
-                $(this).off("click").on('click', function (e) {
-                    $(this).closest('li').click();
-                    e.preventDefault();
-                });
-            });
-            tree.find('.branch>button').each(function () {
-                $(this).off("off").on('click', function (e) {
-                    $(this).closest('li').click();
-                    e.preventDefault();
-                });
-            });
-        }
-    });
-    $.fn.extend({
-        killTree: function (o) {
-            var tree = $(this);
-            tree.removeClass("tree");
-            tree.find('li').has("ul").each(function () {
-                var branch = $(this);
-                branch.children().children().show();
-                branch.children("i").remove();
-                branch.removeClass('branch');
-                branch.off("click");
-            });
-        }
-    });
-</script>
 <div class="container-fluid mob_body" id="@("mobviewversion-body"+ViewBag.tabnum)">
     <div class="row">
         <div class="eb_mobpage_wraper" id="@("eb_mobpage_wraper"+ViewBag.tabnum)">
@@ -91,12 +30,12 @@
                                 Containers
                             </div>
                             <div class="eb_mobpage_tbxbdy">
-                                <div eb-type="EbMobileForm" ctrname="Form" class="toolitems layout">
+                                <div eb-type="EbMobileForm" ctrname="Form" class="toolitems container_draggable">
                                     <div class="toolitems-inner">
                                         <i class="fa fa-wpforms"></i> Form
                                     </div>
                                 </div>
-                                <div eb-type="EbMobileVisualization" ctrname="Visualization" class="toolitems layout">
+                                <div eb-type="EbMobileVisualization" ctrname="Visualization" class="toolitems container_draggable">
                                     <div class="toolitems-inner">
                                         <i class="fa fa-list-alt"></i> Visualization
                                     </div>

@@ -638,9 +638,9 @@
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
                     <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
-                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-minus'></span></button>
+                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-fw fa-trash  fa-lg fa-fw '></span></button>
                 </td>` : "")
-            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
+            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-fw fa-pencil  fa-lg fa-fw'></span></button>" : "")
             .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
     };
 
@@ -1008,7 +1008,8 @@
     this.editRow_click = function (e) {
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
-        this.checkRow_click({ target: td }, false);
+        if (!this.checkRow_click({ target: td }, false))
+            return;
 
         let $td = $(e.target).closest("td");
         let $tr = $td.closest("tr");
@@ -1058,7 +1059,7 @@
         $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
         if (!this.AllRequired_valid_Check(rowid))
-            return;
+            return false;
         $td.find(".check-row").hide();
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
@@ -1075,7 +1076,7 @@
         this.updateAggCols();
         //$addRow.focus();
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
-
+        return true;
     }.bind(this);
 
     //this.updateAggCols = function (rowId) {

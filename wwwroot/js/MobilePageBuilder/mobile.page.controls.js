@@ -5,12 +5,36 @@
         let id = "Tab" + this.Root.Conf.TabNum + "_TableLayout" + CtrlCounters["MobileTableLayoutCounter"]++;
         var obj = new EbObjects.EbMobileTableLayout(id);
         this.Root.Procs[id] = obj;
-        $(`#${o.EbSid} .eb_mob_layout_inner`).append(obj.$Control.outerHTML());
+        $(`#${o.EbSid} .eb_mob_container_inner`).append(obj.$Control.outerHTML());
         $(`#${obj.EbSid} .eb_mob_tablelayout_inner`).append(this.getTableHtml(obj));
         this.makeTdDropable(o);
         this.makeResizable(o);
         this.setListPrev(o);
+        if (this.Root.Mode === "edit" && this.Root.EditObj !== null)
+            this.renderVisOnEdit(obj);
     }
+
+    this.renderVisOnEdit = function (o) {
+        let cellcollection = this.Root.EditObj.Container.DataLayout.CellCollection.$values;
+        for (let i = 0; i < cellcollection.length; i++) {
+            this.renderCellControl(o,cellcollection[i]);
+        }
+        this.refreshList();
+    };
+
+    this.renderCellControl = function (eb_table, cell) {
+        let ctrlCollection = cell.ControlCollection.$values;
+        for (let k = 0; k < ctrlCollection.length; k++) {
+            let id = "Tab" + this.Root.Conf.TabNum + "DataColumn" + CtrlCounters["MobileDataColumnCounter"]++;
+            var obj = new EbObjects.EbMobileDataColumn(id);
+            $.extend(obj, ctrlCollection[k]);
+            this.Root.Procs[id] = obj;
+            $(`#${eb_table.EbSid} tr:eq(${cell.RowIndex}) td:eq(${cell.ColIndex})`).append(obj.$Control.outerHTML());
+            $(`#${eb_table.EbSid} tr:eq(${cell.RowIndex}) td:eq(${cell.ColIndex})`).not(":last-child").css("width", `${cell.Width}%`);
+            this.Root.RefreshControl(obj);
+            $(`#${obj.EbSid}`).off("focus").on("focus", this.Root.elementOnFocus.bind(this.Root));
+        }
+    };
 
     this.makeTdDropable = function (table) {
         $(`#${table.EbSid} .eb_tablelayout_td`).droppable({
@@ -28,7 +52,7 @@
     };
 
     this.setListPrev = function (o) {
-        $(`#${o.EbSid} .eb_mob_layout_inner`).append(this.getListPrevHtml());
+        $(`#${o.EbSid} .eb_mob_container_inner`).append(this.getListPrevHtml());
         this.refreshList();
     }
 
@@ -156,6 +180,12 @@ function MobileMenu(option) {
 
         delete this.Root.Procs[$(selector.$trigger).attr("id")];
         this.Root.pg.removeFromDD($(selector.$trigger).attr("id"));
+
+        if (eb_type === "mob_container") {
+            this.Root.Procs = {};
+            $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty();
+            $(`#eb_mobtree_body_${this.Root.Conf.TabNum}`).hide();
+        }
         $(selector.$trigger).remove();
     };
 

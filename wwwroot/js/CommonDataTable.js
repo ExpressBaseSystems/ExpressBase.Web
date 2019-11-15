@@ -936,7 +936,7 @@
                 var cols = temp[0].FormParameters.$values;
                 $.each(cols, function (i, col) {
                     if (this.rowData[col.data] !== "")
-                        filters.push(new fltr_obj(col.Type, col.name, this.rowData[col.data]));
+                        filters.push(new fltr_obj(col.Type, col.FormControl.Name, this.rowData[col.data]));
                 }.bind(this));
             }
         }

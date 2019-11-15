@@ -638,9 +638,9 @@
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
                     <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
-                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-fw fa-trash  fa-lg fa-fw '></span></button>
+                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-trash'></span></button>
                 </td>` : "")
-            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-fw fa-pencil  fa-lg fa-fw'></span></button>" : "")
+            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
             .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
     };
 

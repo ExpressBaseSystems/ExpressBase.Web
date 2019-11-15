@@ -23,14 +23,17 @@
 <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/css/bootstrap-select.css">
-<link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />@*amal*@
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />
+@*amal*@
 <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
 
 
-<link rel="stylesheet" type="text/css" href="~/css/EbControls/EbSignaturePad.css" asp-append-version=@bApnd />@*amal*@
+<link rel="stylesheet" type="text/css" href="~/css/EbControls/EbSignaturePad.css" asp-append-version=@bApnd />
+@*amal*@
 
 
-<script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
+@*jith*@
 @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>*@@*jith*@
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
@@ -40,14 +43,20 @@
 <script type="text/javascript" src="~/js/FormBuilder/WebFormRenderer.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/EbControls/EbDataGrid.js" asp-append-version=@bApnd></script>
+@*jith*@
 <script type="text/javascript" src="~/js/EbControls/EbDpFormControl.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbItemListControl.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/EbControls/EbApproval.js" asp-append-version=@bApnd></script>@*jith*@
-<script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>@*jith*@
-<script type="text/javascript" src="~/js/FormBuilder/DGUCcolumn.js" asp-append-version=@bApnd></script>@*jith*@
-<script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>@*jith*@
-<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>@*jith*@
+<script type="text/javascript" src="~/js/EbControls/EbApproval.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/DGUCcolumn.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>
+@*jith*@
+<script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>
+@*jith*@
 <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.5/js/bootstrap-select.js"></script>
@@ -56,8 +65,10 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-locationpicker/0.1.12/locationpicker.jquery.min.js"></script>
 <script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
 
-<script type="text/javascript" src="~/js/SignaturePadApis/SigWebTablet.js"></script>@*amal*@
-<script type="text/javascript" src="~/js/EbControls/EbSignaturePad.js"></script>@*amal*@
+<script type="text/javascript" src="~/js/SignaturePadApis/SigWebTablet.js"></script>
+@*amal*@
+<script type="text/javascript" src="~/js/EbControls/EbSignaturePad.js"></script>
+@*amal*@
 
 @{
 
@@ -345,5 +356,7 @@
              formPermissions: _formPermissions,
              headerObj: header
          });
+
+         dateDisplayNone();
     </script>
 )

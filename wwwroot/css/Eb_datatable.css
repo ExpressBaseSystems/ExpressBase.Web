@@ -655,8 +655,6 @@ div.dataTables_wrapper div.dataTables_filters {
     float: right;
 }
 .columnimage {
-    height: 20px;
-    width: 25px;
     cursor:pointer;
 }
 #Imagemodal .modal-header, #Imagemodal .modal-body{

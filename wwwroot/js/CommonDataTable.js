@@ -924,7 +924,7 @@
             }.bind(this));
         }
         else {
-            var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.linkDV; }.bind(this));
+            var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.linkDV && obj.name === this.linkDVColumn; }.bind(this));
             this.dvformMode = temp[0].FormMode;
             if (temp[0].FormMode === 1) {
                 var col = temp[0].FormId.$values;
@@ -3507,6 +3507,7 @@
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
+        this.linkDVColumn = $(e.target).closest("a").attr("data-column");
         var idx = this.Api.row($(e.target).parents().closest("td")).index();
         if (typeof (idx) !== "undefined")
             this.rowData = this.unformatedData[idx];
@@ -4000,8 +4001,9 @@
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         //else
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
-
-        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg' style="height: ${col.ImageHeight}px;width: ${col.ImageWidth}px;"/>`;
+        let _height = col.ImageHeight === 0 ? "auto" : col.ImageHeight;
+        let _width = col.ImageWidth === 0 ? "auto" : col.ImageWidth;
+        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg' style="height: ${_height}px;width: ${_width}px;"/>`;
     };
 
     this.renderDataAsLabel = function (data) {

@@ -359,6 +359,22 @@ const EbSelect = function (ctrl, options) {
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         this.datatable = new EbBasicDataTable(o);
+
+        setTimeout(function () {
+            let contWidth = $('#' + this.name + 'Container').width();
+            contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
+            let brow_wdth = $(window).width();
+            let div_tble = $("#" + o.containerId);
+            let tbl_cod = div_tble.offset();
+            let div_detach = div_tble.detach();
+            let xtra_wdth = tbl_cod.left;
+            if ((contWidth + tbl_cod.left) > brow_wdth)
+                xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
+
+            div_detach.appendTo("body").offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
+
+        }.bind(this), 30);
+
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
         //$.ajax({
@@ -788,7 +804,7 @@ const EbSelect = function (ctrl, options) {
         this.clearSearchBox();
         this.filterArray = [];
         this.datatable.columnSearch = [];
-        this.datatable.Api.ajax.reload();  
+        this.datatable.Api.ajax.reload();
     };
 
     this.checkBxClickEventHand = function (e) {

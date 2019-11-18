@@ -95,6 +95,7 @@ function EbMobStudio(config) {
             this.getCol(o.DataSourceRefId);
             this.Controls.InitVis(o);
         }
+        $(`#${o.EbSid}`).on("click", this.ContainerOnClick.bind(this));
         this.EditObj = null;
     };
 

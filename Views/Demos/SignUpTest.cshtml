@@ -74,25 +74,16 @@
             b = getTok();
             r = getrToken();
 
-            var json = `{"MasterTable":"webform_k24gm2x3_tbl","MultipleTables":{"webform_k24gm2x3_tbl":[{"RowId":1,"IsUpdate":false,"Columns":[{"Name":"company","Value":"EuroStyle carcare","Type":16,"AutoIncrement":false},{"Name":"visited_date","Value":"2019-10-18","Type":5,"AutoIncrement":false},{"Name":"cash_collected","Value":1000,"Type":7,"AutoIncrement":false},{"Name":"branch","Value":"dubai","Type":16,"AutoIncrement":false},{"Name":"authority","Value":"Mashood","Type":16,"AutoIncrement":false},{"Name":"amt","Value":1200,"Type":7,"AutoIncrement":false},{"Name":"discount","Value":12,"Type":7,"AutoIncrement":false}]}]},"ExtendedTables":{"fileuploader1":[]}}`
-
             $.ajax({
-                url: "/api/objects_by_app",
+                url: "/api/menu",
                 type: "GET",
                 cache: false,
-                data: {
-                   // "webform_data": json,
-                   // "rowid": "1",
-                  //  "refid": "hairocraft_stagging-hairocraft_stagging-0-847-973-847-973",
-                    "locid": "1",
-                    "appid":39
-                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", b);
                     xhr.setRequestHeader("rToken", r);
                 }
             }).done(function (data) {
-                //$("#test").attr("src", "data:application/pdf;base64," + data.reportResult);
+                
             });
         }
     </script>

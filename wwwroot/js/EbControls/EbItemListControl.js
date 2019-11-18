@@ -87,6 +87,7 @@
             }
             else if (e.keyCode === 38) {
                 this.$ul.children().last(':visible').addClass('active');
+                this.$ul.scrollTop(this.$ul[0].scrollHeight);
             }
         }
         else {
@@ -94,18 +95,20 @@
                 if ($liAct.nextAll(':visible').first().length > 0) {
                     $liAct.nextAll(':visible').first().addClass('active');
                     $liAct.removeClass('active');
+                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 40);
                 }
             } else if (e.keyCode === 38) {
                 if ($liAct.prevAll(':visible').first().length > 0) {
                     $liAct.prevAll(':visible').first().addClass('active');
                     $liAct.removeClass('active');
+                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 100);
                 }
             }
             else if (e.keyCode === 13) {
                 this.onListItemSelect($liAct);
             }
         }
-
+       
         if (e.keyCode !== 13 && e.keyCode !== 38 && e.keyCode !== 40) {
             let $liAll = this.$ul.children();
             let srchVal = this.$txtSrch.val() || '';

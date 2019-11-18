@@ -73,7 +73,7 @@
                             <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + itemO['img']}.png), url(${this.options.imageAlternate});"></div>
                             <div class="ulstc-disp-txt">${itemO['dm1']}</div>
                         </div>`);
-        $disp.data('data-obj', itemO);
+        this.$dispCont.data('data-obj', itemO);
         this.$dispCont.children('div').remove();
         this.$dispCont.prepend($disp);
         this.$dispCont.next().toggle();

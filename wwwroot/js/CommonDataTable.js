@@ -2348,7 +2348,7 @@
 
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
-        if (e.keyCode === 13 && text.length > 3) {
+        if (e.keyCode === 13 && text.length > 2) {
             //window.find(text, false, false, true);
             if (window.find && window.getSelection) {
                 document.designMode = "on";
@@ -2616,7 +2616,8 @@
     };
 
     this.FormNewGroup = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
@@ -2656,7 +2657,8 @@
     };
 
     this.FormNewItem = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
@@ -2695,7 +2697,8 @@
     };
 
     this.FormEditGroup = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
@@ -2734,7 +2737,8 @@
     };
 
     this.FormEditItem = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");

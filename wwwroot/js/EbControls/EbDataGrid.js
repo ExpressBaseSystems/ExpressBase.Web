@@ -99,11 +99,13 @@
 
     this.getSSDispMembrs = function (cellObj, rowId, col) {
         let opts = col.Options.$values;
+        let val;
         for (var i = 0; i < opts.length; i++) {
             let opt = opts[i];
             if (opt.Value === cellObj.Value)
-                return opt.DisplayName;
+                val = opt.DisplayName;
         }
+        return val === undefined ? " -- select -- " : val;
     };
 
     this.getBSDispMembrs = function (cellObj, rowId, col) {

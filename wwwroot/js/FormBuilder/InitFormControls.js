@@ -557,7 +557,8 @@
         //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //}
         //else {
-        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', ebcontext.user.UserId);
+        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
         //}
     };
     this.SysModifiedBy = function (ctrl) {
@@ -566,12 +567,16 @@
         //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //    }
         //    else {
-        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', ebcontext.user.UserId);
+        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
         //    }
         //}        
     };
     this.SysCreatedAt = function (ctrl) {
-        //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+    };
+    this.SysModifiedAt = function (ctrl) {
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
 
     this.ProvisionUser = function (ctrl, ctrlopts) {

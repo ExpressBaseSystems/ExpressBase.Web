@@ -221,7 +221,7 @@
 }
 
 .del-row, .edit-row {
-    display: none;
+    /*display: none;*/
     position: absolute;
     height: 27px;
     top: 0px;
@@ -366,12 +366,13 @@ eb-disable {
 
 /*[is-editing="true"] .del-row, [is-editing="true"] .edit-row {
     display: block;
-}
+}*/
 
 [is-editing="true"] .edit-row {
     color: gray;
+    opacity:0.5;
     pointer-events: none;
-}*/
+}
 
 .dgtbl[is-disabled='true'] .rowc {
     color: gray;

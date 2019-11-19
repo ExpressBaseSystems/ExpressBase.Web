@@ -2,6 +2,8 @@
 @using ExpressBase.Common
 @using Microsoft.AspNetCore.Mvc;
 @using ExpressBase.Common.Structures;
+@using Newtonsoft.Json;
+@using ExpressBase.Common.Application;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
@@ -183,6 +185,7 @@
                 <div class="tab-pane" id="home" role="tabpanel">
                     @if (appinfo.AppType == 3)
                     {
+                        EbBotSettings settings = ViewBag.AppSettings;
                         var bot_name_txt = appinfo.Name;
                         var bot_wc_msg = "";
                         var bot_tm_color = "";
@@ -190,10 +193,10 @@
 
                         @if (appinfo.AppSettings != null)
                         {
-                            bot_name_txt = appinfo.AppSettings.Name;
-                            bot_wc_msg = appinfo.AppSettings.WelcomeMessage;
-                            bot_tm_color = appinfo.AppSettings.ThemeColor;
-                            bot_dp_url = appinfo.AppSettings.DpUrl;
+                            bot_name_txt = settings.Name;
+                            bot_wc_msg = settings.WelcomeMessage;
+                            bot_tm_color = settings.ThemeColor;
+                            bot_dp_url = settings.DpUrl;
                         }
                         <div>
                             <label>Bot Name: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -252,6 +255,50 @@
                         </div>
 
                     }
+                    else if (appinfo.AppType == 2)
+                    {
+                        EbMobileSettings MobSettings = (ViewBag.AppSettings as EbMobileSettings);
+
+                        <div class="appdash_typedmob_readerWraper">
+                            <div class="appdash_readerinner">
+                                <div class="body" id="reader_body" style="display:flex;flex-flow:column;">
+                                    <table style="width:100%;margin-top:10px;" class="import_reftable">
+                                        <thead>
+                                            <tr>
+                                                <th>Table Name</th>
+                                                <th>Refid</th>
+                                                <th style="width:50px;">
+                                                    <button class="ebbtn eb_btn-sm" id="add_readers" data-target="#import_data_mdl" data-toggle="modal" style="margin-left:auto;background:#d6d4d4">Add</button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="import_reftable_body">
+                                            @{
+                                                if (MobSettings.DataImport.Count > 0)
+                                                {
+                                                    foreach (DataImportMobile di in MobSettings.DataImport)
+                                                    {
+                                                        <tr>
+                                                            <td><input type="text" class="import_reftable_input" value="@di.TableName" name="@(di.RefId + "_input")" /></td>
+                                                            <td>@di.RefId</td>
+                                                            <td class="text-center"><button class="rm_refbtn" ref="@di.RefId"><i class="fa fa-close"></i></button></td>
+                                                        </tr>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <tr class="empty_tr">
+                                                        <td colspan="3" style="text-align:center">empty</td>
+                                                    </tr>
+                                                }
+                                            }
+                                        </tbody>
+                                    </table>
+                                    <button class="ebbtn eb_btn-sm eb_btnblue" id="save_importref" style="margin-left:auto;"><i class="fa fa-floppy-o" style="margin-right:5px;"></i> Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
@@ -301,10 +348,78 @@
 
         </div>
     </div>
+
+    <div id="import_data_mdl" class="modal fade import_data_mdl" role="dialog">
+        <div class="modal-dialog h-100 w-100" style="margin:0;display: flex;justify-content: center;align-items: center;">
+            <div class="modal-content" style="width:50%;height:70%;display: flex;flex-direction: column;">
+                <div class="modal-header" style="border-style:none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Import Data</h4>
+                </div>
+                <div class="modal-body" style="flex:1;overflow-y:auto;">
+                    @{
+                        if (appinfo.AppType == 2)
+                        {
+                            List<int> cs = new List<int> { 2, 20 };
+                            <div class="import_data_mdl_mdlbdy">
+                                <div class="import_data_cols">
+                                    <label>Object Types</label>
+                                    <div class="import_data_cols_inner">
+                                        <div class="import_obj_link" exp-target="#import_expand_20">
+                                            Api
+                                        </div>
+                                        <div class="import_obj_link" exp-target="#import_expand_2">
+                                            DataReaders
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="import_data_cols import_data_objects">
+                                    <label>Objects</label>
+                                    <div class="import_data_cols_inner">
+                                        @{
+                                            foreach (KeyValuePair<int, TypeWrap> kvp in list)
+                                            {
+                                                if (cs.Contains(kvp.Key))
+                                                {
+                                                    <div class="import_obj_expand" id="import_expand_@kvp.Key">
+                                                        @if (!kvp.Value.Objects.Any())
+                                                        {
+                                                            <div class="empty_list">empty</div>
+                                                        }
+
+                                                        @foreach (ObjWrap oball in kvp.Value.Objects)
+                                                        {
+                                                            if (oball.IsCommitted)
+                                                            {
+                                                                <div class="import_obj_expand_objlinks">
+                                                                    <input type="checkbox" name="importcheckbox" refid="@oball.Refid" />
+                                                                    <div class="">
+                                                                        @oball.DisplayName
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    </div>
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="modal-footer" style="border-style:none">
+                    <button type="button" class="btn eb_btnblue" id="import_refsave">Add</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 @section JsCode{
     <script>
-    var adash = new AppDashBoard('@appinfo.Id');
+    let appsetting = @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppSettings));
+    var adash = new AppDashBoard(@appinfo.Id,@appinfo.AppType, appsetting);
 
     function UpdateBotSettings() {
         var appSettings = {};

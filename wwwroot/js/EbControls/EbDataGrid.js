@@ -99,11 +99,13 @@
 
     this.getSSDispMembrs = function (cellObj, rowId, col) {
         let opts = col.Options.$values;
+        let val;
         for (var i = 0; i < opts.length; i++) {
             let opt = opts[i];
             if (opt.Value === cellObj.Value)
-                return opt.DisplayName;
+                val = opt.DisplayName;
         }
+        return val === undefined ? " -- select -- " : val;
     };
 
     this.getBSDispMembrs = function (cellObj, rowId, col) {
@@ -801,7 +803,7 @@
                 inpCtrl.setValue(inpCtrl.DefaultValue);
 
             // DefaultValueExpression
-            if (this.Mode.isNew && inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
+            if (inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
                 let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                 let val = fun();
                 inpCtrl.setValue(val);

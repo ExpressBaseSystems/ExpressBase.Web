@@ -73,7 +73,7 @@
                             <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + itemO['img']}.png), url(${this.options.imageAlternate});"></div>
                             <div class="ulstc-disp-txt">${itemO['dm1']}</div>
                         </div>`);
-        $disp.data('data-obj', itemO);
+        this.$dispCont.data('data-obj', itemO);
         this.$dispCont.children('div').remove();
         this.$dispCont.prepend($disp);
         this.$dispCont.next().toggle();
@@ -87,6 +87,7 @@
             }
             else if (e.keyCode === 38) {
                 this.$ul.children().last(':visible').addClass('active');
+                this.$ul.scrollTop(this.$ul[0].scrollHeight);
             }
         }
         else {
@@ -94,18 +95,20 @@
                 if ($liAct.nextAll(':visible').first().length > 0) {
                     $liAct.nextAll(':visible').first().addClass('active');
                     $liAct.removeClass('active');
+                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 40);
                 }
             } else if (e.keyCode === 38) {
                 if ($liAct.prevAll(':visible').first().length > 0) {
                     $liAct.prevAll(':visible').first().addClass('active');
                     $liAct.removeClass('active');
+                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 100);
                 }
             }
             else if (e.keyCode === 13) {
                 this.onListItemSelect($liAct);
             }
         }
-
+       
         if (e.keyCode !== 13 && e.keyCode !== 38 && e.keyCode !== 40) {
             let $liAll = this.$ul.children();
             let srchVal = this.$txtSrch.val() || '';

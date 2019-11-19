@@ -284,6 +284,5 @@ function dateDisplayNone() {
     document.addEventListener('scroll', function (e)
     {
         $('.xdsoft_datetimepicker').css("display", "none");
-        console.log("hhhhhhhhhhhhhhhhhhh");
     }, true);
 }

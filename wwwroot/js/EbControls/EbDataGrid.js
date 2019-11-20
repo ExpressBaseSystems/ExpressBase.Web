@@ -99,11 +99,13 @@
 
     this.getSSDispMembrs = function (cellObj, rowId, col) {
         let opts = col.Options.$values;
+        let val;
         for (var i = 0; i < opts.length; i++) {
             let opt = opts[i];
             if (opt.Value === cellObj.Value)
-                return opt.DisplayName;
+                val = opt.DisplayName;
         }
+        return val === undefined ? " -- select -- " : val;
     };
 
     this.getBSDispMembrs = function (cellObj, rowId, col) {
@@ -130,13 +132,16 @@
         else if (col.ObjType === "DGBooleanSelectColumn") {
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
-        else if (col.ObjType === "DGDateColumn") {
+        else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (col.EbDbType === 6)
                 dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
             else if (col.EbDbType === 5)
                 dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
             else if (col.EbDbType === 17)
                 dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
+        }
+        else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
+            dspMmbr = cellObj.Value.split('$$')[1];
         }
         else
             dspMmbr = cellObj.Value;
@@ -627,7 +632,7 @@
             inpCtrl.__eb_EditMode_val = editModeDataCellObj.Value;
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
-                    <div class='tdtxt' style='display:block' coltype='${col.ObjType}'><span>${col.DoNotPersist ? "" : editModeDataCellObj.DisplayMember}</span ></div >                         
+                    <div class='tdtxt' style='display:block' coltype='${col.ObjType}'><span>${(col.DoNotPersist && !col.IsSysControl) ? "" : editModeDataCellObj.DisplayMember}</span ></div >                         
                 </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
@@ -638,9 +643,9 @@
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
                     <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
-                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-fw fa-trash  fa-lg fa-fw '></span></button>
+                    <button type='button' class='del-row rowc @del-c@'><span class='fa fa-trash'></span></button>
                 </td>` : "")
-            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-fw fa-pencil  fa-lg fa-fw'></span></button>" : "")
+            .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
             .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
     };
 
@@ -798,7 +803,7 @@
                 inpCtrl.setValue(inpCtrl.DefaultValue);
 
             // DefaultValueExpression
-            if (this.Mode.isNew && inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
+            if (inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Code) {
                 let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                 let val = fun();
                 inpCtrl.setValue(val);

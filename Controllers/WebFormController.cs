@@ -60,6 +60,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     catch (Exception ex)
                     {
+                        ViewBag.formData = JsonConvert.SerializeObject( new WebformDataWrapper { Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace});
                         Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
                     }
                 }

@@ -924,7 +924,7 @@
             }.bind(this));
         }
         else {
-            var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.linkDV; }.bind(this));
+            var temp = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.LinkRefId === this.linkDV && obj.name === this.linkDVColumn; }.bind(this));
             this.dvformMode = temp[0].FormMode;
             if (temp[0].FormMode === 1) {
                 var col = temp[0].FormId.$values;
@@ -2348,7 +2348,7 @@
 
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
-        if (e.keyCode === 13 && text.length > 3) {
+        if (e.keyCode === 13 && text.length > 2) {
             //window.find(text, false, false, true);
             if (window.find && window.getSelection) {
                 document.designMode = "on";
@@ -2454,7 +2454,7 @@
     this.PopoverPlacement = function (context, source) {
         var position = $(source).position();
 
-        if (position.left > 1150)
+        if (position.left > 1000)
             return "left";
         else {
             return "right";
@@ -2616,7 +2616,8 @@
     };
 
     this.FormNewGroup = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.GroupFormParameters.$values)));
 
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
@@ -2656,7 +2657,8 @@
     };
 
     this.FormNewItem = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToMutipleParameters(this.treeColumn.ItemFormParameters.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
@@ -2695,7 +2697,8 @@
     };
 
     this.FormEditGroup = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.GroupFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
@@ -2734,7 +2737,8 @@
     };
 
     this.FormEditItem = function (key, opt, event) {
-        this.rowData = this.unformatedData[opt.$trigger.parent().parent().index()];
+        let index = opt.$trigger.parent().closest("tr").index();
+        this.rowData = this.unformatedData[index];
         let filterparams = btoa(JSON.stringify(this.formatToParameters(this.treeColumn.ItemFormId.$values)));
         if (parseInt(EbEnums.LinkTypeEnum.Popup) === this.treeColumn.LinkType) {
             $("#iFrameFormPopupModal").modal("show");
@@ -3507,6 +3511,7 @@
             colindex = parseInt($(e.target).closest("a").attr("data-colindex"));
         }
         this.linkDV = $(e.target).closest("a").attr("data-link");
+        this.linkDVColumn = $(e.target).closest("a").attr("data-column");
         var idx = this.Api.row($(e.target).parents().closest("td")).index();
         if (typeof (idx) !== "undefined")
             this.rowData = this.unformatedData[idx];
@@ -4000,8 +4005,9 @@
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         //else
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
-
-        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg' style="height: ${col.ImageHeight}px;width: ${col.ImageWidth}px;"/>`;
+        let _height = col.ImageHeight === 0 ? "auto" : col.ImageHeight +"px";
+        let _width = col.ImageWidth === 0 ? "auto" : col.ImageWidth +"px";
+        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg' style="height: ${_height};width: ${_width};"/>`;
     };
 
     this.renderDataAsLabel = function (data) {

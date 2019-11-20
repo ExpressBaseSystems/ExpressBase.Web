@@ -251,7 +251,7 @@
         }
 
         t1 = performance.now();
-        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+        //console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
 
         //}.bind(this), 0);
     };
@@ -461,7 +461,7 @@
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
         let t1 = performance.now();
-        console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
+       // console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {
@@ -557,7 +557,8 @@
         //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //}
         //else {
-        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', ebcontext.user.UserId);
+        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
         //}
     };
     this.SysModifiedBy = function (ctrl) {
@@ -566,12 +567,16 @@
         //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //    }
         //    else {
-        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', ebcontext.user.UserId);
+        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
         //    }
         //}        
     };
     this.SysCreatedAt = function (ctrl) {
-        //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+    };
+    this.SysModifiedAt = function (ctrl) {
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
 
     this.ProvisionUser = function (ctrl, ctrlopts) {

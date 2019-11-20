@@ -221,7 +221,7 @@
 }
 
 .del-row, .edit-row {
-    display: none;
+    /*display: none;*/
     position: absolute;
     height: 27px;
     top: 0px;
@@ -232,21 +232,20 @@
 .del-row {
     left: 23.5px;
     height: 26px !important;
-    color: red;
-    border-radius: 0 50px 50px 0;
+    color: #f55d5d;
+    /*border-radius: 0 50px 50px 0;*/
     direction: rtl;
-    padding-right: 0px;
-    padding-left: 5px;
+    /*padding-right: 0px;
+    padding-left: 5px;*/
 }
 
 .edit-row {
     /*left: 7.5px;*/
-    color: blue;
-    border-radius: 50px 0 0 50px;
+    color: #7171ff;
+    /*border-radius: 50px 0 0 50px;*/
     /*padding-top: 0.5px !important;*/
     padding-left: 0px;
     padding-right: 0px !important;
-    
 }
 
 .tdtxt {
@@ -259,6 +258,7 @@
     padding-top: 3px;
     background-color: transparent;
     border: none;
+    width: 50%;
 }
 
 .del-c {
@@ -272,11 +272,11 @@
 .rowc:focus {
     outline: none;
     /*box-shadow: 0px 0px 6px 0 !important;*/
-    /*background-color: white;*/
+    background-color: #eeeeef;
 }
 
 .rowc:hover {
-    background-color: white;
+    background-color: #eeeeef;
 }
 
 .check-row > .fa {
@@ -297,11 +297,11 @@
 }
 
 .edit-row:hover {
-    color: #0000af;
+    color: #1717ff;
 }
 
 .del-row:hover {
-    color: #ce0000;
+    color: #f71515;
 }
 
 .check-row:hover, .del-c:hover {
@@ -366,12 +366,13 @@ eb-disable {
 
 /*[is-editing="true"] .del-row, [is-editing="true"] .edit-row {
     display: block;
-}
+}*/
 
 [is-editing="true"] .edit-row {
     color: gray;
+    opacity: 0.5;
     pointer-events: none;
-}*/
+}
 
 .dgtbl[is-disabled='true'] .rowc {
     color: gray;
@@ -598,6 +599,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-right: 1px solid rgba(34,36,38,.15);
     border-bottom: none;*/
 }
+.Dg_body  .slno-tbl {
+    width: 34px;
+}
+.dg-body-vscroll {
+    flex-grow: 1;
+    overflow-x: auto;
+}
 
 .Dg_body > .dgtbl > tbody > tr[is-editing=true] {
     /*border-top: 1px solid #ddd;
@@ -605,6 +613,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid #eea100;
     animation: dim_border 0.8s infinite;
     transition: all 0.8s ease-in-out
+}
+
+.Dg_body {
+    display: flex;
 }
 
 .check-wraper {

@@ -75,9 +75,13 @@
             r = getrToken();
 
             $.ajax({
-                url: "/api/menu",
+                url: "/api/objects_by_app",
                 type: "GET",
                 cache: false,
+                data: {
+                    appid: 44,
+                    locid : 1
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", b);
                     xhr.setRequestHeader("rToken", r);

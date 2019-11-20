@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
@@ -16,6 +17,7 @@ using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ExpressBase.Web2.Controllers
 {
@@ -27,6 +29,40 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet("UserDashBoard")]
         public IActionResult UserDashboard()
         {
+            Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
+            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
+            ViewBag.Meta = _jsResult.AllMetas;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
+            GetUserDashBoardObjectsResponse Resp =  this.ServiceClient.Post<GetUserDashBoardObjectsResponse>(new GetUserDashBoardObjectsRequest { ObjectIds = this.LoggedInUser.GetDashBoardIds()});
+            if (Resp.DashBoardObjectIds.Count != 0)
+            {
+                if (this.LoggedInUser.Preference.DefaultDashBoard != null)
+                {
+                    ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    });
+
+                    ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
+                    ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;
+                    ViewBag.ObjType = 22;
+                    ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId);
+                    ViewBag.Status = ViewBag.GetObjectId.Status;
+                }
+                else
+                {
+                    ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds);
+                    ViewBag.GetObjectId = Resp.DashBoardObjectIds.ElementAt(0);
+                    ViewBag.VersionNumber = ViewBag.GetObjectId.Value.VersionNumber;
+                    ViewBag.ObjType = 22;
+                    ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId.Value);
+                    ViewBag.Status = ViewBag.GetObjectId.Value.Status;
+                    //ViewBag.DashBoardObjects = Resp.DashBoardObjectIds;
+                }
+            }
             return View();
         }
 

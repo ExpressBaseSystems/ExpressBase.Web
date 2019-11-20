@@ -169,6 +169,7 @@ function EbSqlJob(options) {
 
     this.start = function () {
         this.DragDrop_Items();
+        $(`#tb${this.TabNum}_SqlJob_drop_cont`).on("click", ".drpboxInt", this.elementOnFocus.bind(this));
     };
 
     this.start();

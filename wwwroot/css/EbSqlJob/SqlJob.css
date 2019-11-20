@@ -33,6 +33,7 @@
 .SqlJobItem {
     display: flex;
     justify-content: center;
+    width: 100%;
     /*margin-left : 15px;
     margin: 40px 0;
     width:150px;*/

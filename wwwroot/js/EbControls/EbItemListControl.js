@@ -93,15 +93,17 @@
         else {
             if (e.keyCode === 40) {
                 if ($liAct.nextAll(':visible').first().length > 0) {
-                    $liAct.nextAll(':visible').first().addClass('active');
+                    let $newLiAct = $liAct.nextAll(':visible').first();
+                    $newLiAct.addClass('active');
                     $liAct.removeClass('active');
-                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 40);
+                    this.$ul.scrollTop($newLiAct.offset().top - $(this.$ul.children(':visible')[0]).offset().top - 70);
                 }
             } else if (e.keyCode === 38) {
                 if ($liAct.prevAll(':visible').first().length > 0) {
-                    $liAct.prevAll(':visible').first().addClass('active');
+                    let $newLiAct = $liAct.prevAll(':visible').first();
+                    $newLiAct.addClass('active');
                     $liAct.removeClass('active');
-                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 100);
+                    this.$ul.scrollTop($newLiAct.offset().top - $(this.$ul.children(':visible')[0]).offset().top - 70);
                 }
             }
             else if (e.keyCode === 13) {

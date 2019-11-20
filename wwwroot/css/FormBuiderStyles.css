@@ -258,7 +258,7 @@
     padding-top: 3px;
     background-color: transparent;
     border: none;
-    width:50%;
+    width: 50%;
 }
 
 .del-c {
@@ -370,7 +370,7 @@ eb-disable {
 
 [is-editing="true"] .edit-row {
     color: gray;
-    opacity:0.5;
+    opacity: 0.5;
     pointer-events: none;
 }
 
@@ -599,6 +599,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-right: 1px solid rgba(34,36,38,.15);
     border-bottom: none;*/
 }
+.Dg_body  .slno-tbl {
+    width: 34px;
+}
+.dg-body-vscroll {
+    flex-grow: 1;
+    overflow-x: auto;
+}
 
 .Dg_body > .dgtbl > tbody > tr[is-editing=true] {
     /*border-top: 1px solid #ddd;
@@ -606,6 +613,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid #eea100;
     animation: dim_border 0.8s infinite;
     transition: all 0.8s ease-in-out
+}
+
+.Dg_body {
+    display: flex;
 }
 
 .check-wraper {

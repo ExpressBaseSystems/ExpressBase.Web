@@ -251,7 +251,7 @@
         }
 
         t1 = performance.now();
-        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+        //console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
 
         //}.bind(this), 0);
     };
@@ -461,7 +461,7 @@
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
         let t1 = performance.now();
-        console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
+       // console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {

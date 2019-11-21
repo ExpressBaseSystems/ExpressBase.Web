@@ -7,24 +7,66 @@
     this.CurrentTile;
     this.Wc = options.Wc;
     this.Cid = options.Cid;
+    this.objGrid;
     this.googlekey = options.googlekey || null;
+    this.DashBoardList = options.AllDashBoards || null;
     this.GenerateButtons = function () {
+
+    }
+   
+    this.DashboardDropdown = function () {
+        let k = Object.keys(this.DashBoardList);
+        let html = [`<select id="DashBoardObjectSelection">`];
+        for (let i = 1; i < k.length; i++) {
+                html.push(`<option value="${this.DashBoardList[k[i]].RefId}"> ${this.DashBoardList[k[i]].DisplayName} </option>`);
+        }
+        html.push("</select>")
+        ebcontext.header.setNameAsHtml(html.join(""));
+        $('#objname #DashBoardObjectSelection').val(this.EbObject.RefId);
+        $('#objname #DashBoardObjectSelection').on("change", this.DashBoardSwitch.bind(this));
+    };
+
+    this.DashBoardSwitch = function (e) {
+        let refid = $(`select#${e.target.getAttribute("id")} option:selected`).val();
+        //this.grid.removeAll();
+        $(".grid-stack").empty();
+        this.Version = this.DashBoardList[refid].VersionNumber;
+        this.EbObject = this.DashBoardList[refid];
+        this.Statu = this.DashBoardList[refid].Status;
+        this.TileCollection = {};
+        this.CurrentTile;
+
+        this.init();
 
     }
 
     this.init = function () {
+        //ebcontext.header.setName("EFGFh")
+        if (this.DashBoardList) {
+            this.DashboardDropdown();
+        }
+        else {
+            ebcontext.header.setName(this.EbObject.DisplayName)
+        }
+
+
         this.DrawTiles();
-        this.propGrid = new Eb_PropertyGrid({
-            id: "propGridView",
-            wc: this.Wc,
-            cid: this.Cid,
-            $extCont: $("#ppt-dash-view"),
-            isDraggable: true
-        });
-        this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
-        this.propGrid.PropertyChanged = this.popChanged.bind(this);
+
+        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
+        this.grid = $('.grid-stack').data("gridstack");
+       
+        //this.propGrid = new Eb_PropertyGrid({
+        //    id: "propGridView",
+        //    wc: this.Wc,
+        //    cid: this.Cid,
+        //    $extCont: $("#ppt-dash-view"),
+        //    isDraggable: true
+        //});
+        //this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
+        //this.propGrid.PropertyChanged = this.popChanged.bind(this);
+         //this.propGrid.ClosePG();
         $("#dashbord-user-view").on("click", ".tile-opt", this.TileOptions.bind(this));
-        this.propGrid.ClosePG();
+       
     }
 
     this.DrawTiles = function () {
@@ -194,30 +236,30 @@
         this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     };
 
-    this.popChanged = function (obj, pname, newval, oldval) {
-        if (pname === "TileCount") {
-            //   $(".grid-stack").append(`<div class="grid-stack-item ui-draggable ui-resizable" data-gs-x="0" data-gs-y="0" data-gs-width="5" data-gs-height="4">
-            //            <div class="grid-stack-item-content panel panel-primary ui-draggable-handle" id="tile1">
-            //            </div>uj
-            //        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: block;"></div></div>`)
-        }
-        if (pname == "TileRefId") {
-            $(`[name-id="${this.CurrentTile}"]`).empty();
-            $(`[data-id="${this.CurrentTile}"]`).empty();
-            $(`.eb-loader-prcbar`).remove();
-            this.VisRefid = newval;
-            $.ajax(
-                {
-                    url: '../DashBoard/DashBoardGetObj',
-                    type: 'POST',
-                    data: { refid: this.VisRefid },
-                    success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
-                });
-        }
-        if (pname === "BackgroundColor") {
-            $("#dashbord-user-view").css("background-color", "").css("background-color", newval);
-        }
-    }
+    //this.popChanged = function (obj, pname, newval, oldval) {
+    //    if (pname === "TileCount") {
+    //        //   $(".grid-stack").append(`<div class="grid-stack-item ui-draggable ui-resizable" data-gs-x="0" data-gs-y="0" data-gs-width="5" data-gs-height="4">
+    //        //            <div class="grid-stack-item-content panel panel-primary ui-draggable-handle" id="tile1">
+    //        //            </div>uj
+    //        //        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: block;"></div></div>`)
+    //    }
+    //    if (pname == "TileRefId") {
+    //        $(`[name-id="${this.CurrentTile}"]`).empty();
+    //        $(`[data-id="${this.CurrentTile}"]`).empty();
+    //        $(`.eb-loader-prcbar`).remove();
+    //        this.VisRefid = newval;
+    //        $.ajax(
+    //            {
+    //                url: '../DashBoard/DashBoardGetObj',
+    //                type: 'POST',
+    //                data: { refid: this.VisRefid },
+    //                success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+    //            });
+    //    }
+    //    if (pname === "BackgroundColor") {
+    //        $("#dashbord-user-view").css("background-color", "").css("background-color", newval);
+    //    }
+    //}
 
 
     this.init();

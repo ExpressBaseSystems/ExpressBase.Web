@@ -469,6 +469,7 @@ const WebFormRender = function (option) {
     this.saveSuccess = function (_respObj) {// need cleanup
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
+        ebcontext._formSaveResponse = respObj;
         let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
         if (this.rowId > 0) {// if edit mode 

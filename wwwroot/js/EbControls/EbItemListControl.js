@@ -21,7 +21,7 @@
         this.$cont = $(`<div class="user-list-ctrl">
                                 <div class="ulstc-disp-c">
                                     <div class="ulstc-disp-img-c" style="background-image: url(${this.options.imageAlternate});"></div>
-                                    <div class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>
+                                    <div id="${this.options.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>
                                     <i class="fa fa-sort-desc" aria-hidden="true" style="margin-left: auto;padding: 3px 10px;min-height: 26px;"></i>
                                 </div>
                                 <div class="ulstc-list-c">
@@ -93,15 +93,17 @@
         else {
             if (e.keyCode === 40) {
                 if ($liAct.nextAll(':visible').first().length > 0) {
-                    $liAct.nextAll(':visible').first().addClass('active');
+                    let $newLiAct = $liAct.nextAll(':visible').first();
+                    $newLiAct.addClass('active');
                     $liAct.removeClass('active');
-                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 40);
+                    this.$ul.scrollTop($newLiAct.offset().top - $(this.$ul.children(':visible')[0]).offset().top - 70);
                 }
             } else if (e.keyCode === 38) {
                 if ($liAct.prevAll(':visible').first().length > 0) {
-                    $liAct.prevAll(':visible').first().addClass('active');
+                    let $newLiAct = $liAct.prevAll(':visible').first();
+                    $newLiAct.addClass('active');
                     $liAct.removeClass('active');
-                    this.$ul.scrollTop($liAct.offset().top - $(this.$ul.children()[0]).offset().top - 100);
+                    this.$ul.scrollTop($newLiAct.offset().top - $(this.$ul.children(':visible')[0]).offset().top - 70);
                 }
             }
             else if (e.keyCode === 13) {

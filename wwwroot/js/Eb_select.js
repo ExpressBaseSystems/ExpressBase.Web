@@ -246,6 +246,7 @@ const EbSelect = function (ctrl, options) {
     }.bind(this);
 
     this.initComplete4SetVal = function (callBFn, StrValues) {
+        this.clearValues();
         if (this.setvaluesColl) {
             if (this.ComboObj.MultiSelect) {
                 $.each(this.setvaluesColl, function (i, val) {

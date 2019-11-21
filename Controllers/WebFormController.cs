@@ -182,23 +182,31 @@ namespace ExpressBase.Web.Controllers
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
-            string Operation = OperationConstants.NEW;
-            if (RowId > 0)
-                Operation = OperationConstants.EDIT;
-            if (!this.HasPermission(RefId, Operation, CurrentLoc))
-                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 });
+            try
+            {
+                //string Operation = OperationConstants.NEW;
+                //if (RowId > 0)
+                //    Operation = OperationConstants.EDIT;
+                //if (!this.HasPermission(RefId, Operation, CurrentLoc))
+                //    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.FORBIDDEN, RowAffected = -2, RowId = -2 });
 
-            WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
-                new InsertDataFromWebformRequest
-                {
-                    RefId = RefId,
-                    FormData = Values,
-                    RowId = RowId,
-                    CurrentLoc = CurrentLoc,
-                    UserObj = this.LoggedInUser
-                });
-            return JsonConvert.SerializeObject(Resp);
+                WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
+                InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                    new InsertDataFromWebformRequest
+                    {
+                        RefId = RefId,
+                        FormData = Values,
+                        RowId = RowId,
+                        CurrentLoc = CurrentLoc,
+                        UserObj = this.LoggedInUser
+                    });
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
+                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
         }
 
         public int DeleteWebformData(string RefId, int RowId, int CurrentLoc)

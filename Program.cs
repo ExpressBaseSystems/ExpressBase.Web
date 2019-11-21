@@ -22,7 +22,6 @@ namespace ExpressBase.Web2
                 .UseUrls(urls: "http://*:41500/")
                 .UseStartup<Startup>()
                 .Build();
-
             host.Run();
         }
     }

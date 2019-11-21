@@ -252,7 +252,7 @@ var InitControls = function (option) {
         }
 
         t1 = performance.now();
-        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+        //console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
 
         //}.bind(this), 0);
     };
@@ -481,7 +481,7 @@ var InitControls = function (option) {
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
         let t1 = performance.now();
-        console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
+       // console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {
@@ -631,7 +631,8 @@ var InitControls = function (option) {
 
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
-            itemList: ctrl.UserList.$values
+            itemList: ctrl.UserList.$values,
+            EbSid_CtxId: ctrl.EbSid_CtxId
         });
 
         ctrl.setValue = itemList.setValue;

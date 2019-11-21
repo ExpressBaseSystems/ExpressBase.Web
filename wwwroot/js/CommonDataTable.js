@@ -4005,9 +4005,9 @@
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         //else
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
-        let _height = col.ImageHeight === 0 ? "auto" : col.ImageHeight;
-        let _width = col.ImageWidth === 0 ? "auto" : col.ImageWidth;
-        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg' style="height: ${_height}px;width: ${_width}px;"/>`;
+        let _height = col.ImageHeight === 0 ? "auto" : col.ImageHeight +"px";
+        let _width = col.ImageWidth === 0 ? "auto" : col.ImageWidth +"px";
+        return `<img class='img-thumbnail columnimage' src='/images/small/${data}.jpg' style="height: ${_height};width: ${_width};"/>`;
     };
 
     this.renderDataAsLabel = function (data) {

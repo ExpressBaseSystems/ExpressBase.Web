@@ -311,7 +311,6 @@ var InitControls = function (option) {
         //        }
         //    //}, 30);
         //});
-
         //},0);
     };
 

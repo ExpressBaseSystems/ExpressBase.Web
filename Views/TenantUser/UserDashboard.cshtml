@@ -67,7 +67,7 @@
     <div class="row">
         <div class="col-sm-12">
             <div id="dashbord-user-view">
-                <div class="grid-stack"></div>
+                <div class="grid-stack" style="min-height:600px"></div>
             </div>
 
         </div>
@@ -98,6 +98,20 @@
         </script>
     }
 }
+ <script type="text/javascript">
+    $(document).ready(function () {
+    $(document).click(function (event) {
+        var clickover = $(event.target);
+        
+        if (!clickover.hasClass("DropDown4DB")) {
+            $("#UserDashBoardSwitchList").hide();
+        }
+        else {
+            $("#UserDashBoardSwitchList").show();
+        }
+    });
+});
+</script>
 <script type="text/javascript">
 //      $(function () {
 //     var options = {

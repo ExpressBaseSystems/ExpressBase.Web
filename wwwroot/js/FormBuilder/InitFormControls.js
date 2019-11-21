@@ -1,4 +1,5 @@
-﻿var InitControls = function (option) {
+﻿
+var InitControls = function (option) {
     if (option) {
         this.Bot = option.botBuilder;
         this.Wc = option.wc;
@@ -290,7 +291,28 @@
     this.SimpleSelect = function (ctrl) {
         //setTimeout(function () {
         let $input = $("#" + ctrl.EbSid_CtxId);
+        console.log("==============================");
         $input.selectpicker();
+        let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+        $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
+        $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
+        //$input.on("shown.bs.select", function () {
+        //    //setTimeout(function () {
+        //        if ($DD.attr("is-moved") !== "true") {
+        //            let drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+        //            let ofsetval = drpdwn.offset();
+        //            let divclone = $("#" + ctrl.EbSid_CtxId).parent().clone().empty();
+        //            alert(ofsetval.top);
+        //            let div_detached = drpdwn.detach();
+        //            div_detached.appendTo("body").wrap(divclone).offset({ top: (ofsetval.top), left: ofsetval.left });
+        //            let offset22 = $('.dd_of_' + ctrl.EbSid_CtxId).offset();
+        //            alert(offset22.top)
+        //            $("input").focus();
+        //            //$DD.attr("is-moved", "true");
+        //        }
+        //    //}, 30);
+        //});
+
         //},0);
     };
 
@@ -535,7 +557,7 @@
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
         }
-       
+
 
 
         //if (_rowId === undefined || _rowId === 0) {
@@ -608,7 +630,7 @@
     };
 
     this.UserSelect = function (ctrl, ctrlopts) {
-        
+
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
             itemList: ctrl.UserList.$values
@@ -624,7 +646,7 @@
     this.TextBox = function (ctrl, ctrlopts) {
         if (ctrl.AutoSuggestion === true) {
             $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
-        }   
+        }
     };
 
     this.Numeric = function (ctrl) {

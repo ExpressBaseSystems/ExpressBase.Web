@@ -291,7 +291,6 @@ var InitControls = function (option) {
     this.SimpleSelect = function (ctrl) {
         //setTimeout(function () {
         let $input = $("#" + ctrl.EbSid_CtxId);
-        console.log("==============================");
         $input.selectpicker();
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
         $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);

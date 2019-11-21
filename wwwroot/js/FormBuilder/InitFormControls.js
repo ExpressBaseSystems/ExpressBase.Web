@@ -611,7 +611,8 @@
         
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
-            itemList: ctrl.UserList.$values
+            itemList: ctrl.UserList.$values,
+            EbSid_CtxId: ctrl.EbSid_CtxId
         });
 
         ctrl.setValue = itemList.setValue;

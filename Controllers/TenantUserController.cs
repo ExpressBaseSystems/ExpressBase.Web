@@ -31,7 +31,16 @@ namespace ExpressBase.Web2.Controllers
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
-            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
+            try
+            {
+                Console.WriteLine("############################ ======------Google Key : " + Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY));
+                ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("key not found" + e.Message + e.StackTrace );
+            }
+           
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;

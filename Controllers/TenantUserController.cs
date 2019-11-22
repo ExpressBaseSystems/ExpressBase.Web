@@ -36,9 +36,15 @@ namespace ExpressBase.Web2.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
 
-            GetUserDashBoardObjectsResponse Resp =  this.ServiceClient.Post<GetUserDashBoardObjectsResponse>(new GetUserDashBoardObjectsRequest { ObjectIds = this.LoggedInUser.GetDashBoardIds()});
+            GetUserDashBoardObjectsResponse Resp = this.ServiceClient.Post(new GetUserDashBoardObjectsRequest
+            {
+                ObjectIds = this.LoggedInUser.GetDashBoardIds(),
+                SolutionOwner = (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) ? true : false
+            });
+
             if (Resp.DashBoardObjectIds.Count != 0)
             {
+                ViewBag.ObjType = 22;
                 if (this.LoggedInUser.Preference.DefaultDashBoard != null)
                 {
                     ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds, new JsonSerializerSettings
@@ -48,7 +54,6 @@ namespace ExpressBase.Web2.Controllers
 
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
                     ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;
-                    ViewBag.ObjType = 22;
                     ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId);
                     ViewBag.Status = ViewBag.GetObjectId.Status;
                 }
@@ -57,7 +62,7 @@ namespace ExpressBase.Web2.Controllers
                     ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds);
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds.ElementAt(0);
                     ViewBag.VersionNumber = ViewBag.GetObjectId.Value.VersionNumber;
-                    ViewBag.ObjType = 22;
+
                     ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId.Value);
                     ViewBag.Status = ViewBag.GetObjectId.Value.Status;
                     //ViewBag.DashBoardObjects = Resp.DashBoardObjectIds;

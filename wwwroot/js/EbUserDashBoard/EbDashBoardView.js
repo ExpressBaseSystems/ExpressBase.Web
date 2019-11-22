@@ -16,18 +16,35 @@
    
     this.DashboardDropdown = function () {
         let k = Object.keys(this.DashBoardList);
-        let html = [`<select id="DashBoardObjectSelection">`];
+        let html = [`<div id="UserDashBoardSwitchList" class="DropMenuUserDash"  hide>`];
+        ebcontext.header.setNameAsHtml(`<button class="DropDown4DB" id="UserDashBoardSwitchBtn"> ${this.EbObject.DisplayName} <span class="caret"></span> </button> `);
         for (let i = 1; i < k.length; i++) {
-                html.push(`<option value="${this.DashBoardList[k[i]].RefId}"> ${this.DashBoardList[k[i]].DisplayName} </option>`);
-        }
-        html.push("</select>")
-        ebcontext.header.setNameAsHtml(html.join(""));
+            html.push(`<div style="padding:3px;"> <button class="Btn4SwitchDB btn btn-default" type="button" value="${this.DashBoardList[k[i]].RefId}">${this.DashBoardList[k[i]].DisplayName} </button></div>`);
+        } 
+        html.push("</div>");
+        $("body").append(html.join(""));
         $('#objname #DashBoardObjectSelection').val(this.EbObject.RefId);
-        $('#objname #DashBoardObjectSelection').on("change", this.DashBoardSwitch.bind(this));
+        $('.Btn4SwitchDB').on("click", this.DashBoardSwitch.bind(this));
+        $('#objname #UserDashBoardSwitchBtn').on("click", this.DashBoardSwitchMenuShow.bind(this));
+        $('#objname #UserDashBoardSwitchBtn').on("focusout", this.DashBoardSwitchMenuHide.bind(this));
     };
+    
+    this.DashBoardSwitchMenuShow = function () {
+        var p = $("#UserDashBoardSwitchBtn").last();
+        var offset = p.offset();
+        $("#UserDashBoardSwitchList").css({ "top": ( offset.top + 18), "left": offset.left});
+        $("#UserDashBoardSwitchList").toggle();
+        
+    }
+    this.DashBoardSwitchMenuHide = function () {
+       // $("#UserDashBoardSwitchList").hide();
+        
+    }
 
     this.DashBoardSwitch = function (e) {
-        let refid = $(`select#${e.target.getAttribute("id")} option:selected`).val();
+        $('.Btn4SwitchDB').removeAttr("disabled");
+        let refid = e.target.getAttribute("value");
+        $(`[Value=${refid}]`).attr("disabled", true);
         //this.grid.removeAll();
         $(".grid-stack").empty();
         this.Version = this.DashBoardList[refid].VersionNumber;
@@ -41,6 +58,8 @@
     }
 
     this.init = function () {
+        $(".grid-stack").removeAttr("style");
+        
         //ebcontext.header.setName("EFGFh")
         if (this.DashBoardList) {
             this.DashboardDropdown();
@@ -48,7 +67,7 @@
         else {
             ebcontext.header.setName(this.EbObject.DisplayName)
         }
-
+        $(`[Value=${this.EbObject.RefId}]`).attr("disabled", true);
 
         this.DrawTiles();
 
@@ -168,7 +187,7 @@
     this.TileRefidChangesuccess = function (id, data) {
         this.GetFilterValues();
         let obj = JSON.parse(data);
-        $(`[name-id="${id}"]`).append(obj.DisplayName);
+        $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
         this.TileCollection[id].TileObject = obj;
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
 
@@ -264,4 +283,3 @@
 
     this.init();
 }
-

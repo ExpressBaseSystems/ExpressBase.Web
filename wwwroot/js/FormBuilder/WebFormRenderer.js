@@ -199,14 +199,12 @@ const WebFormRender = function (option) {
 
         $.each(this.EditModeFormData, function (CtrlName, Data) {
             // data except DGs
-            if (CtrlName === this.FormObj.Name)
-            {
+            if (CtrlName === this.FormObj.Name) {
                 this.EditModeFormData[this.FormObj.TableName] = SourceEditModeFormDataExceptDG;
                 delete this.EditModeFormData[this.FormObj.Name];
             }
             // data DGs
-            else
-            {
+            else {
 
                 let DG = getObjByval(this.DGs, "Name", CtrlName);
                 if (!DG)
@@ -466,6 +464,26 @@ const WebFormRender = function (option) {
         return JSON.stringify(WebformData);
     };
 
+    this.RefreshOuterFormControls = function () {
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let ctrl = this.flatControls[i];
+            let val = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", ctrl.Name).Value;
+            ctrl.reset(val);
+        }
+    };
+
+    this.RefreshDGControlValues = function () {
+        for (let key in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[key];
+            DGB.resetControlValues(this.EditModeFormData[DGB.ctrl.TableName]);
+        }
+    };
+
+    this.RefreshFormControlValues = function () {
+        this.RefreshOuterFormControls();
+        this.RefreshDGControlValues();
+    };
+
     this.saveSuccess = function (_respObj) {// need cleanup
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
@@ -478,6 +496,7 @@ const WebFormRender = function (option) {
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
+                this.RefreshFormControlValues();
                 this.SwitchToViewMode();
             }
             else if (respObj.RowAffected === -2) {
@@ -494,6 +513,7 @@ const WebFormRender = function (option) {
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
+                this.RefreshFormControlValues();
                 this.SwitchToViewMode();
             }
             else if (respObj.RowId === -2) {
@@ -995,9 +1015,19 @@ const WebFormRender = function (option) {
         else if (reqstMode === "Preview Mode") {
             this.mode = "New Mode";////////////
         }
-        this.headerObj.setName(_formObj.DisplayName);
+
+        let title_val = '';
+        try {
+            if (_formObj.TitleExpression && _formObj.TitleExpression.Code && _formObj.TitleExpression.Code !== '') {
+                if (this.formObject) {
+                    title_val = " - " + new Function("form", "user", atob(_formObj.TitleExpression.Code)).bind('', this.formObject, ebcontext.user)();
+                }
+            }
+        }
+        catch (e) {console.log("Error in title expression  "+ e.message)}
+        this.headerObj.setName(_formObj.DisplayName + title_val);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-        $('title').text(this.FormObj.DisplayName + `(${reqstMode})`);
+        $('title').text(this.FormObj.DisplayName + title_val+ `(${reqstMode})`);
 
         if (this.isPartial === "True") {
             this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);

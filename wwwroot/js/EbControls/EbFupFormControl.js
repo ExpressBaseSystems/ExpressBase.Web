@@ -41,18 +41,19 @@
         $(`#${this.Options.Container}-file-input`).off("change").on("change", this.browse.bind(this));
         $(`#${this.Options.Container}-upload-lin`).off("click").on("click", this.upload.bind(this));
         this.Modal.on("show.bs.modal", this.onToggleM.bind(this));
-        $("body").on("click", ".FUP_Head_W>.ebbtn", function (e) {
-            let $e = $(e.target).closest(".FUP_Head_W>.ebbtn");
-            if (((e.which == 13) || (e.keyCode === 13)) && $e.length !== 1) {
-                e.preventDefault();
+        $(`#${this.Options.Container}_Upl_btn`).keypress(function (e) {
+            if ((e.which == 13) || (e.keyCode === 13)) {
+                this.click();
             }
-        })
-        //$(document).keypress(function (e) {
+        });
+
+        //$("body").on("click", ".FUP_Head_W>.ebbtn", function (e) {
         //    let $e = $(e.target).closest(".FUP_Head_W>.ebbtn");
         //    if (((e.which == 13) || (e.keyCode === 13)) && $e.length !== 1) {
         //        e.preventDefault();
         //    }
-        //});
+        //})
+        
     };
 
     multiThumbFlow() {
@@ -569,7 +570,7 @@
         let isVisible = (this.Options.DisableUpload) ? "none" : "block";
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
                                                      <div class="FUP_Head_W" style="display:${isVisible}">
-                                                        <button id="${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right"><i class="fa fa-upload"></i> Upload</button>
+                                                         <div tabindex = "0" id = "${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right" > <i class="fa fa-upload"></i> Upload</div>
                                                      </div>
                                                      <div class="FUP_Bdy_W">
                                                      </div>

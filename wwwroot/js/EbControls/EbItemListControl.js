@@ -21,7 +21,7 @@
         this.$cont = $(`<div class="user-list-ctrl">
                                 <div class="ulstc-disp-c">
                                     <div class="ulstc-disp-img-c" style="background-image: url(${this.options.imageAlternate});"></div>
-                                    <div class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>
+                                    <div id="${this.options.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>
                                     <i class="fa fa-sort-desc" aria-hidden="true" style="margin-left: auto;padding: 3px 10px;min-height: 26px;"></i>
                                 </div>
                                 <div class="ulstc-list-c">

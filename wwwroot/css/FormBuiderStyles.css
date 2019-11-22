@@ -357,17 +357,27 @@
     }
 
 .addrow-btn {
+    box-shadow: inset 0px 1px 0px 0px #a4e271;
+    background: linear-gradient(to bottom,#00D036 5%, #3ebf09 100%);
+    background-color: #00D036;
+    border: 1px solid #c1c1c1;
+    border-bottom: none;
     display: inline-block;
-    background-color: #00d036;
+    cursor: pointer;
+    color: white;
+    padding: 2px 10px;
+    /*text-shadow: 0px 1px 0px #528009;*/
     position: absolute;
     top: 3.5px;
     right: 0;
-    border: 1px solid #c1c1c1;
-    border-bottom: none;
-    color: white;
-    padding: 2px 5px;
-    cursor: pointer;
 }
+
+    .addrow-btn:hover {
+        background: linear-gradient(to bottom, #3ebf09 5%, #00D036 100%);
+        background-color: #00D036;
+    }
+
+
 
 [eb-form="true"][mode="view"] .addrow-btn {
     display: none;

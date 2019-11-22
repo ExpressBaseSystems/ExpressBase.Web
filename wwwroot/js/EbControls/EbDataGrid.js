@@ -265,11 +265,11 @@
                 return ctrl.initializer.columnVals[colName];
             }.bind(this, inpCtrl);
         }
-        else {
-            inpCtrl.setValue = function (p1) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
-            };//temporary init
-        }
+        //else {
+        //    inpCtrl.setValue = function (p1) {
+        //        $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
+        //    };//temporary init
+        //}
         let t1 = performance.now();
         //console.dev_log("DataGrid : initCtrl4EditMode took " + (t1 - t0) + " milliseconds.");
     };

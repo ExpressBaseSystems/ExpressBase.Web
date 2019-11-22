@@ -466,6 +466,26 @@ const WebFormRender = function (option) {
         return JSON.stringify(WebformData);
     };
 
+    this.RefreshOuterFormControls = function () {
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let ctrl = this.flatControls[i];
+            let val = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", ctrl.Name).Value;
+            ctrl.reset(val);
+        }
+    };
+
+    this.RefreshDGControlValues = function () {
+        for (let key in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[key];
+            DGB.resetControlValues(this.EditModeFormData[DGB.ctrl.TableName]);
+        }
+    };
+
+    this.RefreshFormControlValues = function () {
+        this.RefreshOuterFormControls();
+        this.RefreshDGControlValues();
+    };
+
     this.saveSuccess = function (_respObj) {// need cleanup
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
@@ -477,6 +497,7 @@ const WebFormRender = function (option) {
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
+                this.RefreshFormControlValues();
                 this.SwitchToViewMode();
             }
             else if (respObj.RowAffected === -2) {
@@ -493,6 +514,7 @@ const WebFormRender = function (option) {
                 this.EditModeFormData = respObj.FormData.MultipleTables;
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
+                this.RefreshFormControlValues();
                 this.SwitchToViewMode();
             }
             else if (respObj.RowId === -2) {

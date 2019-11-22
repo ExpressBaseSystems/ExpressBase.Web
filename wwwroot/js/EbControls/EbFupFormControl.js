@@ -41,18 +41,19 @@
         $(`#${this.Options.Container}-file-input`).off("change").on("change", this.browse.bind(this));
         $(`#${this.Options.Container}-upload-lin`).off("click").on("click", this.upload.bind(this));
         this.Modal.on("show.bs.modal", this.onToggleM.bind(this));
-        $("body").on("click", ".FUP_Head_W>.ebbtn", function (e) {
-            let $e = $(e.target).closest(".FUP_Head_W>.ebbtn");
-            if (((e.which == 13) || (e.keyCode === 13)) && $e.length !== 1) {
-                e.preventDefault();
-            }
-        })
-        //$(document).keypress(function (e) {
+
+        //$("body").on("click", ".FUP_Head_W>.ebbtn", function (e) {
         //    let $e = $(e.target).closest(".FUP_Head_W>.ebbtn");
         //    if (((e.which == 13) || (e.keyCode === 13)) && $e.length !== 1) {
         //        e.preventDefault();
         //    }
-        //});
+        //})
+        $(document).keypress(function (e) {
+            let $e = $(e.target).closest(".FUP_Head_W>.ebbtn");
+            if (((e.which == 13) || (e.keyCode === 13)) && $e.length !== 1) {
+                e.preventDefault();
+            }
+        });
     };
 
     multiThumbFlow() {

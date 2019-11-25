@@ -992,7 +992,7 @@
         console.dev_log("ctrlToSpan_td " + (performance.now() - t0) + " milliseconds.");
     }.bind(this);
 
-    this.AllRequired_valid_Check = function (rowid) {//////
+    this.RowRequired_valid_Check = function (rowid = this.curRowId) {//////
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         $.each(this.AllRowCtrls[rowid], function (i, Col) {
@@ -1004,10 +1004,13 @@
             }
         }.bind(this));
 
-        if ($notOk1stCtrl)
-            $notOk1stCtrl.select();
+        if ($notOk1stCtrl) {
+            setTimeout(function () {
+                $notOk1stCtrl.select();
+            }.bind(this), 500);
+        }
         return required_valid_flag;
-    };
+    }.bind(this);
 
     this.rowInit_E = function ($tr) {
         let rowid = $tr.attr("rowid");
@@ -1141,7 +1144,7 @@
         let $tr = $td.closest("tr");
         $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
-        if (!this.AllRequired_valid_Check(rowid))
+        if (!this.RowRequired_valid_Check(rowid))
             return false;
         $td.find(".check-row").hide();
         $td.find(".del-row").show();
@@ -1677,6 +1680,7 @@
     this.init = function () {
         this.ctrl.currentRow = [];//try make obj
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
+        this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

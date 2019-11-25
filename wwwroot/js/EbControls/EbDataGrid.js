@@ -219,7 +219,7 @@
                         inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
                         let $td = $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]`);
                         //$('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
-                        //this.ctrlToSpan_td($td); /// need to recheck
+                        //this.ctrlToSpan_td($td); /// need to recheck 
                     }
                 }.bind(this));
                 let bt1 = performance.now();
@@ -1151,7 +1151,7 @@
         $addRow.show().attr("is-editing", "true");
 
         this.ctrlToSpan_row(rowid);
-        if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
+        if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable && !e.originalEvent)
             this.addRow();
         else
             this.setCurRow($addRow.attr("rowid"));

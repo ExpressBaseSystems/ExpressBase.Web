@@ -220,14 +220,23 @@
     border: 0 !important;
 }
 
-/*[is-editing="true"] .edit-row {
+[is-editing="true"][is-checked="false"] .cancel-row {
+    display:none;
+}
+
+[is-editing="true"][is-checked="false"] .del-row {
+    display:block;
+}
+
+[is-editing="true"][is-checked="false"] .edit-row {
+    display: block;
     color: gray;
     opacity: 0.5;
     pointer-events: none;
-}*/
+}
 
 
-[is-editing="true"] .del-row, [is-editing="true"] .edit-row {
+[is-editing="true"] .del-row, [is-editing="true"][is-checked="true"] .edit-row {
     display: none;
 }
 
@@ -265,8 +274,10 @@
 }
 
 .check-row {
+    display: none;
     color: #019a01;
 }
+
 .tdtxt {
     display: none;
     padding: 5px 6px;
@@ -1282,7 +1293,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     vertical-align: middle;
 }
 
-.Dg_head .dgtbl > thead > tr > th:first-child {
+    .Dg_head .dgtbl > thead > tr > th:first-child {
         font-size: 11px;
         width: 34px;
         padding: 0;

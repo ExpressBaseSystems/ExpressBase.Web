@@ -215,8 +215,10 @@
                 let bt0 = performance.now();
                 $.each(inpCtrls, function (i, inpCtrl) {
                     this.initCtrl4EditMode(inpCtrl);
-                    if (!inpCtrl.DoNotPersist)
+                    if (!inpCtrl.DoNotPersist) {
                         inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
+                        $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
+                    }
                 }.bind(this));
                 let bt1 = performance.now();
                 //console.dev_log("DataGrid : 1st loop took " + (bt1 - bt0) + " milliseconds.");

@@ -217,7 +217,9 @@
                     this.initCtrl4EditMode(inpCtrl);
                     if (!inpCtrl.DoNotPersist) {
                         inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
-                        $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
+                        let $td = $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]`);
+                        //$('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
+                        //this.ctrlToSpan_td($td); /// need to recheck
                     }
                 }.bind(this));
                 let bt1 = performance.now();

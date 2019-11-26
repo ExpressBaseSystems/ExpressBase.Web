@@ -1716,7 +1716,11 @@
         this.defineRowCount();
 
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".addrow-btn", this.addRowBtn_click);
-
+        $(`#${this.ctrl.EbSid}addrow`).keypress(function (e) {
+            if ((e.which == 13) || (e.keyCode === 13)) {
+                this.addRowBtn_click();
+            }
+        }.bind(this));
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".cancel-row", this.cancelRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

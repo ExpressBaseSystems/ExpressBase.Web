@@ -10,9 +10,12 @@
     this.objGrid;
     this.googlekey = options.googlekey || null;
     this.DashBoardList = options.AllDashBoards || null;
-    this.GenerateButtons = function () {
 
+    this.GridStackInit = function () {
+        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
+        this.grid = $('.grid-stack').data("gridstack");
     }
+    this.GridStackInit();
    
     this.DashboardDropdown = function () {
         let k = Object.keys(this.DashBoardList);
@@ -24,9 +27,9 @@
         html.push("</div>");
         $("body").append(html.join(""));
         $('#objname #DashBoardObjectSelection').val(this.EbObject.RefId);
-        $('.Btn4SwitchDB').on("click", this.DashBoardSwitch.bind(this));
-        $('#objname #UserDashBoardSwitchBtn').on("click", this.DashBoardSwitchMenuShow.bind(this));
-        $('#objname #UserDashBoardSwitchBtn').on("focusout", this.DashBoardSwitchMenuHide.bind(this));
+        $('.Btn4SwitchDB').off("click").on("click", this.DashBoardSwitch.bind(this));
+        $('#objname #UserDashBoardSwitchBtn').off("click").on("click", this.DashBoardSwitchMenuShow.bind(this));
+        $('#objname #UserDashBoardSwitchBtn').off("focusout").on("focusout", this.DashBoardSwitchMenuHide.bind(this));
     };
     
     this.DashBoardSwitchMenuShow = function () {
@@ -42,6 +45,7 @@
     }
 
     this.DashBoardSwitch = function (e) {
+
         $('.Btn4SwitchDB').removeAttr("disabled");
         let refid = e.target.getAttribute("value");
         $(`[Value=${refid}]`).attr("disabled", true);
@@ -62,17 +66,18 @@
         
         //ebcontext.header.setName("EFGFh")
         if (this.DashBoardList) {
+           
             this.DashboardDropdown();
         }
         else {
-            ebcontext.header.setName(this.EbObject.DisplayName)
+            ebcontext.header.setName(this.EbObject.DisplayName);
         }
         $(`[Value=${this.EbObject.RefId}]`).attr("disabled", true);
-
+        $("title").empty().append(this.EbObject.DisplayName);
+   
         this.DrawTiles();
 
-        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
-        this.grid = $('.grid-stack').data("gridstack");
+       
        
         //this.propGrid = new Eb_PropertyGrid({
         //    id: "propGridView",
@@ -84,7 +89,7 @@
         //this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         //this.propGrid.PropertyChanged = this.popChanged.bind(this);
          //this.propGrid.ClosePG();
-        $("#dashbord-user-view").on("click", ".tile-opt", this.TileOptions.bind(this));
+        $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
        
     }
 
@@ -111,26 +116,41 @@
                         }
                 }
                 if (flag == true) {
-                    $(".grid-stack").append(`<div class="grid-stack-item " data-gs-x=${x} data-gs-y=${y} data-gs-width=${dw} data-gs-height=${dh} id=${tile_id}>
-                    <div class="grid-stack-item-content" id=${t_id}>
+                    $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
+                    <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" id="">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}">
+                    <i class="fa fa-refresh tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
+                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
                     </div></div>
-                    <div data-id="${t_id}" class="db-tbl-wraper"></div>
-                    </div></div>`);
+                    <div data-id="${t_id}" class="db-tbl-wraper">
+                    </div></div></div>`), x, y, dw, dh, false);
+                    //$(".grid-stack").append(`<div class="grid-stack-item " data-gs-x=${x} data-gs-y=${y} data-gs-width=${dw} data-gs-height=${dh} id=${tile_id}>
+                    //<div class="grid-stack-item-content" id=${t_id}>
+                    //<div style="display:flex" id="">
+                    //<div class="db-title" name-id="${t_id}" style="display:float"></div>
+                    //<div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    //</div></div>
+                    //<div data-id="${t_id}" class="db-tbl-wraper"></div>
+                    //</div></div>`);
+                    //this.CurrentTile = t_id;
+                    //this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
+                    //let refid = this.EbObject.Tiles.$values[i].RefId;
+                    //if (refid !== "") {
+                    //    $.ajax(
+                    //        {
+                    //            url: '../DashBoard/DashBoardGetObj',
+                    //            type: 'POST',
+                    //            data: { refid: refid },
+                    //            success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                    //        });
+                    //}
                     this.CurrentTile = t_id;
                     this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                     let refid = this.EbObject.Tiles.$values[i].RefId;
-                    if (refid !== "") {
-                        $.ajax(
-                            {
-                                url: '../DashBoard/DashBoardGetObj',
-                                type: 'POST',
-                                data: { refid: refid },
-                                success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
-                            });
-                    }
+                    this.Ajax4fetchVisualization(refid);
+
                 }
             }
             this.Tilecontext()
@@ -138,9 +158,22 @@
         }
     }
 
+    this.Ajax4fetchVisualization = function (refid) {
+        if (refid !== "") {
+            $.ajax(
+                {
+                    url: '../DashBoard/DashBoardGetObj',
+                    type: 'POST',
+                    data: { refid: refid },
+                    success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                });
+        }
+    }
+
 
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
+        this.CurrentTile = tileid;
         var id = e.target.getAttribute("link");
         if (id === "ext-link") {
             let TileRefid = this.TileCollection[tileid].RefId;
@@ -162,6 +195,11 @@
 
             _form.submit();
             document.body.removeChild(_form);
+        }
+        if (id === "restart-tile") {
+            $(`[data-id="${this.CurrentTile}"]`).empty();
+            let Refid = this.TileCollection[tileid].RefId;
+            this.Ajax4fetchVisualization(Refid);
         }
     }
 

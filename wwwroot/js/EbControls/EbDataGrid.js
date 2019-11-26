@@ -1432,8 +1432,8 @@
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.resetBuffers();
-        if (!this.ctrl.IsDisable && isAddrow)
-            this.addRow();
+        //if (!this.ctrl.IsDisable && isAddrow)
+        //    this.addRow();
     };
 
     this.updateRowByRowIndex = function (rowIdx, rowData) {

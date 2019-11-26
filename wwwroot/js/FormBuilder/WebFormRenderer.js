@@ -481,7 +481,11 @@ const WebFormRender = function (option) {
     this.RefreshDGControlValues = function () {
         for (let key in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[key];
-            DGB.resetControlValues(this.EditModeFormData[DGB.ctrl.TableName]);
+            let singleTable = this.EditModeFormData[DGB.ctrl.TableName];
+            if (singleTable)
+                DGB.resetControlValues(singleTable);
+            else
+                DGB.clearDG();
         }
     };
 

@@ -628,24 +628,24 @@
 
     this.getTdHtml = function (inpCtrl, col, i) {
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
-                    <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
+                    <div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
-                </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+                </td>`.replace("@isReadonly@", col.IsDisable).replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getCtrlHTML = function (col, inpCtrl) {
-        return `<div id='@ebsid@Wraper' class='ctrl-cover'>
+        return `<div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@'>
                     ${col.DBareHtml || inpCtrl.BareControlHtml}
-                </div>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+                </div>`.replace("@isReadonly@", col.IsDisable).replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getTdHtml_E = function (inpCtrl, col, i, editModeDataCellObj) {
         if (!inpCtrl.DoNotPersist)
             inpCtrl.__eb_EditMode_val = editModeDataCellObj.Value;
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
-                    <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
+                    <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'><span>${(col.DoNotPersist && !col.IsSysControl) ? "" : editModeDataCellObj.DisplayMember}</span ></div >                                               
-                </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+                </td>`.replace("@isReadonly@", col.IsDisable).replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getCogsTdHtml = function (isAnyColEditable) {

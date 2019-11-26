@@ -1054,6 +1054,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
+.ctrl-cover[eb-readonly="true"] .v-select .selected-tag .close, .ctrl-cover[eb-readonly="true"] .v-select [type="search"] {
+    display: none !important;
+}
+
+.ctrl-cover[eb-readonly="true"] .v-select .selected-tag {
+    filter: grayscale(0.3);
+}
+
 [isrendermode="false"] .Eb-ctrlContainer .ctrl-cover input, [isrendermode="false"] .Eb-ctrlContainer .ctrl-cover .radio-wrap {
     pointer-events: none;
 }

@@ -11,6 +11,10 @@
         _objName.text(`${name}`);
     };
 
+    this.setNameAsHtml = function (html) {
+        _objName.html(`${html}`);
+    };
+
     this.setMode = function (html) {
         _objName.append(`${html}`);
     };

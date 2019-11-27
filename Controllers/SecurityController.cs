@@ -90,7 +90,12 @@ namespace ExpressBase.Web.Controllers
 			string mode = "user";
 			if (isTenant())
 				mode = "tenant";
-			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
+			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { 
+                WC = ViewBag.wc , 
+                DBIds = this.LoggedInUser.GetDashBoardIds() , 
+                IsSolutionOwner = (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) ? true : false
+
+            });
 
             Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
 
@@ -116,6 +121,7 @@ namespace ExpressBase.Web.Controllers
 
             ViewBag.LocsData = _locs;
             ViewBag.UserData = fr.UserData;
+            ViewBag.RefIds = fr.RefIds;
 			ViewBag.Mode = mode;
 			return View();
 		}

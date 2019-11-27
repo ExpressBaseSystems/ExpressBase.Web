@@ -724,3 +724,52 @@
 #dashbord-user-view .wrapper-cont, #dashbord-user-view .wrapper-cont_inner {
     height: 100% !important;
 }
+
+
+/*USER DASHBOARD*/
+#objname #DashBoardObjectSelection {
+    height: 18px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    border: none;
+}
+#objname #DashBoardObjectSelection  option {
+    border: solid 0px;
+    font-size:16px;
+}
+#UserDashBoardSwitchList {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    min-width: 185px;
+    /*padding: 5px;*/
+    margin: 2px 0 0;
+    font-size: 14px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+#UserDashBoardSwitchBtn {
+    background: #fff;
+    border: solid 0px #d6d4d4;
+    font-size: 12px;
+    height: 19px;
+    border-radius: 2px;
+}
+.Btn4SwitchDB {
+    width: 100%;
+    height: 27px;
+    text-align: left;
+    padding: 0px 0px 0px 10px;
+    border: none;
+}
+    .Btn4SwitchDB:hover {
+        background: #3586cc;
+        color: white;
+    }
+    .Btn4SwitchDB:disabled {
+        background: #dcdcdc;
+        color: black;
+    }

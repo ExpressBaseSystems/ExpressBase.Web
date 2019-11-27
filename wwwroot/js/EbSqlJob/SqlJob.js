@@ -22,15 +22,16 @@ function EB_SqlJob_entry(option) {
 function EbSqlJob(options) {
 
     this.conf = options; //Object
-
     this.Refid = options.RefId;
     this.Cid = options.Cid;
     this.ObjectType = options.ObjType;
-    this.EbObject = options.sqlJobObj;
+    this.EditObj = $.isEmptyObject(options.sqlJobObj) ? null : options.sqlJobObj;
+    this.EbObject = null;
     this.Version = options.Version;
     this.Wc = options.Wc;
     this.TabNum = options.TabNum;
     this.Procs = {};
+    this.Loops = {};
     this.Lines = {};
     this.process = [];
     this.process2 = [];
@@ -42,6 +43,8 @@ function EbSqlJob(options) {
     this.Request = { Default: [], Custom: [] };
     this.Customparams = {};
     this.drg;
+    this.source;
+    this.OuterEl = [];
 
     this.pg = new Eb_PropertyGrid({
         id: "tb" + this.TabNum + "_SqlJob_PropGrid",
@@ -50,6 +53,65 @@ function EbSqlJob(options) {
         $extCont: $("#tb" + this.TabNum + "_SqlJob_PGgrid")
     });
 
+
+    this.newSqlJob = function () {
+        this.EbObject = new EbObjects["EbSqlJob"]("tb" + options.TabNum + "SqlJob");
+        this.pg.setObject(this.EbObject, AllMetas["EbSqlJob"]);
+        //this.setLine('start', 'stop');
+        this.resetLinks();
+    };
+
+    this.editSqlJob = function () {
+        this.EbObject = new EbObjects["EbSqlJob"](this.EditObj.Name);
+        {
+            var _o = $.extend(true, {}, this.EditObj);
+            $.extend(this.EbObject, _o);
+        }
+        this.pg.setObject(this.EbObject, AllMetas["EbSqlJob"]);
+        this.EbObject.Resources.$values.length = 0;
+        this.drawSqlObj();
+        this.resetLinks();
+        this.Tilecontext();
+        //this.setRequestW(this.EbObject.Request.Default.$values);
+        //this.setRequestW(this.EbObject.Request.Custom.$values, 'custom');
+        //this.Request.Default = this.EbObject.Request.Default.$values;
+        //this.Request.Custom = this.EbObject.Request.Custom.$values;
+    };
+    this.drawSqlObj = function () {
+        var o = this.EditObj.Resources.$values;
+        let cont = $(`#${this.dropArea}`);
+        this.drawProcsEmode(o , cont);
+    }
+    this.drawProcsEmode = function (o , cont) {
+        for (let i = 0; i < o.length; i++) {
+            var ebtype = o[i].$type.split(",")[0].split(".").pop().substring(2);
+            var id = "tb" + this.conf.TabNum + ebtype + CtrlCounters[ebtype + "Counter"]++;
+            var obj = new EbObjects["Eb" + ebtype](id);
+            this.drawProcInnerMode(obj, o[i], ebtype, cont)
+            this.Procs[id] = obj;
+            if (ebtype !== "Transaction") {
+                this.RefreshControl(this.Procs[id]);
+            }
+            if ((this.Procs[id].Label == "Transaction" || this.Procs[id].Label == "Loop")) {
+                this.drg.containers.push($(`#${this.Procs[id].EbSid} .Sql_Dropable`)[0]);
+            }
+           
+        }
+    };
+
+    this.drawProcInnerMode = function (obj, ext, ebtype, cont ) {
+        $.extend(obj, ext);
+        cont.append(obj.$Control.outerHTML());
+        if (ebtype === "Transaction" || ebtype === "Loop") {
+            var o = obj.InnerResources.$values;
+            let cont = $(`#${this.dropArea} #${obj.EbSid} .Sql_Dropable`);
+            this.drawProcsEmode(o , cont);
+        }
+    }
+
+    this.drawProcInner2Mode = function () {
+
+    }
 
     this.DragDrop_Items = function () {
         let dritem = `tb${this.TabNum}_SqlJob_drag_cont`;
@@ -167,10 +229,89 @@ function EbSqlJob(options) {
         }
     };
 
+    this.BeforeSave = function () {
+        this.reidStat = true;
+        this.EbObject.Resources.$values.length = 0;
+        this.prepareSqlJobobject();
+        if (this.reidStat)
+            commonO.Current_obj = this.EbObject;
+        else
+            EbMessage("show", { Message: "Reference must be set!", Background: "red" });
+        return this.reidStat;
+    }
+
+    this.prepareSqlJobobject = function () {
+        var $elementsAll = $(".Sql-Job-Cont").find(".SqlJobItem");
+        var $FirstLevel = $elementsAll.not($elementsAll.children().find($elementsAll));
+        for (let i = 0; i < $FirstLevel.length; i++) {
+            this.OuterEl.push($FirstLevel[i].id);
+        }       
+        this.loopProcess($FirstLevel, this.EbObject.Resources)
+    }
+    this.loopProcess = function (ele, obj) {
+      
+        ele.each(function (i, o) {
+            if (o.getAttribute("eb-type") === "Loop" || o.getAttribute("eb-type") === "Transaction") {
+                this.Procs[o.id].RouteIndex = $(o).index();
+                this.LoopProcess2(o.id, this.Procs[o.id].InnerResources);
+            }
+            else if (o.id) {
+                this.Procs[o.id].RouteIndex = $(o).index();
+                obj.$values.push(this.Procs[o.id]);
+            }
+            else {
+                this.reidStat = false;
+                $(o).children(".drpbox").toggleClass("refIdMsetNotfy");
+            }
+        }.bind(this));
+  
+    }
+
+    this.LoopProcess2 = function (id , obj) {
+        var $elementsAll = $(`#${id} .Sql_Dropable`).find(`.SqlJobItem`);
+        var inner = $elementsAll.not($elementsAll.children().find($elementsAll));
+        this.Procs[id].InnerResources.$values.length = 0;
+        this.loopProcess(inner, this.Procs[id].InnerResources);
+        if (this.OuterEl.includes(id)) {
+            this.EbObject.Resources.$values.push(this.Procs[id]);
+        }
+        else {
+            this.Procs[id].InnerResources.$values.push(this.Procs[id])
+        }
+     
+        
+    };
+
+    this.Tilecontext = function () {
+        $.contextMenu({
+            selector: '.lineDrp',
+            trigger: 'right',
+            items: {
+                "RemoveTile": {
+                    name: "Remove", icon: "remove", callback: this.RemoveDiv.bind(this),
+                }
+            }
+        });
+    }
+    this.RemoveDiv = function (name, selector, event) {
+        selector.$trigger.closest(".SqlJobItem")[0].remove();
+        this.resetLinks();
+
+    }
+
     this.start = function () {
         this.DragDrop_Items();
+        if (this.EditObj === null || this.EditObj === "undefined") {
+            this.newSqlJob();
+        }
+        else {
+             this.editSqlJob();
+        }
+        
+       
         $(`#tb${this.TabNum}_SqlJob_drop_cont`).on("click", ".drpboxInt", this.elementOnFocus.bind(this));
     };
+
 
     this.start();
 }

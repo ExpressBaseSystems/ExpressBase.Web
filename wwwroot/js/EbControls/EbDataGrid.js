@@ -217,7 +217,9 @@
                     this.initCtrl4EditMode(inpCtrl);
                     if (!inpCtrl.DoNotPersist) {
                         inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
-                        $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
+                        let $td = $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]`);
+                        //$('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
+                        //this.ctrlToSpan_td($td); /// need to recheck 
                     }
                 }.bind(this));
                 let bt1 = performance.now();
@@ -626,24 +628,33 @@
 
     this.getTdHtml = function (inpCtrl, col, i) {
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
-                    <div id='@ebsid@Wraper' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
+                    <div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' coltype='${col.ObjType}'><span></span></div>                        
-                </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+                </td>`
+            .replace("@isReadonly@", col.IsDisable)
+            .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
+            .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getCtrlHTML = function (col, inpCtrl) {
-        return `<div id='@ebsid@Wraper' class='ctrl-cover'>
+        return `<div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>
                     ${col.DBareHtml || inpCtrl.BareControlHtml}
-                </div>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+                </div>`
+            .replace("@isReadonly@", col.IsDisable)
+            .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
+            .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getTdHtml_E = function (inpCtrl, col, i, editModeDataCellObj) {
         if (!inpCtrl.DoNotPersist)
             inpCtrl.__eb_EditMode_val = editModeDataCellObj.Value;
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
-                    <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover'>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
+                    <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'><span>${(col.DoNotPersist && !col.IsSysControl) ? "" : editModeDataCellObj.DisplayMember}</span ></div >                                               
-                </td>`.replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+                </td>`
+            .replace("@isReadonly@", col.IsDisable)
+            .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
+            .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getCogsTdHtml = function (isAnyColEditable) {
@@ -990,7 +1001,7 @@
         console.dev_log("ctrlToSpan_td " + (performance.now() - t0) + " milliseconds.");
     }.bind(this);
 
-    this.AllRequired_valid_Check = function (rowid) {//////
+    this.RowRequired_valid_Check = function (rowid = this.curRowId) {//////
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         $.each(this.AllRowCtrls[rowid], function (i, Col) {
@@ -1002,10 +1013,13 @@
             }
         }.bind(this));
 
-        if ($notOk1stCtrl)
-            $notOk1stCtrl.select();
+        if ($notOk1stCtrl) {
+            setTimeout(function () {
+                $notOk1stCtrl.select();
+            }.bind(this), 500);
+        }
         return required_valid_flag;
-    };
+    }.bind(this);
 
     this.rowInit_E = function ($tr) {
         let rowid = $tr.attr("rowid");
@@ -1139,7 +1153,7 @@
         let $tr = $td.closest("tr");
         $tr.attr("mode", "false");
         let rowid = $tr.attr("rowid");
-        if (!this.AllRequired_valid_Check(rowid))
+        if (!this.RowRequired_valid_Check(rowid))
             return false;
         $td.find(".check-row").hide();
         $td.find(".del-row").show();
@@ -1418,8 +1432,8 @@
         }.bind(this));
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         this.resetBuffers();
-        if (!this.ctrl.IsDisable && isAddrow)
-            this.addRow();
+        //if (!this.ctrl.IsDisable && isAddrow)
+        //    this.addRow();
     };
 
     this.updateRowByRowIndex = function (rowIdx, rowData) {
@@ -1675,6 +1689,7 @@
     this.init = function () {
         this.ctrl.currentRow = [];//try make obj
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
+        this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";
@@ -1710,7 +1725,11 @@
         this.defineRowCount();
 
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".addrow-btn", this.addRowBtn_click);
-
+        $(`#${this.ctrl.EbSid}addrow`).keypress(function (e) {
+            if ((e.which == 13) || (e.keyCode === 13)) {
+                this.addRowBtn_click();
+            }
+        }.bind(this));
         this.$table.on("click", ".check-row", this.checkRow_click);
         this.$table.on("click", ".cancel-row", this.cancelRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);

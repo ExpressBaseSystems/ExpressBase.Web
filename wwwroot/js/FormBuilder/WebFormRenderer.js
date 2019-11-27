@@ -467,15 +467,25 @@ const WebFormRender = function (option) {
     this.RefreshOuterFormControls = function () {
         for (let i = 0; i < this.flatControls.length; i++) {
             let ctrl = this.flatControls[i];
-            let val = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", ctrl.Name).Value;
-            ctrl.reset(val);
+            let cellObj = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", ctrl.Name);
+            if (cellObj !== undefined) {
+                let val = cellObj.Value;
+                ctrl.reset(val);
+            }
+            else {
+                ctrl.clear();
+            }
         }
     };
 
     this.RefreshDGControlValues = function () {
         for (let key in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[key];
-            DGB.resetControlValues(this.EditModeFormData[DGB.ctrl.TableName]);
+            let singleTable = this.EditModeFormData[DGB.ctrl.TableName];
+            if (singleTable)
+                DGB.resetControlValues(singleTable);
+            else
+                DGB.clearDG();
         }
     };
 
@@ -1024,10 +1034,10 @@ const WebFormRender = function (option) {
                 }
             }
         }
-        catch (e) {console.log("Error in title expression  "+ e.message)}
+        catch (e) { console.log("Error in title expression  " + e.message) }
         this.headerObj.setName(_formObj.DisplayName + title_val);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-        $('title').text(this.FormObj.DisplayName + title_val+ `(${reqstMode})`);
+        $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);
 
         if (this.isPartial === "True") {
             this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);

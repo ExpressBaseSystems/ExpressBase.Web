@@ -179,6 +179,12 @@ namespace ExpressBase.Web.Controllers
            ExecuteSqlValueExprResponse Resp = this.ServiceClient.Post<ExecuteSqlValueExprResponse>(new ExecuteSqlValueExprRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
             return Resp.Data;
         }
+        
+        public string GetDataPusherJson(string RefId)
+        {
+            GetDataPusherJsonResponse Resp = this.ServiceClient.Post<GetDataPusherJsonResponse>(new GetDataPusherJsonRequest { RefId = RefId });
+            return Resp.Json;
+        }
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
@@ -288,8 +294,7 @@ namespace ExpressBase.Web.Controllers
             s = s.ToBase64();
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
         }
-
-
+        
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try

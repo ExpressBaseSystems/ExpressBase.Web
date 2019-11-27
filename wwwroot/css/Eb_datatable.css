@@ -663,10 +663,14 @@ div.dataTables_wrapper div.dataTables_filters {
 #Imagemodal .close {
     margin-top: -36px;
 }
-
-#Imagemodal img, #Imagemodal .modal-body {
+#Imagemodal .modal-dialog {
     width: 100%;
+    margin: 0;
 }
+#Imagemodal .modal-content {
+    height: 100vh;
+}
+
 .group-All {
     background-color: #f2f2f2 !important;
 }

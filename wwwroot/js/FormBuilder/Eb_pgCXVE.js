@@ -49,7 +49,7 @@
 
         this.OnCXE_OK(PropsObj[_CurProp]);
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
-        if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15)) {
+        if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15) || this.editor < 36) {
             let func = this.PGobj.OnChangeExec[_CurProp]
             if (func) {
                 func.bind(PropsObj, this.PGobj)();// call Onchange exec for non inp field CXVEs
@@ -162,6 +162,8 @@
             this.initCSE();
         else if (this.editor === 21)
             this.initMLE(e);
+        else if (this.editor === 36)
+            this.initOSCE();
         else if (this.editor > 63) {
             this.initScrE(e);
         }
@@ -793,6 +795,245 @@
         let ObjType = $selectedOpt.attr("obj-type");
         this.OSEList = null;
         this.getOSElist("refresh");
+    };
+
+    this.initOSCE = function () {
+        this.curEditorLabel = "Object Selector Collection";
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
+            this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
+
+        let OSEbody = `<div pg-editor-type="${this.editor}" class="OSE-body">
+            <table class="table table-bordered editTbl">
+            <tbody>
+            <tr>
+            <td style="padding: 0px;">
+            <div class="CE-controls-head"> Objects </div>
+            <div class="OSEctrlsCont"> </div>
+            </td>
+            <td style="padding: 0px;">
+            <div class="CE-controls-head"> Versions </div>
+            <div class="OSE-verTile-Cont"> </div>
+            </td>
+            <td style="padding: 0px;"><div id="${this.PGobj.wraperId}_InnerPG" class="inner-PG-Cont"><div></td>
+            </tr>
+            </tbody>
+            </table>
+            </div>`;
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
+        let options = [];
+        let ObjTypes = this.CurMeta.options;
+        if (ObjTypes !== null)
+            for (let i = 0; i < ObjTypes.length; i++) { options.push(EbObjectTypes[ObjTypes[i]]); }
+        else
+            console.error("meta.options null for " + this.PGobj.CurProp + " Check C# Decoration");
+        this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
+
+        this.CE_PGObj = new Eb_PropertyGrid({
+            id: this.PGobj.wraperId + "_InnerPG",
+            IsInnerCall: true
+        }, this.PGobj);
+
+        this.getOSClist(options);
+    };
+    
+    this.getOSClist = function (options) {
+        $.LoadingOverlay("show");
+        $.ajax({
+            url: "../DV/FetchAllObjects",
+            type: "POST",
+            data: { typelist: options },
+            success: this.buildObjCollectionTree
+        });
+    };
+
+    this.buildObjCollectionTree = function (data) {
+        this.OSE_curTypeObj = data;
+        $.LoadingOverlay("hide");
+        let ObjType = null;
+        let ObjArray = [];
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").empty();
+
+        let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp].$values;//--
+        $.each(data, function (key, Val) {
+            let ExistObj = CurRefId.filter(refobj => refobj.ObjName === Val[0].name);
+            let isselected = "false";
+            if (ExistObj.length > 0)
+                isselected = "true";
+
+            if (ObjArray.indexOf(Val[0].ebObjectType) === -1) {
+                $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append(`<div> 
+                    <div class="ppgrid-tree-head" hs-id="${Val[0].ebObjectType}" style="display:flex;"> <div class="${GetObjectById(Val[0].ebObjectType).Image} ppgrid-tree-icon"></div>
+                    ${GetObjectById(Val[0].ebObjectType).Name}</div>
+                    <div id="${Val[0].ebObjectType}" class="sidebar-content">
+                    <div class="colTile" is-selected="${isselected}" tabindex="1" name ="${Val[0].name}">${Val[0].displayName.trim()}
+                        <i class="fa fa-chevron-circle-right pull-right ColT-right-arrow" aria-hidden="true"></i></div></div> 
+                    </div>`);
+                ObjArray.push(Val[0].ebObjectType);
+            }
+            else {
+                $(`#${Val[0].ebObjectType}`).append(`<div class="colTile" is-selected="${isselected}" tabindex="1" name ="${Val[0].name}"> ${Val[0].displayName.trim()}
+                        <i class="fa fa-chevron-circle-right pull-right ColT-right-arrow" aria-hidden="true"></i></div>`);
+            }
+        }.bind(this));
+
+        this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType] = data;
+        this.OSEList = this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType];
+        if ($(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").length === 0) {
+            $(this.pgCXE_Cont_Slctr + " .modal-footer .modal-footer-body").append(`
+                <div  class='input-group' style='width: 50%;'>
+                        <span class='input-group-addon'><i class='fa fa-search aria-hidden='true' class='input-group-addon'></i></span>
+                        <input class="searchinp" placeholder="Search object..." type="text"/>
+                </div>`);
+
+
+
+            $(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").off("keyup").on("keyup", this.searchObj);
+        }
+
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .ppgrid-tree-head").off("click").on("click", this.TreeHeadClick.bind(this));
+        $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("click").on("click", this.OTileClick1.bind(this, data));
+        //$(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile").off("keydown").on("keydown", this.OTileKeydown.bind(this));
+        //$(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("keydown").on("keydown", ".colTile", this.VTileKeydown.bind(this));
+        //$(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").off("dblclick").on("dblclick", ".colTile", this.VTileDblClick.bind(this));
+        if ($(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option .fa-refresh").length === 0) {
+            let $refresh = $('<i class="fa fa-refresh DD-refresh" aria-hidden="true"></i>').on("click", this.refreshDD.bind(this));
+            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-DD-cont .filter-option").append($refresh);
+        }
+        if (CurRefId.length > 0)
+            this.OTileClick1(data);
+        $(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").focus();
+    }.bind(this);
+
+    this.TreeHeadClick = function (e) {
+        let divId = e.target.getAttribute("hs-id");
+        $(`#${divId}`).toggle(100);
+    };
+
+    this.OTileClick1 = function (data) {
+        let $e = $(event.target).closest(".colTile"); 
+        let ObjArray = [];
+        let Curobj = "";
+        $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
+        let options = "";
+        $.each(this.PGobj.PropsObj[this.PGobj.CurProp].$values, function (i, obj) {
+            options = "";
+            $.each(data[obj.ObjName], function (i, innerobj) {
+                if (innerobj.versionNumber) {
+                    Curobj = innerobj;
+                    options += `<option ver-no='${innerobj.versionNumber}' value='${innerobj.versionNumber}' data-refid='${innerobj.refId}'>${innerobj.versionNumber}</option>`;
+                }
+            }.bind(this));
+
+            if (options) {
+                if (ObjArray.indexOf(Curobj.ebObjectType) === -1) {
+                    let $verheadertile = $(`<div> 
+                        <div class="ppgrid-tree-head"  style="display:flex;"> <div class="${GetObjectById(Curobj.ebObjectType).Image} ppgrid-tree-icon"></div>
+                        ${GetObjectById(Curobj.ebObjectType).Name}</div>
+                        <div id="${Curobj.ebObjectType}_version" class="sidebar-content">`);
+                    $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verheadertile);
+                    ObjArray.push(Curobj.ebObjectType);
+                }
+
+                let $verTile = $(`<div class="colTile colTile-osce" eb-type="${Curobj.ebObjectType}" name='${obj.ObjName}' is-selected="false" tabindex="1" ><div class="versionTiletext">${obj.ObjDisplayName}</div>
+                    <select  class='selectpicker'>${options}</select>
+                    <i class=" pull-right fa fa-chevron-circle-left ColT-left-arrow" aria-hidden="true"></i></div>`);
+                $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont #${Curobj.ebObjectType}_version`).append($verTile);
+                $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont .colTile[name='${obj.ObjName}'] .selectpicker`).selectpicker("refresh");
+                $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont .colTile[name='${obj.ObjName}'] .bootstrap-select .filter-option`).text(obj.Version);
+                $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont .colTile[name='${obj.ObjName}'] .selectpicker`).val(obj.Version);
+            }
+        }.bind(this));
+
+        if ($e.attr("is-selected") === "false") {
+            $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeClass("Otile-active");
+            $e.addClass("Otile-active");
+            let ObjName = $e.attr("name");
+            options = "<option>-select-</option>";
+            $.each(data[ObjName], function (i, obj) {
+                if (obj.versionNumber) {
+                    Curobj = obj;
+                    options += `<option ver-no='${obj.versionNumber}' value='${obj.versionNumber}' data-refid='${obj.refId}'>${obj.versionNumber}</option>`;
+                }
+            }.bind(this));
+
+            if (options) {
+                if (ObjArray.indexOf(Curobj.ebObjectType) === -1) {
+                    let $verheadertile = $(`<div> 
+                        <div class="ppgrid-tree-head"  style="display:flex;"> <div class="${GetObjectById(Curobj.ebObjectType).Image} ppgrid-tree-icon"></div>
+                        ${GetObjectById(Curobj.ebObjectType).Name}</div>
+                        <div id="${Curobj.ebObjectType}_version" class="sidebar-content">`);
+                    $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verheadertile);
+                    ObjArray.push(Curobj.ebObjectType);
+                }
+
+                let $verTile = $(`<div class="colTile colTile-osce" eb-type="${Curobj.ebObjectType}" name='${ObjName}' is-selected="false" eb-type= tabindex="1" ><div class="versionTiletext">${data[ObjName][0].displayName}</div>
+                        <select  class='selectpicker'>${options}</select>
+                        <i class=" pull-right" aria-hidden="true"></i></div>`);
+                $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont #${Curobj.ebObjectType}_version`).append($verTile);
+                $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont .colTile[name='${ObjName}'] .selectpicker .selectpicker`).selectpicker("refresh");
+            }
+
+        }
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .selectpicker").selectpicker().on('change', this.VTileClick1.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont i").off("click").on("click", this.VTileRemoveClick1.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .colTile").off("click").on("click", this.VTileFocus.bind(this));
+    };
+
+    this.VTileClick1 = function (data) {
+        let $e = $(event.target).closest(".colTile");
+        let ObjName = $e.attr("name");
+        $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont .colTile[name='${ObjName}']`).find("i").addClass("fa fa-chevron-circle-left ColT-left-arrow");
+        let refId = $e.find(".selectpicker option:selected").attr("data-refid");
+        let obj = "";
+        let type = "ObjectBasicVis";
+        if (parseInt(refId.split("-")[2]) === EbObjectTypes.WebForm) {
+            obj = new EbObjects.ObjectBasicForm(ObjName);
+            type = "ObjectBasicForm";
+        }
+        else
+            obj = new EbObjects.ObjectBasicVis(ObjName);
+        let versionNumber = $e.find(".selectpicker option:selected").attr("ver-no");
+        obj.Refid = refId;
+        obj.ObjDisplayName = data[ObjName][0].displayName;
+        obj.ObjName = data[ObjName][0].name;
+        obj.Version = versionNumber;
+        let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp].$values;//--
+        let ExistObj = CurRefId.filter(refobj => refobj.ObjName === ObjName);
+        if (ExistObj.length === 0)
+            this.PGobj.PropsObj[this.PGobj.CurProp].$values.push(obj);
+        else
+            ExistObj[0].Version = versionNumber;
+        $("#" + this.PGobj.wraperId + ".pgCX-Editor-Btn,[for=" + this.PGobj.CurProp + "]").attr("obj-name", ObjName);/////
+        $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").val(ObjName + ", " + $e.attr("ver-no"));
+        $("#" + this.PGobj.wraperId + " [name=" + this.PGobj.CurProp + "Tr]").find("input").attr("refid", refId);
+        this.OSECurVobj = getObjByval(this.OSE_curTypeObj[ObjName], "versionNumber", $e.attr("ver-no"));
+        $(this.pgCXE_Cont_Slctr + ` .OSEctrlsCont .colTile[name='${ObjName}']`).attr("is-selected", "true");
+        $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont .colTile[name='${ObjName}']`).trigger("click");
+    };
+
+    this.VTileFocus = function () {
+        let $e = $(event.target).closest(".colTile");
+        let name = $e.attr("name");
+        let type = $e.attr("eb-type");
+        if (parseInt(type) === EbObjectTypes.WebForm)
+            type = "ObjectBasicForm";
+        else
+            type = "ObjectBasicVis";
+        //this.loadPG($e, name);
+        let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp].$values;//--
+        let ExistObj = CurRefId.filter(refobj => refobj.ObjName === name);
+        if (ExistObj.length > 0 && type)
+            this.CE_PGObj.setObject(ExistObj[0], AllMetas[type]);
+    };
+
+    this.VTileRemoveClick1 = function () {
+        let $e = $(event.target).closest(".colTile");
+        let ObjName = $e.attr("name");
+        let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp].$values;//--
+        CurRefId = CurRefId.filter(refobj => refobj.ObjName !== ObjName);
+        $e.remove();
+        this.PGobj.PropsObj[this.PGobj.CurProp].$values = CurRefId; 
+        $(this.pgCXE_Cont_Slctr + ` .OSEctrlsCont .colTile[name='${ObjName}']`).attr("is-selected", "false");
     };
 
     this.set9ColTiles = function (containerId, values) {

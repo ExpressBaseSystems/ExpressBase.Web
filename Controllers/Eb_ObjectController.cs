@@ -280,7 +280,8 @@ namespace ExpressBase.Web.Controllers
                     dsobj.AfterRedisGet(Redis);
                     ViewBag.dsObj = dsobj;
                 }
-                EbObjAllVerForDashBoardResp result = this.ServiceClient.Get<EbObjAllVerForDashBoardResp>(new EbObjAllVerForDashBoardRqst());
+                List<int> types = new List<int>() { 14, 16, 17, 21 };
+                GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
 
                 ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
             }

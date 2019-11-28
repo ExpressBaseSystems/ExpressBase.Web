@@ -577,8 +577,11 @@ var InitControls = function (option) {
         //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //}
         //else {
-        $("#" + ctrl.EbSid_CtxId).attr('data-id', ebcontext.user.UserId);
-        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        let usrId = ebcontext.user.UserId;
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
+        $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
+        let usrImg = '/images/dp' + usrId + '.png';
+        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src',usrImg );
         //}
     };
     this.SysModifiedBy = function (ctrl) {
@@ -587,8 +590,11 @@ var InitControls = function (option) {
         //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //    }
         //    else {
-        $("#" + ctrl.EbSid_CtxId).attr('data-id', ebcontext.user.UserId);
-        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        let usrId = ebcontext.user.UserId;
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
+        $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
+        let usrImg = '/images/dp' + usrId + '.png';
+        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
         //    }
         //}        
     };

@@ -670,6 +670,14 @@ div.dataTables_wrapper div.dataTables_filters {
 #Imagemodal .modal-content {
     height: 100vh;
 }
+#Imagemodal .modal-body {
+    height: calc(100% - 65px);
+}
+#Imagemodal img {
+    display: inline-block;
+    height: 100%;
+    max-width: 100%;
+}
 
 #Imagemodal .modal-body {
     height: calc(100% - 65px);

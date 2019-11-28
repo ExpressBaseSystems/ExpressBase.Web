@@ -4008,7 +4008,8 @@
         let _height = col.ImageHeight === 0 ? "auto" : col.ImageHeight +"px";
         let _width = col.ImageWidth === 0 ? "auto" : col.ImageWidth + "px";
         let _quality = getKeyByVal(EbEnums.ImageQuality, col.ImageQuality.toString()).toLowerCase();
-        return `<img class='img-thumbnail columnimage' src='/images/${_quality}/${data}.jpg' style="height: ${_height};width: ${_width};"/>`;
+        if(data !== "")
+            return `<img class='img-thumbnail columnimage' src='/images/${_quality}/${data}.jpg' style="height: ${_height};width: ${_width};"/>`;
     };
 
     this.renderDataAsLabel = function (data) {

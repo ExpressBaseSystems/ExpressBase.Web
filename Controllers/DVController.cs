@@ -360,6 +360,14 @@ namespace ExpressBase.Web.Controllers
             return ObjDVListAll;
         }
 
+        public Dictionary<string, List<EbObjectWrapper>> FetchAllObjects(List<int> typelist)
+        {
+            GetAllCommitedObjectsResp resultlist = this.ServiceClient.Get<GetAllCommitedObjectsResp>(new GetAllCommitedObjectsRqst { Typelist = typelist });
+            var ObjDVListAll = resultlist.Data;
+
+            return ObjDVListAll;
+        }
+
         public class DvObjectWithRelatedObjects
         {
             public EbDataVisualization DsObj { get; set; }

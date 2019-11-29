@@ -2398,6 +2398,7 @@
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $(".columnMarker" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".columnimage").off("click").on("click", this.ViewImage.bind(this));
+        $(".columnimage").error( this.OnErrorImage);
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
@@ -2410,7 +2411,6 @@
                 return atob($(this).attr("data-contents"));
             },
         });
-        //$('.columntooltip').on('shown.bs.popover', this.openColumnTooltip.bind(this));
 
         $("[data-coltyp=date]").datepicker({
             dateFormat: this.datePattern.replace(new RegExp("M", 'g'), "m").replace(new RegExp("yy", 'g'), "y"),
@@ -2449,6 +2449,10 @@
         $("#Imagemodal img").Lazy();
         $("#Imagemodal").modal("show");
         //$img.attr('src', $img.attr('data-src')).removeAttr('data-src');
+    };
+
+    this.OnErrorImage = function () {
+        $(this).attr('src', '/images/image.png').off("click");
     };
 
     this.PopoverPlacement = function (context, source) {
@@ -3760,11 +3764,6 @@
         chartobj.DataSourceRefId = this.EbObject.DataSourceRefId;
         chartobj.Pippedfrom = this.EbObject.Name;
         let chartapi = eb_chart(chartobj.DataSourceRefId, null, null, chartobj, null, this.tabNum, this.ssurl, this.login, this.counter, this.MainData, btoa(JSON.stringify(this.rowData)), btoa(JSON.stringify(this.filterValues)), this.cellData, this.propGrid);
-    };
-
-    this.openColumnTooltip = function (e, i) {
-        //$(e.currentTarget).siblings(".popover").find(".popover-content").empty().append(atob($(e.currentTarget).attr("data-contents")));
-        //$(e.currentTarget).siblings(".popover").find(".arrow").remove();
     };
 
     this.collapseFilter = function () {

@@ -862,8 +862,8 @@
 
             if (ObjArray.indexOf(Val[0].ebObjectType) === -1) {
                 $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").append(`<div> 
-                    <div class="ppgrid-tree-head" hs-id="${Val[0].ebObjectType}" style="display:flex;"> <div class="${GetObjectById(Val[0].ebObjectType).Image} ppgrid-tree-icon"></div>
-                    ${GetObjectById(Val[0].ebObjectType).Name}</div>
+                    <div class="ppgrid-tree-head" hs-id="${Val[0].ebObjectType}" style="display:flex;"> <div class="fa ${ebcontext.EbObjectMeta[Val[0].ebObjectType].Icon} ppgrid-tree-icon"></div>
+                    ${ebcontext.EbObjectMeta[Val[0].ebObjectType].Name}</div>
                     <div id="${Val[0].ebObjectType}" class="sidebar-content">
                     <div class="colTile" is-selected="${isselected}" tabindex="1" name ="${Val[0].name}">${Val[0].displayName.trim()}
                         <i class="fa fa-chevron-circle-right pull-right ColT-right-arrow" aria-hidden="true"></i></div></div> 
@@ -927,8 +927,8 @@
             if (options) {
                 if (ObjArray.indexOf(Curobj.ebObjectType) === -1) {
                     let $verheadertile = $(`<div> 
-                        <div class="ppgrid-tree-head"  style="display:flex;"> <div class="${GetObjectById(Curobj.ebObjectType).Image} ppgrid-tree-icon"></div>
-                        ${GetObjectById(Curobj.ebObjectType).Name}</div>
+                        <div class="ppgrid-tree-head"  style="display:flex;"> <div class="fa ${ebcontext.EbObjectMeta[Curobj.ebObjectType].Icon} ppgrid-tree-icon"></div>
+                        ${ebcontext.EbObjectMeta[Curobj.ebObjectType].Name}</div>
                         <div id="${Curobj.ebObjectType}_version" class="sidebar-content">`);
                     $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verheadertile);
                     ObjArray.push(Curobj.ebObjectType);
@@ -944,6 +944,13 @@
             }
         }.bind(this));
 
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .selectpicker").selectpicker().on('change', this.VTileClick1.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont i").off("click").on("click", this.VTileRemoveClick1.bind(this, data));
+        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .colTile").off("click").on("click", this.VTileFocus.bind(this));
+        if (this.PGobj.PropsObj[this.PGobj.CurProp].$values.length > 0)
+            $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .colTile").eq(0).trigger("click");
+        if (this.checkLimit($e, 1000))
+            return false;
         if ($e.attr("is-selected") === "false") {
             $("#" + this.PGobj.wraperId + " .OSE-body .colTile").removeClass("Otile-active");
             $e.addClass("Otile-active");
@@ -959,8 +966,8 @@
             if (options) {
                 if (ObjArray.indexOf(Curobj.ebObjectType) === -1) {
                     let $verheadertile = $(`<div> 
-                        <div class="ppgrid-tree-head"  style="display:flex;"> <div class="${GetObjectById(Curobj.ebObjectType).Image} ppgrid-tree-icon"></div>
-                        ${GetObjectById(Curobj.ebObjectType).Name}</div>
+                        <div class="ppgrid-tree-head"  style="display:flex;"> <div class="fa ${ebcontext.EbObjectMeta[Curobj.ebObjectType].Icon} ppgrid-tree-icon"></div>
+                        ${ebcontext.EbObjectMeta[Curobj.ebObjectType].Name}</div>
                         <div id="${Curobj.ebObjectType}_version" class="sidebar-content">`);
                     $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").append($verheadertile);
                     ObjArray.push(Curobj.ebObjectType);
@@ -971,12 +978,12 @@
                         <i class=" pull-right" aria-hidden="true"></i></div>`);
                 $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont #${Curobj.ebObjectType}_version`).append($verTile);
                 $(this.pgCXE_Cont_Slctr + ` .OSE-verTile-Cont .colTile[name='${ObjName}'] .selectpicker .selectpicker`).selectpicker("refresh");
+                $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .selectpicker").selectpicker().on('change', this.VTileClick1.bind(this, data));
+                $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont i").off("click").on("click", this.VTileRemoveClick1.bind(this, data));
+                $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .colTile").off("click").on("click", this.VTileFocus.bind(this));
             }
 
         }
-        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .selectpicker").selectpicker().on('change', this.VTileClick1.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont i").off("click").on("click", this.VTileRemoveClick1.bind(this, data));
-        $(this.pgCXE_Cont_Slctr + " .modal-body .OSE-verTile-Cont .colTile").off("click").on("click", this.VTileFocus.bind(this));
     };
 
     this.VTileClick1 = function (data) {
@@ -987,11 +994,11 @@
         let obj = "";
         let type = "ObjectBasicVis";
         if (parseInt(refId.split("-")[2]) === EbObjectTypes.WebForm) {
-            obj = new EbObjects.ObjectBasicForm(ObjName);
+            obj = new EbObjects.ObjectBasicForm(ObjName+"ppty");
             type = "ObjectBasicForm";
         }
         else
-            obj = new EbObjects.ObjectBasicVis(ObjName);
+            obj = new EbObjects.ObjectBasicVis(ObjName + "ppty");
         let versionNumber = $e.find(".selectpicker option:selected").attr("ver-no");
         obj.Refid = refId;
         obj.ObjDisplayName = data[ObjName][0].displayName;
@@ -1032,7 +1039,8 @@
         let CurRefId = this.PGobj.PropsObj[this.PGobj.CurProp].$values;//--
         CurRefId = CurRefId.filter(refobj => refobj.ObjName !== ObjName);
         $e.remove();
-        this.PGobj.PropsObj[this.PGobj.CurProp].$values = CurRefId; 
+        this.PGobj.PropsObj[this.PGobj.CurProp].$values = CurRefId;
+        this.selectedCols = CurRefId;
         $(this.pgCXE_Cont_Slctr + ` .OSEctrlsCont .colTile[name='${ObjName}']`).attr("is-selected", "false");
     };
 

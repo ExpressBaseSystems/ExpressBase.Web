@@ -4010,6 +4010,8 @@
         let _quality = getKeyByVal(EbEnums.ImageQuality, col.ImageQuality.toString()).toLowerCase();
         if(data !== "")
             return `<img class='img-thumbnail columnimage' src='/images/${_quality}/${data}.jpg' style="height: ${_height};width: ${_width};"/>`;
+        else
+            return `<img class='img-thumbnail' src='/images/image.png' style="height: ${_height};width: ${_width};"/>`;
     };
 
     this.renderDataAsLabel = function (data) {

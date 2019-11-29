@@ -394,5 +394,23 @@ namespace ExpressBase.Web.Controllers
             return SCtrls;
         }
 
+        public string updateAllFormTables()
+        {
+            if (ViewBag.wc == RoutingConstants.DC && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+            {
+                try
+                {
+                    UpdateAllFormTablesResponse r = this.ServiceClient.Post<UpdateAllFormTablesResponse>(new UpdateAllFormTablesRequest());
+                    return r.Message;
+                }
+                catch(Exception e)
+                {
+                    return e.Message;
+                }
+            }
+            else
+                return ViewBag.wc;
+        }
+
     }
 }

@@ -49,14 +49,13 @@
         $('.Btn4SwitchDB').removeAttr("disabled");
         let refid = e.target.getAttribute("value");
         $(`[Value=${refid}]`).attr("disabled", true);
-        //this.grid.removeAll();
-        $(".grid-stack").empty();
+        this.grid.removeAll();
         this.Version = this.DashBoardList[refid].VersionNumber;
         this.EbObject = this.DashBoardList[refid];
         this.Statu = this.DashBoardList[refid].Status;
         this.TileCollection = {};
         this.CurrentTile;
-
+       
         this.init();
 
     }

@@ -1073,7 +1073,7 @@
             let name = Names[i];
             let ctrl = this.ctrl.currentRow[name];
             let OldVal = this.lastEditedRowvalues[name];
-            if (!(ctrl.ObjType === "PowerSelect" && OldVal === ""))
+            if (!(ctrl.ObjType === "PowerSelect" && OldVal === "") && OldVal !== ctrl.getValue())
                 ctrl.setValue(OldVal);
         }
         let td = $td[0];

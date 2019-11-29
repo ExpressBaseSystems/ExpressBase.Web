@@ -1655,7 +1655,16 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 /*-----------------Item List control End-----------------*/
 
 
-
+.sysctrl_usrimg {
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 26px;
+    width: 26px;
+}
+.sysctrl_usrname {
+    padding: 3px 10px;
+}
 
 
 

@@ -3,6 +3,7 @@ using ExpressBase.Common.Constants;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using ExpressBase.Web.Controllers;
@@ -115,7 +116,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.cide = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
                     controller.ViewBag.wc = bToken.Payload[TokenConstants.WC];
                     controller.ViewBag.email = bToken.Payload[TokenConstants.EMAIL];
-                    
+
                     controller.ViewBag.isAjaxCall = (context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest");
                     controller.ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
                     controller.ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
@@ -126,6 +127,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.UserDisplayName = this.LoggedInUser.FullName;
 
                     controller.ViewBag.UserObject = JsonConvert.SerializeObject(this.LoggedInUser);
+                    controller.ViewBag.EbObjectTypeMeta = JsonConvert.SerializeObject(this.GetObjectTypeMeta());
 
                     if (controller.ViewBag.wc == TokenConstants.UC|| controller.ViewBag.wc == TokenConstants.TC)
                     {
@@ -195,7 +197,24 @@ namespace ExpressBase.Web.BaseControllers
             {
                 Console.WriteLine("Error GetAccessLoc :" + e.StackTrace + "\n"+ e.Message);
             }
-                return _json;
+            return _json;
+        }
+
+        public Dictionary<int, EbObjectTypeWrap> GetObjectTypeMeta()
+        {
+            Dictionary<int, EbObjectTypeWrap> _dict = new Dictionary<int, EbObjectTypeWrap>();
+            foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+            {
+                _dict.Add(objectType.IntCode, new EbObjectTypeWrap
+                {
+                    Name = objectType.Alias,
+                    IntCode = objectType.IntCode,
+                    BMW = objectType.BMW,
+                    IsUserFacing = objectType.IsUserFacing,
+                    Icon = objectType.Icon
+                });
             }
+            return _dict;
+        }
     }
-    }
+}

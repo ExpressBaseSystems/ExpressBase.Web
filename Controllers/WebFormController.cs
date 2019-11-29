@@ -179,6 +179,12 @@ namespace ExpressBase.Web.Controllers
            ExecuteSqlValueExprResponse Resp = this.ServiceClient.Post<ExecuteSqlValueExprResponse>(new ExecuteSqlValueExprRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
             return Resp.Data;
         }
+        
+        public string GetDataPusherJson(string RefId)
+        {
+            GetDataPusherJsonResponse Resp = this.ServiceClient.Post<GetDataPusherJsonResponse>(new GetDataPusherJsonRequest { RefId = RefId });
+            return Resp.Json;
+        }
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
@@ -288,8 +294,7 @@ namespace ExpressBase.Web.Controllers
             s = s.ToBase64();
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
         }
-
-
+        
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try
@@ -387,6 +392,24 @@ namespace ExpressBase.Web.Controllers
             string SCtrls = string.Empty;
             SCtrls = EbSerializers.Json_Serialize(this.ServiceClient.Post<GetCtrlsFlatResponse>(new GetCtrlsFlatRequest() { RefId = refId }).Controls);
             return SCtrls;
+        }
+
+        public string updateAllFormTables()
+        {
+            if (ViewBag.wc == RoutingConstants.DC && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+            {
+                try
+                {
+                    UpdateAllFormTablesResponse r = this.ServiceClient.Post<UpdateAllFormTablesResponse>(new UpdateAllFormTablesRequest());
+                    return r.Message;
+                }
+                catch(Exception e)
+                {
+                    return e.Message;
+                }
+            }
+            else
+                return ViewBag.wc;
         }
 
     }

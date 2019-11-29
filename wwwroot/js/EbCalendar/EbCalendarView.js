@@ -94,6 +94,7 @@
             this.EbObject.Columns.$values = this.returnobj.Columns.$values;
             this.EbObject.KeyColumns.$values = this.returnobj.KeyColumns.$values;
             this.EbObject.LinesColumns.$values = this.returnobj.LinesColumns.$values;            
+            this.EbObject.DataColumns.$values = [];            
         }
         this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
     };

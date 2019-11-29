@@ -97,6 +97,23 @@ console.eb_warn = function (msg, color = "rgb(222, 112, 0)", bgcolor) {
             text-shadow: 1px 1px 1px #eef;`);
 };
 
+function GetObjectById(id) {
+    if (id === 18)
+        return { Name: "BotForm", Image: "chat1" };
+    if (id === 17)
+        return { Name: "ChartVisualization", Image: "fa fa-bar-chart" };
+    if (id === 2)
+        return { Name: "DataSource", Image: "fa fa-database.svg" };
+    if (id === 3)
+        return { Name: "Report", Image: "fa fa-file-pdf-o" };
+    if (id === 16)
+        return { Name: "TableVisualization", Image: "fa fa-table" };
+    if (id === 14)
+        return { Name: "UserControl", Image: "form1" };
+    if (id === 0)
+        return { Name: "WebForm", Image: "fa fa-wpforms" };
+};
+
 function beforeSendXhr(xhr) {
     var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
     var tok = b ? b.pop() : '';

@@ -45,6 +45,7 @@ function EbSqlJob(options) {
     this.drg;
     this.source;
     this.OuterEl = [];
+    this.ProcIdArr = [];
 
     this.pg = new Eb_PropertyGrid({
         id: "tb" + this.TabNum + "_SqlJob_PropGrid",
@@ -87,21 +88,21 @@ function EbSqlJob(options) {
             var ebtype = o[i].$type.split(",")[0].split(".").pop().substring(2);
             var id = "tb" + this.conf.TabNum + ebtype + CtrlCounters[ebtype + "Counter"]++;
             var obj = new EbObjects["Eb" + ebtype](id);
-            this.drawProcInnerMode(obj, o[i], ebtype, cont)
+            $.extend(obj, o[i]);
+            cont.append(obj.$Control[0]);
+            //this.drawProcInnerMode(obj, o[i], ebtype, cont)
             this.Procs[id] = obj;
-            if (ebtype !== "Transaction") {
-                this.RefreshControl(this.Procs[id]);
-            }
+            this.RefreshControl(this.Procs[id]);
             if ((this.Procs[id].Label == "Transaction" || this.Procs[id].Label == "Loop")) {
                 this.drg.containers.push($(`#${this.Procs[id].EbSid} .Sql_Dropable`)[0]);
+                this.drawProcsEmode(this.Procs[id].InnerResources.$values, $(`#${this.Procs[id].EbSid} .Sql_Dropable`)[0])
             }
            
         }
     };
 
     this.drawProcInnerMode = function (obj, ext, ebtype, cont ) {
-        $.extend(obj, ext);
-        cont.append(obj.$Control.outerHTML());
+      
         if (ebtype === "Transaction" || ebtype === "Loop") {
             var o = obj.InnerResources.$values;
             let cont = $(`#${this.dropArea} #${obj.EbSid} .Sql_Dropable`);
@@ -248,7 +249,7 @@ function EbSqlJob(options) {
         }       
         this.loopProcess($FirstLevel, this.EbObject.Resources)
     }
-    this.loopProcess = function (ele, obj) {
+    this.loopProcess = function (ele, obj ) {
       
         ele.each(function (i, o) {
             if (o.getAttribute("eb-type") === "Loop" || o.getAttribute("eb-type") === "Transaction") {
@@ -258,6 +259,7 @@ function EbSqlJob(options) {
             else if (o.id) {
                 this.Procs[o.id].RouteIndex = $(o).index();
                 obj.$values.push(this.Procs[o.id]);
+
             }
             else {
                 this.reidStat = false;
@@ -267,19 +269,27 @@ function EbSqlJob(options) {
   
     }
 
-    this.LoopProcess2 = function (id , obj) {
+    this.LoopProcess2 = function (id, obj) {
+        this.ProcIdArr.push(id);
         var $elementsAll = $(`#${id} .Sql_Dropable`).find(`.SqlJobItem`);
         var inner = $elementsAll.not($elementsAll.children().find($elementsAll));
         this.Procs[id].InnerResources.$values.length = 0;
+        this.Current_Eb_Type = this.Procs[id].$type.split(",")[0].split(".").pop().substring(2);
         this.loopProcess(inner, this.Procs[id].InnerResources);
         if (this.OuterEl.includes(id)) {
-            this.EbObject.Resources.$values.push(this.Procs[id]);
+            this.addToProcsLoop();
         }
-        else {
-            this.Procs[id].InnerResources.$values.push(this.Procs[id])
+    };
+    this.addToProcsLoop = function () {
+        for (let k = this.ProcIdArr.length - 1; k >= 0; k--) {
+            if (this.OuterEl.includes(this.ProcIdArr[k])) {
+                this.EbObject.Resources.$values.push(this.Procs[this.ProcIdArr[k]]);
+            }
+            else {
+                this.Procs[this.ProcIdArr[k - 1]].InnerResources.$values.push(this.Procs[this.ProcIdArr[k]])
+            }
         }
-     
-        
+        this.ProcIdArr = [];
     };
 
     this.Tilecontext = function () {
@@ -296,7 +306,6 @@ function EbSqlJob(options) {
     this.RemoveDiv = function (name, selector, event) {
         selector.$trigger.closest(".SqlJobItem")[0].remove();
         this.resetLinks();
-
     }
 
     this.start = function () {

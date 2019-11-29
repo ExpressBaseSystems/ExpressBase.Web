@@ -650,7 +650,9 @@
             inpCtrl.__eb_EditMode_val = editModeDataCellObj.Value;
         return `<td id ='td_@ebsid@' ctrltdidx='${i}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(i, col)}'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
-                    <div class='tdtxt' style='display:block' coltype='${col.ObjType}'><span>${(col.DoNotPersist && !col.IsSysControl) ? "" : editModeDataCellObj.DisplayMember}</span ></div >                                               
+                    <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
+                      <span>${(col.DoNotPersist && !col.IsSysControl) ? "" : editModeDataCellObj.DisplayMember}</span >
+                    </div >                                               
                 </td>`
             .replace("@isReadonly@", col.IsDisable)
             .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
@@ -990,6 +992,14 @@
             }
             $td.find(".tdtxt span").html(html.substr(0, html.length - 18));
             //console.dev_log("ctrlToSpan_td PS: took " + (performance.now() - t0) + " milliseconds.");
+        }
+        else if ((ctrl.ObjType === "SysCreatedBy")|| (ctrl.ObjType === "SysModifiedBy")){
+            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            let usid = ctrl.getValue();
+            $td.find(".tdtxt span").empty();
+            $td.find(".tdtxt span").append(`<img class='sysctrl_usrimg' src='/images/dp/${usid}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
+            $td.find(".tdtxt span").append(`<span class='sysctrl_usrname'>${val}</span>`);
+
         }
         else {
             //let t0 = performance.now();

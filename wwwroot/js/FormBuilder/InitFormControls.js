@@ -580,7 +580,7 @@ var InitControls = function (option) {
         let usrId = ebcontext.user.UserId;
         $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
         $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
-        let usrImg = '/images/dp' + usrId + '.png';
+        let usrImg = '/images/dp/' + usrId + '.png';
         $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src',usrImg );
         //}
     };
@@ -593,7 +593,7 @@ var InitControls = function (option) {
         let usrId = ebcontext.user.UserId;
         $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
         $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
-        let usrImg = '/images/dp' + usrId + '.png';
+        let usrImg = '/images/dp/' + usrId + '.png';
         $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
         //    }
         //}        

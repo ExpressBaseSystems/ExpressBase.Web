@@ -21,9 +21,11 @@
         let k = Object.keys(this.DashBoardList);
         let html = [`<div id="UserDashBoardSwitchList" class="DropMenuUserDash"  hide>`];
         ebcontext.header.setNameAsHtml(`<button class="DropDown4DB" id="UserDashBoardSwitchBtn"> ${this.EbObject.DisplayName} <span class="caret"></span> </button> `);
-        for (let i = 1; i < k.length; i++) {
-            html.push(`<div style="padding:3px;"> <button class="Btn4SwitchDB btn btn-default" type="button" value="${this.DashBoardList[k[i]].RefId}">${this.DashBoardList[k[i]].DisplayName} </button></div>`);
-        } 
+        for (let i = 0; i < k.length; i++) {
+            if (this.DashBoardList[k[i]].RefId) {
+                html.push(`<div style="padding:3px;"> <button class="Btn4SwitchDB btn btn-default" type="button" value="${this.DashBoardList[k[i]].RefId}">${this.DashBoardList[k[i]].DisplayName} </button></div>`);
+            }
+          } 
         html.push("</div>");
         $("body").append(html.join(""));
         $('#objname #DashBoardObjectSelection').val(this.EbObject.RefId);
@@ -105,7 +107,7 @@
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 let flag = false;
-                if (ebcontext.user.Roles.indexOf("SolutionOwner") !== -1)
+                if (ebcontext.user.Roles.indexOf("SolutionOwner") !== -1 || ebcontext.user.Roles.indexOf("SolutionAdmin") !== -1)
                     flag = true;
                 else {
                     var res = this.EbObject.Tiles.$values[i].RefId.split("-");

@@ -1050,7 +1050,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none !important;
 }
 
-[isrendermode="true"] [eb-hidden="True"] {
+[isrendermode="true"] [eb-hidden="true"] {
     display: none;
 }
 

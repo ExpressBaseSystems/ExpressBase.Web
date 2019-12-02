@@ -127,7 +127,7 @@
             this.EbObject.Columns.$values = this.EbObject.Columns.$values.filter(col => !col.IsCustomColumn);
         }
         return fltr_collection;
-    }
+    };
 
     this.receiveAjaxData = function (result) {
         //this.SetColumnRef();
@@ -139,7 +139,7 @@
             this.formatteddata = result.formattedData;
             this.drawCalendar();
         }
-    }
+    };
 
     this.drawCalendar = function () {
         let id = "table1";
@@ -158,9 +158,9 @@
         o.data = this.result;
         this.dt = new EbCommonDataTable(o);
         $("#eb_common_loader").EbLoader("hide");
-        if (this.EbObject.DataColumns.$values.length >0)
+        if (this.EbObject.DataColumns.$values.length > 0)
             this.CreateDataColumnLinks();
-    }
+    };
 
     this.CreateDataColumnLinks = function () {
         $("#obj_icons #ShowDataColumndd").remove();

@@ -1304,12 +1304,12 @@ this.callGetControl(this.nxtCtrlIdx);
     };
 
     this.initConnectionCheck = function () {
-        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now() }, active: 'image' } };
-        setInterval(this.connectionPing, 5000);///////////////////////////////////////////////////////////////
+        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://eb-test.cloud/images/EB_Logo.png?' + Date.now() }, active: 'image' } };
+        setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////
     };
 
     this.connectionPing = function () {
-        Offline.options.checks.image.url = 'https://www.expressbase.com/images/EB_Logo.png?' + Date.now();
+        Offline.options.checks.image.url = 'https://eb-test.cloud/images/EB_Logo.png?' + Date.now();
         if (Offline.state === 'up')
             Offline.check();
         console.log(Offline.state);

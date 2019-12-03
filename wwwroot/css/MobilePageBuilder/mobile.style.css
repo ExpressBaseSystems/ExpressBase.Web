@@ -122,15 +122,31 @@
 .eb_mob_form_container, .eb_mob_vis_container {
     width: 100%;
     height: 100%;
+    position:relative;
 }
 .eb_mob_container_inner {
     width: 100%;
     height: 100%;
     border: 2px dashed #ccc;
-    padding: 10px;
+    padding: 10px 10px 30px 10px;
     overflow-y: auto;
 }
-
+.eb_mob_form_container:after {
+    content: "Save";
+    position: absolute;
+    bottom: 0;
+    background: #508bf9;
+    width: 100%;
+    display: flex;
+    color: white;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+}
+.eb_mob_form_container:before {
+    
+}
 /*form ctrls*/
 .eb_mob_textbox {
     width: 100%;

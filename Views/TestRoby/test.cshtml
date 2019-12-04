@@ -1,46 +1,25 @@
-﻿<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
-</script>
-<script src="https://apis.google.com/js/client:platform.js?onload=start" async defer>
-    function start() {
-        gapi.load('auth2', function () {
-            
-        });
-        auth2.grantOfflineAccess().then(signInCallback);
-    }   
-</script>
-<button id="signinButton">Sign in with Google</button>
-<script>
-     $('#signinButton').on("click", function () {
-        // signInCallback defined in step 6.
-         auth2 = gapi.auth2.init({
-             client_id: '1080114714952-bjp6t1ifr0dn68u1rrr4icnfscfr9qfl.apps.googleusercontent.com',
-             access_type: 'offline',
-             redirect_uri: 'https://myaccount.eb-test.xyz',
-             scope: 'https://www.googleapis.com/auth/drive',
-                // Scopes to request in addition to 'profile' and 'email'
-                //scope: 'additional_scope'
-            });
-        auth2.grantOfflineAccess().then(signInCallback);
-    }.bind(this));
-    function signInCallback(authResult) {
-        if (authResult['code']) {
-            let ttt = authResult['code'];
-            // Hide the sign-in button now that the user is authorized, for example:
-            $('#signinButton').attr('style', 'display: none');
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Facebook Login JavaScript Example</title>
+    <meta charset="UTF-8">
+</head>
+<body>
 
-            // Send the code to the server
-            $.ajax({
-                type: 'POST',
-                url: "../TestRoby/storeauthcodeAsync",
-                data: { data12: ttt },                
-            });
-        } else {
-            // There was an error.
-        }
-    }
-</script>
-@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script async defer src="https://apis.google.com/js/api.js"
-        onload="this.onload=function(){};handleClientLoad()"
-        onreadystatechange="if (this.readyState === 'complete') this.onload()">
-</script>*@
+    <script src="~/js/JavaScript.js" type="text/javascript"></script>
+
+
+    //  The JS SDK Login Button
+
+    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
+    </fb:login-button>
+
+    <div id="status">
+    </div>
+
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v5.0&appId=399383310944102&autoLogAppEvents=1"></script>
+    <div class="fb-login-button" data-width="" data-size="large" data-button-type="login_with" data-auto-logout-link="true" data-use-continue-as="true"></div>
+</body>
+</html>
+

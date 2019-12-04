@@ -42,14 +42,10 @@
                                         <th scope="col">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="sch_list">
                                     @foreach (EbSchedule sch in Schedules)
                                     {
                                         <tr id="tr_@counter" class="sch_r" slno="@counter">
-                                            @*<td dcope="row" class="id">@sch.Id</td>
-                                    <td class="jobkey">@sch.JobKey</td>
-                                    <td class="triggerkey">@sch.TriggerKey</td>
-                                    <td class="jobtype">@sch.Task.JobType</td>*@
                                             <td class="">@(counter + 1)</td>
                                             <td class="Name">@sch.Name</td>
                                             <td class="expression">@sch.Task.Expression</td>
@@ -95,6 +91,7 @@
 
     .sch-name {
         display: inline-block;
-        width: auto;
+        width: 334px;
+        margin: 1%;
     }
 </style>

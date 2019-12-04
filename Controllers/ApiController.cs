@@ -445,7 +445,7 @@ namespace ExpressBase.Web.Controllers
             return _objs;
         }
 
-        [HttpPost("/api/pushlocal")]
+        [HttpPost("/api/push_data")]
         public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;

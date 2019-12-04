@@ -950,7 +950,7 @@
                 _type = obj.EbDbType;
                 colObj.Value = (_type === 7) ? parseFloat(obj.getValue()) : obj.getValue();
                 colObj.Type = _type;
-                colObj.AutoIncrement = obj.AutoIncrement || false;
+                //colObj.AutoIncrement = obj.AutoIncrement || false;
                 rowObjs[0].push(colObj);
             }.bind(this));
             this.FVWTObjColl.push(rowObjs);
@@ -986,7 +986,7 @@
             //let t0 = performance.now();
             let html = "";
             //let Blocks = $("#" + ctrl.EbSid_CtxId + "Wraper .search-block");
-            let keys = Object.keys(ctrl.initializer.Vobj.displayMembers_cpy);
+            let keys = Object.keys(ctrl.initializer.Vobj.displayMembers);
             for (var i = 0; i < keys.length; i++) {
                 let dispName = keys[i];
                 html += "<span iblock>";

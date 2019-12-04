@@ -541,7 +541,7 @@ function getSingleColumn(obj) {
     SingleColumn.Name = obj.Name;
     SingleColumn.Value = obj.getValue();
     SingleColumn.Type = obj.EbDbType;
-    SingleColumn.AutoIncrement = obj.AutoIncrement || false;
+    //SingleColumn.AutoIncrement = obj.AutoIncrement || false;
     return SingleColumn;
 }
 

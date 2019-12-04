@@ -1,5 +1,6 @@
 ﻿using ExpressBase.Objects.ServiceStack_Artifacts;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -25,6 +26,8 @@ namespace ExpressBase.Web.Components
             GetAllUsersResponse  Res= ServiceClient.Get<GetAllUsersResponse>( new GetAllUsersRequest());
             ViewBag.users = Res.Users;
             ViewBag.usergroups = Res.UserGroups;
+            ViewBag.Slackusers = Res.SlackUsers;
+            ViewBag.SlackChannnel = Res.SlackChannels;
             return View("schWindow");
         }
     }

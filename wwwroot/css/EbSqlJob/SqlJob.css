@@ -12,7 +12,7 @@
     border: 1px solid rgb(204, 204, 204);
 }
 .Sql-Job-Cont {
-    height: 650px;
+    min-height: 650px;
     background-color: white;
     padding: 0px;
     margin-left: -8px;
@@ -28,4 +28,69 @@
     margin-right: 0px;
     border-radius: 6px;
     border: 1px solid #dedede;
+}
+
+.SqlJobItem {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    /*margin-left : 15px;
+    margin: 40px 0;
+    width:150px;*/
+}
+.drpbox {
+    min-height: 60px;
+    width: 150px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* padding: 0 15px; */
+    /* border-radius: 4px; */
+    box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+    /* cursor: pointer; */
+    /* flex-flow: column; */
+    /* text-align: center; */
+    margin: 30px;
+}
+.drpboxInt {
+    min-height: 60px;
+    width: 150px;
+    border: 1px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* padding: 0 15px; */
+    /* border-radius: 4px; */
+    box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+    /* cursor: pointer; */
+    /* flex-flow: column; */
+    /* text-align: center; */
+    margin: 30px;
+}
+
+.Sql_Dropable{
+    min-height:30px;
+}
+
+.resource_items-inner {
+    width: 100%;
+    padding: 10px 10px;
+    border-radius: 2px;
+    box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+    background-color: white;
+    border: solid 1px rgba(0, 0, 255, 0);
+    transition-duration: 0.05s;
+}
+.resource_items  {
+    width: 50%;
+    display: inline-block;
+    font-size: 0.98em;
+    padding: 3px;
+    float: left;
+    cursor: pointer;
+}
+.sqljob-line-border{
+    border:dotted 1px;
+    /*padding: 1px;*/
 }

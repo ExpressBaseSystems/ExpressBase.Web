@@ -1,4 +1,5 @@
-﻿var InitControls = function (option) {
+﻿
+var InitControls = function (option) {
     if (option) {
         this.Bot = option.botBuilder;
         this.Wc = option.wc;
@@ -251,7 +252,7 @@
         }
 
         t1 = performance.now();
-        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+        //console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
 
         //}.bind(this), 0);
     };
@@ -291,6 +292,25 @@
         //setTimeout(function () {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.selectpicker();
+        let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+        $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
+        $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
+        //$input.on("shown.bs.select", function () {
+        //    //setTimeout(function () {
+        //        if ($DD.attr("is-moved") !== "true") {
+        //            let drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+        //            let ofsetval = drpdwn.offset();
+        //            let divclone = $("#" + ctrl.EbSid_CtxId).parent().clone().empty();
+        //            alert(ofsetval.top);
+        //            let div_detached = drpdwn.detach();
+        //            div_detached.appendTo("body").wrap(divclone).offset({ top: (ofsetval.top), left: ofsetval.left });
+        //            let offset22 = $('.dd_of_' + ctrl.EbSid_CtxId).offset();
+        //            alert(offset22.top)
+        //            $("input").focus();
+        //            //$DD.attr("is-moved", "true");
+        //        }
+        //    //}, 30);
+        //});
         //},0);
     };
 
@@ -461,7 +481,7 @@
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
         let t1 = performance.now();
-        console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
+       // console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {
@@ -535,7 +555,7 @@
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
         }
-       
+
 
 
         //if (_rowId === undefined || _rowId === 0) {
@@ -557,7 +577,11 @@
         //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //}
         //else {
-        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        let usrId = ebcontext.user.UserId;
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
+        $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
+        let usrImg = '/images/dp/' + usrId + '.png';
+        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src',usrImg );
         //}
     };
     this.SysModifiedBy = function (ctrl) {
@@ -566,12 +590,19 @@
         //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //    }
         //    else {
-        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        let usrId = ebcontext.user.UserId;
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
+        $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
+        let usrImg = '/images/dp/' + usrId + '.png';
+        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
         //    }
         //}        
     };
     this.SysCreatedAt = function (ctrl) {
-        //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+    };
+    this.SysModifiedAt = function (ctrl) {
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
@@ -603,21 +634,24 @@
     };
 
     this.UserSelect = function (ctrl, ctrlopts) {
-        
+
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
-            itemList: ctrl.UserList.$values
+            itemList: ctrl.UserList.$values,
+            EbSid_CtxId: ctrl.EbSid_CtxId
         });
 
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
-
+        if (ctrl.LoadCurrentUser) {
+            ctrl.setValue(ebcontext.user.UserId.toString());
+        }
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
         if (ctrl.AutoSuggestion === true) {
             $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
-        }   
+        }
     };
 
     this.Numeric = function (ctrl) {

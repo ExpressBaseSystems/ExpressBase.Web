@@ -363,6 +363,7 @@ table.dataTable tbody td.dt-body-right {
     white-space: nowrap;
     padding: 3px 4px !important;
     -webkit-tap-highlight-color: white;
+    vertical-align: middle;
 }
 
 
@@ -654,8 +655,6 @@ div.dataTables_wrapper div.dataTables_filters {
     float: right;
 }
 .columnimage {
-    height: 20px;
-    width: 25px;
     cursor:pointer;
 }
 #Imagemodal .modal-header, #Imagemodal .modal-body{
@@ -664,10 +663,31 @@ div.dataTables_wrapper div.dataTables_filters {
 #Imagemodal .close {
     margin-top: -36px;
 }
-
-#Imagemodal img, #Imagemodal .modal-body {
+#Imagemodal .modal-dialog {
     width: 100%;
+    margin: 0;
 }
+#Imagemodal .modal-content {
+    height: 100vh;
+}
+#Imagemodal .modal-body {
+    height: calc(100% - 65px);
+}
+#Imagemodal img {
+    display: inline-block;
+    height: 100%;
+    max-width: 100%;
+}
+
+#Imagemodal .modal-body {
+    height: calc(100% - 65px);
+}
+
+#Imagemodal img {
+    height: 100%;
+    max-width:100%
+}
+
 .group-All {
     background-color: #f2f2f2 !important;
 }

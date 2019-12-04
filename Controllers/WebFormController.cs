@@ -60,6 +60,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     catch (Exception ex)
                     {
+                        ViewBag.formData = JsonConvert.SerializeObject( new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace});
                         Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
                     }
                 }
@@ -84,23 +85,7 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
-                int targetloc = DataSet.FormData.MultipleTables[DataSet.FormData.MasterTable][0].LocId;
-                if (this.HasPermission(refid, OperationConstants.VIEW, targetloc) || this.HasPermission(refid, OperationConstants.NEW, targetloc) || this.HasPermission(refid, OperationConstants.EDIT, targetloc))
-                {
-                    return new WebformDataWrapper() { FormData = DataSet.FormData, Status = 101 };
-                }
-                throw new FormException("Error in loading data. Access Denied.", 302, "Access Denied for rowid " + rowid + " , current location " + targetloc, string.Empty);
-            }
-            catch (FormException ex)
-            {
-                Console.WriteLine("Form Exception in getRowdata. Message: " + ex.Message);
-                return new WebformDataWrapper()
-                {
-                    Message = ex.Message,
-                    Status = ex.ExceptionCode,
-                    MessageInt = ex.MessageInternal,
-                    StackTraceInt = ex.StackTraceInternal
-                };
+                return DataSet.FormDataWrap;
             }
             catch (Exception ex)
             {
@@ -108,7 +93,7 @@ namespace ExpressBase.Web.Controllers
                 return new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = 301,
+                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 };
@@ -131,7 +116,7 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
                 GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = refid, Params = _params });
-                WebformDataWrapper = new WebformDataWrapper { FormData = Resp.FormData, Status = 200 };
+                WebformDataWrapper = new WebformDataWrapper { FormData = Resp.FormData, Status = (int)HttpStatusCodes.OK };
             }
             catch (Exception ex)
             {
@@ -139,7 +124,7 @@ namespace ExpressBase.Web.Controllers
                 WebformDataWrapper = new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = 500,
+                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 };
@@ -164,7 +149,7 @@ namespace ExpressBase.Web.Controllers
                 _data = new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = 500,
+                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 };
@@ -178,26 +163,42 @@ namespace ExpressBase.Web.Controllers
            ExecuteSqlValueExprResponse Resp = this.ServiceClient.Post<ExecuteSqlValueExprResponse>(new ExecuteSqlValueExprRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
             return Resp.Data;
         }
+        
+        public string GetDataPusherJson(string RefId)
+        {
+            GetDataPusherJsonResponse Resp = this.ServiceClient.Post<GetDataPusherJsonResponse>(new GetDataPusherJsonRequest { RefId = RefId });
+            return Resp.Json;
+        }
 
         public string InsertWebformData(string TableName, string ValObj, string RefId, int RowId, int CurrentLoc)
         {
-            string Operation = OperationConstants.NEW;
-            if (RowId > 0)
-                Operation = OperationConstants.EDIT;
-            if (!this.HasPermission(RefId, Operation, CurrentLoc))
-                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 });
-
-            WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
-            InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
-                new InsertDataFromWebformRequest
-                {
-                    RefId = RefId,
-                    FormData = Values,
-                    RowId = RowId,
-                    CurrentLoc = CurrentLoc,
-                    UserObj = this.LoggedInUser
-                });
-            return JsonConvert.SerializeObject(Resp);
+            try
+            {
+                //string Operation = OperationConstants.NEW;
+                //if (RowId > 0)
+                //    Operation = OperationConstants.EDIT;
+                //if (!this.HasPermission(RefId, Operation, CurrentLoc))
+                //    return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.FORBIDDEN, RowAffected = -2, RowId = -2 });
+                DateTime dt = DateTime.Now;
+                Console.WriteLine("InsertWebformData request received : " + dt);
+                WebformData Values = JsonConvert.DeserializeObject<WebformData>(ValObj);
+                InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                    new InsertDataFromWebformRequest
+                    {
+                        RefId = RefId,
+                        FormData = Values,
+                        RowId = RowId,
+                        CurrentLoc = CurrentLoc,
+                        UserObj = this.LoggedInUser
+                    });
+                Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
+                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
         }
 
         public int DeleteWebformData(string RefId, int RowId, int CurrentLoc)
@@ -279,8 +280,7 @@ namespace ExpressBase.Web.Controllers
             s = s.ToBase64();
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
         }
-
-
+        
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try
@@ -378,6 +378,24 @@ namespace ExpressBase.Web.Controllers
             string SCtrls = string.Empty;
             SCtrls = EbSerializers.Json_Serialize(this.ServiceClient.Post<GetCtrlsFlatResponse>(new GetCtrlsFlatRequest() { RefId = refId }).Controls);
             return SCtrls;
+        }
+
+        public string updateAllFormTables()
+        {
+            if (ViewBag.wc == RoutingConstants.DC && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
+            {
+                try
+                {
+                    UpdateAllFormTablesResponse r = this.ServiceClient.Post<UpdateAllFormTablesResponse>(new UpdateAllFormTablesRequest());
+                    return r.Message;
+                }
+                catch(Exception e)
+                {
+                    return e.Message;
+                }
+            }
+            else
+                return ViewBag.wc;
         }
 
     }

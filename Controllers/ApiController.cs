@@ -421,16 +421,16 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/objects_by_app")]
-        public ObjectListToMob GetObjectsByApp(int appid, int locid)
+        public GetMobilePagesResponse GetObjectsByApp(int appid, int locid)
         {
             locid = locid == 0 ? 1 : locid;
-            ObjectListToMob _objs = null;
+            GetMobilePagesResponse _objs = null;
 
             if (ViewBag.IsValid)
             {
                 try
                 {
-                    _objs = this.ServiceClient.Get<ObjectListToMob>(new ObjectListToMobRequest
+                    _objs = this.ServiceClient.Get<GetMobilePagesResponse>(new GetMobilePagesRequest
                     {
                         LocationId = locid,
                         AppId = appid
@@ -439,36 +439,13 @@ namespace ExpressBase.Web.Controllers
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
-                    _objs = new ObjectListToMob();
+                    _objs = new GetMobilePagesResponse();
                 }
             }
             return _objs;
         }
 
-        [HttpGet("/api/object_by_ref")]
-        public EbObjectToMobResponse GetObjectByRef(string refid)
-        {
-            if (string.IsNullOrEmpty(refid))
-                throw new Exception("refid cannot be null");
-
-            EbObjectToMobResponse resonse = null;
-
-            if (ViewBag.IsValid)
-            {
-                try
-                {
-                    resonse = this.ServiceClient.Get(new EbObjectToMobRequest { RefId = refid, User = this.LoggedInUser });
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine(e.StackTrace);
-                }
-            }
-            return resonse;
-        }
-
-        [HttpPost("/api/webform_save")]
+        [HttpPost("/api/pushlocal")]
         public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;

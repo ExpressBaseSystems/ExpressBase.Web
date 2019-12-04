@@ -689,7 +689,7 @@ namespace ExpressBase.Web.Controllers
         {
             EbAuthResponse authresp = new EbAuthResponse();
             this.EventLogWriteEntry();
-            
+
             HostString host = this.HttpContext.Request.Host;
             string[] hostParts = host.Host.Split(CharConstants.DOT);
             IFormCollection req = this.HttpContext.Request.Form;
@@ -1064,12 +1064,17 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
-
         [HttpGet("/UpdateSolutionMap")]
         public IActionResult UpdateSidMap()
         {
-           UpdateSidMapResponse resp = this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest());
-           return Redirect("/");
+            UpdateSidMapResponse resp = this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest());
+            return Redirect("/");
+        }
+        [HttpGet("/UpdateRedis")]
+        public IActionResult UpdateRedisConnections()
+        {
+            UpdateRedisConnectionsResponse resp = this.ServiceClient.Post<UpdateRedisConnectionsResponse>(new UpdateRedisConnectionsRequest { });
+            return Redirect("/");
         }
     }
 }

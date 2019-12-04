@@ -118,19 +118,35 @@
 .eb_ctrlhtml{
 
 }
-/*form layout*/
-.eb_mob_formlayout, .eb_mob_vislayout {
+/*container*/
+.eb_mob_form_container, .eb_mob_vis_container {
     width: 100%;
     height: 100%;
+    position:relative;
 }
-.eb_mob_layout_inner {
+.eb_mob_container_inner {
     width: 100%;
     height: 100%;
     border: 2px dashed #ccc;
-    padding: 10px;
+    padding: 10px 10px 30px 10px;
     overflow-y: auto;
 }
-
+.eb_mob_form_container:after {
+    content: "Save";
+    position: absolute;
+    bottom: 0;
+    background: #508bf9;
+    width: 100%;
+    display: flex;
+    color: white;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+}
+.eb_mob_form_container:before {
+    
+}
 /*form ctrls*/
 .eb_mob_textbox {
     width: 100%;
@@ -144,6 +160,9 @@
 }
 .drop-hover-layout {
     border-color: #6969d4;
+}
+.drop-hover-td {
+    border-color: #6969d4 !important;
 }
 .eb_mob_select {
     width: 100%;
@@ -172,12 +191,17 @@
     .eb_mob_tablelayout .eb_mob_tablelayout_inner table{
         width:100%;
     }
+    .eb_mob_tablelayout .eb_tablelayout_tr .eb_tablelayout_td:not(:last-child) {
+      
+    }
     /*tree div*/
 .eb_mobtree_body {
     width: 270px;
     background: white;
     border: 1px solid #ccc;
     border-radius: 4px;
+    height: 550px;
+    overflow: auto;
 }
     .eb_mobtree_body .eb_mobtree_inner {
 
@@ -189,4 +213,45 @@
         .eb_mobtree_body .eb_mobtree_inner .eb_mobtree_ds a {
             font-size: 15px;
             font-weight: 500;
+        }
+        /*data col*/
+.data_column {
+    display: flex;
+    width: 100%;
+    display: flex;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+    .data_column .data_column_inner {
+        display: flex;
+        justify-content: center;
+    }
+    /*visualization*/
+.eb_mob_vis_container .eb_mob_container_inner {
+    display: flex;
+    flex-flow: column;
+}
+.eb_mob_vis_container .eb_mob_listprevwraper {
+    flex-grow:1;
+    margin-top:10px;
+}
+    .eb_mob_vis_container .eb_mob_listprevwraper .eb_mob_listprevwraper_inner {
+        display: flex;
+        height: 90%;
+        background: white;
+        border: 1px solid #ccc;
+    }
+    .eb_mob_vis_container .eb_mob_listprevwraper .list_view {
+        height: 100%;
+        width: 100%;
+    }
+    .eb_mob_vis_container .eb_mob_listprevwraper .list_item {
+        border-bottom: 1px solid #ccc;
+        min-height: 50px;
+        padding: 5px;
+    }
+        .eb_mob_vis_container .eb_mob_listprevwraper .list_item .eb_tablelayout_table {
+           width:100%;
         }

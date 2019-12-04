@@ -55,6 +55,12 @@
     height: 100%;
     z-index: 3;
 }
-.holiday_class {
+th.public-holiday {
     background-color: #f98d8d;
+}
+th.week-holiday {
+    background-color: #efb9b9;
+}
+.current_date_class {
+    background-color: #f3f9f1;
 }

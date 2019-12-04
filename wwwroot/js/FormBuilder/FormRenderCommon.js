@@ -136,6 +136,8 @@
                                         row[depCtrl.Name].setValue(val);
                                     }.bind(this));
                                 }
+                                if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                                    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
                             }
                         }
                         else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
@@ -315,7 +317,11 @@
     // checks a control value is emptyString
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
+        if (ctrl.ObjType === "DataGrid" && !ctrl.RowRequired_valid_Check()) {
+            this.addInvalidStyle(ctrl);
+            return false;
+        }
+        else if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
             this.addInvalidStyle(ctrl);
             return false;
         }

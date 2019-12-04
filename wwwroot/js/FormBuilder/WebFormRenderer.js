@@ -461,6 +461,8 @@ const WebFormRender = function (option) {
 
         WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.ExtendedTables = this.getExtendedTables();
+        console.log("form data --");
+        console.log(WebformData);
         return JSON.stringify(WebformData);
     };
 

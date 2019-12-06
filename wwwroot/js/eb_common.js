@@ -61,7 +61,7 @@
             return style;
         }
     };
-} )(jQuery);
+})(jQuery);
 
 console.eb_log = function (msg, color = "rgb(19, 0, 78)", bgcolor) {
     console.log(`%c${msg}`, `color:${color};
@@ -418,6 +418,23 @@ function JsonToEbControls(ctrlsContainer) {
     });
 };
 
+function getControlsUnderTable(container, tableName) {
+    let coll = [];
+    RecurGetControlsUnderTable(container, coll, tableName);
+    return coll;
+
+}
+
+function RecurGetControlsUnderTable(src_obj, dest_coll, tableName) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        if (obj.IsContainer) {
+            RecurGetControlsUnderTable(obj, dest_coll, tableName);
+
+        }
+        else if (src_obj.TableName === tableName && !src_obj.IsSpecialContainer)
+            dest_coll.push(obj);
+    });
+}
 
 function getFlatContControls(formObj) {
     let coll = [];
@@ -541,6 +558,11 @@ function getSingleColumn(obj) {
     SingleColumn.Name = obj.Name;
     SingleColumn.Value = obj.getValue();
     SingleColumn.Type = obj.EbDbType;
+    SingleColumn.ObjType = obj.ObjType;
+    SingleColumn.D = undefined;
+    SingleColumn.C = undefined;
+    obj.DataVals = SingleColumn;
+
     //SingleColumn.AutoIncrement = obj.AutoIncrement || false;
     return SingleColumn;
 }
@@ -699,4 +721,61 @@ var EbTags = function (settings) {
     };
 
     this.show();
+};
+
+function getRow__(__this) {
+    console.log("getRow__");
+    return $(`[ebsid='${__this.__DG.EbSid}'] tr[rowid='${__this.__rowid}']`)
+}
+
+function dgOnChangeBind() {
+    $.each(this.Controls.$values, function (i, col) {
+        console.log(999999999999);
+        if ((col.OnChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '') || col.DependedValExp.$values.length > 0) {
+            let FnString = atob(col.OnChangeFn.Code) + (col.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(form.__getCtrlByPath(this.__path))` : '');
+            let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+            col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+        }
+    }.bind(this));
+
+
+}
+
+function dgEBOnChangeBind() {
+    $.each(this.Controls.$values, function (i, col) {
+        let FnString = `debugger;
+                       let __this = form.__getCtrlByPath(this.__path);
+                        console.log('fired inside');
+                        console.log(__this);  console.log(__this.DataVals);
+                        let $curRow = getRow__(__this);
+                        let isRowEditing = $curRow.attr('is-editing') === 'true' && $curRow.attr('is-checked') === 'true';
+                        if(__this.DataVals !== undefined && isRowEditing === false){
+                            __this.DataVals.Value = __this.getValue();
+                            __this.DataVals.D = __this.getDisplayMember();
+                        }`;
+        let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+        col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+    }.bind(this));
+
+
+}
+
+function setDate_EB (p1, p2) {
+    if (this.IsNullable && p1 !== null)
+        $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
+    if (p1 !== null && p1 !== undefined) {
+        if (this.ShowDateAs_ === 1) //month picker
+            $('#' + this.EbSid_CtxId).val(p1);
+        else if (this.EbDateType === 5) //Date
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD').format(ebcontext.user.Preference.ShortDatePattern));
+        else if (this.EbDateType === 6) //DateTime
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
+        else if (this.EbDateType === 17) //Time
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
+        $('#' + this.EbSid_CtxId).trigger('change');
+    }
+    else
+        $('#' + this.EbSid_CtxId).val('');
 }

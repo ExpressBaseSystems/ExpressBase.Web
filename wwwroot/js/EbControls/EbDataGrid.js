@@ -48,34 +48,7 @@
         this.ctrl.setEditModeRows(SingleTable);
     };
 
-    //this.getPSDispMembrs = function (cellObj, rowId, col) {
-
-    //    let valMsArr = cellObj.Value.split(',');
-    //    let DMtable = this.FormDataExtdObj.val[col.EbSid_CtxId];
-    //    let dispMembrs = [];
-
-    //    console.log(DMtable);
-
-    //    for (let i = 0; i < valMsArr.length; i++) {
-    //        let dmSpan = `<span iblock>`;
-    //        let vm = valMsArr[i];
-    //        //VMs.push(vm);
-    //        for (let j = 0; j < col.DisplayMembers.$values.length; j++) {
-    //            let dm = col.DisplayMembers.$values[j];
-    //            for (var k = 0; k < DMtable.length; k++) {
-    //                let row = DMtable[k];
-    //                if (getObjByval(row.Columns, 'Name', col.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-    //                    //DMs[dm.name].push(_dm);
-    //                    dmSpan += `<span class='selected-tag'>${_dm}</span>`;
-    //                    //dispMembrs.push(dmSpan);
-    //                }
-    //            }
-    //        }
-    //        dmSpan += `</span>`;
-    //        dispMembrs.push(dmSpan);
-    //    }
-
+   
    this.getPSDispMembrs = function (cellObj, rowId, col) {
 
         let valMsArr = cellObj.Value.split(',');

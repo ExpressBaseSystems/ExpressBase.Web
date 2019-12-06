@@ -279,7 +279,7 @@ function ItemCount(array, item) {
     }
     return count;
 }
-
+//need to move to form
 function dateDisplayNone() {
     document.addEventListener('scroll', function (e) {
         $('.xdsoft_datetimepicker').css("display", "none");

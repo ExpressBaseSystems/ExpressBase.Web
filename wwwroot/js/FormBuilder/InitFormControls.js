@@ -289,29 +289,64 @@ var InitControls = function (option) {
     };
 
     this.SimpleSelect = function (ctrl) {
-        //setTimeout(function () {
+
         let $input = $("#" + ctrl.EbSid_CtxId);
-        $input.selectpicker();
+        $input.selectpicker({
+            dropupAuto: false
+        });
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
         $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
         $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
-        //$input.on("shown.bs.select", function () {
-        //    //setTimeout(function () {
-        //        if ($DD.attr("is-moved") !== "true") {
-        //            let drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-        //            let ofsetval = drpdwn.offset();
-        //            let divclone = $("#" + ctrl.EbSid_CtxId).parent().clone().empty();
-        //            alert(ofsetval.top);
-        //            let div_detached = drpdwn.detach();
-        //            div_detached.appendTo("body").wrap(divclone).offset({ top: (ofsetval.top), left: ofsetval.left });
-        //            let offset22 = $('.dd_of_' + ctrl.EbSid_CtxId).offset();
-        //            alert(offset22.top)
-        //            $("input").focus();
-        //            //$DD.attr("is-moved", "true");
-        //        }
-        //    //}, 30);
-        //});
-        //},0);
+
+        //code review..... to set dropdown on body
+        $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+            let $el = $(e.target);
+            if ($el[0].isOutside !== true) {
+                let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                let initDDwidth = $drpdwn.width();
+                let ofsetval = $drpdwn.offset();
+                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr("detch_select", true);;
+                let $div_detached = $drpdwn.detach();
+                $div_detached.appendTo("body").wrap($divclone);
+                $div_detached.width(initDDwidth);
+                $el[0].isOutside = true;
+                $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+
+            }
+            //to set position of dropdrown just below selectpicker btn
+            else {
+                let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                let ddOfset = ($(e.target)).offsetParent().offset();
+                let tgHght = ($(e.target)).offsetParent().height();
+                $outdrpdwn.parent().addClass('open');
+                $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
+            }
+        });
+        //code review ......to hide dropdown on click outside dropdown
+        document.addEventListener("click", function (e) {
+            var container = $('.dd_of_' + ctrl.EbSid_CtxId);
+            if (!((($(e.target).closest('[detch_select=true]').attr('detch_select')) == "true") || ($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+                $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
+                container.closest('[detch_select=true]').removeClass("open");
+            }
+            if (!ctrl.IsMultiSelect) {
+                if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+                    $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
+                    container.closest('[detch_select=true]').removeClass("open");
+                }
+            }
+        });
+        //code review ..... to hide dropdown on scroll 
+        //remove focus
+        document.addEventListener('scroll', function (e) {
+            if (!($(e.target).closest('[detch_select=true]').attr('detch_select')) && $(".detch_select").hasClass("open")) {
+                $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
+                $(".detch_select").removeClass("open");
+            }
+        }, true);
+
+
+
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -481,7 +516,7 @@ var InitControls = function (option) {
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
         let t1 = performance.now();
-       // console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
+        // console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {
@@ -581,7 +616,7 @@ var InitControls = function (option) {
         $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
         $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
         let usrImg = '/images/dp/' + usrId + '.png';
-        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src',usrImg );
+        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
         //}
     };
     this.SysModifiedBy = function (ctrl) {

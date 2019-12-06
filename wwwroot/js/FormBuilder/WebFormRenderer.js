@@ -33,6 +33,9 @@ const WebFormRender = function (option) {
     this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
+    this.FlatContControls = getInnerFlatContControls(this.FormObj);
+    this.MultipleTables = {};
+    this.MasterTable = this.FormObj.TableName;
     this.formValues = {};
     this.IsPSsInitComplete = {};
     this.formValidationflag = true;
@@ -147,6 +150,7 @@ const WebFormRender = function (option) {
         this.initNCs();// order 1
         this.FRC.setDefaultvalsNC(this.flatControls);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 4
         this.initDGs();
 
 
@@ -399,7 +403,7 @@ const WebFormRender = function (option) {
                 if (obj.TableName === "" || obj.TableName === null)
                     obj.TableName = src_obj.TableName;
                 if (FVWTObjColl[obj.TableName] === undefined) {
-                    let rowId = this.Mode.isEdit ? this.EditModeFormData[obj.TableName][0].RowId : 0;
+                    let rowId = this.Mode.isEdit ? (this.EditModeFormData[obj.TableName] ? this.EditModeFormData[obj.TableName][0].RowId : 0) : 0;
                     FVWTObjColl[obj.TableName] = [{
                         RowId: rowId,
                         IsUpdate: false,
@@ -462,8 +466,10 @@ const WebFormRender = function (option) {
         WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
-        console.log(WebformData);
-        return JSON.stringify(WebformData);
+        console.log(WebformData.MultipleTables);
+        console.log(this.MultipleTables);
+        //return JSON.stringify(WebformData);
+        return JSON.stringify(this.MultipleTables);
     };
 
     this.RefreshOuterFormControls = function () {
@@ -1126,6 +1132,28 @@ const WebFormRender = function (option) {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
 
+    this.initMultipleTables = function () {
+        this.formTables = this.getFormTables();
+        this.gridTables = this.getDG_tbl();
+        if (this.ApprovalCtrl)
+            this.approvalTable = this.getApprovalRow();
+
+        this.MultipleTables = $.extend(this.formTables, this.gridTables, this.approvalTable);
+        console.log("form data --");
+        console.log(this.MultipleTables);
+
+    };
+
+
+    this.getDG_tbl = function () {
+        let FVWTObjColl = {};
+        $.each(this.DGBuilderObjs, function (i, DGB) {
+            DGB.SingleTable = [];
+            FVWTObjColl[DGB.ctrl.TableName] = DGB.SingleTable;
+        });
+        return FVWTObjColl;
+    };
+
     this.init = function () {
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
@@ -1152,6 +1180,17 @@ const WebFormRender = function (option) {
 
         if (this.Mode.isNew && this.EditModeFormData)
             this.setEditModeCtrls();
+
+        if (this.Mode.isNew) {
+            this.initMultipleTables();
+            console.log(this.MultipleTables);
+        }
+        else {
+            attachModalCellRef_form(this.FormObj, this.EditModeFormData);
+            // for DG ModalCellReff will attach on demand (when edit row clicked)
+            this.MultipleTables = this.EditModeFormData;
+            console.log("febin", this.EditModeFormData);
+        }
 
         if (this.mode === "View Mode") {
             this.setEditModeCtrls();
@@ -1226,4 +1265,5 @@ const WebFormRender = function (option) {
 
     let t1 = performance.now();
     console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
+    ___builder = this;
 };

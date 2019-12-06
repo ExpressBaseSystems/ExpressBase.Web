@@ -561,6 +561,7 @@ function getSingleColumn(obj) {
     SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = undefined;
     SingleColumn.C = undefined;
+    SingleColumn.R = undefined;
     obj.DataVals = SingleColumn;
 
     //SingleColumn.AutoIncrement = obj.AutoIncrement || false;
@@ -745,9 +746,8 @@ function dgOnChangeBind() {
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {
         let FnString = `debugger;
-                       let __this = form.__getCtrlByPath(this.__path);
-                        console.log('fired inside');
-                        console.log(__this);  console.log(__this.DataVals);
+                        let __this = form.__getCtrlByPath(this.__path);
+                        console.log(__this);
                         let $curRow = getRow__(__this);
                         let isRowEditing = $curRow.attr('is-editing') === 'true' && $curRow.attr('is-checked') === 'true';
                         if(__this.DataVals !== undefined && isRowEditing === false){
@@ -762,7 +762,7 @@ function dgEBOnChangeBind() {
 
 }
 
-function setDate_EB (p1, p2) {
+function setDate_EB(p1, p2) {
     if (this.IsNullable && p1 !== null)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
     if (p1 !== null && p1 !== undefined) {
@@ -778,4 +778,62 @@ function setDate_EB (p1, p2) {
     }
     else
         $('#' + this.EbSid_CtxId).val('');
+}
+
+function removePropsOfType(Obj, type = "function") {
+    for (var Key in Obj) {
+        if (typeof Obj[Key] === type) {
+            delete Obj[Key];
+        }
+    }
+    return Obj;
+}
+
+function REFF_attachModalCellRef(MultipleTables) {
+    let keys = Object.keys(MultipleTables);
+    for (var i = 0; i < keys.length; i++) {
+        let tableName = keys[i];
+        let table = MultipleTables[tableName];
+
+        for (var j = 0; j < table.length; j++) {
+            let row = table[j];
+            for (var k = 0; k < row.Columns.length; k++) {
+                let SingleColumn = row.Columns[k];
+                obj.DataVals = SingleColumn;
+            }
+        }
+
+
+
+    }
+}
+
+
+function attachModalCellRef_form(container, multipleTable) {
+    $.each(container.Controls.$values, function (i, obj) {
+        if (obj.IsSpecialContainer)
+            return true;
+        if (obj.IsContainer) {
+            obj.TableName = (typeof obj.TableName === "string") ? obj.TableName.trim() : false;
+            obj.TableName = obj.TableName || container.TableName;
+            attachModalCellRef_form(obj, multipleTable);
+        }
+        else {
+            setSingleColumnRef(container.TableName, obj.Name, multipleTable, obj);
+        }
+    });
+}
+
+function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
+    if (MultipleTables.hasOwnProperty(TableName)) {
+        let table = MultipleTables[TableName];
+        for (var i = 0; i < table.length; i++) {
+            let row = table[i];
+            let SingleColumn = getObjByval(row.Columns, "Name", ctrlName);
+            if (SingleColumn) {
+                obj.DataVals = SingleColumn;
+                return;
+            }
+        }
+    }
 }

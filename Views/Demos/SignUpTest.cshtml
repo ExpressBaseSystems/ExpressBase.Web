@@ -71,20 +71,18 @@
         }
 
         function testAjax() {
-            b = getTok();
-            r = getrToken();
-
             $.ajax({
                 url: "/api/objects_by_app",
                 type: "GET",
                 cache: false,
                 data: {
                     appid: 44,
-                    locid : 1
+                    locid: 1,
+                    pull_data: false
                 },
                 beforeSend: function (xhr) {
-                    xhr.setRequestHeader("bToken", b);
-                    xhr.setRequestHeader("rToken", r);
+                    xhr.setRequestHeader("bToken", getTok());
+                    xhr.setRequestHeader("rToken", getrToken());
                 }
             }).done(function (data) {
                 

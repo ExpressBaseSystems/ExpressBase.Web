@@ -4,34 +4,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Common;
-using ExpressBase.Common.Connections;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.Messaging;
-using ExpressBase.Common.Messaging.ExpertTexting;
-using ExpressBase.Common.Messaging.Twilio;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-using ExpressBase.Objects;
-using System.Collections.Specialized;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
-using ExpressBase.Web.Models;
-using System.Runtime.Serialization;
 using System.Xml;
-using System.Xml.Serialization;
 using System.IO;
-using System.Text;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Constants;
 using ServiceStack.Auth;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
-using ExpressBase.Common.Structures;
 using ExpressBase.Web.Filters;
 
 namespace ExpressBase.Web.Controllers
@@ -277,6 +264,7 @@ namespace ExpressBase.Web.Controllers
                     response.RToken = authResponse.RefreshToken;
                     response.UserId = authResponse.User.UserId;
                     response.DisplayName = authResponse.User.FullName;
+                    response.User = authResponse.User;
                 }
                 else
                     response.IsValid = false;
@@ -287,13 +275,6 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("api auth request failed: " + e.Message);
             }
             return response;
-        }
-
-        [HttpGet("/api/logout")]
-        [HttpPost("/api/logout")]
-        public void ApiLogOut()
-        {
-
         }
 
         [HttpPost("/api/upload")]
@@ -353,7 +334,7 @@ namespace ExpressBase.Web.Controllers
             return ApiResp;
         }
 
-        [HttpGet("api/files/{filename}")]
+        [HttpGet("/api/files/{filename}")]
         public IActionResult GetFile(string filename)
         {
             DownloadFileResponse dfs = null;
@@ -421,7 +402,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/objects_by_app")]
-        public GetMobilePagesResponse GetObjectsByApp(int appid, int locid)
+        public GetMobilePagesResponse GetObjectsByApp(int appid, int locid, bool pull_data = false)
         {
             locid = locid == 0 ? 1 : locid;
             GetMobilePagesResponse _objs = null;
@@ -433,7 +414,8 @@ namespace ExpressBase.Web.Controllers
                     _objs = this.ServiceClient.Get<GetMobilePagesResponse>(new GetMobilePagesRequest
                     {
                         LocationId = locid,
-                        AppId = appid
+                        AppId = appid,
+                        PullData = pull_data
                     });
                 }
                 catch (Exception e)

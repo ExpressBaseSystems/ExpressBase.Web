@@ -220,7 +220,7 @@
     border: 0 !important;
 }
 
-[is-editing="true"][is-checked="false"] .cancel-row {
+[is-editing='true'][is-checked='false'] .cancel-row {
     display:none;
 }
 

@@ -1635,6 +1635,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     outline: none !important;
 }
 
+.ulstc-note {
+    text-align: right;
+    color: #ccc;
+    padding-right: 5px;
+    font-size: 10px;
+    font-style: italic;
+}
+
 .ulstc-list-ul {
     max-height: 200px;
     overflow-y: auto;

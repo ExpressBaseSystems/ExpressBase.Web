@@ -209,6 +209,8 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
+        if (StrValues === "")
+            return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {

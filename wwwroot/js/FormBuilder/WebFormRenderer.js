@@ -3,6 +3,8 @@
 * to Render WebForm
 * EXPRESSbase Systems Pvt. Ltd , Jith Job
 */
+var a___builder = 0;
+var a___MT = 0;
 
 const WebFormRender = function (option) {
     this.FormObj = option.formObj;
@@ -28,13 +30,14 @@ const WebFormRender = function (option) {
     this.formData = option.formData === null ? null : option.formData.FormData;
     this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
     this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;
+    this.TableNames;
     this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
     this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
     this.FormDataExtdObj = { val: this.FormDataExtended };
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.FlatContControls = getInnerFlatContControls(this.FormObj);
-    this.MultipleTables = {};
+    this.MultipleTables = this.EditModeFormData;
     this.MasterTable = this.FormObj.TableName;
     this.formValues = {};
     this.IsPSsInitComplete = {};
@@ -199,6 +202,8 @@ const WebFormRender = function (option) {
     this.modifyFormData4Import = function (_respObj) {
 
         this.EditModeFormData = _respObj.FormData.MultipleTables;
+        this.MultipleTables = this.EditModeFormData;
+        attachModalCellRef_form(this.FormObj, this.EditModeFormData);
         let SourceEditModeFormDataExceptDG = this.EditModeFormData[this.FormObj.Name];
 
         $.each(this.EditModeFormData, function (CtrlName, Data) {
@@ -293,7 +298,7 @@ const WebFormRender = function (option) {
         this.isInitNCs = true;
     };
 
-    this.getNCCTblNames = function (FormData) {
+    this.getNCCTblNames = function () {
         let NCCTblNames = [];
         let FlatContControls = getFlatContControls(this.FormObj);
         $.each(FlatContControls, function (i, CC) {
@@ -333,7 +338,7 @@ const WebFormRender = function (option) {
             return;
         }
         let EditModeFormData = this.EditModeFormData;
-        let NCCTblNames = this.getNCCTblNames(EditModeFormData);
+        let NCCTblNames = this.getNCCTblNames();
         //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
         $.each(this.DGs, function (k, DG) {
             if (!EditModeFormData.hasOwnProperty(DG.TableName))
@@ -466,16 +471,55 @@ const WebFormRender = function (option) {
         WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
-        console.log(WebformData.MultipleTables);
-        console.log(this.MultipleTables);
+
+
+        console.log("old data --");
+        console.log(JSON.stringify(WebformData.MultipleTables));
+
+        console.log("new data --");
+        console.log(JSON.stringify(this.formateDS(this.MultipleTables)));
+        let newWebFormData = { MultipleTables: this.formateDS(this.MultipleTables) };
         //return JSON.stringify(WebformData);
-        return JSON.stringify(this.MultipleTables);
+        return JSON.stringify(newWebFormData);
+    };
+
+    this.formateDS = function (_multipleTables) {
+        let multipleTables = $.extend(true, {}, _multipleTables);
+        let tableNames = Object.keys(multipleTables);
+        for (let i = 0; i < tableNames.length; i++) {
+            let tableName = tableNames[i];
+            let table = multipleTables[tableName];
+            for (let j = 0; j < table.length; j++) {
+                let row = table[j];
+                    let columns = row.Columns;
+                    for (let k = 0; k < columns.length; k++) {
+                        let singleColumn = columns[k];
+                        delete singleColumn["D"];
+                        delete singleColumn["F"];
+                        delete singleColumn["R"];
+                        delete singleColumn["DisplayMember"];
+                    }
+            }
+        }
+        return multipleTables;
+    };
+
+    this.getCellObjFromEditModeObj = function (ctrl) {
+        let CellObj;
+            for (let i = 0; i < this.TableNames.length; i++) {
+                let tableName = this.TableNames[i];
+                CellObj = getObjByval(this.EditModeFormData[tableName][0].Columns, "Name", ctrl.Name);
+                if (CellObj)
+                    return CellObj;
+            }
+
+        return CellObj;
     };
 
     this.RefreshOuterFormControls = function () {
         for (let i = 0; i < this.flatControls.length; i++) {
             let ctrl = this.flatControls[i];
-            let cellObj = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", ctrl.Name);
+            let cellObj = this.getCellObjFromEditModeObj(ctrl);
             if (cellObj !== undefined) {
                 let val = cellObj.Value;
                 ctrl.reset(val);
@@ -511,7 +555,11 @@ const WebFormRender = function (option) {
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
                 EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+
                 this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.MultipleTables = this.EditModeFormData;
+                attachModalCellRef_form(this.FormObj, this.MultipleTables);
+
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
                 this.RefreshFormControlValues();
@@ -528,7 +576,11 @@ const WebFormRender = function (option) {
             if (respObj.RowId > 0) {// if insertion success -NewToedit
                 EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
                 this.rowId = respObj.RowId;
+
                 this.EditModeFormData = respObj.FormData.MultipleTables;
+                this.MultipleTables = this.EditModeFormData;
+                attachModalCellRef_form(this.FormObj, this.EditModeFormData);
+
                 this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
                 this.FormDataExtended = respObj.FormData.ExtendedTables;
                 this.RefreshFormControlValues();
@@ -1133,6 +1185,7 @@ const WebFormRender = function (option) {
     };
 
     this.initMultipleTables = function () {
+        this.MultipleTables = {};
         this.formTables = this.getFormTables();
         this.gridTables = this.getDG_tbl();
         if (this.ApprovalCtrl)
@@ -1155,6 +1208,7 @@ const WebFormRender = function (option) {
     };
 
     this.init = function () {
+        this.TableNames = this.getNCCTblNames();
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
@@ -1186,9 +1240,9 @@ const WebFormRender = function (option) {
             console.log(this.MultipleTables);
         }
         else {
-            attachModalCellRef_form(this.FormObj, this.EditModeFormData);
             // for DG ModalCellReff will attach on demand (when edit row clicked)
             this.MultipleTables = this.EditModeFormData;
+            attachModalCellRef_form(this.FormObj, this.MultipleTables);
             console.log("febin", this.EditModeFormData);
         }
 
@@ -1265,5 +1319,6 @@ const WebFormRender = function (option) {
 
     let t1 = performance.now();
     console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
-    ___builder = this;
+    a___builder = this;
+    a___MT = this.MultipleTables;
 };

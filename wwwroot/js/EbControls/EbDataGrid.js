@@ -1094,8 +1094,8 @@
         let curRowCtrls = this.AllRowCtrls[rowid];
         let curRowData = this.EditModeDataTable[rowid];
 
-        this.attachModalCellRef_DGRow(getObjByval(this.SingleTable, "RowId", rowid), curRowCtrls);
         this.setRowValues_E(curRowCtrls, curRowData);
+        this.attachModalCellRef_DGRow(getObjByval(this.SingleTable, "RowId", rowid), curRowCtrls);
 
         $tr.attr("is-initialised", "true");
     };

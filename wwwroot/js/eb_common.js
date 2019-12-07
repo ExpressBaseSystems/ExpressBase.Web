@@ -436,6 +436,30 @@ function RecurGetControlsUnderTable(src_obj, dest_coll, tableName) {
     });
 }
 
+//function getTableNames(container, dest_coll) {
+//    let tableNames = [];
+//    if (container.TableName)
+//    dest_coll.push(container.TableName);
+//    recurGetTableNames(container, tableNames);
+//    return tableNames;
+//}
+
+//function recurGetTableNames(container, dest_coll) {
+//    for (let i = 0; i < container.Controls.$values.length; i++) {
+//        let ctrl = container.Controls[i];
+//        if (ctrl.IsContainer) {
+//            if (ctrl.IsSpecialContainer)
+//                continue;
+//            else {
+//                dest_coll.push(container.TableName);
+//                recurGetTableNames(container, dest_coll);
+//            }
+//        }
+//        else
+//            return;
+//    }
+//}
+
 function getFlatContControls(formObj) {
     let coll = [];
     if (formObj.IsContainer)
@@ -558,7 +582,7 @@ function getSingleColumn(obj) {
     SingleColumn.Name = obj.Name;
     SingleColumn.Value = obj.getValue();
     SingleColumn.Type = obj.EbDbType;
-    SingleColumn.ObjType = obj.ObjType;
+    //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = undefined;
     SingleColumn.C = undefined;
     SingleColumn.R = undefined;
@@ -745,7 +769,7 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {
-        let FnString = `debugger;
+        let FnString = `
                         let __this = form.__getCtrlByPath(this.__path);
                         console.log(__this);
                         let $curRow = getRow__(__this);

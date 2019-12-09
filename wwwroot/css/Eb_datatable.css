@@ -679,6 +679,15 @@ div.dataTables_wrapper div.dataTables_filters {
     max-width: 100%;
 }
 
+#Imagemodal .modal-body {
+    height: calc(100% - 65px);
+}
+
+#Imagemodal img {
+    height: 100%;
+    max-width:100%
+}
+
 .group-All {
     background-color: #f2f2f2 !important;
 }

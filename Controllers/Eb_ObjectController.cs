@@ -836,6 +836,11 @@ namespace ExpressBase.Web.Controllers
                 versionObj = Redis.Get<EbApi>(_refid);
                 return ViewComponent("ApiBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
+            else if (_ObjType == (int)EbObjectTypes.MobilePage)
+            {
+                versionObj = Redis.Get<EbMobilePage>(_refid);
+                return ViewComponent("MobilePage", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
             return View();
         }
 

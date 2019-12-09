@@ -87,10 +87,21 @@
         }.bind(this));
     };
 
+    this.bindEbOnChange2Ctrls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            this.bindEbFnOnChange(Obj);
+        }.bind(this));
+    };
+
     this.bindOnChange = function (control) {
         try {
             let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) +
-                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? ` ; form.updateDependentControls(${control.__path}, form)` : "");
+                `;console.log("onchange outside");
+                if(this.DataVals){
+                    this.DataVals.Value = this.getValue();
+                    this.DataVals.D = this.getDisplayMember();
+                }` +
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? ` ; form.updateDependentControls(${control.__path}, form);` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.__onChangeFn = onChangeFn;
             control.bindOnChange(onChangeFn);
@@ -98,6 +109,25 @@
             console.eb_log("eb error :");
             console.eb_log(e);
             alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+        }
+    };
+
+    this.bindEbFnOnChange = function (control) {
+        try {
+            let FnString = 
+                `
+                console.log(this); console.log(this.DataVals);
+                if(this.DataVals){
+                    this.DataVals.Value = this.getValue();
+                    this.DataVals.D = this.getDisplayMember();
+                }`;
+            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+            control.__onChangeFn = onChangeFn;
+            control.bindOnChange(onChangeFn);
+        } catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            console.log("error in 'bindEbFnOnChange function' of : " + control.Name + " - " + e.message);
         }
     };
 

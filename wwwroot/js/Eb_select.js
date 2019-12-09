@@ -68,6 +68,7 @@ const EbSelect = function (ctrl, options) {
     this.Vobj = null;
     this.datatable = null;
     this.clmAdjst = 0;
+    this.onDataLoadCallBackFns = [];
 
 
     ctrl._DisplayMembers = [];
@@ -208,6 +209,8 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
+        if (StrValues === "")
+            return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {
@@ -359,6 +362,7 @@ const EbSelect = function (ctrl, options) {
             o.wc = options.wc;
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
+        o.fns4PSonLoad = this.onDataLoadCallBackFns;
         this.datatable = new EbBasicDataTable(o);
 
         setTimeout(function () {

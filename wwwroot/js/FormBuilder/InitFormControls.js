@@ -326,12 +326,10 @@ var InitControls = function (option) {
         document.addEventListener("click", function (e) {
             var container = $('.dd_of_' + ctrl.EbSid_CtxId);
             if (!((($(e.target).closest('[detch_select=true]').attr('detch_select')) == "true") || ($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
-                $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
-                container.closest('[detch_select=true]').removeClass("open");
+              container.closest('[detch_select=true]').removeClass("open");
             }
             if (!ctrl.IsMultiSelect) {
                 if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
-                    $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
                     container.closest('[detch_select=true]').removeClass("open");
                 }
             }
@@ -340,7 +338,6 @@ var InitControls = function (option) {
         //remove focus
         document.addEventListener('scroll', function (e) {
             if (!($(e.target).closest('[detch_select=true]').attr('detch_select')) && $(".detch_select").hasClass("open")) {
-                $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
                 $(".detch_select").removeClass("open");
             }
         }, true);

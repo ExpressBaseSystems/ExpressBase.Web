@@ -98,17 +98,18 @@
     padding-left: 42px;
 }
     .eb-signup_wrapper .leftpart {
-      padding:20px;
-       height:98vh;
-       
+       display:flex;
+       justify-content:center;
+       align-items:center;
+       flex-flow:column;
+       padding-top:6rem;
     }
 
 .leftsideimg {
     height:350px;
 }
-
 .imglogo {
-    height: 40px;
+   height:40px;
 }
 .lg_img {
   
@@ -518,100 +519,6 @@ input {
 
 
 
-.testimonials {
-    position: absolute;
-    top: 15%;
-    
-}
-
-
-    .testimonials .conts {
-        /*border: red 2px solid;*/
-        padding: 15px;
-        margin: 65px;
-        border-radius: 10px;
-        
-        box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);
-        border-bottom: 4px solid #4987fb;
-    }
-
-        .testimonials .conts .testi_img {
-            height: 100px;
-            width: 100px;
-            border-radius: 50%;
-            left: 40%;
-            position: relative;
-        }
-
-        .testimonials .testi_p {
-            text-align: left;
-        }
-
-    .testimonials .tesimgdiv {
-        margin-top: -60px;
-    }
-    .testimonials .slick-active {
-        outline: none;
-    }
-    .testimonials .slick-slider {
-        outline: none;
-    }
-
-    .testimonials .testi_p p {
-        margin-top: 1em;
-        line-height: 27px;
-        font-weight: 400;
-        font-size: 14px;
-        color: #404040;
-        position: relative;
-    }
-
-    .testimonials .testi_nam {
-        text-align: right;
-    }
-
-    .testimonials .testi_com {
-        text-align: right;
-    }
-    .testimonials .testi_desig {
-        height: 60px;
-        
-    }
-    
-    .testimonials .testi_logo {
-        height: 60px;
-     }
-
-    .testimonials .testi_posi {
-        
-        
-    }
-
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /******social media sign in******/
 .smGlobalBtn { /* global button class */
@@ -831,8 +738,6 @@ input {
     .eb_ext_pge_stl .tbpad {
         padding-top: 1em;
     }
-
-
 
 /*css for emailverify page*/
 

@@ -116,7 +116,6 @@
         try {
             let FnString = 
                 `
-                console.log(this); console.log(this.DataVals);
                 if(this.DataVals){
                     this.DataVals.Value = this.getValue();
                     this.DataVals.D = this.getDisplayMember();

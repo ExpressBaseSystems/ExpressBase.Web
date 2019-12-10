@@ -864,3 +864,49 @@ function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
         }
     }
 }
+
+
+
+//code review ......to hide dropdown on click outside dropdown
+document.addEventListener("click", function (e) {
+    let par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
+    let ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+    var container = $('.dd_of_' + ebSid_CtxId);
+
+    //to close opend select on click of another select
+    if ((($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+        //  container.closest('[detch_select=true]').removeClass("open");
+        if ($(".detch_select").hasClass("open")) {
+            $(".detch_select").removeClass("open");
+            $(`#${par_ebSid}`).selectpicker('toggle');
+            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        }
+        else {
+            $(`#${par_ebSid}`).selectpicker('toggle');
+            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        }
+    }
+    //to close dropdown on ouside click of dropdown
+    if (!((($(e.target).closest('[detch_select=true]').attr('detch_select')) == "true") || ($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+        $(".detch_select").removeClass("open");
+    }
+
+    if ((($(e.target).closest('[MultiSelect]').attr("MultiSelect")) == "false") || (($(e.target).closest('[objtype]').attr("objtype")) == 'SimpleSelect')) {
+        if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+            container.closest('[detch_select=true]').removeClass("open");
+
+        }
+    }
+});
+
+//code review ..... to hide dropdown on scroll 
+
+
+document.addEventListener('scroll', function (e) {
+    if (!($(e.target).closest('[detch_select=true]').attr('detch_select')) && $(".detch_select").hasClass("open")) {// to check scroll is on body or detached div
+        if (!$(e.target).hasClass('selectpicker')) {
+          //  $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
+            $(".detch_select").removeClass("open");
+        }
+    }
+}, true);

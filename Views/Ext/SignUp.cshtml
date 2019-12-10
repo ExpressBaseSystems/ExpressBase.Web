@@ -39,16 +39,19 @@
             }
     </style>
     <link rel="stylesheet" href="~/css/EbCommonStyles/Ebsitepage.css" asp-append-version="true">
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
 }
 
 @section JavaScript{
     <script src="~/js/EbDashBoards/EbOnBoarding.js" type="text/javascript" asp-append-version="true"></script>
     <script src="~/js/EbDashBoards/countrypicker.js" type="text/javascript"></script>
     <script src="~/js/EbDashBoards/Ebsitepagepass.js" type="text/javascript" asp-append-version="true"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
+
 }
 
-<!-- Load Facebook SDK for JavaScript -->
+<!---Load Facebook SDK for JavaScript --->
 <div id="fb-root"></div>
 <script>
     window.fbAsyncInit = function () {
@@ -64,104 +67,105 @@
         js = d.createElement(s); js.id = id;
         js.src = "https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js#xfbml=1&version=v2.12"
         fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));</script>
+    }(document, 'script', 'facebook-jssdk'));
+</script>
 
-<!-- Your customer chat code -->
+<!--Your customer chat code--->
 <div class="fb-customerchat"
      attribution=setup_tool
      page_id="1616632595309068">
 </div>
 
 <script>
-    //load the JavaScript SDK
-    (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "https://connect.facebook.net/en_US/sdk.js";
-    fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
+        //load the JavaScript SDK
+        (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/en_US/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
 
-    window.fbAsyncInit = function() {
-        FB.init({
-        appId      :  '@ViewBag.FacebookSigninAppid',
-        cookie     : true,
-        xfbml      : true,
-        version: ('@ViewBag.Env' === 'Development' ? 'v3.3' : ('@ViewBag.Env' === 'Staging' ? 'v4.0' : 'v3.0'))
-        });
+        window.fbAsyncInit = function() {
+            FB.init({
+            appId      :  '@ViewBag.FacebookSigninAppid',
+            cookie     : true,
+            xfbml      : true,
+            version: ('@ViewBag.Env' === 'Development' ? 'v3.3' : ('@ViewBag.Env' === 'Staging' ? 'v4.0' : 'v3.0'))
+            });
 
-	    //check user session and refresh it
-	    FB.getLoginStatus((response) => {
-		    if (response.status === 'connected') {
-			    //user is authorized
-			    // getUserData();
-		    } else {
-			    //user is not authorized
-		    }
-	    });
-    };
+            //check user session and refresh it
+            FB.getLoginStatus((response) => {
+                if (response.status === 'connected') {
+                    //user is authorized
+                    // getUserData();
+                } else {
+                    //user is not authorized
+                }
+            });
+        };
 
-    //add event listener to login button
-    function FBLogin() {
-        console.log("fb");
-        $("#loaderdiv").EbLoader("show");
-    FB.login(function (response) {
-        if (response.authResponse) {
-            getUserData();
-        } else {
-        //alert('User cancelled login or did not fully authorize.');
+        //add event listener to login button
+        function FBLogin() {
+            console.log("fb login ");
+            $("#loaderdiv").EbLoader("show");
+        FB.login(function (response) {
+            if (response.authResponse) {
+                getUserData();
+            } else {
+            //alert('User cancelled login or did not fully authorize.');
+            }
+        }, {scope: 'email,public_profile'});
         }
-    }, {scope: 'email,public_profile'});
-    }
 
-    function getUserData() {
-	    FB.api('/me', {fields: 'id, name, first_name, last_name,email, gender,hometown'}, (response) => {
-            fbuserdetails(response);
-	    });
+        function getUserData() {
+            FB.api('/me', {fields: 'id, name, first_name, last_name,email, gender,hometown'}, (response) => {
+                fbuserdetails(response);
+            });
 
-    }
-
-    function fbuserdetails(response) {
-        if (response.email != null &
-            response.email != undefined &
-            response.email != "undefined"
-        ) {
-
-
-            let url = "../Ext/FacebookLogin?fbdtls=";
-            var _form = document.createElement("form");
-            _form.setAttribute("method", "post");
-            _form.setAttribute("action", url);
-            _form.setAttribute("target", "_top");
-
-
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "fbid";
-            input.value = response.id;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "email";
-            input.value = response.email;
-            _form.appendChild(input);
-
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "name";
-            input.value = response.name;
-            _form.appendChild(input);
-
-            document.body.appendChild(_form);
-            _form.submit();
-            document.body.removeChild(_form);
         }
-        else {
-              EbMessage("show", { Message: 'Error while getting permission from facebook', Background: "#d83535" });
-             $("#loaderdiv").EbLoader("hide");
+
+        function fbuserdetails(response) {
+            if (response.email != null &
+                response.email != undefined &
+                response.email != "undefined"
+            ) {
+
+
+                let url = "../Ext/FacebookLogin?fbdtls=";
+                var _form = document.createElement("form");
+                _form.setAttribute("method", "post");
+                _form.setAttribute("action", url);
+                _form.setAttribute("target", "_top");
+
+
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "fbid";
+                input.value = response.id;
+                _form.appendChild(input);
+
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "email";
+                input.value = response.email;
+                _form.appendChild(input);
+
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "name";
+                input.value = response.name;
+                _form.appendChild(input);
+
+                document.body.appendChild(_form);
+                _form.submit();
+                document.body.removeChild(_form);
+            }
+            else {
+                  EbMessage("show", { Message: 'Error while getting permission from facebook', Background: "#d83535" });
+                 $("#loaderdiv").EbLoader("hide");
+            }
         }
-    }
 </script>
 
 <div class="eb-signup_wrapper h-100">
@@ -184,13 +188,69 @@
         <div class="row">
             <div class="col-sm-6 col-md-6 col-lg-6 hidden-xs row-flex ">
                 <div class=" col-sm-12 col-md-12 col-lg-12 leftpart ">
-                    <div class="eb-signup-selltext">
-                        <h2>Are you <b>Struggling?</b></h2>
-                        <h4>with frequent changes</h4>
+                    @*<div class="eb-signup-selltext">
+                            <h2>Are you <b>Struggling?</b></h2>
+                            <h4>with frequent changes</h4>
+                        </div>
+                        <div class="eb-signup-sellimg">
+                            <img src="~/images/developer.jpg" class="leftsideimg">
+                        </div>*@
+
+
+
+
+                    <div class="testimonials ">
+
+                        @*<div>
+                                <div class="conts">
+                                    <div>
+                                        <img class="testi_img" src="~/images/testimonial/ahammed.jpeg">
+                                    </div>
+                                    <div class="testi_p">
+                                        <blockquote><p>" We value our customer's effort, time and money. Our mission is to reduce the time and effort small to medium enterprises spend on business automation. Change is inevitable but this is an era of "supersonic" disruptions. To survive, SME need rapidly evolving software and conventional modes of application development simply doesn't make sense. We are passionately building next-gen rapid application development tools on the cloud for SME who have frequent changes in processes and workflows, thanks to their rapid growth or market disruptions."</p></blockquote>
+                                    </div>
+
+                                    <div class="testi_desig">
+                                        <div class="col-sm-6 col-md-6 col-lg-6 ">
+                                            <img class=" testi_logo" src="/images/testimonial/alarz.png">
+                                        </div>
+                                        <div class="col-sm-6 col-md-6 col-lg-6 testi_posi">
+                                            <div class="testi_nam">Al azar</div>
+                                            <div class="testi_com">Manager, Al azar</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>*@
+                        <div>
+                            <div class="conts">
+                                <div class="tesimgdiv">
+                                    <img class="testi_img" src="/images/testimonial/syam_surendran.png">
+                                </div>
+                                <div class="testi_p">
+                                    <blockquote> <p>"We have been working on the ExpressBase Platform for over 2 years now for our chain of clinics. Their CEO, Suresh’s rich international experience was a great plus for us as he was able to advise us on the right strategy and approach to building our Healthcare Management System. I also like the fact that the platform is also built on the latest technologies i.e.; .NET Core, Docker & Kubernetes. The team has been very responsive to our evolving needs. We have not had any issues with data/security/downtime/speed etc as their support has been excellent !. I would also highly recommend this platform for software developers who are looking to build & deploy applications at scale at a fraction of the time and cost required for a traditional application."</p></blockquote>
+                                </div>
+
+                                <div class="testi_desig">
+                                    <div class="col-sm-6 col-md-6 col-lg-6  ">
+                                        <img class=" testi_logo" src="/images/testimonial/hairocraft-color.png">
+                                    </div>
+                                    <div class="col-sm-6 col-md-6 col-lg-6 testi_posi">
+                                        <div class="testi_nam">Shyam Surendran</div>
+                                        <div class="testi_com">Director, Hair-O-Craft</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
                     </div>
-                    <div class="eb-signup-sellimg">
-                        <img src="~/images/developer.jpg" class="leftsideimg">
-                    </div>
+
+
+
+
                 </div>
             </div>
             <div class="col-sm-6 col-md-6 col-lg-6 col-xs-12 rightpart">
@@ -432,6 +492,22 @@
         $('#inputPassword,#inputPasswordConfirm').bind('cut copy paste', function (e) {
             e.preventDefault();
         });
+
+        $(".testimonials").slick({
+
+            pauseOnHover: true,
+            dots: false,
+            prevArrow: false,
+            nextArrow: false,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            infinite: true,
+            autoplay: true,
+            autoplaySpeed: 2000,
+            //fade:true,
+
+        });
+
     });
 
 </script>

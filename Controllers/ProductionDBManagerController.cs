@@ -66,5 +66,34 @@ namespace ExpressBase.Web.Controllers
                 }
             return false;
         }
+
+        public Object GetFunctionOrProcedureQueries(Eb_FileDetails change, string solution_id)
+        {
+            GetFunctionOrProcedureQueriesResponse resp = this.ServiceClient.Post<GetFunctionOrProcedureQueriesResponse>((object)new GetFunctionOrProcedureQueriesRequest
+            {
+                ChangeList = change,
+                SolutionId = solution_id 
+            });
+            return resp;
+        }
+
+        public Object GetTableQueries(Eb_FileDetails change, string solution_id)
+        {
+            GetTableQueriesResponse resp = this.ServiceClient.Post<GetTableQueriesResponse>((object)new GetTableQueriesRequest
+            {
+                ChangeList = change,
+                SolutionId = solution_id
+            });
+            return resp;
+        }
+
+        public void ExecuteQuery(string query, string solution_id)
+        {
+            this.ServiceClient.Post<ExecuteQueriesResponse>((object)new ExecuteQueriesRequest
+            {
+                Query = query,
+                SolutionId = solution_id
+            });
+        }
     }
 }

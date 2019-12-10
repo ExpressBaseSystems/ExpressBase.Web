@@ -672,9 +672,14 @@ var InitControls = function (option) {
             itemList: ctrl.UserList.$values,
             EbSid_CtxId: ctrl.EbSid_CtxId
         });
-
+        itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
+        ctrl._onChangeFunction = [];
+        ctrl.bindOnChange = function (p1) {
+            if (!this._onChangeFunction.includes(p1))
+                this._onChangeFunction.push(p1);
+        };
         if (ctrl.LoadCurrentUser) {
             ctrl.setValue(ebcontext.user.UserId.toString());
         }

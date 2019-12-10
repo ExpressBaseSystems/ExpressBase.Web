@@ -1855,7 +1855,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         } else if (target == 1) {
             $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
         }
-        $('#EmailInputPort').val("465");
+        $('#EmailInputPort').val("587");
     }.bind(this);
 
     this.init = function () {        

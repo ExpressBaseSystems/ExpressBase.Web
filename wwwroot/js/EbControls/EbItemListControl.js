@@ -27,8 +27,9 @@
                                 <div class="ulstc-list-c">
                                     <div class="ulstc-list-srch">
                                         <span><i class="fa fa-search"></i></span>
-                                        <input type="text" placeholder="Type to search..." />
+                                        <input type="text" placeholder="Type to search..." style="padding-bottom: 0px !important;"/>
                                     </div>
+                                    <div class="ulstc-note">Showing 0 of 0</div>
                                     <div class="ulstc-list-ul"></div>
                                 </div>
                             </div>`);
@@ -38,15 +39,28 @@
         this.$popCont = this.$cont.find('.ulstc-list-c');
         this.$txtSrch = this.$cont.find('.ulstc-list-srch input');
         this.$ul = this.$cont.find('.ulstc-list-ul');
+        this.$note = this.$cont.find('.ulstc-note');
 
-        for (let i = 0; i < this.options.itemList.length; i++) {
+        let i = 0, sc = 0;
+        for (; i < this.options.itemList.length; i++) {
+            //let $li = $(`<div class="ulstc-list-li">
+            //                <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + this.options.itemList[i]['img']}.png), url(${this.options.imageAlternate});"></div>
+            //                <div class="ulstc-disp-txt">${this.options.itemList[i]['dm1']}</div>
+            //            </div>`);
             let $li = $(`<div class="ulstc-list-li">
-                            <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + this.options.itemList[i]['img']}.png), url(${this.options.imageAlternate});"></div>
+                            <div class="ulstc-disp-img-c">
+                                <img class='img-thumbnail' style='padding: 1px;' src='${this.options.imageAlternate}' onerror="this.src = '${this.options.imageAlternate}';" data-src="${this.options.imageUrl + this.options.itemList[i]['img']}.png" />
+                            </div>
                             <div class="ulstc-disp-txt">${this.options.itemList[i]['dm1']}</div>
                         </div>`);
+            if (i > 9)
+                $li.hide();
+            else
+                sc++;
             $li.data('data-obj', this.options.itemList[i]);
             this.$ul.append($li);
         }
+        this.$note.text("Showing " + sc + " of " + i);
 
         this.$txtSrch.on('focusout', function (e) {
             this.$popCont.hide();
@@ -55,6 +69,7 @@
         this.$dispCont.on('click', function (e) {
             this.$popCont.toggle();
             this.$txtSrch.focus();
+            this.$ul.children(':visible').find('img').Lazy();
         }.bind(this));
 
         this.$ul.children('.ulstc-list-li').on('mousedown', function (e) {
@@ -117,15 +132,24 @@
             srchVal = srchVal.toLowerCase();
             if (this.srchValOld !== srchVal) {
                 this.srchValOld = srchVal;
-                for (let i = 0; i < $liAll.length; i++) {
+                let i = 0, sc = 0, tc = 0;
+                for (; i < $liAll.length; i++) {
                     let itemO = $($liAll[i]).data('data-obj');
-                    if (itemO['dm1'].toLowerCase().search(srchVal) === -1)
+                    if (itemO['dm1'].toLowerCase().search(srchVal) === -1 || sc > 9) {
                         $($liAll[i]).hide();
-                    else
+                        if (sc > 9)
+                            tc++;
+                    }
+                    else {
                         $($liAll[i]).show();
+                        sc++;
+                        tc++;
+                    }
                 }
                 $liAct.removeClass('active');
                 this.$ul.children(':visible').first().addClass('active');
+                this.$note.text("Showing " + sc + " of " + tc);
+                this.$ul.children(':visible').find('img').Lazy();
             }
         }
     };

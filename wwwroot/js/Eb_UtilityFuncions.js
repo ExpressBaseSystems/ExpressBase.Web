@@ -279,10 +279,19 @@ function ItemCount(array, item) {
     }
     return count;
 }
-
+//need to move to form
 function dateDisplayNone() {
-    document.addEventListener('scroll', function (e)
-    {
+    document.addEventListener('scroll', function (e) {
         $('.xdsoft_datetimepicker').css("display", "none");
     }, true);
+}
+function getObjCopy4PS(Obj) {
+    let newObj = {};
+    $.extend(true, newObj, Obj);
+    let keys = Object.keys(newObj);
+    for (var i = 0; i < keys.length; i++) {
+        if (typeof Obj[keys[i]] === "function")
+            delete newObj[keys[i]];
+    }
+    return newObj;
 }

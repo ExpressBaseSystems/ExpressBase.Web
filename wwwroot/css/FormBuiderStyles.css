@@ -220,7 +220,7 @@
     border: 0 !important;
 }
 
-[is-editing="true"][is-checked="false"] .cancel-row {
+[is-editing='true'][is-checked='false'] .cancel-row {
     display:none;
 }
 
@@ -1050,7 +1050,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none !important;
 }
 
-[isrendermode="true"] [eb-hidden="True"] {
+[isrendermode="true"] [eb-hidden="true"] {
     display: none;
 }
 
@@ -1633,6 +1633,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none !important;
     padding: 5px 35px !important;
     outline: none !important;
+}
+
+.ulstc-note {
+    text-align: right;
+    color: #ccc;
+    padding-right: 5px;
+    font-size: 10px;
+    font-style: italic;
 }
 
 .ulstc-list-ul {

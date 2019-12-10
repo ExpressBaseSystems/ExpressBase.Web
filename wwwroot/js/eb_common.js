@@ -61,7 +61,7 @@
             return style;
         }
     };
-} )(jQuery);
+})(jQuery);
 
 console.eb_log = function (msg, color = "rgb(19, 0, 78)", bgcolor) {
     console.log(`%c${msg}`, `color:${color};
@@ -418,6 +418,47 @@ function JsonToEbControls(ctrlsContainer) {
     });
 };
 
+function getControlsUnderTable(container, tableName) {
+    let coll = [];
+    RecurGetControlsUnderTable(container, coll, tableName);
+    return coll;
+
+}
+
+function RecurGetControlsUnderTable(src_obj, dest_coll, tableName) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        if (obj.IsContainer) {
+            RecurGetControlsUnderTable(obj, dest_coll, tableName);
+
+        }
+        else if (src_obj.TableName === tableName && !src_obj.IsSpecialContainer)
+            dest_coll.push(obj);
+    });
+}
+
+//function getTableNames(container, dest_coll) {
+//    let tableNames = [];
+//    if (container.TableName)
+//    dest_coll.push(container.TableName);
+//    recurGetTableNames(container, tableNames);
+//    return tableNames;
+//}
+
+//function recurGetTableNames(container, dest_coll) {
+//    for (let i = 0; i < container.Controls.$values.length; i++) {
+//        let ctrl = container.Controls[i];
+//        if (ctrl.IsContainer) {
+//            if (ctrl.IsSpecialContainer)
+//                continue;
+//            else {
+//                dest_coll.push(container.TableName);
+//                recurGetTableNames(container, dest_coll);
+//            }
+//        }
+//        else
+//            return;
+//    }
+//}
 
 function getFlatContControls(formObj) {
     let coll = [];
@@ -541,7 +582,13 @@ function getSingleColumn(obj) {
     SingleColumn.Name = obj.Name;
     SingleColumn.Value = obj.getValue();
     SingleColumn.Type = obj.EbDbType;
-    SingleColumn.AutoIncrement = obj.AutoIncrement || false;
+    //SingleColumn.ObjType = obj.ObjType;
+    SingleColumn.D = undefined;
+    SingleColumn.C = undefined;
+    SingleColumn.R = undefined;
+    obj.DataVals = SingleColumn;
+
+    //SingleColumn.AutoIncrement = obj.AutoIncrement || false;
     return SingleColumn;
 }
 
@@ -699,4 +746,164 @@ var EbTags = function (settings) {
     };
 
     this.show();
+};
+
+function getRow__(__this) {
+    console.log("getRow__");
+    return $(`[ebsid='${__this.__DG.EbSid}'] tr[rowid='${__this.__rowid}']`)
 }
+
+function dgOnChangeBind() {
+    $.each(this.Controls.$values, function (i, col) {
+        console.log(999999999999);
+        if ((col.OnChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '') || col.DependedValExp.$values.length > 0) {
+            let FnString = atob(col.OnChangeFn.Code) + (col.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(form.__getCtrlByPath(this.__path))` : '');
+            let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+            col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+        }
+    }.bind(this));
+
+
+}
+
+function dgEBOnChangeBind() {
+    $.each(this.Controls.$values, function (i, col) {
+        let FnString = `
+                        let __this = form.__getCtrlByPath(this.__path);
+                        console.log(__this);
+                        let $curRow = getRow__(__this);
+                        let isRowEditing = $curRow.attr('is-editing') === 'true' && $curRow.attr('is-checked') === 'true';
+                        if(__this.DataVals !== undefined && isRowEditing === false){
+                            __this.DataVals.Value = __this.getValue();
+                            __this.DataVals.D = __this.getDisplayMember();
+                        }`;
+        let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+        col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+    }.bind(this));
+
+
+}
+
+function setDate_EB(p1, p2) {
+    if (this.IsNullable && p1 !== null)
+        $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
+    if (p1 !== null && p1 !== undefined) {
+        if (this.ShowDateAs_ === 1) //month picker
+            $('#' + this.EbSid_CtxId).val(p1);
+        else if (this.EbDateType === 5) //Date
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD').format(ebcontext.user.Preference.ShortDatePattern));
+        else if (this.EbDateType === 6) //DateTime
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
+        else if (this.EbDateType === 17) //Time
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
+        $('#' + this.EbSid_CtxId).trigger('change');
+    }
+    else
+        $('#' + this.EbSid_CtxId).val('');
+}
+
+function removePropsOfType(Obj, type = "function") {
+    for (var Key in Obj) {
+        if (typeof Obj[Key] === type) {
+            delete Obj[Key];
+        }
+    }
+    return Obj;
+}
+
+function REFF_attachModalCellRef(MultipleTables) {
+    let keys = Object.keys(MultipleTables);
+    for (var i = 0; i < keys.length; i++) {
+        let tableName = keys[i];
+        let table = MultipleTables[tableName];
+
+        for (var j = 0; j < table.length; j++) {
+            let row = table[j];
+            for (var k = 0; k < row.Columns.length; k++) {
+                let SingleColumn = row.Columns[k];
+                obj.DataVals = SingleColumn;
+            }
+        }
+
+
+
+    }
+}
+
+
+function attachModalCellRef_form(container, multipleTable) {
+    $.each(container.Controls.$values, function (i, obj) {
+        if (obj.IsSpecialContainer)
+            return true;
+        if (obj.IsContainer) {
+            obj.TableName = (typeof obj.TableName === "string") ? obj.TableName.trim() : false;
+            obj.TableName = obj.TableName || container.TableName;
+            attachModalCellRef_form(obj, multipleTable);
+        }
+        else {
+            setSingleColumnRef(container.TableName, obj.Name, multipleTable, obj);
+        }
+    });
+}
+
+function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
+    if (MultipleTables.hasOwnProperty(TableName)) {
+        let table = MultipleTables[TableName];
+        for (var i = 0; i < table.length; i++) {
+            let row = table[i];
+            let SingleColumn = getObjByval(row.Columns, "Name", ctrlName);
+            if (SingleColumn) {
+                obj.DataVals = SingleColumn;
+                return;
+            }
+        }
+    }
+}
+
+
+
+//code review ......to hide dropdown on click outside dropdown
+document.addEventListener("click", function (e) {
+    let par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
+    let ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+    var container = $('.dd_of_' + ebSid_CtxId);
+
+    //to close opend select on click of another select
+    if ((($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+        //  container.closest('[detch_select=true]').removeClass("open");
+        if ($(".detch_select").hasClass("open")) {
+            $(".detch_select").removeClass("open");
+            $(`#${par_ebSid}`).selectpicker('toggle');
+            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        }
+        else {
+            $(`#${par_ebSid}`).selectpicker('toggle');
+            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        }
+    }
+    //to close dropdown on ouside click of dropdown
+    if (!((($(e.target).closest('[detch_select=true]').attr('detch_select')) == "true") || ($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+        $(".detch_select").removeClass("open");
+    }
+
+    if ((($(e.target).closest('[MultiSelect]').attr("MultiSelect")) == "false") || (($(e.target).closest('[objtype]').attr("objtype")) == 'SimpleSelect')) {
+        if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+            container.closest('[detch_select=true]').removeClass("open");
+
+        }
+    }
+});
+
+//code review ..... to hide dropdown on scroll 
+
+
+document.addEventListener('scroll', function (e) {
+    if (!($(e.target).closest('[detch_select=true]').attr('detch_select')) && $(".detch_select").hasClass("open")) {// to check scroll is on body or detached div
+        if (!$(e.target).hasClass('selectpicker')) {
+          //  $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
+            $(".detch_select").removeClass("open");
+        }
+    }
+}, true);

@@ -375,8 +375,8 @@ const EbSelect = function (ctrl, options) {
             let xtra_wdth = tbl_cod.left;
             if ((contWidth + tbl_cod.left) > brow_wdth)
                 xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
-
-            div_detach.appendTo("body").offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
+            let $form_div = $('#' + this.name ).closest("[eb-type='WebForm']");
+            div_detach.appendTo($form_div).offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
 
         }.bind(this), 30);
 

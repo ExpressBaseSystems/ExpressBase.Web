@@ -104,7 +104,8 @@
                                                         </div>
                                                         <div class="col-md-2">
                                                             <input type="hidden" value="${val}" id="data_${val}" name="data"/>
-                                                            <button type="button" id="${val}showquery" obj-val="${btoa(unescape(encodeURIComponent(JSON.stringify(vals))))}" sol-id="${val}" class="btn btn-change btn-sm view_query" file-name = "${vals['fileHeader']}" id="${vals['fileHeader']}" data-loading-text="Getting Queries... <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;'  ></i> " >Show Query</button>
+                                                            <button data-toggle="modal"  type="button" id="${val}showquery" obj-val="${btoa(unescape(encodeURIComponent(JSON.stringify(vals))))}" sol-id="${val}" 
+                                                            class="btn btn-change btn-sm view_query" file-name = "${vals['fileHeader']}" id="${vals['fileHeader']}" data-loading-text="Getting Queries... <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;'  ></i> " >Show Query</button>
                                                         </div>
                                                     </div>`;
             });
@@ -143,7 +144,10 @@
 
     }
     this.AjaxSuccessFun = function (data) {
-        $('#viewQuery').modal('show');
+        $('#viewQuery').modal({
+            show: true,
+            backdrop: "static"
+        });
         this.CodeMirrorObject.setValue(data.query);
         var that = this;
         setTimeout(function () {
@@ -165,12 +169,64 @@
         let query = this.CodeMirrorObject.getValue();
         let solution_id = $(`#solution_id`).val();
         let filename = $(`#file_header`).val();
-        $.ajax({
-            type: "POST",
-            url: "../ProductionDBManager/ExecuteQuery",
-            data: { query: query, solution_id: solution_id },
-            success:
-                this.getqueryAjaxSuccess.bind(this)
+        let msg = "Contains ";
+        let f = 0;
+        if (query.includes("DROP TABLE")) {
+            f = 1;
+            msg = msg + "\"DROP TABLE\"";
+        }
+        else if (query.includes("DROP COLUMN"))
+        {
+            f = 1;
+            msg = msg + " \"DROP COLUMN\"";
+        }
+        else if (query.includes("INSERT INTO"))
+        {
+            f = 1;
+            msg = msg + " \"INSERT\"";
+        }
+        else if (query.includes("UPDATE"))
+        {
+            f = 1;
+            msg = msg + " \"UPDATE\"";
+        }
+        else if (query.includes("DELETE FROM"))
+        {
+            f = 1;
+            msg = msg + " \"DELETE\"";
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "../ProductionDBManager/ExecuteQuery",
+                data: { query: query, solution_id: solution_id },
+                success:
+                    this.getqueryAjaxSuccess.bind(this)
+            });
+        }
+        if (f == 1) {
+            msg = msg + ". Please Confirm Query...";
+            this.clickEventFunction(msg);
+        }
+       
+    }
+    this.clickEventFunction = function (msg) {
+        EbDialog("show", {
+            Message: msg,
+            Buttons: {
+                "Ok": {
+                    Background: "green",
+                    Align: "right",
+                    FontColor: "white;"
+                }
+            },
+            CallBack: this.dialogboxAction.bind(this)
+        });
+    }
+    this.dialogboxAction = function(value){
+                $('#viewQuery').modal({
+            show: true,
+            backdrop: "static"
         });
     }
     this.getqueryAjaxSuccess = function () {

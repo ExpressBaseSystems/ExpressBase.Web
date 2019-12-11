@@ -660,7 +660,12 @@ const EbSelect = function (ctrl, options) {
 
         if (this.datatable !== null) {
             this.setColumnvals();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            if (this.justInit) {
+                this.$inp.val(this.Vobj.valueMembers);
+                this.justInit = undefined;
+            }
+            else
+                this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
         else
             this.$inp.val(this.Vobj.valueMembers);

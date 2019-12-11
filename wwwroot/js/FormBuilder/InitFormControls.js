@@ -305,7 +305,7 @@ var InitControls = function (option) {
                 let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
                 let initDDwidth = $drpdwn.width();
                 let ofsetval = $drpdwn.offset();
-                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr("detch_select", true);;
+                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });;
                 let $div_detached = $drpdwn.detach();
                 $div_detached.appendTo("body").wrap($divclone);
                 $div_detached.width(initDDwidth);
@@ -322,28 +322,6 @@ var InitControls = function (option) {
                 $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
             }
         });
-        //code review ......to hide dropdown on click outside dropdown
-        document.addEventListener("click", function (e) {
-            var container = $('.dd_of_' + ctrl.EbSid_CtxId);
-            if (!((($(e.target).closest('[detch_select=true]').attr('detch_select')) == "true") || ($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
-              container.closest('[detch_select=true]').removeClass("open");
-            }
-            if (!ctrl.IsMultiSelect) {
-                if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
-                    container.closest('[detch_select=true]').removeClass("open");
-                }
-            }
-        });
-        //code review ..... to hide dropdown on scroll 
-        //remove focus
-        document.addEventListener('scroll', function (e) {
-            if (!($(e.target).closest('[detch_select=true]').attr('detch_select')) && $(".detch_select").hasClass("open")) {
-                $(".detch_select").removeClass("open");
-            }
-        }, true);
-
-
-
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -672,9 +650,14 @@ var InitControls = function (option) {
             itemList: ctrl.UserList.$values,
             EbSid_CtxId: ctrl.EbSid_CtxId
         });
-
+        itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
+        ctrl._onChangeFunction = [];
+        ctrl.bindOnChange = function (p1) {
+            if (!this._onChangeFunction.includes(p1))
+                this._onChangeFunction.push(p1);
+        };
         if (ctrl.LoadCurrentUser) {
             ctrl.setValue(ebcontext.user.UserId.toString());
         }

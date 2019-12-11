@@ -245,6 +245,10 @@ namespace ExpressBase.Web.Controllers
                 return true;
 
             EbOperation Op = EbWebForm.Operations.Get(ForWhat);
+            EbObjectType EbType = RefId.GetEbObjectType();            
+            if (EbType.IntCode == EbObjectTypes.Report)
+                Op = EbReport.Operations.Get(ForWhat);
+
             if (!Op.IsAvailableInWeb)
                 return false;
 

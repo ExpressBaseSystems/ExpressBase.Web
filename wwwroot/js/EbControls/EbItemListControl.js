@@ -11,7 +11,7 @@
             { vm: 4, dm1: 'Word', img: '2' }
         ]
     }, options);
-
+    this.ctrl = null;
 
     this.init = function () {
         this.drawControl();
@@ -82,8 +82,10 @@
     };
 
     this.onListItemSelect = function ($ele) {
+        let oldItemO = this.$dispCont.data('data-obj');
         let itemO = $ele.data('data-obj');
-
+        if (oldItemO && oldItemO['vm'] === itemO['vm'])
+            return;
         let $disp = $(`<div style="display: inherit;">
                             <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + itemO['img']}.png), url(${this.options.imageAlternate});"></div>
                             <div class="ulstc-disp-txt">${itemO['dm1']}</div>
@@ -92,6 +94,8 @@
         this.$dispCont.children('div').remove();
         this.$dispCont.prepend($disp);
         this.$dispCont.next().toggle();
+        for (let j = 0; j < this.ctrl._onChangeFunction.length; j++)
+            this.ctrl._onChangeFunction[j]();
     };
 
     this.onTxtSrchKeydown = function (e) {
@@ -155,15 +159,32 @@
     };
 
     this.setValue = function (p1, p2) {
+        let $dispC = $(`#cont_${this.EbSid_CtxId}`).find('.ulstc-disp-c');
+        let itemO = $dispC.data('data-obj');
+        if (itemO && itemO['vm'].toString() === p1.toString())
+            return;
+        if (!p1 || p1.toString() === '') {
+            if (itemO) {
+                $dispC.children('div').remove();
+                $dispC.prepend(`<div class="ulstc-disp-img-c" style="background-image: url(/images/nulldp.png);"></div>
+                            <div id="${this.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>`);
+                $dispC.removeData('data-obj');
+                for (let j = 0; j < this._onChangeFunction.length; j++)
+                    this._onChangeFunction[j]();
+            }
+            return;
+        }
+
         for (let i = 0; i < this.UserList.$values.length; i++) {
             if (this.UserList.$values[i]['vm'].toString() === p1.toString()) {
-                let $dispC = $(`#cont_${this.EbSid_CtxId}`).find('.ulstc-disp-c');
                 $dispC.data('data-obj', this.UserList.$values[i]);
                 $dispC.children('div').remove();
                 $dispC.prepend(`<div style="display: inherit;">
                                     <div class="ulstc-disp-img-c" style="background-image:url(/images/dp/${this.UserList.$values[i]['img']}.png), url(/images/nulldp.png);"></div>
                                     <div class="ulstc-disp-txt">${this.UserList.$values[i]['dm1']}</div>
                                 </div>`);
+                for (let j = 0; j < this._onChangeFunction.length; j++)
+                    this._onChangeFunction[j]();
                 break;
             }
         }
@@ -176,6 +197,6 @@
         else
             return '';
     };
-
+    
     this.init();
 };

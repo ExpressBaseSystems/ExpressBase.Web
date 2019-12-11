@@ -461,26 +461,25 @@ const WebFormRender = function (option) {
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
         let approvalTable = {};
-        WebformData.MasterTable = this.FormObj.TableName;
 
         let formTables = this.getFormTables();
         let gridTables = this.getDG_FVWTObjColl();
         if (this.ApprovalCtrl)
             approvalTable = this.getApprovalRow();
 
-        WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
+        //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
+
+        WebformData.MultipleTables = this.formateDS(this.MultipleTables);
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
 
 
-        console.log("old data --");
-        console.log(JSON.stringify(WebformData.MultipleTables));
+        //console.log("old data --");
+        //console.log(JSON.stringify(WebformData.MultipleTables));
 
         console.log("new data --");
         console.log(JSON.stringify(this.formateDS(this.MultipleTables)));
-        let newWebFormData = { MultipleTables: this.formateDS(this.MultipleTables) };
-        //return JSON.stringify(WebformData);
-        return JSON.stringify(newWebFormData);
+        return JSON.stringify(WebformData);
     };
 
     this.formateDS = function (_multipleTables) {
@@ -491,14 +490,15 @@ const WebFormRender = function (option) {
             let table = multipleTables[tableName];
             for (let j = 0; j < table.length; j++) {
                 let row = table[j];
-                    let columns = row.Columns;
-                    for (let k = 0; k < columns.length; k++) {
-                        let singleColumn = columns[k];
-                        delete singleColumn["D"];
-                        delete singleColumn["F"];
-                        delete singleColumn["R"];
-                        delete singleColumn["DisplayMember"];
-                    }
+                let columns = row.Columns;
+                for (let k = 0; k < columns.length; k++) {
+                    let singleColumn = columns[k];
+                    delete singleColumn["D"];
+                    delete singleColumn["F"];
+                    delete singleColumn["R"];
+                    delete singleColumn["ValueExpr_val"];
+                    delete singleColumn["DisplayMember"];
+                }
             }
         }
         return multipleTables;
@@ -506,12 +506,12 @@ const WebFormRender = function (option) {
 
     this.getCellObjFromEditModeObj = function (ctrl) {
         let CellObj;
-            for (let i = 0; i < this.TableNames.length; i++) {
-                let tableName = this.TableNames[i];
-                CellObj = getObjByval(this.EditModeFormData[tableName][0].Columns, "Name", ctrl.Name);
-                if (CellObj)
-                    return CellObj;
-            }
+        for (let i = 0; i < this.TableNames.length; i++) {
+            let tableName = this.TableNames[i];
+            CellObj = getObjByval(this.EditModeFormData[tableName][0].Columns, "Name", ctrl.Name);
+            if (CellObj)
+                return CellObj;
+        }
 
         return CellObj;
     };
@@ -520,13 +520,10 @@ const WebFormRender = function (option) {
         for (let i = 0; i < this.flatControls.length; i++) {
             let ctrl = this.flatControls[i];
             let cellObj = this.getCellObjFromEditModeObj(ctrl);
-            if (cellObj !== undefined) {
-                let val = cellObj.Value;
-                ctrl.reset(val);
-            }
-            else {
+            if (cellObj !== undefined)
+                ctrl.reset(cellObj.Value);
+            else
                 ctrl.clear();
-            }
         }
     };
 
@@ -1237,13 +1234,10 @@ const WebFormRender = function (option) {
 
         if (this.Mode.isNew) {
             this.initMultipleTables();
-            console.log(this.MultipleTables);
         }
         else {
-            // for DG ModalCellReff will attach on demand (when edit row clicked)
             this.MultipleTables = this.EditModeFormData;
             attachModalCellRef_form(this.FormObj, this.MultipleTables);
-            console.log("febin", this.EditModeFormData);
         }
 
         if (this.mode === "View Mode") {

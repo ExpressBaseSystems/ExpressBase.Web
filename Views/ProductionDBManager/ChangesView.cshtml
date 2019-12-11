@@ -14,6 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="~/js/EbControls/EbDialogBox.js"></script>
     <script src="~/js/ProductionDBManager/productiondbmanager.js"></script>
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
@@ -193,7 +194,7 @@
         </div>
     </div>
     <!-- ---------- Modal----------------- -->
-    <div id="viewQuery" class="modal fade" role="dialog">
+    <div id="viewQuery" class="modal fade" role="dialog" data-backdrop= "static">
         <div class="modal-dialog modal-lg">
 
             <!-- Modal content-->

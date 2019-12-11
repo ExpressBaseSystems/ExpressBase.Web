@@ -528,7 +528,6 @@ function getValsFromForm(formObj) {
         //    flag++;
     });
     if (flag > 0) {
-        console.log(111);
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
@@ -749,13 +748,11 @@ var EbTags = function (settings) {
 };
 
 function getRow__(__this) {
-    console.log("getRow__");
     return $(`[ebsid='${__this.__DG.EbSid}'] tr[rowid='${__this.__rowid}']`)
 }
 
 function dgOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {
-        console.log(999999999999);
         if ((col.OnChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '') || col.DependedValExp.$values.length > 0) {
             let FnString = atob(col.OnChangeFn.Code) + (col.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(form.__getCtrlByPath(this.__path))` : '');
             let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
@@ -771,7 +768,6 @@ function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {
         let FnString = `
                         let __this = form.__getCtrlByPath(this.__path);
-                        console.log(__this);
                         let $curRow = getRow__(__this);
                         let isRowEditing = $curRow.attr('is-editing') === 'true' && $curRow.attr('is-checked') === 'true';
                         if(__this.DataVals !== undefined && isRowEditing === false){
@@ -802,6 +798,13 @@ function setDate_EB(p1, p2) {
     }
     else
         $('#' + this.EbSid_CtxId).val('');
+}
+
+function justSetDate_EB(p1, p2) {
+    setDate_EB(p1, p2);
+    if (p1 !== null && p1 !== undefined) {        
+        $('#' + this.EbSid_CtxId).trigger('change');
+    }
 }
 
 function removePropsOfType(Obj, type = "function") {
@@ -895,15 +898,3 @@ document.addEventListener("click", function (e) {
         }
     }
 });
-
-//code review ..... to hide dropdown on scroll 
-
-
-document.addEventListener('scroll', function (e) {
-    if (!($(e.target).closest('[detch_select=true]').attr('detch_select')) && $(".detch_select").hasClass("open")) {// to check scroll is on body or detached div
-        if (!$(e.target).hasClass('selectpicker')) {
-          //  $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
-            $(".detch_select").removeClass("open");
-        }
-    }
-}, true);

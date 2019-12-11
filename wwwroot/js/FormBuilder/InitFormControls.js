@@ -307,7 +307,8 @@ var InitControls = function (option) {
                 let ofsetval = $drpdwn.offset();
                 let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });;
                 let $div_detached = $drpdwn.detach();
-                $div_detached.appendTo("body").wrap($divclone);
+                let $form_div = $(e.target).closest("[eb-type='WebForm']");
+                $div_detached.appendTo($form_div).wrap($divclone);
                 $div_detached.width(initDDwidth);
                 $el[0].isOutside = true;
                 $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
@@ -650,9 +651,14 @@ var InitControls = function (option) {
             itemList: ctrl.UserList.$values,
             EbSid_CtxId: ctrl.EbSid_CtxId
         });
-
+        itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
+        ctrl._onChangeFunction = [];
+        ctrl.bindOnChange = function (p1) {
+            if (!this._onChangeFunction.includes(p1))
+                this._onChangeFunction.push(p1);
+        };
         if (ctrl.LoadCurrentUser) {
             ctrl.setValue(ebcontext.user.UserId.toString());
         }

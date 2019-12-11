@@ -47,6 +47,7 @@
 @*jith*@
 <script type="text/javascript" src="~/js/EbControls/EbDpFormControl.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbItemListControl.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbDynamicTab.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbApproval.js" asp-append-version=@bApnd></script>
 @*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
@@ -334,6 +335,7 @@
 
     //to store refids of uploaded files via all fileuploader ctrls
     let uploadedFileRefList = {};
+    let DynamicTabPane = function() { console.log('Not Implemented');};
 
     $("#layout_div").addClass("for-modal-blur");
     //$("#webformaudittrail").on("click", function () {

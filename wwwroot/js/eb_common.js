@@ -773,6 +773,11 @@ function dgEBOnChangeBind() {
                         if(__this.DataVals !== undefined && isRowEditing === false){
                             __this.DataVals.Value = __this.getValue();
                             __this.DataVals.D = __this.getDisplayMember();
+                            if(__this.Name === 'ps1'){
+                                console.log('got it ========================');
+                                console.log(__this.getDisplayMember());
+                                console.log(__this.DataVals.D);
+                            }
                         }`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 

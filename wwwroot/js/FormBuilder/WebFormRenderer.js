@@ -257,28 +257,55 @@ const WebFormRender = function (option) {
     //this.j = function (p1) {
     //    let VMs = this.initializer.Vobj.valueMembers;
     //    let DMs = this.initializer.Vobj.displayMembers;
+    //    let columnVals = this.initializer.columnVals;
 
     //    if (VMs.length > 0)// clear if already values there
     //        this.initializer.clearValues();
 
-    //    let valMsArr = p1[0].split(",");
+    //    let valMsArr = p1[0].split(',');
     //    let DMtable = p1[1];
 
-
-    //    $.each(valMsArr, function (i, vm) {
+    //    for (let i = 0; i < valMsArr.length; i++) {
+    //        let vm = valMsArr[i];
     //        VMs.push(vm);
-    //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            valMsArr;
-    //            DMtable;
-
-    //            $.each(DMtable, function (j, r) {
-    //                if (getObjByval(r.Columns, "Name", this.ValueMember.name).Value === vm) {
-    //                    let _dm = getObjByval(r.Columns, "Name", dm.name).Value;
+    //        for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
+    //            let dm = this.DisplayMembers.$values[j];
+    //            for (var k = 0; k < DMtable.length; k++) {
+    //                let row = DMtable[k];
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
     //                    DMs[dm.name].push(_dm);
     //                }
+    //            }
+    //        }
+    //    }
+
+    //    if (this.initializer.datatable === null) {//for aftersave actions
+    //        $.each(valMsArr, function (i, vm) {
+    //            $.each(DMtable, function (j, row) {
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    $.each(row.Columns, function (k, column) {
+    //                        if (!columnVals[column.Name]) {
+    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
+    //                            return true;
+    //                        }
+    //                        let val = EbConvertValue(column.Value, column.Type);
+    //                        columnVals[column.Name].push(val);
+    //                    }.bind(this));
+    //                }
+
+    //                //$.each(r.Columns, function (j, column) {
+    //                //    if (!columnVals[column.Name]) {
+    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                //        return true;
+    //                //    }
+    //                //    let val = EbConvertValue(column.Value, column.Type);
+    //                //    columnVals[column.Name].push(val);
+    //                //}.bind(this));
+
     //            }.bind(this));
     //        }.bind(this));
-    //    }.bind(this));
+    //    }
     //};
 
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
@@ -470,8 +497,8 @@ const WebFormRender = function (option) {
         let WebformData = {};
         let approvalTable = {};
 
-        let formTables = this.getFormTables();
-        let gridTables = this.getDG_FVWTObjColl();
+        //let formTables = this.getFormTables();
+        //let gridTables = this.getDG_FVWTObjColl();
         if (this.ApprovalCtrl)
             approvalTable = this.getApprovalRow();
 
@@ -557,6 +584,10 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
         let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
+        if (this.rowId === 0) {
+            console.dev_log("Form save failed");
+            return;
+        }
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
                 EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });

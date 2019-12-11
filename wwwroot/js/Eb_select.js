@@ -253,13 +253,13 @@ const EbSelect = function (ctrl, options) {
         if (this.setvaluesColl) {
             if (this.ComboObj.MultiSelect) {
                 $.each(this.setvaluesColl, function (i, val) {
-                    let $row = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
-                    if ($row.length === 0) {
+                    let $checkBox = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
+                    if ($checkBox.length === 0) {
                         console.eb_warn(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`, "rgb(222, 112, 0)");
                         this.$inp.val(StrValues).trigger("change");
                     }
                     else
-                        $row.click();
+                        $checkBox.click();
                 }.bind(this));
             }
             else {
@@ -271,6 +271,7 @@ const EbSelect = function (ctrl, options) {
                 else
                     $row.trigger("dblclick");
             }
+            //this.afterInitComplete4SetVal = true;
         }
         if (callBFn)
             callBFn();
@@ -372,11 +373,11 @@ const EbSelect = function (ctrl, options) {
             let div_tble = $("#" + o.containerId);
             let tbl_cod = div_tble.offset();
             let div_detach = div_tble.detach();
-            div_detach.attr({ "detch_select": true, "par_ebsid": this.name , "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
+            div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
             let xtra_wdth = tbl_cod.left;
             if ((contWidth + tbl_cod.left) > brow_wdth)
                 xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
-            let $form_div = $('#' + this.name ).closest("[eb-type='WebForm']");
+            let $form_div = $('#' + this.name).closest("[eb-type='WebForm']");
             div_detach.appendTo($form_div).offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
 
         }.bind(this), 30);
@@ -663,7 +664,8 @@ const EbSelect = function (ctrl, options) {
             this.setColumnvals();
             if (this.justInit) {
                 this.$inp.val(this.Vobj.valueMembers);
-                this.justInit = undefined;
+                //if (this.afterInitComplete4SetVal)
+                    this.justInit = undefined;
             }
             else
                 this.$inp.val(this.Vobj.valueMembers).trigger("change");

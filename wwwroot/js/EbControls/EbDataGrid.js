@@ -92,40 +92,6 @@
             textspn += `<span iblock>` + objspn[x] + `</span>`;
         }
 
-        //$.each(valMsArr, function (i, vm) {//for aftersave actions
-        //    $.each(DMtable, function (j, row) {
-        //        if (getObjByval(row.Columns, 'Name', col.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-        //            $.each(row.Columns, function (k, column) {
-        //                //if (!columnVals[column.Name]) {
-        //                //console.warn('Found mismatch in Columns from datasource and Colums in object');
-        //                //return true;
-        //                //}
-        //                //let val = EbConvertValue(column.Value, column.Type);
-        //                //columnVals[column.Name].push(val);
-        //            }.bind(this));
-        //        }
-
-        //        //$.each(r.Columns, function (j, column) {
-        //        //    if (!columnVals[column.Name]) {
-        //        //        console.warn('Mismatch found in Colums in datasource and Colums in object');
-        //        //        return true;
-        //        //    }
-        //        //    let val = EbConvertValue(column.Value, column.Type);
-        //        //    columnVals[column.Name].push(val);
-        //        //}.bind(this));
-
-        //    }.bind(this));
-        //}.bind(this));
-
-
-
-        //let psValues = this.FormDataExtdObj.val[col.EbSid_CtxId];
-        //let psColumns = getObjByval(psValues, "RowId", rowId).Columns;
-        //let DMNames = col.DisplayMembers.$values.map(function (obj) { return obj["name"]; }.bind(this));
-        //for (let i = 0; i < DMNames.length; i++) {
-        //    let DMName = DMNames[i];
-        //    dispMembrs.push(getObjByval(psColumns, "Name", DMName).Value);
-        //}
         return textspn;
     };
 
@@ -335,58 +301,6 @@
         if (!this.ctrl.AscendingOrder)
             this.UpdateSlNo();
     };
-
-    //this.j = function (p1) {
-    //    let VMs = this.initializer.Vobj.valueMembers;
-    //    let DMs = this.initializer.Vobj.displayMembers;
-    //    let columnVals = this.initializer.columnVals;
-
-    //    if (VMs.length > 0)// clear if already values there
-    //        this.initializer.clearValues();
-
-    //    let valMsArr = p1[0].split(',');
-    //    let DMtable = p1[1];
-
-    //    $.each(valMsArr, function (i, vm) {
-    //        VMs.push(vm);
-    //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            $.each(DMtable, function (j, row) {
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-    //                    DMs[dm.name].push(_dm);
-    //                }
-    //            }.bind(this));
-    //        }.bind(this));
-    //    }.bind(this));
-
-
-    //    if (this.initializer.datatable === null) {//for aftersave actions
-    //        $.each(valMsArr, function (i, vm) {
-    //            $.each(DMtable, function (j, row) {
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    $.each(row.Columns, function (k, column) {
-    //                        if (!columnVals[column.Name]) {
-    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
-    //                            return true;
-    //                        }
-    //                        let val = EbConvertValue(column.Value, column.Type);
-    //                        columnVals[column.Name].push(val);
-    //                    }.bind(this));
-    //                }
-
-    //                //$.each(r.Columns, function (j, column) {
-    //                //    if (!columnVals[column.Name]) {
-    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
-    //                //        return true;
-    //                //    }
-    //                //    let val = EbConvertValue(column.Value, column.Type);
-    //                //    columnVals[column.Name].push(val);
-    //                //}.bind(this));
-
-    //            }.bind(this));
-    //        }.bind(this));
-    //    }
-    //};
 
     //this.j = function (p1) {
     //    let VMs = this.initializer.Vobj.valueMembers;
@@ -937,7 +851,7 @@
                 return true;
 
             if (ctrl.ObjType === "PowerSelect") {
-                ctrl.setDisplayMember = this.j;
+                //ctrl.setDisplayMember = this.j;
                 if (val)
                     ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
             }
@@ -974,9 +888,9 @@
         let $tr = this.$table.find(`[rowid=${rowid}]`);
         let tds = $tr.find("td[ctrltdidx]");
         for (var i = 0; i < tds.length; i++) {
-            setTimeout(function (tds, i) {
-                this.ctrlToSpan_td($(tds[i]));
-            }.bind(this, tds, i), 0);
+            //setTimeout(function (tds, i) {//============
+            this.ctrlToSpan_td($(tds[i]));
+            //}.bind(this, tds, i), 0);
         }
         //$.each($tr.find("td[ctrltdidx]"), function (i, td) {
         //    this.ctrlToSpan_td($(td));
@@ -995,6 +909,8 @@
         let ctrl = this.getCtrlByTd($td);
         $td.find(".ctrl-cover").hide();
         if (ctrl.ObjType === "PowerSelect") {
+            if (!ctrl.DataVals.Value)
+                return;
             //let t0 = performance.now();
             let html = "";
             //let Blocks = $("#" + ctrl.EbSid_CtxId + "Wraper .search-block");
@@ -1112,8 +1028,12 @@
         for (let colName in curRowData) {
             let ctrl = getObjByval(curRowCtrls, "Name", curRowData[colName].Name);
             let Value = ctrl.DataVals.Value;
-            if (Value !== null)
-                ctrl.justSetValue(Value);
+            if (Value !== null) {
+                if (ctrl.ObjType === "PowerSelect")
+                    ctrl.setDisplayMember([Value, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                else
+                    ctrl.justSetValue(Value);
+            }
         }
     };
 

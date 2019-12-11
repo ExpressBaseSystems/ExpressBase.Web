@@ -372,6 +372,7 @@ const EbSelect = function (ctrl, options) {
             let div_tble = $("#" + o.containerId);
             let tbl_cod = div_tble.offset();
             let div_detach = div_tble.detach();
+            div_detach.attr({ "detch_select": true, "par_ebsid": this.name , "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
             let xtra_wdth = tbl_cod.left;
             if ((contWidth + tbl_cod.left) > brow_wdth)
                 xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));

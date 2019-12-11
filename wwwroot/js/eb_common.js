@@ -895,15 +895,3 @@ document.addEventListener("click", function (e) {
         }
     }
 });
-
-//code review ..... to hide dropdown on scroll 
-
-
-document.addEventListener('scroll', function (e) {
-    if (!($(e.target).closest('[detch_select=true]').attr('detch_select')) && $(".detch_select").hasClass("open")) {// to check scroll is on body or detached div
-        if (!$(e.target).hasClass('selectpicker')) {
-          //  $("#" + ctrl.EbSid_CtxId).selectpicker('toggle');
-            $(".detch_select").removeClass("open");
-        }
-    }
-}, true);

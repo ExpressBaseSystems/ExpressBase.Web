@@ -137,6 +137,10 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
+
+        //this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
+        //new EbDynamicTab({ AllTabCtrls: this.TabControls, FormModel: _formData });
+
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
@@ -1057,7 +1061,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
@@ -1077,7 +1081,7 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "Fail Mode") {
             EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
@@ -1124,7 +1128,7 @@ const WebFormRender = function (option) {
                 r.push(btns[i]);
             else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
                 r.push(btns[i]);
-            else if (btns[i] === "webformprint" && mode === 'View Mode' && this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '')
+            else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                 r.push(btns[i]);
         }
         return r;
@@ -1165,22 +1169,31 @@ const WebFormRender = function (option) {
             return this.closeAfterSave;
     };
 
-    this.initPrintMenu = function () {
-        //test data hardcoded
-        //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
-        //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
+    this.initPrintMenu = function () {       
+        if (this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0) {
+            let $sel = $("#webformprint-selbtn .selectpicker");
+            for (let i = 0; i < this.FormObj.PrintDocs.$values.length; i++) {
+                let tle = this.FormObj.PrintDocs.$values[i].Title || this.FormObj.PrintDocs.$values[i].ObjDisplayName;
+                $sel.append(`<option data-token="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`);
+            }
+            //test data hardcoded
+            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
+            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
 
-        //$("#webformprint-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
-        //$("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
-        if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
-            $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
-            $("#webformprint").on("click", this.printDocument.bind(this));
-        }
+            $sel.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+            $("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
+            $("#webformprint").on("click", function () { this.printDocument(); }.bind(this));
+        }        
+
+        //if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
+        //    $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
+        //    $("#webformprint").on("click", this.printDocument.bind(this));
+        //}
     };
 
     this.printDocument = function () {
-        //let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
-        let rptRefid = $("#webformprint").attr('data-refid');
+        let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
+        //let rptRefid = $("#webformprint").attr('data-refid');
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };

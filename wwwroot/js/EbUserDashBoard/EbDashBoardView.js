@@ -14,6 +14,7 @@
     this.filtervalues = [];
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
+    this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
 
     this.GridStackInit = function () {
         this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
@@ -25,7 +26,6 @@
     this.getColumns = function () {
         $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
     };
-
 
     this.AppendFD = function (result) {
         $('.db-user-filter').remove();
@@ -41,7 +41,7 @@
                 `);
         $('#paramdiv' + this.TabNum).append(result);
         $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
-        $("#btnGo").off("click").on("click", this.GetFilterValues4Dashboard.bind(this));
+        $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
         if (typeof FilterDialog !== "undefined") {
             $(".param-div-cont").show();
             this.stickBtn = new EbStickButton({
@@ -65,25 +65,6 @@
     this.CloseParamDiv = function () {
         this.stickBtn.minimise();
     }
-
-    this.GetFilterValues4Dashboard = function () {
-        this.grid.removeAll();
-        this.filtervalues = [];
-
-        if (this.filterDialog)
-            this.filtervalues = getValsForViz(this.filterDialog.FormObj);
-
-        let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
-        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.EbObject.Tiles.$values.length > 0) {
-            this.DrawTiles();
-        }
-        this.stickBtn.minimise();
-    };
 
     this.placefiltervalues = function () {
         $.each(getFlatControls(this.filterDialog.FormObj), function (i, obj) {
@@ -136,7 +117,7 @@
         this.Statu = this.DashBoardList[refid].Status;
         this.TileCollection = {};
         this.CurrentTile;
-
+        this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
         this.init();
     }
 
@@ -154,6 +135,7 @@
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "") {
             $('.db-user-filter').remove();
             if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            this.grid.removeAll();
             this.DrawTiles();
         }
         else {
@@ -311,7 +293,8 @@
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`#${id} .db-title`).css({ "font-size": "1.3em", "padding-bottom": "1.4em", "padding-left": "2px" });
             $(`#${id} .db-title`).parent().css("border","0px")
-            $("#tile5 .i-opt-obj").hide();
+            $(`#${id} .i-opt-obj`).hide();
+            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" })
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -344,7 +327,8 @@
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.EbObject.Filter_Dialogue != null || this.EbObject.Filter_Dialogue != undefined || this.EbObject.Filter_Dialogue != "") {
+        if (this.filterDialogRefid !== "") {
+            this.grid.removeAll();
             this.DrawTiles();
         }
         if (this.stickBtn) { this.stickBtn.minimise(); }

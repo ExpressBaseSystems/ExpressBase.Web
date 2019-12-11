@@ -31,14 +31,15 @@
     }.bind(this);
     this.resetBuffers();
 
-    this.ctrl.setEditModeRows = function (SingleTable) {/////////// need change
+    this.setEditModeRows = function (SingleTable) {/////////// need change
         this.SingleTable = SingleTable;
         this.SetEditModeDataTable(SingleTable);
-        this.setEditModeRows(this.EditModeDataTable);
+        this.setupEditModeRows(this.EditModeDataTable);
         return this.updateAggCols(false);
     }.bind(this);
 
-    this.setEditModeRows = function (EditModeDataTable) {
+
+    this.setupEditModeRows = function (EditModeDataTable) {
         this.addEditModeRows(EditModeDataTable);
         this.attachModalCellRef();
         this.updateColSpanBasedOnValExp_E();
@@ -47,7 +48,7 @@
 
     this.resetControlValues = function (SingleTable) {
         console.log(SingleTable);
-        this.ctrl.setEditModeRows(SingleTable);
+        this.setEditModeRows(SingleTable);
     };
 
 
@@ -236,20 +237,24 @@
                 let bt0 = performance.now();
                 $.each(inpCtrls, function (i, inpCtrl) {
                     this.initCtrl4EditMode(inpCtrl);
-                    //if (!inpCtrl.DoNotPersist) {
-                    //    inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
-                    //    let $td = $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]`);
-                    //    //$('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
-                    //    //this.ctrlToSpan_td($td); /// need to recheck 
-                    //}
+                    if (!inpCtrl.DoNotPersist) {
+                        inpCtrl.justSetValue(inpCtrl.__eb_EditMode_val);
+                        //let $td = $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]`);
+                        //$('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
+                        //this.ctrlToSpan_td($td); /// need to recheck 
+                    }
                 }.bind(this));
                 let bt1 = performance.now();
                 //console.dev_log("DataGrid : 1st loop took " + (bt1 - bt0) + " milliseconds.");
 
                 let at0 = performance.now();
-                $.each(inpCtrls, function (i, inpCtrl) {
-                    EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full, true);
-                }.bind(this));
+
+                for (let k = 0; k < inpCtrls.length; k++) {
+                    let inpCtrl = inpCtrls[k];
+                    let ValueExpr_val = EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full, true);
+                    if (inpCtrl.DoNotPersist && inpCtrl.DataVals.ValueExpr_val)
+                        $(`#td_${inpCtrl.EbSid_CtxId} .tdtxt>span`).text(ValueExpr_val);
+                }
                 let at1 = performance.now();
                 //console.dev_log("DataGrid : EbRunValueExpr took " + (at1 - at0) + " milliseconds.");
 
@@ -753,11 +758,10 @@
         $tr.show(300);
         this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
-        this.updateAggCols();
         let t1 = performance.now();
+        this.addSingleColumns(rowid, this.AllRowCtrls[rowid]);
         let rowCtrls = this.initRowCtrls(rowid, editModeData);
-        this.addSingleColumns(rowid, rowCtrls);
-        //let rowCtrls = this.AllRowCtrls[rowid];
+        this.updateAggCols();
         console.dev_log("initRowCtrls : took " + (performance.now() - t1) + " milliseconds.");
         return [$tr, rowCtrls];
 
@@ -820,6 +824,7 @@
         let SingleRow = EditModeData;
         let CurRowCtrls = this.AllRowCtrls[rowid];
 
+        //// initialise all controls in added row
         for (let i = 0; i < CurRowCtrls.length; i++) {
             let inpCtrl = CurRowCtrls[i];
             let opt = {};
@@ -838,20 +843,9 @@
 
         }
 
-        //// initialise all controls in added row
-        //$.each(CurRowCtrls, function (i, inpCtrl) {
-        //    let opt = {};
-        //    if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
-        //        opt.getAllCtrlValuesFn = this.getFormVals;
-        //    else if (inpCtrl.ObjType === "Date") {
-        //        opt.source = "webform";
-        //        opt.userObject = this.ctrl.__userObject;
-        //    }
-        //    this.initControls.init(inpCtrl, opt);
-        //}.bind(this));
-
         //should fire after onChangeFn init
-        $.each(CurRowCtrls, function (i, inpCtrl) {
+        for (let j = 0; j < CurRowCtrls.length; j++) {
+            let inpCtrl = CurRowCtrls[j];
 
             // DefaultValue
             if (this.Mode.isNew && inpCtrl.DefaultValue)
@@ -892,7 +886,7 @@
                 }
             }
 
-        }.bind(this));
+        }
 
 
         ////////////////////
@@ -1774,7 +1768,7 @@
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
 
-        this.ctrl.setEditModeRows(SingleTable);
+        this.setEditModeRows(SingleTable);
     };
 
     this.init = function () {

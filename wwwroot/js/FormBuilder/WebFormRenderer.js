@@ -340,12 +340,16 @@ const WebFormRender = function (option) {
         let EditModeFormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames();
         //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
-        $.each(this.DGs, function (k, DG) {
-            if (!EditModeFormData.hasOwnProperty(DG.TableName))
-                return true;
-            let SingleTable = EditModeFormData[DG.TableName];
-            DG.setEditModeRows(SingleTable);
-        }.bind(this));
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
+            if (!this.MultipleTables.hasOwnProperty(DGB.ctrl.TableName)) {
+                this.MultipleTables[DGB.ctrl.TableName] = [];
+                DGB.SingleTable = this.MultipleTables[DGB.ctrl.TableName];
+                continue;
+            }
+            let SingleTable = EditModeFormData[DGB.ctrl.TableName];
+            DGB.setEditModeRows(SingleTable);
+        }
 
         if (this.ApprovalCtrl) {
             if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
@@ -528,8 +532,8 @@ const WebFormRender = function (option) {
     };
 
     this.RefreshDGControlValues = function () {
-        for (let key in this.DGBuilderObjs) {
-            let DGB = this.DGBuilderObjs[key];
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
             let singleTable = this.EditModeFormData[DGB.ctrl.TableName];
             if (singleTable)
                 DGB.resetControlValues(singleTable);

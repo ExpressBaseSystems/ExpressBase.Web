@@ -14,11 +14,11 @@
     this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
-    this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21:"GoogleMap"}
+    this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21: "GoogleMap" }
     this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21: "fa fa-map-marker" }
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
-    this.filterDialogRefid = this.EbObject.Filter_Dialogue;
+    this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "" ;
 
     this.GridStackInit = function () {
         this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
@@ -29,7 +29,7 @@
 
 
     this.getColumns = function () {
-        $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv"}, this.AppendFD.bind(this));
+        $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
     };
 
 
@@ -57,7 +57,7 @@
                 icon: "fa-filter",
                 dir: "left",
                 label: "Parameters",
-                style: { top: "230px"}
+                style: { top: "230px" }
             });
             this.filterDialog = FilterDialog;
         }
@@ -66,7 +66,7 @@
             this.filterDialog = null;
         }
         this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
-       
+
     };
 
     this.CloseParamDiv = function () {
@@ -96,14 +96,14 @@
         this.DrawObjectOnMenu();
         $('#close_ToolBoxdiv' + this.TabNum).off('click').on('click', this.CloseToolBoxDiv.bind(this));
         $(".ToolBox-div").hide();
-            this.stickBtn4ToolBox = new EbStickButton({
-                $wraper: $(".ToolBox-div"),
-                $extCont: $(".ToolBox-div"),
-                icon: "fa-wrench",
-                dir: "left",
-                label: "ToolBox",
-                style: { top: "105px" }
-            });
+        this.stickBtn4ToolBox = new EbStickButton({
+            $wraper: $(".ToolBox-div"),
+            $extCont: $(".ToolBox-div"),
+            icon: "fa-wrench",
+            dir: "left",
+            label: "ToolBox",
+            style: { top: "105px" }
+        });
         this.stickBtn4ToolBox.minimise();
     };
 
@@ -127,11 +127,11 @@
                         </div>`);
                     myarr4EbType.push(Obj.EbObjectType);
                     containers.push(document.getElementById(`${Obj.EbObjectType}`));
-                   
+
                 }
                 else {
                     $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
-                  
+
                 }
             }.bind(this));
 
@@ -158,16 +158,16 @@
             return false;
         }
         else {
-            if (this.drake.containers.indexOf($("#grid-cont") === -1)){
+            if (this.drake.containers.indexOf($("#grid-cont") === -1)) {
 
                 this.drake.containers.push(document.getElementById('grid-cont'));
                 return true;
-            } 
+            }
         }
     };
 
     this.columnsshadow = function (el, container, source) {
-        if (source === $("#grid-cont")){
+        if (source === $("#grid-cont")) {
             return false;
         }
     };
@@ -187,7 +187,7 @@
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
-       
+
     };
 
     this.GenerateButtons = function () {
@@ -224,8 +224,8 @@
         else {
             this.getColumns();
         }
-    
-        $("#dashbord-view").on("click",".tile-opt" , this.TileOptions.bind(this));
+
+        $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
     }
@@ -367,7 +367,13 @@
         }
 
         if (pname == "Filter_Dialogue") {
-            this.getColumns();
+            if (newval !== "") {
+                this.getColumns();
+            }
+            else {
+                $('.param-div-cont').remove();
+                if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            }
         }
     }
     //this.addTilecontext = function () {
@@ -412,7 +418,7 @@
 
 
     this.TileRefidChangesuccess = function (id, data) {
-        if (this.filtervalues.length === 0 ){
+        if (this.filtervalues.length === 0) {
             this.GetFilterValues();
         }
         let obj = JSON.parse(data);
@@ -454,17 +460,17 @@
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
             let opts = {
-                parentDiv : '#' + id + '_UserCtrl',
+                parentDiv: '#' + id + '_UserCtrl',
                 refId: obj.RefId
             }
             new EbUserCtrlHelper(opts);
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).css({ "font-size": "1.3em", "padding-bottom": "1.4em", "padding-left" : "2px"});    
-            $("#tile5 .i-opt-obj").hide();
-
-            
+            $(`#${id} .db-title`).css({ "font-size": "1.3em", "padding-bottom": "1.4em", "padding-left": "2px" });
+            $(`#${id} .i-opt-obj`).hide();
+            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" })
+            //$(`#${id} .db-title`).parent().css({ "border": "solid 1px #dcdcdc" })
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);

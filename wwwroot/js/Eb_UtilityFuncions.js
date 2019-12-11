@@ -92,18 +92,18 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
 
 function valueExpHelper(val, ctrl, updateSpan) {
     val = EbConvertValue(val, ctrl.ObjType);
-    ctrl.__eb_ValueExpr_val = val;
-
-    if (ctrl.__eb_EditMode_val && ctrl.__eb_EditMode_val !== ctrl.__eb_ValueExpr_val) {
-        //ctrl.setValue(ctrl.__eb_EditMode_val);
+    ctrl.DataVals.ValueExpr_val = val;
+    let isdifferentValue = ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val;
+    if (isdifferentValue) {
+        //ctrl.setValue(ctrl.DataVals.Value);
         console.warn(`edit mode value and valueExpression value are different for '${ctrl.Name}' control`);
     }
     else {
-        if (ctrl.__eb_ValueExpr_val)
-            ctrl.setValue(ctrl.__eb_ValueExpr_val);
+        if (ctrl.DataVals.ValueExpr_val)
+            ctrl.setValue(ctrl.DataVals.ValueExpr_val);
     }
-    if (updateSpan)
-        $(`#td_${ctrl.EbSid_CtxId} .tdtxt>span`).text(ctrl.__eb_ValueExpr_val);
+    if (updateSpan && ctrl.DataVals.ValueExpr_val)
+        $(`#td_${ctrl.EbSid_CtxId} .tdtxt>span`).text(ctrl.DataVals.ValueExpr_val);
 }
 
 function showLoader4webform() {
@@ -279,10 +279,19 @@ function ItemCount(array, item) {
     }
     return count;
 }
-
+//need to move to form
 function dateDisplayNone() {
-    document.addEventListener('scroll', function (e)
-    {
+    document.addEventListener('scroll', function (e) {
         $('.xdsoft_datetimepicker').css("display", "none");
     }, true);
+}
+function getObjCopy4PS(Obj) {
+    let newObj = {};
+    $.extend(true, newObj, Obj);
+    let keys = Object.keys(newObj);
+    for (var i = 0; i < keys.length; i++) {
+        if (typeof Obj[keys[i]] === "function")
+            delete newObj[keys[i]];
+    }
+    return newObj;
 }

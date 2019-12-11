@@ -32,6 +32,7 @@
     this.resetBuffers();
 
     this.ctrl.setEditModeRows = function (SingleTable) {/////////// need change
+        this.SingleTable = SingleTable;
         this.SetEditModeDataTable(SingleTable);
         this.setEditModeRows(this.EditModeDataTable);
         return this.updateAggCols(false);
@@ -39,7 +40,8 @@
 
     this.setEditModeRows = function (EditModeDataTable) {
         this.addEditModeRows(EditModeDataTable);
-        this.setValueExpCols();
+        this.attachModalCellRef();
+        this.updateColSpanBasedOnValExp_E();
         //this.tryAddRow();
     };
 
@@ -48,30 +50,45 @@
         this.ctrl.setEditModeRows(SingleTable);
     };
 
+
     this.getPSDispMembrs = function (cellObj, rowId, col) {
 
         let valMsArr = cellObj.Value.split(',');
         let DMtable = this.FormDataExtdObj.val[col.EbSid_CtxId];
-        let dispMembrs = [];
+        //let dispMembrs = [];
+        let textspn = "";
+        var objspn = {};
+        console.log(DMtable);
 
         for (let i = 0; i < valMsArr.length; i++) {
-            let dmSpan = `<span iblock>`;
+            //  let dmSpan = `<span iblock>`;
             let vm = valMsArr[i];
             //VMs.push(vm);
             for (let j = 0; j < col.DisplayMembers.$values.length; j++) {
+                let innrspn = "";
                 let dm = col.DisplayMembers.$values[j];
                 for (var k = 0; k < DMtable.length; k++) {
                     let row = DMtable[k];
                     if (getObjByval(row.Columns, 'Name', col.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
                         let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-                        //DMs[dm.name].push(_dm);
-                        dmSpan += `<span class='selected-tag'>${_dm}</span>`;
-                        //dispMembrs.push(dmSpan);
+
+                        if (!(objspn.hasOwnProperty(`${dm.name}`))) {
+                            objspn[`${dm.name}`] = "";
+                        }
+                        objspn[`${dm.name}`] += `<span class='selected-tag'>${_dm}</span>`;
+
+                        // //DMs[dm.name].push(_dm);
+                        //dmSpan += `<span class='selected-tag'>${_dm}</span>`;
+                        //// dispMembrs.push(dmSpan);
                     }
                 }
             }
-            dmSpan += `</span>`;
-            dispMembrs.push(dmSpan);
+            //dmSpan += `</span>`;
+            //dispMembrs.push(dmSpan);
+        }
+
+        for (var x in objspn) {
+            textspn += `<span iblock>` + objspn[x] + `</span>`;
         }
 
         //$.each(valMsArr, function (i, vm) {//for aftersave actions
@@ -108,7 +125,7 @@
         //    let DMName = DMNames[i];
         //    dispMembrs.push(getObjByval(psColumns, "Name", DMName).Value);
         //}
-        return dispMembrs;
+        return textspn;
     };
 
     this.getSSDispMembrs = function (cellObj, rowId, col) {
@@ -159,7 +176,7 @@
             let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`
             spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
             // dspMmbr = cellObj.Value.split('$$')[1];
-            dspMmbr =spn;
+            dspMmbr = spn;
         }
         else
             dspMmbr = cellObj.Value;
@@ -210,7 +227,7 @@
         return !isEditing;
     };
 
-    this.setValueExpCols = function () {
+    this.updateColSpanBasedOnValExp_E = function () {
         let t0 = performance.now();
         $.each(this.AllRowCtrls, function (rowId, inpCtrls) {
             setTimeout(function () {// to make asynchronous
@@ -219,12 +236,12 @@
                 let bt0 = performance.now();
                 $.each(inpCtrls, function (i, inpCtrl) {
                     this.initCtrl4EditMode(inpCtrl);
-                    if (!inpCtrl.DoNotPersist) {
-                        inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
-                        let $td = $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]`);
-                        //$('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
-                        //this.ctrlToSpan_td($td); /// need to recheck 
-                    }
+                    //if (!inpCtrl.DoNotPersist) {
+                    //    inpCtrl.setValue(inpCtrl.__eb_EditMode_val);
+                    //    let $td = $('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]`);
+                    //    //$('[ebsid=' + inpCtrl.__DG.EbSid + ']').find(`tr[rowid=${inpCtrl.__rowid}] [colname=${inpCtrl.Name}]>.tdtxt>span`).html(inpCtrl.getDisplayMember());
+                    //    //this.ctrlToSpan_td($td); /// need to recheck 
+                    //}
                 }.bind(this));
                 let bt1 = performance.now();
                 //console.dev_log("DataGrid : 1st loop took " + (bt1 - bt0) + " milliseconds.");
@@ -240,7 +257,7 @@
 
         }.bind(this));
         let t1 = performance.now();
-        console.dev_log("DataGrid : setValueExpCols took " + (t1 - t0) + " milliseconds.");
+        console.dev_log("DataGrid : updateColSpanBasedOnValExp took " + (t1 - t0) + " milliseconds.");
     };
 
     this.initCtrl4EditMode = function (inpCtrl) {
@@ -249,7 +266,7 @@
             inpCtrl.initializer = {};//temporary init
             inpCtrl.initializer.columnVals = {};//temporary init
             inpCtrl.initializer.setValues = function (p1, p2) {
-                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1).trigger('change');
+                $(`#${inpCtrl.EbSid_CtxId}Wraper [ui-inp]`).val(p1);//.trigger('change');
             };
 
             inpCtrl.getColumn = function (ctrl, colName) {
@@ -469,7 +486,6 @@
         SingleRow.Columns.push({
             Name: "eb_row_num",
             Value: parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx")),
-            AutoIncrement: false,
             Type: 7
         });
         $.each(inpCtrls, function (i, obj) {
@@ -706,6 +722,10 @@
         return tr;
     }.bind(this);
 
+    this.addSingleColumns = function (rowId, inpCtrls) {
+        this.SingleTable.push(this.getRowWTs(rowId, inpCtrls));
+    };
+
     this.addRow = function (opt = {}) {
         let rowid = opt.rowid;
         let isAdded = opt.isAdded;
@@ -736,6 +756,7 @@
         this.updateAggCols();
         let t1 = performance.now();
         let rowCtrls = this.initRowCtrls(rowid, editModeData);
+        this.addSingleColumns(rowid, rowCtrls);
         //let rowCtrls = this.AllRowCtrls[rowid];
         console.dev_log("initRowCtrls : took " + (performance.now() - t1) + " milliseconds.");
         return [$tr, rowCtrls];
@@ -857,7 +878,9 @@
             // run DG onChangeFns initially
             if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
                 try {
-                    let onChangeFn = new Function('form', 'user', `event`, atob(inpCtrl.OnChangeFn.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
+                    let FnString = atob(inpCtrl.OnChangeFn.Code) +
+                        `;console.log('GOT IT initially inside dg---'); console.log(this)`;
+                    let onChangeFn = new Function('form', 'user', `event`, FnString).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
                     inpCtrl.__onChangeFn = onChangeFn;
                     console.log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
                     inpCtrl.__onChangeFn();
@@ -881,11 +904,6 @@
         //should fire after all default value set
         $.each(this.AllRowCtrls[rowid], function (i, inpCtrl) {
             EbRunValueExpr(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full);
-            //if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Code) {
-            //    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-            //    let val = fun();
-            //    inpCtrl.setValue(val);
-            //}
         }.bind(this));
 
         return this.AllRowCtrls[rowid];
@@ -950,7 +968,7 @@
                 _type = obj.EbDbType;
                 colObj.Value = (_type === 7) ? parseFloat(obj.getValue()) : obj.getValue();
                 colObj.Type = _type;
-                colObj.AutoIncrement = obj.AutoIncrement || false;
+                //colObj.AutoIncrement = obj.AutoIncrement || false;
                 rowObjs[0].push(colObj);
             }.bind(this));
             this.FVWTObjColl.push(rowObjs);
@@ -985,19 +1003,30 @@
         if (ctrl.ObjType === "PowerSelect") {
             //let t0 = performance.now();
             let html = "";
-            let Blocks = $("#" + ctrl.EbSid_CtxId + "Wraper .search-block");
-            for (var i = 0; i < Blocks.length; i++) {
-                let block = Blocks[i];
+            //let Blocks = $("#" + ctrl.EbSid_CtxId + "Wraper .search-block");
+            let dmNames = ctrl.initializer.dmNames;
+            for (var i = 0; i < dmNames.length; i++) {
+                let dispName = dmNames[i];
                 html += "<span iblock>";
-                let $tags = $(block).find(".selected-tag");
-                for (var j = 0; j < $tags.length; j++) { html += $($tags[j]).outerHTML(); }
-                //$(block).find(".selected-tag").each(function (i, tag) { html += $(tag).outerHTML(); });
+                let dispVals = ctrl.DataVals.D[dispName];
+                for (var j = 0; j < dispVals.length; j++) {
+                    let dispVal = dispVals[j];
+                    html += `<span class="selected-tag">${dispVal}</span>`;
+                }
+
+
+                //for (var j = 0; j < dispVals.length; j++) {
+                //    let dispVals = ctrl.DataVals.D[j][i];
+                //    let dispVal = dispVals[j];
+                //    html += `<span class="selected-tag">${dispVal}</span>`;
+                //}
+
                 html += "</span>&nbsp;&nbsp;&nbsp;";
             }
             $td.find(".tdtxt span").html(html.substr(0, html.length - 18));
             //console.dev_log("ctrlToSpan_td PS: took " + (performance.now() - t0) + " milliseconds.");
         }
-        else if ((ctrl.ObjType === "SysCreatedBy")|| (ctrl.ObjType === "SysModifiedBy")){
+        else if ((ctrl.ObjType === "SysCreatedBy") || (ctrl.ObjType === "SysModifiedBy")) {
             let val = ctrl.getDisplayMember() || ctrl.getValue();
             let usid = ctrl.getValue();
             $td.find(".tdtxt span").empty();
@@ -1060,20 +1089,39 @@
         //
         let curRowCtrls = this.AllRowCtrls[rowid];
         let curRowData = this.EditModeDataTable[rowid];
+
         this.setRowValues_E(curRowCtrls, curRowData);
+        //this.attachModalCellRef_Row(getObjByval(this.SingleTable, "RowId", rowid), curRowCtrls);
+
         $tr.attr("is-initialised", "true");
     };
+
+    this.attachModalCellRef = function () {
+        for (let i = 0; i < this.SingleTable.length; i++) {
+            let row = this.SingleTable[i];
+            this.attachModalCellRef_Row(row, this.AllRowCtrls[row.RowId]);
+        }
+    }.bind(this);
+
+    this.attachModalCellRef_Row = function (row, rowInpCtrls) {
+        for (let i = 0; i < rowInpCtrls.length; i++) {
+            console.log(i);
+            let inpCtrl = rowInpCtrls[i];
+            let SingleColumn = getObjByval(row.Columns, "Name", inpCtrl.Name);
+            if (SingleColumn) {
+                inpCtrl.DataVals = SingleColumn;
+            }
+        }
+    }.bind(this);
 
     this.setRowValues_E = function (curRowCtrls, curRowData) {
         for (let colName in curRowData) {
             let ctrl = getObjByval(curRowCtrls, "Name", curRowData[colName].Name);
-            let Value = curRowData[colName].Value;
+            let Value = ctrl.DataVals.Value;
             if (Value !== null)
-                ctrl.setValue(Value);
+                ctrl.justSetValue(Value);
         }
     };
-
-    this.lastEditedRowvalues = {};
 
     this.cancelRow_click = function (e) {
         if (Object.keys(this.lastEditedRowvalues).length === 0)
@@ -1087,20 +1135,33 @@
             let name = Names[i];
             let ctrl = this.ctrl.currentRow[name];
             let OldVal = this.lastEditedRowvalues[name];
+            //let OldDMVal = this.lastEditedRowDMvalues[name];
             if (!(ctrl.ObjType === "PowerSelect" && OldVal === "") && OldVal !== ctrl.getValue())
                 ctrl.setValue(OldVal);
+            //    if (ctrl.ObjType === "PowerSelect" && OldDMVal)
+            //        ctrl.initializer.Vobj.displayMembers_cpy = OldDMVal;
         }
+        this.updateAggCols(false);
         let td = $td[0];
         this.checkRow_click({ target: td });
         this.lastEditedRowvalues = {};
+        //this.lastEditedRowDMvalues = {};
     }.bind(this);
 
     this.setLastEditedRowvalues = function () {
+        //let $curentRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);
         let Names = Object.keys(this.ctrl.currentRow);
         for (let i = 0; i < Names.length; i++) {
             let name = Names[i];
             let ctrl = this.ctrl.currentRow[name];
             this.lastEditedRowvalues[ctrl.Name] = ctrl.getValue();
+            //if (ctrl.ObjType === "PowerSelect") {
+            //    ctrl.initializer.onDataLoadCallBack[0] = function () {
+            //        this.lastEditedRowDMvalues[ctrl.Name] = getObjCopy4PS(ctrl.initializer.Vobj.displayMembers);
+            //    }.bind(this);
+            //}
+            //else
+            //    this.lastEditedRowDMvalues[ctrl.Name] = ctrl.getDisplayMember();
         }
     };
 
@@ -1182,12 +1243,22 @@
         else
             this.setCurRow($addRow.attr("rowid"));
         $tr.attr("is-checked", "true").attr("is-editing", "false");
-        this.updateAggCols();
+        //this.updateAggCols();
         //$addRow.focus();
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
         console.dev_log("checkRow_click : took " + (performance.now() - t0) + " milliseconds.");
+        this.updateModalObject(rowid);
         return true;
     }.bind(this);
+
+    this.updateModalObject = function (rowId) {
+        $.each(this.AllRowCtrls[rowId], function (i, inpCtrl) {
+            if (inpCtrl.DataVals !== undefined) {
+                inpCtrl.DataVals.Value = inpCtrl.getValue();
+                inpCtrl.DataVals.D = inpCtrl.getDisplayMember();
+            }
+        }.bind(this));
+    };
 
     //this.updateAggCols = function (rowId) {
     //    $.each(this.AllRowCtrls[rowId], function (i, inpctrl) {
@@ -1257,14 +1328,17 @@
         let sum = 0;
         $.each($(`#${this.TableId} > tbody [colname='${colname}'] .tdtxt span`), function (i, Iter_span) {
             let val;
-            let Iter_Inp = $(Iter_span).closest(`[colname='${colname}']`).find("[ui-inp]")[0];
+            let $Iter_span = $(Iter_span);
+            let Iter_Inp = $Iter_span.closest(`[colname='${colname}']`).find("[ui-inp]")[0];
 
             if (event && event.target === Iter_Inp) {
                 let typing_inp = event.target;
                 val = typing_inp.value;
             }
             else {
-                val = $(Iter_span).text() || 0;
+                let rowCtrls = this.AllRowCtrls[$Iter_span.closest("tr.dgtr").attr("rowid")];
+                let ctrl = getObjByval(rowCtrls, "Name", $Iter_span.closest("td").attr("colname"));
+                val = ctrl.DataVals.Value || 0;
             }
 
             sum += parseFloat(val) || 0;
@@ -1284,7 +1358,7 @@
                 if (valExpFnStr) {
                     if (!depCtrl.IsDGCtrl) {
                         let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.ctrl.formObject, this.ctrl.__userObject)();
-                        depCtrl.__eb_ValueExpr_val = val;
+                        depCtrl.DataVals.ValueExpr_val = val;
                         depCtrl.setValue(val);
                     }
                     //else {
@@ -1318,6 +1392,9 @@
 
     this.delRow_click = function (e) {
         $tr = $(e.target).closest("tr");
+        let rowid = $tr.attr("rowid");
+        if ($tr.attr("is-added") === "false")
+            getObjByval(this.SingleTable, "RowId", rowid).IsDelete = true;
         this.removeTr($tr);
         this.resetRowSlNoUnder($tr);
     }.bind(this);
@@ -1702,6 +1779,8 @@
 
     this.init = function () {
         this.ctrl.currentRow = [];//try make obj
+        this.lastEditedRowvalues = {};
+        //this.lastEditedRowDMvalues = {};
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
         this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;
         this.isAggragateInDG = false;
@@ -1754,7 +1833,6 @@
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);
-
     };
 
     this.dg_HScroll = function (e) {

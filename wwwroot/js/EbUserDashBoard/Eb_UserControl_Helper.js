@@ -19,6 +19,14 @@
 
     this.getUserControlSuccess = function (resp) {
         $(this.options.parentDiv).append(JSON.parse(resp).UcHtml); 
+
+        if (JSON.parse(resp).UcHtml.includes("table")) {
+            $(this.options.parentDiv).addClass("user-ctrl-row");
+        }
+        else {
+            $(this.options.parentDiv).addClass("user-ctrl-col");
+        }
+        $(`[ctype="DataObject"]`).remove();
     }
 
 

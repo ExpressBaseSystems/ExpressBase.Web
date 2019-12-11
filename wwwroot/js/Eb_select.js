@@ -68,6 +68,7 @@ const EbSelect = function (ctrl, options) {
     this.Vobj = null;
     this.datatable = null;
     this.clmAdjst = 0;
+    this.onDataLoadCallBackFns = [];
 
 
     ctrl._DisplayMembers = [];
@@ -208,6 +209,8 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
+        if (StrValues === "")
+            return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {
@@ -359,6 +362,7 @@ const EbSelect = function (ctrl, options) {
             o.wc = options.wc;
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
+        o.fns4PSonLoad = this.onDataLoadCallBackFns;
         this.datatable = new EbBasicDataTable(o);
 
         setTimeout(function () {
@@ -371,8 +375,8 @@ const EbSelect = function (ctrl, options) {
             let xtra_wdth = tbl_cod.left;
             if ((contWidth + tbl_cod.left) > brow_wdth)
                 xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
-
-            div_detach.appendTo("body").offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
+            let $form_div = $('#' + this.name ).closest("[eb-type='WebForm']");
+            div_detach.appendTo($form_div).offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
 
         }.bind(this), 30);
 
@@ -656,7 +660,12 @@ const EbSelect = function (ctrl, options) {
 
         if (this.datatable !== null) {
             this.setColumnvals();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            if (this.justInit) {
+                this.$inp.val(this.Vobj.valueMembers);
+                this.justInit = undefined;
+            }
+            else
+                this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
         else
             this.$inp.val(this.Vobj.valueMembers);

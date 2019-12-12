@@ -927,3 +927,18 @@ document.addEventListener("click", function (e) {
         }
     }
 });
+
+function blink(el, delay = 1000) {
+    if (el.jquery) {
+
+        $e = $(el);
+        $e.addClass("blink");
+        setTimeout(function () {
+            $e.removeClass("blink");
+        }, delay);
+    }
+    else
+        blink($(el), delay);
+}
+
+

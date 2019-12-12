@@ -14,32 +14,39 @@ body {
     --blackpipe: -webkit-linear-gradient(top, #4c4c4c 3%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 46%,#000000 53%,#111111 64%,#2b2b2b 82%,#1c1c1c 94%,#131313 100%);
     --blum: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.86, #369), color-stop(0.72, rgb(73,125,189)));
 }
-body, html,.html-root {
+
+body, html, .html-root {
     height: 100%;
     overflow: visible !important;
-    width:100%;
-    font-family:Roboto,sans-serif;
+    width: 100%;
+    font-family: Roboto,sans-serif;
 }
+
 .flex-shrink-zero {
     -webkit-flex-shrink: 0 !important;
     flex-shrink: 0 !important;
 }
+
 .flex-grow-one {
     -webkit-flex-grow: 1 !important;
-    flex-grow: 1!important;
+    flex-grow: 1 !important;
 }
+
 .row-flex {
     display: -webkit-flex;
     display: flex;
     -webkit-flex-wrap: wrap;
     flex-wrap: wrap;
 }
-.eb_input-h{
-    height:45px;
+
+.eb_input-h {
+    height: 45px;
 }
-.border-style-none{
-    border-style:none;
+
+.border-style-none {
+    border-style: none;
 }
+
 .ebbtn {
     border: 0;
     border-radius: 3px;
@@ -58,10 +65,11 @@ body, html,.html-root {
     text-decoration: none;
     cursor: pointer;
     border: 1px solid transparent;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
+
     .ebbtn:hover {
         /*box-shadow: 0 5px 16px 1px rgba(0,0,0,0.13), 0 1px 4px 0 rgba(0,0,0,0.09);*/
         text-decoration: none;
@@ -75,12 +83,14 @@ body, html,.html-root {
 
 .eb_btngreen {
     background: #47af08;
-    color:white;
+    color: white;
 }
+
     .eb_btngreen:hover {
         background: #3c9208;
         color: white;
     }
+
 .eb_btn-sm {
     padding: 5px 10px;
     font-size: 12px;
@@ -94,19 +104,21 @@ body, html,.html-root {
 .eb_btn_md {
     padding: 10px 20px;
 }
+
 .eb_btnblue {
     background: #4987fb;
     color: #fff;
 }
+
     .eb_btnblue:hover {
         background: #3876ea;
         color: white;
     }
 
-    .eb_btnorange {
-        background: #f37e1a;
-        color: #fff;
-    }
+.eb_btnorange {
+    background: #f37e1a;
+    color: #fff;
+}
 
 .btn_s_fr {
     margin-left: 10px;
@@ -119,27 +131,32 @@ body, html,.html-root {
     background: white;
     border: 1px solid #4987fb;
 }
+
     .eb_btnplain:hover, .eb_btnwhite:hover {
         color: #3876ea;
         font-weight: 500;
     }
-.eb-search-box{
 
+.eb-search-box {
 }
+
     .eb-search-box span {
         background: white;
         border-color: #508bf9;
     }
+
     .eb-search-box input {
-        border-left:none;
+        border-left: none;
         border-color: #508bf9;
     }
+
         .eb-search-box input:focus {
             border-color: #508bf9;
             outline: 0;
             -webkit-box-shadow: unset;
             box-shadow: unset;
         }
+
 .cb {
     color: #1497cc;
 }
@@ -163,8 +180,9 @@ body, html,.html-root {
 .mt0 {
     margin: 0;
 }
-.mr-t-10{
-    margin-top:10px !important;
+
+.mr-t-10 {
+    margin-top: 10px !important;
 }
 
 .h_b {
@@ -218,6 +236,7 @@ body, html,.html-root {
 .login_spiner {
     display: none;
 }
+
 .eb_login {
     height: 100%;
     /*background: linear-gradient(to right,#eef9fe,#edf7ff);*/
@@ -225,46 +244,56 @@ body, html,.html-root {
     /*background: #508bf9;
     background-image: linear-gradient(to right bottom, #508bf9, #4177e2, #3264cc, #2151b6, #0a3fa0);*/
 }
+
 .ebtext-lg {
     height: 45px;
     padding-left: 40px;
 }
+
 .ebtext-lg-noic {
     height: 45px;
 }
+
 .log-username, .log-pw {
     position: relative;
     display: flex;
     align-items: center;
     color: #508bf9;
 }
+
     .log-username:before {
         font-family: FontAwesome;
         content: "\f007";
         position: absolute;
         margin-left: 15px;
     }
+
     .log-pw:before {
         font-family: FontAwesome;
         content: "\f084";
         position: absolute;
         margin-left: 15px;
     }
+
 .mb-25 {
     margin-bottom: 25px;
 }
+
 .validator_error {
     border: 1px solid #f5222d !important;
 }
+
 .eb_login .container {
     height: inherit;
 }
+
 .eb_login .header, .eb-signup_wrapper .header {
     position: fixed;
     width: 100%;
     padding: 10px 45px 10px 10px;
     z-index: 10;
 }
+
 .callActionBtn {
     background: transparent;
     border: 1px solid #508bf9;
@@ -274,23 +303,26 @@ body, html,.html-root {
     font-weight: 500;
     margin-left: 15px;
 }
+
     .callActionBtn:hover {
         text-decoration: none;
         color: #508bf9;
-        font-weight:600;
+        font-weight: 600;
     }
-    .login_container {
-        background-color: white;
-        overflow: hidden;
-        font-family: Montserrat;
-        font-weight: 300;
-        position: relative;
-        height: 100%;
-        /*border-left: 1px solid #dbf1fd;*/
-        display: flex;
-        align-items: center;
-        /*justify-content: center;*/
-    }
+
+.login_container {
+    background-color: white;
+    overflow: hidden;
+    font-family: Montserrat;
+    font-weight: 300;
+    position: relative;
+    height: 100%;
+    /*border-left: 1px solid #dbf1fd;*/
+    display: flex;
+    align-items: center;
+    /*justify-content: center;*/
+}
+
 .login_container_usr {
     max-width: 450px;
     background-color: white;
@@ -300,24 +332,29 @@ body, html,.html-root {
     font-family: Montserrat;
     font-weight: 300;
     position: relative;
-    padding:0;
+    padding: 0;
 }
+
     .login_container label, .login_container_usr label {
         font-weight: 500;
     }
+
     .login_container .fpNdRemMe, .login_container_usr .fpNdRemMe {
         display: flex;
         justify-content: space-between;
     }
+
     .login_container .rememberMe, .login_container_usr .rememberMe {
         display: flex;
         align-items: center;
     }
+
         .login_container .rememberMe [type='checkbox'], .login_container_usr .rememberMe [type='checkbox'] {
             margin: 0 5px 0 0;
             width: 15px;
             height: 15px;
         }
+
 .login_container .eb-auth-htmlbox {
     padding: 30px;
     width: 100%;
@@ -329,6 +366,7 @@ body, html,.html-root {
     max-width: 90%;
     position: relative;
 }
+
 .login_container_usr .eb-auth-htmlbox {
     border: 1px solid #d3edff;
     padding: 30px;
@@ -344,7 +382,7 @@ body, html,.html-root {
     margin-top: 10px;
 }
 
-.login_container a, .login_container_usr a{
+.login_container a, .login_container_usr a {
     text-decoration: none;
     color: #666;
     text-align: center;
@@ -356,20 +394,23 @@ body, html,.html-root {
     height: 45px;
     padding: 6px 30px;
 }
+
     .login_container .signin-btn:hover, .login_container_usr .signin-btn:hover {
         background: #3579f7;
     }
-    .log-eblogo {
+
+.log-eblogo {
     position: absolute;
     top: 7px;
     height: 40px;
     left: 35px;
 }
-    .login-sec-image {
-        width: 100%;
-        padding-top: 10px;
-        padding-bottom: 15px;
-    }
+
+.login-sec-image {
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
 
     .login-sec-image img {
         height: 70px;
@@ -379,8 +420,9 @@ body, html,.html-root {
 .w-100 {
     width: 100%;
 }
-.h-100{
-    height:100%;
+
+.h-100 {
+    height: 100%;
 }
 /*tenant logoin page*/
 .lg_content {
@@ -425,9 +467,11 @@ body, html,.html-root {
     position: relative;
     left: 0;
 }
+
     .lg_img img {
-        height:350px;
+        height: 350px;
     }
+
 .prelative {
     position: relative;
 }
@@ -493,6 +537,7 @@ Navigation bar
     .active_Link:hover {
         background-color: #0a6794 !important;
     }
+
 .padding-zero {
     padding: 0px;
 }
@@ -514,7 +559,7 @@ Navigation bar
 .html-root-layout {
     background-color: #f2f2f2;
     height: 100%;
-    font-family:Roboto;
+    font-family: Roboto;
 }
 
 #layout_div #objlist-items {
@@ -1040,6 +1085,7 @@ Navigation bar
     -moz-box-shadow: 0px 0px 9px 2px #ababab;
     box-shadow: 0px 0px 9px 2px #ababab;
 }
+
     .eb-expndLinkswrpr .eb-expand-link {
         width: 40px;
         height: 40px;
@@ -1048,24 +1094,27 @@ Navigation bar
         background: #4987fb;
         color: white;
         font-size: 18px;
-        outline:none;
+        outline: none;
     }
+
     .eb-expndLinkswrpr .eb-expndLinkswrpr-inner {
         display: flex;
         flex-flow: column;
-        align-items:center;
+        align-items: center;
     }
+
         .eb-expndLinkswrpr .eb-expndLinkswrpr-inner .eb-expand-innerbtn {
             height: 30px;
             width: 30px;
             background: white;
             margin: 4px 0;
             border-style: none;
-            border-radius:50%;
+            border-radius: 50%;
         }
-        .eb-expndLinkswrpr .eb-expndLinkswrpr-inner .eb-expand-innerbtn:hover {
-            background:#f2f2f2;
-        }
+
+            .eb-expndLinkswrpr .eb-expndLinkswrpr-inner .eb-expand-innerbtn:hover {
+                background: #f2f2f2;
+            }
 /*inner page expand button end*/
 /*Responsive media queries*/
 @media (max-width: 768px) {
@@ -1096,13 +1145,15 @@ Navigation bar
         float: unset;
         margin-right: unset;
     }
+
     .login_container .eb-auth-htmlbox {
-    max-width:100%;
+        max-width: 100%;
     }
+
     .eb_login .eb_socilaWrpr {
         max-width: 100%;
     }
-        /*.ext-pageheader .navbar-collapse {
+    /*.ext-pageheader .navbar-collapse {
         text-align: center;
     }
 
@@ -1116,19 +1167,62 @@ Navigation bar
         width: 100%;
         padding-left: 0;
     }*/
-        /*.ext-pageheader li[class='open'] {
+    /*.ext-pageheader li[class='open'] {
         background: #fafafa;
     }
 
     .ext-pageheader .drp_container::after {
         display: none;
     }*/
-        .login_container form, .login_container_usr form {
-        flex:1;max-width:100%;
+    .login_container form, .login_container_usr form {
+        flex: 1;
+        max-width: 100%;
     }
 
     .login_container .log-eblogo {
         left: 0;
     }
 }
+
+.blink {
+    -webkit-animation-name: blinkanima; /* Safari 4.0 - 8.0 */
+    -webkit-animation-duration: 4s; /* Safari 4.0 - 8.0 */
+    -webkit-animation-name: blinkanima; /* Safari 4.0 - 8.0 */
+    animation-name: blinkanima;
+    animation-duration: 4s;
+    animation-iteration-count: infinite;
+}
+/* Standard syntax */
+@-webkit-keyframes blinkanima {
+    0% {
+        box-shadow: 0 0 0px 0px transparent;
+        z-index: 999;
+    }
+
+    30% {
+        box-shadow: 0px 0px 3px 2px #4959ef;
+        z-index: 999;
+    }
+
+    100% {
+        box-shadow: 0 0 0px 0px transparent;
+        z-index: 999;
+    }
+}
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes blinkanima {
+    0% {
+        box-shadow: 0 0 0px 0px transparent;
+    }
+
+    30% {
+        box-shadow: 0px 0px 3px 2px #4959ef;
+    }
+
+    100% {
+        box-shadow: 0 0 0px 0px transparent;
+    }
+}
+
+
 

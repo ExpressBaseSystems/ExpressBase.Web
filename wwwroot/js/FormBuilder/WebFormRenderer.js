@@ -99,6 +99,7 @@ const WebFormRender = function (option) {
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+            this.DGBuilderObjs[DG.Name].MultipleTables = this.MultipleTables;
         }.bind(this));
     };
 
@@ -254,60 +255,6 @@ const WebFormRender = function (option) {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
-    //this.j = function (p1) {
-    //    let VMs = this.initializer.Vobj.valueMembers;
-    //    let DMs = this.initializer.Vobj.displayMembers;
-    //    let columnVals = this.initializer.columnVals;
-
-    //    if (VMs.length > 0)// clear if already values there
-    //        this.initializer.clearValues();
-
-    //    let valMsArr = p1[0].split(',');
-    //    let DMtable = p1[1];
-
-    //    for (let i = 0; i < valMsArr.length; i++) {
-    //        let vm = valMsArr[i];
-    //        VMs.push(vm);
-    //        for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
-    //            let dm = this.DisplayMembers.$values[j];
-    //            for (var k = 0; k < DMtable.length; k++) {
-    //                let row = DMtable[k];
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-    //                    DMs[dm.name].push(_dm);
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    if (this.initializer.datatable === null) {//for aftersave actions
-    //        $.each(valMsArr, function (i, vm) {
-    //            $.each(DMtable, function (j, row) {
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    $.each(row.Columns, function (k, column) {
-    //                        if (!columnVals[column.Name]) {
-    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
-    //                            return true;
-    //                        }
-    //                        let val = EbConvertValue(column.Value, column.Type);
-    //                        columnVals[column.Name].push(val);
-    //                    }.bind(this));
-    //                }
-
-    //                //$.each(r.Columns, function (j, column) {
-    //                //    if (!columnVals[column.Name]) {
-    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
-    //                //        return true;
-    //                //    }
-    //                //    let val = EbConvertValue(column.Value, column.Type);
-    //                //    columnVals[column.Name].push(val);
-    //                //}.bind(this));
-
-    //            }.bind(this));
-    //        }.bind(this));
-    //    }
-    //};
-
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
         $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
             let val = SingleColumn.Value;
@@ -320,8 +267,8 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
+                ctrl.setDisplayMember = EBPSSetDisplayMember;///
+                ctrl.setDisplayMember(val);
             }
             else
                 ctrl.setValue(val);
@@ -584,10 +531,10 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
         let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
-        if (this.rowId === 0) {
-            console.dev_log("Form save failed");
-            return;
-        }
+        //if (this.rowId === 0) {
+        //    EbMessage("show", { Message: "Save failed", AutoHide: true, Background: '#aa0000' });
+        //    return;
+        //}
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
                 EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });

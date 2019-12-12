@@ -765,7 +765,7 @@ function dgOnChangeBind() {
 }
 
 function dgEBOnChangeBind() {
-    $.each(this.Controls.$values, function (i, col) {
+    $.each(this.Controls.$values, function (i, col) {// need change
         let FnString = `
                         let __this = form.__getCtrlByPath(this.__path);
                         let $curRow = getRow__(__this);
@@ -773,11 +773,6 @@ function dgEBOnChangeBind() {
                         if(__this.DataVals !== undefined && isRowEditing === false){
                             __this.DataVals.Value = __this.getValue();
                             __this.DataVals.D = __this.getDisplayMember();
-                            if(__this.Name === 'ps1'){
-                                console.log('got it ========================');
-                                console.log(__this.getDisplayMember());
-                                console.log(__this.DataVals.D);
-                            }
                         }`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
@@ -927,3 +922,74 @@ document.addEventListener("click", function (e) {
         }
     }
 });
+
+function EBPSSetDisplayMember(p1, p2) {
+    if (p1 === "")
+        return;
+    let VMs = this.initializer.Vobj.valueMembers;
+    let DMs = this.initializer.Vobj.displayMembers;
+    let columnVals = this.initializer.columnVals;
+
+    if (VMs.length > 0)// clear if already values there
+        this.initializer.clearValues();
+
+    let valMsArr = p1[0].split(',');
+    let DMtable = p1[1];
+
+    for (let i = 0; i < valMsArr.length; i++) {
+        let vm = valMsArr[i];
+        VMs.push(vm);
+        for (let j = 0; j < this.initializer.dmNames.length; j++) {
+            let dmName = this.initializer.dmNames[j];
+            DMs[dmName].push(this.DataVals.D[vm][dmName]);
+        }
+    }
+    
+
+    //for (let i = 0; i < valMsArr.length; i++) {
+    //    let vm = valMsArr[i];
+    //    VMs.push(vm);
+    //    for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
+    //        let dm = this.DisplayMembers.$values[j];
+    //        for (var k = 0; k < DMtable.length; k++) {
+    //            let row = DMtable[k];
+    //            if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
+    //                DMs[dm.name].push(_dm);
+    //            }
+    //        }
+    //    }
+    //}
+    
+    if (this.initializer.datatable === null) {//for aftersave actions
+
+
+        for (var i = 0; i < this.DataVals.R.length; i++) {
+            let row = this.DataVals.R[i];
+            $.each(row.Columns, function (k, column) {
+                if (!columnVals[column.Name]) {
+                    console.warn('Found mismatch in Columns from datasource and Colums in object');
+                    return true;
+                }
+                let val = EbConvertValue(column.Value, column.Type);
+                columnVals[column.Name].push(val);
+            }.bind(this));
+
+        }
+
+        //$.each(valMsArr, function (i, vm) {
+        //    $.each(DMtable, function (j, row) {
+        //        if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+        //            $.each(row.Columns, function (k, column) {
+        //                if (!columnVals[column.Name]) {
+        //                    console.warn('Found mismatch in Columns from datasource and Colums in object');
+        //                    return true;
+        //                }
+        //                let val = EbConvertValue(column.Value, column.Type);
+        //                columnVals[column.Name].push(val);
+        //            }.bind(this));
+        //        }
+        //    }.bind(this));
+        //}.bind(this));
+    }
+}

@@ -31,7 +31,7 @@
     }.bind(this);
     this.resetBuffers();
 
-    this.setEditModeRows = function (SingleTable) {/////////// need change
+    this.setEditModeRows = function (SingleTable) {
         this.SingleTable = SingleTable;
         this.SetEditModeDataTable(SingleTable);
         this.setupEditModeRows(this.EditModeDataTable);
@@ -53,43 +53,19 @@
 
 
     this.getPSDispMembrs = function (cellObj, rowId, col) {
-
         let valMsArr = cellObj.Value.split(',');
-        let DMtable = this.FormDataExtdObj.val[col.EbSid_CtxId];
-        //let dispMembrs = [];
         let textspn = "";
-        var objspn = {};
-        console.log(DMtable);
 
         for (let i = 0; i < valMsArr.length; i++) {
-            //  let dmSpan = `<span iblock>`;
-            let vm = valMsArr[i];
-            //VMs.push(vm);
+            textspn += "<span iblock>";
+            let vm = parseInt(valMsArr[i]);
+            let dispA = cellObj.D[vm];
             for (let j = 0; j < col.DisplayMembers.$values.length; j++) {
-                let innrspn = "";
-                let dm = col.DisplayMembers.$values[j];
-                for (var k = 0; k < DMtable.length; k++) {
-                    let row = DMtable[k];
-                    if (getObjByval(row.Columns, 'Name', col.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-                        let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-
-                        if (!(objspn.hasOwnProperty(`${dm.name}`))) {
-                            objspn[`${dm.name}`] = "";
-                        }
-                        objspn[`${dm.name}`] += `<span class='selected-tag'>${_dm}</span>`;
-
-                        // //DMs[dm.name].push(_dm);
-                        //dmSpan += `<span class='selected-tag'>${_dm}</span>`;
-                        //// dispMembrs.push(dmSpan);
-                    }
-                }
+                let DMName = col.DisplayMembers.$values[j].name;
+                let DMVal = dispA[DMName];
+                textspn += `<span class='selected-tag'>${DMVal}</span>`;
             }
-            //dmSpan += `</span>`;
-            //dispMembrs.push(dmSpan);
-        }
-
-        for (var x in objspn) {
-            textspn += `<span iblock>` + objspn[x] + `</span>`;
+            textspn += "</span>&nbsp;&nbsp;&nbsp;";
         }
 
         return textspn;
@@ -301,60 +277,6 @@
         if (!this.ctrl.AscendingOrder)
             this.UpdateSlNo();
     };
-
-    //this.j = function (p1) {
-    //    let VMs = this.initializer.Vobj.valueMembers;
-    //    let DMs = this.initializer.Vobj.displayMembers;
-    //    let columnVals = this.initializer.columnVals;
-
-    //    if (VMs.length > 0)// clear if already values there
-    //        this.initializer.clearValues();
-
-    //    let valMsArr = p1[0].split(',');
-    //    let DMtable = p1[1];
-
-    //    for (let i = 0; i < valMsArr.length; i++) {
-    //        let vm = valMsArr[i];
-    //        VMs.push(vm);
-    //        for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
-    //            let dm = this.DisplayMembers.$values[j];
-    //            for (var k = 0; k < DMtable.length; k++) {
-    //                let row = DMtable[k];
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-    //                    DMs[dm.name].push(_dm);
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    if (this.initializer.datatable === null) {//for aftersave actions
-    //        $.each(valMsArr, function (i, vm) {
-    //            $.each(DMtable, function (j, row) {
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    $.each(row.Columns, function (k, column) {
-    //                        if (!columnVals[column.Name]) {
-    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
-    //                            return true;
-    //                        }
-    //                        let val = EbConvertValue(column.Value, column.Type);
-    //                        columnVals[column.Name].push(val);
-    //                    }.bind(this));
-    //                }
-
-    //                //$.each(r.Columns, function (j, column) {
-    //                //    if (!columnVals[column.Name]) {
-    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
-    //                //        return true;
-    //                //    }
-    //                //    let val = EbConvertValue(column.Value, column.Type);
-    //                //    columnVals[column.Name].push(val);
-    //                //}.bind(this));
-
-    //            }.bind(this));
-    //        }.bind(this));
-    //    }
-    //};
 
     this.addEditModeRows = function (EditModeDataTable) {
         $(`#${this.TableId} tbody`).empty();
@@ -851,7 +773,7 @@
                 return true;
 
             if (ctrl.ObjType === "PowerSelect") {
-                //ctrl.setDisplayMember = this.j;
+                ctrl.setDisplayMember = EBPSSetDisplayMember;
                 if (val)
                     ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
             }
@@ -892,9 +814,6 @@
             this.ctrlToSpan_td($(tds[i]));
             //}.bind(this, tds, i), 0);
         }
-        //$.each($tr.find("td[ctrltdidx]"), function (i, td) {
-        //    this.ctrlToSpan_td($(td));
-        //}.bind(this));
         console.dev_log("ctrlToSpan_row : took " + (performance.now() - t0) + " milliseconds.");
     }.bind(this);
 
@@ -911,30 +830,8 @@
         if (ctrl.ObjType === "PowerSelect") {
             if (!ctrl.DataVals.Value)
                 return;
-            //let t0 = performance.now();
-            let html = "";
-            //let Blocks = $("#" + ctrl.EbSid_CtxId + "Wraper .search-block");
-            let dmNames = ctrl.initializer.dmNames;
-            for (var i = 0; i < dmNames.length; i++) {
-                let dispName = dmNames[i];
-                html += "<span iblock>";
-                let dispVals = ctrl.DataVals.D[dispName];
-                for (var j = 0; j < dispVals.length; j++) {
-                    let dispVal = dispVals[j];
-                    html += `<span class="selected-tag">${dispVal}</span>`;
-                }
-
-
-                //for (var j = 0; j < dispVals.length; j++) {
-                //    let dispVals = ctrl.DataVals.D[j][i];
-                //    let dispVal = dispVals[j];
-                //    html += `<span class="selected-tag">${dispVal}</span>`;
-                //}
-
-                html += "</span>&nbsp;&nbsp;&nbsp;";
-            }
+            let html = this.getPSDispMembrs(ctrl.DataVals, ctrl.__rowid, ctrl.__Col);
             $td.find(".tdtxt span").html(html.substr(0, html.length - 18));
-            //console.dev_log("ctrlToSpan_td PS: took " + (performance.now() - t0) + " milliseconds.");
         }
         else if ((ctrl.ObjType === "SysCreatedBy") || (ctrl.ObjType === "SysModifiedBy")) {
             let val = ctrl.getDisplayMember() || ctrl.getValue();
@@ -1029,8 +926,10 @@
             let ctrl = getObjByval(curRowCtrls, "Name", curRowData[colName].Name);
             let Value = ctrl.DataVals.Value;
             if (Value !== null) {
-                if (ctrl.ObjType === "PowerSelect")
+                if (ctrl.ObjType === "PowerSelect") {
+                    ctrl.setDisplayMember = EBPSSetDisplayMember;
                     ctrl.setDisplayMember([Value, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                }
                 else
                     ctrl.justSetValue(Value);
             }
@@ -1151,6 +1050,7 @@
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
         $addRow.show().attr("is-editing", "true");
 
+        this.updateModalObject(rowid);
         this.ctrlToSpan_row(rowid);
         if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
             this.addRow();
@@ -1161,7 +1061,6 @@
         //$addRow.focus();
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
         console.dev_log("checkRow_click : took " + (performance.now() - t0) + " milliseconds.");
-        this.updateModalObject(rowid);
         return true;
     }.bind(this);
 
@@ -1687,7 +1586,7 @@
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-
+        this.MultipleTables[this.ctrl.TableName] = SingleTable;
         this.setEditModeRows(SingleTable);
     };
 

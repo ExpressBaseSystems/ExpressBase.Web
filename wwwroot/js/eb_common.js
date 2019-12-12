@@ -773,6 +773,11 @@ function dgEBOnChangeBind() {
                         if(__this.DataVals !== undefined && isRowEditing === false){
                             __this.DataVals.Value = __this.getValue();
                             __this.DataVals.D = __this.getDisplayMember();
+                            if(__this.Name === 'ps1'){
+                                console.log('got it ========================');
+                                console.log(__this.getDisplayMember());
+                                console.log(__this.DataVals.D);
+                            }
                         }`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
@@ -869,9 +874,33 @@ function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
 
 //code review ......to hide dropdown on click outside dropdown
 document.addEventListener("click", function (e) {
-    let par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
-    let ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
-    var container = $('.dd_of_' + ebSid_CtxId);
+
+
+    let par_ebSid = "";
+    let ebSid_CtxId = "";
+    let container = "";
+    //to check select click is on datagrid
+    if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid")) {
+        //initial click of select
+        if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid")) {
+            par_ebSid = $(e.target).closest(".dropdown").find("select").attr("name");
+            ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+            container = $('.dd_of_' + par_ebSid);
+        }
+       //item selection click in select
+        else {
+            par_ebSid = $(e.target).closest(".dropdown").attr("par_ebsid");
+            ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+            container = $('.dd_of_' + par_ebSid);
+        }
+    }
+     //if select is not in datagrid ...ie,outside datagrid
+    else
+    {
+         par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
+         ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+         container = $('.dd_of_' + ebSid_CtxId);
+    }
 
     //to close opend select on click of another select
     if ((($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
@@ -891,10 +920,25 @@ document.addEventListener("click", function (e) {
         $(".detch_select").removeClass("open");
     }
 
-    if ((($(e.target).closest('[MultiSelect]').attr("MultiSelect")) == "false") || (($(e.target).closest('[objtype]').attr("objtype")) == 'SimpleSelect')) {
+    if ((($(e.target).closest('[MultiSelect]').attr("MultiSelect")) == "false") || (($(e.target).closest('[objtype]').attr("objtype")) == 'SimpleSelect') || (($(e.target).closest('[objtype]').attr("objtype")) == 'BooleanSelect')) {
         if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
             container.closest('[detch_select=true]').removeClass("open");
 
         }
     }
 });
+
+function blink(el, delay = 1000) {
+    if (el.jquery) {
+
+        $e = $(el);
+        $e.addClass("blink");
+        setTimeout(function () {
+            $e.removeClass("blink");
+        }, delay);
+    }
+    else
+        blink($(el), delay);
+}
+
+

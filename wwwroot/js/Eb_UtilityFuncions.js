@@ -64,7 +64,7 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
         let val = fun();
         val = EbConvertValue(val, ctrl.ObjType);
 
-        valueExpHelper(val, ctrl, updateSpan);
+        return valueExpHelper(val, ctrl, updateSpan);
     }
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
         let params = [];
@@ -102,8 +102,7 @@ function valueExpHelper(val, ctrl, updateSpan) {
         if (ctrl.DataVals.ValueExpr_val)
             ctrl.setValue(ctrl.DataVals.ValueExpr_val);
     }
-    if (updateSpan && ctrl.DataVals.ValueExpr_val)
-        $(`#td_${ctrl.EbSid_CtxId} .tdtxt>span`).text(ctrl.DataVals.ValueExpr_val);
+    return ctrl.DataVals.ValueExpr;
 }
 
 function showLoader4webform() {

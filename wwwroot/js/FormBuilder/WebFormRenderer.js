@@ -137,6 +137,10 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
+
+        //this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
+        //new EbDynamicTab({ AllTabCtrls: this.TabControls, FormModel: _formData });
+
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
@@ -253,28 +257,55 @@ const WebFormRender = function (option) {
     //this.j = function (p1) {
     //    let VMs = this.initializer.Vobj.valueMembers;
     //    let DMs = this.initializer.Vobj.displayMembers;
+    //    let columnVals = this.initializer.columnVals;
 
     //    if (VMs.length > 0)// clear if already values there
     //        this.initializer.clearValues();
 
-    //    let valMsArr = p1[0].split(",");
+    //    let valMsArr = p1[0].split(',');
     //    let DMtable = p1[1];
 
-
-    //    $.each(valMsArr, function (i, vm) {
+    //    for (let i = 0; i < valMsArr.length; i++) {
+    //        let vm = valMsArr[i];
     //        VMs.push(vm);
-    //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            valMsArr;
-    //            DMtable;
-
-    //            $.each(DMtable, function (j, r) {
-    //                if (getObjByval(r.Columns, "Name", this.ValueMember.name).Value === vm) {
-    //                    let _dm = getObjByval(r.Columns, "Name", dm.name).Value;
+    //        for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
+    //            let dm = this.DisplayMembers.$values[j];
+    //            for (var k = 0; k < DMtable.length; k++) {
+    //                let row = DMtable[k];
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
     //                    DMs[dm.name].push(_dm);
     //                }
+    //            }
+    //        }
+    //    }
+
+    //    if (this.initializer.datatable === null) {//for aftersave actions
+    //        $.each(valMsArr, function (i, vm) {
+    //            $.each(DMtable, function (j, row) {
+    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
+    //                    $.each(row.Columns, function (k, column) {
+    //                        if (!columnVals[column.Name]) {
+    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
+    //                            return true;
+    //                        }
+    //                        let val = EbConvertValue(column.Value, column.Type);
+    //                        columnVals[column.Name].push(val);
+    //                    }.bind(this));
+    //                }
+
+    //                //$.each(r.Columns, function (j, column) {
+    //                //    if (!columnVals[column.Name]) {
+    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
+    //                //        return true;
+    //                //    }
+    //                //    let val = EbConvertValue(column.Value, column.Type);
+    //                //    columnVals[column.Name].push(val);
+    //                //}.bind(this));
+
     //            }.bind(this));
     //        }.bind(this));
-    //    }.bind(this));
+    //    }
     //};
 
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
@@ -340,12 +371,16 @@ const WebFormRender = function (option) {
         let EditModeFormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames();
         //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
-        $.each(this.DGs, function (k, DG) {
-            if (!EditModeFormData.hasOwnProperty(DG.TableName))
-                return true;
-            let SingleTable = EditModeFormData[DG.TableName];
-            DG.setEditModeRows(SingleTable);
-        }.bind(this));
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
+            if (!this.MultipleTables.hasOwnProperty(DGB.ctrl.TableName)) {
+                this.MultipleTables[DGB.ctrl.TableName] = [];
+                DGB.SingleTable = this.MultipleTables[DGB.ctrl.TableName];
+                continue;
+            }
+            let SingleTable = EditModeFormData[DGB.ctrl.TableName];
+            DGB.setEditModeRows(SingleTable);
+        }
 
         if (this.ApprovalCtrl) {
             if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
@@ -462,8 +497,8 @@ const WebFormRender = function (option) {
         let WebformData = {};
         let approvalTable = {};
 
-        let formTables = this.getFormTables();
-        let gridTables = this.getDG_FVWTObjColl();
+        //let formTables = this.getFormTables();
+        //let gridTables = this.getDG_FVWTObjColl();
         if (this.ApprovalCtrl)
             approvalTable = this.getApprovalRow();
 
@@ -528,8 +563,8 @@ const WebFormRender = function (option) {
     };
 
     this.RefreshDGControlValues = function () {
-        for (let key in this.DGBuilderObjs) {
-            let DGB = this.DGBuilderObjs[key];
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
             let singleTable = this.EditModeFormData[DGB.ctrl.TableName];
             if (singleTable)
                 DGB.resetControlValues(singleTable);
@@ -549,6 +584,10 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
         let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
+        if (this.rowId === 0) {
+            console.dev_log("Form save failed");
+            return;
+        }
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
                 EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
@@ -1053,7 +1092,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
@@ -1073,7 +1112,7 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "Fail Mode") {
             EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
@@ -1120,7 +1159,7 @@ const WebFormRender = function (option) {
                 r.push(btns[i]);
             else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
                 r.push(btns[i]);
-            else if (btns[i] === "webformprint" && mode === 'View Mode' && this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '')
+            else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                 r.push(btns[i]);
         }
         return r;
@@ -1161,22 +1200,31 @@ const WebFormRender = function (option) {
             return this.closeAfterSave;
     };
 
-    this.initPrintMenu = function () {
-        //test data hardcoded
-        //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
-        //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
+    this.initPrintMenu = function () {       
+        if (this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0) {
+            let $sel = $("#webformprint-selbtn .selectpicker");
+            for (let i = 0; i < this.FormObj.PrintDocs.$values.length; i++) {
+                let tle = this.FormObj.PrintDocs.$values[i].Title || this.FormObj.PrintDocs.$values[i].ObjDisplayName;
+                $sel.append(`<option data-token="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`);
+            }
+            //test data hardcoded
+            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
+            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
 
-        //$("#webformprint-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
-        //$("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
-        if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
-            $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
-            $("#webformprint").on("click", this.printDocument.bind(this));
-        }
+            $sel.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+            $("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
+            $("#webformprint").on("click", function () { this.printDocument(); }.bind(this));
+        }        
+
+        //if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
+        //    $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
+        //    $("#webformprint").on("click", this.printDocument.bind(this));
+        //}
     };
 
     this.printDocument = function () {
-        //let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
-        let rptRefid = $("#webformprint").attr('data-refid');
+        let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
+        //let rptRefid = $("#webformprint").attr('data-refid');
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };

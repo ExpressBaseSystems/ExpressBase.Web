@@ -258,6 +258,22 @@
             var grid = $('.grid-stack').data('gridstack');
             grid.removeWidget(abc);
         }
+        else if (id === "restart-tile") {
+            $(`[data-id="${this.CurrentTile}"]`).empty();
+            let Refid = this.TileCollection[tileid].RefId;
+            this.Ajax4fetchVisualization(Refid);
+        }
+    }
+    this.Ajax4fetchVisualization = function (refid) {
+        if (refid !== "") {
+            $.ajax(
+                {
+                    url: '../DashBoard/DashBoardGetObj',
+                    type: 'POST',
+                    data: { refid: refid },
+                    success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                });
+        }
     }
 
     this.DrawTiles = function () {
@@ -422,7 +438,7 @@
             this.GetFilterValues();
         }
         let obj = JSON.parse(data);
-        $(`[name-id="${id}"]`).append(obj.DisplayName);
+        $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
         //this.TileCollection[id].TileObject = obj;
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
 
@@ -444,8 +460,8 @@
             //$(`[data-id="${id}"]`).parent().removeAttr("style");
             //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
             //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
-
             $("#objname").empty().text(this.EbObject.DisplayName);
+            $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -456,6 +472,7 @@
             o.DisplayName = this.EbObject.DisplayName;
             var dt = new EbBasicChart(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
+            $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
@@ -467,7 +484,7 @@
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).css({ "font-size": "1.3em", "padding-bottom": "1.4em", "padding-left": "2px" });
+            $(`#${id} .db-title`).empty();
             $(`#${id} .i-opt-obj`).hide();
             $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" })
             //$(`#${id} .db-title`).parent().css({ "border": "solid 1px #dcdcdc" })
@@ -483,6 +500,7 @@
             o.DisplayName = this.EbObject.DisplayName;
             var dt = new EbGoogleMap(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
+            $(`#${id}`).addClass("box-shadow-style");
         }
     }
 

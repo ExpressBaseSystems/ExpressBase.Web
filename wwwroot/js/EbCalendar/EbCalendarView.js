@@ -93,8 +93,8 @@
             this.returnobj = CalendarColumns;
             this.EbObject.Columns.$values = this.returnobj.Columns.$values;
             this.EbObject.KeyColumns.$values = this.returnobj.KeyColumns.$values;
-            this.EbObject.LinesColumns.$values = this.returnobj.LinesColumns.$values;            
-            this.EbObject.DataColumns.$values = [];            
+            this.EbObject.LinesColumns.$values = this.returnobj.LinesColumns.$values;
+            this.EbObject.DataColumns.$values = _.cloneDeep(this.EbObject.LinesColumns.$values);
         }
         this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
     };
@@ -145,21 +145,32 @@
         let id = "table1";
         $("#calendar-user-view").empty();
         $("#calendar-user-view").append(`<table id="${id}" class="table display table-bordered compact"></table>`);
+        this.CustomDataCols = this.EbObject.DataColumns.$values.filter(col => col.IsCustomColumn);
+        let _AllColumns = this.EbObject.KeyColumns.$values.concat(this.EbObject.LinesColumns.$values, this.CustomDataCols, this.EbObject.DateColumns.$values);
         var o = {};
         o.dsid = this.EbObject.DataSourceRefId;
         o.tableId = id;
         o.containerId = "calendar-user-view";
-        o.columns = this.EbObject.KeyColumns.$values.concat(this.EbObject.LinesColumns.$values, this.EbObject.DateColumns.$values);
+        o.columns = _AllColumns;
         o.IsPaging = false;
         o.showFilterRow = false;
         o.showCheckboxColumn = false;
         o.showSerialColumn = false;
         o.Source = "Calendar";
         o.data = this.result;
+        o.drawCallBack = this.drawCallBackFn.bind(this);
+        o.LeftFixedColumn = this.EbObject.LeftFixedColumn;
+        o.RowHeight = this.EbObject.RowHeight;
+        o.ObjectLinks = this.EbObject.ObjectLinks.$values;
         this.dt = new EbCommonDataTable(o);
         $("#eb_common_loader").EbLoader("hide");
-        if (this.EbObject.DataColumns.$values.length > 0)
+        this.VisibleDataCols = this.EbObject.DataColumns.$values.filter(col => col.bVisible);
+        if (this.VisibleDataCols.length > 0)
             this.CreateDataColumnLinks();
+    };
+
+    this.drawCallBackFn = function () {
+        //this.CreateContextmenu4ObjectSelector();
     };
 
     this.CreateDataColumnLinks = function () {
@@ -169,13 +180,13 @@
           <div class="dropdown-menu">
           </div>
         </div>`);
-        $.each(this.EbObject.DataColumns.$values, function (i, obj) {
-            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-item='${obj.name}'>${obj.name}</a>`);
-            if (i > 0)
-                $(`.${obj.name}_class`).hide();
+        $.each(this.VisibleDataCols, function (i, obj) {
+                $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-item='${obj.name}'>${obj.name}</a>`);
+                if (i > 0)
+                    $(`.${obj.name}_class`).hide();
         }.bind(this));
         $(`#ShowDataColumndd a`).off("click").on("click", this.showDatColumn.bind(this));
-        $(`#ShowDataColumndd #action`).text(this.EbObject.DataColumns.$values[0].name);
+        $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].name);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.dt.Api.columns.adjust();
     };
@@ -186,14 +197,14 @@
         $(`#ShowDataColumndd #action`).text($(e.target).attr("data-item"));
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.dt.Api.columns.adjust();
-    }
+    };    
 
     this.RemoveColumnRef = function () {
         this.EbObject.__oldValues = null;
         this.__KeyOSElist = [];
-        this.__KeyoldValues = []; 
+        this.__KeyoldValues = [];
         this.__LineOSElist = [];
-        this.__LineoldValues = []; 
+        this.__LineoldValues = [];
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             obj.ColumnsRef = null;
             obj.__oldValues = null;
@@ -231,8 +242,8 @@
         $.each(this.EbObject.KeyColumns.$values, function (i, obj) {
             obj.__OSElist = this.__KeyOSElist[i];
             obj.__oldValues = this.__KeyoldValues[i];
-        }.bind(this));       
-        
+        }.bind(this));
+
         $.each(this.EbObject.LinesColumns.$values, function (i, obj) {
             obj.__OSElist = this.__LineOSElist[i];
             obj.__oldValues = this.__LineoldValues[i];

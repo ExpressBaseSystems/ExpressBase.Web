@@ -97,8 +97,9 @@ const WebFormRender = function (option) {
     };
 
     this.initDGs = function () {
-        $.each(this.DGs, function (k, DG) {
+        $.each(this.DGs, function (k, DG) {//dginit
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+            this.DGBuilderObjs[DG.Name].MultipleTables = this.MultipleTables;
         }.bind(this));
     };
 
@@ -139,7 +140,19 @@ const WebFormRender = function (option) {
     this.initWebFormCtrls = function () {
 
         //this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        //new EbDynamicTab({ AllTabCtrls: this.TabControls, FormModel: _formData });
+        //let opts = {
+        //    allTabCtrls: this.TabControls,
+        //    formModel: _formData,
+        //    initControls: this.initControls,
+        //    mode: this.Mode,
+        //    formObjectGlobal: this.formObject,
+        //    userObject: this.userObject,
+        //    formDataExtdObj: this.FormDataExtdObj,
+        //    formObject_Full: this.FormObj,
+        //    formRefId: this.formRefId,
+        //    formRenderer: this
+        //};
+        //new EbDynamicTab(opts);
 
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
@@ -254,60 +267,6 @@ const WebFormRender = function (option) {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
-    //this.j = function (p1) {
-    //    let VMs = this.initializer.Vobj.valueMembers;
-    //    let DMs = this.initializer.Vobj.displayMembers;
-    //    let columnVals = this.initializer.columnVals;
-
-    //    if (VMs.length > 0)// clear if already values there
-    //        this.initializer.clearValues();
-
-    //    let valMsArr = p1[0].split(',');
-    //    let DMtable = p1[1];
-
-    //    for (let i = 0; i < valMsArr.length; i++) {
-    //        let vm = valMsArr[i];
-    //        VMs.push(vm);
-    //        for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
-    //            let dm = this.DisplayMembers.$values[j];
-    //            for (var k = 0; k < DMtable.length; k++) {
-    //                let row = DMtable[k];
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-    //                    DMs[dm.name].push(_dm);
-    //                }
-    //            }
-    //        }
-    //    }
-
-    //    if (this.initializer.datatable === null) {//for aftersave actions
-    //        $.each(valMsArr, function (i, vm) {
-    //            $.each(DMtable, function (j, row) {
-    //                if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                    $.each(row.Columns, function (k, column) {
-    //                        if (!columnVals[column.Name]) {
-    //                            console.warn('Found mismatch in Columns from datasource and Colums in object');
-    //                            return true;
-    //                        }
-    //                        let val = EbConvertValue(column.Value, column.Type);
-    //                        columnVals[column.Name].push(val);
-    //                    }.bind(this));
-    //                }
-
-    //                //$.each(r.Columns, function (j, column) {
-    //                //    if (!columnVals[column.Name]) {
-    //                //        console.warn('Mismatch found in Colums in datasource and Colums in object');
-    //                //        return true;
-    //                //    }
-    //                //    let val = EbConvertValue(column.Value, column.Type);
-    //                //    columnVals[column.Name].push(val);
-    //                //}.bind(this));
-
-    //            }.bind(this));
-    //        }.bind(this));
-    //    }
-    //};
-
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
         $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
             let val = SingleColumn.Value;
@@ -320,8 +279,8 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
+                ctrl.setDisplayMember = EBPSSetDisplayMember;///
+                ctrl.setDisplayMember(val);
             }
             else
                 ctrl.setValue(val);
@@ -584,10 +543,10 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
         let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
-        if (this.rowId === 0) {
-            console.dev_log("Form save failed");
-            return;
-        }
+        //if (this.rowId === 0) {
+        //    EbMessage("show", { Message: "Save failed", AutoHide: true, Background: '#aa0000' });
+        //    return;
+        //}
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
                 EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
@@ -1298,6 +1257,7 @@ const WebFormRender = function (option) {
                 let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
                 let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
                 if (typeof nwlocO === "undefined") {
+                    console.error("Unknown location id found. LocId = " + nl);
                     EbDialog("show", {
                         Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
                         Buttons: {
@@ -1313,23 +1273,25 @@ const WebFormRender = function (option) {
                     });
                 }
                 else {
-                    EbDialog("show", {
-                        Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                            this.setHeader(this.mode);
-                        }.bind(this)
-                    });
+                    EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+                    ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                    this.setHeader(this.mode);
+                    //EbDialog("show", {
+                    //    Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
+                    //    Buttons: {
+                    //        "Ok": {
+                    //            Background: "green",
+                    //            Align: "right",
+                    //            FontColor: "white;"
+                    //        }
+                    //    },
+                    //    CallBack: function (name) {
+                    //        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                    //        this.setHeader(this.mode);
+                    //    }.bind(this)
+                    //});
                 }
             }
-
         }
 
         if (ebcontext.locations.Listener) {

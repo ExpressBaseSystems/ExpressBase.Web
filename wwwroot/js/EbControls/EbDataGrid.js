@@ -115,11 +115,18 @@
                 dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
         }
         else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
-
-            let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`
+            let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
             spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
             // dspMmbr = cellObj.Value.split('$$')[1];
             dspMmbr = spn;
+        }
+        else if (col.ObjType === "EbDGUserSelectColumn") {
+            alert();
+            //let spn = `<div class="ulstc-disp-img-c" style="background-image: url(/images/dp/${cellObj.Value.split('$$')[0]}.png;), url(/images/nulldp.png;);></div>`
+           
+            //spn += `<div class="ulstc-disp-txt">${cellObj.Value.split('$$')[1]}</div>`;
+            //// dspMmbr = cellObj.Value.split('$$')[1];
+            //dspMmbr = spn;
         }
         else
             dspMmbr = cellObj.Value;
@@ -840,6 +847,12 @@
             $td.find(".tdtxt span").append(`<img class='sysctrl_usrimg' src='/images/dp/${usid}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
             $td.find(".tdtxt span").append(`<span class='sysctrl_usrname'>${val}</span>`);
 
+        }
+        else if (ctrl.ObjType === "UserSelect") {
+            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            $td.find(".tdtxt span").empty();
+            $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
+            $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
         }
         else {
             //let t0 = performance.now();

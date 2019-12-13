@@ -91,7 +91,7 @@ namespace ExpressBase.Web.Components
                 {
                     colindx++; dvindex++;
                     returnobj.LinesColumns.Add(GetDVBaseColumn(column, false, colindx, dvindex));
-                    returnobj.Columns.Add(GetDVBaseColumn(column, false, dvindex, dvindex));
+                    returnobj.Columns.Add(GetDVBaseColumn(column, false, colindx, dvindex));
                 }
             }
             catch (Exception e)

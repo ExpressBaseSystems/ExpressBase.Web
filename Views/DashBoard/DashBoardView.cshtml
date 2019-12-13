@@ -29,11 +29,9 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
-
-
-<div class="container-fluid" style="margin-top:50px">
-    <div class="row">
-        <div class="col-sm-12">
+<div class="container-fluid" style="margin-top:50px;background: transparent;">
+    <div class="row" style="background: transparent;">
+        <div class="col-sm-12" style="background: transparent;">
             <div id="dashbord-user-view">
                 <div class="grid-stack"></div>
             </div>
@@ -55,7 +53,7 @@
             googlekey: '@ViewBag.al_arz_map_key',
             filterValues :  '@Html.Raw(ViewBag.filterValues)',
             tabNum :@ViewBag.tabNum,
-            rowData : '@Html.Raw(ViewBag.rowData)' 
+            rowData : '@Html.Raw(ViewBag.rowData)'
         });
 
       $(function () {

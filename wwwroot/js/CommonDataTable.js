@@ -93,6 +93,9 @@
     this.contId = Option.containerId;
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.IsPaging : true;
+    this.LeftFixedColumn = Option.LeftFixedColumn || 0;
+    this.RowHeight = Option.RowHeight || "15";
+    this.ObjectLinks = Option.ObjectLinks || [];
 
     if (this.Source === "EbDataTable") {
         this.split = new splitWindow("parent-div0", "contBox");
@@ -391,6 +394,8 @@
         else if (this.Source === "Calendar") {
             $("#" + this.contId).empty();
             $("#" + this.contId).append(`<table id="${this.tableId}" class="table display table-bordered compact"></table>`);
+            this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
+            this.EbObject.RowHeight = this.RowHeight;
         }
         this.initCompleteflag = false;
         this.extraCol = [];
@@ -734,7 +739,13 @@
                 o.data = this.receiveAjaxData(this.MainData);
             }
             else {
-                o.dom = "<'col-md-12 noPadding display_none'>rt";
+                if (this.Source === "Calendar") {
+                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12'i>rt";
+                    o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
+                }
+                else {
+                    o.dom = "<'col-md-12 noPadding display_none'>rt";
+                }
                 o.paging = false;
                 o.data = this.receiveAjaxData(this.MainData);
             }
@@ -744,7 +755,7 @@
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
-                if (this.IsTree) {
+                if (this.IsTree ) {
                     o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
@@ -780,7 +791,7 @@
         o.fnRowCallback = this.rowCallBackFunc.bind(this);
         o.drawCallback = this.drawCallBackFunc.bind(this);
         o.initComplete = this.initCompleteFunc.bind(this);
-        //o.headerCallback = this.headerCallback.bind(this);
+        o.headerCallback = this.headerCallback.bind(this);
         //o.fnDblclickCallbackFunc = this.dblclickCallbackFunc.bind(this);
         return o;
     };
@@ -790,7 +801,7 @@
         for (var i = 0; i < 5; i++)
             ia[i] = (this.EbObject.PageLength * (i + 1));
         return JSON.parse("[ [{0},-1], [{0},\"All\"] ]".replace(/\{0\}/g, ia.join(',')));
-    }
+    };
 
     this.ajaxData = function (dq) {
         if (!this.isSecondTime) {
@@ -865,7 +876,7 @@
         if (this.FD)
             fltr_collection = getValsForViz(this.FilterDialog.FormObj);
 
-        let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });        
+        let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
@@ -1114,8 +1125,11 @@
                     visCount++;
             }.bind(this));
         }
-        return count;
-    }
+        if (this.extraCol.length === 2)
+            return count + 1;
+        else
+            return count;
+    };
 
     this.ColumnsComparer = function (a, b) {
         if (a.data < b.data) return -1;
@@ -1239,64 +1253,65 @@
         this.Run = false;
         if (this.Source === "EbDataTable")
             this.GenerateButtons();
+        else if (this.Source === "Calendar") {
+            this.CreateContextmenu4ObjectSelector();
+        }
         if (this.login == "uc") {
             this.initCompleteflag = true;
             //if (this.isSecondTime) { }
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");            
         }
+        setTimeout(function () {
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
+            $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
+            $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
+            $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
+            if (!this.IsTree && this.showFilterRow) {
 
-        if (!this.IsTree && this.showFilterRow)
-            this.createFilterRowHeader();
-        else if (this.IsTree)
-            this.createFilterforTree();
-        this.filterDisplay();
-        this.createFooter();
-        if (this.Source === "EbDataTable")
-            this.arrangeWindowHeight();
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").show();
-        $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").show();
-        $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
-        $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
-
-        this.CreateHeaderTooltip();
-        this.addFilterEventListeners();
-        this.arrangeFooterWidth();
-        //this.arrangefixedHedaerWidth();
-        this.placeFilterInText();
-        //this.check4Scroll();
-        this.Api.columns.adjust();
-
-        $("#eb_common_loader").EbLoader("hide");
-        //this.contextMenu4Cell();
-        //this.contextMenu();
-        if (this.login === "uc") {
-            if (!this.EbObject.DisableCopy)
-                $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
-            else
-                $("#" + focusedId + " .wrapper-cont").removeClass("userselect");
-        }
-        else {
-            if (!this.EbObject.DisableCopy)
-                $(".wrapper-cont").removeClass("userselect").addClass("userselect");
-            else
-                $(" .wrapper-cont").removeClass("userselect");
-        }
-        this.isSecondTime = true;
-
-        if (this.Source !== "EbDataTable") {
-            $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
-            if ($("#" + this.tableId + " tr").length > 7) {
-                $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
-                $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "155px", "important");
-
-                //if ($.isEmptyObject(this.summary)) {
-                //    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "174px", "important");
-                //}
-                //else
-                //    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "142px", "important");
+                this.createFilterRowHeader();
             }
-        }
+            else if (this.IsTree || this.Source === "Calendar")
+                this.createFilterforTree();
+            this.filterDisplay();
+            this.createFooter();
+            if (this.Source === "EbDataTable")
+                this.arrangeWindowHeight();
+
+            this.CreateHeaderTooltip();
+            this.addFilterEventListeners();
+            this.arrangeFooterWidth();
+            this.placeFilterInText();
+
+            $("#eb_common_loader").EbLoader("hide");
+            if (this.login === "uc") {
+                if (!this.EbObject.DisableCopy)
+                    $("#" + focusedId + " .wrapper-cont").removeClass("userselect").addClass("userselect");
+                else
+                    $("#" + focusedId + " .wrapper-cont").removeClass("userselect");
+            }
+            else {
+                if (!this.EbObject.DisableCopy)
+                    $(".wrapper-cont").removeClass("userselect").addClass("userselect");
+                else
+                    $(" .wrapper-cont").removeClass("userselect");
+            }
+            this.isSecondTime = true;
+
+            if (this.Source !== "EbDataTable") {
+                $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
+                $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
+                $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
+                if ($("#" + this.tableId + " tr").length > 7) {
+                    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scroll").style("height", "210px", "important");
+                    $(".containerrow #" + this.tableId + "_wrapper .dataTables_scrollBody").style("height", "155px", "important");
+                }
+                $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_RightBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
+                $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_LeftBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
+                $("#" + this.tableId + "_wrapper .dataTables_scroll .dataTables_scrollBody tr").css("height", this.EbObject.RowHeight + "px");
+            }
+            this.Api.columns.adjust();
+        }.bind(this), 0);
     };
 
     this.contextMenu = function () {
@@ -1631,7 +1646,7 @@
     this.arrangeWindowHeight = function () {
         var filterId = "#filterdisplayrowtd_" + this.tableId;
         if (this.login === "uc") {
-            if (this.IsTree) {
+            if (this.IsTree || this.Source === "Calendar") {
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 52px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader)
@@ -1677,7 +1692,7 @@
                 }
             }
             else {
-                if (this.IsTree)
+                if (this.IsTree || this.Source === "Calendar")
                     $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 32px)", "important");
                 else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging)
                     $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 42px)", "important");
@@ -2223,6 +2238,7 @@
                     if (j === 0)
                         $(lfoot).children().find("tr").eq(ps).children("th").eq(j).html("");
                     $(lfoot).children().find("tr").eq(ps).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).css("width"));
+                    $(lfoot).children().find("tr").eq(ps).children("th").eq(j).css("height", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j).css("height"));
                 }
             }
 
@@ -2231,8 +2247,12 @@
                 for (let j = 0; (j + start) < eb_footer_controls_lfoot.length; j++) {
                     $(rfoot).children().find("tr").eq(ps).children("th").eq(j).html(eb_footer_controls_lfoot[j + start]);
                     $(rfoot).children().find("tr").eq(ps).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j + start).css("width"));
+                    $(rfoot).children().find("tr").eq(ps).children("th").eq(j).css("height", scrollfoot.find("tfoot").children("tr").eq(ps).children("th").eq(j + start).css("height"));
                 }
             }
+
+            $(lfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
+            $(rfoot).children().find("tr").css("height", scrollfoot.find("tfoot").children("tr").css("height"));
         }
         this.summarize2();
     };
@@ -2379,6 +2399,7 @@
     };
 
     this.createFilterforTree = function () {
+        var TRange = null;
         $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="dataTables_filters">
         <label>Search:<input type="search" class="form-control input-sm" placeholder="" aria-controls="${this.tableId}"></label></div>`);
         $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
@@ -2388,19 +2409,117 @@
         var text = $(e.target).val();
         if (e.keyCode === 13 && text.length > 2) {
             //window.find(text, false, false, true);
-            if (window.find && window.getSelection) {
-                document.designMode = "on";
-                var sel = window.getSelection();
-                sel.collapse(document.body, 0);
+            //if (window.find && window.getSelection) {
+            //    document.designmode = "on";
+            //    var sel = window.getSelection();
+            //    sel.collapse(document.body, 0);
 
-                while (window.find(text)) {
-                    document.execCommand("HiliteColor", false, "yellow");
-                    sel.collapseToEnd();
-                }
-                document.designMode = "off";
-            }
+            //    while (window.find(text)) {
+            //        document.execCommand("backColor", true, "yellow");
+            //        sel.collapseToEnd();
+            //    }
+            //    document.designmode = "off";
+            //}
+
+
+            //this.findString(text);
+            $(".highlighted").removeClass("highlighted").removeClass("match");
+            this.searchAndHighlight(text, ".calendar_wrapper");
         }
     };
+
+    this.findString = function (str) {
+        if (parseInt(navigator.appVersion) < 4) return;
+        var strFound;
+        if (window.find) {
+
+            // CODE FOR BROWSERS THAT SUPPORT window.find
+
+            strFound = self.find(str);
+            if (!strFound) {
+                strFound = self.find(str, 0, 1);
+                while (self.find(str, 0, 1)) continue;
+            }
+        }
+        else if (navigator.appName.indexOf("Microsoft") !== -1) {
+
+            // EXPLORER-SPECIFIC CODE
+
+            if (TRange !== null) {
+                TRange.collapse(false);
+                strFound = TRange.findText(str);
+                if (strFound) TRange.select();
+            }
+            if (TRange === null || strFound === 0) {
+                TRange = self.document.body.createTextRange();
+                strFound = TRange.findText(str);
+                if (strFound) TRange.select();
+            }
+        }
+        else if (navigator.appName === "Opera") {
+            alert("Opera browsers not supported, sorry...");
+            return;
+        }
+        if (!strFound) alert("String '" + str + "' not found!");
+        return;
+    };
+
+    this.searchAndHighlight = function (searchTerm, selector) {
+        if (searchTerm) {
+            var searchTermRegEx = new RegExp(searchTerm, "ig");
+            var matches = $(selector).text().match(searchTermRegEx);
+            if (matches !== null && matches.length > 0) {
+                $('.highlighted').removeClass('highlighted'); //Remove old search highlights  
+
+                //Remove the previous matches
+                $span = $('.calendar_wrapper span');
+                $span.replaceWith($span.html());
+
+                if (searchTerm === "&") {
+                    searchTerm = "&amp;";
+                    searchTermRegEx = new RegExp(searchTerm, "ig");
+                }
+                $(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + searchTerm + "</span>"));
+                $('.match:first').addClass('highlighted');
+
+                var i = 0;
+
+                $('.next_h').off('click').on('click', function () {
+                    i++;
+
+                    if (i >= $('.match').length) i = 0;
+
+                    $('.match').removeClass('highlighted');
+                    $('.match').eq(i).addClass('highlighted');
+                    $('.ui-mobile-viewport').animate({
+                        scrollTop: $('.match').eq(i).offset().top
+                    }, 300);
+                });
+                $('.previous_h').off('click').on('click', function () {
+
+                    i--;
+
+                    if (i < 0) i = $('.match').length - 1;
+
+                    $('.match').removeClass('highlighted');
+                    $('.match').eq(i).addClass('highlighted');
+                    $('.ui-mobile-viewport').animate({
+                        scrollTop: $('.match').eq(i).offset().top
+                    }, 300);
+                });
+
+
+
+
+                if ($('.highlighted:first').length) { //if match found, scroll to where the first one appears
+                    $(window).scrollTop($('.highlighted:first').position().top);
+                }
+                return true;
+            }
+        }
+        return false;
+    };
+
 
     this.addFilterEventListeners = function () {
         $('#' + this.tableId + '_wrapper thead tr:eq(0)').off('click').on('click', 'th', this.orderingEvent.bind(this));
@@ -2413,6 +2532,7 @@
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
@@ -2436,7 +2556,7 @@
         $("#btnToggleFD" + this.tableId).off("click").on("click", this.toggleFilterdialog.bind(this));
         $(".columnMarker" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".columnimage").off("click").on("click", this.ViewImage.bind(this));
-        $(".columnimage").error( this.OnErrorImage);
+        $(".columnimage").error(this.OnErrorImage);
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
@@ -2460,11 +2580,11 @@
             $(this).datepicker("show");
         });
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
-        this.Api.columns.adjust();
+        //this.Api.columns.adjust();
     };
 
     this.ViewImage = function (e) {
-        let data = $(e.target).attr("src").replace("/small","").replace("/medium","");
+        let data = $(e.target).attr("src").replace("/small", "").replace("/medium", "");
         let loader = "data:image/gif;base64,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";
         $("#Imagemodal").remove();
 
@@ -2555,15 +2675,14 @@
                 dvcontainerObj.modifyNavigation();
             }
         }
-        if (this.isSecondTime) {
-            this.addFilterEventListeners();
-        }
 
         if (this.IsTree) {
             this.CreateContexmenu4Tree();
         }
-        if (this.Source === "Calendar")
-            this.CreateContexmenu4Calendar();
+
+        if (this.isSecondTime) {
+            this.addFilterEventListeners();
+        }
         $("#" + this.tableId + " tbody").off("click", ".groupform").on("click", ".groupform", this.collapseTreeGroup);
     };
 
@@ -2637,9 +2756,93 @@
         });
     };
 
+    this.CreateContextmenu4ObjectSelector = function () {
+        $.contextMenu('destroy', ".dataclass");
+        if (this.ObjectLinks.length > 1) {
+            let _items = {};
+            $.each(this.ObjectLinks, function (i, obj) {
+                _items[obj.ObjName] = { name: obj.ObjDisplayName, callback: this.CalendarLinkClick.bind(this) };
+            }.bind(this));
+            $.contextMenu({
+                selector: ".dataclass",
+                build: function ($trigger, e) {
+                    $("body").find("td").removeClass("focus");
+                    $("body").find("[role=row]").removeClass("selected");
+                    $trigger.closest("[role=row]").addClass("selected");
+                    return {
+                        items: _items
+                    };
+                }.bind(this)
+            });
+        }
+    };
 
-    this.CreateContexmenu4Calendar = function () {
+    this.CalendarLinkClick = function (key, opt, event) {
+        let MapObj = this.ObjectLinks.filter(obj => obj.ObjName === key)[0];
+        var idx = this.Api.row(opt.$trigger.parent().parent()).index();
+        let rowdata = window.atob(opt.$trigger.attr("hidden-row")).split(",");
+        var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
+        if (MapObj.FormMode === 1) {
+            if (filter[0].Value === "") {
+                MapObj.FormMode = 2;
+                filter = [];
+            }
+        }
+        if (MapObj.RefId.split("-")[2] === "0") {
+            if (parseInt(EbEnums.LinkTypeEnum.Popout) === MapObj.LinkType) {
+                let url = "../webform/index?refid=" + MapObj.RefId;
+                var _form = document.createElement("form");
+                _form.setAttribute("method", "post");
+                _form.setAttribute("action", url);
+                _form.setAttribute("target", "_blank");
 
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "_params";
+                input.value = btoa(unescape(encodeURIComponent(JSON.stringify(filter))));
+                _form.appendChild(input);
+
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "_mode";
+                input.value = MapObj.FormMode;
+                _form.appendChild(input);
+
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "_locId";
+                input.value = store.get("Eb_Loc-" + this.TenantId + this.UserId);
+                _form.appendChild(input);
+
+                document.body.appendChild(_form);
+                _form.submit();
+                document.body.removeChild(_form);
+            }
+            else {
+
+                $("#iFrameFormPopupModal").modal("show");
+                let url = `../webform/index?refid=${MapObj.RefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_mode=1${MapObj.FormMode}&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+                $("#iFrameFormPopup").attr("src", url);
+            }
+        }
+    };
+
+    this.GetFilterforCalendarToForm = function (MapObj, rowdata) {
+        let filters = [];
+        if (MapObj.FormMode === 1) {
+            var col = MapObj.FormId.$values;
+            $.each(col, function (i, col) {
+                filters.push(new fltr_obj(col.Type, col.name, rowdata[col.OIndex]));
+            }.bind(this));
+        }
+        else if (MapObj.FormMode === 2) {
+            var cols = MapObj.FormParameters.$values;
+            $.each(cols, function (i, col) {
+                if (rowdata[col.data] !== "")
+                    filters.push(new fltr_obj(col.Type, col.FormControl.Name, rowdata[col.OIndex]));
+            }.bind(this));
+        }
+        return filters;
     };
 
     this.CreateNewFormLinks = function () {
@@ -3530,6 +3733,10 @@
         this.Api.columns.adjust();
     };
 
+    this.linkFromCalendar = function () {
+
+    };
+
     this.link2NewTable = function (e) {
         this.rowgroupFilter = [];
         var rows = this.Api.rows(idx).nodes();
@@ -4042,10 +4249,10 @@
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/${data}/picture?type=square' style="height: 20px;width: 25px;"/>`;
         //else
         //    return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' style="height: 20px;width: 25px;"/>`;
-        let _height = col.ImageHeight === 0 ? "auto" : col.ImageHeight +"px";
+        let _height = col.ImageHeight === 0 ? "auto" : col.ImageHeight + "px";
         let _width = col.ImageWidth === 0 ? "auto" : col.ImageWidth + "px";
         let _quality = getKeyByVal(EbEnums.ImageQuality, col.ImageQuality.toString()).toLowerCase();
-        if(data !== "")
+        if (data !== "")
             return `<img class='img-thumbnail columnimage' src='/images/${_quality}/${data}.jpg' style="height: ${_height};width: ${_width};"/>`;
         else
             return `<img class='img-thumbnail' src='/images/image.png' style="height: ${_height};width: ${_width};"/>`;

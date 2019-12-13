@@ -147,7 +147,7 @@
 
     this.DrawTiles = function () {
 
-        $("#dashbord-user-view").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -270,7 +270,8 @@
             o.Source = "DashBoard";
             o.drawCallBack = this.drawCallBack.bind(this, id);
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
-            var dt = new EbCommonDataTable(o); 
+            var dt = new EbCommonDataTable(o);
+            $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -280,6 +281,7 @@
             o.filtervalues = this.filtervalues;
             var dt = new EbBasicChart(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
+            $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
@@ -291,7 +293,7 @@
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).css({ "font-size": "1.3em", "padding-bottom": "1.4em", "padding-left": "2px" });
+            $(`#${id} .db-title`).empty();
             $(`#${id} .db-title`).parent().css("border","0px")
             $(`#${id} .i-opt-obj`).hide();
             $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" })
@@ -306,6 +308,7 @@
             o.googlekey = this.googlekey;
             var dt = new EbGoogleMap(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
+            $(`#${id}`).addClass("box-shadow-style");
         }
     }
 

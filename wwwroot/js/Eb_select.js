@@ -82,7 +82,7 @@ const EbSelect = function (ctrl, options) {
     this.IsDatatableInit = false;
     this.IsSearchBoxFocused = false;
 
-    $.each(this.dmNames, function (i, name) { this.localDMS[name] = [] }.bind(this));
+    $.each(this.dmNames, function (i, name) { this.localDMS[name] = []; }.bind(this));
 
     this.VMindex = null;
     this.DMindexes = [];
@@ -625,7 +625,6 @@ const EbSelect = function (ctrl, options) {
         //hiding v-select native DD
         $('#' + this.container + ' [class=expand]').css('display', 'none');
         this.Vobj.valueMembers = this.values;
-        this.Vobj.displayMembers;
     };
 
     //single select & max limit
@@ -665,7 +664,7 @@ const EbSelect = function (ctrl, options) {
             if (this.justInit) {
                 this.$inp.val(this.Vobj.valueMembers);
                 //if (this.afterInitComplete4SetVal)
-                    this.justInit = undefined;
+                this.justInit = undefined;
             }
             else
                 this.$inp.val(this.Vobj.valueMembers).trigger("change");
@@ -816,8 +815,10 @@ const EbSelect = function (ctrl, options) {
         }.bind(this));
         this.clearSearchBox();
         this.filterArray = [];
-        this.datatable.columnSearch = [];
-        this.datatable.Api.ajax.reload();
+        if (this.datatable) {
+            this.datatable.columnSearch = [];
+            this.datatable.Api.ajax.reload();
+        }
     };
 
     this.checkBxClickEventHand = function (e) {
@@ -872,6 +873,24 @@ const EbSelect = function (ctrl, options) {
 
             }
         }
+    };
+
+    this.getDisplayMemberModel = function () {
+
+        let newDMs = {};
+        let DmClone = removePropsOfType($.extend(true, {}, this.Vobj.displayMembers), 'function');
+        let ValueMembers = this.Vobj.valueMembers.toString().split(",");
+        for (var i = 0; i < ValueMembers.length; i++) {
+            let vm = ValueMembers[i];
+            newDMs[vm] = {};
+            for (let j = 0; j < this.dmNames.length; j++) {
+                let dmName = this.dmNames[j];
+                newDMs[vm][dmName] = DmClone[dmName][i];
+            }
+
+        }
+
+        return newDMs;
     };
 
     this.Renderselect();

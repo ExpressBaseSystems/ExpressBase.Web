@@ -99,6 +99,7 @@ const WebFormRender = function (option) {
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {//dginit
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+            this.DGBuilderObjs[DG.Name].MultipleTables = this.MultipleTables;
         }.bind(this));
     };
 
@@ -266,33 +267,6 @@ const WebFormRender = function (option) {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
-    //this.j = function (p1) {
-    //    let VMs = this.initializer.Vobj.valueMembers;
-    //    let DMs = this.initializer.Vobj.displayMembers;
-
-    //    if (VMs.length > 0)// clear if already values there
-    //        this.initializer.clearValues();
-
-    //    let valMsArr = p1[0].split(",");
-    //    let DMtable = p1[1];
-
-
-    //    $.each(valMsArr, function (i, vm) {
-    //        VMs.push(vm);
-    //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            valMsArr;
-    //            DMtable;
-
-    //            $.each(DMtable, function (j, r) {
-    //                if (getObjByval(r.Columns, "Name", this.ValueMember.name).Value === vm) {
-    //                    let _dm = getObjByval(r.Columns, "Name", dm.name).Value;
-    //                    DMs[dm.name].push(_dm);
-    //                }
-    //            }.bind(this));
-    //        }.bind(this));
-    //    }.bind(this));
-    //};
-
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
         $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
             let val = SingleColumn.Value;
@@ -305,8 +279,8 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
+                ctrl.setDisplayMember = EBPSSetDisplayMember;///
+                ctrl.setDisplayMember(val);
             }
             else
                 ctrl.setValue(val);
@@ -356,12 +330,16 @@ const WebFormRender = function (option) {
         let EditModeFormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames();
         //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
-        $.each(this.DGs, function (k, DG) {
-            if (!EditModeFormData.hasOwnProperty(DG.TableName))
-                return true;
-            let SingleTable = EditModeFormData[DG.TableName];
-            DG.setEditModeRows(SingleTable);
-        }.bind(this));
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
+            if (!this.MultipleTables.hasOwnProperty(DGB.ctrl.TableName)) {
+                this.MultipleTables[DGB.ctrl.TableName] = [];
+                DGB.SingleTable = this.MultipleTables[DGB.ctrl.TableName];
+                continue;
+            }
+            let SingleTable = EditModeFormData[DGB.ctrl.TableName];
+            DGB.setEditModeRows(SingleTable);
+        }
 
         if (this.ApprovalCtrl) {
             if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
@@ -478,8 +456,8 @@ const WebFormRender = function (option) {
         let WebformData = {};
         let approvalTable = {};
 
-        let formTables = this.getFormTables();
-        let gridTables = this.getDG_FVWTObjColl();
+        //let formTables = this.getFormTables();
+        //let gridTables = this.getDG_FVWTObjColl();
         if (this.ApprovalCtrl)
             approvalTable = this.getApprovalRow();
 
@@ -544,8 +522,8 @@ const WebFormRender = function (option) {
     };
 
     this.RefreshDGControlValues = function () {
-        for (let key in this.DGBuilderObjs) {
-            let DGB = this.DGBuilderObjs[key];
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
             let singleTable = this.EditModeFormData[DGB.ctrl.TableName];
             if (singleTable)
                 DGB.resetControlValues(singleTable);
@@ -565,6 +543,10 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
         let locName = ebcontext.locations.CurrentLocObj.LongName;
         let formName = this.FormObj.DisplayName;
+        //if (this.rowId === 0) {
+        //    EbMessage("show", { Message: "Save failed", AutoHide: true, Background: '#aa0000' });
+        //    return;
+        //}
         if (this.rowId > 0) {// if edit mode 
             if (respObj.RowAffected > 0) {// edit success from editmode
                 EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });

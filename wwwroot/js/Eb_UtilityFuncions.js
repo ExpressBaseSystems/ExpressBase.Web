@@ -64,7 +64,7 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
         let val = fun();
         val = EbConvertValue(val, ctrl.ObjType);
 
-        valueExpHelper(val, ctrl, updateSpan);
+        return valueExpHelper(val, ctrl, updateSpan);
     }
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
         let params = [];
@@ -102,8 +102,7 @@ function valueExpHelper(val, ctrl, updateSpan) {
         if (ctrl.DataVals.ValueExpr_val)
             ctrl.setValue(ctrl.DataVals.ValueExpr_val);
     }
-    if (updateSpan && ctrl.DataVals.ValueExpr_val)
-        $(`#td_${ctrl.EbSid_CtxId} .tdtxt>span`).text(ctrl.DataVals.ValueExpr_val);
+    return ctrl.DataVals.ValueExpr;
 }
 
 function showLoader4webform() {
@@ -294,4 +293,36 @@ function getObjCopy4PS(Obj) {
             delete newObj[keys[i]];
     }
     return newObj;
+}
+
+function getEbFontStyleObject(font) {
+    let fontObj = {};
+    let Abc = { 0: "normal", 1: "bold", 2: "italic", 3: "bold-italic" };
+    if (font !== null) { 
+        fontObj['font-family'] = font.FontName;
+        fontObj['font-size'] = font.Size;
+        fontObj['color'] = font.color;
+            if (Abc[font.Style] === "bold") {
+                fontObj['font-weight'] = Abc[font.Style];
+            }
+            else if (Abc[font.Style] === "italic") {
+                fontObj['font-style'] = Abc[font.Style];
+            }
+            else if (Abc[font.Style] === "bold-italic") {
+                fontObj['font-style'] = "italic";
+                fontObj['font-weight'] = "bold";
+            }
+        if (font.Caps === true) {
+            fontObj['text-transform'] = "uppercase";
+        }
+        if (font.Strikethrough === true) {
+            fontObj['text-decoration'] = "line-through";
+        }
+        if (font.Underline === true) {
+            fontObj['text-decoration'] = "underline";
+        }
+
+    }
+    return fontObj;
+  
 }

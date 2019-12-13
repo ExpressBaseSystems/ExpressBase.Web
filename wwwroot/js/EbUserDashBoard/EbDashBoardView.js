@@ -147,7 +147,7 @@
 
     this.DrawTiles = function () {
 
-        $("#dashbord-user-view").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {

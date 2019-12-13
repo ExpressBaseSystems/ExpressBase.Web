@@ -47,22 +47,22 @@
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
 </script>
-<div class="container-fluid" style="margin-top:50px">
-    <div class="row">
-        <div class="col-sm-12">
-            <div id="dashbord-user-view">
-                <div class="grid-stack" style="min-height:600px"></div>
+    <div class="container-fluid" style="margin-top:60px;background: transparent;">
+        <div class="row" style="background: transparent;">
+            <div class="col-sm-12" style="background: transparent;">
+                <div id="dashbord-user-view">
+                    <div class="grid-stack"></div>
+                </div>
+
             </div>
-
         </div>
-    </div>
 
-    @*<div id="ppt-dash-view" class="PGgrid"> <div id="propGridView"> </div></div>*@
-</div>
-@{
-    if (ViewBag.AllDashBoard != null)
-    {
-        <script>
+        @*<div id="ppt-dash-view" class="PGgrid"> <div id="propGridView"> </div></div>*@
+    </div>
+    @{
+        if (ViewBag.AllDashBoard != null)
+        {
+            <script>
             var DBobj = new DashBoardViewWrapper({
             Version: '@ViewBag.VersionNumber',
             ObjType: @ViewBag.ObjType,
@@ -71,32 +71,32 @@
             googlekey: '@ViewBag.al_arz_map_key',
             AllDashBoards: @Html.Raw(ViewBag.AllDashBoard),
         });
-        </script>
+            </script>
+        }
+        else
+        {
+            @*<script>
+                      $(document).ready(function () {
+                    $('#quik_menu').click();
+                });
+                </script>*@
+        }
     }
-    else
-    {
-        @*<script>
-                  $(document).ready(function () {
-                $('#quik_menu').click();
-            });
-            </script>*@
-    }
-}
-<script type="text/javascript">
-    $(document).ready(function () {
-        $(document).click(function (event) {
-            var clickover = $(event.target);
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).click(function (event) {
+                var clickover = $(event.target);
 
-            if (!clickover.hasClass("DropDown4DB")) {
-                $("#UserDashBoardSwitchList").hide();
-            }
-            else {
-                $("#UserDashBoardSwitchList").show();
-            }
+                if (!clickover.hasClass("DropDown4DB")) {
+                    $("#UserDashBoardSwitchList").hide();
+                }
+                else {
+                    $("#UserDashBoardSwitchList").show();
+                }
+            });
         });
-    });
-</script>
-<script type="text/javascript">
+    </script>
+    <script type="text/javascript">
 //      $(function () {
 //     var options = {
 //     float: true,
@@ -145,4 +145,4 @@
 //            $("#iFrameFormPopupOverlay").hide();
 //    });
 
-</script>
+    </script>

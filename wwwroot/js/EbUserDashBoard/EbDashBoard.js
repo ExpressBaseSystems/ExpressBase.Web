@@ -277,7 +277,7 @@
     }
 
     this.DrawTiles = function () {
-        $("#dashbord-view").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -379,7 +379,7 @@
                 });
         }
         if (pname === "BackgroundColor") {
-            $("#dashbord-view").css("background-color", "").css("background-color", newval);
+            $("#layout_div").css("background-color", "").css("background-color", newval);
         }
 
         if (pname == "Filter_Dialogue") {

@@ -1337,11 +1337,13 @@
             this.$PhSec.val(this.UserData["phnosecondary"]);
             this.$PhLand.val(this.UserData["landline"]);
             this.$PhExt.val(this.UserData["phextension"]);
-            let pobj = JSON.parse(this.UserData["preferencesjson"]);
-            this.$Locale.val(pobj.Locale);
-            this.$Timezone.val(pobj.TimeZone);
-            this.$DefaultLoc.val(pobj.DefaultLocation);
-            this.$DefaultDashBoard.val(pobj.DefaultDashBoard);
+            if (this.UserData["preferencesjson"]) {
+                let pobj = JSON.parse(this.UserData["preferencesjson"]);
+                this.$Locale.val(pobj.Locale);
+                this.$Timezone.val(pobj.TimeZone);
+                this.$DefaultLoc.val(pobj.DefaultLocation);
+                this.$DefaultDashBoard.val(pobj.DefaultDashBoard);
+            }
 
             if (this.mode !== 'user' || this.UserData['email'] === 'anonymous@anonym.com'){
                 this.$FullName.prop("disabled", true);

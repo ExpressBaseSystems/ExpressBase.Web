@@ -994,13 +994,17 @@
         let obj = "";
         let type = "ObjectBasicVis";
         if (parseInt(refId.split("-")[2]) === EbObjectTypes.WebForm) {
-            obj = new EbObjects.ObjectBasicForm(ObjName+"ppty");
+            obj = new EbObjects.ObjectBasicForm(ObjName + "ppty");
             type = "ObjectBasicForm";
+        }
+        else if (parseInt(refId.split("-")[2]) === EbObjectTypes.Report) {
+            obj = new EbObjects.ObjectBasicReport(ObjName + "ppty");
+            type = "ObjectBasicReport";
         }
         else
             obj = new EbObjects.ObjectBasicVis(ObjName + "ppty");
         let versionNumber = $e.find(".selectpicker option:selected").attr("ver-no");
-        obj.RefId = refId;
+        obj.ObjRefId = refId;
         obj.ObjDisplayName = data[ObjName][0].displayName;
         obj.ObjName = data[ObjName][0].name;
         obj.Version = versionNumber;
@@ -1024,6 +1028,8 @@
         let type = $e.attr("eb-type");
         if (parseInt(type) === EbObjectTypes.WebForm)
             type = "ObjectBasicForm";
+        else if (parseInt(type) === EbObjectTypes.Report)
+            type = "ObjectBasicReport";
         else
             type = "ObjectBasicVis";
         //this.loadPG($e, name);

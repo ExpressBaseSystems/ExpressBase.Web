@@ -515,6 +515,8 @@ var EbBasicDataTable = function (Option) {
             Option.fninitComplete();
         if (Option.fninitComplete4SetVal)
             Option.fninitComplete4SetVal();
+        if (Option.fns4PSonLoad.length > 0)
+            Option.fns4PSonLoad[0]();
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay) {
             $(".Eb-ctrlContainer .dataTables_scrollHead").addClass("headhide");

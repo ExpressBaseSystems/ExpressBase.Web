@@ -1,15 +1,42 @@
 ﻿@{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
 <head>
     <title>Changes in DB</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="~/js/EbControls/EbDialogBox.js"></script>
     <script src="~/js/ProductionDBManager/productiondbmanager.js"></script>
+    @*code editor*@
+    <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" asp-append-version=@bApnd>
+    <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" asp-append-version=@bApnd />
+    <script src="~/lib/codemirror/lib/codemirror.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/show-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/javascript-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/javascript/javascript.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/sql-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/sql/sql.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/foldcode.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/foldgutter.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/brace-fold.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/xml-fold.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/fold/comment-fold.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/xml/xml.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/hint/anyword-hint.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/mode/clike/clike.js" asp-append-version=@bApnd></script>
+    <script src="~/lib/codemirror/addon/edit/matchbrackets.js" asp-append-version=@bApnd></script>
     <script>
-        $(document).ready(function () { 
+        $(document).ready(function () {
             new productiondbmanager();
         });
     </script>
@@ -164,6 +191,29 @@
                     }
                 </div>
             </div>
+        </div>
+    </div>
+    <!-- ---------- Modal----------------- -->
+    <div id="viewQuery" class="modal fade" role="dialog" data-backdrop= "static">
+        <div class="modal-dialog modal-lg">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Query Editor</h4>
+                </div>
+                <div class="modal-body" id="modalBodyQueryView">
+                    <input type="hidden" value="" id="solution_id" name="solution_id" />
+                    <input type="hidden" value="" id="file_header" name="file_header" />
+                    <textarea id='editor'>  </textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="queryExecute" data-dismiss="modal">Execute</button>
+
+                </div>
+            </div>
+
         </div>
     </div>
 </body>

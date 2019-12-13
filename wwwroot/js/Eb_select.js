@@ -68,6 +68,7 @@ const EbSelect = function (ctrl, options) {
     this.Vobj = null;
     this.datatable = null;
     this.clmAdjst = 0;
+    this.onDataLoadCallBackFns = [];
 
 
     ctrl._DisplayMembers = [];
@@ -81,7 +82,7 @@ const EbSelect = function (ctrl, options) {
     this.IsDatatableInit = false;
     this.IsSearchBoxFocused = false;
 
-    $.each(this.dmNames, function (i, name) { this.localDMS[name] = [] }.bind(this));
+    $.each(this.dmNames, function (i, name) { this.localDMS[name] = []; }.bind(this));
 
     this.VMindex = null;
     this.DMindexes = [];
@@ -208,6 +209,8 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
+        if (StrValues === "")
+            return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {
@@ -250,13 +253,13 @@ const EbSelect = function (ctrl, options) {
         if (this.setvaluesColl) {
             if (this.ComboObj.MultiSelect) {
                 $.each(this.setvaluesColl, function (i, val) {
-                    let $row = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
-                    if ($row.length === 0) {
+                    let $checkBox = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
+                    if ($checkBox.length === 0) {
                         console.eb_warn(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`, "rgb(222, 112, 0)");
                         this.$inp.val(StrValues).trigger("change");
                     }
                     else
-                        $row.click();
+                        $checkBox.click();
                 }.bind(this));
             }
             else {
@@ -268,6 +271,7 @@ const EbSelect = function (ctrl, options) {
                 else
                     $row.trigger("dblclick");
             }
+            //this.afterInitComplete4SetVal = true;
         }
         if (callBFn)
             callBFn();
@@ -359,6 +363,7 @@ const EbSelect = function (ctrl, options) {
             o.wc = options.wc;
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
+        o.fns4PSonLoad = this.onDataLoadCallBackFns;
         this.datatable = new EbBasicDataTable(o);
 
         setTimeout(function () {
@@ -368,11 +373,12 @@ const EbSelect = function (ctrl, options) {
             let div_tble = $("#" + o.containerId);
             let tbl_cod = div_tble.offset();
             let div_detach = div_tble.detach();
+            div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
             let xtra_wdth = tbl_cod.left;
             if ((contWidth + tbl_cod.left) > brow_wdth)
                 xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
-
-            div_detach.appendTo("body").offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
+            let $form_div = $('#' + this.name).closest("[eb-type='WebForm']");
+            div_detach.appendTo($form_div).offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
 
         }.bind(this), 30);
 
@@ -619,7 +625,6 @@ const EbSelect = function (ctrl, options) {
         //hiding v-select native DD
         $('#' + this.container + ' [class=expand]').css('display', 'none');
         this.Vobj.valueMembers = this.values;
-        this.Vobj.displayMembers;
     };
 
     //single select & max limit
@@ -656,7 +661,13 @@ const EbSelect = function (ctrl, options) {
 
         if (this.datatable !== null) {
             this.setColumnvals();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            if (this.justInit) {
+                this.$inp.val(this.Vobj.valueMembers);
+                //if (this.afterInitComplete4SetVal)
+                this.justInit = undefined;
+            }
+            else
+                this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
         else
             this.$inp.val(this.Vobj.valueMembers);
@@ -804,8 +815,10 @@ const EbSelect = function (ctrl, options) {
         }.bind(this));
         this.clearSearchBox();
         this.filterArray = [];
-        this.datatable.columnSearch = [];
-        this.datatable.Api.ajax.reload();
+        if (this.datatable) {
+            this.datatable.columnSearch = [];
+            this.datatable.Api.ajax.reload();
+        }
     };
 
     this.checkBxClickEventHand = function (e) {
@@ -860,6 +873,24 @@ const EbSelect = function (ctrl, options) {
 
             }
         }
+    };
+
+    this.getDisplayMemberModel = function () {
+
+        let newDMs = {};
+        let DmClone = removePropsOfType($.extend(true, {}, this.Vobj.displayMembers), 'function');
+        let ValueMembers = this.Vobj.valueMembers.toString().split(",");
+        for (var i = 0; i < ValueMembers.length; i++) {
+            let vm = ValueMembers[i];
+            newDMs[vm] = {};
+            for (let j = 0; j < this.dmNames.length; j++) {
+                let dmName = this.dmNames[j];
+                newDMs[vm][dmName] = DmClone[dmName][i];
+            }
+
+        }
+
+        return newDMs;
     };
 
     this.Renderselect();

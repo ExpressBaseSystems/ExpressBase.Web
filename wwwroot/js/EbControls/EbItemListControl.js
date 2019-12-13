@@ -11,7 +11,7 @@
             { vm: 4, dm1: 'Word', img: '2' }
         ]
     }, options);
-
+    this.ctrl = null;
 
     this.init = function () {
         this.drawControl();
@@ -27,8 +27,9 @@
                                 <div class="ulstc-list-c">
                                     <div class="ulstc-list-srch">
                                         <span><i class="fa fa-search"></i></span>
-                                        <input type="text" placeholder="Type to search..." />
+                                        <input type="text" placeholder="Type to search..." style="padding-bottom: 0px !important;"/>
                                     </div>
+                                    <div class="ulstc-note">Showing 0 of 0</div>
                                     <div class="ulstc-list-ul"></div>
                                 </div>
                             </div>`);
@@ -38,15 +39,28 @@
         this.$popCont = this.$cont.find('.ulstc-list-c');
         this.$txtSrch = this.$cont.find('.ulstc-list-srch input');
         this.$ul = this.$cont.find('.ulstc-list-ul');
+        this.$note = this.$cont.find('.ulstc-note');
 
-        for (let i = 0; i < this.options.itemList.length; i++) {
+        let i = 0, sc = 0;
+        for (; i < this.options.itemList.length; i++) {
+            //let $li = $(`<div class="ulstc-list-li">
+            //                <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + this.options.itemList[i]['img']}.png), url(${this.options.imageAlternate});"></div>
+            //                <div class="ulstc-disp-txt">${this.options.itemList[i]['dm1']}</div>
+            //            </div>`);
             let $li = $(`<div class="ulstc-list-li">
-                            <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + this.options.itemList[i]['img']}.png), url(${this.options.imageAlternate});"></div>
+                            <div class="ulstc-disp-img-c">
+                                <img class='img-thumbnail' style='padding: 1px;' src='${this.options.imageAlternate}' onerror="this.src = '${this.options.imageAlternate}';" data-src="${this.options.imageUrl + this.options.itemList[i]['img']}.png" />
+                            </div>
                             <div class="ulstc-disp-txt">${this.options.itemList[i]['dm1']}</div>
                         </div>`);
+            if (i > 9)
+                $li.hide();
+            else
+                sc++;
             $li.data('data-obj', this.options.itemList[i]);
             this.$ul.append($li);
         }
+        this.$note.text("Showing " + sc + " of " + i);
 
         this.$txtSrch.on('focusout', function (e) {
             this.$popCont.hide();
@@ -55,6 +69,7 @@
         this.$dispCont.on('click', function (e) {
             this.$popCont.toggle();
             this.$txtSrch.focus();
+            this.$ul.children(':visible').find('img').Lazy();
         }.bind(this));
 
         this.$ul.children('.ulstc-list-li').on('mousedown', function (e) {
@@ -67,8 +82,10 @@
     };
 
     this.onListItemSelect = function ($ele) {
+        let oldItemO = this.$dispCont.data('data-obj');
         let itemO = $ele.data('data-obj');
-
+        if (oldItemO && oldItemO['vm'] === itemO['vm'])
+            return;
         let $disp = $(`<div style="display: inherit;">
                             <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + itemO['img']}.png), url(${this.options.imageAlternate});"></div>
                             <div class="ulstc-disp-txt">${itemO['dm1']}</div>
@@ -77,6 +94,8 @@
         this.$dispCont.children('div').remove();
         this.$dispCont.prepend($disp);
         this.$dispCont.next().toggle();
+        for (let j = 0; j < this.ctrl._onChangeFunction.length; j++)
+            this.ctrl._onChangeFunction[j]();
     };
 
     this.onTxtSrchKeydown = function (e) {
@@ -117,29 +136,55 @@
             srchVal = srchVal.toLowerCase();
             if (this.srchValOld !== srchVal) {
                 this.srchValOld = srchVal;
-                for (let i = 0; i < $liAll.length; i++) {
+                let i = 0, sc = 0, tc = 0;
+                for (; i < $liAll.length; i++) {
                     let itemO = $($liAll[i]).data('data-obj');
-                    if (itemO['dm1'].toLowerCase().search(srchVal) === -1)
+                    if (itemO['dm1'].toLowerCase().search(srchVal) === -1 || sc > 9) {
                         $($liAll[i]).hide();
-                    else
+                        if (sc > 9)
+                            tc++;
+                    }
+                    else {
                         $($liAll[i]).show();
+                        sc++;
+                        tc++;
+                    }
                 }
                 $liAct.removeClass('active');
                 this.$ul.children(':visible').first().addClass('active');
+                this.$note.text("Showing " + sc + " of " + tc);
+                this.$ul.children(':visible').find('img').Lazy();
             }
         }
     };
 
     this.setValue = function (p1, p2) {
+        let $dispC = $(`#cont_${this.EbSid_CtxId}`).find('.ulstc-disp-c');
+        let itemO = $dispC.data('data-obj');
+        if (itemO && itemO['vm'].toString() === p1.toString())
+            return;
+        if (!p1 || p1.toString() === '') {
+            if (itemO) {
+                $dispC.children('div').remove();
+                $dispC.prepend(`<div class="ulstc-disp-img-c" style="background-image: url(/images/nulldp.png);"></div>
+                            <div id="${this.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>`);
+                $dispC.removeData('data-obj');
+                for (let j = 0; j < this._onChangeFunction.length; j++)
+                    this._onChangeFunction[j]();
+            }
+            return;
+        }
+
         for (let i = 0; i < this.UserList.$values.length; i++) {
             if (this.UserList.$values[i]['vm'].toString() === p1.toString()) {
-                let $dispC = $(`#cont_${this.EbSid_CtxId}`).find('.ulstc-disp-c');
                 $dispC.data('data-obj', this.UserList.$values[i]);
                 $dispC.children('div').remove();
                 $dispC.prepend(`<div style="display: inherit;">
                                     <div class="ulstc-disp-img-c" style="background-image:url(/images/dp/${this.UserList.$values[i]['img']}.png), url(/images/nulldp.png);"></div>
                                     <div class="ulstc-disp-txt">${this.UserList.$values[i]['dm1']}</div>
                                 </div>`);
+                for (let j = 0; j < this._onChangeFunction.length; j++)
+                    this._onChangeFunction[j]();
                 break;
             }
         }
@@ -152,6 +197,6 @@
         else
             return '';
     };
-
+    
     this.init();
 };

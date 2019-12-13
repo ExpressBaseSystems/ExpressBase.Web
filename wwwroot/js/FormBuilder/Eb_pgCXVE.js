@@ -1000,7 +1000,7 @@
         else
             obj = new EbObjects.ObjectBasicVis(ObjName + "ppty");
         let versionNumber = $e.find(".selectpicker option:selected").attr("ver-no");
-        obj.Refid = refId;
+        obj.RefId = refId;
         obj.ObjDisplayName = data[ObjName][0].displayName;
         obj.ObjName = data[ObjName][0].name;
         obj.Version = versionNumber;

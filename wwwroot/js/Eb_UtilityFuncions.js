@@ -96,6 +96,7 @@ function valueExpHelper(val, ctrl, updateSpan) {
     if (!ctrl.DataVals)// temp fix 13-12-2019
         ctrl.DataVals = getSingleColumn(ctrl);
 
+
     ctrl.DataVals.ValueExpr_val = val;
     let isdifferentValue = ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val;
     if (isdifferentValue) {

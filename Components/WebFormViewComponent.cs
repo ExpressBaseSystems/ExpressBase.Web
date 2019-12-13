@@ -65,6 +65,10 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbPowerSelect).EbSimpleSelect.InitFromDataBase(this.ServiceClient);
                     }
+                    else if (control is EbDGPowerSelectColumn && (control as EbDGPowerSelectColumn).RenderAsSimpleSelect)
+                    {
+                        (control as EbDGPowerSelectColumn).EbPowerSelect.EbSimpleSelect.InitFromDataBase(this.ServiceClient);
+                    }
                     else if (control is EbDGSimpleSelectColumn)
                     {
                         EbDGSimpleSelectColumn SimpleSelectColumn = (control as EbDGSimpleSelectColumn);

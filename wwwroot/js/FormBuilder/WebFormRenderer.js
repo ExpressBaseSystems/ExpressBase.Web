@@ -279,7 +279,7 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                ctrl.setDisplayMember = EBPSSetDisplayMember;
+                //ctrl.setDisplayMember = EBPSSetDisplayMember;
                 ctrl.setDisplayMember(val);
             }
             else

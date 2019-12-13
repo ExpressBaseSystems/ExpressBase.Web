@@ -53,6 +53,9 @@
 
 
     this.getPSDispMembrs = function (cellObj, rowId, col) {
+        if (col.RenderAsSimpleSelect)
+            return this.getSSDispMembrs(cellObj, rowId, col);
+
         let valMsArr = cellObj.Value.split(',');
         let textspn = "";
 
@@ -123,7 +126,7 @@
         else if (col.ObjType === "EbDGUserSelectColumn") {
             alert();
             //let spn = `<div class="ulstc-disp-img-c" style="background-image: url(/images/dp/${cellObj.Value.split('$$')[0]}.png;), url(/images/nulldp.png;);></div>`
-           
+
             //spn += `<div class="ulstc-disp-txt">${cellObj.Value.split('$$')[1]}</div>`;
             //// dspMmbr = cellObj.Value.split('$$')[1];
             //dspMmbr = spn;
@@ -780,7 +783,7 @@
                 return true;
 
             if (ctrl.ObjType === "PowerSelect") {
-                ctrl.setDisplayMember = EBPSSetDisplayMember;///////////
+                //ctrl.setDisplayMember = EBPSSetDisplayMember;///////////
                 if (val)
                     ctrl.setDisplayMember(val);
             }
@@ -940,7 +943,7 @@
             let Value = ctrl.DataVals.Value;
             if (Value !== null) {
                 if (ctrl.ObjType === "PowerSelect") {
-                    ctrl.setDisplayMember = EBPSSetDisplayMember;//////
+                    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
                     ctrl.setDisplayMember(Value);
                 }
                 else

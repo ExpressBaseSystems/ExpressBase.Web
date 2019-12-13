@@ -2788,9 +2788,9 @@
                 filter = [];
             }
         }
-        if (MapObj.RefId.split("-")[2] === "0") {
+        if (MapObj.ObjRefId.split("-")[2] === "0") {
             if (parseInt(EbEnums.LinkTypeEnum.Popout) === MapObj.LinkType) {
-                let url = "../webform/index?refid=" + MapObj.RefId;
+                let url = "../webform/index?refid=" + MapObj.ObjRefId;
                 var _form = document.createElement("form");
                 _form.setAttribute("method", "post");
                 _form.setAttribute("action", url);
@@ -2821,7 +2821,7 @@
             else {
 
                 $("#iFrameFormPopupModal").modal("show");
-                let url = `../webform/index?refid=${MapObj.RefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_mode=1${MapObj.FormMode}&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+                let url = `../webform/index?refid=${MapObj.ObjRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filter))))}&_mode=1${MapObj.FormMode}&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
                 $("#iFrameFormPopup").attr("src", url);
             }
         }

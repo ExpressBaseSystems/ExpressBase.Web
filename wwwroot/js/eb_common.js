@@ -923,8 +923,8 @@ document.addEventListener("click", function (e) {
     }
 });
 
-function EBPSSetDisplayMember(p1, p2) {
-    if (p1 === "")
+function EBPSSetDisplayMember(values, p2) {
+    if (values === "")
         return;
     let VMs = this.initializer.Vobj.valueMembers;
     let DMs = this.initializer.Vobj.displayMembers;
@@ -933,8 +933,7 @@ function EBPSSetDisplayMember(p1, p2) {
     if (VMs.length > 0)// clear if already values there
         this.initializer.clearValues();
 
-    let valMsArr = p1[0].split(',');
-    let DMtable = p1[1];
+    let valMsArr = values.split(',');
 
     for (let i = 0; i < valMsArr.length; i++) {
         let vm = valMsArr[i];

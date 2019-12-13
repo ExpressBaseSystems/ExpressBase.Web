@@ -773,9 +773,9 @@
                 return true;
 
             if (ctrl.ObjType === "PowerSelect") {
-                ctrl.setDisplayMember = EBPSSetDisplayMember;
+                ctrl.setDisplayMember = EBPSSetDisplayMember;///////////
                 if (val)
-                    ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                    ctrl.setDisplayMember(val);
             }
             else
                 ctrl.setValue(val);
@@ -927,8 +927,8 @@
             let Value = ctrl.DataVals.Value;
             if (Value !== null) {
                 if (ctrl.ObjType === "PowerSelect") {
-                    ctrl.setDisplayMember = EBPSSetDisplayMember;
-                    ctrl.setDisplayMember([Value, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                    ctrl.setDisplayMember = EBPSSetDisplayMember;//////
+                    ctrl.setDisplayMember(Value);
                 }
                 else
                     ctrl.justSetValue(Value);
@@ -956,7 +956,7 @@
         }
         this.updateAggCols(false);
         let td = $td[0];
-        this.checkRow_click({ target: td });
+        this.checkRow_click({ target: td }, true, true);
         this.lastEditedRowvalues = {};
         //this.lastEditedRowDMvalues = {};
     }.bind(this);
@@ -1033,7 +1033,7 @@
         //}.bind(this));
     };
 
-    this.checkRow_click = function (e, isAddRow = true) {
+    this.checkRow_click = function (e, isAddRow = true, isFromCancel) {
         let t0 = performance.now();
         let $td = $(e.target).closest("td");
         //let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']:last`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
@@ -1049,8 +1049,8 @@
 
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
         $addRow.show().attr("is-editing", "true");
-
-        this.updateModalObject(rowid);
+        if (!isFromCancel)
+            this.updateModalObject(rowid);
         this.ctrlToSpan_row(rowid);
         if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
             this.addRow();

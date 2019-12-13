@@ -97,7 +97,7 @@ const WebFormRender = function (option) {
     };
 
     this.initDGs = function () {
-        $.each(this.DGs, function (k, DG) {
+        $.each(this.DGs, function (k, DG) {//dginit
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
         }.bind(this));
     };
@@ -139,7 +139,19 @@ const WebFormRender = function (option) {
     this.initWebFormCtrls = function () {
 
         //this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        //new EbDynamicTab({ AllTabCtrls: this.TabControls, FormModel: _formData });
+        //let opts = {
+        //    allTabCtrls: this.TabControls,
+        //    formModel: _formData,
+        //    initControls: this.initControls,
+        //    mode: this.Mode,
+        //    formObjectGlobal: this.formObject,
+        //    userObject: this.userObject,
+        //    formDataExtdObj: this.FormDataExtdObj,
+        //    formObject_Full: this.FormObj,
+        //    formRefId: this.formRefId,
+        //    formRenderer: this
+        //};
+        //new EbDynamicTab(opts);
 
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
@@ -1263,6 +1275,7 @@ const WebFormRender = function (option) {
                 let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
                 let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
                 if (typeof nwlocO === "undefined") {
+                    console.error("Unknown location id found. LocId = " + nl);
                     EbDialog("show", {
                         Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
                         Buttons: {
@@ -1278,23 +1291,25 @@ const WebFormRender = function (option) {
                     });
                 }
                 else {
-                    EbDialog("show", {
-                        Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                            this.setHeader(this.mode);
-                        }.bind(this)
-                    });
+                    EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+                    ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                    this.setHeader(this.mode);
+                    //EbDialog("show", {
+                    //    Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
+                    //    Buttons: {
+                    //        "Ok": {
+                    //            Background: "green",
+                    //            Align: "right",
+                    //            FontColor: "white;"
+                    //        }
+                    //    },
+                    //    CallBack: function (name) {
+                    //        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                    //        this.setHeader(this.mode);
+                    //    }.bind(this)
+                    //});
                 }
             }
-
         }
 
         if (ebcontext.locations.Listener) {

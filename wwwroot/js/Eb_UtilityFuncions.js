@@ -93,8 +93,8 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
 function valueExpHelper(val, ctrl, updateSpan) {
     val = EbConvertValue(val, ctrl.ObjType);
 
-    if (!ctrl.DataVals)// temp fix 13-12-2019
-        ctrl.DataVals = getSingleColumn(ctrl);
+    //if (!ctrl.DataVals)// temp fix 13-12-2019
+    //    ctrl.DataVals = getSingleColumn(ctrl);
 
 
     ctrl.DataVals.ValueExpr_val = val;
@@ -330,4 +330,10 @@ function getEbFontStyleObject(font) {
     }
     return fontObj;
 
+}
+
+if (!Array.prototype.clear) {
+    Array.prototype.clear = function () {
+        this.splice(0, this.length);
+    };
 }

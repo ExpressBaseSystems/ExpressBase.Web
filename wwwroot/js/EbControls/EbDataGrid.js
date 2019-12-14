@@ -841,7 +841,9 @@
             if (!ctrl.DataVals.Value)
                 return;
             let html = this.getPSDispMembrs(ctrl.DataVals, ctrl.__rowid, ctrl.__Col);
-            $td.find(".tdtxt span").html(html.substr(0, html.length - 18));
+            if (!ctrl.RenderAsSimpleSelect)
+                html = html.substr(0, html.length - 18);
+            $td.find(".tdtxt span").html(html);
         }
         else if ((ctrl.ObjType === "SysCreatedBy") || (ctrl.ObjType === "SysModifiedBy")) {
             let val = ctrl.getDisplayMember() || ctrl.getValue();

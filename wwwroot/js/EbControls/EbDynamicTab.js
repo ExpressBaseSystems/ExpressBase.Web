@@ -83,17 +83,18 @@
         let $tab = $('#cont_' + temp.tab.EbSid_CtxId);
         let id = 'EbTab_' + Date.now().toString(36);
         let ahtml = temp.liHtml.replace(new RegExp(`@${temp.tabPane.EbSid_CtxId}_ebsid@`, 'g'), id);
-        ahtml = ahtml.replace(`@${temp.tabPane.EbSid_CtxId}_title@`, args.title || args.srcId);
         let bhtml = temp.contentHtml.replace(new RegExp(`@${temp.tabPane.EbSid_CtxId}_ebsid@`, 'g'), id);
 
         let paneCtrlNew = $.extend(true, {}, temp.tabPane);
         paneCtrlNew.EbSid = id;
         paneCtrlNew.EbSid_CtxId = id;
+        paneCtrlNew.Title = args.title || args.srcId;
+        paneCtrlNew.Name = paneCtrlNew.Name + '_' + args.srcId;
         let allFlatControls = getFlatControls(paneCtrlNew);
         let flatControls = getFlatCtrlObjs(paneCtrlNew);
 
         for (let i = 0; i < allFlatControls.length; i++) {
-            let nwEbsid = allFlatControls[i].ObjType + '_' + Date.now().toString(36);
+            let nwEbsid = allFlatControls[i].EbSid_CtxId + '_' + Date.now().toString(36);
             bhtml = bhtml.replace(new RegExp(`@${allFlatControls[i].EbSid_CtxId}_ebsid@`, 'g'), nwEbsid);
             allFlatControls[i].EbSid = nwEbsid;
             allFlatControls[i].EbSid_CtxId = nwEbsid;
@@ -129,6 +130,7 @@
                 formRefId: this.options.formRefId,
                 formRenderer: this.options.formRenderer
             });
+            //dObj.DGBuilderObjs[dObj.DGs[i].Name].refreshDG([{Name: 'actype', Value: 'Dr'}],'actype');//test
         }
         
     };

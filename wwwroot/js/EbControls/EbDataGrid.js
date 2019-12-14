@@ -53,6 +53,9 @@
 
 
     this.getPSDispMembrs = function (cellObj, rowId, col) {
+        if (col.RenderAsSimpleSelect)
+            return this.getSSDispMembrs(cellObj, rowId, col);
+
         let valMsArr = cellObj.Value.split(',');
         let textspn = "";
 
@@ -115,11 +118,18 @@
                 dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
         }
         else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
-
-            let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`
+            let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
             spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
             // dspMmbr = cellObj.Value.split('$$')[1];
             dspMmbr = spn;
+        }
+        else if (col.ObjType === "EbDGUserSelectColumn") {
+            alert();
+            //let spn = `<div class="ulstc-disp-img-c" style="background-image: url(/images/dp/${cellObj.Value.split('$$')[0]}.png;), url(/images/nulldp.png;);></div>`
+
+            //spn += `<div class="ulstc-disp-txt">${cellObj.Value.split('$$')[1]}</div>`;
+            //// dspMmbr = cellObj.Value.split('$$')[1];
+            //dspMmbr = spn;
         }
         else
             dspMmbr = cellObj.Value;
@@ -773,9 +783,9 @@
                 return true;
 
             if (ctrl.ObjType === "PowerSelect") {
-                ctrl.setDisplayMember = EBPSSetDisplayMember;
+                //ctrl.setDisplayMember = EBPSSetDisplayMember;///////////
                 if (val)
-                    ctrl.setDisplayMember([val, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                    ctrl.setDisplayMember(val);
             }
             else
                 ctrl.setValue(val);
@@ -840,6 +850,12 @@
             $td.find(".tdtxt span").append(`<img class='sysctrl_usrimg' src='/images/dp/${usid}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
             $td.find(".tdtxt span").append(`<span class='sysctrl_usrname'>${val}</span>`);
 
+        }
+        else if (ctrl.ObjType === "UserSelect") {
+            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            $td.find(".tdtxt span").empty();
+            $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
+            $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
         }
         else {
             //let t0 = performance.now();
@@ -927,8 +943,8 @@
             let Value = ctrl.DataVals.Value;
             if (Value !== null) {
                 if (ctrl.ObjType === "PowerSelect") {
-                    ctrl.setDisplayMember = EBPSSetDisplayMember;
-                    ctrl.setDisplayMember([Value, this.FormDataExtdObj.val[ctrl.EbSid]]);
+                    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
+                    ctrl.setDisplayMember(Value);
                 }
                 else
                     ctrl.justSetValue(Value);
@@ -956,7 +972,7 @@
         }
         this.updateAggCols(false);
         let td = $td[0];
-        this.checkRow_click({ target: td });
+        this.checkRow_click({ target: td }, true, true);
         this.lastEditedRowvalues = {};
         //this.lastEditedRowDMvalues = {};
     }.bind(this);
@@ -1033,7 +1049,7 @@
         //}.bind(this));
     };
 
-    this.checkRow_click = function (e, isAddRow = true) {
+    this.checkRow_click = function (e, isAddRow = true, isFromCancel) {
         let t0 = performance.now();
         let $td = $(e.target).closest("td");
         //let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']:last`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
@@ -1049,8 +1065,8 @@
 
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
         $addRow.show().attr("is-editing", "true");
-
-        this.updateModalObject(rowid);
+        if (!isFromCancel)
+            this.updateModalObject(rowid);
         this.ctrlToSpan_row(rowid);
         if (($tr.attr("is-checked") !== "true" && isAddRow) && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
             this.addRow();

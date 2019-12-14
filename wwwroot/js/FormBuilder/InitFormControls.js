@@ -654,6 +654,7 @@ var InitControls = function (option) {
         itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
+        ctrl.getDisplayMember = itemList.getDisplayMember;
         ctrl._onChangeFunction = [];
         ctrl.bindOnChange = function (p1) {
             if (!this._onChangeFunction.includes(p1))

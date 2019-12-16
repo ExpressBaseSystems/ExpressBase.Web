@@ -296,6 +296,29 @@ function getObjCopy4PS(Obj) {
 }
 
 function getEbFontStyleObject(font) {
+    //let GfontsList = {
+    //    'Arapey': 'Arapey',
+    //    'Arvo': 'Arvo',
+    //    'Baskerville': 'Libre Baskerville',
+    //    'Bentham': 'Bentham',
+    //    'Cabin Condensed': 'Cabin Condensed',
+    //    'Century Gothic': 'Didact Gothic',
+    //    'Courier': 'Courier > Courier',
+    //    'Crimson Text': 'Crimson Text',
+    //    'EB Garamond': 'EB Garamond',
+    //    'GFS Didot': 'GFS Didot',
+    //    'Gotham': 'Montserrat',
+    //    'Helvetica': 'Helvetica',
+    //    'Libre Franklin': 'Libre Franklin',
+    //    'Maven Pro': 'Maven Pro',
+    //    'Merriweather': 'Merriweather',
+    //    'News Cycle': 'News Cycle',
+    //    'Puritan': 'Puritan',
+    //    'Questrial': 'Questrial',
+    //    'Times-Roman': 'Times',
+    //    'Times': 'Tinos',
+    //    'ZapfDingbats': 'Heebo'
+    //}
     let fontObj = {};
     let Abc = { 0: "normal", 1: "bold", 2: "italic", 3: "bold-italic" };
     if (font !== null) {

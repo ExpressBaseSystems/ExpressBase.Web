@@ -99,7 +99,7 @@ const WebFormRender = function (option) {
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {//dginit
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
-            this.DGBuilderObjs[DG.Name].MultipleTables = this.MultipleTables;
+            this.DGBuilderObjs[DG.Name].MultipleTables = this.MultipleTables | [];
         }.bind(this));
     };
 

@@ -92,6 +92,11 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
 
 function valueExpHelper(val, ctrl, updateSpan) {
     val = EbConvertValue(val, ctrl.ObjType);
+
+    //if (!ctrl.DataVals)// temp fix 13-12-2019
+    //    ctrl.DataVals = getSingleColumn(ctrl);
+
+
     ctrl.DataVals.ValueExpr_val = val;
     let isdifferentValue = ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val;
     if (isdifferentValue) {
@@ -321,20 +326,20 @@ function getEbFontStyleObject(font) {
     //}
     let fontObj = {};
     let Abc = { 0: "normal", 1: "bold", 2: "italic", 3: "bold-italic" };
-    if (font !== null) { 
+    if (font !== null) {
         fontObj['font-family'] = font.FontName;
         fontObj['font-size'] = font.Size;
         fontObj['color'] = font.color;
-            if (Abc[font.Style] === "bold") {
-                fontObj['font-weight'] = Abc[font.Style];
-            }
-            else if (Abc[font.Style] === "italic") {
-                fontObj['font-style'] = Abc[font.Style];
-            }
-            else if (Abc[font.Style] === "bold-italic") {
-                fontObj['font-style'] = "italic";
-                fontObj['font-weight'] = "bold";
-            }
+        if (Abc[font.Style] === "bold") {
+            fontObj['font-weight'] = Abc[font.Style];
+        }
+        else if (Abc[font.Style] === "italic") {
+            fontObj['font-style'] = Abc[font.Style];
+        }
+        else if (Abc[font.Style] === "bold-italic") {
+            fontObj['font-style'] = "italic";
+            fontObj['font-weight'] = "bold";
+        }
         if (font.Caps === true) {
             fontObj['text-transform'] = "uppercase";
         }
@@ -347,4 +352,11 @@ function getEbFontStyleObject(font) {
 
     }
     return fontObj;
+
+}
+
+if (!Array.prototype.clear) {
+    Array.prototype.clear = function () {
+        this.splice(0, this.length);
+    };
 }

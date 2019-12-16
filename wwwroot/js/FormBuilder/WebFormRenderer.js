@@ -279,7 +279,7 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                ctrl.setDisplayMember = EBPSSetDisplayMember;///
+                //ctrl.setDisplayMember = EBPSSetDisplayMember;
                 ctrl.setDisplayMember(val);
             }
             else
@@ -537,59 +537,36 @@ const WebFormRender = function (option) {
         this.RefreshDGControlValues();
     };
 
-    this.saveSuccess = function (_respObj) {// need cleanup
+    this.saveSuccess = function (_respObj) {
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
         ebcontext._formSaveResponse = respObj;
-        let locName = ebcontext.locations.CurrentLocObj.LongName;
-        let formName = this.FormObj.DisplayName;
-        //if (this.rowId === 0) {
-        //    EbMessage("show", { Message: "Save failed", AutoHide: true, Background: '#aa0000' });
-        //    return;
-        //}
-        if (this.rowId > 0) {// if edit mode 
-            if (respObj.RowAffected > 0) {// edit success from editmode
-                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
 
-                this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.MultipleTables = this.EditModeFormData;
-                attachModalCellRef_form(this.FormObj, this.MultipleTables);
+        if (respObj.Status === 200) {
+            let locName = ebcontext.locations.CurrentLocObj.LongName;
+            let formName = this.FormObj.DisplayName;
+            EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+            this.rowId = respObj.RowId;
 
-                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
-                this.FormDataExtended = respObj.FormData.ExtendedTables;
-                this.RefreshFormControlValues();
-                this.SwitchToViewMode();
-            }
-            else if (respObj.RowAffected === -2) {
-                EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
-            }
-            else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
-            }
+            this.EditModeFormData = respObj.FormData.MultipleTables;
+            this.MultipleTables = this.EditModeFormData;
+            attachModalCellRef_form(this.FormObj, this.MultipleTables);
+
+            this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
+            this.FormDataExtended = respObj.FormData.ExtendedTables;
+            this.RefreshFormControlValues();
+            this.SwitchToViewMode();
+
+            this.afterSaveAction();
+            //window.parent.closeModal();
+        }
+        else if (respObj.Status === 403) {
+            EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
         }
         else {
-            if (respObj.RowId > 0) {// if insertion success -NewToedit
-                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
-                this.rowId = respObj.RowId;
-
-                this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.MultipleTables = this.EditModeFormData;
-                attachModalCellRef_form(this.FormObj, this.EditModeFormData);
-
-                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
-                this.FormDataExtended = respObj.FormData.ExtendedTables;
-                this.RefreshFormControlValues();
-                this.SwitchToViewMode();
-            }
-            else if (respObj.RowId === -2) {
-                EbMessage("show", { Message: "Access denied to save this data entry!", AutoHide: true, Background: '#aa0000' });
-            }
-            else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
-            }
+            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
+            console.error(respObj.MessageInt);
         }
-        this.afterSaveAction();
-        //window.parent.closeModal();
     };
 
     this.isAllUniqOK = function () {

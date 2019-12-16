@@ -15,7 +15,7 @@
 }
 
 #calendar-user-view .dataTables_scrollBody {
-    height: calc( 100% - 45px ) !important;
+    height: calc( 100% - 61px ) !important;
 }
 
 #ShowDataColumndd button {
@@ -63,4 +63,37 @@ th.week-holiday {
 }
 .current_date_class {
     background-color: #f3f9f1;
+}
+#calendar-user-view .DTFC_ScrollWrapper, #calendar-user-view .DTFC_LeftBodyWrapper, #calendar-user-view .DTFC_RightBodyWrapper {
+    height: calc(100% - 18px);
+}
+
+#calendar-user-view .DTFC_LeftHeadWrapper, #calendar-user-view .DTFC_RightHeadWrapper {
+     padding-bottom: 0px !important; 
+     margin-bottom: 0px !important; 
+}
+
+.highlighted {
+    background-color: yellow;
+}
+
+.highlight {
+    background-color: #fff34d;
+    -moz-border-radius: 5px;
+    /* FF1+ */
+    -webkit-border-radius: 5px;
+    /* Saf3-4 */
+    border-radius: 5px;
+    /* Opera 10.5, IE 9, Saf5, Chrome */
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    /* FF3.5+ */
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    /* Saf3.0+, Chrome */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    /* Opera 10.5+, IE 9.0 */
+}
+
+.highlight {
+    padding: 1px 4px;
+    margin: 0 -4px;
 }

@@ -924,7 +924,7 @@ document.addEventListener("click", function (e) {
 });
 
 function EBPSSetDisplayMember(p1, p2) {
-    if (p1 === "")
+    if (p1 === '')
         return;
     let VMs = this.initializer.Vobj.valueMembers;
     let DMs = this.initializer.Vobj.displayMembers;
@@ -933,8 +933,7 @@ function EBPSSetDisplayMember(p1, p2) {
     if (VMs.length > 0)// clear if already values there
         this.initializer.clearValues();
 
-    let valMsArr = p1[0].split(',');
-    let DMtable = p1[1];
+    let valMsArr = p1.split(',');
 
     for (let i = 0; i < valMsArr.length; i++) {
         let vm = valMsArr[i];
@@ -944,22 +943,6 @@ function EBPSSetDisplayMember(p1, p2) {
             DMs[dmName].push(this.DataVals.D[vm][dmName]);
         }
     }
-    
-
-    //for (let i = 0; i < valMsArr.length; i++) {
-    //    let vm = valMsArr[i];
-    //    VMs.push(vm);
-    //    for (let j = 0; j < this.DisplayMembers.$values.length; j++) {
-    //        let dm = this.DisplayMembers.$values[j];
-    //        for (var k = 0; k < DMtable.length; k++) {
-    //            let row = DMtable[k];
-    //            if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-    //                let _dm = getObjByval(row.Columns, 'Name', dm.name).Value;
-    //                DMs[dm.name].push(_dm);
-    //            }
-    //        }
-    //    }
-    //}
     
     if (this.initializer.datatable === null) {//for aftersave actions
 
@@ -976,20 +959,5 @@ function EBPSSetDisplayMember(p1, p2) {
             }.bind(this));
 
         }
-
-        //$.each(valMsArr, function (i, vm) {
-        //    $.each(DMtable, function (j, row) {
-        //        if (getObjByval(row.Columns, 'Name', this.ValueMember.name).Value === vm) {// to select row which includes ValueMember we are seeking for 
-        //            $.each(row.Columns, function (k, column) {
-        //                if (!columnVals[column.Name]) {
-        //                    console.warn('Found mismatch in Columns from datasource and Colums in object');
-        //                    return true;
-        //                }
-        //                let val = EbConvertValue(column.Value, column.Type);
-        //                columnVals[column.Name].push(val);
-        //            }.bind(this));
-        //        }
-        //    }.bind(this));
-        //}.bind(this));
     }
 }

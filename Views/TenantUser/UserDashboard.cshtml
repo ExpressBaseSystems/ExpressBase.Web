@@ -25,6 +25,7 @@
 }
 
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
@@ -47,22 +48,22 @@
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
 </script>
-    <div class="container-fluid" style="margin-top:60px;background: transparent;">
-        <div class="row" style="background: transparent;">
-            <div class="col-sm-12" style="background: transparent;">
-                <div id="dashbord-user-view">
-                    <div class="grid-stack"></div>
-                </div>
-
+<div class="container-fluid" style="margin-top:60px;background: transparent;">
+    <div class="row" style="background: transparent;">
+        <div class="col-sm-12" style="background: transparent;">
+            <div id="dashbord-user-view">
+                <div class="grid-stack"></div>
             </div>
-        </div>
 
-        @*<div id="ppt-dash-view" class="PGgrid"> <div id="propGridView"> </div></div>*@
+        </div>
     </div>
-    @{
-        if (ViewBag.AllDashBoard != null)
-        {
-            <script>
+
+    @*<div id="ppt-dash-view" class="PGgrid"> <div id="propGridView"> </div></div>*@
+</div>
+@{
+    if (ViewBag.AllDashBoard != null)
+    {
+        <script>
             var DBobj = new DashBoardViewWrapper({
             Version: '@ViewBag.VersionNumber',
             ObjType: @ViewBag.ObjType,
@@ -71,32 +72,32 @@
             googlekey: '@ViewBag.al_arz_map_key',
             AllDashBoards: @Html.Raw(ViewBag.AllDashBoard),
         });
-            </script>
-        }
-        else
-        {
-            @*<script>
-                      $(document).ready(function () {
-                    $('#quik_menu').click();
-                });
-                </script>*@
-        }
+        </script>
     }
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $(document).click(function (event) {
-                var clickover = $(event.target);
-
-                if (!clickover.hasClass("DropDown4DB")) {
-                    $("#UserDashBoardSwitchList").hide();
-                }
-                else {
-                    $("#UserDashBoardSwitchList").show();
-                }
+    else
+    {
+        @*<script>
+                  $(document).ready(function () {
+                $('#quik_menu').click();
             });
+            </script>*@
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(document).click(function (event) {
+            var clickover = $(event.target);
+
+            if (!clickover.hasClass("DropDown4DB")) {
+                $("#UserDashBoardSwitchList").hide();
+            }
+            else {
+                $("#UserDashBoardSwitchList").show();
+            }
         });
-    </script>
-    <script type="text/javascript">
+    });
+</script>
+<script type="text/javascript">
 //      $(function () {
 //     var options = {
 //     float: true,
@@ -145,4 +146,4 @@
 //            $("#iFrameFormPopupOverlay").hide();
 //    });
 
-    </script>
+</script>

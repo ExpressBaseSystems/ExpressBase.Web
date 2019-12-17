@@ -347,6 +347,7 @@
         inpCtrl.EbSid_CtxId = ctrlEbSid;
         inpCtrl.__rowid = rowid;
         inpCtrl.__Col = col;
+        inpCtrl.TableName = col.__DG.TableName;
 
         if (inpCtrl.ObjType === "DGUserControlColumn") {///////////
             $.each(col.Columns.$values, function (i, _inpCtrl) {
@@ -598,14 +599,14 @@
         }.bind(this));
     };
 
-    this.bindReq_Vali_UniqCtrl = function (Col) {
-        let $ctrl = $(`#${Col.EbSid_CtxId}`);
-        if (Col.Required)
-            this.bindRequired($ctrl, Col);
-        if (Col.Unique)
-            this.bindUniqueCheck($ctrl, Col);
-        if (Col.Validators.$values.length > 0)
-            this.bindValidators($ctrl, Col);
+    this.bindReq_Vali_UniqCtrl = function (ctrl) {
+        let $ctrl = $(`#${ctrl.EbSid_CtxId}`);
+        if (ctrl.Required)
+            this.bindRequired($ctrl, ctrl);
+        if (ctrl.Unique)
+            this.formRenderer.FRC.bindUniqueCheck(ctrl);
+        if (ctrl.Validators.$values.length > 0)
+            this.bindValidators($ctrl, ctrl);
     };
 
     this.bindRequired = function ($ctrl, control) {
@@ -616,18 +617,18 @@
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
-            this.addInvalidStyle(ctrl);
+            ctrl.AddInvalidStyle();
             return false;
         }
         else {
-            this.removeInvalidStyle(ctrl);
+            ctrl.removeInvalidStyle();
             return true;
         }
     };
 
-    this.addInvalidStyle = function (ctrl, msg, type) {
-        EbMakeInvalid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
-    };
+    //this.addInvalidStyle = function (ctrl, msg, type) {
+    //    EbMakeInvalid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+    //};
 
     this.removeInvalidStyle = function (ctrl) {
         EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);

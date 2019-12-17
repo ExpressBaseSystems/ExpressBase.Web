@@ -341,7 +341,7 @@
         return `EbDG${type}Column`;
     };
 
-    this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
+    this.addPropsToInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
         //inpCtrl.Name = col.Name;
         //inpCtrl.EbDbType = col.EbDbType;
         inpCtrl.EbSid_CtxId = ctrlEbSid;
@@ -354,7 +354,7 @@
                 let _ctrlEbSid = "ctrl_" + Date.now().toString(36) + i;
                 let NewInpCtrl = $.extend({}, new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
                 NewInpCtrl.EbSid_CtxId = _ctrlEbSid;
-                inpCtrl.Columns.$values[i] = this.initInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
+                inpCtrl.Columns.$values[i] = this.addPropsToInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
             }.bind(this));
         }
         else
@@ -420,7 +420,7 @@
             }
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
-            this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
+            this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.AllRowCtrls[rowid].push(inpCtrl);
 
@@ -452,7 +452,7 @@
             let editModeDataCellObj = editModeDataRow[col.Name];
             if (!editModeDataCellObj && !col.DoNotPersist)
                 continue;
-            this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
+            this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.AllRowCtrls[rowid].push(inpCtrl);
             tr += this.getTdHtml_E(inpCtrl, col, visibleCtrlIdx, editModeDataCellObj);

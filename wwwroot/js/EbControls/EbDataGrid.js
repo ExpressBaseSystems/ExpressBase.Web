@@ -341,19 +341,20 @@
         return `EbDG${type}Column`;
     };
 
-    this.initInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
+    this.addPropsToInpCtrl = function (inpCtrl, col, ctrlEbSid, rowid) {
         //inpCtrl.Name = col.Name;
         //inpCtrl.EbDbType = col.EbDbType;
         inpCtrl.EbSid_CtxId = ctrlEbSid;
         inpCtrl.__rowid = rowid;
         inpCtrl.__Col = col;
+        inpCtrl.TableName = col.__DG.TableName;
 
         if (inpCtrl.ObjType === "DGUserControlColumn") {///////////
             $.each(col.Columns.$values, function (i, _inpCtrl) {
                 let _ctrlEbSid = "ctrl_" + Date.now().toString(36) + i;
                 let NewInpCtrl = $.extend({}, new EbObjects[this.getType(_inpCtrl)](_ctrlEbSid, _inpCtrl));
                 NewInpCtrl.EbSid_CtxId = _ctrlEbSid;
-                inpCtrl.Columns.$values[i] = this.initInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
+                inpCtrl.Columns.$values[i] = this.addPropsToInpCtrl(NewInpCtrl, col, _ctrlEbSid, rowid);
             }.bind(this));
         }
         else
@@ -419,7 +420,7 @@
             }
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
-            this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
+            this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.AllRowCtrls[rowid].push(inpCtrl);
 
@@ -451,7 +452,7 @@
             let editModeDataCellObj = editModeDataRow[col.Name];
             if (!editModeDataCellObj && !col.DoNotPersist)
                 continue;
-            this.initInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
+            this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.AllRowCtrls[rowid].push(inpCtrl);
             tr += this.getTdHtml_E(inpCtrl, col, visibleCtrlIdx, editModeDataCellObj);
@@ -598,14 +599,14 @@
         }.bind(this));
     };
 
-    this.bindReq_Vali_UniqCtrl = function (Col) {
-        let $ctrl = $(`#${Col.EbSid_CtxId}`);
-        if (Col.Required)
-            this.bindRequired($ctrl, Col);
-        if (Col.Unique)
-            this.bindUniqueCheck($ctrl, Col);
-        if (Col.Validators.$values.length > 0)
-            this.bindValidators($ctrl, Col);
+    this.bindReq_Vali_UniqCtrl = function (ctrl) {
+        let $ctrl = $(`#${ctrl.EbSid_CtxId}`);
+        if (ctrl.Required)
+            this.bindRequired($ctrl, ctrl);
+        if (ctrl.Unique)
+            this.formRenderer.FRC.bindUniqueCheck(ctrl);
+        if (ctrl.Validators.$values.length > 0)
+            this.bindValidators($ctrl, ctrl);
     };
 
     this.bindRequired = function ($ctrl, control) {
@@ -616,18 +617,18 @@
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
-            this.addInvalidStyle(ctrl);
+            ctrl.AddInvalidStyle();
             return false;
         }
         else {
-            this.removeInvalidStyle(ctrl);
+            ctrl.removeInvalidStyle();
             return true;
         }
     };
 
-    this.addInvalidStyle = function (ctrl, msg, type) {
-        EbMakeInvalid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
-    };
+    //this.addInvalidStyle = function (ctrl, msg, type) {
+    //    EbMakeInvalid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+    //};
 
     this.removeInvalidStyle = function (ctrl) {
         EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);

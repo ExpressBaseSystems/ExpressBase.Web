@@ -260,6 +260,25 @@ function getEbObjectTypes() {
     return Eb_ObjectTypes;
 }
 
+function EbAddInvalidStyle(msg, type) {
+    if (this.ObjType === "PowerSelect" && !this.RenderAsSimpleSelect)
+        EbMakeInvalid(`#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
+    else
+        EbMakeInvalid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function EbRemoveInvalidStyle() {
+    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
+function DGaddInvalidStyle(msg, type) {
+    EbMakeInvalid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function DGremoveInvalidStyle() {
+    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
 
 function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     let shadowColor = "rgb(174, 0, 0)";

@@ -242,6 +242,7 @@
         //let unique_flag = true;
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         let val = ctrl.getValue();
+        let tableName = ctrl.TableName || this.FO.FormObj.TableName;
         if (isNaNOrEmpty(val))
             return;
         //this.FO.hideLoader();
@@ -252,7 +253,7 @@
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
             data: {
-                TableName: this.FO.FormObj.TableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
+                TableName: tableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
             },
             success: function (isUnique) {
                 //this.FO.hideLoader();
@@ -260,11 +261,11 @@
                 if (!isUnique) {
                     //unique_flag = false;
                     $ctrl.attr("uniq-ok", "false");
-                    this.addInvalidStyle(ctrl, "This field is unique, try another value");
+                    ctrl.addInvalidStyle("This field is unique, try another value");
                 }
                 else {
                     $ctrl.attr("uniq-ok", "true");
-                    this.removeInvalidStyle(ctrl);
+                    ctrl.removeInvalidStyle();
                 }
                 //return unique_flag;
             }.bind(this)

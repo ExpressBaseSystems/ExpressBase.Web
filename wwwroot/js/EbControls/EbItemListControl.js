@@ -204,6 +204,12 @@
         else
             return '';
     };
+    this.refresh = function () {
+
+    };
+    this.clear = function () {
+
+    };
     
     this.init();
 };

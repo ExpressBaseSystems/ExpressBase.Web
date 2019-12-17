@@ -985,6 +985,8 @@ function EBPSSetDisplayMember(p1, p2) {
 
 
 function getEbFormatedPSRows(ctrl) {
+    if (!ctrl.DataVals.Value)
+        return {};
     let rows = ctrl.DataVals.R;
     let columnVals = {};
     for (let i = 0; i < rows.length; i++) {

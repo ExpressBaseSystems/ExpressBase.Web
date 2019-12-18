@@ -145,6 +145,11 @@ const EbSelect = function (ctrl, options) {
 
     this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
 
+    //this.getColumn = function (colName) {
+    //    let columnVals = getEbFormatedPSRows(this.ComboObj);
+    //    return this.ComboObj.MultiSelect ? columnVals[colName] : columnVals[colName][0];
+    //}.bind(this);
+
     this.searchBoxFocus = function () {
         this.IsSearchBoxFocused = true;
         this.RemoveRowFocusStyle();
@@ -448,7 +453,7 @@ const EbSelect = function (ctrl, options) {
         }
     };
     this.searchCallBack = function () {
-        setTimeout(function() {
+        setTimeout(function () {
             this.V_updateCk();
         }.bind(this), 30);
     }.bind(this);
@@ -505,7 +510,7 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.reSetColumnvals = function () {
-        if (!this.$curEventTarget)
+        if (!event)
             return;
         let vmValue = this.lastAddedOrDeletedVal;
         if (event.target.nodeName === "SPAN")// if clicked tagclose
@@ -519,7 +524,6 @@ const EbSelect = function (ctrl, options) {
         else {
             this.addColVals();
         }
-
     };
 
     this.addColVals = function () {
@@ -677,7 +681,18 @@ const EbSelect = function (ctrl, options) {
         //    $('#' + this.name + 'Wraper [type=search]').val("");
         //}.bind(this), 10);
 
-        if (this.datatable !== null) {
+        if (this.datatable === null) {
+            if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
+                this.reSetColumnvals();
+            if (this.ComboObj.justInit) { // temp from DG.setRowValues_E
+                this.$inp.val(this.Vobj.valueMembers);
+                this.ComboObj.justInit = undefined;
+            }
+            else
+                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+
+        }
+        else {
             this.reSetColumnvals();
             if (this.justInit) {
                 this.$inp.val(this.Vobj.valueMembers);
@@ -687,8 +702,6 @@ const EbSelect = function (ctrl, options) {
             else
                 this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
-        else
-            this.$inp.val(this.Vobj.valueMembers);
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
@@ -705,6 +718,11 @@ const EbSelect = function (ctrl, options) {
             DMs.pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
         }
     };
+
+    //this.clearColumnVals = function () {
+    //    for (colName in this.columnVals)
+    //        this.columnVals[colName].clear();
+    //}.bind(this);
 
     this.V_toggleDD = function (e) {
         if (!this.IsDatatableInit)

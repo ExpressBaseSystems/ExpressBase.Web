@@ -260,6 +260,25 @@ function getEbObjectTypes() {
     return Eb_ObjectTypes;
 }
 
+function EbAddInvalidStyle(msg, type) {
+    if (this.ObjType === "PowerSelect" && !this.RenderAsSimpleSelect)
+        EbMakeInvalid(`#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
+    else
+        EbMakeInvalid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function EbRemoveInvalidStyle() {
+    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
+function DGaddInvalidStyle(msg, type) {
+    EbMakeInvalid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function DGremoveInvalidStyle() {
+    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
 
 function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     let shadowColor = "rgb(174, 0, 0)";
@@ -782,7 +801,7 @@ function dgEBOnChangeBind() {
 
 }
 
-function setDate_EB(p1, p2) {
+function justSetDate_EB(p1, p2) {
     if (this.IsNullable && p1 !== null)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
     if (p1 !== null && p1 !== undefined) {
@@ -800,9 +819,9 @@ function setDate_EB(p1, p2) {
         $('#' + this.EbSid_CtxId).val('');
 }
 
-function justSetDate_EB(p1, p2) {
-    setDate_EB(p1, p2);
-    if (p1 !== null && p1 !== undefined) {        
+function setDate_EB(p1, p2) {
+    justSetDate_EB.bind(this)(p1, p2);
+    if (p1 !== null && p1 !== undefined) {
         $('#' + this.EbSid_CtxId).trigger('change');
     }
 }
@@ -882,19 +901,18 @@ document.addEventListener("click", function (e) {
             ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
             container = $('.dd_of_' + par_ebSid);
         }
-       //item selection click in select
+        //item selection click in select
         else {
             par_ebSid = $(e.target).closest(".dropdown").attr("par_ebsid");
             ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
             container = $('.dd_of_' + par_ebSid);
         }
     }
-     //if select is not in datagrid ...ie,outside datagrid
-    else
-    {
-         par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
-         ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
-         container = $('.dd_of_' + ebSid_CtxId);
+    //if select is not in datagrid ...ie,outside datagrid
+    else {
+        par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
+        ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+        container = $('.dd_of_' + ebSid_CtxId);
     }
 
     //to close opend select on click of another select
@@ -926,9 +944,9 @@ document.addEventListener("click", function (e) {
 function EBPSSetDisplayMember(p1, p2) {
     if (p1 === '')
         return;
-    let VMs = this.initializer.Vobj.valueMembers;
-    let DMs = this.initializer.Vobj.displayMembers;
-    let columnVals = this.initializer.columnVals;
+    let VMs = this.initializer.Vobj.valueMembers || [];
+    let DMs = this.initializer.Vobj.displayMembers || [];
+    let columnVals = this.initializer.columnVals || {};
 
     if (VMs.length > 0)// clear if already values there
         this.initializer.clearValues();
@@ -940,10 +958,12 @@ function EBPSSetDisplayMember(p1, p2) {
         VMs.push(vm);
         for (let j = 0; j < this.initializer.dmNames.length; j++) {
             let dmName = this.initializer.dmNames[j];
+            if (!DMs[dmName])
+                DMs[dmName] = []; // dg edit mode call
             DMs[dmName].push(this.DataVals.D[vm][dmName]);
         }
     }
-    
+
     if (this.initializer.datatable === null) {//for aftersave actions
 
 
@@ -960,4 +980,23 @@ function EBPSSetDisplayMember(p1, p2) {
 
         }
     }
+    $("#" + this.EbSid_CtxId).val(p1);
+}
+
+
+function getEbFormatedPSRows(ctrl) {
+    if (!ctrl.DataVals.Value)
+        return {};
+    let rows = ctrl.DataVals.R;
+    let columnVals = {};
+    for (let i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        for (let j = 0; j < row.Columns.length; j++) {
+            let column = row.Columns[j];
+            if (!columnVals[column.Name])
+                columnVals[column.Name] = [];
+            columnVals[column.Name].push(column.Value);
+        }
+    }
+    return columnVals;
 }

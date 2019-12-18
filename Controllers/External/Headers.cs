@@ -12,7 +12,7 @@ namespace ExpressBase.Web.Controllers.External
         [Route("/headers")]
         public IActionResult Index()
         {
-            string headers = "";
+            string headers = "<div>" + HttpContext.Connection.RemoteIpAddress + "</div>";
 
 
 

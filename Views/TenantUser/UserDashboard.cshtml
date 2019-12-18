@@ -25,6 +25,7 @@
 }
 
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
@@ -47,11 +48,11 @@
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
 </script>
-<div class="container-fluid" style="margin-top:50px">
-    <div class="row">
-        <div class="col-sm-12">
+<div class="container-fluid" style="margin-top:60px;background: transparent;">
+    <div class="row" style="background: transparent;">
+        <div class="col-sm-12" style="background: transparent;">
             <div id="dashbord-user-view">
-                <div class="grid-stack" style="min-height:600px"></div>
+                <div class="grid-stack"></div>
             </div>
 
         </div>

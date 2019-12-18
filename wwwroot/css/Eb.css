@@ -334,19 +334,23 @@
     display: flex;
     flex-direction: row;
     width: 100%;
-    box-shadow: inherit; /*jovis*/
-    align-items: stretch; /*jovis*/
+    box-shadow: inherit;
+    align-items: stretch;
 }
 
 .ps-srch {
-    flex: 0 0 27px; /*jovis*/
-    display: flex; /*jovis*/
-    align-items: center; /*jovis*/
+    flex: 0 0 27px;
+    display: flex;
+    align-items: center;
 }
 
 .v-select {
-    flex-grow: 1; /*jovis*/
-    display: flex; /*jovis*/
+    flex-grow: 1;
+    display: flex;
+}
+
+[eb-form="true"][mode="view"] .searchable [type="search"] {
+    background-color: rgb(243, 243, 243) !important;
 }
 
 .searchable [type="search"] {
@@ -430,14 +434,15 @@
 }
 
 .search-block {
-    background-color: white; /*jovis*/
-    display: flex; /*jovis*/
+    background-color: white;
+    display: flex;
+    flex-grow: 1;
 }
 
     .search-block > .input-group {
-        display: flex; /*jovis*/
-        align-items: stretch; /*jovis*/
-        flex: 1 0; /*jovis*/
+        display: flex;
+        align-items: stretch;
+        flex: 1 0;
     }
 
 .v-select .selected-tag, .tdtxt .selected-tag {

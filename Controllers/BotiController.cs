@@ -165,7 +165,7 @@ namespace ExpressBase.Web.Controllers
 					}
 					else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
 					{
-						(control as EbPowerSelect).EbSimpleSelect.InitFromDataBase(this.ServiceClient);
+						(control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);
 					}
 					else if (control is EbDynamicCardSet)
                     {

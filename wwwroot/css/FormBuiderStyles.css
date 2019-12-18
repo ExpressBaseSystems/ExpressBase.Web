@@ -221,11 +221,11 @@
 }
 
 [is-editing='true'][is-checked='false'] .cancel-row {
-    display:none;
+    display: none;
 }
 
 [is-editing="true"][is-checked="false"] .del-row {
-    display:block;
+    display: block;
 }
 
 [is-editing="true"][is-checked="false"] .edit-row {
@@ -289,6 +289,7 @@
     background-color: transparent;
     border: none;
     width: 50%;
+    flex-grow: 1;
 }
 
 .del-c {
@@ -339,10 +340,15 @@
 }
 
 .dgtr:focus {
-    border: solid 1.5px rgb(85, 94, 167);
-    box-shadow: 0 0 3px rgb(255, 255, 255) inset;
+    /*border: solid 1px rgb(85, 94, 167) !important;*/
+    /*box-shadow: 0 0 3px rgb(255, 255, 255) inset;*/
+    box-shadow: 0 0 0px 2px rgb(85, 94, 167) inset;
     outline: 0 none;
 }
+
+    .dgtr:focus > td {
+        border-right: dotted 1px transparent !important;
+    }
 
 .dgtbl .row-no-td {
     width: 34px;
@@ -417,6 +423,12 @@ eb-disable {
     color: gray;
     pointer-events: none;
 }
+
+
+.ctrlstd {
+    display: flex;
+}
+
 
 .dgtbl {
     /*width: auto !important;
@@ -646,10 +658,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .Dg_body > .dgtbl > tbody > tr[is-editing=true] {
     /*border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;*/
-    border: 1px solid #eea100;
-    animation: dim_border 0.8s infinite;
-    transition: all 0.8s ease-in-out
+    /*border: 1px solid #eea100;*/
+    /*animation: dim_border 0.8s infinite;*/
+    /*transition: all 0.8s ease-in-out;*/
+    box-shadow: 0 0 0px 1px rgb(0, 0, 0) inset;
 }
+    .Dg_body > .dgtbl > tbody > tr[is-editing=true] > td {
+        border: none !important
+    }
 
 .Dg_body {
     display: flex;
@@ -845,7 +861,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [ctype=PowerSelect] .ctrl-cover .dropdown-toggle,
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
-[tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle {
+[tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle,
+[tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
     padding: 0 0px 0 5px;
 }
 
@@ -1670,6 +1687,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     height: 26px;
     width: 26px;
 }
+
 .sysctrl_usrname {
     padding: 3px 10px;
 }
@@ -1678,7 +1696,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 /*animations*/
 /* Safari 4.0 - 8.0 */
-@-webkit-keyframes dim_border {
+/*@-webkit-keyframes dim_border {
     from {
         border: 1px solid #f9a100;
     }
@@ -1686,7 +1704,19 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     to {
         border: 3px solid #fFa100;
     }
-}
+}*/
+
+/* Safari 4.0 - 8.0 */
+/*@-webkit-keyframes dim_border {
+    from {
+        box-shadow: 0 0 0px 1px rgb(85, 94, 167) inset;
+    }
+
+    to {
+        box-shadow: 0 0 0px 1px rgb(9, 214, 226) inset;
+    }
+}*/
+
 
 
 
@@ -1698,7 +1728,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 /*animations*/
 
 /* Safari 4.0 - 8.0 */
-@-webkit-keyframes dim_border {
+/*@-webkit-keyframes dim_border {
     from {
         border: 1px solid #eeb500;
     }
@@ -1706,10 +1736,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     to {
         border: 1px solid #ffa190;
     }
-}
+}*/
 
 /* Standard syntax */
-@keyframes dim_border {
+/*@keyframes dim_border {
     from {
         border: 1px solid #eeb500;
     }
@@ -1717,7 +1747,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     to {
         border: 1px solid #ffa190;
     }
-}
+}*/
 
 /*data Reader Style*/
 .Dt-Rdr-col-cont .col-div-blk {

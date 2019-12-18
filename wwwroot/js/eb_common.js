@@ -260,6 +260,25 @@ function getEbObjectTypes() {
     return Eb_ObjectTypes;
 }
 
+function EbAddInvalidStyle(msg, type) {
+    if (this.ObjType === "PowerSelect" && !this.RenderAsSimpleSelect)
+        EbMakeInvalid(`#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
+    else
+        EbMakeInvalid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function EbRemoveInvalidStyle() {
+    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
+function DGaddInvalidStyle(msg, type) {
+    EbMakeInvalid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function DGremoveInvalidStyle() {
+    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
 
 function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     let shadowColor = "rgb(174, 0, 0)";
@@ -765,7 +784,7 @@ function dgOnChangeBind() {
 }
 
 function dgEBOnChangeBind() {
-    $.each(this.Controls.$values, function (i, col) {
+    $.each(this.Controls.$values, function (i, col) {// need change
         let FnString = `
                         let __this = form.__getCtrlByPath(this.__path);
                         let $curRow = getRow__(__this);
@@ -782,7 +801,7 @@ function dgEBOnChangeBind() {
 
 }
 
-function setDate_EB(p1, p2) {
+function justSetDate_EB(p1, p2) {
     if (this.IsNullable && p1 !== null)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
     if (p1 !== null && p1 !== undefined) {
@@ -800,9 +819,9 @@ function setDate_EB(p1, p2) {
         $('#' + this.EbSid_CtxId).val('');
 }
 
-function justSetDate_EB(p1, p2) {
-    setDate_EB(p1, p2);
-    if (p1 !== null && p1 !== undefined) {        
+function setDate_EB(p1, p2) {
+    justSetDate_EB.bind(this)(p1, p2);
+    if (p1 !== null && p1 !== undefined) {
         $('#' + this.EbSid_CtxId).trigger('change');
     }
 }
@@ -869,9 +888,32 @@ function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
 
 //code review ......to hide dropdown on click outside dropdown
 document.addEventListener("click", function (e) {
-    let par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
-    let ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
-    var container = $('.dd_of_' + ebSid_CtxId);
+
+
+    let par_ebSid = "";
+    let ebSid_CtxId = "";
+    let container = "";
+    //to check select click is on datagrid
+    if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid")) {
+        //initial click of select
+        if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid")) {
+            par_ebSid = $(e.target).closest(".dropdown").find("select").attr("name");
+            ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+            container = $('.dd_of_' + par_ebSid);
+        }
+        //item selection click in select
+        else {
+            par_ebSid = $(e.target).closest(".dropdown").attr("par_ebsid");
+            ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+            container = $('.dd_of_' + par_ebSid);
+        }
+    }
+    //if select is not in datagrid ...ie,outside datagrid
+    else {
+        par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
+        ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+        container = $('.dd_of_' + ebSid_CtxId);
+    }
 
     //to close opend select on click of another select
     if ((($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
@@ -891,10 +933,70 @@ document.addEventListener("click", function (e) {
         $(".detch_select").removeClass("open");
     }
 
-    if ((($(e.target).closest('[MultiSelect]').attr("MultiSelect")) == "false") || (($(e.target).closest('[objtype]').attr("objtype")) == 'SimpleSelect')) {
+    if ((($(e.target).closest('[MultiSelect]').attr("MultiSelect")) == "false") || (($(e.target).closest('[objtype]').attr("objtype")) == 'SimpleSelect') || (($(e.target).closest('[objtype]').attr("objtype")) == 'BooleanSelect')) {
         if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
             container.closest('[detch_select=true]').removeClass("open");
 
         }
     }
 });
+
+function EBPSSetDisplayMember(p1, p2) {
+    if (p1 === '')
+        return;
+    let VMs = this.initializer.Vobj.valueMembers || [];
+    let DMs = this.initializer.Vobj.displayMembers || [];
+    let columnVals = this.initializer.columnVals || {};
+
+    if (VMs.length > 0)// clear if already values there
+        this.initializer.clearValues();
+
+    let valMsArr = p1.split(',');
+
+    for (let i = 0; i < valMsArr.length; i++) {
+        let vm = valMsArr[i];
+        VMs.push(vm);
+        for (let j = 0; j < this.initializer.dmNames.length; j++) {
+            let dmName = this.initializer.dmNames[j];
+            if (!DMs[dmName])
+                DMs[dmName] = []; // dg edit mode call
+            DMs[dmName].push(this.DataVals.D[vm][dmName]);
+        }
+    }
+
+    if (this.initializer.datatable === null) {//for aftersave actions
+
+
+        for (var i = 0; i < this.DataVals.R.length; i++) {
+            let row = this.DataVals.R[i];
+            $.each(row.Columns, function (k, column) {
+                if (!columnVals[column.Name]) {
+                    console.warn('Found mismatch in Columns from datasource and Colums in object');
+                    return true;
+                }
+                let val = EbConvertValue(column.Value, column.Type);
+                columnVals[column.Name].push(val);
+            }.bind(this));
+
+        }
+    }
+    $("#" + this.EbSid_CtxId).val(p1);
+}
+
+
+function getEbFormatedPSRows(ctrl) {
+    if (!ctrl.DataVals.Value)
+        return {};
+    let rows = ctrl.DataVals.R;
+    let columnVals = {};
+    for (let i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        for (let j = 0; j < row.Columns.length; j++) {
+            let column = row.Columns[j];
+            if (!columnVals[column.Name])
+                columnVals[column.Name] = [];
+            columnVals[column.Name].push(column.Value);
+        }
+    }
+    return columnVals;
+}

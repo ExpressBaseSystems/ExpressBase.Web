@@ -19,9 +19,9 @@
 
     this.drawControl = function () {
         this.$cont = $(`<div class="user-list-ctrl">
-                                <div class="ulstc-disp-c">
+                                <div id="${this.options.EbSid_CtxId}" class="ulstc-disp-c">
                                     <div class="ulstc-disp-img-c" style="background-image: url(${this.options.imageAlternate});"></div>
-                                    <div id="${this.options.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>
+                                    <div class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>
                                     <i class="fa fa-sort-desc" aria-hidden="true" style="margin-left: auto;padding: 3px 10px;min-height: 26px;"></i>
                                 </div>
                                 <div class="ulstc-list-c">
@@ -159,7 +159,7 @@
     };
 
     this.setValue = function (p1, p2) {
-        let $dispC = $(`#cont_${this.EbSid_CtxId}`).find('.ulstc-disp-c');
+        let $dispC = $(`#${this.EbSid_CtxId}`);
         let itemO = $dispC.data('data-obj');
         if (itemO && itemO['vm'].toString() === p1.toString())
             return;
@@ -191,11 +191,24 @@
     };
 
     this.getValue = function (p1) {
-        let itemO = $(`#cont_${this.EbSid_CtxId}`).find('.ulstc-disp-c').data('data-obj');
+        let itemO = $(`#${this.EbSid_CtxId}`).data('data-obj');
         if (itemO)
             return itemO['vm'];
         else
             return '';
+    };
+    this.getDisplayMember = function (p1, p2) {
+        let itemO = $(`#${this.EbSid_CtxId}`).data('data-obj');
+        if (itemO)
+            return itemO;
+        else
+            return '';
+    };
+    this.refresh = function () {
+
+    };
+    this.clear = function () {
+
     };
     
     this.init();

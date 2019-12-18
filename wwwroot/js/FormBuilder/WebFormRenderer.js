@@ -37,7 +37,7 @@ const WebFormRender = function (option) {
     this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
     this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
     this.FlatContControls = getInnerFlatContControls(this.FormObj);
-    this.MultipleTables = this.EditModeFormData;
+    this.DataMODEL = this.EditModeFormData;
     this.MasterTable = this.FormObj.TableName;
     this.formValues = {};
     this.IsPSsInitComplete = {};
@@ -97,8 +97,9 @@ const WebFormRender = function (option) {
     };
 
     this.initDGs = function () {
-        $.each(this.DGs, function (k, DG) {
+        $.each(this.DGs, function (k, DG) {//dginit
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+            this.DGBuilderObjs[DG.Name].MultipleTables = this.DataMODEL | [];
         }.bind(this));
     };
 
@@ -137,6 +138,22 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
+
+        //this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
+        //let opts = {
+        //    allTabCtrls: this.TabControls,
+        //    formModel: _formData,
+        //    initControls: this.initControls,
+        //    mode: this.Mode,
+        //    formObjectGlobal: this.formObject,
+        //    userObject: this.userObject,
+        //    formDataExtdObj: this.FormDataExtdObj,
+        //    formObject_Full: this.FormObj,
+        //    formRefId: this.formRefId,
+        //    formRenderer: this
+        //};
+        //new EbDynamicTab(opts);
+
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
@@ -202,7 +219,7 @@ const WebFormRender = function (option) {
     this.modifyFormData4Import = function (_respObj) {
 
         this.EditModeFormData = _respObj.FormData.MultipleTables;
-        this.MultipleTables = this.EditModeFormData;
+        this.DataMODEL = this.EditModeFormData;
         attachModalCellRef_form(this.FormObj, this.EditModeFormData);
         let SourceEditModeFormDataExceptDG = this.EditModeFormData[this.FormObj.Name];
 
@@ -250,33 +267,6 @@ const WebFormRender = function (option) {
         return getValsFromForm(this.FormObj);
     }.bind(this);
 
-    //this.j = function (p1) {
-    //    let VMs = this.initializer.Vobj.valueMembers;
-    //    let DMs = this.initializer.Vobj.displayMembers;
-
-    //    if (VMs.length > 0)// clear if already values there
-    //        this.initializer.clearValues();
-
-    //    let valMsArr = p1[0].split(",");
-    //    let DMtable = p1[1];
-
-
-    //    $.each(valMsArr, function (i, vm) {
-    //        VMs.push(vm);
-    //        $.each(this.DisplayMembers.$values, function (j, dm) {
-    //            valMsArr;
-    //            DMtable;
-
-    //            $.each(DMtable, function (j, r) {
-    //                if (getObjByval(r.Columns, "Name", this.ValueMember.name).Value === vm) {
-    //                    let _dm = getObjByval(r.Columns, "Name", dm.name).Value;
-    //                    DMs[dm.name].push(_dm);
-    //                }
-    //            }.bind(this));
-    //        }.bind(this));
-    //    }.bind(this));
-    //};
-
     this.setNCCSingleColumns = function (NCCSingleColumns_flat_editmode_data) {
         $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
             let val = SingleColumn.Value;
@@ -289,8 +279,8 @@ const WebFormRender = function (option) {
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                //ctrl.setDisplayMember = this.j;
-                ctrl.setDisplayMember([val, this.FormDataExtended[ctrl.EbSid]]);
+                //ctrl.setDisplayMember = EBPSSetDisplayMember;
+                ctrl.setDisplayMember(val);
             }
             else
                 ctrl.setValue(val);
@@ -340,17 +330,21 @@ const WebFormRender = function (option) {
         let EditModeFormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames();
         //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
-        $.each(this.DGs, function (k, DG) {
-            if (!EditModeFormData.hasOwnProperty(DG.TableName))
-                return true;
-            let SingleTable = EditModeFormData[DG.TableName];
-            DG.setEditModeRows(SingleTable);
-        }.bind(this));
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
+            if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
+                this.DataMODEL[DGB.ctrl.TableName] = [];
+                DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
+                continue;
+            }
+            let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            DGB.setEditModeRows(DataMODEL);
+        }
 
         if (this.ApprovalCtrl) {
             if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-                let SingleTable = EditModeFormData[this.ApprovalCtrl.TableName];
-                this.ApprovalCtrl.setEditModeRows(SingleTable);
+                let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+                this.ApprovalCtrl.setEditModeRows(DataMODEL);
             }
         }
 
@@ -399,8 +393,7 @@ const WebFormRender = function (option) {
         return FVWTObjColl;
     };
 
-    this.ProcRecurForVal = function (src_obj, FVWTObjColl) {
-        let _val = null;
+    this.ProcRecurForDataModels = function (src_obj, FVWTObjColl) {
         $.each(src_obj.Controls.$values, function (i, obj) {
             if (obj.IsContainer) {
                 if (obj.IsSpecialContainer)
@@ -415,7 +408,7 @@ const WebFormRender = function (option) {
                         Columns: []
                     }];
                 }
-                this.ProcRecurForVal(obj, FVWTObjColl);
+                this.ProcRecurForDataModels(obj, FVWTObjColl);
             }
             else if (obj.ObjType !== "FileUploader" && !obj.DoNotPersist) {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
@@ -424,15 +417,15 @@ const WebFormRender = function (option) {
 
     };
 
-    this.getFormTables = function () {
-        let FormTables = {};
-        FormTables[this.FormObj.TableName] = [{
+    this.getForm_dataModels = function () {
+        let FormDataModels = {};
+        FormDataModels[this.FormObj.TableName] = [{
             RowId: this.rowId,
             IsUpdate: false,
             Columns: []
         }];
-        this.ProcRecurForVal(this.FormObj, FormTables);
-        return FormTables;
+        this.ProcRecurForDataModels(this.FormObj, FormDataModels);
+        return FormDataModels;
     };
 
     this.getExtendedTables = function () {
@@ -462,14 +455,12 @@ const WebFormRender = function (option) {
         let WebformData = {};
         let approvalTable = {};
 
-        let formTables = this.getFormTables();
-        let gridTables = this.getDG_FVWTObjColl();
         if (this.ApprovalCtrl)
             approvalTable = this.getApprovalRow();
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
 
-        WebformData.MultipleTables = this.formateDS(this.MultipleTables);
+        WebformData.MultipleTables = this.formateDS(this.DataMODEL);
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
 
@@ -478,7 +469,7 @@ const WebFormRender = function (option) {
         //console.log(JSON.stringify(WebformData.MultipleTables));
 
         console.log("new data --");
-        console.log(JSON.stringify(this.formateDS(this.MultipleTables)));
+        console.log(JSON.stringify(this.formateDS(this.DataMODEL)));
         return JSON.stringify(WebformData);
     };
 
@@ -528,11 +519,11 @@ const WebFormRender = function (option) {
     };
 
     this.RefreshDGControlValues = function () {
-        for (let key in this.DGBuilderObjs) {
-            let DGB = this.DGBuilderObjs[key];
-            let singleTable = this.EditModeFormData[DGB.ctrl.TableName];
-            if (singleTable)
-                DGB.resetControlValues(singleTable);
+        for (let DGName in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[DGName];
+            let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
+            if (DataMODEL)
+                DGB.resetControlValues(DataMODEL);
             else
                 DGB.clearDG();
         }
@@ -543,55 +534,36 @@ const WebFormRender = function (option) {
         this.RefreshDGControlValues();
     };
 
-    this.saveSuccess = function (_respObj) {// need cleanup
+    this.saveSuccess = function (_respObj) {
         this.hideLoader();
         let respObj = JSON.parse(_respObj);
         ebcontext._formSaveResponse = respObj;
-        let locName = ebcontext.locations.CurrentLocObj.LongName;
-        let formName = this.FormObj.DisplayName;
-        if (this.rowId > 0) {// if edit mode 
-            if (respObj.RowAffected > 0) {// edit success from editmode
-                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
 
-                this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.MultipleTables = this.EditModeFormData;
-                attachModalCellRef_form(this.FormObj, this.MultipleTables);
+        if (respObj.Status === 200) {
+            let locName = ebcontext.locations.CurrentLocObj.LongName;
+            let formName = this.FormObj.DisplayName;
+            EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+            this.rowId = respObj.RowId;
 
-                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
-                this.FormDataExtended = respObj.FormData.ExtendedTables;
-                this.RefreshFormControlValues();
-                this.SwitchToViewMode();
-            }
-            else if (respObj.RowAffected === -2) {
-                EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
-            }
-            else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
-            }
+            this.EditModeFormData = respObj.FormData.MultipleTables;
+            this.DataMODEL = this.EditModeFormData;
+            attachModalCellRef_form(this.FormObj, this.DataMODEL);
+
+            this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
+            this.FormDataExtended = respObj.FormData.ExtendedTables;
+            this.RefreshFormControlValues();
+            this.SwitchToViewMode();
+
+            this.afterSaveAction();
+            //window.parent.closeModal();
+        }
+        else if (respObj.Status === 403) {
+            EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
         }
         else {
-            if (respObj.RowId > 0) {// if insertion success -NewToedit
-                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
-                this.rowId = respObj.RowId;
-
-                this.EditModeFormData = respObj.FormData.MultipleTables;
-                this.MultipleTables = this.EditModeFormData;
-                attachModalCellRef_form(this.FormObj, this.EditModeFormData);
-
-                this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
-                this.FormDataExtended = respObj.FormData.ExtendedTables;
-                this.RefreshFormControlValues();
-                this.SwitchToViewMode();
-            }
-            else if (respObj.RowId === -2) {
-                EbMessage("show", { Message: "Access denied to save this data entry!", AutoHide: true, Background: '#aa0000' });
-            }
-            else {
-                EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
-            }
+            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
+            console.error(respObj.MessageInt);
         }
-        this.afterSaveAction();
-        //window.parent.closeModal();
     };
 
     this.isAllUniqOK = function () {
@@ -1053,7 +1025,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
@@ -1073,7 +1045,7 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "Fail Mode") {
             EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
@@ -1120,7 +1092,7 @@ const WebFormRender = function (option) {
                 r.push(btns[i]);
             else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
                 r.push(btns[i]);
-            else if (btns[i] === "webformprint" && mode === 'View Mode' && this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '')
+            else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                 r.push(btns[i]);
         }
         return r;
@@ -1162,46 +1134,55 @@ const WebFormRender = function (option) {
     };
 
     this.initPrintMenu = function () {
-        //test data hardcoded
-        //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
-        //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
+        if (this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0) {
+            let $sel = $("#webformprint-selbtn .selectpicker");
+            for (let i = 0; i < this.FormObj.PrintDocs.$values.length; i++) {
+                let tle = this.FormObj.PrintDocs.$values[i].Title || this.FormObj.PrintDocs.$values[i].ObjDisplayName;
+                $sel.append(`<option data-token="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`);
+            }
+            //test data hardcoded
+            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
+            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
 
-        //$("#webformprint-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
-        //$("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
-        if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
-            $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
-            $("#webformprint").on("click", this.printDocument.bind(this));
+            $sel.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+            $("#webformprint-selbtn").on("click", ".dropdown-menu li", this.printDocument.bind(this));
+            $("#webformprint").on("click", function () { this.printDocument(); }.bind(this));
         }
+
+        //if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
+        //    $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
+        //    $("#webformprint").on("click", this.printDocument.bind(this));
+        //}
     };
 
     this.printDocument = function () {
-        //let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
-        let rptRefid = $("#webformprint").attr('data-refid');
+        let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
+        //let rptRefid = $("#webformprint").attr('data-refid');
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
 
     this.initMultipleTables = function () {
-        this.MultipleTables = {};
-        this.formTables = this.getFormTables();
+        this.DataMODEL = {};
+        this.FormDataModels = this.getForm_dataModels();
         this.gridTables = this.getDG_tbl();
         if (this.ApprovalCtrl)
             this.approvalTable = this.getApprovalRow();
 
-        this.MultipleTables = $.extend(this.formTables, this.gridTables, this.approvalTable);
+        this.DataMODEL = $.extend(this.FormDataModels, this.gridTables, this.approvalTable);
         console.log("form data --");
-        console.log(this.MultipleTables);
+        console.log(this.DataMODEL);
 
     };
 
 
     this.getDG_tbl = function () {
-        let FVWTObjColl = {};
+        let DG_dataModels = {};
         $.each(this.DGBuilderObjs, function (i, DGB) {
-            DGB.SingleTable = [];
-            FVWTObjColl[DGB.ctrl.TableName] = DGB.SingleTable;
+            DGB.DataMODEL = [];
+            DG_dataModels[DGB.ctrl.TableName] = DGB.DataMODEL;
         });
-        return FVWTObjColl;
+        return DG_dataModels;
     };
 
     this.init = function () {
@@ -1236,8 +1217,8 @@ const WebFormRender = function (option) {
             this.initMultipleTables();
         }
         else {
-            this.MultipleTables = this.EditModeFormData;
-            attachModalCellRef_form(this.FormObj, this.MultipleTables);
+            this.DataMODEL = this.EditModeFormData;
+            attachModalCellRef_form(this.FormObj, this.DataMODEL);
         }
 
         if (this.mode === "View Mode") {
@@ -1250,6 +1231,7 @@ const WebFormRender = function (option) {
                 let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
                 let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
                 if (typeof nwlocO === "undefined") {
+                    console.error("Unknown location id found. LocId = " + nl);
                     EbDialog("show", {
                         Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
                         Buttons: {
@@ -1265,23 +1247,25 @@ const WebFormRender = function (option) {
                     });
                 }
                 else {
-                    EbDialog("show", {
-                        Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                            this.setHeader(this.mode);
-                        }.bind(this)
-                    });
+                    EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+                    ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                    this.setHeader(this.mode);
+                    //EbDialog("show", {
+                    //    Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
+                    //    Buttons: {
+                    //        "Ok": {
+                    //            Background: "green",
+                    //            Align: "right",
+                    //            FontColor: "white;"
+                    //        }
+                    //    },
+                    //    CallBack: function (name) {
+                    //        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                    //        this.setHeader(this.mode);
+                    //    }.bind(this)
+                    //});
                 }
             }
-
         }
 
         if (ebcontext.locations.Listener) {
@@ -1314,5 +1298,5 @@ const WebFormRender = function (option) {
     let t1 = performance.now();
     console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
     a___builder = this;
-    a___MT = this.MultipleTables;
+    a___MT = this.DataMODEL;
 };

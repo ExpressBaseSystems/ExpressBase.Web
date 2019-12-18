@@ -305,7 +305,7 @@ var InitControls = function (option) {
                 let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
                 let initDDwidth = $drpdwn.width();
                 let ofsetval = $drpdwn.offset();
-                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });;
+                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
                 let $div_detached = $drpdwn.detach();
                 let $form_div = $(e.target).closest("[eb-type='WebForm']");
                 $div_detached.appendTo($form_div).wrap($divclone);
@@ -654,6 +654,9 @@ var InitControls = function (option) {
         itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
         ctrl.getValue = itemList.getValue;
+        ctrl.getDisplayMember = itemList.getDisplayMember;
+        ctrl.refresh = itemList.refresh;
+        ctrl.clear = itemList.clear;
         ctrl._onChangeFunction = [];
         ctrl.bindOnChange = function (p1) {
             if (!this._onChangeFunction.includes(p1))

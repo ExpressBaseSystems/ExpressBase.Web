@@ -140,6 +140,7 @@ div.DTFC_LeftBodyWrapper table, div.DTFC_RightBodyWrapper table {
 .DTFC_LeftFootWrapper, .DTFC_RightFootWrapper {
     padding-bottom: 100px !important;
     margin-bottom: -100px !important;
+    top: 18px !important;
 }
 
 .DTFC_RightBodyWrapper {

@@ -10,6 +10,7 @@
     }
 }
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
@@ -22,7 +23,7 @@
 <script src="~/js/EbUserDashBoard/EbDashBoard.js" asp-append-version=@bApnd></script>
 <script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js" asp-append-version=@bApnd></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.all.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
@@ -33,49 +34,21 @@
     @Html.Raw(ViewBag.EbObjectTypes);
 
 </script>
-
-@*<div id="mySidenav" class="sidenav">
-    <div class="stickBtnHide">
-        <p>Toolbox</p> <i class="fa fa-thumb-tack " onclick="closeNav()" style="transform: rotate(90deg);"></i>
-    </div>
-    <div class="search-div"> <input type="search" id="DashB-Search" placeholder="search.." /> </div>
-    <div id="DashB-Searched-Obj" hidden> </div>
-    <div id="Eb-obj-sidebar-cont">   </div>
-
-
-</div>*@
-@*<script>
-    function openNav() {
-        document.getElementById("mySidenav").style.width = "250px";
-        $(".stkMenu").hide(200);
-    }
-
-    function closeNav() {
-        document.getElementById("mySidenav").style.width = "0";
-        $(".stkMenu").show(200);
-    }
-</script>*@
-
-
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12">
-            @*<div class="stkMenu" onclick="openNav()" style="display:flex"><i class="fa fa-wrench" style="padding: 5px 5px 0px 0px;"></i>  ToolBox </div>*@
+<div class="container-fluid" style="background: transparent;">
+    <div class="row" style="background: transparent;">
+        <div class="col-sm-12" style="background: transparent;">
             <div id="dashbord-view" class="drop-target">
                 <div class="grid-stack" id="grid-cont"></div>
             </div>
 
         </div>
     </div>
-
-
-
     <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
 </div>
 
 
-    <script type="text/javascript">
-        
+<script type="text/javascript">
+
         if (@ViewBag.tabnum === 0) {
             var commonO = $("#layout_div").data("commonObj");
         }
@@ -130,21 +103,7 @@
     });
 
 
-    </script>
+</script>
+<script type="text/javascript">
 
-    @*<div class="container-fluid">
-            <h1>knockout.js Demo</h1>
-
-            <div>
-                <button data-bind="click: add_new_widget">Add new widget</button>
-            </div>
-
-            <br>
-
-            <div data-bind="component: {name: 'dashboard-grid', params: $data}"></div>
-        </div>*@
-
-
-    <script type="text/javascript">
-
-    </script>
+</script>

@@ -49,7 +49,7 @@ var EbBasicDataTable = function (Option) {
     this.QueryIndex = Option.QueryIndex || 0;
     this.datetimeformat = Option.datetimeformat;
 
-    this.action = Option.action|| null ;
+    this.action = Option.action || null;
 
 
     this.init = function () {
@@ -253,7 +253,7 @@ var EbBasicDataTable = function (Option) {
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
-        o.dom = this.dom ||((this.EbObject.IsPaging ? "ip" : "") + "<'col-md-12 noPadding display_none'>rt");
+        o.dom = this.dom || ((this.EbObject.IsPaging ? "ip" : "") + "<'col-md-12 noPadding display_none'>rt");
         o.paging = this.EbObject.IsPaging;
         o.lengthChange = this.EbObject.IsPaging;
         o.select = true;
@@ -406,7 +406,7 @@ var EbBasicDataTable = function (Option) {
     this.getAgginfo_inner = function (_ls, i, col) {
         var type = col.Type || col.type;
         if (col.bVisible && (type === parseInt(gettypefromString("Int32")) || type === parseInt(gettypefromString("Decimal")) || type === parseInt(gettypefromString("Int64")) || type === parseInt(gettypefromString("Double"))) && col.name !== "serial")
-            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces,col.data));
+            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces, col.data));
     };
 
     this.getFooterFromSettingsTbl = function () {
@@ -454,7 +454,7 @@ var EbBasicDataTable = function (Option) {
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
                                         if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2),type));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), type));
                                         }
                                         else if (Rtype === 5 || Rtype === 6) {
                                             if (val2 > val1) {
@@ -515,7 +515,7 @@ var EbBasicDataTable = function (Option) {
             Option.fninitComplete();
         if (Option.fninitComplete4SetVal)
             Option.fninitComplete4SetVal();
-        if (Option.fns4PSonLoad.length > 0)
+        if (Option.fns4PSonLoad && Option.fns4PSonLoad.length > 0)
             Option.fns4PSonLoad[0]();
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay) {
@@ -649,7 +649,9 @@ var EbBasicDataTable = function (Option) {
         //    //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         //}
         //this.filterDisplay();
-        if(this.Api !== null)
+        if (Option.searchCallBack)
+            Option.searchCallBack();
+        if (this.Api !== null)
             this.Api.columns.adjust();
     };
 
@@ -678,7 +680,7 @@ var EbBasicDataTable = function (Option) {
         if (Option.rowclick)
             Option.rowclick(e, dt, type, indexes);
     };
-    
+
     this.doRowgrouping = function () {
         var rows = this.Api.rows({ page: 'current' }).nodes();
         var last = null;
@@ -1097,7 +1099,7 @@ var EbBasicDataTable = function (Option) {
                 else if (type === parseInt(gettypefromString("String"))) {
 
                     _ls += span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex);
-               }
+                }
                 else if (type === parseInt(gettypefromString("DateTime"))) {
 
                     _ls += span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex);
@@ -1336,7 +1338,7 @@ var EbBasicDataTable = function (Option) {
             this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             //var idpos = getObjByval(this.ebSettings.Columns.$values, "name", this.hiddenFieldName).data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + ((row[this.hiddenIndex]!== null) ? row[this.hiddenIndex].toString(): null) + "'/>";
+            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + ((row[this.hiddenIndex] !== null) ? row[this.hiddenIndex].toString() : null) + "'/>";
         }
         else
             return "<input type='checkbox' class='" + this.tableId + "_select'/>";

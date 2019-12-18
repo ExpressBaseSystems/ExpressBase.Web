@@ -37,6 +37,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "MYSQL": `<img class='img-responsive' src='../images/mysql.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>MySQL is an open-source relational database management system. Its name is a combination of "My", the name of co-founder Michael Widenius's daughter, and "SQL", the abbreviation for Structured Query Language.</span>
+                        </div>`,
+        "MSSQL": `<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Microsoft SQL Server is a relational database management system developed by Microsoft. As a database server, it is a software product with the primary function of storing and retrieving data as requested by other software applications—which may run either on the same computer or on another computer across a network.</span>
                         </div>`
     }
 

@@ -114,7 +114,7 @@
 
     this.bindEbFnOnChange = function (control) {
         try {
-            let FnString = 
+            let FnString =
                 `
                 if(this.DataVals){
                     this.DataVals.Value = this.getValue();
@@ -151,18 +151,19 @@
         this.FO.formObject.updateDependentControls = function (curCtrl) {
             if (curCtrl.DependedValExp) {
                 $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                    let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                     try {
-                        let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                         let valExpFnStr = atob(depCtrl.ValueExpr.Code);
                         if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
-                            let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                            let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
                             if (valExpFnStr) {
                                 if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                                    depCtrl.setValue(val);
+                                    //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
+                                        depCtrl.setValue(ValueExpr_val);
                                 }
                                 else {
                                     $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
-                                        row[depCtrl.Name].setValue(val);
+                                        row[depCtrl.Name].setValue(ValueExpr_val);
                                     }.bind(this));
                                 }
                                 if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
@@ -241,6 +242,7 @@
         //let unique_flag = true;
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         let val = ctrl.getValue();
+        let tableName = ctrl.TableName || this.FO.FormObj.TableName;
         if (isNaNOrEmpty(val))
             return;
         //this.FO.hideLoader();
@@ -251,7 +253,7 @@
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
             data: {
-                TableName: this.FO.FormObj.TableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
+                TableName: tableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
             },
             success: function (isUnique) {
                 //this.FO.hideLoader();
@@ -259,11 +261,11 @@
                 if (!isUnique) {
                     //unique_flag = false;
                     $ctrl.attr("uniq-ok", "false");
-                    this.addInvalidStyle(ctrl, "This field is unique, try another value");
+                    ctrl.addInvalidStyle("This field is unique, try another value");
                 }
                 else {
                     $ctrl.attr("uniq-ok", "true");
-                    this.removeInvalidStyle(ctrl);
+                    ctrl.removeInvalidStyle();
                 }
                 //return unique_flag;
             }.bind(this)

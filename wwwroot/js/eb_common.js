@@ -779,8 +779,6 @@ function dgOnChangeBind() {
             col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
         }
     }.bind(this));
-
-
 }
 
 function dgEBOnChangeBind() {
@@ -788,10 +786,15 @@ function dgEBOnChangeBind() {
         let FnString = `
                         let __this = form.__getCtrlByPath(this.__path);
                         let $curRow = getRow__(__this);
-                        let isRowEditing = $curRow.attr('is-editing') === 'true' && $curRow.attr('is-checked') === 'true';
-                        if(__this.DataVals !== undefined && isRowEditing === false){
-                            __this.DataVals.Value = __this.getValue();
-                            __this.DataVals.D = __this.getDisplayMember();
+                        if(__this.DataVals !== undefined){
+                            if(__this.__isEditing){
+                                __this.curRowDataVals.Value = __this.getValueFromDOM();
+                                __this.curRowDataVals.D = __this.getDisplayMemberFromDOM();
+                            }
+                            else{
+                                __this.DataVals.Value = __this.getValueFromDOM();
+                                __this.DataVals.D = __this.getDisplayMember();
+                            }
                         }`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 

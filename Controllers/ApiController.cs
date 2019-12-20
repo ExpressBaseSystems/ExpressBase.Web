@@ -268,7 +268,12 @@ namespace ExpressBase.Web.Controllers
                     response.User = authResponse.User;
 
                     Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
-                    if (s_obj != null && authResponse.User.LocationIds != null)
+
+                    if (authResponse.User.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || authResponse.User.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                    {
+                        response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                    }
+                    else if (s_obj != null && authResponse.User.LocationIds != null)
                     {
                         foreach (int _locid in authResponse.User.LocationIds)
                         {

@@ -598,13 +598,14 @@ function getValsForViz(formObj) {
 function getSingleColumn(obj) {
     let SingleColumn = {};
     SingleColumn.Name = obj.Name;
-    SingleColumn.Value = obj.getValue();
     SingleColumn.Type = obj.EbDbType;
+    SingleColumn.Value = "";
     //SingleColumn.ObjType = obj.ObjType;
-    SingleColumn.D = undefined;
+    SingleColumn.D = "";
     SingleColumn.C = undefined;
     SingleColumn.R = undefined;
     obj.DataVals = SingleColumn;
+    obj.curRowDataVals = $.extend(true, {}, SingleColumn);
 
     //SingleColumn.AutoIncrement = obj.AutoIncrement || false;
     return SingleColumn;

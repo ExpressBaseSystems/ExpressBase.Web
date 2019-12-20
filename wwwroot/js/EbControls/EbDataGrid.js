@@ -45,6 +45,7 @@
     }.bind(this);
 
     this.constructObjectModel = function (dataRows) {
+        this.objectMODEL = {};
         for (let i = 0; i < dataRows.length; i++) {
             let dataRow = dataRows[i];
             let rowId = dataRow.RowId;
@@ -956,7 +957,7 @@
             this.tryAddRow();
         else {
             let td = $curentRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td });
+            this.checkRow_click({ target: td }, true, true);
             //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
             //    this.tryAddRow();
         }
@@ -1144,17 +1145,19 @@
             $tr.remove();
             this.updateAggCols();
         }.bind(this), 201);
-        if ($tr.attr("is-initialised") === 'false')
-            this.objectMODEL[rowId] = {};
-
-        this.objectMODEL[rowId].IsDelete = true;
     };
 
     this.delRow_click = function (e) {
         $tr = $(e.target).closest("tr");
         let rowid = $tr.attr("rowid");
+        let rowDataModel = getObjByval(this.DataMODEL, "RowId", rowid);
         if ($tr.attr("is-added") === "false")
-            getObjByval(this.DataMODEL, "RowId", rowid).IsDelete = true;
+            rowDataModel.IsDelete = true;
+        else {
+            let index = this.DataMODEL.indexOf(rowDataModel);
+            if (index > -1)
+                this.DataMODEL.splice(index, 1);
+        }
         this.removeTr($tr);
         this.resetRowSlNoUnder($tr);
     }.bind(this);
@@ -1411,12 +1414,12 @@
     }.bind(this);
 
     this.B4saveActions = function () {
-        let $curRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
-        //if (!this.isCurRowEmpty()) {
-        if ($curRow.length === 1 && $curRow.attr("is-editing") === "true") {
-            let td = $curRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td }, false);
-        }
+        //let $curRow = $(`[ebsid='${this.ctrl.EbSid}'] [rowid='${this.curRowId}']`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
+        ////if (!this.isCurRowEmpty()) {
+        //if ($curRow.length === 1 && $curRow.attr("is-editing") === "true") {
+        //    let td = $curRow.find(".ctrlstd")[0];
+        //    this.checkRow_click({ target: td }, false);
+        //}
     };
 
     //isCurRowEmpty = this.isCurRowEmpty;

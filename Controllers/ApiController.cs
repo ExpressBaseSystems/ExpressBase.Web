@@ -20,6 +20,7 @@ using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
 using ExpressBase.Web.Filters;
+using ExpressBase.Common.LocationNSolution;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -265,6 +266,23 @@ namespace ExpressBase.Web.Controllers
                     response.UserId = authResponse.User.UserId;
                     response.DisplayName = authResponse.User.FullName;
                     response.User = authResponse.User;
+
+                    Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
+
+                    if (authResponse.User.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || authResponse.User.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                    {
+                        response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                    }
+                    else if (s_obj != null && authResponse.User.LocationIds != null)
+                    {
+                        foreach (int _locid in authResponse.User.LocationIds)
+                        {
+                            if (s_obj.Locations.ContainsKey(_locid))
+                            {
+                                response.Locations.Add(s_obj.Locations[_locid]);
+                            }
+                        }
+                    }
                 }
                 else
                     response.IsValid = false;

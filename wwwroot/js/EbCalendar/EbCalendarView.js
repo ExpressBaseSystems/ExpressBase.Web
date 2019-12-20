@@ -45,6 +45,7 @@
             this.changeColumn = true;
             this.getColumns();
         }
+        commonO.Current_obj = this.EbObject;
     };
 
     this.getColumns = function () {
@@ -77,8 +78,8 @@
         if (typeof FilterDialog !== "undefined") {
             $(".param-div-cont").show();
             this.stickBtn = new EbStickButton({
-                $wraper: $(".param-div"),
-                $extCont: $(".param-div"),
+                $wraper: $(".param-div-cont"),
+                $extCont: $(".param-div-cont"),
                 icon: "fa-filter",
                 dir: "left",
                 label: "Parameters"
@@ -180,24 +181,35 @@
           <div class="dropdown-menu">
           </div>
         </div>`);
+        let firstSymbol = "";
         $.each(this.VisibleDataCols, function (i, obj) {
-                $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-item='${obj.name}'>${obj.name}</a>`);
-                if (i > 0)
-                    $(`.${obj.name}_class`).hide();
+            let symbol = "";
+            if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Count)
+                symbol = "&lowast;";
+            else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Sum)
+                symbol = "&sum;";
+            $(`#ShowDataColumndd .dropdown-menu`).append(`<a class="dropdown-item" data-symbol="${symbol}" data-item='${obj.name}'>${symbol} ${obj.name} </a>`);
+            if (i > 0)
+                $(`.${obj.name}_class`).hide();
+            else
+                firstSymbol = symbol;
         }.bind(this));
         $(`#ShowDataColumndd a`).off("click").on("click", this.showDatColumn.bind(this));
         $(`#ShowDataColumndd #action`).text(this.VisibleDataCols[0].name);
+        $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${firstSymbol}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.dt.Api.columns.adjust();
     };
 
     this.showDatColumn = function (e) {
-        $(".dataclass").not(`.${$(e.target).attr("data-item")}_class`).hide();
+        $(".dataclass").hide();
         $(`.${$(e.target).attr("data-item")}_class`).show();
         $(`#ShowDataColumndd #action`).text($(e.target).attr("data-item"));
+        $(`#ShowDataColumndd .datacolumnsymbol`).remove();
+        $(`#ShowDataColumndd`).prepend(`<span class="datacolumnsymbol">${$(e.target).attr("data-symbol")}</span>`);
         $(`#ShowDataColumndd #action`).append(`<span class="open"><i class="fa fa-caret-down "></i></span>`);
         this.dt.Api.columns.adjust();
-    };    
+    };
 
     this.RemoveColumnRef = function () {
         this.EbObject.__oldValues = null;
@@ -251,6 +263,7 @@
     };
 
     this.BeforeSave = function () {
+        this.RemoveColumnRef();
         return true;
     };
 

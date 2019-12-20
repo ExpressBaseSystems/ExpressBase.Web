@@ -2780,7 +2780,7 @@
     this.CalendarLinkClick = function (key, opt, event) {
         let MapObj = this.ObjectLinks.filter(obj => obj.ObjName === key)[0];
         var idx = this.Api.row(opt.$trigger.parent().parent()).index();
-        let rowdata = window.atob(opt.$trigger.attr("hidden-row")).split(",");
+        let rowdata = window.atob(opt.$trigger.children("span").attr("hidden-row")).split(",");
         var filter = this.GetFilterforCalendarToForm(MapObj, rowdata);
         if (MapObj.FormMode === 1) {
             if (filter[0].Value === "") {

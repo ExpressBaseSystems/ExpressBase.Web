@@ -31,7 +31,23 @@ namespace ExpressBase.Web.BaseControllers
 
 		public IHttpContextAccessor httpContextAccessor { get; set; }
 
-		public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+        public string RequestSourceIp
+        {
+            get
+            {
+                return this.HttpContext.Request.Headers["X-Real-IP"].Count > 0 ? this.HttpContext.Request.Headers["X-Real-IP"][0] : string.Empty;
+            }
+        }
+
+        public string UserAgent
+        {
+            get
+            {
+                return this.HttpContext.Request.Headers["User-Agent"].Count > 0 ? this.HttpContext.Request.Headers["User-Agent"][0] : string.Empty;
+            }
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc)
 		{
 			this.ServiceClient = _ssclient as JsonServiceClient;
 			this.Redis = _redis as RedisClient;

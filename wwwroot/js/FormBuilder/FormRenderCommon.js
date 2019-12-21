@@ -117,8 +117,8 @@
             let FnString =
                 `
                 if(this.DataVals){
-                    this.DataVals.Value = this.getValue();
-                    this.DataVals.D = this.getDisplayMember();
+                    this.DataVals.Value = this.getValueFromDOM();
+                    this.DataVals.D = this.getDisplayMemberFromDOM();
                 }`;
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.__onChangeFn = onChangeFn;

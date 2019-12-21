@@ -152,7 +152,8 @@ const WebFormRender = function (option) {
         //    formRefId: this.formRefId,
         //    formRenderer: this
         //};
-        //new EbDynamicTab(opts);
+        //this.DynamicTabObject = new EbDynamicTab(opts);
+        //window.zzzz = this.DynamicTabObject;
 
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
@@ -160,17 +161,17 @@ const WebFormRender = function (option) {
         this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
-        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject
         this._allPSsInit = false;
 
-        this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
-        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject
+        this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
+        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.setDefaultvalsNC(this.flatControls);// order 2
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 4
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 3
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 4
         this.initDGs();
 
 
@@ -461,6 +462,7 @@ const WebFormRender = function (option) {
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
 
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+        $.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getMultipleTables()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
 
@@ -540,11 +542,11 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {
+            respObj.FormData = JSON.parse(respObj.FormData);
             let locName = ebcontext.locations.CurrentLocObj.LongName;
             let formName = this.FormObj.DisplayName;
             EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
             this.rowId = respObj.RowId;
-
             this.EditModeFormData = respObj.FormData.MultipleTables;
             this.DataMODEL = this.EditModeFormData;
             attachModalCellRef_form(this.FormObj, this.DataMODEL);
@@ -700,6 +702,7 @@ const WebFormRender = function (option) {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
+        this.DynamicTabObject.switchToViewMode();
     };
 
     this.SwitchToEditMode = function () {
@@ -720,6 +723,7 @@ const WebFormRender = function (option) {
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
         }.bind(this));
+        this.DynamicTabObject.switchToEditMode();
     };
 
     this.BeforeModeSwitch = function (newMode) {

@@ -86,6 +86,7 @@
         let bhtml = temp.contentHtml.replace(new RegExp(`@${temp.tabPane.EbSid_CtxId}_ebsid@`, 'g'), id);
 
         let paneCtrlNew = $.extend(true, {}, temp.tabPane);
+        JsonToEbControls(paneCtrlNew);
         paneCtrlNew.EbSid = id;
         paneCtrlNew.EbSid_CtxId = id;
         paneCtrlNew.Title = args.title || args.srcId;
@@ -107,31 +108,40 @@
             allFlatControls: allFlatControls,
             flatControls: flatControls,
             DGs: getFlatObjOfType(paneCtrlNew, "DataGrid"),
-            DGBuilderObjs: {}
+            DGBuilderObjs: {},
+            FRC: new FormRenderCommon({ FO: paneCtrlNew})
         };
+        
         this.initializeControls(this.dynamicTabPanes[args.srcId]);
     };
 
     this.initializeControls = function (dObj) {
-        JsonToEbControls(dObj.ctrlObj);
+        this.setFormObject(dObj);
         this.updateCtrlsUI([dObj.ctrlObj, ...dObj.allFlatControls]);
 
-        $.each(dObj.flatControls, function (k, Obj) {
+        $.each(dObj.flatControls, function (k, Obj) {//initNCs  order 1
             this.options.initControls.init(Obj, {});
         }.bind(this));
+
+        dObj.FRC.setDefaultvalsNC(dObj.flatControls);// order 2
+        dObj.FRC.bindFnsToCtrls(dObj.flatControls);// order 3
+        dObj.FRC.bindEbOnChange2Ctrls(dObj.flatControls);// order 4
 
         for (let i = 0; i < dObj.DGs.length; i++) {
             dObj.DGBuilderObjs[dObj.DGs[i].Name] = this.options.initControls.init(dObj.DGs[i], {
                 Mode: this.options.mode,
-                formObject: this.options.formObject,
+                formObject: dObj.ctrlObj.formObject,
                 userObject: this.options.userObject,
                 FormDataExtdObj: this.options.formDataExtdObj,
                 formObject_Full: this.options.formObject_Full,
                 formRefId: this.options.formRefId,
                 formRenderer: this.options.formRenderer
             });
+            dObj.DGBuilderObjs[dObj.DGs[i].Name].MultipleTables = [];
             //dObj.DGBuilderObjs[dObj.DGs[i].Name].refreshDG([{Name: 'actype', Value: 'Dr'}],'actype');//test
         }
+
+        dObj.FRC.fireInitOnchangeNC(dObj.flatControls);
         
     };
     
@@ -156,6 +166,52 @@
         }.bind(this));
     };
 
+    this.setFormObject = function (dObj) {
+        dObj.ctrlObj.formObject = {};
+        let allCtrlWithDg = dObj.flatControls.concat(dObj.DGs);
+        $.each(allCtrlWithDg, function (i, ctrl) {
+            dObj.ctrlObj.formObject[ctrl.Name] = ctrl;
+        });
+        dObj.FRC.setFormObjHelperfns();
+        dObj.ctrlObj.Mode = this.options.mode;
+        dObj.FRC.setUpdateDependentControlsFn();
+
+        return dObj.ctrlObj.formObject;
+    };
+
+    this.getMultipleTables = function () {
+        let mt = {};
+        $.each(this.dynamicTabPanes, function (k, dObj) {
+            for (let i = 0; i < dObj.DGs.length; i++) {
+                if (!mt.hasOwnProperty(dObj.DGs[i].TableName))
+                    mt[dObj.DGs[i].TableName] = [];
+                mt[dObj.DGs[i].TableName] = mt[dObj.DGs[i].TableName].concat(dObj.DGBuilderObjs[dObj.DGs[i].Name].MultipleTables[dObj.DGs[i].TableName]);
+            }
+        }.bind(this));
+        return mt;
+    };
+
+    this.switchToViewMode = function () {
+        $.each(this.dynamicTabPanes, function (k, dObj) {
+            for (let i = 0; i < dObj.flatControls.length; i++)
+                dObj.flatControls[i].disable();
+            for (let i = 0; i < dObj.DGs.length; i++) {
+                dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToViewMode();
+            }
+        }.bind(this));
+    };
+
+    this.switchToEditMode = function () {
+        $.each(this.dynamicTabPanes, function (k, dObj) {
+            for (let i = 0; i < dObj.flatControls.length; i++) {
+                if (!dObj.flatControls[i].IsDisable)
+                    dObj.flatControls[i].enable();
+            }
+            for (let i = 0; i < dObj.DGs.length; i++) {
+                dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToEditMode();
+            }
+        }.bind(this));
+    };
 
     this.init();
 };

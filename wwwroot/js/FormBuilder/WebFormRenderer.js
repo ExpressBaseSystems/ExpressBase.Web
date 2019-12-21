@@ -152,7 +152,8 @@ const WebFormRender = function (option) {
         //    formRefId: this.formRefId,
         //    formRenderer: this
         //};
-        //new EbDynamicTab(opts);
+        //this.DynamicTabObject = new EbDynamicTab(opts);
+        //window.zzzz = this.DynamicTabObject;
 
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
@@ -461,6 +462,7 @@ const WebFormRender = function (option) {
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
 
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+        $.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getMultipleTables()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
 
@@ -700,6 +702,7 @@ const WebFormRender = function (option) {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
+        this.DynamicTabObject.switchToViewMode();
     };
 
     this.SwitchToEditMode = function () {
@@ -720,6 +723,7 @@ const WebFormRender = function (option) {
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
         }.bind(this));
+        this.DynamicTabObject.switchToEditMode();
     };
 
     this.BeforeModeSwitch = function (newMode) {

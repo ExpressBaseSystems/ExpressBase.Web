@@ -530,7 +530,9 @@ const EbSelect = function (ctrl, options) {
         $.each(this.ColNames, function (i, name) {
             let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
             let type = obj.Type;
-            let cellData = this.datatable.Api.row($(`${this.DT_tbodySelector} [data-uid=${this.lastAddedOrDeletedVal}]`)).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
+            let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${this.lastAddedOrDeletedVal}]`);
+            let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
+            let cellData = this.datatable.Api.row($rowEl).data()[idx];
             //if (this.maxLimit === 1)
             //    this.columnVals[name] = cellData;
 

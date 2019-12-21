@@ -97,3 +97,19 @@ th.week-holiday {
     padding: 1px 4px;
     margin: 0 -4px;
 }
+
+.datacolumnsymbol {
+    margin-right: 5px;
+    float: left;
+    background-color: transparent;
+    color: #336699;
+}
+
+#ShowDataColumndd:hover {
+    background-color: #e4e4e4;
+    border-radius: 0;
+    outline: none;
+    border-radius: 4px;
+}
+
+

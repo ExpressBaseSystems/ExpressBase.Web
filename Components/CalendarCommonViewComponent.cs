@@ -103,15 +103,15 @@ namespace ExpressBase.Web.Components
 
         public DVBaseColumn GetDVBaseColumn(EbDataColumn column, bool visiblity, int Colindex, int dvindex)
         {
-            DVBaseColumn _col = null;
-            if (column.Type == EbDbTypes.String)
-                _col = new DVStringColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
-            else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
-                _col = new DVNumericColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
-            else if (column.Type == EbDbTypes.Boolean)
-                _col = new DVBooleanColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
-            else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
-                _col = new DVDateTimeColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
+            CalendarDynamicColumn _col = null;
+            //if (column.Type == EbDbTypes.String)
+                _col = new CalendarDynamicColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
+            //else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
+            //    _col = new CalendarDynamicColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
+            //else if (column.Type == EbDbTypes.Boolean)
+            //    _col = new CalendarDynamicColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
+            //else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
+            //    _col = new CalendarDynamicColumn { Data = dvindex, OIndex = Colindex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = visiblity };
             _col.EbSid = column.Type.ToString() + dvindex;
             _col.RenderType = _col.Type;
             return _col;

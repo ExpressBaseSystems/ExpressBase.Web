@@ -161,17 +161,17 @@ const WebFormRender = function (option) {
         this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
-        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject
         this._allPSsInit = false;
 
-        this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in the formObject
-        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval in the formObject
+        this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
+        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.setDefaultvalsNC(this.flatControls);// order 2
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 4
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 3
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 4
         this.initDGs();
 
 

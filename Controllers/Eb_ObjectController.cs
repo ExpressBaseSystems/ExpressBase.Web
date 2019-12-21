@@ -282,7 +282,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 List<int> types = new List<int>() { 14, 16, 17, 21 };
                 GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
-
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
                 ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
             }
             else if (type.Equals(EbObjectTypes.CalendarView))

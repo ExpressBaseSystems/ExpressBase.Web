@@ -159,7 +159,7 @@ namespace ExpressBase.Web.BaseControllers
                                 if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
                                     isvalid = true;
                             }
-                            else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
+                            else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC))
                             {
                                 isvalid = true;
                             }

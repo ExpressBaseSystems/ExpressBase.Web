@@ -52,7 +52,8 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                Eb_Solution s_obj = GetSolutionObject(ViewBag.cid); 
+                request.eb_Solution = s_obj;
                 if (request.CalendarObjString != null)
                     request.CalendarObj = EbSerializers.Json_Deserialize<EbCalendarView>(request.CalendarObjString);
                 request.CalendarObjString = null;
@@ -82,8 +83,10 @@ namespace ExpressBase.Web.Controllers
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobjt);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            return ViewComponent("CalendarCommon", new { dvobjt = dvobjt, _user = this.LoggedInUser, _sol = solu, wc = "dc",  flag = _flag });
+
+            Eb_Solution s_obj = GetSolutionObject(ViewBag.cid); 
+ 
+            return ViewComponent("CalendarCommon", new { dvobjt = dvobjt, _user = this.LoggedInUser, _sol = s_obj, wc = "dc",  flag = _flag });
         }
     }
 

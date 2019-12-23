@@ -136,7 +136,7 @@ namespace ExpressBase.Web.Controllers
         {
             EditSolutionResponse resp = null;
             IFormCollection form = this.HttpContext.Request.Form;
-            Eb_Solution slno = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", form["isid"]));
+            Eb_Solution slno = GetSolutionObject(form["isid"]); 
 
             if (slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
             {

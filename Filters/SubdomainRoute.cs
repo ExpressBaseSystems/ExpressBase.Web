@@ -49,7 +49,7 @@ namespace ExpressBase.Web.Filters
             var path = context.HttpContext.Request.Path;
             string[] hostParts = host.Split(CharConstants.DOT);
 
-            object _subDomain = null;
+            //object _subDomain = null;
             //if (Enum.TryParse(typeof(SubDomains), hostParts[0], out _subDomain))
             //{
             //    context.RouteData.Values[RoutingConstants.CONTROLLER] = RoutingConstants.EB_PRODUCTS;

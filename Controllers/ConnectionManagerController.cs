@@ -608,9 +608,7 @@ namespace ExpressBase.Web.Controllers
         {
             var req = this.HttpContext.Request.Form;
             EbDbConfig con = new EbDbConfig();
-            DatabaseVendors vendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());
-            string res;
-            AddDBResponse response = new AddDBResponse();
+            DatabaseVendors vendor = Enum.Parse<DatabaseVendors>(req["databaseVendor"].ToString());  
             if (vendor == DatabaseVendors.PGSQL)
             {
                 con = new PostgresConfig()
@@ -669,7 +667,7 @@ namespace ExpressBase.Web.Controllers
             }
             try
             {
-                response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
+                AddDBResponse response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
                 {
                     DbConfig = con,
                     // IsNew = false,

@@ -14,7 +14,7 @@
 
 </script>
 <script>
-     let chkObj = new Object();
+    let chkObj = new Object();
     chkObj.data = null;
     chkObj.title = "Action";
     chkObj.orderable = false;
@@ -40,7 +40,7 @@
                         cols.push(chkObj);
                         $("#list-of-jobs").empty();
                         $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
-                        
+
                         var o = new Object();
                         o.tableId = "tbl";
                         o.datetimeformat = true;
@@ -66,19 +66,19 @@
             return `<button class="retryBtn" id="${data[5]}">Retry</button>`
     }
 
-   
+
     $(document).ready(function () {
         $("#list-of-jobs").on("click", ".retryBtn", function (e) {
-             let id = e.target.getAttribute("id");
+            let id = e.target.getAttribute("id");
             $.ajax(
                 {
                     type: 'POST',
                     url: "/SqlJob/JobRetry",
                     data: {
-                        id : id
+                        id: id
                     },
-                    success: function (result) {   
-                             $("#show-sql-jobs").click();
+                    success: function (result) {
+                        $("#show-sql-jobs").click();
                     }
                 });
         })
@@ -88,34 +88,36 @@
 <div class="container-fluid" style="margin-top:50px">
     <div class="row">
         <div class="col-sm-12">
-            <input type="text" id="refid" />
+            <input type="text" id="refid" value="ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-26-2642-3506-2642-3506" />
             <input type="text" id="date">
             <button id="show-sql-jobs"> Show Jobs</button>
         </div>
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <div id="list-of-jobs" > </div>
+            <div id="list-of-jobs"> </div>
         </div>
     </div>
 </div>
 <style>
-    tbody{
+    tbody {
         padding: 10px;
         border: solid 1px #2b2b2b;
         background-color: #ffff;
     }
-    thead{
-        padding: 10px;
-        border: solid 1px #2b2b2b;
-        background-color: #ffff;
-    }
-    dataTables_scroll{
-        height : 550px;
-    }
-  .selected  {
-    background-color: #fff !important;
-    color:black !important;
 
-}
+    thead {
+        padding: 10px;
+        border: solid 1px #2b2b2b;
+        background-color: #ffff;
+    }
+
+    dataTables_scroll {
+        height: 550px;
+    }
+
+    .selected {
+        background-color: #fff !important;
+        color: black !important;
+    }
 </style>

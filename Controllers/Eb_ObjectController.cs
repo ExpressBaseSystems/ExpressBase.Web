@@ -48,12 +48,7 @@ namespace ExpressBase.Web.Controllers
             HttpContext.Items["ObjectType"] = type;
             ViewBag.mode = buildermode;
 
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (soln == null)
-            {
-                this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = ViewBag.cid, UserId = ViewBag.UId });
-                soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            }
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             ViewBag.versioning = soln.IsVersioningEnabled;
 
             if (objid != "null")

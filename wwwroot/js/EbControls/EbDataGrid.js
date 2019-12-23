@@ -356,11 +356,11 @@
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
-            dspMmbr = cellObj.Value || "0";
+            dspMmbr = cellObj.F || "0.00"; // temporary fix
         }
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)
-                dspMmbr = "null";
+                dspMmbr = "";//ebcontext.user.Preference.ShortDatePattern.replace(/-/g, "/").replace(/D|M|Y|d|m|y/g, "-");
             else if (col.EbDbType === 6)
                 dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
             else if (col.EbDbType === 5)
@@ -865,7 +865,7 @@
             $td.find(".tdtxt span").html(html);
         }
         else if ((ctrl.ObjType === "SysCreatedBy") || (ctrl.ObjType === "SysModifiedBy")) {
-            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            let val = ctrl.getDisplayMemberFromDOM() || ctrl.getValue();
             let usid = ctrl.getValue();
             $td.find(".tdtxt span").empty();
             $td.find(".tdtxt span").append(`<img class='sysctrl_usrimg' src='/images/dp/${usid}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
@@ -873,14 +873,18 @@
 
         }
         else if (ctrl.ObjType === "UserSelect") {
-            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            let val = ctrl.getDisplayMemberFromDOM() || ctrl.getValue();
             $td.find(".tdtxt span").empty();
             $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
             $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
         }
+        else if (ctrl.ObjType === "Numeric") {
+            let val = ctrl.getDisplayMemberFromDOM() || "0.00";// temporary fix
+            $td.find(".tdtxt span").text(val);
+        }
         else {
             //let t0 = performance.now();
-            let val = ctrl.getDisplayMember() || ctrl.getValue();
+            let val = ctrl.getDisplayMemberFromDOM() || ctrl.getValue();
             $td.find(".tdtxt span").text(val);
             //console.dev_log("ctrlToSpan_td else: took " + (performance.now() - t0) + " milliseconds.");
         }
@@ -1069,11 +1073,22 @@
         return colCtrls;
     };
 
+
+    this.markDelColCtrls = function (rowId) {
+        let rowCtrls = this.objectMODEL[rowId];
+        for (let i = 0; i < rowCtrls.length; i++) {
+            let inpCtrl = rowCtrls[i];
+            inpCtrl.__isDeleted = true;
+        }
+    };
+
     this.getAggOfCol = function (colname, updateDpnt = true) {
         let sum = 0;
         let colCtrls = this.getColCtrls(colname);
         for (let i = 0; i < colCtrls.length; i++) {
             let inpCtrl = colCtrls[i];
+            if (inpCtrl.__isDeleted)
+                continue;
             if (document.getElementById(inpCtrl.EbSid_CtxId) === document.activeElement)
                 val = document.activeElement.value;
             else
@@ -1140,11 +1155,12 @@
 
     this.removeTr = function ($tr) {
         let rowId = $tr.attr("rowid");
-        $tr.find("td *").hide(200);
+        $tr.find("td *").hide(100);
+        this.markDelColCtrls(rowId);
         setTimeout(function () {
             $tr.remove();
             this.updateAggCols();
-        }.bind(this), 201);
+        }.bind(this), 101);
     };
 
     this.delRow_click = function (e) {

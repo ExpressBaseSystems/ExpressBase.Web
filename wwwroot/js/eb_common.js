@@ -942,9 +942,7 @@ document.addEventListener("click", function (e) {
     }
 });
 
-function EBPSGetColummn(colName) {
-    return this.DataVals.R[colName];
-}
+
 
 function EBPSSetDisplayMember(p1, p2) {
     if (p1 === '')

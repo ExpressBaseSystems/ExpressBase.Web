@@ -86,8 +86,8 @@ namespace ExpressBase.Web.Controllers
         {
             EbDataVisualization dvObject = EbSerializers.Json_Deserialize(dvobj);
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = solu, contextId = contextId, CustomColumn = customcolumn, wc = ViewBag.wc, curloc = _curloc, submitId = submitId });
+            Eb_Solution s_obj = GetSolutionObject( ViewBag.cid); 
+            return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = s_obj, contextId = contextId, CustomColumn = customcolumn, wc = ViewBag.wc, curloc = _curloc, submitId = submitId });
         }
 
         public string GetColumns(string dvobjt, bool CustomColumn)
@@ -249,76 +249,13 @@ namespace ExpressBase.Web.Controllers
         public DataSourceDataResponse getData(TableDataRequest request)
         {
             try
-            {
-                request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            { 
+                request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = true;
                 if (request.DataVizObjString != null)
                     request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
                 if (request.CurrentRowGroup != null)
                     (request.EbDataVisualization as EbTableVisualization).CurrentRowGroup = EbSerializers.Json_Deserialize<RowGroupParent>(request.CurrentRowGroup);
-                request.DataVizObjString = null;
-                request.UserInfo = this.LoggedInUser;
-                if (request.TFilters != null)
-                {
-                    foreach (TFilters para in request.TFilters)
-                    {
-
-                        if (para.Type ==EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
-                        {
-                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
-                        }
-                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
-                    }
-                }
-                DataSourceDataResponse resultlist1 = null;
-                try
-                {
-                    this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
-                    resultlist1 = this.ServiceClient.Post(request);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Exception: " + e.ToString());
-                }
-                return resultlist1;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
-            }
-            return null;
-        }
-
-        public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)
-        {
-            InlineTableDataRequest request = new InlineTableDataRequest();
-            request = _request;
-            request.eb_solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            request.ReplaceEbColumns = true;
-            if (request.DataVizObjString != null)
-                request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
-            request.DataVizObjString = null;
-            request.UserInfo = this.LoggedInUser;
-            DataSourceDataResponse resultlist1 = null;
-            try
-            {
-                resultlist1 = this.ServiceClient.Post(request);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception: " + e.ToString());
-            }
-            return resultlist1;
-        }
-
-        public DataSourceDataResponse getData4PowerSelect(TableDataRequest request)
-        {
-            try
-            {
-                request.eb_Solution = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-                request.ReplaceEbColumns = false;
-                if (request.DataVizObjString != null)
-                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);               
                 request.DataVizObjString = null;
                 request.UserInfo = this.LoggedInUser;
                 if (request.TFilters != null)
@@ -350,7 +287,70 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
             }
             return null;
-        }        
+        }
+
+        public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)
+        {
+            InlineTableDataRequest request = new InlineTableDataRequest();
+            request = _request; 
+            request.eb_solution = GetSolutionObject(ViewBag.cid);
+            request.ReplaceEbColumns = true;
+            if (request.DataVizObjString != null)
+                request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+            request.DataVizObjString = null;
+            request.UserInfo = this.LoggedInUser;
+            DataSourceDataResponse resultlist1 = null;
+            try
+            {
+                resultlist1 = this.ServiceClient.Post(request);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+            }
+            return resultlist1;
+        }
+
+        public DataSourceDataResponse getData4PowerSelect(TableDataRequest request)
+        {
+            try
+            { 
+                request.eb_Solution = GetSolutionObject(ViewBag.cid);
+                request.ReplaceEbColumns = false;
+                if (request.DataVizObjString != null)
+                    request.EbDataVisualization = EbSerializers.Json_Deserialize<EbDataVisualization>(request.DataVizObjString);
+                request.DataVizObjString = null;
+                request.UserInfo = this.LoggedInUser;
+                if (request.TFilters != null)
+                {
+                    foreach (TFilters para in request.TFilters)
+                    {
+
+                        if (para.Type == EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
+                        {
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                        }
+                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                    }
+                }
+                DataSourceDataResponse resultlist1 = null;
+                try
+                {
+                    this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                    resultlist1 = this.ServiceClient.Post(request);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception: " + e.ToString());
+                }
+                return resultlist1;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("dvconroller getdata request Exception........." + e.StackTrace);
+            }
+            return null;
+        }
 
         public Dictionary<string, List<EbObjectWrapper>> FetchAllDataVisualizations(int type)
         {

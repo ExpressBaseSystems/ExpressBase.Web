@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects.Helpers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -35,7 +36,7 @@ namespace ExpressBase.Web.Controllers
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc) : base(_client, _redis, _cxtacc) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc) : base(_client, _redis, _cxtacc, _mqc) { }
 
         [HttpPost]
         [EnableCors("AllowSpecificOrigin")]
@@ -307,7 +308,10 @@ namespace ExpressBase.Web.Controllers
             if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
                 return true;
             else
-                return false;
+            {
+                RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
+                return res.Status;
+            }
         }
 
         public IActionResult UsrSignIn()
@@ -752,8 +756,7 @@ namespace ExpressBase.Web.Controllers
                 try
                 {
                     string tenantid = ViewBag.cid;
-                    var authClient = this.ServiceClient;
-                    authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                    authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],

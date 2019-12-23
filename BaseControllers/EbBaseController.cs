@@ -121,39 +121,50 @@ namespace ExpressBase.Web.BaseControllers
         public bool IsTokensValid(string sRToken, string sBToken, string subdomain)
         {
             bool isvalid = false;
-            if (VerifySignature(sRToken) && VerifySignature(sBToken))
+            try
             {
-                var rToken = new JwtSecurityToken(sRToken);
-                var bToken = new JwtSecurityToken(sBToken);
-
-                string rSub = rToken.Payload[TokenConstants.SUB].ToString();
-                string bSub = bToken.Payload[TokenConstants.SUB].ToString();
-                string _ip = bToken.Payload[TokenConstants.IP].ToString();
-
-                if (this.RequestSourceIp == _ip)
+                if (VerifySignature(sRToken) && VerifySignature(sBToken))
                 {
-                    DateTime startDate = new DateTime(1970, 1, 1);
-                    DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
+                    var rToken = new JwtSecurityToken(sRToken);
+                    var bToken = new JwtSecurityToken(sBToken);
 
-                    if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
+                    string rSub = rToken.Payload[TokenConstants.SUB].ToString();
+                    string bSub = bToken.Payload[TokenConstants.SUB].ToString();
+                    string _ip = bToken.Payload[TokenConstants.IP].ToString();
+                    Console.WriteLine("IP : " + this.RequestSourceIp + " - " + _ip);
+                    if (this.RequestSourceIp == _ip)
                     {
-                        string[] subParts = rSub.Split(CharConstants.COLON);
+                        Console.WriteLine("IP check success");
+                        DateTime startDate = new DateTime(1970, 1, 1);
+                        DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
 
-                        if (rSub.EndsWith(TokenConstants.TC))
-                            isvalid = true;
-                        else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                        if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
                         {
-                            string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
-                            if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                            string[] subParts = rSub.Split(CharConstants.COLON);
+
+                            if (rSub.EndsWith(TokenConstants.TC))
                                 isvalid = true;
-                        }
-                        else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
-                        {
-                            isvalid = true;
+                            else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                            {
+                                string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
+                                if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                                    isvalid = true;
+                            }
+                            else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
+                            {
+                                isvalid = true;
+                            }
                         }
                     }
                 }
             }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, string.Empty, new CookieOptions());
+                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, string.Empty, new CookieOptions());
+            }
+            
             return isvalid;
         }
 

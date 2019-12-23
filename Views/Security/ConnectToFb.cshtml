@@ -3,13 +3,277 @@
 *@
 @{
 
-Layout = "~/Views/Shared/_Layout1.cshtml";
+Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 
-<button class="btn btn-info" id="loginbutton" style=" margin:2%">Login to Al-Arz systems Using facebook</button>
+<style>
+    .user-list-ctrl{
+        border: 1px solid #ccc; 
+        position: relative;
+    }
+    .ulstc-disp-c{
+        display: flex;
+        user-select: none;
+    }
+    .ulstc-disp-img-c{
+        background-repeat:no-repeat;
+        background-position: center;            
+        background-size: cover;
+        height: 26px;
+        width: 26px;
+    }
+    .ulstc-disp-txt{
+        padding: 3px 10px;
+    }
+    .ulstc-list-c{
+        position: absolute;
+        width: 100%;
+        box-shadow: 1px 1px 4px #ccc;
+        background-color: white;
+        display: none;
+        user-select: none;
+    }
+    .ulstc-list-srch > span{
+        position: absolute; 
+        padding: 5px 10px; 
+    }
+    .ulstc-list-srch > input{
+        width: 100%;
+        border: none; 
+        padding: 5px 35px;
+        outline: none;
+    }
+    .ulstc-list-ul{
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    .ulstc-list-ul > .active{
+        background-color: #eef;
+    }
+    .ulstc-list-li{
+        display: flex;
+        padding: 2px;
+    }
+    .ulstc-list-li:hover{
+        background-color: #ddd;
+    }
+
+</style>
+<input type ="text" style="margin-top: 100px;"/>
+<div id="demodiv" style="margin-top: 100px; ">
+    
+</div>
+<input type="text" style="margin-top: 100px;" />
+
+<script>
+
+
+    var UserList = function (options) {
+        this.options = $.extend({
+            contSelector : '#demodiv',
+            multiSelect: false,
+            imageUrl: '/images/dp/',
+            imageAlternate: '/images/nulldp.png',
+            itemList: [
+                {id: 2, vm: 2, dm1: 'Febin', img: '2'},
+                {id: 2, vm: 2, dm1: 'Carlos', img: '2'},
+                {id: 2, vm: 2, dm1: 'Amal', img: '2'},
+                {id: 2, vm: 2, dm1: 'Dev', img: '2'}
+            ],
+        }, options);
+
+
+        this.init = function () {
+            this.drawControl();
+        }
+
+        this.drawControl = function () {
+            this.$cont = $(`<div class="user-list-ctrl">
+                                <div class="ulstc-disp-c">
+                                    <i class="fa fa-sort-desc" aria-hidden="true" style="margin-left: auto;padding: 3px 10px;min-height: 26px;"></i>
+                                </div>
+                                <div class="ulstc-list-c">
+                                    <div class="ulstc-list-srch">
+                                        <span><i class="fa fa-search"></i></span>
+                                        <input type="text" placeholder="Type to search..." />
+                                    </div>
+                                    <div class="ulstc-list-ul"></div>
+                                </div>
+                            </div>`);
+            $(this.options.contSelector).append(this.$cont);
+            this.$dispCont = this.$cont.find('.ulstc-disp-c');
+            this.$popCont = this.$cont.find('.ulstc-list-c');
+            this.$txtSrch = this.$cont.find('.ulstc-list-srch input');
+            this.$ul = this.$cont.find('.ulstc-list-ul');
+
+            for (let i = 0; i < this.options.itemList.length; i++) {
+                let $li = $(`<div class="ulstc-list-li">
+                                <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + this.options.itemList[i]['img']}.png), url(${this.options.imageAlternate});"></div>
+                                <div class="ulstc-disp-txt">${this.options.itemList[i]['dm1']}</div>
+                            </div>`);
+                $li.data('data-obj', this.options.itemList[i]);
+                this.$ul.append($li);
+            }
+
+            this.$txtSrch.on('focusout', function (e) {
+                this.$popCont.hide();
+            }.bind(this));
+            
+            this.$dispCont.on('click', function (e) {
+                this.$popCont.toggle();
+                this.$txtSrch.focus();
+            }.bind(this));
+
+            this.$ul.children('.ulstc-list-li').on('mousedown', function (e) {
+                this.onListItemSelect($(e.target).closest('.ulstc-list-li'));
+            }.bind(this));
+
+            this.$txtSrch.on('keyup', function (e) {
+                this.onTxtSrchKeydown(e);
+            }.bind(this));
+        }
+
+        this.onListItemSelect = function ($ele) {
+            let itemO = $ele.data('data-obj');
+
+            let $disp = $(`<div style="display: inherit;">
+                                <div class="ulstc-disp-img-c" style="background-image:url(${this.options.imageUrl + itemO['img']}.png), url(${this.options.imageAlternate});"></div>
+                                <div class="ulstc-disp-txt">${itemO['dm1']}</div>
+                            </div>`);
+            $disp.data('data-obj', itemO);
+            this.$dispCont.children('div').remove();
+            this.$dispCont.prepend($disp);
+            this.$dispCont.next().toggle();
+        }
+
+        this.onTxtSrchKeydown = function (e) {
+            let $liAct = this.$ul.find('.active');
+            if ($liAct.length === 0) {
+                if (e.keyCode === 40) {
+                    this.$ul.children().first(':visible').addClass('active');
+                }
+                else if (e.keyCode === 38) {
+                    this.$ul.children().last(':visible').addClass('active');
+                }
+            }
+            else {            
+                if (e.keyCode === 40) {
+                    if ($liAct.nextAll(':visible').first().length > 0) {
+                        $liAct.nextAll(':visible').first().addClass('active');
+                        $liAct.removeClass('active');
+                    }
+                } else if (e.keyCode === 38) {        
+                    if ($liAct.prevAll(':visible').first().length > 0) {
+                        $liAct.prevAll(':visible').first().addClass('active');
+                        $liAct.removeClass('active');
+                    }
+                }
+                else if (e.keyCode === 13) {
+                    this.onListItemSelect($liAct);
+                }
+            }
+
+            if (e.keyCode !== 13 && e.keyCode !== 38 && e.keyCode !== 40) {
+                let $liAll = this.$ul.children();
+                let srchVal = this.$txtSrch.val() || '';               
+                srchVal = srchVal.toLowerCase(); 
+                if (this.srchValOld !== srchVal) {               
+                    this.srchValOld = srchVal;
+                    for (let i = 0; i < $liAll.length; i++) {
+                        let itemO = $($liAll[i]).data('data-obj');
+                        if (itemO['dm1'].toLowerCase().search(srchVal) === -1)
+                            $($liAll[i]).hide();
+                        else
+                            $($liAll[i]).show();
+                    }                    
+                    $liAct.removeClass('active');
+                    this.$ul.children(':visible').first().addClass('active');
+                }               
+            }
+        }
+
+        this.setValue = function (p1, p2) {
+
+
+            //this.$dispCont.children('div')
+        }
+
+        this.getValue = function (p1) {
+
+        }
+
+        this.init();
+    };
+
+
+
+    new UserList({});
+
+
+    //$('.ulstc-disp-c').on('click', function (e) {
+    //    $(this).next().toggle();
+    //});
+
+    //$('.ulstc-list-c .ulstc-list-srch input').on('keydown', function (e) {
+    //    let $ul = $(this).parent().siblings('.ulstc-list-ul');
+    //    let $liAct = $ul.find('.active');
+    //    if ($liAct.length === 0) {
+    //        if (e.keyCode === 40) {
+    //            $ul.children().first().addClass('active');
+    //        }
+    //        else if (e.keyCode === 38) {
+    //            $ul.children().last().addClass('active');
+    //        }
+    //    }
+    //    else {            
+    //        if (e.keyCode === 40) {
+    //            if ($liAct.next().length > 0) {
+    //                $liAct.next().addClass('active');
+    //                $liAct.removeClass('active');
+    //            }
+    //        } else if (e.keyCode === 38) {        
+    //            if ($liAct.prev().length > 0) {
+    //                $liAct.prev().addClass('active');
+    //                $liAct.removeClass('active');
+    //            }
+    //        }
+    //    }
+
+    //});
+
+
+//$('div.container').on('focus', 'li', function() {
+//    var $this = $(this);
+//    $this.addClass('active').siblings().removeClass();
+//    $this.closest('div.container').scrollTop($this.index() * $this.outerHeight());
+//}).on('keydown', 'li', function(e) {
+//    var $this = $(this);
+//    if (e.keyCode === 40) {        
+//        $this.next().focus();
+//        return false;
+//    } else if (e.keyCode === 38) {        
+//        $this.prev().focus();
+//        return false;
+//    }
+//}).find('li').first().focus();
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+@*<button class="btn btn-info" id="loginbutton" style=" margin:2%">Login to Al-Arz systems Using facebook</button>
 <button class="btn btn-info" id="test" style=" margin:2%">Logout from App</button>
 <button class="btn btn-info" id="test222" style=" margin:2%">check status</button>
-<button class="btn btn-info" id="test333" style=" margin:2%">prof img</button>
+<button class="btn btn-info" id="test333" style=" margin:2%">prof img</button>*@
 <script>
     //this is a test page, it can be deleted any time (febin)
     //$('document').ready(function () {

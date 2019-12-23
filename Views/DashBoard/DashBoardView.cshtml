@@ -13,6 +13,7 @@
     }
 }
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
@@ -25,13 +26,13 @@
 <script src="~/js/EbUserDashBoard/EbDashBoardView.js" asp-append-version=@bApnd></script>
 <script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js" asp-append-version=@bApnd></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.all.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.all.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
 <div class="container-fluid" style="margin-top:50px;background: transparent;">
     <div class="row" style="background: transparent;">
-        <div class="col-sm-12" style="background: transparent;">
+        <div class="col-sm-12" style="background: transparent; width: 99%">
             <div id="dashbord-user-view">
                 <div class="grid-stack"></div>
             </div>
@@ -45,6 +46,7 @@
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
+    @Html.Raw(ViewBag.ControlOperations);
         var DBobj = new DashBoardViewWrapper({
             Version: '@ViewBag.VersionNumber',
             ObjType: @ViewBag.ObjType,

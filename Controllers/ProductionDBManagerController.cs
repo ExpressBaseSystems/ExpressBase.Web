@@ -9,6 +9,10 @@ using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using ServiceStack.Redis;
+using DiffPlex.DiffBuilder;
+using DiffPlex;
+using DiffPlex.DiffBuilder.Model;
+
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -95,5 +99,72 @@ namespace ExpressBase.Web.Controllers
                 SolutionId = solution_id
             });
         }
+
+        public Object GetScriptsForDiffView(string solution, string filename, string filepath, string filetype)
+        {
+            GetScriptsForDiffViewResponse resp = this.ServiceClient.Post<GetScriptsForDiffViewResponse>((object)new GetScriptsForDiffViewRequest
+            {
+                SolutionId = solution,
+                FileHeader = filename,
+                FilePath = filepath,
+                FileType = filetype
+            });
+            resp.Result = GetDiffer(resp.InfraFileContent,resp.TenantFileContent );
+            return resp;
+        }
+
+        public List<string> GetDiffer(string OldText, string NewText)
+        {
+            List<string> Diff = new List<string>();
+            SideBySideDiffBuilder inlineBuilder = new SideBySideDiffBuilder(new Differ());
+            SideBySideDiffModel diffmodel = inlineBuilder.BuildDiffModel(OldText, NewText);
+            Diff.Add(Differ(diffmodel.OldText));
+            Diff.Add(Differ(diffmodel.NewText));
+            return Diff;
+        }
+
+        private string Differ(DiffPaneModel text)
+        {
+            const string spaceValue = "&nbsp;";
+            const string tabValue = "&#9;";
+            string html = "<div class=" + "'diffpane col-md-12'" + "><table cellpadding='0' cellspacing='0' class='diffTable'>";
+
+            foreach (DiffPiece diffLine in text.Lines)
+            {
+                html += "<tr>";
+                html += "<td class='lineNumber'>";
+                html += diffLine.Position.HasValue ? diffLine.Position.ToString() : "&nbsp;";
+                html += "</td>";
+                html += "<td class='line " + diffLine.Type.ToString() + "Line'>";
+                html += "<span class='lineText'>";
+
+                if (diffLine.Type == ChangeType.Deleted || diffLine.Type == ChangeType.Inserted || diffLine.Type == ChangeType.Unchanged)
+                {
+                    html += diffLine.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                }
+                else if (diffLine.Type == ChangeType.Modified)
+                {
+                    foreach (DiffPiece character in diffLine.SubPieces)
+                    {
+                        if (character.Type == ChangeType.Imaginary) continue;
+                        else
+                        {
+                            html += "<span class='" + character.Type.ToString() + "Character'>";
+                            html += character.Text.Replace(" ", spaceValue.ToString()).Replace("\t", tabValue.ToString());
+                            html += "</span>";
+                        }
+                    }
+                }
+
+                html += "</span>";
+                html += "</td>";
+                html += "</tr>";
+            }
+
+            html += "</table></div>";
+
+            return html;
+        }
+
     }
 }

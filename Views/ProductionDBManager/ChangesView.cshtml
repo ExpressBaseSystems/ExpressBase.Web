@@ -12,8 +12,6 @@
     <title>Changes in DB</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="~/js/EbControls/EbDialogBox.js"></script>
     <script src="~/js/ProductionDBManager/productiondbmanager.js"></script>
     @*code editor*@
@@ -35,6 +33,7 @@
     <script src="~/lib/codemirror/addon/hint/anyword-hint.js" asp-append-version=@bApnd></script>
     <script src="~/lib/codemirror/mode/clike/clike.js" asp-append-version=@bApnd></script>
     <script src="~/lib/codemirror/addon/edit/matchbrackets.js" asp-append-version=@bApnd></script>
+    <link rel="stylesheet" href="~/css/EbCommonStyles/Ebsitepage.css">
     <script>
         $(document).ready(function () {
             new productiondbmanager();
@@ -152,49 +151,49 @@
                         </div>
                     </div>
                     @{
-                        for (int i = 0; i < ViewBag.ChangesLog.Count; i++)
-                        {
-                            <div class="row row-padding div-row-heading">
-                                <div class="col-md-4 align-center">
-                                    <div>
-                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantName</label>
-                                    </div>
-                                    <div>
-                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantEmail</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4 align-center">
-                                    <div>
-                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Solution</label>
-                                    </div>
-                                    <div>
-                                        <input type="hidden" value="@ViewBag.ChangesLog[i].DBName" id="dbname" name="dbname" />
-                                        <label class="sub-headings row-padding dbname">@ViewBag.ChangesLog[i].DBName</label>
-                                    </div>
-                                    <div>
-                                        <label class="sub-headings row-padding align-center">@ViewBag.ChangesLog[i].Vendor</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-2 align-center" id="modified_date_@ViewBag.ChangesLog[i].Solution">
-                                    <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Last_Modified</label>
-                                </div>
-                                <div class="col-md-2 align-center">
-                                    <input type="hidden" value="@ViewBag.ChangesLog[i].Solution" id="solu_id" name="solu_id" />
-                                    <label class="sub-headings row-padding" id="uptodate_@ViewBag.ChangesLog[i].Solution" style="display:none">Up to Date</label>
-                                    <button id="i_chk_@ViewBag.ChangesLog[i].Solution" name="i_chk_@ViewBag.ChangesLog[i].Solution" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
-                                </div>
+                    for (int i = 0; i < ViewBag.ChangesLog.Count; i++)
+                    {
+                    <div class="row row-padding div-row-heading">
+                        <div class="col-md-4 align-center">
+                            <div>
+                                <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantName</label>
                             </div>
-                            <div id="@ViewBag.ChangesLog[i].Solution">
+                            <div>
+                                <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantEmail</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4 align-center">
+                            <div>
+                                <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Solution</label>
+                            </div>
+                            <div>
+                                <input type="hidden" value="@ViewBag.ChangesLog[i].DBName" id="dbname" name="dbname" />
+                                <label class="sub-headings row-padding dbname">@ViewBag.ChangesLog[i].DBName</label>
+                            </div>
+                            <div>
+                                <label class="sub-headings row-padding align-center">@ViewBag.ChangesLog[i].Vendor</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2 align-center" id="modified_date_@ViewBag.ChangesLog[i].Solution">
+                            <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Last_Modified</label>
+                        </div>
+                        <div class="col-md-2 align-center">
+                            <input type="hidden" value="@ViewBag.ChangesLog[i].Solution" id="solu_id" name="solu_id" />
+                            <label class="sub-headings row-padding" id="uptodate_@ViewBag.ChangesLog[i].Solution" style="display:none">Up to Date</label>
+                            <button id="i_chk_@ViewBag.ChangesLog[i].Solution" name="i_chk_@ViewBag.ChangesLog[i].Solution" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
+                        </div>
+                    </div>
+                    <div id="@ViewBag.ChangesLog[i].Solution">
 
-                            </div>
-                        }
+                    </div>
+                    }
                     }
                 </div>
             </div>
         </div>
     </div>
     <!-- ---------- Modal----------------- -->
-    <div id="viewQuery" class="modal fade" role="dialog" data-backdrop= "static">
+    <div id="viewQuery" class="modal fade " role="dialog" data-backdrop="static">
         <div class="modal-dialog modal-lg">
 
             <!-- Modal content-->
@@ -216,5 +215,198 @@
 
         </div>
     </div>
-</body>
 
+    <div id="diffViewer" class="modal fade" role="dialog" data-backdrop="static" style="padding-right:0px">
+        <div class="modal-dialog diffmodalsize">
+
+            <!-- Modal content-->
+            <div class="modal-content diffmodal-contentsize" id="modal-diff">
+                <div id="eb-loader-diff" style="top:0;left:0;width:100%;"></div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Diff Viewer</h4>
+                </div>
+                <div class="modal-body diffmodal-bodysize" id="modalBodyDiffView">
+                    <div id='diff_result' class="diffresultsize"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+<style>
+    .diff-container {
+        margin-top: 55px;
+    }
+
+    .compare_inner {
+        margin-bottom: 25px;
+    }
+
+    /*differ styles*/
+
+    #diffBar {
+        width: 3%;
+        height: 100%;
+        float: left;
+        position: relative;
+        background: #DDDDDD;
+    }
+
+    .diffBarLineLeft, .diffBarLineRight {
+        width: 50%;
+        float: left;
+        height: 0px;
+        cursor: pointer;
+    }
+
+    .inView {
+        background-repeat: repeat;
+    }
+
+    #activeBar {
+        position: absolute;
+        top: 0px;
+        background-color: #6699FF;
+        opacity: 0.5;
+        filter: alpha(opacity= '50');
+    }
+
+
+    #diffBox {
+        margin-left: auto;
+        margin-right: auto;
+        border: solid 2px #000000;
+    }
+
+
+    .leftPane, .rightPane {
+        float: left;
+        width: 50%;
+        font-family: monospace;
+        height: 400px;
+        color: black;
+        overflow-x: scroll;
+        height: calc(100% - 60px);
+    }
+
+    .leftPane {
+        border-right: solid 1px #bbb4b4;
+    }
+
+    .rightPane {
+        border-left: solid 1px #bbb4b4;
+    }
+
+    .diffHeader {
+        font-weight: bold;
+        padding: 2px 0px 2px 10px;
+        background-color: #FFFFFF;
+        text-align: center;
+    }
+
+    .diffPane {
+        margin-right: 0px;
+        padding: 0px;
+        overflow-y: scroll;
+        font-family: Consolas;
+        font-size: xx-small;
+        background-color: #FFFFFF;
+    }
+
+        .diffPane table {
+            width: 100%;
+        }
+
+    .line {
+        padding-left: .2em;
+        white-space: nowrap;
+        width: 50%;
+    }
+
+    .lineNumber {
+        padding: 0 .3em;
+        background-color: #FFFFFF;
+        //text-align: center;
+    }
+
+    .InsertedLine {
+        background-color: lightgreen;
+    }
+
+    .ModifiedLine {
+        background-color: lightyellow;
+    }
+
+    .DeletedLine {
+        background-color: lightpink;
+    }
+
+    .UnchangedLine {
+        background-color: #FFFFFF;
+    }
+
+    .ImaginaryLine {
+        background-color: #C8C8C8;
+    }
+
+    .InsertedCharacter {
+        background-color: palegreen;
+    }
+
+    .DeletedCharacter {
+        background-color: hotpink;
+    }
+
+    .UnchangedCharacter {
+    }
+
+    .ImaginaryCharacter {
+    }
+
+    .clear {
+        clear: both;
+    }
+
+    #oldtext .diffTable {
+        width: 50%;
+        height: 50%;
+        padding-left: 0px;
+        overflow-y: scroll;
+    }
+
+    #newtext .diffTable {
+        width: 50%;
+        height: 50%;
+        padding-right: 0px;
+        overflow-y: scroll;
+    }
+
+    .ViewCode_btn {
+        width: 32px;
+        height: 37px;
+        background: #5dddd3;
+        border-radius: 50%;
+        padding: 4px;
+        cursor: pointer;
+    }
+
+    .diffHeader {
+        font-family: FreeMono, monospace;
+        padding:20px;
+    }
+    .diffmodalsize {
+        height: 100vh;
+        width: 100%;
+        margin: 0px;
+    }
+    .diffmodal-contentsize {
+        height: 100%;
+    }
+    .diffmodal-bodysize {
+        height: calc(100% - 57px );
+    }
+    .diffresultsize {
+        height: 100%;
+    }
+</style>

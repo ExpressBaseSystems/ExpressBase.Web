@@ -642,7 +642,13 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = email,
                     Password = "NIL",
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, ViewBag.cid }, { "sso", "true" } },
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, whichconsole },
+                        { TokenConstants.CID, ViewBag.cid },
+                        { "sso", "true" },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { "useragent", this.UserAgent}
+                    },
                 });
 
             }
@@ -752,7 +758,12 @@ namespace ExpressBase.Web.Controllers
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],
                         Password = (req["pass"] + req["uname"]).ToMD5Hash(),
-                        Meta = new Dictionary<string, string> { { RoutingConstants.WC, whichconsole }, { TokenConstants.CID, tenantid } },
+                        Meta = new Dictionary<string, string> {
+                            { RoutingConstants.WC, whichconsole },
+                            { TokenConstants.CID, tenantid },
+                            { TokenConstants.IP, this.RequestSourceIp},
+                            { "useragent", this.UserAgent}
+                        },
                         RememberMe = true
                         //UseTokenCookie = true
                     });

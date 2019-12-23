@@ -64,6 +64,7 @@ const EbSelect = function (ctrl, options) {
     //local variables
     this.container = this.name + "Container";
     this.DTSelector = '#' + this.name + 'tbl';
+    this.DT_tbodySelector = "#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody';
     this.NoOfFields = this.dmNames.length;
     this.Vobj = null;
     this.datatable = null;
@@ -142,7 +143,12 @@ const EbSelect = function (ctrl, options) {
         }
     }.bind(this);
 
-    this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
+    this.getColumn = function (colName) { return this.ComboObj.MultiSelect ? this.columnVals[colName] : this.columnVals[colName][0]; }.bind(this);
+
+    //this.getColumn = function (colName) {
+    //    let columnVals = getEbFormatedPSRows(this.ComboObj);
+    //    return this.ComboObj.MultiSelect ? columnVals[colName] : columnVals[colName][0];
+    //}.bind(this);
 
     this.searchBoxFocus = function () {
         this.IsSearchBoxFocused = true;
@@ -365,6 +371,7 @@ const EbSelect = function (ctrl, options) {
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
+        o.searchCallBack = this.searchCallBack;
         this.datatable = new EbBasicDataTable(o);
 
         setTimeout(function () {
@@ -445,6 +452,11 @@ const EbSelect = function (ctrl, options) {
                 this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
         }
     };
+    this.searchCallBack = function () {
+        setTimeout(function () {
+            this.V_updateCk();
+        }.bind(this), 30);
+    }.bind(this);
 
     this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
         let row = datatable.row(cell.index().row);
@@ -498,7 +510,7 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.reSetColumnvals = function () {
-        if (!this.$curEventTarget)
+        if (!event)
             return;
         let vmValue = this.lastAddedOrDeletedVal;
         if (event.target.nodeName === "SPAN")// if clicked tagclose
@@ -512,22 +524,25 @@ const EbSelect = function (ctrl, options) {
         else {
             this.addColVals();
         }
-
     };
 
-    this.addColVals = function () {
+    this.reSetColumnvals_ = function () {
+        $.each(this.ColNames, function (i, name) {
+            this.columnVals[name].clear();
+        }.bind(this));
+        for (let i = 0; i < this.Vobj.valueMembers.length; i++) {
+            this.addColVals(this.Vobj.valueMembers[i]);
+        }
+    };
+
+    this.addColVals = function (val = this.lastAddedOrDeletedVal) {
         $.each(this.ColNames, function (i, name) {
             let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
             let type = obj.Type;
-            let cellData = this.lastAddedOrDeletedVal;
-            //if (this.maxLimit === 1)
-            //    this.columnVals[name] = cellData;
-
-            if (this.ComboObj.MultiSelect)
-                this.columnVals[name].push(EbConvertValue(cellData, type));
-            else
-                this.columnVals[name] = [EbConvertValue(cellData, type)];
-
+            let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
+            let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
+            let cellData = this.datatable.Api.row($rowEl).data()[idx];
+            this.columnVals[name].push(EbConvertValue(cellData, type));
         }.bind(this));
     };
 
@@ -670,8 +685,19 @@ const EbSelect = function (ctrl, options) {
         //    $('#' + this.name + 'Wraper [type=search]').val("");
         //}.bind(this), 10);
 
-        if (this.datatable !== null) {
-            this.reSetColumnvals();
+        if (this.datatable === null) {
+            if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
+                this.reSetColumnvals();
+            if (this.ComboObj.justInit) { // temp from DG.setRowValues_E
+                this.$inp.val(this.Vobj.valueMembers);
+                this.ComboObj.justInit = undefined;
+            }
+            else
+                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+
+        }
+        else {
+            this.reSetColumnvals_();
             if (this.justInit) {
                 this.$inp.val(this.Vobj.valueMembers);
                 //if (this.afterInitComplete4SetVal)
@@ -680,8 +706,8 @@ const EbSelect = function (ctrl, options) {
             else
                 this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
-        else
-            this.$inp.val(this.Vobj.valueMembers);
+
+        this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
@@ -698,6 +724,11 @@ const EbSelect = function (ctrl, options) {
             DMs.pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
         }
     };
+
+    //this.clearColumnVals = function () {
+    //    for (colName in this.columnVals)
+    //        this.columnVals[colName].clear();
+    //}.bind(this);
 
     this.V_toggleDD = function (e) {
         if (!this.IsDatatableInit)
@@ -763,7 +794,7 @@ const EbSelect = function (ctrl, options) {
     //this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
 
     this.V_updateCk = function () {// API..............
-        $("#" + this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
+        $("#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
             let $row = $(chkbx).closest('tr');
             let datas = $(this.DTSelector).DataTable().row($row).data();
             if (this.Vobj.valueMembers.contains(datas[this.VMindex]))

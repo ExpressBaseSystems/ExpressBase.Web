@@ -58,14 +58,18 @@ function isAllValuesTrue(Obj) {
     return all_true;
 }
 
-function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
+function getValueExprValue(ctrl, formObject, userObject) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code) {
         let fun = new Function("form", "user", `event`, atob(ctrl.ValueExpr.Code)).bind(ctrl, formObject, userObject);
         let val = fun();
         val = EbConvertValue(val, ctrl.ObjType);
-
-        return valueExpHelper(val, ctrl, updateSpan);
+        return val;
     }
+}
+
+function EbRunValueExpr(ctrl, formObject, userObject, formObj) {
+    if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
+        return valueExpHelper(getValueExprValue(ctrl, formObject, userObject), ctrl);
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
         let params = [];
 
@@ -86,28 +90,20 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
             }
         }.bind(this));
 
-        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl, updateSpan);
+        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
     }
 }
 
-function valueExpHelper(val, ctrl, updateSpan) {
-    val = EbConvertValue(val, ctrl.ObjType);
-
-    //if (!ctrl.DataVals)// temp fix 13-12-2019
-    //    ctrl.DataVals = getSingleColumn(ctrl);
-
-
+function valueExpHelper(val, ctrl) {
     ctrl.DataVals.ValueExpr_val = val;
     let isdifferentValue = ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val;
-    if (isdifferentValue) {
-        //ctrl.setValue(ctrl.DataVals.Value);
+    if (isdifferentValue)
         console.warn(`edit mode value and valueExpression value are different for '${ctrl.Name}' control`);
-    }
     else {
         if (ctrl.DataVals.ValueExpr_val)
             ctrl.setValue(ctrl.DataVals.ValueExpr_val);
     }
-    return ctrl.DataVals.ValueExpr;
+    return ctrl.DataVals.ValueExpr_val;
 }
 
 function showLoader4webform() {
@@ -118,10 +114,9 @@ function hideLoader4webform() {
     $("#eb_common_loader").EbLoader("hide");
 }
 
-function ExecQuery(refId, ctrlName, params, ctrl, updateSpan) {
+function ExecQuery(refId, ctrlName, params, ctrl) {
     showLoader4webform();
     var _ctrl = ctrl;
-    var _updateSpan = updateSpan;
     $.ajax({
         type: "POST",
         //url: this.ssurl + "/bots",
@@ -140,7 +135,7 @@ function ExecQuery(refId, ctrlName, params, ctrl, updateSpan) {
         //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
         //}.bind(this),
         success: function (_respObjStr) {
-            valueExpHelper(_respObjStr, _ctrl, _updateSpan);
+            valueExpHelper(_respObjStr, _ctrl);
             hideLoader4webform();
         }
     });
@@ -301,6 +296,29 @@ function getObjCopy4PS(Obj) {
 }
 
 function getEbFontStyleObject(font) {
+    //let GfontsList = {
+    //    'Arapey': 'Arapey',
+    //    'Arvo': 'Arvo',
+    //    'Baskerville': 'Libre Baskerville',
+    //    'Bentham': 'Bentham',
+    //    'Cabin Condensed': 'Cabin Condensed',
+    //    'Century Gothic': 'Didact Gothic',
+    //    'Courier': 'Courier > Courier',
+    //    'Crimson Text': 'Crimson Text',
+    //    'EB Garamond': 'EB Garamond',
+    //    'GFS Didot': 'GFS Didot',
+    //    'Gotham': 'Montserrat',
+    //    'Helvetica': 'Helvetica',
+    //    'Libre Franklin': 'Libre Franklin',
+    //    'Maven Pro': 'Maven Pro',
+    //    'Merriweather': 'Merriweather',
+    //    'News Cycle': 'News Cycle',
+    //    'Puritan': 'Puritan',
+    //    'Questrial': 'Questrial',
+    //    'Times-Roman': 'Times',
+    //    'Times': 'Tinos',
+    //    'ZapfDingbats': 'Heebo'
+    //}
     let fontObj = {};
     let Abc = { 0: "normal", 1: "bold", 2: "italic", 3: "bold-italic" };
     if (font !== null) {

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using ExpressBase.Common;
+using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
@@ -51,13 +52,15 @@ namespace ExpressBase.Web.Controllers
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
             ViewBag.rowData = rowData;
+            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
             //ViewBag.ObjectIds = this.LoggedInUser.EbObjectIds;
             return View();
         }
 
-        public string UserControlGetObj(string refid)
+        public string UserControlGetObj(string refid , List<Param> param)
         {
-            GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid });
+            GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid, Param = param });
+
             return JsonConvert.SerializeObject(Resp);
         }
 

@@ -1208,7 +1208,8 @@
         //alt + enter
         if ((event.altKey || event.metaKey) && event.which === 13) {
             if (this.$table.has(document.activeElement).length === 1) {
-                $(document.activeElement).closest(".dgtr").find(".check-row").trigger("click");
+                document.activeElement.blur();
+                this.addRowBtn_click();
             }
         }
     }.bind(this);

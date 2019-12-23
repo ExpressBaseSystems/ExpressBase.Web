@@ -1,4 +1,5 @@
-﻿var DashBoardWrapper = function (options) {
+﻿var grid;
+var DashBoardWrapper = function (options) {
     this.RefId = options.RefId;
     this.Version = options.Version;
     this.ObjType = options.ObjType;
@@ -23,8 +24,10 @@
     }
 
     this.GridStackInit = function () {
-        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
+        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }} );
         this.grid = $('.grid-stack').data("gridstack");
+        this.grid.cellHeight(25);
+        grid = this.grid;
     }
     this.GridStackInit();
 
@@ -207,7 +210,7 @@
 
         if (this.EbObject === null) {
             this.EbObject = new EbObjects.EbDashBoard(`EbDashBoar${Date.now()}`);
-            this.GetFilterValues();
+            this.filterDialogRefid = "";
         }
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
@@ -291,10 +294,10 @@
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
-                    <div style="display:flex" id="">
+                    <div style="display:flex" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
-                    <i class="fa fa-refresh tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
+                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
                     <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
@@ -333,10 +336,10 @@
         let tile_id = "t" + j;
         let t_id = "tile" + j;
         $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
-                    <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
+                    <div style="display:flex;" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
-                    <i class="fa fa-refresh tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
+                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
                     <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
@@ -467,6 +470,7 @@
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
+            $(`#${id}`).addClass("chart-tile-opt");
             var o = {};
             o.tableId = "tb1" + id;
             o.dvObject = obj;
@@ -478,18 +482,21 @@
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
+            let height = $(`#${id}`).height();
             let opts = {
                 parentDiv: '#' + id + '_UserCtrl',
-                refId: obj.RefId
+                refId: obj.RefId,
+                params: this.filtervalues,
+                height: height 
             }
             new EbUserCtrlHelper(opts);
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`#${id} .db-title`).empty();
+            $(`#${id}`).addClass("user-control-tile-opt");
             $(`#${id} .i-opt-obj`).hide();
-            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" })
-            //$(`#${id} .db-title`).parent().css({ "border": "solid 1px #dcdcdc" })
+            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -555,11 +562,9 @@
                         </div>`);
                             myarr.push(Obj.EbObjectType);
                             containers.push(document.getElementById(`${Obj.EbObjectType}`));
-
                         }
                         else {
                             $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
-
                         }
                     }
                 }.bind(this));

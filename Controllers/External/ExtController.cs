@@ -651,7 +651,7 @@ namespace ExpressBase.Web.Controllers
                         { TokenConstants.CID, ViewBag.cid },
                         { "sso", "true" },
                         { TokenConstants.IP, this.RequestSourceIp},
-                        { "useragent", this.UserAgent}
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
                     },
                 });
 
@@ -765,7 +765,7 @@ namespace ExpressBase.Web.Controllers
                             { RoutingConstants.WC, whichconsole },
                             { TokenConstants.CID, tenantid },
                             { TokenConstants.IP, this.RequestSourceIp},
-                            { "useragent", this.UserAgent}
+                            { RoutingConstants.USER_AGENT, this.UserAgent}
                         },
                         RememberMe = true
                         //UseTokenCookie = true
@@ -1078,6 +1078,6 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
-     
+
     }
 }

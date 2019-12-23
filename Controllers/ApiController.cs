@@ -217,9 +217,13 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = (password + username).ToMD5Hash(),
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.MC }, { TokenConstants.CID, this.SultionId } },
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
                     RememberMe = true
-                    //UseTokenCookie = true
                 });
 
                 if (authResponse != null && authResponse.User != null)
@@ -253,9 +257,13 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = password,
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.MC }, { TokenConstants.CID, this.SultionId } },
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
                     RememberMe = true
-                    //UseTokenCookie = true
                 });
 
                 if (authResponse != null && authResponse.User != null)

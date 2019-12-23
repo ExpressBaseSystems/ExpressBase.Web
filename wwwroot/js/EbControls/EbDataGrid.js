@@ -635,15 +635,6 @@
             .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
-    this.getCtrlHTML = function (col, inpCtrl) {// need to look
-        return `<div id='@ebsid@Wraper' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>
-                    ${col.DBareHtml || inpCtrl.BareControlHtml}
-                </div>`
-            .replace("@isReadonly@", col.IsDisable)
-            .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
-            .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
-    };
-
     this.getCogsTdHtml = function (isAnyColEditable) {
         return `@cogs@
                 </tr>`
@@ -706,11 +697,11 @@
         if (!this.ctrl.AscendingOrder)
             this.UpdateSlNo();
         $tr.show(300);
-        this.bindReq_Vali_UniqRow($tr);
         this.setCurRow(rowid);
         let t1 = performance.now();
         this.addRowDataModel(rowid, this.objectMODEL[rowid]);
         let rowCtrls = this.initRowCtrls(rowid, editModeData);
+        this.bindReq_Vali_UniqRow($tr);
         this.updateAggCols();
         console.dev_log("initRowCtrls : took " + (performance.now() - t1) + " milliseconds.");
         return [$tr, rowCtrls];
@@ -753,7 +744,7 @@
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if ($ctrl.length !== 0 && ctrl.Required && !ctrl.isRequiredOK()) {
-            ctrl.AddInvalidStyle();
+            ctrl.addInvalidStyle();
             return false;
         }
         else {

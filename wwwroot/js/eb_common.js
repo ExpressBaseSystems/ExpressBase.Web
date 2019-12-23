@@ -603,7 +603,7 @@ function getSingleColumn(obj) {
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;
-    SingleColumn.R = undefined;
+    SingleColumn.R = [];
     obj.DataVals = SingleColumn;
     obj.curRowDataVals = $.extend(true, {}, SingleColumn);
 
@@ -941,7 +941,6 @@ document.addEventListener("click", function (e) {
         }
     }
 });
-
 
 
 function EBPSSetDisplayMember(p1, p2) {

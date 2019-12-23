@@ -304,14 +304,18 @@ namespace ExpressBase.Web.Controllers
         }
         private bool isAvailSolution()
         {
-            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
-            if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
-                return true;
-            else
+            if (ViewBag.SolutionId != String.Empty && ViewBag.SolutionId != null)
             {
-                RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
-                return res.Status;
+                IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
+                if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
+                    return true;
+                else
+                {
+                    RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
+                    return res.Status;
+                }
             }
+            return false;
         }
 
         public IActionResult UsrSignIn()
@@ -1078,6 +1082,6 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
-     
+
     }
 }

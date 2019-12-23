@@ -63,7 +63,11 @@ namespace ExpressBase.Web.Components
                     }
                     else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
                     {
-                        (control as EbPowerSelect).EbSimpleSelect.InitFromDataBase(this.ServiceClient);
+                        (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);
+                    }
+                    else if (control is EbDGPowerSelectColumn && (control as EbDGPowerSelectColumn).RenderAsSimpleSelect)
+                    {
+                        (control as EbDGPowerSelectColumn).InitFromDataBase_SS(this.ServiceClient);
                     }
                     else if (control is EbDGSimpleSelectColumn)
                     {
@@ -84,11 +88,15 @@ namespace ExpressBase.Web.Components
                                 control.IsDisable = true;
                         }
                     }
-                    else if(control is EbUserSelect)
+                    else if(control is EbUserSelect )
                     {
                         (control as EbUserSelect).InitOptions(WebForm.SolutionObj.Users);
                     }
-                    else if(control is EbTextBox)
+					else if (control is EbDGUserSelectColumn)
+					{
+						(control as EbDGUserSelectColumn).InitOptions(WebForm.SolutionObj.Users);
+					}
+					else if(control is EbTextBox)
                     {
                         (control as EbTextBox).InitFromDataBase(this.ServiceClient);
                     }
@@ -96,6 +104,7 @@ namespace ExpressBase.Web.Components
 					{
 						(control as EbDGStringColumn).InitFromDataBase(this.ServiceClient);
 					}
+
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();

@@ -33,6 +33,28 @@ namespace ExpressBase.Web.BaseControllers
 
         public IHttpContextAccessor httpContextAccessor { get; set; }
 
+        public string RequestSourceIp
+        {
+            get
+            {
+                return this.HttpContext.Request.Headers["X-Real-IP"].Count > 0 ? this.HttpContext.Request.Headers["X-Real-IP"][0] : string.Empty;
+            }
+        }
+
+        public string UserAgent
+        {
+            get
+            {
+                return this.HttpContext.Request.Headers["User-Agent"].Count > 0 ? this.HttpContext.Request.Headers["User-Agent"][0] : string.Empty;
+            }
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+        }
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
@@ -115,25 +137,29 @@ namespace ExpressBase.Web.BaseControllers
 
                 string rSub = rToken.Payload[TokenConstants.SUB].ToString();
                 string bSub = bToken.Payload[TokenConstants.SUB].ToString();
+                string _ip = bToken.Payload[TokenConstants.IP].ToString();
 
-                DateTime startDate = new DateTime(1970, 1, 1);
-                DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
-
-                if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
+                if (this.RequestSourceIp == _ip)
                 {
-                    string[] subParts = rSub.Split(CharConstants.COLON);
+                    DateTime startDate = new DateTime(1970, 1, 1);
+                    DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
 
-                    if (rSub.EndsWith(TokenConstants.TC))
-                        isvalid = true;
-                    else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                    if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
                     {
-                        string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
-                        if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                        string[] subParts = rSub.Split(CharConstants.COLON);
+
+                        if (rSub.EndsWith(TokenConstants.TC))
                             isvalid = true;
-                    }
-                    else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
-                    {
-                        isvalid = true;
+                        else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                        {
+                            string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
+                            if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                                isvalid = true;
+                        }
+                        else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
+                        {
+                            isvalid = true;
+                        }
                     }
                 }
             }

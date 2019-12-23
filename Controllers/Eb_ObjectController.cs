@@ -277,7 +277,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 List<int> types = new List<int>() { 14, 16, 17, 21 };
                 GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
-
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
                 ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
             }
             else if (type.Equals(EbObjectTypes.CalendarView))
@@ -830,6 +830,11 @@ namespace ExpressBase.Web.Controllers
             {
                 versionObj = Redis.Get<EbApi>(_refid);
                 return ViewComponent("ApiBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.MobilePage)
+            {
+                versionObj = Redis.Get<EbMobilePage>(_refid);
+                return ViewComponent("MobilePage", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
             return View();
         }

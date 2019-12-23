@@ -47,6 +47,7 @@
 @*jith*@
 <script type="text/javascript" src="~/js/EbControls/EbDpFormControl.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbItemListControl.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbControls/EbDynamicTab.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbApproval.js" asp-append-version=@bApnd></script>
 @*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
@@ -266,11 +267,6 @@
             $("#iFrameFormOverlay").hide();
     });
 
-    //$("#webformprint").on('click', function () {
-    //    $("#iFramePdf").attr("src", "/WebForm/GetPdfReport");
-    //    $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
-    //});
-
     $("#iFramePdf").on('load', function (evt) {
         try {
             if ($(evt.target).attr("src") !== undefined) {
@@ -312,12 +308,12 @@
                             </select>
                         </div>
     `);
-    header.insertButton(`<button id="webformprint" class='btn' title='Print' style='display: none;'><i class="fa fa-print" aria-hidden="true"></i></button>`);
-    //header.insertButton(`<div id="webformprint-selbtn" style='' class="btn-select btn">
-    //                        <button id="webformprint" class="savebtn" title="Print"><i class="fa fa-print" aria-hidden="true"></i></button>
-    //                        <select class="selectpicker"></select>
-    //                    </div>
-    //`);
+    //header.insertButton(`<button id="webformprint" class='btn' title='Print' style='display: none;'><i class="fa fa-print" aria-hidden="true"></i></button>`);
+    header.insertButton(`<div id="webformprint-selbtn" style='display: none;' class="btn-select btn">
+                            <button id="webformprint" class="savebtn" title="Print"><i class="fa fa-print" aria-hidden="true"></i></button>
+                            <select class="selectpicker"></select>
+                        </div>
+    `);
 
     header.insertButton(`<button id="webformaudittrail" class="btn" title="Audit Trail" style='display: none;'><i class="fa fa-history" aria-hidden="true"></i></button>`)
 
@@ -334,6 +330,7 @@
 
     //to store refids of uploaded files via all fileuploader ctrls
     let uploadedFileRefList = {};
+    let DynamicTabPane = function() { console.log('Not Implemented');};
 
     $("#layout_div").addClass("for-modal-blur");
     //$("#webformaudittrail").on("click", function () {

@@ -54,24 +54,23 @@ namespace ExpressBase.Web2.Controllers
             if (Resp.DashBoardObjectIds.Count != 0)
             {
                 ViewBag.ObjType = 22;
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
+                ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                });
+
                 if (this.LoggedInUser.Preference.DefaultDashBoard != null)
                 {
-                    ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All
-                    });
-
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
                     ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;
                     ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId);
                     ViewBag.Status = ViewBag.GetObjectId.Status;
                 }
                 else
-                {
-                    ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds);
+                {  
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds.ElementAt(0);
                     ViewBag.VersionNumber = ViewBag.GetObjectId.Value.VersionNumber;
-
                     ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId.Value);
                     ViewBag.Status = ViewBag.GetObjectId.Value.Status;
                     //ViewBag.DashBoardObjects = Resp.DashBoardObjectIds;

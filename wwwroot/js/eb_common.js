@@ -61,7 +61,7 @@
             return style;
         }
     };
-} )(jQuery);
+})(jQuery);
 
 console.eb_log = function (msg, color = "rgb(19, 0, 78)", bgcolor) {
     console.log(`%c${msg}`, `color:${color};
@@ -260,6 +260,25 @@ function getEbObjectTypes() {
     return Eb_ObjectTypes;
 }
 
+function EbAddInvalidStyle(msg, type) {
+    if (this.ObjType === "PowerSelect" && !this.RenderAsSimpleSelect)
+        EbMakeInvalid(`#${this.EbSid_CtxId}Container`, `#${this.EbSid_CtxId}Wraper`, msg, type);
+    else
+        EbMakeInvalid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function EbRemoveInvalidStyle() {
+    EbMakeValid(`#cont_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
+function DGaddInvalidStyle(msg, type) {
+    EbMakeInvalid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`, msg, type);
+}
+
+function DGremoveInvalidStyle() {
+    EbMakeValid(`#td_${this.EbSid_CtxId}`, `.ctrl-cover`);
+}
+
 
 function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
     let shadowColor = "rgb(174, 0, 0)";
@@ -418,6 +437,47 @@ function JsonToEbControls(ctrlsContainer) {
     });
 };
 
+function getControlsUnderTable(container, tableName) {
+    let coll = [];
+    RecurGetControlsUnderTable(container, coll, tableName);
+    return coll;
+
+}
+
+function RecurGetControlsUnderTable(src_obj, dest_coll, tableName) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        if (obj.IsContainer) {
+            RecurGetControlsUnderTable(obj, dest_coll, tableName);
+
+        }
+        else if (src_obj.TableName === tableName && !src_obj.IsSpecialContainer)
+            dest_coll.push(obj);
+    });
+}
+
+//function getTableNames(container, dest_coll) {
+//    let tableNames = [];
+//    if (container.TableName)
+//    dest_coll.push(container.TableName);
+//    recurGetTableNames(container, tableNames);
+//    return tableNames;
+//}
+
+//function recurGetTableNames(container, dest_coll) {
+//    for (let i = 0; i < container.Controls.$values.length; i++) {
+//        let ctrl = container.Controls[i];
+//        if (ctrl.IsContainer) {
+//            if (ctrl.IsSpecialContainer)
+//                continue;
+//            else {
+//                dest_coll.push(container.TableName);
+//                recurGetTableNames(container, dest_coll);
+//            }
+//        }
+//        else
+//            return;
+//    }
+//}
 
 function getFlatContControls(formObj) {
     let coll = [];
@@ -487,7 +547,6 @@ function getValsFromForm(formObj) {
         //    flag++;
     });
     if (flag > 0) {
-        console.log(111);
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
@@ -539,9 +598,16 @@ function getValsForViz(formObj) {
 function getSingleColumn(obj) {
     let SingleColumn = {};
     SingleColumn.Name = obj.Name;
-    SingleColumn.Value = obj.getValue();
     SingleColumn.Type = obj.EbDbType;
-    SingleColumn.AutoIncrement = obj.AutoIncrement || false;
+    SingleColumn.Value = "";
+    //SingleColumn.ObjType = obj.ObjType;
+    SingleColumn.D = "";
+    SingleColumn.C = undefined;
+    SingleColumn.R = undefined;
+    obj.DataVals = SingleColumn;
+    obj.curRowDataVals = $.extend(true, {}, SingleColumn);
+
+    //SingleColumn.AutoIncrement = obj.AutoIncrement || false;
     return SingleColumn;
 }
 
@@ -699,4 +765,243 @@ var EbTags = function (settings) {
     };
 
     this.show();
+};
+
+function getRow__(__this) {
+    return $(`[ebsid='${__this.__DG.EbSid}'] tr[rowid='${__this.__rowid}']`)
+}
+
+function dgOnChangeBind() {
+    $.each(this.Controls.$values, function (i, col) {
+        if ((col.OnChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '') || col.DependedValExp.$values.length > 0) {
+            let FnString = atob(col.OnChangeFn.Code) + (col.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(form.__getCtrlByPath(this.__path))` : '');
+            let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+            col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+        }
+    }.bind(this));
+}
+
+function dgEBOnChangeBind() {
+    $.each(this.Controls.$values, function (i, col) {// need change
+        let FnString = `
+                        let __this = form.__getCtrlByPath(this.__path);
+                        let $curRow = getRow__(__this);
+                        if(__this.DataVals !== undefined){
+                            if(__this.__isEditing){
+                                __this.curRowDataVals.Value = __this.getValueFromDOM();
+                                __this.curRowDataVals.D = __this.getDisplayMemberFromDOM();
+                            }
+                            else{
+                                __this.DataVals.Value = __this.getValueFromDOM();
+                                __this.DataVals.D = __this.getDisplayMemberFromDOM();
+                            }
+                        }`;
+        let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+
+        col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
+    }.bind(this));
+
+
+}
+
+function justSetDate_EB(p1, p2) {
+    if (this.IsNullable && p1 !== null)
+        $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
+    if (p1 !== null && p1 !== undefined) {
+        if (this.ShowDateAs_ === 1) //month picker
+            $('#' + this.EbSid_CtxId).val(p1);
+        else if (this.EbDateType === 5) //Date
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD').format(ebcontext.user.Preference.ShortDatePattern));
+        else if (this.EbDateType === 6) //DateTime
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD HH:mm:ss').format(ebcontext.user.Preference.ShortDatePattern + ' ' + ebcontext.user.Preference.ShortTimePattern));
+        else if (this.EbDateType === 17) //Time
+            $('#' + this.EbSid_CtxId).val(moment(p1, 'HH:mm:ss').format(ebcontext.user.Preference.ShortTimePattern));
+        $('#' + this.EbSid_CtxId).trigger('change');
+    }
+    else
+        $('#' + this.EbSid_CtxId).val('');
+}
+
+function setDate_EB(p1, p2) {
+    justSetDate_EB.bind(this)(p1, p2);
+    if (p1 !== null && p1 !== undefined) {
+        $('#' + this.EbSid_CtxId).trigger('change');
+    }
+}
+
+function removePropsOfType(Obj, type = "function") {
+    for (var Key in Obj) {
+        if (typeof Obj[Key] === type) {
+            delete Obj[Key];
+        }
+    }
+    return Obj;
+}
+
+function REFF_attachModalCellRef(MultipleTables) {
+    let keys = Object.keys(MultipleTables);
+    for (var i = 0; i < keys.length; i++) {
+        let tableName = keys[i];
+        let table = MultipleTables[tableName];
+
+        for (var j = 0; j < table.length; j++) {
+            let row = table[j];
+            for (var k = 0; k < row.Columns.length; k++) {
+                let SingleColumn = row.Columns[k];
+                obj.DataVals = SingleColumn;
+            }
+        }
+    }
+}
+
+
+function attachModalCellRef_form(container, multipleTable) {
+    $.each(container.Controls.$values, function (i, obj) {
+        if (obj.IsSpecialContainer)
+            return true;
+        if (obj.IsContainer) {
+            obj.TableName = (typeof obj.TableName === "string") ? obj.TableName.trim() : false;
+            obj.TableName = obj.TableName || container.TableName;
+            attachModalCellRef_form(obj, multipleTable);
+        }
+        else {
+            setSingleColumnRef(container.TableName, obj.Name, multipleTable, obj);
+        }
+    });
+}
+
+function setSingleColumnRef(TableName, ctrlName, MultipleTables, obj) {
+    if (MultipleTables.hasOwnProperty(TableName)) {
+        let table = MultipleTables[TableName];
+        for (var i = 0; i < table.length; i++) {
+            let row = table[i];
+            let SingleColumn = getObjByval(row.Columns, "Name", ctrlName);
+            if (SingleColumn) {
+                obj.DataVals = SingleColumn;
+                return;
+            }
+        }
+    }
+}
+
+
+
+//code review ......to hide dropdown on click outside dropdown
+document.addEventListener("click", function (e) {
+
+
+    let par_ebSid = "";
+    let ebSid_CtxId = "";
+    let container = "";
+    //to check select click is on datagrid
+    if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid")) {
+        //initial click of select
+        if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid")) {
+            par_ebSid = $(e.target).closest(".dropdown").find("select").attr("name");
+            ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+            container = $('.dd_of_' + par_ebSid);
+        }
+        //item selection click in select
+        else {
+            par_ebSid = $(e.target).closest(".dropdown").attr("par_ebsid");
+            ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+            container = $('.dd_of_' + par_ebSid);
+        }
+    }
+    //if select is not in datagrid ...ie,outside datagrid
+    else {
+        par_ebSid = $(e.target).closest('[ebsid]').attr("ebsid");
+        ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
+        container = $('.dd_of_' + ebSid_CtxId);
+    }
+
+    //to close opend select on click of another select
+    if ((($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+        //  container.closest('[detch_select=true]').removeClass("open");
+        if ($(".detch_select").hasClass("open")) {
+            $(".detch_select").removeClass("open");
+            $(`#${par_ebSid}`).selectpicker('toggle');
+            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        }
+        else {
+            $(`#${par_ebSid}`).selectpicker('toggle');
+            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        }
+    }
+    //to close dropdown on ouside click of dropdown
+    if (!((($(e.target).closest('[detch_select=true]').attr('detch_select')) == "true") || ($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+        $(".detch_select").removeClass("open");
+    }
+
+    if ((($(e.target).closest('[MultiSelect]').attr("MultiSelect")) == "false") || (($(e.target).closest('[objtype]').attr("objtype")) == 'SimpleSelect') || (($(e.target).closest('[objtype]').attr("objtype")) == 'BooleanSelect')) {
+        if (!(($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
+            container.closest('[detch_select=true]').removeClass("open");
+
+        }
+    }
+});
+
+function EBPSGetColummn(colName) {
+    return this.DataVals.R[colName];
+}
+
+function EBPSSetDisplayMember(p1, p2) {
+    if (p1 === '')
+        return;
+    let VMs = this.initializer.Vobj.valueMembers || [];
+    let DMs = this.initializer.Vobj.displayMembers || [];
+    let columnVals = this.initializer.columnVals || {};
+
+    if (VMs.length > 0)// clear if already values there
+        this.initializer.clearValues();
+
+    let valMsArr = p1.split(',');
+
+    for (let i = 0; i < valMsArr.length; i++) {
+        let vm = valMsArr[i];
+        VMs.push(vm);
+        for (let j = 0; j < this.initializer.dmNames.length; j++) {
+            let dmName = this.initializer.dmNames[j];
+            if (!DMs[dmName])
+                DMs[dmName] = []; // dg edit mode call
+            DMs[dmName].push(this.DataVals.D[vm][dmName]);
+        }
+    }
+
+    if (this.initializer.datatable === null) {//for aftersave actions
+
+
+        for (var i = 0; i < this.DataVals.R.length; i++) {
+            let row = this.DataVals.R[i];
+            $.each(row.Columns, function (k, column) {
+                if (!columnVals[column.Name]) {
+                    console.warn('Found mismatch in Columns from datasource and Colums in object');
+                    return true;
+                }
+                let val = EbConvertValue(column.Value, column.Type);
+                columnVals[column.Name].push(val);
+            }.bind(this));
+
+        }
+    }
+    $("#" + this.EbSid_CtxId).val(p1);
+}
+
+
+function getEbFormatedPSRows(ctrl) {
+    if (!ctrl.DataVals.Value)
+        return {};
+    let rows = ctrl.DataVals.R;
+    let columnVals = {};
+    for (let i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        for (let j = 0; j < row.Columns.length; j++) {
+            let column = row.Columns[j];
+            if (!columnVals[column.Name])
+                columnVals[column.Name] = [];
+            columnVals[column.Name].push(column.Value);
+        }
+    }
+    return columnVals;
 }

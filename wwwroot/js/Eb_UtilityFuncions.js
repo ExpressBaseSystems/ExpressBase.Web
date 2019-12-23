@@ -58,14 +58,18 @@ function isAllValuesTrue(Obj) {
     return all_true;
 }
 
-function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
+function getValueExprValue(ctrl, formObject, userObject) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code) {
         let fun = new Function("form", "user", `event`, atob(ctrl.ValueExpr.Code)).bind(ctrl, formObject, userObject);
         let val = fun();
         val = EbConvertValue(val, ctrl.ObjType);
-
-        valueExpHelper(val, ctrl, updateSpan);
+        return val;
     }
+}
+
+function EbRunValueExpr(ctrl, formObject, userObject, formObj) {
+    if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
+        return valueExpHelper(getValueExprValue(ctrl, formObject, userObject), ctrl);
     else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
         let params = [];
 
@@ -86,24 +90,20 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj, updateSpan) {
             }
         }.bind(this));
 
-        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl, updateSpan);
+        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
     }
 }
 
-function valueExpHelper(val, ctrl, updateSpan) {
-    val = EbConvertValue(val, ctrl.ObjType);
-    ctrl.__eb_ValueExpr_val = val;
-
-    if (ctrl.__eb_EditMode_val && ctrl.__eb_EditMode_val !== ctrl.__eb_ValueExpr_val) {
-        //ctrl.setValue(ctrl.__eb_EditMode_val);
+function valueExpHelper(val, ctrl) {
+    ctrl.DataVals.ValueExpr_val = val;
+    let isdifferentValue = ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val;
+    if (isdifferentValue)
         console.warn(`edit mode value and valueExpression value are different for '${ctrl.Name}' control`);
-    }
     else {
-        if (ctrl.__eb_ValueExpr_val)
-            ctrl.setValue(ctrl.__eb_ValueExpr_val);
+        if (ctrl.DataVals.ValueExpr_val)
+            ctrl.setValue(ctrl.DataVals.ValueExpr_val);
     }
-    if (updateSpan)
-        $(`#td_${ctrl.EbSid_CtxId} .tdtxt>span`).text(ctrl.__eb_ValueExpr_val);
+    return ctrl.DataVals.ValueExpr_val;
 }
 
 function showLoader4webform() {
@@ -114,10 +114,9 @@ function hideLoader4webform() {
     $("#eb_common_loader").EbLoader("hide");
 }
 
-function ExecQuery(refId, ctrlName, params, ctrl, updateSpan) {
+function ExecQuery(refId, ctrlName, params, ctrl) {
     showLoader4webform();
     var _ctrl = ctrl;
-    var _updateSpan = updateSpan;
     $.ajax({
         type: "POST",
         //url: this.ssurl + "/bots",
@@ -136,7 +135,7 @@ function ExecQuery(refId, ctrlName, params, ctrl, updateSpan) {
         //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
         //}.bind(this),
         success: function (_respObjStr) {
-            valueExpHelper(_respObjStr, _ctrl, _updateSpan);
+            valueExpHelper(_respObjStr, _ctrl);
             hideLoader4webform();
         }
     });
@@ -279,10 +278,80 @@ function ItemCount(array, item) {
     }
     return count;
 }
-
+//need to move to form
 function dateDisplayNone() {
-    document.addEventListener('scroll', function (e)
-    {
+    document.addEventListener('scroll', function (e) {
         $('.xdsoft_datetimepicker').css("display", "none");
     }, true);
+}
+function getObjCopy4PS(Obj) {
+    let newObj = {};
+    $.extend(true, newObj, Obj);
+    let keys = Object.keys(newObj);
+    for (var i = 0; i < keys.length; i++) {
+        if (typeof Obj[keys[i]] === "function")
+            delete newObj[keys[i]];
+    }
+    return newObj;
+}
+
+function getEbFontStyleObject(font) {
+    //let GfontsList = {
+    //    'Arapey': 'Arapey',
+    //    'Arvo': 'Arvo',
+    //    'Baskerville': 'Libre Baskerville',
+    //    'Bentham': 'Bentham',
+    //    'Cabin Condensed': 'Cabin Condensed',
+    //    'Century Gothic': 'Didact Gothic',
+    //    'Courier': 'Courier > Courier',
+    //    'Crimson Text': 'Crimson Text',
+    //    'EB Garamond': 'EB Garamond',
+    //    'GFS Didot': 'GFS Didot',
+    //    'Gotham': 'Montserrat',
+    //    'Helvetica': 'Helvetica',
+    //    'Libre Franklin': 'Libre Franklin',
+    //    'Maven Pro': 'Maven Pro',
+    //    'Merriweather': 'Merriweather',
+    //    'News Cycle': 'News Cycle',
+    //    'Puritan': 'Puritan',
+    //    'Questrial': 'Questrial',
+    //    'Times-Roman': 'Times',
+    //    'Times': 'Tinos',
+    //    'ZapfDingbats': 'Heebo'
+    //}
+    let fontObj = {};
+    let Abc = { 0: "normal", 1: "bold", 2: "italic", 3: "bold-italic" };
+    if (font !== null) {
+        fontObj['font-family'] = font.FontName;
+        fontObj['font-size'] = font.Size;
+        fontObj['color'] = font.color;
+        if (Abc[font.Style] === "bold") {
+            fontObj['font-weight'] = Abc[font.Style];
+        }
+        else if (Abc[font.Style] === "italic") {
+            fontObj['font-style'] = Abc[font.Style];
+        }
+        else if (Abc[font.Style] === "bold-italic") {
+            fontObj['font-style'] = "italic";
+            fontObj['font-weight'] = "bold";
+        }
+        if (font.Caps === true) {
+            fontObj['text-transform'] = "uppercase";
+        }
+        if (font.Strikethrough === true) {
+            fontObj['text-decoration'] = "line-through";
+        }
+        if (font.Underline === true) {
+            fontObj['text-decoration'] = "underline";
+        }
+
+    }
+    return fontObj;
+
+}
+
+if (!Array.prototype.clear) {
+    Array.prototype.clear = function () {
+        this.splice(0, this.length);
+    };
 }

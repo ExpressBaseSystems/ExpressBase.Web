@@ -335,6 +335,44 @@ var DvContainerObj = function (settings) {
                 $("#eb_common_loader").EbLoader("hide");
                 $("#obj_icons .btn").prop("disabled", false);
             }
+            else if (this.dvRefid.split("-")[2] === "22") {
+                let url = "../DashBoard/DashBoardView?refid=" + this.dvRefid;
+
+                let _form = document.createElement("form");
+                _form.setAttribute("method", "post");
+                _form.setAttribute("action", url);
+                _form.setAttribute("target", "_blank");
+
+                let input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = "rowData";
+
+                input.value = this.rowData;
+                _form.appendChild(input);
+
+                let input1 = document.createElement('input');
+                input1.type = 'hidden';
+                input1.name = "filterValues";
+                input1.value = this.filterValues;
+                _form.appendChild(input1);
+
+                let input2 = document.createElement('input');
+                input2.type = 'hidden';
+                input2.name = "tabNum";
+                input2.value = this.tabNum;
+                _form.appendChild(input2);
+
+                document.body.appendChild(_form);
+
+                //note I am using a post.htm page since I did not want to make double request to the page 
+                //it might have some Page_Load call which might screw things up.
+                //window.open("post.htm", name, windowoption);       
+                _form.submit();
+                document.body.removeChild(_form);
+                $("#eb_common_loader").EbLoader("hide");
+                $("#obj_icons .btn").prop("disabled", false);
+
+            }
             else {
                 $.ajax({
                     type: "POST",

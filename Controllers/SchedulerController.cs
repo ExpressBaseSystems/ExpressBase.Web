@@ -5,6 +5,7 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Scheduler.Jobs;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -22,30 +23,58 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        public IActionResult SchedulelistCall(int obj)
+        {
+            return ViewComponent("SchedulerListing", new { objid = obj });
+        }
+
         [HttpPost]
-        public void Schedule(string name, string expression, int objId, JobTypes type, string users, string groups, string cronstring)
+        public void Schedule(string name, string expression, int objId, JobTypes type, string message, string users, string groups, string cronstring/*, int _delMechanism*/)
         {
             List<Param> _param = new List<Param> { new Param { Name = "FromDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString("yyyy-MM-dd") },
             new Param{ Name = "ToDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() } };
 
-            EbTask task = new EbTask
-            {
-                Name = name,
-                Expression = expression,
-                JobType = type,
-                CronString = cronstring,
-                JobArgs = new EbJobArguments
+           
+                EbTask task = new EbTask
                 {
-                    Params = _param,
-                    ObjId = objId,
-                    SolnId = ViewBag.cid,
-                    UserId = ViewBag.UId,
-                    UserAuthId = ViewBag.UAuthId,
-                    ToUserIds = users,
-                    ToUserGroupIds = groups
-                }
-            };
-            var ds = this.ServiceClient.Post(new ScheduleMQRequest { Task = task });
+                    Name = name,
+                    Expression = expression,
+                    JobType = type,
+                    CronString = cronstring,
+                    JobArgs = new EbJobArguments
+                    {
+                        Params = _param,
+                        ObjId = objId,
+                        SolnId = ViewBag.cid,
+                        UserId = ViewBag.UId,
+                        UserAuthId = ViewBag.UAuthId,
+                        ToUserIds = users,
+                        ToUserGroupIds = groups,
+                        Message = message
+                    }
+                };
+                this.ServiceClient.Post(new ScheduleMQRequest { Task = task });
+
+            //EbTask task = new EbTask
+            //{
+            //    Name = name,
+            //    Expression = expression,
+            //    JobType = type,
+            //    CronString = cronstring,
+            //    JobArgs = new EbJobArguments
+            //    {
+            //        Params = _param,
+            //        ObjId = objId,
+            //        SolnId = ViewBag.cid,
+            //        UserId = ViewBag.UId,
+            //        UserAuthId = ViewBag.UAuthId,
+            //        ToUserIds = users,
+            //        ToUserGroupIds = groups,
+            //        Message = message,
+            //        DeliveryMechanisms = (DeliveryMechanisms)_delMechanism,
+            //    }
+            //};
+            //var ds = this.ServiceClient.Post(new ScheduleMQRequest { Task = task });
         }
 
         [HttpGet]
@@ -71,6 +100,13 @@ namespace ExpressBase.Web.Controllers
         {
             DeleteJobMQResponse ds = this.ServiceClient.Post(new DeleteJobMQRequest { JobKey = jobkey, Id = id });
 
+        }
+
+        [HttpPost]
+        public string GetUser_Group()
+        {
+            GetAllUsersResponse res = this.ServiceClient.Get<GetAllUsersResponse>(new GetAllSlackRequest());
+            return JsonConvert.SerializeObject(res);
         }
     }
 }

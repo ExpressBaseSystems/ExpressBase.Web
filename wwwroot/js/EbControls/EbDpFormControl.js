@@ -96,7 +96,12 @@ class DisplayPictureControl {
         this.Multiple = this.Options.Multiple ? "multiple" : "";
         this.init();
 
-        $.extend(ctrl, { getValue: this.GetValue.bind(ctrl), setValue: this.SetValue.bind(ctrl) });
+        $.extend(ctrl, {
+            getValue: this.GetValue.bind(ctrl),
+            setValue: this.SetValue.bind(ctrl),
+            refresh: this.Refresh.bind(ctrl),
+            clear: this.Clear.bind(ctrl)
+        });
     }
 
     init() {
@@ -407,10 +412,15 @@ class DisplayPictureControl {
         else
             return '';
     }
-
     SetValue(p1) {
         this._fileRefids = p1.split(',');
         $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).attr('src', `/images/${this._fileRefids[0]}.jpg`);
         $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).css('opacity', `1`);
+    }
+    Refresh() {
+
+    }
+    Clear() {
+
     }
 }

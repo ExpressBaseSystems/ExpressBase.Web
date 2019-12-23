@@ -640,18 +640,18 @@
         }
 
 
-        if (ObjType === "WebForm" && CurProp === "DataPushers") {
-            $.LoadingOverlay('show');
-            $.ajax({
-                type: "POST",
-                url: "../WebForm/GetDataPusherJson",
-                data: { RefId: PropsObj.DataPushers.$values[0].FormRefId },
-                success: function (Json) {
-                    console.log(Json);
-                    $.LoadingOverlay('hide');
-                }.bind(this)
-            });
-        }
+        //if (ObjType === "WebForm" && CurProp === "DataPushers") {
+        //    $.LoadingOverlay('show');
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "../WebForm/GetDataPusherJson",
+        //        data: { RefId: PropsObj.DataPushers.$values[0].FormRefId },
+        //        success: function (Json) {
+        //            console.log(Json);
+        //            $.LoadingOverlay('hide');
+        //        }.bind(this)
+        //    });
+        //}
 
 
     }.bind(this);

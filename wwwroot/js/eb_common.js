@@ -598,13 +598,14 @@ function getValsForViz(formObj) {
 function getSingleColumn(obj) {
     let SingleColumn = {};
     SingleColumn.Name = obj.Name;
-    SingleColumn.Value = obj.getValue();
     SingleColumn.Type = obj.EbDbType;
+    SingleColumn.Value = "";
     //SingleColumn.ObjType = obj.ObjType;
-    SingleColumn.D = undefined;
+    SingleColumn.D = "";
     SingleColumn.C = undefined;
     SingleColumn.R = undefined;
     obj.DataVals = SingleColumn;
+    obj.curRowDataVals = $.extend(true, {}, SingleColumn);
 
     //SingleColumn.AutoIncrement = obj.AutoIncrement || false;
     return SingleColumn;
@@ -793,7 +794,7 @@ function dgEBOnChangeBind() {
                             }
                             else{
                                 __this.DataVals.Value = __this.getValueFromDOM();
-                                __this.DataVals.D = __this.getDisplayMember();
+                                __this.DataVals.D = __this.getDisplayMemberFromDOM();
                             }
                         }`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
@@ -851,9 +852,6 @@ function REFF_attachModalCellRef(MultipleTables) {
                 obj.DataVals = SingleColumn;
             }
         }
-
-
-
     }
 }
 
@@ -943,6 +941,10 @@ document.addEventListener("click", function (e) {
         }
     }
 });
+
+function EBPSGetColummn(colName) {
+    return this.DataVals.R[colName];
+}
 
 function EBPSSetDisplayMember(p1, p2) {
     if (p1 === '')

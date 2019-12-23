@@ -169,13 +169,7 @@ namespace ExpressBase.Web.BaseControllers
             List<EbLocation> list = new List<EbLocation>();
             try
             {
-                Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", contrlr.ViewBag.cid));
-
-                if (s_obj == null)
-                {
-                    this.ServiceClient.Post(new UpdateSolutionRequest() { SolnId = contrlr.ViewBag.cid });
-                    s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", contrlr.ViewBag.cid));
-                }
+                Eb_Solution s_obj = GetSolutionObject(contrlr.ViewBag.cid); 
                 if (this.LoggedInUser.LocationIds.Contains(-1) || this.LoggedInUser.Roles.Contains("SolutionAdmin"))
                     list = s_obj.Locations.Values.ToList();
                 else

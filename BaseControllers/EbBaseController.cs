@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +54,13 @@ namespace ExpressBase.Web.BaseControllers
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
             this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+        }
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+            this.MqClient = _mqc as EbMqClient;
         }
 
         public EbBaseController(IServiceClient _ssclient)
@@ -216,10 +225,27 @@ namespace ExpressBase.Web.BaseControllers
 
         public string GetIsolutionId(string esid)
         {
+            string solnId = string.Empty;
             if (this.Redis != null)
-                return this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
-            else
-                return string.Empty;
+                solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+            if (solnId == null || solnId == string.Empty)
+            {
+                this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest());
+                solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+            }
+            return solnId;
+        }
+
+        public Eb_Solution GetSolutionObject(string cid)
+        {
+            Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+
+            if (s_obj == null)
+            {
+                this.ServiceClient.Post(new UpdateSolutionObjectRequest() { SolnId = cid });
+                s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+            }
+            return s_obj;
         }
     }
 }

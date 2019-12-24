@@ -3,6 +3,7 @@ using ExpressBase.Common.Data;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
@@ -28,6 +29,9 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SqlJobConsole()
         {
+            List<int> types = new List<int>() { 26 };
+            GetAllLiveObjectsResp Result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
+            ViewBag.SqlJobObject = JsonConvert.SerializeObject(Result.Data);
             return View();
         }
         public SqlJobsListGetResponse Get_Jobs_List(string Refid , string Date)

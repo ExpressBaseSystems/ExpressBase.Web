@@ -545,7 +545,10 @@ const WebFormRender = function (option) {
             respObj.FormData = JSON.parse(respObj.FormData);
             let locName = ebcontext.locations.CurrentLocObj.LongName;
             let formName = this.FormObj.DisplayName;
-            EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+            if (this.rowId > 0)
+                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+            else
+                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
             this.rowId = respObj.RowId;
             this.EditModeFormData = respObj.FormData.MultipleTables;
             this.DataMODEL = this.EditModeFormData;

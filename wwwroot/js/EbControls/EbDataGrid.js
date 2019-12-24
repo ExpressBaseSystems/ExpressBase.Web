@@ -298,10 +298,10 @@
         if (col.RenderAsSimpleSelect)
             return this.getSSDispMembrs(cellObj, rowId, col);
 
-        if (!cellObj.Value)
+        if (!cellObj.Value && cellObj.Value !== 0)
             return "";
 
-        let valMsArr = cellObj.Value.split(',');
+        let valMsArr = cellObj.Value.toString().split(',');
         let textspn = "";
 
         for (let i = 0; i < valMsArr.length; i++) {
@@ -320,11 +320,13 @@
     };
 
     this.getSSDispMembrs = function (cellObj, rowId, col) {
+        if (!cellObj.Value && cellObj.Value !== 0)
+            return "";
         let opts = col.Options.$values;
         let val;
         for (var i = 0; i < opts.length; i++) {
             let opt = opts[i];
-            if (opt.Value === cellObj.Value)
+            if (opt.Value === cellObj.Value.toString())
                 val = opt.DisplayName;
         }
         return val === undefined ? "" : val;

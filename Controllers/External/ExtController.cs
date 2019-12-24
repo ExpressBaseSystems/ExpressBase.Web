@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects.Helpers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -35,7 +36,7 @@ namespace ExpressBase.Web.Controllers
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc) : base(_client, _redis, _cxtacc) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc) : base(_client, _redis, _cxtacc, _mqc) { }
 
         [HttpPost]
         [EnableCors("AllowSpecificOrigin")]
@@ -303,11 +304,18 @@ namespace ExpressBase.Web.Controllers
         }
         private bool isAvailSolution()
         {
-            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
-            if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
-                return true;
-            else
-                return false;
+            if (ViewBag.SolutionId != String.Empty && ViewBag.SolutionId != null)
+            {
+                IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
+                if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
+                    return true;
+                else
+                {
+                    RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
+                    return res.Status;
+                }
+            }
+            return false;
         }
 
         public IActionResult UsrSignIn()
@@ -647,7 +655,7 @@ namespace ExpressBase.Web.Controllers
                         { TokenConstants.CID, ViewBag.cid },
                         { "sso", "true" },
                         { TokenConstants.IP, this.RequestSourceIp},
-                        { "useragent", this.UserAgent}
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
                     },
                 });
 
@@ -752,8 +760,7 @@ namespace ExpressBase.Web.Controllers
                 try
                 {
                     string tenantid = ViewBag.cid;
-                    var authClient = this.ServiceClient;
-                    authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                    authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],
@@ -762,7 +769,7 @@ namespace ExpressBase.Web.Controllers
                             { RoutingConstants.WC, whichconsole },
                             { TokenConstants.CID, tenantid },
                             { TokenConstants.IP, this.RequestSourceIp},
-                            { "useragent", this.UserAgent}
+                            { RoutingConstants.USER_AGENT, this.UserAgent}
                         },
                         RememberMe = true
                         //UseTokenCookie = true
@@ -1075,6 +1082,6 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
-     
+
     }
 }

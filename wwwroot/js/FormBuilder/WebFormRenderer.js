@@ -462,7 +462,7 @@ const WebFormRender = function (option) {
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
 
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
-        $.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getMultipleTables()));
+        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getMultipleTables()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
 
@@ -545,7 +545,10 @@ const WebFormRender = function (option) {
             respObj.FormData = JSON.parse(respObj.FormData);
             let locName = ebcontext.locations.CurrentLocObj.LongName;
             let formName = this.FormObj.DisplayName;
-            EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+            if (this.rowId > 0)
+                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+            else
+                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
             this.rowId = respObj.RowId;
             this.EditModeFormData = respObj.FormData.MultipleTables;
             this.DataMODEL = this.EditModeFormData;
@@ -702,7 +705,7 @@ const WebFormRender = function (option) {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
-        this.DynamicTabObject.switchToViewMode();
+        //this.DynamicTabObject.switchToViewMode();
     };
 
     this.SwitchToEditMode = function () {
@@ -723,7 +726,7 @@ const WebFormRender = function (option) {
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
         }.bind(this));
-        this.DynamicTabObject.switchToEditMode();
+        //this.DynamicTabObject.switchToEditMode();
     };
 
     this.BeforeModeSwitch = function (newMode) {

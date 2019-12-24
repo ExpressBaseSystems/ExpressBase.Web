@@ -105,7 +105,7 @@ const EbSelect = function (ctrl, options) {
             $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-            this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+            $('#' + this.name + 'Wraper' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
             this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox

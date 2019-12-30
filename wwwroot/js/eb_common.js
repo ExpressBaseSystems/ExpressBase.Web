@@ -505,6 +505,23 @@ function RecurFlatContControls(src_obj, dest_coll) {
     });
 }
 
+
+function getAllctrlsFrom(formObj) {
+    let coll = [];
+    coll.push(formObj);
+    RecurgetAllctrlsFrom(formObj, coll);
+    return coll;
+}
+
+function RecurgetAllctrlsFrom(src_obj, dest_coll) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        dest_coll.push(obj);
+        if (obj.IsContainer) {
+            RecurgetAllctrlsFrom(obj, dest_coll);
+        }
+    });
+}
+
 function getFlatCtrlObjs(formObj) {
     let coll = [];
     RecurFlatCtrlObjs(formObj, coll);
@@ -785,18 +802,23 @@ function dgOnChangeBind() {
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
         let FnString = `
-                        let __this = form.__getCtrlByPath(this.__path);
-                        let $curRow = getRow__(__this);
-                        if(__this.DataVals !== undefined){
-                            if(__this.__isEditing){
-                                __this.curRowDataVals.Value = __this.getValueFromDOM();
-                                __this.curRowDataVals.D = __this.getDisplayMemberFromDOM();
-                            }
-                            else{
-                                __this.DataVals.Value = __this.getValueFromDOM();
-                                __this.DataVals.D = __this.getDisplayMemberFromDOM();
-                            }
-                        }`;
+let __this = form.__getCtrlByPath(this.__path);
+let $curRow = getRow__(__this);
+if (__this.DataVals !== undefined) {
+    let v = __this.getValueFromDOM();
+    let d = __this.getDisplayMemberFromDOM();
+    if (__this.ObjType === 'Numeric')
+        v = parseFloat(v);
+
+    if (__this.__isEditing) {
+        __this.curRowDataVals.Value = v;
+        __this.curRowDataVals.D = d;
+    }
+    else {
+        __this.DataVals.Value = v;
+        __this.DataVals.D = d;
+    }
+}`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
         col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);

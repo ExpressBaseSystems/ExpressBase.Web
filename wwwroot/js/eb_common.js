@@ -559,6 +559,8 @@ function getValsFromForm(formObj) {
     let fltr_collection = [];
     let flag = 1;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
+        if (obj.ObjType === "FileUploader")
+            return;
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
         //if (obj.ObjType === "PowerSelect")
         //    flag++;

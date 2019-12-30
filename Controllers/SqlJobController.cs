@@ -17,14 +17,14 @@ namespace ExpressBase.Web.Controllers
     {
         public SqlJobController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public void Index()
+        public SqlJobResponse ExecuteSqlJob(string Refid)
         {
             SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
             {
-                RefId= "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-26-2642-3506-2642-3506",
+                RefId= Refid,
                 GlobalParams = new List<Param> { new Param { Name = "date_to_consolidate", Type = "6", Value = "28-02-2015" } }
             });
-            //return View("Index");
+            return resp;
         }
 
         public IActionResult SqlJobConsole()

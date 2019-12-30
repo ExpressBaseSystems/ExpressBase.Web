@@ -70,8 +70,9 @@
        };
 
 
-  this.SqljobRetry = function () {
-            let id = e.target.getAttribute("id");
+  this.SqljobRetry = function (e) {
+      let id = e.target.getAttribute("id");
+      if (id) {
             $.ajax(
                 {
                     type: 'POST',
@@ -83,13 +84,36 @@
                         $("#show-sql-jobs").click();
                     }
                 });
+      }
     };
 
+    this.RunsqlJobFunction = function () {
+        let Refid = $("#select-sql-job").children("option:selected").val();
+        if (Refid !== null) {
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: "/SqlJob/ExecuteSqlJob",
+                    data: {
+                        Refid: Refid,
+                    },
+                    success: function (result) {
+                        alert(result);
+                    }
+                });
+        }
+    };
+
+    this.ScheduleSqlJobFunction = function () {
+
+    };
 
     this.init = function () {
         this.DrawJobSelectBox();
-        $("#list-of-jobs").on("click", this.SqljobRetry.bind(this));
+        $("#list-of-jobs").on("click", ".retryBtn" ,this.SqljobRetry.bind(this));
         $("#show-sql-jobs").on("click", this.getJobsList.bind(this));
+        $("#run-sql-job").on("click", this.RunsqlJobFunction.bind(this));
+        $("#schedule-sql-job").on("click", this.ScheduleSqlJobFunction.bind(this));
     };
     this.init();
 

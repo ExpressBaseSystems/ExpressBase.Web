@@ -41,7 +41,7 @@ var InitControls = function (option) {
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.cloud',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -274,18 +274,20 @@ var InitControls = function (option) {
     };
 
     this.setCurrentDate = function (ctrl, $input) {
+        let val;
         if (ctrl.ShowDateAs_ === 1) {
-            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+            val = moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY');
         }
         else if (ctrl.EbDateType === 5) { //Date
-            $input.val(ebcontext.user.Preference.ShortDate);
+            val = ebcontext.user.Preference.ShortDate;
         }
         else if (ctrl.EbDateType === 17) { //Time
-            $input.val(ebcontext.user.Preference.ShortTime);
+            val = ebcontext.user.Preference.ShortTime;
         }
         else {
-            $input.val(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime);
+            val = ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime;
         }
+        ctrl.setValue(val);
     };
 
     this.SimpleSelect = function (ctrl) {

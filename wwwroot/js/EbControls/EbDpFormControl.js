@@ -35,7 +35,7 @@
             SolutionId: ebcontext.sid,
             Container: this.ctrlCont,
             Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.xyz',
+            ServerEventUrl: 'https://se.eb-test.cloud',
             EnableTag: false,
             EnableCrop: true,
             ExtraData: {},//extra data for location optional for other

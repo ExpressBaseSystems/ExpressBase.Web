@@ -586,6 +586,16 @@ function getFlatContObjsOfType(ContObj, type) {
     return ctrls;
 }
 
+function getFlatObjOfTypes(ContObj, typesArr) {
+    let ctrls = [];
+    let flat = getFlatControls(ContObj);
+    $.each(flat, function (i, ctrl) {
+        if (typesArr.contains(ctrl.ObjType))
+            ctrls.push(ctrl);
+    });
+    return ctrls;
+}
+
 function getFlatObjOfType(ContObj, type) {
     let ctrls = [];
     let flat = getFlatControls(ContObj);

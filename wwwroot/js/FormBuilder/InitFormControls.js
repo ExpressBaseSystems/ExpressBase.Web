@@ -659,14 +659,13 @@ var InitControls = function (option) {
         });
         itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
-        ctrl.getValue = itemList.getValue;
         ctrl.getDisplayMember = itemList.getDisplayMember;
         ctrl.refresh = itemList.refresh;
         ctrl.clear = itemList.clear;
-        ctrl._onChangeFunction = [];
+        ctrl._onChangeFunctions = [];
         ctrl.bindOnChange = function (p1) {
-            if (!this._onChangeFunction.includes(p1))
-                this._onChangeFunction.push(p1);
+            if (!this._onChangeFunctions.includes(p1))
+                this._onChangeFunctions.push(p1);
         };
         if (ctrl.LoadCurrentUser) {
             ctrl.setValue(ebcontext.user.UserId.toString());

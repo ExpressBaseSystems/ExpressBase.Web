@@ -94,8 +94,8 @@
         this.$dispCont.children('div').remove();
         this.$dispCont.prepend($disp);
         this.$dispCont.next().toggle();
-        for (let j = 0; j < this.ctrl._onChangeFunction.length; j++)
-            this.ctrl._onChangeFunction[j]();
+        for (let j = 0; j < this.ctrl._onChangeFunctions.length; j++)
+            this.ctrl._onChangeFunctions[j]();
     };
 
     this.onTxtSrchKeydown = function (e) {
@@ -161,20 +161,19 @@
     this.setValue = function (p1, p2) {
         let $dispC = $(`#${this.EbSid_CtxId}`);
         let itemO = $dispC.data('data-obj');
-        if (itemO && itemO['vm'].toString() === p1.toString())
-            return;
+
         if (!p1 || p1.toString() === '') {
             if (itemO) {
                 $dispC.children('div').remove();
                 $dispC.prepend(`<div class="ulstc-disp-img-c" style="background-image: url(/images/nulldp.png);"></div>
                             <div id="${this.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>`);
                 $dispC.removeData('data-obj');
-                for (let j = 0; j < this._onChangeFunction.length; j++)
-                    this._onChangeFunction[j]();
+                for (let j = 0; j < this._onChangeFunctions.length; j++)
+                    this._onChangeFunctions[j]();
             }
             return;
         }
-
+        
         for (let i = 0; i < this.UserList.$values.length; i++) {
             if (this.UserList.$values[i]['vm'].toString() === p1.toString()) {
                 $dispC.data('data-obj', this.UserList.$values[i]);
@@ -183,20 +182,13 @@
                                     <div class="ulstc-disp-img-c" style="background-image:url(/images/dp/${this.UserList.$values[i]['img']}.png), url(/images/nulldp.png);"></div>
                                     <div class="ulstc-disp-txt">${this.UserList.$values[i]['dm1']}</div>
                                 </div>`);
-                for (let j = 0; j < this._onChangeFunction.length; j++)
-                    this._onChangeFunction[j]();
+                for (let j = 0; j < this._onChangeFunctions.length; j++)
+                    this._onChangeFunctions[j]();
                 break;
             }
         }
     };
 
-    this.getValue = function (p1) {
-        let itemO = $(`#${this.EbSid_CtxId}`).data('data-obj');
-        if (itemO)
-            return itemO['vm'];
-        else
-            return '';
-    };
     this.getDisplayMember = function (p1, p2) {
         let itemO = $(`#${this.EbSid_CtxId}`).data('data-obj');
         if (itemO)

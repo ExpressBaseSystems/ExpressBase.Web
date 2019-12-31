@@ -920,7 +920,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .msg-cont {
-    position: relative;
+    /*position: relative;*/
 }
 
     .msg-cont > label, .req-cont > label {

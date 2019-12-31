@@ -41,7 +41,7 @@ var InitControls = function (option) {
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.cloud',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -243,13 +243,17 @@ var InitControls = function (option) {
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
         }
-        this.setCurrentDate(ctrl, $input);
         if (ctrl.IsNullable) {
-            if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
-                $input.val('');
+            //if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+            //    $input.val('');
+            //else
+            $('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').attr('checked', false);
+            $input.val("");
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
+        else
+            this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
         //console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
@@ -274,18 +278,20 @@ var InitControls = function (option) {
     };
 
     this.setCurrentDate = function (ctrl, $input) {
+        let val;
         if (ctrl.ShowDateAs_ === 1) {
-            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+            val = moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY');
         }
         else if (ctrl.EbDateType === 5) { //Date
-            $input.val(ebcontext.user.Preference.ShortDate);
+            val = moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('YYYY-MM-DD');
         }
         else if (ctrl.EbDateType === 17) { //Time
-            $input.val(ebcontext.user.Preference.ShortTime);
+            val = moment(ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortTimePattern).format('HH:mm:ss');
         }
         else {
-            $input.val(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime);
+            val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
+        ctrl.setValue(val);
     };
 
     this.SimpleSelect = function (ctrl) {

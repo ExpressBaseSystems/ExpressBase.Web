@@ -27,7 +27,7 @@
     this.setDefaultValues = function (Obj) {
         if (Obj.DefaultValue)
             Obj.setValue(Obj.DefaultValue);
-        if (this.FO.Mode.isNew && Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
+        if (Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
             let fun = new Function("form", "user", `event`, atob(Obj.DefaultValueExpression.Code)).bind(Obj, this.FO.formObject, this.FO.userObject);
             let val = fun();
 
@@ -115,7 +115,6 @@
     this.bindEbFnOnChange = function (control) {
         try {
             let FnString =
-                `
                 if(this.DataVals){
                     this.DataVals.Value = this.getValueFromDOM();
                     this.DataVals.D = this.getDisplayMemberFromDOM();

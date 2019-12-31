@@ -1279,7 +1279,8 @@ const WebFormRender = function (option) {
         let allTypeDateCtrls = getFlatObjOfTypes(this.FormObj, ["Date", "SysModifiedAt", "SysCreatedAt"]);
         for (let i = 0; i < allTypeDateCtrls.length; i++) {
             let ctrl = allTypeDateCtrls[i];
-            ctrl.setValue(moment(new Date()).format('YYYY-MM-DD'));
+            if (!ctrl.IsNullable)
+                ctrl.setValue(moment(new Date()).format('YYYY-MM-DD'));
         }
     };
 

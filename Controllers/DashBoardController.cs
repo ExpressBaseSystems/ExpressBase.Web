@@ -34,7 +34,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult DashBoardView(string refid, string rowData, string filterValues, int tabNum)
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
-            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper),typeof(EbObject));
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.WebForm, typeof(EbObject));
             ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
@@ -59,6 +59,7 @@ namespace ExpressBase.Web.Controllers
 
         public string UserControlGetObj(string refid , List<Param> param)
         {
+            param = new List<Param> { new Param { Name = "id", Type = "7", Value = "10" } };
             GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid, Param = param });
 
             return JsonConvert.SerializeObject(Resp);
@@ -71,7 +72,7 @@ namespace ExpressBase.Web.Controllers
             Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             if (dsObject.FilterDialog != null)
                 EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
-            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc" }); 
+            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true }); 
         }
     }
 }

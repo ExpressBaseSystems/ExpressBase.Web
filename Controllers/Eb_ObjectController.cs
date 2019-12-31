@@ -269,7 +269,7 @@ namespace ExpressBase.Web.Controllers
             else if (type.Equals(EbObjectTypes.DashBoard))
             {
                 Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
+                _c2js = new Context2Js(typeArray, BuilderType.WebForm, typeof(EbDashBoardWraper), typeof(EbObject));
                 if (dsobj != null)
                 {
                     dsobj.AfterRedisGet(Redis);
@@ -277,7 +277,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 List<int> types = new List<int>() { 14, 16, 17, 21 };
                 GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
-                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.FilterDialog);
                 ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
             }
             else if (type.Equals(EbObjectTypes.CalendarView))

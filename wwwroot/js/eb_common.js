@@ -312,7 +312,7 @@ function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type 
 
 function EbHideCtrlMsg(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    $(`${contSel} .msg-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
 

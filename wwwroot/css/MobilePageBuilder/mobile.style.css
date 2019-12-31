@@ -124,10 +124,10 @@
     height: 100%;
     position:relative;
 }
-    .eb_mob_vis_container:focus{
-        outline:none;
+    .eb_mob_vis_container:focus, .eb_mob_form_container:focus {
+        outline: none;
     }
-        .eb_mob_vis_container:focus .eb_mob_container_inner {
+        .eb_mob_vis_container:focus .eb_mob_container_inner, .eb_mob_form_container:focus .eb_mob_container_inner {
             border-color: #316396;
         }
     .eb_mob_container_inner {

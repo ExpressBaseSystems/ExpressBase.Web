@@ -115,7 +115,6 @@
     this.bindEbFnOnChange = function (control) {
         try {
             let FnString =
-                `
                 if(this.DataVals){
                     this.DataVals.Value = this.getValueFromDOM();
                     this.DataVals.D = this.getDisplayMemberFromDOM();

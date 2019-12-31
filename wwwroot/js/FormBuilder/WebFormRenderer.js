@@ -168,8 +168,8 @@ const WebFormRender = function (option) {
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
         this.initNCs();// order 1
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
 

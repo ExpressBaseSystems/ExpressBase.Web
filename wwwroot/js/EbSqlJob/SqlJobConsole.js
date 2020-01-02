@@ -106,7 +106,29 @@
     };
 
     this.ScheduleSqlJobFunction = function () {
-
+        $.post("/Scheduler/Schedule",
+            //{
+            //    "name": $('#sch-name').val(),
+            //    "expression": $('#result').text(),
+            //    "objId": window.location.search.split("&")[0].split("=")[1],
+            //    "type": taskType,
+            //    "users": JSON.stringify(Alluserlist),
+            //    "groups": JSON.stringify(Allgrouplist),
+            //    "cronstring": JSON.stringify(EbCron),
+            //    "message": JSON.stringify(AllDelMessage),
+            //    "_delMechanism": delMechanism
+            //}
+            {
+                "name":"test",
+                "expression": "0 14 16 2 1 ? 2020 *",
+                "objId": $("#select-sql-job").children("option:selected").val().split("-")[3],
+                "type": 5,
+                "users": "",
+                "groups": "",
+                "cronstring": "0 14 16 2 1 ? 2020 *",
+                "message": "message" 
+            },
+            function () { });
     };
 
     this.RunsqlJobTrigger = function () {

@@ -168,8 +168,8 @@ const WebFormRender = function (option) {
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
         this.initNCs();// order 1
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
 
@@ -1279,7 +1279,8 @@ const WebFormRender = function (option) {
         let allTypeDateCtrls = getFlatObjOfTypes(this.FormObj, ["Date", "SysModifiedAt", "SysCreatedAt"]);
         for (let i = 0; i < allTypeDateCtrls.length; i++) {
             let ctrl = allTypeDateCtrls[i];
-            ctrl.setValue(moment(new Date()).format('YYYY-MM-DD'));
+            if (!ctrl.IsNullable)
+                ctrl.setValue(moment(new Date()).format('YYYY-MM-DD'));
         }
     };
 

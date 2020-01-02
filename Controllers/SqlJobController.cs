@@ -25,12 +25,12 @@ namespace ExpressBase.Web.Controllers
         {
             SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
             {
-                RefId= Refid,
+                RefId = Refid,
                 GlobalParams = new List<Param> { new Param { Name = "date_to_consolidate", Type = "6", Value = "28-02-2015" } }
             });
             return resp;
         }
-
+         
         public IActionResult SqlJobConsole()
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
@@ -56,12 +56,12 @@ namespace ExpressBase.Web.Controllers
             SqlJobsListGetResponse resp = this.ServiceClient.Get(new SqlJobsListGetRequest()
             {
                 RefId = Refid,
-                Date =  Date
+                Date = Date
 
             });
-            var Temp = new DSController(this.ServiceClient , this.Redis);
+            var Temp = new DSController(this.ServiceClient, this.Redis);
             resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumnsForSqlJob(resp.SqlJobsColumns));
-            return resp;  
+            return resp;
         }
 
 
@@ -85,13 +85,13 @@ namespace ExpressBase.Web.Controllers
 
         public RetryJobResponse JobRetry(int id)
         {
-            RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id , RefId = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-26-2642-3506-2642-3506" });
+            RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-26-2642-3506-2642-3506" });
             return response;
         }
 
         public void ProcessorLogic()
         {
-            this.ServiceClient.Post <ProcessorResponse> (new ProcessorRequest()); ;
+            this.ServiceClient.Post<ProcessorResponse>(new ProcessorRequest()); ;
         }
     }
 }

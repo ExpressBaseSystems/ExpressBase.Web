@@ -27,11 +27,16 @@
 
 </script>
 <script>
-  
-</script>
 
+</script>
+@*<div class="Scheduler_main">
+    @await Component.InvokeAsync("SchedulerWindow", new { objid = 2642 , tasktype = JobTypes.SqlTask })
+</div>*@
+<div id="show-scheduler"></div>
 <div class="container-fluid" style="margin-top:50px">
     <div class="row">
+
+
         <div class="col-sm-12">
             <div class="dropdown view-log-pane" id="sql-job-objs" style="width:20%"> </div>
             <ul class="nav nav-tabs">
@@ -41,14 +46,17 @@
 
             <div class="tab-content">
                 <div id="home" class="tab-pane fade in active">
-                    <div class="run-sql-job-pane"><button class="btn btn-primary" id="run-sql-job">Run Now </button>
-                    <button class="btn btn-primary" id="schedule-sql-job"> SChedule </button></div>
+                    <div class="run-sql-job-pane">
+                        <button class="btn btn-primary" id="run-sql-job" data-toggle="modal" data-target="#myModal">Run Now </button>
+                        <button class="btn btn-primary" id="schedule-sql-job"> SChedule </button>
+                        <button class="btn btn-primary" id="schedule-job"> Schedule Sql Job </button>
+                    </div>
                 </div>
                 <div id="menu1" class="tab-pane fade">
                     <div class="row">
                         <div class="col-sm-12" style="display:flex">
                             <div class="view-log-pane">
-                                <input type="email" class="form-control" id="date" placeholder="MM/DD/YY">
+                                @*<input type="email" class="form-control" id="date" placeholder="MM/DD/YY">*@
                             </div>
                             <div class="view-log-pane"><button id="show-sql-jobs" class="btn btn-primary"> Show Jobs</button></div>
                         </div>
@@ -63,7 +71,13 @@
         </div>
     </div>
 
-    
+</div>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog modal-lg" style="top:15%">
+        <div class="modal-content">
+            <div id="sql-job-param"> </div>
+        </div>
+    </div>
 </div>
 <style>
     tbody {
@@ -88,6 +102,10 @@
     }
 </style>
 <script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+    @Html.Raw(ViewBag.ControlOperations);
     if (@Html.Raw(ViewBag.SqlJobObject) != null) {
         var obj = new sqljobconsole({
             AllObj: @Html.Raw(ViewBag.SqlJobObject),

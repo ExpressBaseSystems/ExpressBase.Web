@@ -87,7 +87,7 @@
 
 <div class="container-fluid">
     <div class="Scheduler_main">
-        @await Component.InvokeAsync("SchedulerWindow", new { objid = Convert.ToInt32(ViewBag.Obj_id) })
+        @await Component.InvokeAsync("SchedulerWindow", new { objid = Convert.ToInt32(ViewBag.Obj_id), tasktype = JobTypes.ReportTask })
     </div>
     <div class="max-pg" id="max-pg"><i class="fa fa-wrench" aria-hidden="true"></i> Properties</div>
     <div class="row pgB eb-rpt-container" id="eb-rpt-container">

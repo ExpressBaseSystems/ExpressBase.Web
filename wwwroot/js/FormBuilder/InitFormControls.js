@@ -335,6 +335,7 @@ var InitControls = function (option) {
         this.SimpleSelect(ctrl);
     };
 
+    // http://davidstutz.de/bootstrap-multiselect
     this.UserLocation = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.multiselect({
@@ -357,6 +358,8 @@ var InitControls = function (option) {
                     $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             }
         }
+
+        ctrl.DataVals.Value = ctrl.getValueFromDOM();
     };
 
     this.UserLocationCheckboxChanged = function (ctrl) {

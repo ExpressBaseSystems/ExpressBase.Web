@@ -75,11 +75,26 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         });
     };
 
+    this.initDataModel = function () {
+        let FormDataModels = {};
+        FormDataModels[this.FormObj.TableName] = [{
+            RowId: 0,
+            IsUpdate: false,
+            Columns: []
+        }];
+        for (let i = 0; i < this.FormObj.Controls.$values.length; i++) {
+            let ctrl = this.FormObj.Controls.$values[i];
+            FormDataModels[this.FormObj.TableName][0].Columns.push(getSingleColumn(ctrl));
+        }
+    };
+
     this.init = function () {
         this._all_OctrlsInit = false;
         this._allPSsInit = false;
         this.initFormObject2();
+        this.initDataModel();
         this.initFilterDialogCtrls();// order 1
+        this.FRC.bindEbOnChange2Ctrls(this.FormObj.Controls.$values);// order 2
         this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
         this.FRC.setValueExpValsNC(this.FormObj.Controls.$values);//
         this.FRC.bindFnsToCtrls(this.flatControls);// order 4

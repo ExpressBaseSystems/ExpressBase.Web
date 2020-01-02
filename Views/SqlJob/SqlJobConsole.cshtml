@@ -1,10 +1,23 @@
 ﻿
 @using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common;
 @{
     Layout = "~/Views/Shared/LayoutBuilders.cshtml";
+    @await Component.InvokeAsync("PageHeaderCommon")
 }
-<script src="~/js/Eb_Basic_DataTable.js"></script>
-<script src="~/js/EbControls/EbProgressBar.js"></script>
+
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+
+<script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbControls/EbProgressBar.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbSqlJob/SqlJobConsole.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" href="~/css/EbSqlJob/SqlJobConsole.css" asp-append-version=@bApnd />
 <script>
     $(function () {
         $("#date").datepicker({
@@ -14,90 +27,43 @@
 
 </script>
 <script>
-    let chkObj = new Object();
-    chkObj.data = null;
-    chkObj.title = "Action";
-    chkObj.orderable = false;
-    chkObj.bVisible = true;
-    chkObj.name = "action";
-    chkObj.Type = 1;
-    chkObj.render = renderButtonCol;
-
-    $(document).ready(function () {
-        $("#show-sql-jobs").click(function () {
-            let id = $("#refid").val();
-            let date = $("#date").val();
-            $.ajax(
-                {
-                    type: 'POST',
-                    url: "/SqlJob/Get_Jobs_List",
-                    data: {
-                        Refid: id,
-                        Date: date
-                    },
-                    success: function (result) {
-                        let cols = JSON.parse(result.sqlJobsDvColumns).$values;
-                        cols.push(chkObj);
-                        $("#list-of-jobs").empty();
-                        $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
-
-                        var o = new Object();
-                        o.tableId = "tbl";
-                        o.datetimeformat = true;
-                        //o.showFilterRow = false;
-                        o.showSerialColumn = false;
-                        o.showCheckboxColumn = false;
-                        o.showFilterRow = false;
-                        o.IsPaging = true;
-                        //o.source = "inline";
-                        //o.scrollHeight = "200px";
-                        o.columns = cols;
-                        o.data = result.sqlJobsRows;
-                        var data = new EbBasicDataTable(o);
-                    }
-                });
-        });
-    });
-
-    function renderButtonCol(data, type, row, meta) {
-        if (data[4] === "S")
-            return "";
-        else
-            return `<button class="retryBtn" id="${data[5]}">Retry</button>`
-    }
-
-
-    $(document).ready(function () {
-        $("#list-of-jobs").on("click", ".retryBtn", function (e) {
-            let id = e.target.getAttribute("id");
-            $.ajax(
-                {
-                    type: 'POST',
-                    url: "/SqlJob/JobRetry",
-                    data: {
-                        id: id
-                    },
-                    success: function (result) {
-                        $("#show-sql-jobs").click();
-                    }
-                });
-        })
-    });
+  
 </script>
 
 <div class="container-fluid" style="margin-top:50px">
     <div class="row">
         <div class="col-sm-12">
-            <input type="text" id="refid" value="ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-26-2642-3506-2642-3506" />
-            <input type="text" id="date">
-            <button id="show-sql-jobs"> Show Jobs</button>
+            <div class="dropdown view-log-pane" id="sql-job-objs" style="width:20%"> </div>
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">Run Sql Job</a></li>
+                <li><a data-toggle="tab" href="#menu1">View Log</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="home" class="tab-pane fade in active">
+                    <div class="run-sql-job-pane"><button class="btn btn-primary" id="run-sql-job">Run Now </button>
+                    <button class="btn btn-primary" id="schedule-sql-job"> SChedule </button></div>
+                </div>
+                <div id="menu1" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-sm-12" style="display:flex">
+                            <div class="view-log-pane">
+                                <input type="email" class="form-control" id="date" placeholder="MM/DD/YY">
+                            </div>
+                            <div class="view-log-pane"><button id="show-sql-jobs" class="btn btn-primary"> Show Jobs</button></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div id="list-of-jobs"> </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div id="list-of-jobs"> </div>
-        </div>
-    </div>
+
+    
 </div>
 <style>
     tbody {
@@ -121,3 +87,10 @@
         color: black !important;
     }
 </style>
+<script>
+    if (@Html.Raw(ViewBag.SqlJobObject) != null) {
+        var obj = new sqljobconsole({
+            AllObj: @Html.Raw(ViewBag.SqlJobObject),
+        });
+    }
+</script>

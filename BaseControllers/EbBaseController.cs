@@ -72,7 +72,11 @@ namespace ExpressBase.Web.BaseControllers
         {
             this.FileClient = _sfc as EbStaticFileClient;
         }
-
+        public EbBaseController(IEbStaticFileClient _sfc, IRedisClient _redis)
+        {
+            this.FileClient = _sfc as EbStaticFileClient;
+            this.Redis = _redis as RedisClient;
+        }
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
@@ -159,7 +163,7 @@ namespace ExpressBase.Web.BaseControllers
                                 if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
                                     isvalid = true;
                             }
-                            else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
+                            else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC))
                             {
                                 isvalid = true;
                             }
@@ -167,13 +171,13 @@ namespace ExpressBase.Web.BaseControllers
                     }
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message + e.StackTrace);
                 Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, string.Empty, new CookieOptions());
                 Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, string.Empty, new CookieOptions());
             }
-            
+
             return isvalid;
         }
 
@@ -226,12 +230,19 @@ namespace ExpressBase.Web.BaseControllers
         public string GetIsolutionId(string esid)
         {
             string solnId = string.Empty;
-            if (this.Redis != null)
-                solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
-            if (solnId == null || solnId == string.Empty)
+
+            if (esid == CoreConstants.MYACCOUNT)
+                solnId = CoreConstants.EXPRESSBASE;
+            else if (esid == CoreConstants.ADMIN)
+                solnId = CoreConstants.ADMIN;
+            else if (this.Redis != null)
             {
-                this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest());
                 solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                if (solnId == null || solnId == string.Empty)
+                {
+                    this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest { ExtSolutionId = esid});
+                    solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                }
             }
             return solnId;
         }

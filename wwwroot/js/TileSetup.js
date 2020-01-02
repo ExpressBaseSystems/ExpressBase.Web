@@ -341,7 +341,10 @@
 
 
     this.onClickBtnAddModal = function () {
-        $(this.addModal).modal('show');
+        if (this.title === 'New DateTime')
+            EbMessage("show", { Message: 'Temporarily Suspended', AutoHide: true, Background: '#1e1ebf' });
+        else
+            $(this.addModal).modal('show');
     };
 
     this.keyUpTxtDemoSearch = function () {

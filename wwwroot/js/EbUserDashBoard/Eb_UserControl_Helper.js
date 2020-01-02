@@ -13,7 +13,7 @@
         $.ajax({
             url: '../DashBoard/UserControlGetObj',
             type: 'POST',
-            data: { refid: this.options.refId },
+            data: { refid: this.options.refId, param : this.options.params },
             success: this.getUserControlSuccess.bind(this)
         });
     }

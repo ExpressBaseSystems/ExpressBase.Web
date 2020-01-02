@@ -312,7 +312,7 @@ function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type 
 
 function EbHideCtrlMsg(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    $(`${contSel} .msg-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
 
@@ -505,6 +505,23 @@ function RecurFlatContControls(src_obj, dest_coll) {
     });
 }
 
+
+function getAllctrlsFrom(formObj) {
+    let coll = [];
+    coll.push(formObj);
+    RecurgetAllctrlsFrom(formObj, coll);
+    return coll;
+}
+
+function RecurgetAllctrlsFrom(src_obj, dest_coll) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        dest_coll.push(obj);
+        if (obj.IsContainer) {
+            RecurgetAllctrlsFrom(obj, dest_coll);
+        }
+    });
+}
+
 function getFlatCtrlObjs(formObj) {
     let coll = [];
     RecurFlatCtrlObjs(formObj, coll);
@@ -542,6 +559,8 @@ function getValsFromForm(formObj) {
     let fltr_collection = [];
     let flag = 1;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
+        if (obj.ObjType === "FileUploader")
+            return;
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
         //if (obj.ObjType === "PowerSelect")
         //    flag++;
@@ -564,6 +583,16 @@ function getFlatContObjsOfType(ContObj, type) {
     let flat = getFlatContControls(ContObj);
     $.each(flat, function (i, ctrl) {
         if (ctrl.ObjType === type)
+            ctrls.push(ctrl);
+    });
+    return ctrls;
+}
+
+function getFlatObjOfTypes(ContObj, typesArr) {
+    let ctrls = [];
+    let flat = getFlatControls(ContObj);
+    $.each(flat, function (i, ctrl) {
+        if (typesArr.contains(ctrl.ObjType))
             ctrls.push(ctrl);
     });
     return ctrls;
@@ -603,7 +632,7 @@ function getSingleColumn(obj) {
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;
-    SingleColumn.R = undefined;
+    SingleColumn.R = [];
     obj.DataVals = SingleColumn;
     obj.curRowDataVals = $.extend(true, {}, SingleColumn);
 
@@ -785,18 +814,23 @@ function dgOnChangeBind() {
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
         let FnString = `
-                        let __this = form.__getCtrlByPath(this.__path);
-                        let $curRow = getRow__(__this);
-                        if(__this.DataVals !== undefined){
-                            if(__this.__isEditing){
-                                __this.curRowDataVals.Value = __this.getValueFromDOM();
-                                __this.curRowDataVals.D = __this.getDisplayMemberFromDOM();
-                            }
-                            else{
-                                __this.DataVals.Value = __this.getValueFromDOM();
-                                __this.DataVals.D = __this.getDisplayMemberFromDOM();
-                            }
-                        }`;
+let __this = form.__getCtrlByPath(this.__path);
+let $curRow = getRow__(__this);
+if (__this.DataVals !== undefined) {
+    let v = __this.getValueFromDOM();
+    let d = __this.getDisplayMemberFromDOM();
+    if (__this.ObjType === 'Numeric')
+        v = parseFloat(v);
+
+    if (__this.__isEditing) {
+        __this.curRowDataVals.Value = v;
+        __this.curRowDataVals.D = d;
+    }
+    else {
+        __this.DataVals.Value = v;
+        __this.DataVals.D = d;
+    }
+}`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
         col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
@@ -942,9 +976,6 @@ document.addEventListener("click", function (e) {
     }
 });
 
-function EBPSGetColummn(colName) {
-    return this.DataVals.R[colName];
-}
 
 function EBPSSetDisplayMember(p1, p2) {
     if (p1 === '')

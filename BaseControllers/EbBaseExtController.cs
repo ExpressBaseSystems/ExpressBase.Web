@@ -16,6 +16,8 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBaseExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
 
+         public EbBaseExtController(IEbStaticFileClient _sfc, IRedisClient _redis) : base(_sfc, _redis) { }
+
         public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
 		public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc) : base(_ssclient, _redis, _cxtacc,_mqc) { }

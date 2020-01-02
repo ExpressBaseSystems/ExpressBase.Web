@@ -72,14 +72,9 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/objects_by_app",
+                url: "/api/menu",
                 type: "GET",
                 cache: false,
-                data: {
-                    appid: 44,
-                    locid: 1,
-                    pull_data: false
-                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());

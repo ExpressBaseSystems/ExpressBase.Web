@@ -1034,6 +1034,7 @@
         var src = image.src;
         var alt = image.alt || getImageNameFromURL(src);
         var url = options.url;
+          var dtls = image.attributes.dtls.value;
 
         if (isString(url)) {
           url = image.getAttribute(url);
@@ -1050,6 +1051,7 @@
           img.setAttribute('data-original-url', url || src);
           img.setAttribute('data-viewer-action', 'view');
           img.setAttribute('role', 'button');
+            img.setAttribute('dtls', image.attributes.dtls.value);
           item.appendChild(img);
           list.appendChild(item);
           items.push(item);
@@ -1874,6 +1876,7 @@
       var image = document.createElement('img');
       image.src = url;
       image.alt = alt;
+        image.dtls = img.getAttribute('dtls');;
 
       if (isFunction(options.view)) {
         addListener(element, EVENT_VIEW, options.view, {
@@ -2285,6 +2288,7 @@
         var image = document.createElement('img');
         image.src = getData(img, 'originalUrl');
         image.alt = img.getAttribute('alt');
+        image.dtls = img.getAttribute('alt');
         total += 1;
         addClass(image, CLASS_FADE);
         toggleClass(image, CLASS_TRANSITION, options.transition);
@@ -2987,6 +2991,7 @@
             var click = deep && !isUndefined(value.click) ? value.click : value;
             var item = document.createElement('li');
             item.setAttribute('role', 'button');
+            item.setAttribute('title', name);
             addClass(item, "".concat(NAMESPACE, "-").concat(name));
 
             if (!isFunction(click)) {

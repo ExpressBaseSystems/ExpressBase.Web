@@ -1,0 +1,13 @@
+﻿body {
+}
+.view-log-pane {
+    padding:10px 30px 10px 0px;
+}
+.run-sql-job-pane{
+    padding:10px;
+    display:flex;
+}
+    .run-sql-job-pane button {
+        margin-right: 35px;
+        margin-top: 30px;
+    }

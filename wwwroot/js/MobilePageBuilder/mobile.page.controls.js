@@ -12,12 +12,12 @@
         this.setListPrev(o);
         if (this.Root.Mode === "edit" && this.Root.EditObj !== null)
             this.renderVisOnEdit(obj);
-    }
+    };
 
     this.renderVisOnEdit = function (o) {
         let cellcollection = this.Root.EditObj.Container.DataLayout.CellCollection.$values;
         for (let i = 0; i < cellcollection.length; i++) {
-            this.renderCellControl(o,cellcollection[i]);
+            this.renderCellControl(o, cellcollection[i]);
         }
         this.refreshList();
     };
@@ -54,7 +54,7 @@
     this.setListPrev = function (o) {
         $(`#${o.EbSid} .eb_mob_container_inner`).append(this.getListPrevHtml());
         this.refreshList();
-    }
+    };
 
     this.refreshList = function () {
         $(`div[eb-type="EbMobileVisualization"] .eb_mob_listprevwraper .list_view`).empty();
@@ -64,7 +64,7 @@
         }
     };
 
-    this.onDropColumn = function (event,ui) {
+    this.onDropColumn = function (event, ui) {
         let dragged = $(ui.draggable);
         let id = "Tab" + this.Root.Conf.TabNum + "DataColumn" + CtrlCounters["MobileDataColumnCounter"]++;
         var obj = new EbObjects.EbMobileDataColumn(id);
@@ -89,7 +89,7 @@
                         </div>
                 </div >`);
         return html.join("");
-    }
+    };
 
     this.InitTableLayout = function (o) {
         $(`#${o.EbSid} .eb_mob_tablelayout_inner`).append(this.getTableHtml(o));
@@ -107,7 +107,7 @@
         }
         html.push(`</table>`);
         return html.join("");
-    }
+    };
 
     this.getListPrevHtml = function (o) {
         let html = [];
@@ -118,7 +118,7 @@
                         </div>
                 </div>`);
         return html.join("");
-    }
+    };
 
     this.drawDsColTree = function (colList) {
         $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty();
@@ -221,7 +221,7 @@ function MobileMenu(option) {
             "add_row": { name: "Add Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
             "delete_row": { name: "Delete Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) }
         }
-    }
+    };
 
     this.initContextMenu = function () {
         $.contextMenu({
@@ -243,4 +243,51 @@ function MobileMenu(option) {
     };
 
     this.initContextMenu();
+}
+
+function SetControlFunctions(obj) {
+    var Name = obj.constructor.name;
+    var Functions = {
+        "EbMobileSimpleSelect": null
+    };
+    if (Name in Functions) {
+        let o = window.ControlFunctions[Name];
+        $.extend(obj, o);
+    }
+}
+
+window.ControlFunctions = {
+    "EbMobileSimpleSelect": {
+        _getColumns: function (ds_refid, callback) {
+            if (ds_refid !== "") {
+                $.ajax({
+                    url: "../RB/GetColumns",
+                    type: "POST",
+                    cache: false,
+                    data: { refID: ds_refid },
+                    beforeSend: function () { },
+                    success: function (data) {
+                        let keys = Object.keys(data.columns).length;
+                        let c = 1;
+                        this.Columns.$values.length = 0;
+                        $.each(data.columns, function (i, columnCollection) {
+                            for (let i = 0; i < columnCollection.length; i++) {
+
+                                let o = new EbObjects.EbMobileDataColumn(columnCollection[i].columnName);
+                                o.ColumnIndex = columnCollection[i].columnIndex;
+                                o.ColumnName = columnCollection[i].columnName;
+                                o.Type = columnCollection[i].type;
+
+                                this.Columns.$values.push(o);
+                            }
+                            if (c === keys) {
+                                callback();
+                            }
+                            c++;
+                        }.bind(this));
+                    }.bind(this)
+                });
+            }
+        }
+    }
 }

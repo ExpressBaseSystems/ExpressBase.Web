@@ -650,7 +650,7 @@
     display: block;
     margin-top: 37px;
     height: 100%;
-    z-index: 100;
+    z-index: 9;
 }
     .param-div-cont .param-div {
         display: block;
@@ -706,7 +706,7 @@
     display: block;
     margin-top: 37px;
     height: 100%;
-    z-index: 100;
+    z-index: 9;
 }
 
     .db-user-filter .param-div {

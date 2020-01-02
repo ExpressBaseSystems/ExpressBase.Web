@@ -169,9 +169,8 @@ const WebFormRender = function (option) {
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
-        this.FRC.setDefaultvalsNC(this.flatControls);// order 2
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 3
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 4
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
 
 
@@ -1192,89 +1191,7 @@ const WebFormRender = function (option) {
         return DG_dataModels;
     };
 
-    this.init = function () {
-        this.TableNames = this.getNCCTblNames();
-        this.setHeader(this.mode);
-        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
-        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
-        $("#webformsave-selbtn").on("click", ".dropdown-menu li", this.saveSelectChange);
-        $("#webformsave-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
-
-        this.$saveBtn.on("click", this.saveForm.bind(this));
-        this.$deleteBtn.on("click", this.deleteForm.bind(this));
-        this.$cancelBtn.on("click", this.cancelForm.bind(this));
-        this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
-        this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
-        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
-        $("body").on("focus", "[ui-inp]", function () {
-            if (event && event.target)
-                $(event.target).select();
-        });
-        $(window).off("keydown").on("keydown", this.windowKeyDown);
-        this.initWebFormCtrls();
-
-        this.initPrintMenu();
-
-        this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
-
-        if (this.Mode.isNew && this.EditModeFormData)
-            this.setEditModeCtrls();
-
-        if (this.Mode.isNew) {
-            this.initMultipleTables();
-        }
-        else {
-            this.DataMODEL = this.EditModeFormData;
-            attachModalCellRef_form(this.FormObj, this.DataMODEL);
-        }
-
-        if (this.mode === "View Mode") {
-            this.setEditModeCtrls();
-            this.SwitchToViewMode();
-
-            let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
-            let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
-            if (ol !== nl) {
-                let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
-                let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
-                if (typeof nwlocO === "undefined") {
-                    console.error("Unknown location id found. LocId = " + nl);
-                    EbDialog("show", {
-                        Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
-                        Buttons: {
-                            "Ok": {
-                                Background: "green",
-                                Align: "right",
-                                FontColor: "white;"
-                            }
-                        },
-                        CallBack: function (name) {
-                            reloadFormPage();
-                        }.bind(this)
-                    });
-                }
-                else {
-                    EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
-                    ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                    this.setHeader(this.mode);
-                    //EbDialog("show", {
-                    //    Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
-                    //    Buttons: {
-                    //        "Ok": {
-                    //            Background: "green",
-                    //            Align: "right",
-                    //            FontColor: "white;"
-                    //        }
-                    //    },
-                    //    CallBack: function (name) {
-                    //        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                    //        this.setHeader(this.mode);
-                    //    }.bind(this)
-                    //});
-                }
-            }
-        }
-
+    this.LocationInit = function () {
         if (ebcontext.locations.Listener) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
                 if (this.rowId > 0) {
@@ -1294,6 +1211,109 @@ const WebFormRender = function (option) {
                 }
             }.bind(this);
         }
+    };
+
+    this.locInit4viewMode = function () {
+        let ol = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId).toString();
+        let nl = this.formData.MultipleTables[this.formData.MasterTable][0].LocId.toString();
+        if (ol !== nl) {
+            let odlocO = getObjByval(ebcontext.locations.Locations, "LocId", ol);
+            let nwlocO = getObjByval(ebcontext.locations.Locations, "LocId", nl);
+            if (typeof nwlocO === "undefined") {
+                console.error("Unknown location id found. LocId = " + nl);
+                EbDialog("show", {
+                    Message: "This data is no longer available in " + odlocO.LongName + ". Redirecting to new mode...",
+                    Buttons: {
+                        "Ok": {
+                            Background: "green",
+                            Align: "right",
+                            FontColor: "white;"
+                        }
+                    },
+                    CallBack: function (name) {
+                        reloadFormPage();
+                    }.bind(this)
+                });
+            }
+            else {
+                EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
+                ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                this.setHeader(this.mode);
+                //EbDialog("show", {
+                //    Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
+                //    Buttons: {
+                //        "Ok": {
+                //            Background: "green",
+                //            Align: "right",
+                //            FontColor: "white;"
+                //        }
+                //    },
+                //    CallBack: function (name) {
+                //        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
+                //        this.setHeader(this.mode);
+                //    }.bind(this)
+                //});
+            }
+        }
+    };
+
+    this.bindEventFns = function () {
+        $("[eb-form=true]").on("submit", function () { event.preventDefault(); });
+        $("#webformsave-selbtn").on("click", ".dropdown-menu li", this.saveSelectChange);
+        $("#webformsave-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+
+        this.$saveBtn.on("click", this.saveForm.bind(this));
+        this.$deleteBtn.on("click", this.deleteForm.bind(this));
+        this.$cancelBtn.on("click", this.cancelForm.bind(this));
+        this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
+        this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
+        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
+        $("body").on("focus", "[ui-inp]", function () {
+            if (event && event.target)
+                $(event.target).select();
+        });
+        $(window).off("keydown").on("keydown", this.windowKeyDown);
+    };
+
+    this.populateDateCtrlsWithCurDate = function () {
+        let allTypeDateCtrls = getFlatObjOfTypes(this.FormObj, ["Date", "SysModifiedAt", "SysCreatedAt"]);
+        for (let i = 0; i < allTypeDateCtrls.length; i++) {
+            let ctrl = allTypeDateCtrls[i];
+            if (!ctrl.IsNullable)
+                ctrl.setValue(moment(new Date()).format('YYYY-MM-DD'));
+        }
+    };
+
+    this.init = function () {
+        this.TableNames = this.getNCCTblNames();
+        this.setHeader(this.mode);
+        $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
+        this.bindEventFns();
+        this.initWebFormCtrls();
+        this.initPrintMenu();
+        this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
+
+        if (this.Mode.isNew && this.EditModeFormData)
+            this.setEditModeCtrls();
+
+        if (this.Mode.isNew) {
+            this.initMultipleTables();
+            this.FRC.setDefaultvalsNC(this.flatControls);
+        }
+        else {
+            this.DataMODEL = this.EditModeFormData;
+            attachModalCellRef_form(this.FormObj, this.DataMODEL);
+        }
+
+        if (this.mode === "View Mode") {
+            this.setEditModeCtrls();
+            this.SwitchToViewMode();
+            this.locInit4viewMode();
+        }
+        this.LocationInit();
+
+        if (this.Mode.isNew)
+            this.populateDateCtrlsWithCurDate();
     };
 
     let t0 = performance.now();

@@ -312,7 +312,7 @@ function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type 
 
 function EbHideCtrlMsg(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    $(`${contSel} .msg-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
 
@@ -559,6 +559,8 @@ function getValsFromForm(formObj) {
     let fltr_collection = [];
     let flag = 1;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
+        if (obj.ObjType === "FileUploader")
+            return;
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
         //if (obj.ObjType === "PowerSelect")
         //    flag++;
@@ -581,6 +583,16 @@ function getFlatContObjsOfType(ContObj, type) {
     let flat = getFlatContControls(ContObj);
     $.each(flat, function (i, ctrl) {
         if (ctrl.ObjType === type)
+            ctrls.push(ctrl);
+    });
+    return ctrls;
+}
+
+function getFlatObjOfTypes(ContObj, typesArr) {
+    let ctrls = [];
+    let flat = getFlatControls(ContObj);
+    $.each(flat, function (i, ctrl) {
+        if (typesArr.contains(ctrl.ObjType))
             ctrls.push(ctrl);
     });
     return ctrls;

@@ -12,8 +12,8 @@
         this.init = function () {
             this.initViewer();
             $("#printBtn").on("click", this.printImagefn.bind(this));
-            $("li.viewer-info").on("mouseenter", this.printImagefn2.bind(this));   
-            $("li.viewer-info").on("mouseleave", this.printImagefn3.bind(this));   
+            //$("li.viewer-info").on("mouseenter", this.printImagefn2.bind(this));   
+            //$("li.viewer-info").on("mouseleave", this.printImagefn3.bind(this));   
         }
 
         this.initViewer = function () {

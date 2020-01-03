@@ -98,7 +98,7 @@
                                 <button class="prevImgrout roundstyledbtn" action="prev"><i class="fa fa-chevron-left"></i></button>
                                 <button class="nextImgrout roundstyledbtn" action="next"><i class="fa fa-chevron-right"></i></button>
                                 <div class="ebFupGFscreen_inner">
-                                <img src="~/images/web.png" class="FupimgIcon" />
+                                <img src="/images/web.png" class="FupimgIcon" />
                                 <div class="ebFupGFscreen_footr">
                                     <h1 class="Fname"></h1>
                                     <h3 class="Tags"></h3>

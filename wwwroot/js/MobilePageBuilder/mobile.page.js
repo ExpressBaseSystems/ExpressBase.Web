@@ -16,7 +16,7 @@
         console.log("initialization error");
         return null;
     }
-};
+}
 
 function EbMobStudio(config) {
     this.Conf = config;
@@ -86,7 +86,6 @@ function EbMobStudio(config) {
         let o = new EbObjects[ebtype](id);
         $.extend(o, this.EditObj.Container);
         this.Procs[id] = o;
-        SetControlFunctions(this.Procs[id]);
         $(this.droparea).append(o.$Control.outerHTML());
         if (ebtype === "EbMobileForm") {
             this.makeDropable(o.EbSid);
@@ -109,6 +108,7 @@ function EbMobStudio(config) {
             let o = new EbObjects[ebtype](id);
             $.extend(o, _obj);
             this.Procs[id] = o;
+            SetControlFunctions(this.Procs[id]);
             $(`#${_containerid} .eb_mob_container_inner`).append(o.$Control.outerHTML());
             this.RefreshControl(this.Procs[id]);
         }

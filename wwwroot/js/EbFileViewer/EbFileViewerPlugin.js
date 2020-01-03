@@ -27,26 +27,26 @@
                 $("body").append(ulview);
                 this.viewer = new Viewer($('#imageContainer')[0], {
                     toolbar: {
-                        info: function () {
-                            if (this.infono) {
-                                $(".viewer-canvas").append(`<div class='imgDetail'><h4>${this.viewer.image.dtls}</h4</div>`);
-                                this.infono = 0;
-                            } else {
-                                $(".imgDetail").remove();
-                                this.infono = 1;
-                            }
+                        //info: function () {
+                        //    if (this.infono) {
+                        //        $(".viewer-canvas").append(`<div class='imgDetail'><h4>${this.viewer.image.dtls}</h4</div>`);
+                        //        this.infono = 0;
+                        //    } else {
+                        //        $(".imgDetail").remove();
+                        //        this.infono = 1;
+                        //    }
 
-                        }.bind(this),
+                        //}.bind(this),
                         zoomIn: 1,
                         zoomOut: 1,
                         oneToOne: 1,
                         reset: 1,
-                        prev: 1,
+                        //prev: 1,
                         //play: {
                         //    show: 1,
                         //    size: 'large',
                         //},
-                        next: 1,
+                        //next: 1,
                         rotateLeft: 1,
                         rotateRight: 1,
                         flipHorizontal: 1,

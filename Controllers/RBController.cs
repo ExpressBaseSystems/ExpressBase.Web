@@ -23,48 +23,48 @@ namespace ExpressBase.Web.Controllers
         public RBController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
         [HttpPost]
-        public DataSourceColumnsResponse GetColumns(String refID)
+        public DataSourceColumnsResponse GetColumns(string refID)
         {
-            EbDataReader ds = null;
-            List<Param> FilterControls = new List<Param>();
-            DataSourceColumnsResponse cresp = new DataSourceColumnsResponse();
-            //cresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", refID));
-            //if (cresp == null || cresp.Columns.Count == 0)
+            DataSourceColumnsResponse DsColumns = null;
+            try
             {
-                ds = this.Redis.Get<EbDataReader>(refID);
+                EbDataReader ds = this.Redis.Get<EbDataReader>(refID);
+                List<Param> FilterParams = null;
                 if (ds == null)
                 {
-                    EbObjectParticularVersionResponse dsresult = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refID });
+                    EbObjectParticularVersionResponse dsresult = this.ServiceClient.Get(new EbObjectParticularVersionRequest { RefId = refID });
                     ds = EbSerializers.Json_Deserialize<EbDataReader>(dsresult.Data[0].Json);
-                    Redis.Set<EbDataReader>(refID, ds);
+                    this.Redis.Set<EbDataReader>(refID, ds);
                 }
 
-                if (ds.FilterDialogRefId != string.Empty)
-                    ds.AfterRedisGet(this.Redis, this.ServiceClient);
-                FilterControls = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
-                cresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest { RefId = refID, Params = FilterControls });
-                Redis.Set<DataSourceColumnsResponse>(string.Format("{0}_columns", refID), cresp);
-            }
-            if (FilterControls == null)
-            {
-                ds = this.Redis.Get<EbDataReader>(refID);
-                if (ds == null)
+                if (!string.IsNullOrEmpty(ds.FilterDialogRefId))
                 {
-                    EbObjectParticularVersionResponse dsresult = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refID });
-                    ds = EbSerializers.Json_Deserialize<EbDataReader>(dsresult.Data[0].Json);
-                    Redis.Set<EbDataReader>(refID, ds);
-                }
-                if (ds.FilterDialogRefId != string.Empty)
                     ds.AfterRedisGet(this.Redis, this.ServiceClient);
-                FilterControls = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
-            }
-            cresp.ParamsList = FilterControls;
-            foreach (var columnCollection in cresp.Columns)
-            {
-                columnCollection.Sort(CompareEbDataColumn);
-            }
+                    FilterParams = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
+                }
+                else
+                {
+                    FilterParams = ds.GetParams(this.Redis);
+                }
 
-            return cresp;
+                DsColumns = this.ServiceClient.Get<DataSourceColumnsResponse>(new DataSourceColumnsRequest
+                {
+                    RefId = refID,
+                    Params = FilterParams
+                });
+                Redis.Set<DataSourceColumnsResponse>(string.Format("{0}_columns", refID), DsColumns);
+                DsColumns.ParamsList = FilterParams;
+
+                foreach (var columnCollection in DsColumns.Columns)
+                {
+                    columnCollection.Sort(CompareEbDataColumn);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return DsColumns;
         }
 
         private int CompareEbDataColumn(object a, object b)
@@ -78,7 +78,7 @@ namespace ExpressBase.Web.Controllers
             if (ds.FilterDialogRefId != string.Empty)
                 ds.AfterRedisGet(this.Redis, this.ServiceClient);
             List<Param> FilterControls = (ds.FilterDialog != null) ? ds.FilterDialog.GetDefaultParams() : null;
-            ValidateCalcExpressionResponse res = this.ServiceClient.Get<ValidateCalcExpressionResponse>(new ValidateCalcExpressionRequest { DataSourceRefId = refid, ValueExpression = expression ,Parameters = FilterControls });
+            ValidateCalcExpressionResponse res = this.ServiceClient.Get<ValidateCalcExpressionResponse>(new ValidateCalcExpressionRequest { DataSourceRefId = refid, ValueExpression = expression, Parameters = FilterControls });
             return JsonConvert.SerializeObject(res);
         }
 

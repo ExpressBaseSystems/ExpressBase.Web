@@ -323,9 +323,11 @@
                                 </div>
                             </div>
                             <div id="login_activity" class="tab-pane fade">
-                                <div id="activity_div">
-                                    <table class="table  " id="activity_table">
-                                    </table>
+                                <div class="loginActivity w-100">
+                                    <div id="activity_div">
+                                        <table class="table  " id="activity_table">
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -450,6 +452,12 @@
             EbMessage("show", { Message: "window closed",Background: "red" });
         }
 
+         function sampleInit() {
+             if (typeof datatable == 'undefined') {
+                datatable = $('#activity_table').DataTable();
+             }
+             datatable.columns.adjust();
+        };
         //for login activity
          var o = {};
         o.columns =  @Html.Raw(ViewBag.ColumnEb);
@@ -460,7 +468,8 @@
         o.showCheckboxColumn = false;
         o.datetimeformat = true;
         o.IsPaging = true;
-        this.datatable = new EbBasicDataTable(o);
+        o.fninitComplete = sampleInit;
+        var datatable = new EbBasicDataTable(o);
     });
     </script>
 }

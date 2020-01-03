@@ -503,8 +503,12 @@ var EbBasicDataTable = function (Option) {
             //if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        if (this.Api !== null)
+        if (this.Api !== null) {
             this.Api.columns.adjust();
+        }
+        else {
+            this.Api = $("#" + this.tableId).DataTable();
+        }
 
         this.$dtLoaderCont.EbLoader("hide");
 

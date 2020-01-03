@@ -112,6 +112,40 @@
         }
     };
 
+    this.populateDateCtrlsWithInitialVal = function (formObj) {
+        let allTypeDateCtrls = getFlatObjOfTypes(formObj, ["Date", "SysModifiedAt", "SysCreatedAt"]);
+        for (let i = 0; i < allTypeDateCtrls.length; i++) {
+            let ctrl = allTypeDateCtrls[i];
+            if (ctrl.DefaultValueExpression && ctrl.DefaultValueExpression.Code)
+                continue;
+            if (!ctrl.IsNullable) {
+                if (ctrl.ShowDateAs_ === 1)
+                    ctrl.DataVals.Value = moment(new Date()).format('MM-YYYY');
+                else
+                    ctrl.DataVals.Value = moment(new Date()).format('YYYY-MM-DD');
+            }
+
+        }
+    };
+
+    this.populateRGCtrlsWithInitialVal = function (formObj) {
+        let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["RadioGroup"]);
+        for (let i = 0; i < allTypeRGCtrls.length; i++) {
+            let ctrl = allTypeRGCtrls[i];
+            if (!ctrl.IsNullable)
+                ctrl.setValue(ctrl.getValueFromDOM());
+        }
+    };
+
+    this.populateSSCtrlsWithInitialVal = function (formObj) {
+        let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect"]);
+        for (let i = 0; i < allTypeRGCtrls.length; i++) {
+            let ctrl = allTypeRGCtrls[i];
+            if (!ctrl.IsNullable)
+                ctrl.setValue(ctrl.getValueFromDOM());
+        }
+    };
+
     this.bindEbFnOnChange = function (control) {
         try {
             let FnString =

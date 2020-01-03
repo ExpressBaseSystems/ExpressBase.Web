@@ -269,7 +269,7 @@ namespace ExpressBase.Web.Controllers
             else if (type.Equals(EbObjectTypes.DashBoard))
             {
                 Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.WebForm, typeof(EbDashBoardWraper), typeof(EbObject));
+                _c2js = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
                 if (dsobj != null)
                 {
                     dsobj.AfterRedisGet(Redis);

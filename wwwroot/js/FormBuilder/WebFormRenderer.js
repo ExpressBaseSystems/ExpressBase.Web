@@ -1275,15 +1275,6 @@ const WebFormRender = function (option) {
         $(window).off("keydown").on("keydown", this.windowKeyDown);
     };
 
-    this.populateDateCtrlsWithCurDate = function () {
-        let allTypeDateCtrls = getFlatObjOfTypes(this.FormObj, ["Date", "SysModifiedAt", "SysCreatedAt"]);
-        for (let i = 0; i < allTypeDateCtrls.length; i++) {
-            let ctrl = allTypeDateCtrls[i];
-            if (!ctrl.IsNullable)
-                ctrl.setValue(moment(new Date()).format('YYYY-MM-DD'));
-        }
-    };
-
     this.init = function () {
         this.TableNames = this.getNCCTblNames();
         this.setHeader(this.mode);
@@ -1313,7 +1304,7 @@ const WebFormRender = function (option) {
         this.LocationInit();
 
         if (this.Mode.isNew)
-            this.populateDateCtrlsWithCurDate();
+            this.FRC.populateDateCtrlsWithInitialVal(this.FormObj);
     };
 
     let t0 = performance.now();

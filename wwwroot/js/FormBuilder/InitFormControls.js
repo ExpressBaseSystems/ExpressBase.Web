@@ -313,7 +313,7 @@ var InitControls = function (option) {
                 let ofsetval = $drpdwn.offset();
                 let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
                 let $div_detached = $drpdwn.detach();
-                let $form_div = $(e.target).closest("[eb-type='WebForm']");
+                let $form_div = $(e.target).closest("[eb-root-obj-container]");
                 $div_detached.appendTo($form_div).wrap($divclone);
                 $div_detached.width(initDDwidth);
                 $el[0].isOutside = true;
@@ -335,6 +335,7 @@ var InitControls = function (option) {
         this.SimpleSelect(ctrl);
     };
 
+    // http://davidstutz.de/bootstrap-multiselect
     this.UserLocation = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.multiselect({
@@ -357,6 +358,8 @@ var InitControls = function (option) {
                     $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             }
         }
+
+        ctrl.DataVals.Value = ctrl.getValueFromDOM();
     };
 
     this.UserLocationCheckboxChanged = function (ctrl) {

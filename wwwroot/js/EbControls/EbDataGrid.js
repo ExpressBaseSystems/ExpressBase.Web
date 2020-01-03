@@ -147,7 +147,8 @@
     this.editRow_click = function (e) {
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
-        if ($addRow.length !== 0 && !this.checkRow_click({ target: td }, false))
+        let isSameRow = $(event.target).closest("tr") === $addRow;
+        if ($addRow.length !== 0 && !this.checkRow_click({ target: td }, false, false, isSameRow))
             return;
 
         let $td = $(e.target).closest("td");
@@ -975,7 +976,7 @@
 
     };
 
-    this.checkRow_click = function (e, isAddRow = true, isFromCancel) {
+    this.checkRow_click = function (e, isAddRow = true, isFromCancel, isSameRow = true) {
         let t0 = performance.now();
         let $td = $(e.target).closest("td");
         //let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']:last`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
@@ -991,7 +992,7 @@
 
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
         $addRow.show().attr("is-editing", "true");
-        if (!isFromCancel) {
+        if (!isFromCancel && isSameRow) {
             this.setcurRowDataMODELWithNewVals(rowid);
             this.changeEditFlagInRowCtrls(false, rowid);
         }

@@ -978,6 +978,7 @@ document.addEventListener("click", function (e) {
 
 
 function EBPSSetDisplayMember(p1, p2) {
+    p1 = p1 + "";
     if (p1 === '')
         return;
     let VMs = this.initializer.Vobj.valueMembers || [];
@@ -1001,8 +1002,6 @@ function EBPSSetDisplayMember(p1, p2) {
     }
 
     if (this.initializer.datatable === null) {//for aftersave actions
-
-
         for (var i = 0; i < this.DataVals.R.length; i++) {
             let row = this.DataVals.R[i];
             $.each(row.Columns, function (k, column) {

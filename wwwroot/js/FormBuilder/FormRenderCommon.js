@@ -124,7 +124,6 @@
                 else
                     ctrl.DataVals.Value = moment(new Date()).format('YYYY-MM-DD');
             }
-
         }
     };
 
@@ -132,16 +131,15 @@
         let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["RadioGroup"]);
         for (let i = 0; i < allTypeRGCtrls.length; i++) {
             let ctrl = allTypeRGCtrls[i];
-            if (!ctrl.IsNullable)
-                ctrl.setValue(ctrl.getValueFromDOM());
+            ctrl.setValue(ctrl.getValueFromDOM());
         }
     };
 
     this.populateSSCtrlsWithInitialVal = function (formObj) {
-        let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect"]);
+        let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect", "PowerSelect"]);
         for (let i = 0; i < allTypeRGCtrls.length; i++) {
             let ctrl = allTypeRGCtrls[i];
-            if (!ctrl.IsNullable)
+            if (ctrl.ObjType === "SimpleSelect" || (ctrl.ObjType === "PowerSelect" && ctrl.RenderAsSimpleSelect))
                 ctrl.setValue(ctrl.getValueFromDOM());
         }
     };
@@ -193,7 +191,7 @@
                             if (valExpFnStr) {
                                 if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                     //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-                                        depCtrl.setValue(ValueExpr_val);
+                                    depCtrl.setValue(ValueExpr_val);
                                 }
                                 else {
                                     $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

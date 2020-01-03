@@ -48,7 +48,7 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult GetScheduleVc(int ObjId)
         {
-            return ViewComponent("SchedulerWindow", new { objid = ObjId, tasktype = JobTypes.SqlTask });
+            return ViewComponent("SchedulerWindow", new { objid = ObjId, tasktype = JobTypes.SqlJobTask });
         }
 
         public SqlJobsListGetResponse Get_Jobs_List(string Refid , string Date)

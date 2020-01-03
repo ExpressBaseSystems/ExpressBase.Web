@@ -503,13 +503,9 @@ var EbBasicDataTable = function (Option) {
             //if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        if (this.Api !== null) {
-            this.Api.columns.adjust();
-        }
-        else {
+        if (this.Api === null)
             this.Api = $("#" + this.tableId).DataTable();
-        }
-
+        this.Api.columns.adjust();
         this.$dtLoaderCont.EbLoader("hide");
 
         if (this.showFilterRow)

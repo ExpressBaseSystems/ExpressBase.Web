@@ -53,7 +53,7 @@ namespace ExpressBase.Web2
                 options.AddPolicy("AllowSpecificOrigin",
                     builder => builder
                      .SetIsOriginAllowedToAllowWildcardSubdomains()
-                    .WithOrigins("https://*.eb-test.xyz", "https://*.expressbase.com")
+                    .WithOrigins("https://*.eb-test.cloud", "https://*.expressbase.com")
                     .AllowAnyMethod());
             });
 
@@ -108,20 +108,20 @@ namespace ExpressBase.Web2
             string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
-            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT); 
-            if (env == "Development" || env == "Production")
+            var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
+            if (env == "Staging")
+            {
+                services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
+                {
+                    return new RedisClient(redisServer, Convert.ToInt32(redisPort));
+                });
+            }
+            else
             {
                 var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
                 services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
                 {
                     return new RedisClient(redisConnectionString); ;
-                });
-            }
-            else
-            {
-                services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
-                {
-                    return new RedisClient(redisServer, Convert.ToInt32(redisPort));
                 });
             }
 

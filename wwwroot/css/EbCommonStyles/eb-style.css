@@ -101,6 +101,11 @@ body, html, .html-root {
     font-size: 12px;
 }
 
+.eb_btn-xxs {
+    padding: 1px 1px;
+    font-size: 10px;
+}
+
 .eb_btn_md {
     padding: 10px 20px;
 }

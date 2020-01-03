@@ -90,6 +90,7 @@ function EbMobStudio(config) {
         $(this.droparea).append(o.$Control.outerHTML());
         if (ebtype === "EbMobileForm") {
             this.makeDropable(o.EbSid);
+            this.makeSortable(o.EbSid);
             this.setCtrls(o.EbSid);
         }
         else if (ebtype === "EbMobileVisualization") {
@@ -141,8 +142,8 @@ function EbMobStudio(config) {
     };
 
     this.makeSortable = function (ebsid) {
-        $(`#${ebsid}`).sortable({
-            //axis: "y",
+        $(`#${ebsid} .eb_mob_container_inner`).sortable({
+            axis: "y",
             appendTo: document.body
         });
     };
@@ -153,7 +154,6 @@ function EbMobStudio(config) {
         let o = this.makeElement(dragged);
         $(event.target).append(o.$Control.outerHTML());
         this.RefreshControl(o);
-        this.makeSortable(o.EbSid);
         if (ebtype === "EbMobileTableLayout") {
             this.Controls.InitTableLayout(o);
         }
@@ -168,6 +168,7 @@ function EbMobStudio(config) {
             dropLoc.append(o.$Control.outerHTML());
             if (ebtype === "EbMobileForm") {
                 this.makeDropable(o.EbSid);
+                this.makeSortable(o.EbSid);
             }
             else if (ebtype === "EbMobileVisualization") {
                 this.Controls.InitVis(o);

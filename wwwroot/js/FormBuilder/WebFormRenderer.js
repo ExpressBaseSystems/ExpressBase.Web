@@ -1304,7 +1304,7 @@ const WebFormRender = function (option) {
         this.LocationInit();
 
         if (this.Mode.isNew)
-            this.FRC.populateDateCtrlsWithCurDate(this.FormObj);
+            this.FRC.populateDateCtrlsWithInitialVal(this.FormObj);
     };
 
     let t0 = performance.now();

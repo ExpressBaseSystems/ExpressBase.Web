@@ -270,6 +270,7 @@ window.ControlFunctions = {
                         let keys = Object.keys(data.columns).length;
                         let c = 1;
                         this.Columns.$values.length = 0;
+                        this.Parameters.$values = data.paramsList;
                         $.each(data.columns, function (i, columnCollection) {
                             for (let i = 0; i < columnCollection.length; i++) {
 

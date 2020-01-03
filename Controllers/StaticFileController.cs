@@ -20,7 +20,7 @@ namespace ExpressBase.Web.Controllers
 {
     public class StaticFileExtController : EbBaseExtController
     {
-        public StaticFileExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
+        public StaticFileExtController(IEbStaticFileClient _sfc, IRedisClient _redis) : base(_sfc, _redis) { }
 
         [HttpGet("images/logo/{solnid}")]
         public IActionResult GetLogo(string solnid)
@@ -330,7 +330,7 @@ namespace ExpressBase.Web.Controllers
                 List<string> tags = string.IsNullOrEmpty(req["Tags"]) ? new List<string>() : req["Tags"].ToList<string>();
                 List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
                 string context = (req.ContainsKey("Context")) ? context = req["Context"] : StaticFileConstants.CONTEXT_DEFAULT;
-                
+
                 UploadFileAsyncRequest uploadFileRequest = new UploadFileAsyncRequest();
                 uploadFileRequest.FileDetails = new FileMeta();
 
@@ -548,7 +548,7 @@ namespace ExpressBase.Web.Controllers
 
                 int _userid = Convert.ToInt32(req["UserId"]);
 
-                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest { UserIntId=_userid};
+                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest { UserIntId = _userid };
                 uploadImageRequest.ImageInfo = new ImageMeta();
                 foreach (var formFile in req.Files)
                 {

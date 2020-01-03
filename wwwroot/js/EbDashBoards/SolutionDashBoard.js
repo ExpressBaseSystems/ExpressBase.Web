@@ -17,15 +17,17 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "ORACLE": "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />",
         "MongoDB": "<img class='img-responsive' src='../images/MongodB.png' align='middle' style='height:40px' />",
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
-        "ExpertTexting": "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />",
-        "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
+        "ExpertTexting": "<img class='img-responsive' src='../images/Expert Texting.png' align='middle' style='height:26px' />",
+        "Twilio": "<img class='img-responsive' src='../images/Twilio.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
         "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />",
         "GoogleDrive": "<img class='img- responsive image-vender' src='../images/Google-Drive-Logo.png' style='width:68%' />",
-        "AWSS3": "<img class='img- responsive image-vender' src='../images/amazon-s3.png' style='width:68%' />",
+        "AWSS3": "<img class='img- responsive image-vender' src='../images/amazon-s3.png' style='width:100%' />",
         "DropBox": "<img class='img- responsive image-vender' src='../images/Dropbox-logo.png' style='width:100%' />",
-        "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />"
+        "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />",
+        "Facebook": "<img class='img- responsive image-vender' src='../images/fb_logo.png' style='width:46%' />",
+        "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"
     }
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -35,6 +37,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "MYSQL": `<img class='img-responsive' src='../images/mysql.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>MySQL is an open-source relational database management system. Its name is a combination of "My", the name of co-founder Michael Widenius's daughter, and "SQL", the abbreviation for Structured Query Language.</span>
+                        </div>`,
+        "MSSQL": `<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Microsoft SQL Server is a relational database management system developed by Microsoft. As a database server, it is a software product with the primary function of storing and retrieving data as requested by other software applications—which may run either on the same computer or on another computer across a network.</span>
                         </div>`
     }
 
@@ -333,6 +339,26 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }.bind(this));
     };
 
+    this.UnifonicAccountSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddUnifonic",
+            data: postData,
+            beforeSend: function () {
+                $("#UnifonicConnection_loder").EbLoader("show", { maskItem: { Id: "#twilio_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#UnifonicConnection_loder").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Changed Successfully" });
+            $("#UnifonicConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
     this.CloudnaryConSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -499,6 +525,26 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $("#Slack_loader").EbLoader("hide");
             EbMessage("show", { Message: "Connection Added Successfully" });
             $("#SlackConnectionEdit").modal("toggle");
+            $("#IntegrationsCall").trigger("click");
+            $("#MyIntegration").trigger("click");
+        }.bind(this));
+    };
+
+    this.facebookOnSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddFacebook",
+            data: postData,
+            beforeSend: function () {
+                $("#facebook_loader").EbLoader("show", { maskItem: { Id: "#facebook", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#facebook_loader").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Added Successfully" });
+            $("#facebookConnectionEdit").modal("toggle");
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
         }.bind(this));
@@ -709,6 +755,21 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             }
         }
     };
+    this.UnifonicinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#UnifonicConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#UnifonicInputNickname').val(temp[obj].NickName);
+                $('#UnifonicInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#UnifonicInputUsername').val(temp1["UserName"]);
+                $('#UnifonicInputPassword').val(temp1["Password"]);
+                $('#UnifonicInputFrom').val(temp1["From"]);
+                $('#IsSSL').prop('checked', temp1["IsSSL"]);
+            }
+        }
+    };
     this.TwiliointeConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TwilioConnectionEdit').modal('toggle');
@@ -817,6 +878,19 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#SlackInputOAuthAccessToken').val(temp1["OAuthAccessToken"]);
                 $('#SlackInputChannel').val(temp1["Channel"]);
+            }
+        }
+    };
+    this.FacebookinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#facebookConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#facebookInputNickname').val(temp[obj].NickName);
+                $('#facebookInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#facebookInputAppId').val(temp1["AppId"]);
+                $('#facebookInputAppVersion').val(temp1["AppVersion"]);
             }
         }
     };
@@ -1136,6 +1210,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                     }.bind(this));
                                     this.IntegrationSubmit();
                                 }
+                                else if (key == "AUTHENTICATION") {
+                                    postData.Preference = "MULTIPLE";
+                                    this.IntegrationSubmit();
+                                }
                                 else {
                                     EbMessage("show", { Message: "Please delete existing account then try again", Background: "red" });
                                 }
@@ -1189,6 +1267,11 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
+                else if ($trigger.hasClass('Unifonicedit')) {
+                    options.items.SMS = { name: "Set as SMS" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
                 else if ($trigger.hasClass('ExpertTextingedit')) {
                     options.items.SMS = { name: "Set as SMS" },
                         options.items.Delete = { name: "Remove" },
@@ -1231,6 +1314,11 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 }
                 else if ($trigger.hasClass('Slackedit')) {
                     options.items.Chat = { name: "Configure as Chat" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('Facebookedit')) {
+                    options.items.AUTHENTICATION = { name: "Configure as AUTHENTICATION" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
@@ -1390,6 +1478,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 } else if ($trigger.hasClass('Cloudinaryedit')) {
                     options.items.Remove = { name: "Unset" }
 
+                } else if ($trigger.hasClass('Cloudinaryedit')) {
+                    options.items.Remove = { name: "Unset" }
+
                 } else if ($trigger.hasClass('SMSedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
                         options.items.FALLBACK = { name: "Set as FALLBACK" }
@@ -1410,6 +1501,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             }
                         }
 
+                } else if ($trigger.hasClass('AUTHENTICATIONedit 1')) {
+                    options.items.Remove = {name: "Unset"}
                 }
                 if (preventContextMenu == 0)
                     return options;
@@ -1615,6 +1708,35 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $('#Integration_ICHAT').empty().append("Chat (" + count + ")");
     }.bind(this);
 
+    this.integration_AUTHENTICATION_all = function () {
+        let html = [];
+        var count = 0;
+        Integrations = this.Connections.Integrations["AUTHENTICATION"];
+        $.each(Integrations, function (i, rows) {
+            //$.each(rows, function (j, rowss) {
+            html.push(`<div class="integrationContainer hover-mover ${rows.Type.concat("edit")} ${rows.Preference}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}" dataConffId="${rows.ConfId}">
+                            <div class="integrationContainer_Image">
+                                 ${Imageurl[rows.Ctype]}
+                            </div>
+                            <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
+                                <span>${rows.NickName}</span>
+                                `);
+            if (rows.Preference == "1") {
+                html.push(`<span  class="PF_span">PRIMARY</span>`);
+            }
+
+            html.push(`
+                            </div>
+                            <div id="nm" class="inteConfContainer_caret-down ">
+                                <i class="fa fa-caret-down" aria-hidden="true"></i>
+                            </div>
+                        </div>`)
+            count += 1;
+        }.bind(this));
+        $('#AUTHENTICATION-all').empty().append(html.join(''));
+        $('#Integration_AUTHENTICATION').empty().append("AUTHENTICATION (" + count + ")");
+    }.bind(this);
+
     this.integration_config_all = function () {
         let html = [];
         var count = 0;
@@ -1657,6 +1779,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_SMS_all();
         this.integration_Map_all();
         this.integration_IChat_all();
+        this.integration_AUTHENTICATION_all();
     }.bind(this);
 
     this.db_modal_show_append = function (DatabaseName) {
@@ -1729,10 +1852,21 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
     };
 
+    this.SMTPautoFill = function (e) {
+        var target = e.target.options.selectedIndex;
+        if (target == 0) {
+            $('#EmailInputSMTP').val("smtp.gmail.com");
+        } else if (target == 1) {
+            $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
+        }
+        $('#EmailInputPort').val("587");
+    }.bind(this);
+
     this.init = function () {        
         if (this.versioning === 'True') {
             $("#VersioningSwitch").bootstrapToggle('on');            
-        }   
+        }
+        $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
@@ -1740,6 +1874,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#filesDbConnectionSubmit").on("submit", this.FilesDbSubmit.bind(this));
         $("#emailConnectionSubmit").on("submit", this.emailConnectionSubmit.bind(this));
         $("#TwilioConnectionSubmit").on("submit", this.twilioAccountSubmit.bind(this));
+        $("#UnifonicConnectionSubmit").on("submit", this.UnifonicAccountSubmit.bind(this));
         $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
@@ -1749,6 +1884,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#DropBoxConnectionSubmit").on("submit", this.DropBoxOnSubmit.bind(this));
         $("#AWSS3ConnectionSubmit").on("submit", this.AWSS3OnSubmit.bind(this));
         $("#SlackConnectionSubmit").on("submit", this.SlackOnSubmit.bind(this));
+        $("#facebookConnectionSubmit").on("submit", this.facebookOnSubmit.bind(this));
         $(".testConnection").on("click", this.testConnection.bind(this));
         $("#UserNamesAdvanced").on("click", this.showAdvanced.bind(this));
         this.LogoImageUpload();
@@ -1784,7 +1920,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         this.integration_SMS_all();
         this.integration_Map_all();
         this.integration_IChat_all();
-
+        this.integration_AUTHENTICATION_all();
 
 
         $(".Inter_modal_list").on("click", this.ShowIntreationModalList.bind(this));

@@ -153,6 +153,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit"  data-whatever="MSSQL">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="mongo" class="connection_wrap_outer" data-toggle="modal" data-target="#filesDbConnectEdit" data-whatever="MongoDB">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="FilesConnection_config">
@@ -187,6 +197,16 @@
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="TwilioConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/Twilio.png" style="width:95%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="Unifonic" class="connection_wrap_outer" data-toggle="modal" data-target="#UnifonicConnectionEdit" data-whatever="Unifonic">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="UnifonicConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/unifonic.png" style="width:95%" />
                                                 <div class="image-add">
                                                     <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
@@ -263,6 +283,16 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div id="facebook" class="connection_wrap_outer" data-toggle="modal" data-target="#facebookConnectionEdit" data-whatever="">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="facebookConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/fb_logo.png" style="width:50%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div id="oracle" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit" *@ data-whatever="ORACLE">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
@@ -273,40 +303,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" @*data-target="#dbConnectionEdit" *@ data-whatever="MSSQL">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
-                                                <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
                                     <div id="whatsapp" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="whatsappConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/WhatsApp_Logo.png" style="width:50%" />
-                                                <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="facebook" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="facebookConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/fb_logo.png" style="width:50%" />
-                                                <div class="image-add">
-                                                    <div class="text fa-coming-soon">Coming Soon</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="googleanalitics" class="connection_wrap_outer" data-toggle="modal" data-target="#" data-whatever="">
-                                        <div class="connection_wrap w-100">
-                                            <div class="connection_wrap_header w-100 image-hover" id="MapsConnection_config">
-                                                <img class="img-responsive image-vender" src="~/images/google-analytics-logo.png" style="width:100%" />
                                                 <div class="image-add">
                                                     <div class="text fa-coming-soon">Coming Soon</div>
                                                 </div>
@@ -427,6 +427,20 @@
                                             </div>
                                             <div id="ICHAT" class="panel-collapse collapse">
                                                 <div id="ICHAT-all" class="panel-body">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading">
+                                                <h4 class="panel-title">
+                                                    <a id="Integration_AUTHENTICATION" data-toggle="collapse" data-parent="#MyIntegrations" href="#AUTHENTICATION">
+                                                        AUTHENTICATION
+                                                    </a>
+                                                </h4>
+                                            </div>
+                                            <div id="AUTHENTICATION" class="panel-collapse collapse">
+                                                <div id="AUTHENTICATION-all" class="panel-body">
 
                                                 </div>
                                             </div>
@@ -575,7 +589,7 @@
                                 </div>
                             </div>
                             <input type="hidden" class="Inputclear IntConfId" id="IntConfId" name="Id" value="0" />
-                            <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                            <input type="hidden" class="" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         </div>
                         <div class="col-md-12 pd-0">
                             <div class="uname-advanced-sec">
@@ -713,7 +727,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="FilesInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
@@ -779,8 +793,76 @@
                                     </div>
                                 </div>
 
-                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                                 <input type="hidden" class="Inputclear IntConfId" id="TwilioInputIntConfId" name="Id" value="0" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="UnifonicConnectionEdit" class="modal fade input-clear" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="Unifonic_mask">
+            <form id="UnifonicConnectionSubmit" method="post" data-toggle="validator">
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Unifonic Accounts</h4>
+                    <div id="UnifonicConnection_loder" class="dbConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:25%;">
+                        <img class='img-responsive' src='~/images/unifonic.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Cloud Communications For Everyone. Unifonic makes cloud communications more accessible, cost - efficient and simpler to implement.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <input name="DatabaseVendor" value="Twilio" class="form-control Vendor" type="hidden" readonly />
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="UnifonicInputNickname" name="NickName" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Sender Number</label>
+                                    <input id="UnifonicInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input id="UnifonicInputUsername" name="UserName" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group ">
+                                    <label>Password</label>
+                                    <div class="input-group eb-inputWicon" style="padding:0;">
+                                        <input id="UnifonicInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear eb_input-h" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd">
+                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                                <input type="hidden" class="Inputclear IntConfId" id="UnifonicInputIntConfId" name="Id" value="0" />
                             </div>
                         </div>
                     </div>
@@ -854,7 +936,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="ExpertInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
@@ -910,7 +992,7 @@
                                     <label>Api Secret</label>
                                     <input id="CloudnaryInputApisecret" type="text" name="ApiSecret" class="form-control Inputclear eb_input-h" value="" required />
                                 </div>
-                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                                <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                                 <input type="hidden" class="Inputclear IntConfId" id="CloudnaryInputIntConfId" name="Id" value="0" />
                             </div>
                         </div>
@@ -956,7 +1038,7 @@
                         <label>NickName</label>
                         <input type="text" name="NickName" class="form-control Inputclear" value="" required />
                     </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                 </div>
                 <div class="modal-footer border-style-none">
                     <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
@@ -1046,7 +1128,7 @@
                         </div>
                     </div>
                 </div>
-                <input type="hidden" name="SolnId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                <input type="hidden" name="SolnId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                 <input type="hidden" class="Inputclear IntConfId" id="SMTPInputIntConfId" name="Id" value="0" />
                 <div class="modal-footer border-style-none">
                     <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
@@ -1094,7 +1176,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="MapInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
@@ -1162,7 +1244,7 @@
                             </div>
                         </div>
                     </div>
-                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                    <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                     <input type="hidden" class="Inputclear IntConfId" id="GoogleDriveInputIntConfId" name="Id" value="0" />
                 </div>
                 <div class="modal-footer">
@@ -1224,7 +1306,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="SendGridInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
@@ -1273,7 +1355,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="DropBoxInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
@@ -1352,7 +1434,7 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="AWSS3InputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
@@ -1411,13 +1493,72 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.EsolutionId" />
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="SlackInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
 
                 <div class="modal-footer border-style-none">
-                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm AWSS3Connection">Save</button>
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm SlackConnection">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="facebookConnectionEdit" class="modal fade s-dash-modal input-clear" role="dialog" style="margin-top: 100px;" display: block;>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="facebook_mask">
+            <form action="" method="post" id="facebookConnectionSubmit" data-toggle="validator">
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Facebook</h4>
+                    <div id="facebook_loader" class="facebookConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:35%">
+                        <img class='img-responsive' src='~/images/fb_logo.png' align='middle' style='margin:auto;margin-top: 15px;margin-bottom: 15px; width:33%' />
+                        <div class="connection-vender-desp">
+                            <span> Company can verify there users on chatbot using facebook credentials.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input name="facebookVendor" type="hidden" value="Slack" class="form-control Vendor" readonly />
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="facebookInputNickname" name="NickName" type="text" class=" Inputclear form-control eb_input-h" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>APP Id</label>
+                                        <input id="facebookInputAppId" name="AppId" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label>APP Version</label>
+                                        <input id="facebookInputAppVersion" name="AppVersion" type="text" class="form-control Inputclear eb_input-h" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="facebookInputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm facebookConnection">Save</button>
                 </div>
             </form>
         </div>
@@ -1438,7 +1579,7 @@
     <script>
         let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));
         let GoogleRedirecturi = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Env));
-	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.EsolutionId', '@ViewBag.Connections.SolutionInfo.IsVersioningEnabled');
+	    var sdb = new SolutionDashBoard(Connection, '@ViewBag.Connections.SolutionInfo.IsolutionId', '@ViewBag.Connections.SolutionInfo.IsVersioningEnabled');
 	    $("#no_user").change(function (e) {
 		    $("#user_countForm").val(e.target.value);
         });

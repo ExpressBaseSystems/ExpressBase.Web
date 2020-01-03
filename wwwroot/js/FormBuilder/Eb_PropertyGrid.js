@@ -98,7 +98,7 @@
         //else if (type === 25) {
         //    valueHTML = this.getBootstrapSelectHtml25(elemId, value, meta.enumoptions, IsCElimitEditor);
         //}
-        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26 || type === 27 || type === 35) {//  If collection editor
+        else if (type > 6 && type < 11 || type === 22 || type === 24 || type === 25 || type === 26 || type === 27 || type === 35 || type === 36) {//  If collection editor
             if ((meta.Limit === 1 && type === 25) || (meta.Limit === 1 && type === 8)) {
                 let _meta = jQuery.extend({}, meta);
                 _meta.editor = 1;
@@ -170,7 +170,7 @@
                 SolutionId: "@ViewBag.SolnId",
                 Container: "mb_" + this.wraperId,
                 Multiple: false,
-                ServerEventUrl: 'https://se.eb-test.xyz',
+                ServerEventUrl: 'https://se.eb-test.cloud',
                 EnableTag: false,
                 EnableCrop: false,
                 MaxSize: 2,//in MegaBytes

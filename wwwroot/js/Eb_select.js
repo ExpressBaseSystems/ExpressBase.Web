@@ -12,7 +12,7 @@
     this.RenderMe = function () {
         let NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
         $.each(metas, function (i, meta) {
-            let name = meta.name; 
+            let name = meta.name;
             if (meta.IsUIproperty) {
                 NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
             }
@@ -64,10 +64,12 @@ const EbSelect = function (ctrl, options) {
     //local variables
     this.container = this.name + "Container";
     this.DTSelector = '#' + this.name + 'tbl';
+    this.DT_tbodySelector = "#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody';
     this.NoOfFields = this.dmNames.length;
     this.Vobj = null;
     this.datatable = null;
     this.clmAdjst = 0;
+    this.onDataLoadCallBackFns = [];
 
 
     ctrl._DisplayMembers = [];
@@ -81,7 +83,7 @@ const EbSelect = function (ctrl, options) {
     this.IsDatatableInit = false;
     this.IsSearchBoxFocused = false;
 
-    $.each(this.dmNames, function (i, name) { this.localDMS[name] = [] }.bind(this));
+    $.each(this.dmNames, function (i, name) { this.localDMS[name] = []; }.bind(this));
 
     this.VMindex = null;
     this.DMindexes = [];
@@ -103,10 +105,11 @@ const EbSelect = function (ctrl, options) {
             $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-            this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+            $('#' + this.name + 'Wraper' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
             this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
+            this.Values = [];
 
             if (this.ComboObj.IsInsertable) {
                 this.ComboObj.__AddButtonInit(this.ComboObj.AddButton);
@@ -140,7 +143,12 @@ const EbSelect = function (ctrl, options) {
         }
     }.bind(this);
 
-    this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
+    this.getColumn = function (colName) { return this.ComboObj.MultiSelect ? this.columnVals[colName] : this.columnVals[colName][0]; }.bind(this);
+
+    //this.getColumn = function (colName) {
+    //    let columnVals = getEbFormatedPSRows(this.ComboObj);
+    //    return this.ComboObj.MultiSelect ? columnVals[colName] : columnVals[colName][0];
+    //}.bind(this);
 
     this.searchBoxFocus = function () {
         this.IsSearchBoxFocused = true;
@@ -208,6 +216,8 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
+        if (StrValues === "")
+            return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {
@@ -246,16 +256,17 @@ const EbSelect = function (ctrl, options) {
     }.bind(this);
 
     this.initComplete4SetVal = function (callBFn, StrValues) {
+        this.clearValues();
         if (this.setvaluesColl) {
             if (this.ComboObj.MultiSelect) {
                 $.each(this.setvaluesColl, function (i, val) {
-                    let $row = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
-                    if ($row.length === 0) {
+                    let $checkBox = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
+                    if ($checkBox.length === 0) {
                         console.eb_warn(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`, "rgb(222, 112, 0)");
                         this.$inp.val(StrValues).trigger("change");
                     }
                     else
-                        $row.click();
+                        $checkBox.click();
                 }.bind(this));
             }
             else {
@@ -267,6 +278,7 @@ const EbSelect = function (ctrl, options) {
                 else
                     $row.trigger("dblclick");
             }
+            //this.afterInitComplete4SetVal = true;
         }
         if (callBFn)
             callBFn();
@@ -358,7 +370,26 @@ const EbSelect = function (ctrl, options) {
             o.wc = options.wc;
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
+        o.fns4PSonLoad = this.onDataLoadCallBackFns;
+        o.searchCallBack = this.searchCallBack;
         this.datatable = new EbBasicDataTable(o);
+
+        setTimeout(function () {
+            let contWidth = $('#' + this.name + 'Container').width();
+            contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
+            let brow_wdth = $(window).width();
+            let div_tble = $("#" + o.containerId);
+            let tbl_cod = div_tble.offset();
+            let div_detach = div_tble.detach();
+            div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
+            let xtra_wdth = tbl_cod.left;
+            if ((contWidth + tbl_cod.left) > brow_wdth)
+                xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
+            let $form_div = $('#' + this.name).closest("[eb-type='WebForm']");
+            div_detach.appendTo($form_div).offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
+
+        }.bind(this), 30);
+
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
         //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
         //$.ajax({
@@ -411,6 +442,8 @@ const EbSelect = function (ctrl, options) {
     //};
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
+        if ($(":focus").hasClass("eb_finput"))
+            return;
         if (key === 13)
             this.DDEnterKeyPress(e, datatable, key, cell, originalEvent);
         else if (key === 32) {
@@ -419,6 +452,11 @@ const EbSelect = function (ctrl, options) {
                 this.DDSpaceKeyPress(e, datatable, key, cell, originalEvent);
         }
     };
+    this.searchCallBack = function () {
+        setTimeout(function () {
+            this.V_updateCk();
+        }.bind(this), 30);
+    }.bind(this);
 
     this.DDSpaceKeyPress = function (e, datatable, key, cell, originalEvent) {
         let row = datatable.row(cell.index().row);
@@ -471,10 +509,10 @@ const EbSelect = function (ctrl, options) {
         }.bind(this), 10);
     };
 
-    this.setColumnvals = function () {
-        if (!this.$curEventTarget)
+    this.reSetColumnvals = function () {
+        if (!event)
             return;
-        let vmValue = this.datatable.data[this.$curEventTarget.closest("tr").index()][getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
+        let vmValue = this.lastAddedOrDeletedVal;
         if (event.target.nodeName === "SPAN")// if clicked tagclose
             vmValue = this.ClosedItem;
         //if (!this.ComboObj.MultiSelect)
@@ -486,22 +524,25 @@ const EbSelect = function (ctrl, options) {
         else {
             this.addColVals();
         }
-
     };
 
-    this.addColVals = function () {
+    this.reSetColumnvals_ = function () {
+        $.each(this.ColNames, function (i, name) {
+            this.columnVals[name].clear();
+        }.bind(this));
+        for (let i = 0; i < this.Vobj.valueMembers.length; i++) {
+            this.addColVals(this.Vobj.valueMembers[i]);
+        }
+    };
+
+    this.addColVals = function (val = this.lastAddedOrDeletedVal) {
         $.each(this.ColNames, function (i, name) {
             let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
             let type = obj.Type;
-            let cellData = this.datatable.data[this.$curEventTarget.closest("tr").index()][obj.data];
-            //if (this.maxLimit === 1)
-            //    this.columnVals[name] = cellData;
-
-            if (this.ComboObj.MultiSelect)
-                this.columnVals[name].push(EbConvertValue(cellData, type));
-            else
-                this.columnVals[name] = [EbConvertValue(cellData, type)];
-
+            let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
+            let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
+            let cellData = this.datatable.Api.row($rowEl).data()[idx];
+            this.columnVals[name].push(EbConvertValue(cellData, type));
         }.bind(this));
     };
 
@@ -600,11 +641,20 @@ const EbSelect = function (ctrl, options) {
         //hiding v-select native DD
         $('#' + this.container + ' [class=expand]').css('display', 'none');
         this.Vobj.valueMembers = this.values;
-        this.Vobj.displayMembers;
+    };
+
+    this.setLastmodfiedVal = function () {
+        if (this.Vobj.valueMembers.length > this.Values.length)
+            this.lastAddedOrDeletedVal = this.Vobj.valueMembers.filter(x => !this.Values.includes(x))[0];
+        else
+            this.lastAddedOrDeletedVal = this.Values.filter(x => !this.Vobj.valueMembers.includes(x))[0];
     };
 
     //single select & max limit
-    this.V_watchVMembers = function (VMs) {
+    this.V_watchVMembers = function (VMs, a, b, c) {
+        this.setLastmodfiedVal();
+        this.Values = [...this.Vobj.valueMembers];
+
         this.ComboObj.TempValue = [...this.Vobj.valueMembers];
         //single select
         if (this.maxLimit === 1 && VMs.length > 1) {
@@ -635,12 +685,29 @@ const EbSelect = function (ctrl, options) {
         //    $('#' + this.name + 'Wraper [type=search]').val("");
         //}.bind(this), 10);
 
-        if (this.datatable !== null) {
-            this.setColumnvals();
-            this.$inp.val(this.Vobj.valueMembers).trigger("change");
+        if (this.datatable === null) {
+            if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
+                this.reSetColumnvals();
+            if (this.ComboObj.justInit) { // temp from DG.setRowValues_E
+                this.$inp.val(this.Vobj.valueMembers);
+                this.ComboObj.justInit = undefined;
+            }
+            else
+                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+
         }
-        else
-            this.$inp.val(this.Vobj.valueMembers);
+        else {
+            this.reSetColumnvals_();
+            if (this.justInit) {
+                this.$inp.val(this.Vobj.valueMembers);
+                //if (this.afterInitComplete4SetVal)
+                this.justInit = undefined;
+            }
+            else
+                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+        }
+
+        this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
@@ -657,6 +724,11 @@ const EbSelect = function (ctrl, options) {
             DMs.pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
         }
     };
+
+    //this.clearColumnVals = function () {
+    //    for (colName in this.columnVals)
+    //        this.columnVals[colName].clear();
+    //}.bind(this);
 
     this.V_toggleDD = function (e) {
         if (!this.IsDatatableInit)
@@ -722,7 +794,7 @@ const EbSelect = function (ctrl, options) {
     //this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
 
     this.V_updateCk = function () {// API..............
-        $("#" + this.container + ' table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
+        $("#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
             let $row = $(chkbx).closest('tr');
             let datas = $(this.DTSelector).DataTable().row($row).data();
             if (this.Vobj.valueMembers.contains(datas[this.VMindex]))
@@ -777,7 +849,7 @@ const EbSelect = function (ctrl, options) {
     this.tagCloseBtnHand = function (e) {
         this.ClosedItem = this.Vobj.valueMembers.splice(delid(), 1)[0];
         if (this.ComboObj.MultiSelect)
-            $(this.DTSelector + ' [type=checkbox][value=' + this.ClosedItem + ']').prop("checked", false);
+            $(this.DTSelector + " [type=checkbox][value='" + this.ClosedItem + "']").prop("checked", false);
         //else
         //    var _v = this.Vobj.valueMembers.splice(delid(), 1);
         $.each(this.dmNames, function (i, name) {
@@ -785,14 +857,19 @@ const EbSelect = function (ctrl, options) {
         }.bind(this));
         this.clearSearchBox();
         this.filterArray = [];
-        this.datatable.columnSearch = [];
-        this.datatable.Api.ajax.reload();
+        if (this.datatable) {
+            this.datatable.columnSearch = [];
+            this.datatable.Api.ajax.reload();
+        }
     };
 
     this.checkBxClickEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         let $row = $(e.target).closest('tr');
-        let datas = $(this.DTSelector).DataTable().row($row).data();
+        //let datas = $(this.DTSelector).DataTable().row($row).data();
+        let datas = this.datatable.data[$row.index()];
+
+
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
             if (this.maxLimit === 0 || this.Vobj.valueMembers.length !== this.maxLimit) {
                 this.Vobj.valueMembers.push(datas[this.VMindex]);
@@ -838,6 +915,24 @@ const EbSelect = function (ctrl, options) {
 
             }
         }
+    };
+
+    this.getDisplayMemberModel = function () {
+
+        let newDMs = {};
+        let DmClone = removePropsOfType($.extend(true, {}, this.Vobj.displayMembers), 'function');
+        let ValueMembers = this.Vobj.valueMembers.toString().split(",");
+        for (var i = 0; i < ValueMembers.length; i++) {
+            let vm = ValueMembers[i];
+            newDMs[vm] = {};
+            for (let j = 0; j < this.dmNames.length; j++) {
+                let dmName = this.dmNames[j];
+                newDMs[vm][dmName] = DmClone[dmName][i];
+            }
+
+        }
+
+        return newDMs;
     };
 
     this.Renderselect();

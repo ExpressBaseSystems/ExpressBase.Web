@@ -1,0 +1,115 @@
+﻿#ppt-calendar-view {
+    top: 0px;
+    right: 0px;
+    width: 350px;
+    position: fixed;
+    display: block;
+    margin-top: 37px;
+    height: 100%;
+    z-index: 3;
+    border: 1px solid rgb(204, 204, 204);
+}
+
+#calendar-user-view .dataTables_wrapper, #calendar-user-view .dataTables_scroll {
+    height: inherit;
+}
+
+#calendar-user-view .dataTables_scrollBody {
+    height: calc( 100% - 61px ) !important;
+}
+
+#ShowDataColumndd button {
+    font-size: 14px;
+    padding: 0px;
+}
+
+#ShowDataColumndd .dropdown-item {
+    display: block;
+    width: 100%;
+    padding: .25rem 1.5rem;
+    clear: both;
+    font-weight: 400;
+    color: #212529;
+    text-align: inherit;
+    white-space: nowrap;
+    background-color: transparent;
+    border: 0;
+    text-decoration: none;
+    cursor:pointer;
+}
+
+#ShowDataColumndd .dropdown-item:hover {
+    background-color: #f4f4f4;
+}
+
+#ShowDataColumndd span {
+    margin-left: 5px;
+}
+.param-div-cont {
+    top: 0px;
+    left: 0px;
+    width: 350px;
+    position: fixed;
+    display: block;
+    margin-top: 37px;
+    height: 100%;
+    z-index: 3;
+}
+th.public-holiday {
+    background-color: #f98d8d;
+}
+th.week-holiday {
+    background-color: #efb9b9;
+}
+.current_date_class {
+    background-color: #f3f9f1;
+}
+#calendar-user-view .DTFC_ScrollWrapper, #calendar-user-view .DTFC_LeftBodyWrapper, #calendar-user-view .DTFC_RightBodyWrapper {
+    height: calc(100% - 18px);
+}
+
+#calendar-user-view .DTFC_LeftHeadWrapper, #calendar-user-view .DTFC_RightHeadWrapper {
+     padding-bottom: 0px !important; 
+     margin-bottom: 0px !important; 
+}
+
+.highlighted {
+    background-color: yellow;
+}
+
+.highlight {
+    background-color: #fff34d;
+    -moz-border-radius: 5px;
+    /* FF1+ */
+    -webkit-border-radius: 5px;
+    /* Saf3-4 */
+    border-radius: 5px;
+    /* Opera 10.5, IE 9, Saf5, Chrome */
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    /* FF3.5+ */
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    /* Saf3.0+, Chrome */
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+    /* Opera 10.5+, IE 9.0 */
+}
+
+.highlight {
+    padding: 1px 4px;
+    margin: 0 -4px;
+}
+
+.datacolumnsymbol {
+    margin-right: 5px;
+    float: left;
+    background-color: transparent;
+    color: #336699;
+}
+
+#ShowDataColumndd:hover {
+    background-color: #e4e4e4;
+    border-radius: 0;
+    outline: none;
+    border-radius: 4px;
+}
+
+

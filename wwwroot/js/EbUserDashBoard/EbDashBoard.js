@@ -1,4 +1,5 @@
-﻿var DashBoardWrapper = function (options) {
+﻿var grid;
+var DashBoardWrapper = function (options) {
     this.RefId = options.RefId;
     this.Version = options.Version;
     this.ObjType = options.ObjType;
@@ -14,28 +15,128 @@
     this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
-    this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21:"GoogleMap"}
+    this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21: "GoogleMap" }
     this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21: "fa fa-map-marker" }
+    this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
+    this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
+    if (this.EbObject !== null) {
+        this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
+    }
+
+    this.GridStackInit = function () {
+        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }} );
+        this.grid = $('.grid-stack').data("gridstack");
+        this.grid.cellHeight(25);
+        grid = this.grid;
+    }
+    this.GridStackInit();
+
+
+
+    this.getColumns = function () {
+        $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
+    };
+
+
+    this.AppendFD = function (result) {
+        $('.param-div-cont').remove();
+        $("#dashbord-view").prepend(`
+                <div id='paramdiv-Cont${this.TabNum}' class='param-div-cont'>
+                <div id='paramdiv${this.TabNum}' class='param-div fd'>
+                    <div class='pgHead'>
+                        <h6 class='smallfont' style='font-size: 12px;display:inline'>Filter Dialogue</h6>
+                        <div class="icon-cont  pull-right" id='close_paramdiv${this.TabNum}'><i class="fa fa-times" aria-hidden="true"></i></div>
+                    </div>
+                    </div>
+                    </div>
+                `);
+
+        $('#paramdiv' + this.TabNum).append(result);
+        $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
+        $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
+        if (typeof FilterDialog !== "undefined") {
+            $(".param-div-cont").show();
+            this.stickBtn = new EbStickButton({
+                $wraper: $(".param-div-cont"),
+                $extCont: $(".param-div-cont"),
+                icon: "fa-filter",
+                dir: "left",
+                label: "Parameters",
+                style: { top: "230px" }
+            });
+            this.filterDialog = FilterDialog;
+        }
+        else {
+            $(".param-div-cont").hide();
+            this.filterDialog = null;
+        }
+        this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
+
+    };
+
+    this.CloseParamDiv = function () {
+        this.stickBtn.minimise();
+    }
+
+
+    //Toolbox
+    this.AppendToolBox = function () {
+        $('.ToolBox-div').remove();
+        $("#dashbord-view").prepend(`
+                <div id='ToolBox-div${this.TabNum}' class='ToolBox-div'>
+                <div id='ToolBoxdiv${this.TabNum}' class='ToolBoxdiv fd'>
+                    <div class='pgHead'>
+                        <h6 class='smallfont' style='font-size: 12px;display:inline'>ToolBox</h6>
+                        <div class="icon-cont  pull-right" id='close_ToolBoxdiv${this.TabNum}'><i class="fa fa-times" aria-hidden="true"></i></div>
+                    </div>
+                    <div id="mySidenav" class="sidenav">
+                    <div class="search-div"> <input type="search" id="DashB-Search" placeholder="search.." /> </div>
+                    <div id="DashB-Searched-Obj" hidden> </div>
+                    <div id="Eb-obj-sidebar-cont">   </div>
+                    </div>
+                    </div>
+                    </div>
+                `);
+
+        this.DrawObjectOnMenu();
+        $('#close_ToolBoxdiv' + this.TabNum).off('click').on('click', this.CloseToolBoxDiv.bind(this));
+        $(".ToolBox-div").hide();
+        this.stickBtn4ToolBox = new EbStickButton({
+            $wraper: $(".ToolBox-div"),
+            $extCont: $(".ToolBox-div"),
+            icon: "fa-wrench",
+            dir: "left",
+            label: "ToolBox",
+            style: { top: "105px" }
+        });
+        this.stickBtn4ToolBox.minimise();
+    };
+
+    this.CloseToolBoxDiv = function () {
+        this.stickBtn4ToolBox.minimise();
+    };
+
+
 
     this.DrawObjectOnMenu = function () {
-        let myarr = [];
+        let myarr4EbType = [];
         let count = 0;
         let containers = [];
         $.each(this.ebObjList, function (key, Val) {
             $.each(Val, function (i, Obj) {
-                if (myarr.indexOf(Obj.EbObjectType) === -1) {
+                if (myarr4EbType.indexOf(Obj.EbObjectType) === -1) {
                     $("#Eb-obj-sidebar-cont").append(`<div> 
                         <div class="sidebar-head" hs-id="${Obj.EbObjectType}" style="display:flex;"> <div class="${this.ObjIcons[Obj.EbObjectType]} db-sidebar-icon"></div>
                        ${this.ObjTypeName[Obj.EbObjectType]}</div>
                        <div id="${Obj.EbObjectType}" class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
                         </div>`);
-                    myarr.push(Obj.EbObjectType);
+                    myarr4EbType.push(Obj.EbObjectType);
                     containers.push(document.getElementById(`${Obj.EbObjectType}`));
-                   
+
                 }
                 else {
                     $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
-                  
+
                 }
             }.bind(this));
 
@@ -62,15 +163,16 @@
             return false;
         }
         else {
-            if (this.drake.containers.indexOf($("#grid-cont") === -1)){
+            if (this.drake.containers.indexOf($("#grid-cont") === -1)) {
 
                 this.drake.containers.push(document.getElementById('grid-cont'));
                 return true;
-            } 
+            }
         }
     };
+
     this.columnsshadow = function (el, container, source) {
-        if (source === $("#grid-cont")){
+        if (source === $("#grid-cont")) {
             return false;
         }
     };
@@ -90,7 +192,7 @@
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
-       
+
     };
 
     this.GenerateButtons = function () {
@@ -104,9 +206,11 @@
     }
 
     this.init = function () {
+        this.AppendToolBox();
 
         if (this.EbObject === null) {
             this.EbObject = new EbObjects.EbDashBoard(`EbDashBoar${Date.now()}`);
+            this.filterDialogRefid = "";
         }
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
@@ -119,30 +223,66 @@
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
         commonO.Current_obj = this.EbObject;
         this.propGrid.ClosePG();
-        this.DrawTiles();
-        
-        //$("body").on("click", this.EbObjectshow.bind(this));
-        //$(".grid-stack").on("click", this.DashBoardSelectorJs.bind(this));
+        if (this.filterDialogRefid == "") {
+            this.DrawTiles();
+        }
+        else {
+            this.getColumns();
+        }
+
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
     }
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
-        var id = e.target.getAttribute("id");
-        if (id === "i-opt-obj") {
+        var id = e.target.getAttribute("link");
+        if (id === "ext-link") {
             let TileRefid = this.TileCollection[tileid].RefId;
-            window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+            //window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
+            let url = "../DV/dv?refid=" + TileRefid;
+
+            let _form = document.createElement("form");
+            _form.setAttribute("method", "post");
+            _form.setAttribute("action", url);
+            _form.setAttribute("target", "_blank");
+
+            let input1 = document.createElement('input');
+            input1.type = 'hidden';
+            input1.name = "filterValues";
+            input1.value = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
+            _form.appendChild(input1);
+
+            document.body.appendChild(_form);
+
+            _form.submit();
+            document.body.removeChild(_form);
         }
-        else if (id === "i-opt-close") {
+        else if (id === "close") {
             var abc = $(`#${tileid}`).closest(".grid-stack-item");
             var grid = $('.grid-stack').data('gridstack');
             grid.removeWidget(abc);
         }
+        else if (id === "restart-tile") {
+            $(`[data-id="${this.CurrentTile}"]`).empty();
+            let Refid = this.TileCollection[tileid].RefId;
+            this.Ajax4fetchVisualization(Refid);
+        }
+    }
+    this.Ajax4fetchVisualization = function (refid) {
+        if (refid !== "") {
+            $.ajax(
+                {
+                    url: '../DashBoard/DashBoardGetObj',
+                    type: 'POST',
+                    data: { refid: refid },
+                    success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                });
+        }
     }
 
     this.DrawTiles = function () {
-        $("#dashbord-view").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -152,15 +292,17 @@
                 let y = this.EbObject.Tiles.$values[i].TileDiv.Data_y;
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
-                $(".grid-stack").append(`<div class="grid-stack-item " data-gs-x=${x} data-gs-y=${y} data-gs-width=${dw} data-gs-height=${dh} id=${tile_id}>
-                    <div class="grid-stack-item-content" id=${t_id}>
-                    <div style="display:flex" id="">
+                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
+                    <div class="grid-stack-item-content" id=${t_id}>
+                    <div style="display:flex" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
-                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}">
+                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
+                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
-                    <div data-id="${t_id}" class="db-tbl-wraper"></div>
-                    </div></div>`);
+                    <div data-id="${t_id}" class="db-tbl-wraper">
+                    </div></div></div>`), x, y, dw, dh, false);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                 let refid = this.EbObject.Tiles.$values[i].RefId;
@@ -172,6 +314,7 @@
                             data: { refid: refid },
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
+
                 }
             }
             //this.addTilecontext()
@@ -179,23 +322,11 @@
         }
         else {
             $('.grid-stack').gridstack();
-            //for (let i = 0; i < 2; i++) {
-            //    let tile_id = "t" + i;
-            //    let t_id = "tile" + i;
-            //    $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> <div class="grid-stack-item-content" id="${t_id}"> 
-            //         <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
-            //        <div class="db-title" name-id="${t_id}" style="display:float"></div>
-            //        <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
-            //        <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
-            //        </div></div>
-            //     <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
-            //    //this.AddNewTile();
-            //    this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
-            //}
         }
         $(".grid-stack").on("click", this.TileSelectorJs.bind(this));
         //this.addTilecontext()
-        this.Tilecontext()
+        this.Tilecontext();
+
     }
 
     this.AddNewTile = function () {
@@ -205,10 +336,12 @@
         let tile_id = "t" + j;
         let t_id = "tile" + j;
         $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
-                    <div style="display:flex;border-bottom: solid 1px #dcdcdc;" id="">
+                    <div style="display:flex;" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
-                    <div style="float:right;display:flex" u-id="${t_id}"><i class="fa fa-external-link tile-opt" aria-hidden="true" id="i-opt-obj"></i>
-                    <i class="fa fa-times tile-opt" aria-hidden="true" id="i-opt-close"></i>
+                    <div style="float:right;display:flex" u-id="${t_id}">
+                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
+                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
                  <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
         this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
@@ -218,10 +351,6 @@
     this.TileSelectorJs = function (e) {
         let a = $(event.target).closest(".grid-stack-item-content").attr("id");
         if (a != null) {
-            //this.CurrentTile = $(a).attr('id');
-            //if (this.TileCollection[this.CurrentTile] == null) {
-            //    this.TileCollection[this.CurrentTile] = new EbObjects.Tiles("Tile" + Date.now());
-            //}
             this.CurrentTile = a;
             this.propGrid.setObject(this.TileCollection[`${this.CurrentTile}`], AllMetas["Tiles"]);
 
@@ -255,7 +384,17 @@
                 });
         }
         if (pname === "BackgroundColor") {
-            $("#dashbord-view").css("background-color", "").css("background-color", newval);
+            $("#layout_div").css("background-color", "").css("background-color", newval);
+        }
+
+        if (pname == "Filter_Dialogue") {
+            if (newval !== "") {
+                this.getColumns();
+            }
+            else {
+                $('.param-div-cont').remove();
+                if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            }
         }
     }
     //this.addTilecontext = function () {
@@ -300,9 +439,11 @@
 
 
     this.TileRefidChangesuccess = function (id, data) {
-        this.GetFilterValues();
+        if (this.filtervalues.length === 0) {
+            this.GetFilterValues();
+        }
         let obj = JSON.parse(data);
-        $(`[name-id="${id}"]`).append(obj.DisplayName);
+        $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
         //this.TileCollection[id].TileObject = obj;
         if (obj.$type.indexOf("EbTableVisualization") >= 0) {
 
@@ -311,38 +452,51 @@
             o.dsid = obj.DataSourceRefId;
             o.tableId = "tb1" + id;
             o.containerId = id;
-            o.columns = obj.Columns;
+            o.columns = obj.Columns.$values;
             o.dvObject = obj;
             o.IsPaging = false;
             o.showFilterRow = false;
             o.showCheckboxColumn = false;
             o.Source = "DashBoard";
+            o.DisplayName = this.EbObject.DisplayName;
             o.drawCallBack = this.drawCallBack.bind(this, id);
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
             var dt = new EbCommonDataTable(o);
             //$(`[data-id="${id}"]`).parent().removeAttr("style");
             //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
             //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
+            $("#objname").empty().text(this.EbObject.DisplayName);
+            $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbChartVisualization") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
+            $(`#${id}`).addClass("chart-tile-opt");
             var o = {};
             o.tableId = "tb1" + id;
             o.dvObject = obj;
             o.filtervalues = this.filtervalues;
+            o.DisplayName = this.EbObject.DisplayName;
             var dt = new EbBasicChart(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
+            $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
-            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl"></div>`);
+            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
+            let height = $(`#${id}`).height();
             let opts = {
-                parentDiv : '#' + id + '_UserCtrl',
-                refId: obj.RefId
+                parentDiv: '#' + id + '_UserCtrl',
+                refId: obj.RefId,
+                params: this.filtervalues,
+                height: height 
             }
             new EbUserCtrlHelper(opts);
             $(`[data-id="${id}"]`).parent().css("background", "transparent");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`[name-id="${id}"]`).empty();
+            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            $(`#${id} .db-title`).empty();
+            $(`#${id}`).addClass("user-control-tile-opt");
+            $(`#${id} .i-opt-obj`).hide();
+            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -352,8 +506,10 @@
             o.Source = "Dashboard";
             o.filtervalues = this.filtervalues;
             o.googlekey = this.googlekey;
+            o.DisplayName = this.EbObject.DisplayName;
             var dt = new EbGoogleMap(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
+            $(`#${id}`).addClass("box-shadow-style");
         }
     }
 
@@ -406,11 +562,9 @@
                         </div>`);
                             myarr.push(Obj.EbObjectType);
                             containers.push(document.getElementById(`${Obj.EbObjectType}`));
-
                         }
                         else {
                             $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
-
                         }
                     }
                 }.bind(this));
@@ -436,7 +590,21 @@
 
     this.GetFilterValues = function () {
         this.filtervalues = [];
-        this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+
+        if (this.filterDialog)
+            this.filtervalues = getValsForViz(this.filterDialog.FormObj);
+
+        let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (this.filterDialogRefid !== "") {
+            this.grid.removeAll();
+            this.DrawTiles();
+        }
+        if (this.stickBtn) { this.stickBtn.minimise(); }
     };
 
     //this.RemoveColumnRef = function () {
@@ -452,7 +620,6 @@
     //}
 
     this.init();
-    this.DrawObjectOnMenu();
 
 }
 

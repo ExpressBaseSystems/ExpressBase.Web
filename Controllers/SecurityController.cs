@@ -1,38 +1,32 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.LocationNSolution;
-using ExpressBase.Common.Objects;
 using ExpressBase.Common.Singletons;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
+using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Filters;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using System.Net.Http;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace ExpressBase.Web.Controllers
 {
 	public class SecurityController : EbBaseIntCommonController
 	{
 		public SecurityController(IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
-		
-        [EbBreadCrumbFilter("Security/type")]
+
+		[EbBreadCrumbFilter("Security/type")]
 		public IActionResult CommonList(string type, string show)
 		{
-			if(!HasPemissionToSecurity())
+			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
 
 			IServiceClient client = this.ServiceClient;
@@ -40,13 +34,13 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.ListType = type;
 			if (type == "users")
 			{
-                ViewBag.DisableNewUser = "false";
-                var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
+				ViewBag.DisableNewUser = "false";
+				var fr = this.ServiceClient.Get<GetUsersResponse1>(new GetUsersRequest1() { Show = show });
 				ViewBag.dict = JsonConvert.SerializeObject(fr.Data);
-                Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
-                if (_solu.PlanUserCount <= _solu.NumberOfUsers)
-                    ViewBag.DisableNewUser = "true";
-            }
+				Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
+				if (_solu.PlanUserCount <= _solu.NumberOfUsers)
+					ViewBag.DisableNewUser = "true";
+			}
 			else if (type == "roles")
 			{
 				var fr = this.ServiceClient.Get<GetRolesResponse1>(new GetRolesRequest1());
@@ -70,13 +64,13 @@ namespace ExpressBase.Web.Controllers
 
 		private bool HasPemissionToSecurity()
 		{
-			if(ViewBag.wc == RoutingConstants.UC)
+			if (ViewBag.wc == RoutingConstants.UC)
 			{
 				if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()))
 					return true;
 				if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
 					return true;
-			}			
+			}
 			return false;
 		}
 
@@ -90,46 +84,53 @@ namespace ExpressBase.Web.Controllers
 			string mode = "user";
 			if (isTenant())
 				mode = "tenant";
-			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
+			var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest
+			{
+				WC = ViewBag.wc,
+				DBIds = this.LoggedInUser.GetDashBoardIds(),
+				IsSolutionOwner = (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) ? true : false
 
-            Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
+			});
 
-            Dictionary<string, int> _locs = new Dictionary<string, int>();
+			Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
 
-            if (this.LoggedInUser.LocationIds.Contains(-1))
-            {
-                foreach(KeyValuePair<int, EbLocation> entry in _solu.Locations)
-                {
-                    _locs.Add(entry.Value.ShortName + " - " + entry.Value.LongName, entry.Key);
-                }
-            }
-            else
-            {
-                foreach (int id in this.LoggedInUser.LocationIds)
-                {
-                    if (_solu.Locations.ContainsKey(id))
-                    {
-                        _locs.Add(_solu.Locations[id].ShortName + " - " + _solu.Locations[id].LongName, id);
-                    }
-                }
-            }           
+			Dictionary<string, int> _locs = new Dictionary<string, int>();
 
-            ViewBag.LocsData = _locs;
-            ViewBag.UserData = fr.UserData;
+			if (this.LoggedInUser.LocationIds.Contains(-1))
+			{
+				foreach (KeyValuePair<int, EbLocation> entry in _solu.Locations)
+				{
+					_locs.Add(entry.Value.ShortName + " - " + entry.Value.LongName, entry.Key);
+				}
+			}
+			else
+			{
+				foreach (int id in this.LoggedInUser.LocationIds)
+				{
+					if (_solu.Locations.ContainsKey(id))
+					{
+						_locs.Add(_solu.Locations[id].ShortName + " - " + _solu.Locations[id].LongName, id);
+					}
+				}
+			}
+
+			ViewBag.LocsData = _locs;
+			ViewBag.UserData = fr.UserData;
+			ViewBag.RefIds = fr.RefIds;
 			ViewBag.Mode = mode;
 			return View();
 		}
 
-        [EbBreadCrumbFilter("My Profile")]
-        [HttpGet("MyProfile")]
+		[EbBreadCrumbFilter("My Profile")]
+		[HttpGet("MyProfile")]
 		public IActionResult MyProfile_Tenant()
 		{
 			if (ViewBag.wc == RoutingConstants.TC)
 			{
 				var fr = this.ServiceClient.Get<GetMyProfileResponse>(new GetMyProfileRequest { WC = ViewBag.wc });
 				ViewBag.UserData = fr.UserData;
-                ViewBag.Title = "My Profile";
-                return View();
+				ViewBag.Title = "My Profile";
+				return View();
 			}
 			return Redirect("/StatusCode/404");
 		}
@@ -139,13 +140,13 @@ namespace ExpressBase.Web.Controllers
 			bool isTenantAsUser = false;
 			if (isTenant() && (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.DC))
 				isTenantAsUser = true;
-			var fr = this.ServiceClient.Get<SaveMyProfileResponse>(new SaveMyProfileRequest {UserData = UserData, WC = ViewBag.wc, PreferenceOnly = isTenantAsUser });
+			var fr = this.ServiceClient.Get<SaveMyProfileResponse>(new SaveMyProfileRequest { UserData = UserData, WC = ViewBag.wc, PreferenceOnly = isTenantAsUser });
 			return (fr.RowsAffectd > 0);
 		}
 
 		public bool ChangeUserPassword(string OldPwd, string NewPwd)
 		{
-			if((isTenant() && (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.DC)) || this.LoggedInUser.UserId <= 1)
+			if ((isTenant() && (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.DC)) || this.LoggedInUser.UserId <= 1)
 				return false;
 			ChangeUserPasswordResponse resp = this.ServiceClient.Post<ChangeUserPasswordResponse>(new ChangeUserPasswordRequest { OldPwd = OldPwd, NewPwd = NewPwd, Email = ViewBag.email, WC = ViewBag.wc });
 			return resp.isSuccess;
@@ -181,9 +182,9 @@ namespace ExpressBase.Web.Controllers
 			////string result = await client.GetStringAsync("http://freegeoip.net/json");
 			//string result = await client.GetStringAsync("http://ip-api.com/json");
 			//IpApiResponse ooo = JsonConvert.DeserializeObject<IpApiResponse>(result);
-			
 
-			Dictionary<string, string> dict = new Dictionary<string, string>();				
+
+			Dictionary<string, string> dict = new Dictionary<string, string>();
 			//List<EbRole> Sysroles = new List<EbRole>();
 			//foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			//{
@@ -193,7 +194,8 @@ namespace ExpressBase.Web.Controllers
 			var fr = this.ServiceClient.Get<GetManageUserResponse>(new GetManageUserRequest { Id = itemid, RqstMode = Mode, SolnId = ViewBag.cid });
 			foreach (var role in Enum.GetValues(typeof(SystemRoles)))
 			{
-				fr.Roles.Add(new EbRole() {
+				fr.Roles.Add(new EbRole()
+				{
 					Name = role.ToString(),
 					Description = "SYSTEM ROLE",
 					Id = (int)role
@@ -209,38 +211,48 @@ namespace ExpressBase.Web.Controllers
 			}
 			ViewBag.UserStatusList = UserStatus;
 
-			if(Mode == 3)
+			if (Mode == 3)
 			{
 				itemid = Convert.ToInt32(fr.UserData["id"]);
 			}
 
-			if(itemid == 1)
+			if (itemid == 1)
 			{
 				dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(AnonymousUserInfo);
 				ViewBag.U_Info = dict;
 			}
 			else if (itemid > 1)
 			{
-                if (fr.UserData.Count > 0)
-                {
-                    ViewBag.U_Info = fr.UserData;
-                    ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
-                    ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
-                    ViewBag.LocConstraint = JsonConvert.SerializeObject(fr.LocConstraint);
-                }
-                else
-                {
-                    ViewBag.U_Roles = "";
-                    ViewBag.U_Groups = "";
-                    itemid = 0;
-                }
-            }
+				if (fr.UserData.Count > 0)
+				{
+					ViewBag.U_Info = fr.UserData;
+					ViewBag.U_Roles = JsonConvert.SerializeObject(fr.UserRoles);
+					ViewBag.U_Groups = JsonConvert.SerializeObject(fr.UserGroups);
+					ViewBag.LocConstraint = JsonConvert.SerializeObject(fr.LocConstraint);
+				}
+				else
+				{
+					ViewBag.U_Roles = "";
+					ViewBag.U_Groups = "";
+					itemid = 0;
+				}
+			}
 			else
 			{
 				ViewBag.U_Roles = "";
 				ViewBag.U_Groups = "";
 			}
 			ViewBag.itemid = itemid;
+			//for showing login activity log
+			LoginActivityResponse Lar = this.ServiceClient.Post<LoginActivityResponse>(new LoginActivityRequest
+			{
+				UserObject = this.LoggedInUser,
+				Alluser = false,
+				UserId= itemid
+			});
+			ActivityLogin(Lar);
+
+
 			return View();
 		}
 
@@ -267,14 +279,15 @@ namespace ExpressBase.Web.Controllers
 				}
 			}
 
-            if (userid <= 0 && ViewBag.Env == "Production")
-            {
-                Eb_Solution _solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.Cid));
-                if (_solu.PlanUserCount <= _solu.NumberOfUsers)
-                    return -1;
-            }
+			if (userid <= 0 && ViewBag.Env == "Production")
+			{
+				Eb_Solution _solu = GetSolutionObject(ViewBag.Cid);
+				if (_solu.PlanUserCount <= _solu.NumberOfUsers)
+					return -1;
+			}
 
-            SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest {
+			SaveUserResponse res = this.ServiceClient.Post<SaveUserResponse>(new SaveUserRequest
+			{
 				Id = userid,
 				FullName = Dict["fullname"],
 				NickName = Dict["nickname"],
@@ -293,46 +306,46 @@ namespace ExpressBase.Web.Controllers
 				UserGroups = string.IsNullOrEmpty(Dict["usergroups"]) ? string.Empty : Dict["usergroups"],
 				StatusId = Dict["statusid"],
 				Hide = Dict["hide"],
-                AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
+				AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
 				Preference = Dict["preference"],
-                LocationAdd = Dict["loc_add"],
-                LocationDelete = Dict["loc_delete"]
+				LocationAdd = Dict["loc_add"],
+				LocationDelete = Dict["loc_delete"]
 			});
 			return res.id;
 		}
 
 		public bool isValidEmail(string reqEmail)
 		{
-            UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail.Trim().ToLower() });
-            return temp.unrespose;
+			UniqueCheckResponse temp = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { email = reqEmail.Trim().ToLower() });
+			return temp.unrespose;
 		}
-				
+
 		public bool ResetUserPassword(int userid, string username, string NewPwd)
 		{
 			if (!HasPemissionToSecurity())
 				return false;
 			else
 			{
-				ResetUserPasswordResponse resp = this.ServiceClient.Post<ResetUserPasswordResponse>(new ResetUserPasswordRequest { Id = userid, Email = username, NewPwd = NewPwd});
+				ResetUserPasswordResponse resp = this.ServiceClient.Post<ResetUserPasswordResponse>(new ResetUserPasswordRequest { Id = userid, Email = username, NewPwd = NewPwd });
 				return resp.isSuccess;
 			}
 		}
 
-        public int DeleteUser(int userid)
-        {
-            if (!HasPemissionToSecurity())
-                return 0;
-            else
-            {
-                DeleteUserResponse resp = this.ServiceClient.Post<DeleteUserResponse>(new DeleteUserRequest { Id = userid });
-                return resp.Status;
-            }
-        }
+		public int DeleteUser(int userid)
+		{
+			if (!HasPemissionToSecurity())
+				return 0;
+			else
+			{
+				DeleteUserResponse resp = this.ServiceClient.Post<DeleteUserResponse>(new DeleteUserRequest { Id = userid });
+				return resp.Status;
+			}
+		}
 
 
-        //--------------MANAGE ANONYMOUS USER START------------------------------------
-        [EbBreadCrumbFilter("Security")]
-        public IActionResult ManageAnonymousUser(int itemid)
+		//--------------MANAGE ANONYMOUS USER START------------------------------------
+		[EbBreadCrumbFilter("Security")]
+		public IActionResult ManageAnonymousUser(int itemid)
 		{
 			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
@@ -344,7 +357,7 @@ namespace ExpressBase.Web.Controllers
 		{
 			if (!HasPemissionToSecurity())
 				return string.Empty;
-			GetManageAnonymousUserResponse temp = this.ServiceClient.Post<GetManageAnonymousUserResponse>(new GetManageAnonymousUserRequest {Id = userid });
+			GetManageAnonymousUserResponse temp = this.ServiceClient.Post<GetManageAnonymousUserResponse>(new GetManageAnonymousUserRequest { Id = userid });
 			return JsonConvert.SerializeObject(temp.UserData);
 		}
 
@@ -352,20 +365,20 @@ namespace ExpressBase.Web.Controllers
 		{
 			if (!HasPemissionToSecurity())
 				return 0;
-			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name.IsNullOrEmpty() ? "":name, EmailID = email.IsNullOrEmpty()?"":email, PhoneNumber = phone.IsNullOrEmpty()?"":phone, Remarks = remarks.IsNullOrEmpty()?"":remarks });
+			UpdateAnonymousUserResponse temp = this.ServiceClient.Post<UpdateAnonymousUserResponse>(new UpdateAnonymousUserRequest { Id = itemid, FullName = name.IsNullOrEmpty() ? "" : name, EmailID = email.IsNullOrEmpty() ? "" : email, PhoneNumber = phone.IsNullOrEmpty() ? "" : phone, Remarks = remarks.IsNullOrEmpty() ? "" : remarks });
 			return temp.RowAffected;
 		}
 
-        //----------------MANAGE USERGROUPS START----------------------------
-        //[HttpGet]
-        //public IActionResult ManageUserGroups()
-        //{
-        //	return View();
-        //}
+		//----------------MANAGE USERGROUPS START----------------------------
+		//[HttpGet]
+		//public IActionResult ManageUserGroups()
+		//{
+		//	return View();
+		//}
 
-        //[HttpPost]
-        [EbBreadCrumbFilter("Security")]
-        public IActionResult ManageUserGroups(int itemid)
+		//[HttpPost]
+		[EbBreadCrumbFilter("Security")]
+		public IActionResult ManageUserGroups(int itemid)
 		{
 			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
@@ -399,9 +412,9 @@ namespace ExpressBase.Web.Controllers
 			return res.id;
 		}
 
-        //---------------MANAGE ROLES START----------------------------------
-        [EbBreadCrumbFilter("Security")]
-        public IActionResult ManageRoles(int itemid)
+		//---------------MANAGE ROLES START----------------------------------
+		[EbBreadCrumbFilter("Security")]
+		public IActionResult ManageRoles(int itemid)
 		{
 			if (!HasPemissionToSecurity())
 				return Redirect("/StatusCode/401");
@@ -440,11 +453,11 @@ namespace ExpressBase.Web.Controllers
 		{
 			if (!HasPemissionToSecurity())
 				return string.Empty;
-			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText=srchTxt, SolnId = ViewBag.cid });
+			var fr = this.ServiceClient.Get<GetUserDetailsResponse>(new GetUserDetailsRequest { SearchText = srchTxt, SolnId = ViewBag.cid });
 			return fr.UserList;
 		}
 
-		public string SaveRole(int _roleId,string _roleName,string _roleDesc, bool _isAnonymous, int _appId,string _permission, string _role2role, string _users, string _locations)
+		public string SaveRole(int _roleId, string _roleName, string _roleDesc, bool _isAnonymous, int _appId, string _permission, string _role2role, string _users, string _locations)
 		{
 			if (!HasPemissionToSecurity())
 				return "Failed";
@@ -453,7 +466,7 @@ namespace ExpressBase.Web.Controllers
 				Enum.Parse(typeof(SystemRoles), _roleName.Trim().ToLower(), true);
 				return "Failed";
 			}
-			catch(Exception ex)
+			catch (Exception ex)
 			{
 				Console.WriteLine("RoleSave rolename check : " + ex.Message);
 			}
@@ -492,10 +505,11 @@ namespace ExpressBase.Web.Controllers
 				Enum.Parse(typeof(SystemRoles), reqRoleName.ToLower(), true);
 				return true;//role name is already exists
 			}
-			catch (Exception ex){
+			catch (Exception ex)
+			{
 				var result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { roleName = reqRoleName });
 				return result.unrespose;
-			}			
+			}
 		}
 
 
@@ -562,5 +576,47 @@ namespace ExpressBase.Web.Controllers
 		//	return String.IsNullOrWhiteSpace(s);
 		//}
 
+
+		public IActionResult LoginActivity()
+		{
+			LoginActivityResponse Lar = this.ServiceClient.Post<LoginActivityResponse>(new LoginActivityRequest
+			{
+				UserObject = this.LoggedInUser,
+				Alluser = true
+			});
+			ActivityLogin(Lar);
+
+			return View();
+		}
+
+		public void ActivityLogin(LoginActivityResponse Lar)
+		{
+			if (Lar.ErrMsg == null)
+			{
+				DVColumnCollection _columns = new DVColumnCollection();
+				foreach (var col in Lar._data.Columns)
+				{
+					string _title = string.Empty;
+					if (col.ColumnName == "ip_address")
+						_title = "IP Address";
+					else if (col.ColumnName == "signin_time")
+						_title = "SignIn Time";
+					else if (col.ColumnName == "signin_at")
+						_title = "SignIn Date";
+					else if (col.ColumnName == "signout_time")
+						_title = "SignOut Time";
+					else if (col.ColumnName == "signout_at")
+						_title = "SignOut Date";
+					else if (col.ColumnName == "fullname")
+						_title = "User Name";
+					else if (col.ColumnName == "duration")
+						_title = "Duration";
+					DVBaseColumn ebcol = new DVBaseColumn { Data = col.ColumnIndex, Name = col.ColumnName, sTitle = _title, bVisible = true, Type = col.Type };
+					_columns.Add(ebcol);
+				}
+				ViewBag.ColumnEb = JsonConvert.SerializeObject(_columns);
+				ViewBag.RowsEb = JsonConvert.SerializeObject(Lar._data.Rows);
+			}
+		}
 	}
 }

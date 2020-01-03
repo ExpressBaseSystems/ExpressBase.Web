@@ -26,6 +26,7 @@ using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Helpers;
+using ExpressBase.Objects;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -47,12 +48,7 @@ namespace ExpressBase.Web.Controllers
             HttpContext.Items["ObjectType"] = type;
             ViewBag.mode = buildermode;
 
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (soln == null)
-            {
-                this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = ViewBag.cid, UserId = ViewBag.UId });
-                soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            }
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             ViewBag.versioning = soln.IsVersioningEnabled;
 
             if (objid != "null")
@@ -260,6 +256,16 @@ namespace ExpressBase.Web.Controllers
                     ViewBag.dsObj = dsobj;
                 }
             }
+            else if (type.Equals(EbObjectTypes.MobilePage))
+            {
+                Type[] typeArray = typeof(EbMobilePageBase).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.MobilePage, typeof(EbMobilePageBase));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
             else if (type.Equals(EbObjectTypes.DashBoard))
             {
                 Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
@@ -269,9 +275,30 @@ namespace ExpressBase.Web.Controllers
                     dsobj.AfterRedisGet(Redis);
                     ViewBag.dsObj = dsobj;
                 }
-                EbObjAllVerForDashBoardResp result = this.ServiceClient.Get<EbObjAllVerForDashBoardResp>(new EbObjAllVerForDashBoardRqst());
-
+                List<int> types = new List<int>() { 14, 16, 17, 21 };
+                GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.FilterDialog);
                 ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
+            }
+            else if (type.Equals(EbObjectTypes.CalendarView))
+            {
+                Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.Calendar, typeof(EbCalendarWrapper), typeof(EbObject));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
+            }
+            else if (type.Equals(EbObjectTypes.SqlJob))
+            {
+                Type[] typeArray = typeof(EbSqlJobWrapper).GetTypeInfo().Assembly.GetTypes();
+                _c2js = new Context2Js(typeArray, BuilderType.SqlJob, typeof(EbSqlJobWrapper), typeof(EbObject));
+                if (dsobj != null)
+                {
+                    dsobj.AfterRedisGet(Redis);
+                    ViewBag.dsObj = dsobj;
+                }
             }
 
             if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
@@ -779,11 +806,6 @@ namespace ExpressBase.Web.Controllers
                 versionObj = Redis.Get<EbTableVisualization>(_refid);
                 return ViewComponent("DVBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
-            else if (_ObjType == (int)EbObjectTypes.TableVisualization)
-            {
-                versionObj = Redis.Get<EbTableVisualization>(_refid);
-                return ViewComponent("DVTable", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
-            }
             else if (_ObjType == (int)EbObjectTypes.ChartVisualization)
             {
                 versionObj = Redis.Get<EbChartVisualization>(_refid);
@@ -808,6 +830,11 @@ namespace ExpressBase.Web.Controllers
             {
                 versionObj = Redis.Get<EbApi>(_refid);
                 return ViewComponent("ApiBuilder", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+            }
+            else if (_ObjType == (int)EbObjectTypes.MobilePage)
+            {
+                versionObj = Redis.Get<EbMobilePage>(_refid);
+                return ViewComponent("MobilePage", new { dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
             return View();
         }

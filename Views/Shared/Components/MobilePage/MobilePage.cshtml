@@ -1,0 +1,149 @@
+﻿@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+</script>
+
+<link rel="stylesheet" href="~/css/MobilePageBuilder/mobile.style.css" asp-append-version=@bApnd />
+<script src="~/js/MobilePageBuilder/mobile.page.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script src="~/js/MobilePageBuilder/mobile.page.controls.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script src="~/js/EbControls/eb_html.tree.js" type="text/javascript" asp-append-version="@bApnd"></script>
+
+<div class="container-fluid mob_body" id="@("mobviewversion-body"+ViewBag.tabnum)">
+    <div class="row">
+        <div class="eb_mobpage_wraper" id="@("eb_mobpage_wraper"+ViewBag.tabnum)">
+            <div class="eb_mobpage_toolbox" id="@("eb_mobpage_toolbox"+ViewBag.tabnum)">
+                <div class="eb_mobpage_toolbox_body">
+                    <div class="head">
+                        Tools
+                    </div>
+                    <div class="bdy" id="@("eb_mobpage_toolbox"+ViewBag.tabnum+"_draggable")">
+                        <div class="eb_mobpage_tbxcategory">
+                            <div class="eb_mobpage_tbx_head">
+                                Containers
+                            </div>
+                            <div class="eb_mobpage_tbxbdy">
+                                <div eb-type="EbMobileForm" ctrname="Form" class="toolitems container_draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-wpforms"></i> Form
+                                    </div>
+                                </div>
+                                <div eb-type="EbMobileVisualization" ctrname="Visualization" class="toolitems container_draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-list-alt"></i> Visualization
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eb_mobpage_tbxcategory">
+                            <div class="eb_mobpage_tbx_head">
+                                Form Controls
+                            </div>
+                            <div class="eb_mobpage_tbxbdy">
+                                <div eb-type="EbMobileTextBox" ctrname="TextBox" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-i-cursor"></i> TextBox
+                                    </div>
+                                </div>
+                                <div eb-type="EbMobileNumericBox" ctrname="Numeric" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-i-cursor"></i> Numeric
+                                    </div>
+                                </div>
+                                <div eb-type="EbMobileDateTime" ctrname="DateTime" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-calendar"></i> Date Time
+                                    </div>
+                                </div>
+                                <div eb-type="EbMobileSimpleSelect" ctrname="SimpleSelect" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-caret-down"></i> SimpleSelect
+                                    </div>
+                                </div>
+                                <div eb-type="EbMobileBoolean" ctrname="Boolean" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-toggle-on"></i> Boolean
+                                    </div>
+                                </div>
+                                <div eb-type="EbMobileFileUpload" ctrname="FileUpload" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-upload"></i> FileUploader
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <div class="eb_mobpage_tbxcategory">
+                            <div class="eb_mobpage_tbx_head">
+                                Layout
+                            </div>
+                            <div class="eb_mobpage_tbxbdy">
+                                <div eb-type="EbMobileTableLayout" ctrname="TableLayout" class="toolitems draggable">
+                                    <div class="toolitems-inner">
+                                        <i class="fa fa-th-large"></i> TableLayout
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="eb_mobpage_pane">
+                <div class="eb_mobpage_pane_body">
+                    <div class="eb_mobtree_body" style="display:none;" id="@("eb_mobtree_body_"+ViewBag.tabnum)">
+                        <div class="eb_mobtree_inner">
+                            <div class="eb_mobtree_ds">
+                                <ul id="@("ds_parameter_list" + ViewBag.tabnum)" class="tool-box-items" style="padding:10px">
+                                    <li>
+                                        <a>Columns</a>
+                                        <ul class="ds_cols"></ul>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="eb_mobpage_pane_layout">
+                        <div class="eb_mobpage_emulatorbody">
+                            <div class="eb_mobpage_drparea">
+                                <div class="eb_mobpage_drop" id="@("eb_mobpage_pane"+ViewBag.tabnum)">
+
+                                </div>
+                            </div>
+                        </div>
+                        <img src="~/images/walls/emulator.png" class="eb_mobpage_pane_layout_emulator"/>
+                    </div>
+                </div>
+            </div>
+            <div class="eb_mobpage_properties" id="@("eb_mobpage_property_wrapr"+ViewBag.tabnum)">
+                <div class="eb_mobpage_properties_body" id="@("eb_mobpage_properties"+ViewBag.tabnum)">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+         if (@ViewBag.tabnum === 0) {
+            var commonO = $("#layout_div").data("commonObj");
+         }
+        commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = EB_MobilePage({
+            Wc: '@ViewBag.wc',
+            TenantId: '@ViewBag.cid',
+            RefId: '@ViewBag.Refid',
+            Version: '@ViewBag.VersionNumber',
+            ObjType: @ViewBag.ObjType,
+            DsObj: @Html.Raw(ViewBag.dsObj),
+            Status: '@ViewBag.Status',
+            TabNum: @ViewBag.tabnum,
+            ServiceUrl: '@ViewBag.ServiceUrl'
+        });
+    });
+</script>

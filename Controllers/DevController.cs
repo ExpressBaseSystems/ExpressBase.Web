@@ -34,6 +34,7 @@ using ExpressBase.Common.Data;
 using ExpressBase.Objects.Helpers;
 using Newtonsoft.Json.Linq;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.Application;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -71,10 +72,38 @@ namespace ExpressBase.Web.Controllers
             GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });            
             ViewBag.ObjectCollection = _objects.Data;
             ViewBag.AppInfo = _objects.AppInfo;
+
+            if (Type == EbApplicationTypes.Web)
+                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings)?? new EbWebSettings();
+            else if (Type == EbApplicationTypes.Mobile)
+                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
+            else if (Type == EbApplicationTypes.Bot)
+                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings) ?? new EbBotSettings();
+
             this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
             ViewBag.Title = _objects.AppInfo.Name;
             ViewBag.ObjectsCount = _objects.ObjectsCount;
             return View();
+        }
+
+        [HttpPost]
+        public UpdateAppSettingsResponse UpdateAppSettingsMob(string settings,int appid, EbApplicationTypes type)
+        {
+            UpdateAppSettingsResponse resp = null;
+            try
+            {
+                resp = this.ServiceClient.Post(new UpdateAppSettingsRequest
+                {
+                    Settings = settings,
+                    AppId = appid,
+                    AppType = type
+                });
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            return resp;
         }
 
         [HttpPost]

@@ -28,7 +28,7 @@ using ExpressBase.Common.LocationNSolution;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class TenantController : EbBaseIntCommonController
+    public class TenantController : EbBaseIntTenantController
     {
         public const string Msg = "Msg";
 
@@ -82,39 +82,53 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("MySolutions/{ESid}")]
         public IActionResult SolutionManager(string ESid)
         {
-            string isid = this.GetIsolutionId(ESid);
-            ViewBag.Title = "MySolutions/" + ESid;
-            GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = isid });
-            //ViewBag.intergrationconfig = resp.IntegrationsConfig;
-            //ViewBag.integrations = resp.Integrations;
-            //ViewBag.SolutionInfo = resp.SolutionInfo;
-            ViewBag.Connections = resp;
-            ViewBag.cid = isid;
-            ViewBag.Domain = this.HttpContext.Request.Host;
-            ViewBag.rToken = Request.Cookies["rToken"];
-            ViewBag.bToken = Request.Cookies["bToken"];
-            return View();
+            if (HasTenantAccess(ESid))
+            {
+                string isid = this.GetIsolutionId(ESid);
+                ViewBag.Title = "MySolutions/" + ESid;
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = isid });
+                //ViewBag.intergrationconfig = resp.IntegrationsConfig;
+                //ViewBag.integrations = resp.Integrations;
+                //ViewBag.SolutionInfo = resp.SolutionInfo;
+                ViewBag.Connections = resp;
+                ViewBag.cid = isid;
+                ViewBag.Domain = this.HttpContext.Request.Host;
+                ViewBag.rToken = Request.Cookies["rToken"];
+                ViewBag.bToken = Request.Cookies["bToken"];
+                return View();
+            }
+            else
+            {
+                return Redirect("/StatusCode/401");
+            }
         }
 
         [HttpGet("Upgrade/{esid}")]
         [EbBreadCrumbFilter("MySolutions/Upgrade Solution", new string[] { "/MySolutions" })]
         public IActionResult EditSolution(string esid)
         {
-            CheckSolutionOwnerResp resp = this.ServiceClient.Get(new CheckSolutionOwnerReq
+            if (HasTenantAccess(esid))
             {
-                ESolutionId = esid
-            });
+                CheckSolutionOwnerResp resp = this.ServiceClient.Get(new CheckSolutionOwnerReq
+                {
+                    ESolutionId = esid
+                });
 
-            if (resp.IsValid)
-            {
-                ViewBag.SolutionInfo = resp.SolutionInfo;
-                ViewBag.Title = "Upgrade";
+                if (resp.IsValid)
+                {
+                    ViewBag.SolutionInfo = resp.SolutionInfo;
+                    ViewBag.Title = "Upgrade";
+                }
+                else
+                {
+                    return Redirect("/StatusCode/401");
+                }
+                return View();
             }
             else
             {
                 return Redirect("/StatusCode/401");
             }
-            return View();
         }
 
         [HttpPost]
@@ -122,9 +136,9 @@ namespace ExpressBase.Web.Controllers
         {
             EditSolutionResponse resp = null;
             IFormCollection form = this.HttpContext.Request.Form;
-            Eb_Solution slno = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", form["isid"]));
+            Eb_Solution slno = GetSolutionObject(form["isid"]); 
 
-            if(slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
+            if (slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
             {
                 if (this.Redis.ContainsKey(string.Format(CoreConstants.SOLUTION_ID_MAP, form["newesid"])) && (form["newesid"] != form["oldesid"]))
                 {
@@ -217,6 +231,19 @@ namespace ExpressBase.Web.Controllers
                 resp.status = new ResponseStatus { Message = e.Message };
             }
             return JsonConvert.SerializeObject(resp);
+        }
+
+        [HttpGet("/UpdateSolutionMap")]
+        public IActionResult UpdateSidMap()
+        {
+            UpdateSidMapResponse resp = this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest());
+            return Redirect("/");
+        }
+        [HttpGet("/UpdateRedis")]
+        public IActionResult UpdateRedisConnections()
+        {
+            UpdateRedisConnectionsResponse resp = this.ServiceClient.Post<UpdateRedisConnectionsResponse>(new UpdateRedisConnectionsRequest { });
+            return Redirect("/");
         }
     }
 

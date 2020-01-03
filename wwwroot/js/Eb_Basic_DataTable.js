@@ -49,6 +49,9 @@ var EbBasicDataTable = function (Option) {
     this.QueryIndex = Option.QueryIndex || 0;
     this.datetimeformat = Option.datetimeformat;
 
+    this.action = Option.action || null;
+
+
     this.init = function () {
         if (this.EbObject === null)
             this.EbObject = new EbTableVisualization(this.tableId);
@@ -134,7 +137,6 @@ var EbBasicDataTable = function (Option) {
             }
         }.bind(this));
 
-        jQuery.fn.dataTable.ext.errMode = 'alert';
 
         this.table_jQO.on('error.dt', function (settings, techNote, message) {
             console.log('An error has been reported by DataTables: ', message);
@@ -171,6 +173,9 @@ var EbBasicDataTable = function (Option) {
 
             return sum / data.length;
         });
+
+        jQuery.fn.dataTable.ext.errMode = 'alert';
+
         this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
         //this.table_jQO.off('order.dt').on('order.dt', this.doSerial.bind(this));
         ////this.table_jQO.off('init.dt').on('init.dt', this.doSerial.bind(this));
@@ -248,7 +253,7 @@ var EbBasicDataTable = function (Option) {
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
-        o.dom = this.dom ||((this.EbObject.IsPaging ? "ip" : "") + "<'col-md-12 noPadding display_none'>rt");
+        o.dom = this.dom || ((this.EbObject.IsPaging ? "ip" : "") + "<'col-md-12 noPadding display_none'>rt");
         o.paging = this.EbObject.IsPaging;
         o.lengthChange = this.EbObject.IsPaging;
         o.select = true;
@@ -401,7 +406,7 @@ var EbBasicDataTable = function (Option) {
     this.getAgginfo_inner = function (_ls, i, col) {
         var type = col.Type || col.type;
         if (col.bVisible && (type === parseInt(gettypefromString("Int32")) || type === parseInt(gettypefromString("Decimal")) || type === parseInt(gettypefromString("Int64")) || type === parseInt(gettypefromString("Double"))) && col.name !== "serial")
-            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces,col.data));
+            _ls.push(new Agginfo(col.name, this.ebSettings.Columns.$values[i].DecimalPlaces, col.data));
     };
 
     this.getFooterFromSettingsTbl = function () {
@@ -436,7 +441,7 @@ var EbBasicDataTable = function (Option) {
                     var Rtype = api.settings().init().aoColumns[i].RenderType;
                     if (Rtype === 3) {
                         val1 = ($(textid).is(':checked')) ? "true" : "false";
-                        if (!($(textid).is(':indeterminate')))
+                        if ($(textid)[0] && !($(textid).is(':indeterminate')))
                             filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
                     }
                     else {
@@ -449,7 +454,7 @@ var EbBasicDataTable = function (Option) {
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
                                         if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
                                             filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2),type));
+                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), type));
                                         }
                                         else if (Rtype === 5 || Rtype === 6) {
                                             if (val2 > val1) {
@@ -498,9 +503,9 @@ var EbBasicDataTable = function (Option) {
             //if (this.isSecondTime) { }
             this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");
         }
-        if (this.Api !== null)
-            this.Api.columns.adjust();
-
+        if (this.Api === null)
+            this.Api = $("#" + this.tableId).DataTable();
+        this.Api.columns.adjust();
         this.$dtLoaderCont.EbLoader("hide");
 
         if (this.showFilterRow)
@@ -510,6 +515,8 @@ var EbBasicDataTable = function (Option) {
             Option.fninitComplete();
         if (Option.fninitComplete4SetVal)
             Option.fninitComplete4SetVal();
+        if (Option.fns4PSonLoad && Option.fns4PSonLoad.length > 0)
+            Option.fns4PSonLoad[0]();
         //$(".Eb-ctrlContainer .dataTables_scroll").css("height", "100%");
         if (!this.headerDisplay) {
             $(".Eb-ctrlContainer .dataTables_scrollHead").addClass("headhide");
@@ -577,7 +584,7 @@ var EbBasicDataTable = function (Option) {
         }
         else {
             this.tabNum++;
-            var url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;
+            let url = "http://" + this.url + "/DV/dv?refid=" + this.linkDV;
 
             var _form = document.createElement("form");
             _form.setAttribute("method", "post");
@@ -642,8 +649,10 @@ var EbBasicDataTable = function (Option) {
         //    //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
         //}
         //this.filterDisplay();
-        //if(this.Api !== null)
-        //    this.Api.columns.adjust();
+        if (Option.searchCallBack)
+            Option.searchCallBack();
+        if (this.Api !== null)
+            this.Api.columns.adjust();
     };
 
     this.selectCallbackFunc = function (e, dt, type, indexes) {
@@ -671,7 +680,7 @@ var EbBasicDataTable = function (Option) {
         if (Option.rowclick)
             Option.rowclick(e, dt, type, indexes);
     };
-    
+
     this.doRowgrouping = function () {
         var rows = this.Api.rows({ page: 'current' }).nodes();
         var last = null;
@@ -846,12 +855,12 @@ var EbBasicDataTable = function (Option) {
             this.GetFiltersFromSettingsTbl(50);
             if (fc_lh_tbl.length !== 0) {
                 fc_lh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++)
+                for (let j = 0; j < this.ebSettings.LeftFixedColumn; j++)
                     $(fc_lh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
             if (fc_rh_tbl.length !== 0) {
                 fc_rh_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
-                for (var j = this.eb_filter_controls_4fc.length - this.ebSettings.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
+                for (let j = this.eb_filter_controls_4fc.length - this.ebSettings.RightFixedColumn; j < this.eb_filter_controls_4fc.length; j++)
                     $(fc_rh_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4fc[j]));
             }
         }
@@ -861,7 +870,7 @@ var EbBasicDataTable = function (Option) {
             this.GetFiltersFromSettingsTbl(1);
             sc_h_tbl.find("thead").append($("<tr role='row' class='addedbyeb'/>"));
             if (this.ebSettings.LeftFixedColumn + this.ebSettings.RightFixedColumn > 0) {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++) {
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++) {
                     if (j < this.ebSettings.LeftFixedColumn) {
                         $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
                         $(sc_h_tbl.find("tr[class=addedbyeb] th:eq(" + j + ")")).children().not("span").remove();
@@ -877,7 +886,7 @@ var EbBasicDataTable = function (Option) {
                 }
             }
             else {
-                for (var j = 0; j < this.eb_filter_controls_4sb.length; j++)
+                for (let j = 0; j < this.eb_filter_controls_4sb.length; j++)
                     $(sc_h_tbl.find("tr[class=addedbyeb]")).append($(this.eb_filter_controls_4sb[j]));
             }
         }
@@ -1090,7 +1099,7 @@ var EbBasicDataTable = function (Option) {
                 else if (type === parseInt(gettypefromString("String"))) {
 
                     _ls += span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex);
-               }
+                }
                 else if (type === parseInt(gettypefromString("DateTime"))) {
 
                     _ls += span + this.getFilterForDateTime(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex);
@@ -1308,14 +1317,14 @@ var EbBasicDataTable = function (Option) {
 
         if (this.ebSettings.LeftFixedColumn > 0 || this.ebSettings.RightFixedColumn > 0) {
             if (this.ebSettings.LeftFixedColumn > 0) {
-                for (var j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
+                for (let j = 0; j < this.ebSettings.LeftFixedColumn; j++) {
                     $(lfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j).css("width"));
                 }
             }
 
             if (this.ebSettings.RightFixedColumn > 0) {
                 var start = scrollfoot.find("tr").eq(0).children().length - this.ebSettings.RightFixedColumn;
-                for (var j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
+                for (let j = 0; (j + start) < scrollfoot.find("tr").eq(0).children().length; j++) {
                     $(rfoot).children().find("tr").eq(0).children("th").eq(j).css("width", scrollfoot.find("tfoot").children("tr").eq(0).children("th").eq(j + start).css("width"));
                 }
             }
@@ -1329,7 +1338,7 @@ var EbBasicDataTable = function (Option) {
             this.hiddenIndex = $.grep(this.ebSettings.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             //var idpos = getObjByval(this.ebSettings.Columns.$values, "name", this.hiddenFieldName).data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + ((row[this.hiddenIndex]!== null) ? row[this.hiddenIndex].toString(): null) + "'/>";
+            return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + ((row[this.hiddenIndex] !== null) ? row[this.hiddenIndex].toString() : null) + "'/>";
         }
         else
             return "<input type='checkbox' class='" + this.tableId + "_select'/>";

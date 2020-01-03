@@ -1,4 +1,5 @@
-﻿var InitControls = function (option) {
+﻿
+var InitControls = function (option) {
     if (option) {
         this.Bot = option.botBuilder;
         this.Wc = option.wc;
@@ -40,7 +41,7 @@
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.cloud',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -242,16 +243,20 @@
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
         }
-        this.setCurrentDate(ctrl, $input);
         if (ctrl.IsNullable) {
-            if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
-                $input.val('');
+            //if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+            //    $input.val('');
+            //else
+            $('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').attr('checked', false);
+            $input.val("");
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
+        else
+            this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
-        console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
+        //console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
 
         //}.bind(this), 0);
     };
@@ -273,31 +278,64 @@
     };
 
     this.setCurrentDate = function (ctrl, $input) {
+        let val;
         if (ctrl.ShowDateAs_ === 1) {
-            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+            val = moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY');
         }
         else if (ctrl.EbDateType === 5) { //Date
-            $input.val(ebcontext.user.Preference.ShortDate);
+            val = moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('YYYY-MM-DD');
         }
         else if (ctrl.EbDateType === 17) { //Time
-            $input.val(ebcontext.user.Preference.ShortTime);
+            val = moment(ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortTimePattern).format('HH:mm:ss');
         }
         else {
-            $input.val(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime);
+            val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
+        ctrl.setValue(val);
     };
 
     this.SimpleSelect = function (ctrl) {
-        //setTimeout(function () {
+
         let $input = $("#" + ctrl.EbSid_CtxId);
-        $input.selectpicker();
-        //},0);
+        $input.selectpicker({
+            dropupAuto: false
+        });
+        let $DD = $input.siblings(".dropdown-menu[role='combobox']");
+        $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
+        $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
+
+        //code review..... to set dropdown on body
+        $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
+            let $el = $(e.target);
+            if ($el[0].isOutside !== true) {
+                let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                let initDDwidth = $drpdwn.width();
+                let ofsetval = $drpdwn.offset();
+                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
+                let $div_detached = $drpdwn.detach();
+                let $form_div = $(e.target).closest("[eb-root-obj-container]");
+                $div_detached.appendTo($form_div).wrap($divclone);
+                $div_detached.width(initDDwidth);
+                $el[0].isOutside = true;
+                $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+
+            }
+            //to set position of dropdrown just below selectpicker btn
+            else {
+                let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                let ddOfset = ($(e.target)).offsetParent().offset();
+                let tgHght = ($(e.target)).offsetParent().height();
+                $outdrpdwn.parent().addClass('open');
+                $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
+            }
+        });
     };
 
     this.BooleanSelect = function (ctrl) {
         this.SimpleSelect(ctrl);
     };
 
+    // http://davidstutz.de/bootstrap-multiselect
     this.UserLocation = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.multiselect({
@@ -320,6 +358,8 @@
                     $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             }
         }
+
+        ctrl.DataVals.Value = ctrl.getValueFromDOM();
     };
 
     this.UserLocationCheckboxChanged = function (ctrl) {
@@ -461,7 +501,7 @@
         if (this.Bot && this.Bot.curCtrl !== undefined)
             this.Bot.curCtrl.SelectedRows = EbCombo.getSelectedRow;
         let t1 = performance.now();
-        console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
+        // console.dev_log("PowerSelect init took " + (t1 - t0) + " milliseconds.");
     };
 
     this.Survey = function (ctrl) {
@@ -535,7 +575,7 @@
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
         }
-       
+
 
 
         //if (_rowId === undefined || _rowId === 0) {
@@ -557,7 +597,11 @@
         //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //}
         //else {
-        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        let usrId = ebcontext.user.UserId;
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
+        $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
+        let usrImg = '/images/dp/' + usrId + '.png';
+        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
         //}
     };
     this.SysModifiedBy = function (ctrl) {
@@ -566,12 +610,19 @@
         //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //    }
         //    else {
-        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.FullName);
+        let usrId = ebcontext.user.UserId;
+        $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
+        $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
+        let usrImg = '/images/dp/' + usrId + '.png';
+        $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
         //    }
         //}        
     };
     this.SysCreatedAt = function (ctrl) {
-        //this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
+    };
+    this.SysModifiedAt = function (ctrl) {
+        this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
 
     this.ProvisionUser = function (ctrl, ctrlopts) {
@@ -603,21 +654,31 @@
     };
 
     this.UserSelect = function (ctrl, ctrlopts) {
-        
+
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
-            itemList: ctrl.UserList.$values
+            itemList: ctrl.UserList.$values,
+            EbSid_CtxId: ctrl.EbSid_CtxId
         });
-
+        itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
-        ctrl.getValue = itemList.getValue;
-
+        ctrl.getDisplayMember = itemList.getDisplayMember;
+        ctrl.refresh = itemList.refresh;
+        ctrl.clear = itemList.clear;
+        ctrl._onChangeFunctions = [];
+        ctrl.bindOnChange = function (p1) {
+            if (!this._onChangeFunctions.includes(p1))
+                this._onChangeFunctions.push(p1);
+        };
+        if (ctrl.LoadCurrentUser) {
+            ctrl.setValue(ebcontext.user.UserId.toString());
+        }
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
         if (ctrl.AutoSuggestion === true) {
             $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
-        }   
+        }
     };
 
     this.Numeric = function (ctrl) {

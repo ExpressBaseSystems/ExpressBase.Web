@@ -1,12 +1,150 @@
-﻿@{
-    Layout = "~/Views/Shared/LayoutInner.cshtml";
+﻿<script>
+        var cm = new EbHeader().setName("User Home");
+        $('title').text("User Home");
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#quik_menu').click();
+        });
+
+    </script>
+
+
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
+    @await Component.InvokeAsync("PageHeaderCommon")
 }
+
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.min.css" asp-append-version=@bApnd />
+<link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
+<link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js"></script>
+<script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.js"></script>
+<script src="~/js/EbUserDashBoard/EbDashBoard.js"></script>
+<script src="~/js/CommonDataTable.js"></script>
+<script src="~/js/GoogleMap/Googlemap.js"></script>
+<script src="~/js/EbUserDashBoard/EbDashBoardView.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js" asp-append-version=@bApnd></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gridstack.js/0.4.0/gridstack.all.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+<script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+
 <script>
-    var cm = new EbHeader().setName("User Home");
-    $('title').text("User Home");
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+    @Html.Raw(ViewBag.ControlOperations);
 </script>
-<script>
+<div class="container-fluid" style="margin-top:60px;background: transparent;">
+    <div class="row" style="background: transparent;">
+        <div class="col-sm-12" style="background: transparent;width: 99%">
+            <div id="dashbord-user-view">
+                <div class="grid-stack"></div>
+            </div>
+
+        </div>
+    </div>
+
+    @*<div id="ppt-dash-view" class="PGgrid"> <div id="propGridView"> </div></div>*@
+</div>
+@{
+    if (ViewBag.AllDashBoard != null)
+    {
+        <script>
+            var DBobj = new DashBoardViewWrapper({
+            Version: '@ViewBag.VersionNumber',
+            ObjType: @ViewBag.ObjType,
+            dvObj: @Html.Raw(ViewBag.dsObj),
+            Status: '@ViewBag.Status',
+            googlekey: '@ViewBag.al_arz_map_key',
+            AllDashBoards: @Html.Raw(ViewBag.AllDashBoard),
+        });
+        </script>
+    }
+    else
+    {
+        @*<script>
+                  $(document).ready(function () {
+                $('#quik_menu').click();
+            });
+            </script>*@
+    }
+}
+<script type="text/javascript">
     $(document).ready(function () {
-        $('#quik_menu').click();
-     });
+        $(document).click(function (event) {
+            var clickover = $(event.target);
+
+            if (!clickover.hasClass("DropDown4DB")) {
+                $("#UserDashBoardSwitchList").hide();
+            }
+            else {
+                $("#UserDashBoardSwitchList").show();
+            }
+        });
+    });
+</script>
+<script type="text/javascript">
+//      $(function () {
+//     var options = {
+//     float: true,
+//     width: 4,
+//     height: 4,
+//     animate: true,
+//     always_show_resize_handle: true,
+//     cellHeight: 110,
+//     verticalMargin: 18,
+//     horizontalMargin: 9,
+//     placeholder_class: 'grid-stack-placeholder',
+//     acceptWidgets: '.grid-stack-item'
+//   };
+
+//          //$('.grid-stack').gridstack();
+
+//});
+
+//     $("body").prepend(`
+//<div class="modal fade" id="iFrameFormPopupModal" role="dialog">
+//    <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
+//        <div class="modal-content">
+//            <div class="modal-body" style="height: 60vh; padding: 0px;">
+//                <div>
+//                    <div id="iFrameFormPopupOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
+//                        <div style="position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>
+//                    </div>
+//                    <iframe id="iFrameFormPopup" style="width: 100%; height: 60vh; border: none; border-radius: 6px;" ></iframe>
+//                </div>
+//            </div>
+//        </div>
+//    </div>
+//</div>
+//`);
+//    window.closeModal = function (func) {// receives call from iFrame
+//        //func();
+//        $('#iFrameFormPopupModal').modal('hide');
+//    };
+//    $('#iFrameFormPopupModal').on('hidden.bs.modal', function () {
+//        $('#iFrameFormPopup').removeAttr("src");
+//        $("#iFrameFormPopupOverlay").show();
+//    });
+//    $("#iFrameFormPopup").on('load', function (evt) {
+//        console.log(evt.target);
+//        if ($(evt.target).attr("src") !== undefined)
+//            $("#iFrameFormPopupOverlay").hide();
+//    });
+
 </script>

@@ -74,7 +74,9 @@
     };
 
     this.UpdateTab = function (data) {
+        let forceContinue = true;
         if (data.message !== null && data.message !== "") {
+            forceContinue = false;
             if (data.message.indexOf("Specify a diffrent name.") > 0) {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
@@ -91,13 +93,17 @@
                 this.alertMsg = "The Operation Can't be completed because an item with the name \"" + this.Current_obj.Name + "\"" + " already exists. Specify a diffrent name.";
                 this.showMessage();
             }
+            else if (data.message.indexOf("--FormException--") > -1) {
+                data.message = data.message.replace("--FormException--", "");
+                forceContinue = true;
+            }
             else {
                 this.alertBgColor = this.RedColor;
                 this.alertMsg = data.message;
                 this.showMessage();
             }
         }
-        else {
+        if (forceContinue) {
             var target = this.target;//edits by amal
             this.ver_Refid = data.refid;
             var getNav = $("#versionNav li.active a").attr("href");
@@ -130,6 +136,10 @@
                     this.alertMsg = "Commit Success";
                     if (this.ObjectType === 2)
                         this.AfterCommit();
+                }
+                if (data.message !== null && data.message !== "") {
+                    this.alertBgColor = this.RedColor;
+                    this.alertMsg = data.message;
                 }
             }
             this.Current_obj.RefId = this.ver_Refid;
@@ -520,6 +530,12 @@
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("WebForm") !== -1)
             return true;
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("EbDashBoard") !== -1)
+            return true;
+        else if (this.ObjCollection[getNav].EbObject.$type.indexOf("EbCalendarView") !== -1)
+            return true;
+        else if (this.ObjCollection[getNav].EbObject.$type.indexOf("EbMobilePage") !== -1)
+            return true;
+        else if (this.ObjCollection[getNav].EbObject.$type.indexOf("EbSqlJob") !== -1)
             return true;
         else
             return false;

@@ -203,6 +203,7 @@
     //}];
 
     {
+        // if editmode
         if (this.EbObject) {
             this.InitEditModeCtrls(this.EbObject);
         }
@@ -318,15 +319,15 @@
         if (target) {
             //drop from toolbox to form
             if ($(source).attr("ebclass") === this.toolContClass) {
-                var $el = $(el);
-                var type = $el.attr("eb-type").trim();
-                var id = type + (this.controlCounters[type + "Counter"])++;
-                var ctrlObj = new EbObjects["Eb" + type](id);
-                var $ctrl = ctrlObj.$WrapedCtrl4Bot.clone();
+                let $el = $(el);
+                let type = $el.attr("eb-type").trim();
+                let ebsid = type + ++(this.controlCounters[type + "Counter"]);
+                let ctrlObj = new EbObjects["Eb" + type](ebsid);
+                let $ctrl = ctrlObj.$WrapedCtrl4Bot.clone();
                 $el.remove();
                 $ctrl.attr("tabindex", "1").attr("onclick", "event.stopPropagation();$(this).focus()");
                 $ctrl.on("focus", this.controlOnFocus.bind(this));
-                $ctrl.attr("id", "cont_" + id).attr("ebsid", id);
+                $ctrl.attr("id", "cont_" + ebsid).attr("ebsid", ebsid);
                 $ctrl.attr("eb-type", type);
                 if (sibling) {
                     $ctrl.insertBefore($(sibling));
@@ -336,12 +337,26 @@
                     $(target).append($ctrl);
                     this.rootContainerObj.Controls.Append(ctrlObj);
                 }
+                if (type === "SimpleSelect" || type === "BooleanSelect") {
+                    $ctrl.find(".selectpicker").selectpicker();
+                }
+                else if (type == "Labels") {
+                    console.log("dsf");
+                    let zx = ctrlObj.LabelCollection.$values[0].EbSid;
+                    this.updateControlUI(zx);
+                }
                 $ctrl.focus();
                 //$ctrl.contextMenu(this.CtxMenu, { triggerOn: 'contextmenu' });
-                ctrlObj.Label = id;
+                ctrlObj.Label = ebsid;
                 ctrlObj.HelpText = "";
 
-                this.RefreshControl(ctrlObj);
+                if (ctrlObj.IsContainer)
+                    this.InitContCtrl(ctrlObj, $ctrl);
+                $ctrl.focus();
+                this.updateControlUI(ebsid);
+
+
+                //this.RefreshControl(ctrlObj);
 
 
             }
@@ -350,6 +365,30 @@
             this.saveObj();
         }
     };
+
+
+    this.updateControlUI = function (ebsid, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(ebsid);
+        let _type = obj.ObjType;
+        $.each(obj, function (propName, propVal) {
+            let meta = getObjByval(AllMetas["Eb" + _type], "name", propName);
+            if (propName == "Label")
+                console.log("dfgdf");
+            if (meta && meta.IsUIproperty)
+                this.updateUIProp(propName, ebsid, _type);
+        }.bind(this));
+    };
+
+    this.updateUIProp = function (propName, id, type) {
+        let obj = this.rootContainerObj.Controls.GetByName(id);
+        let NSS = getObjByval(AllMetas["Eb" + type], "name", propName).UIChangefn;
+        if (NSS) {
+            let NS1 = NSS.split(".")[0];
+            let NS2 = NSS.split(".")[1];
+            EbOnChangeUIfns[NS1][NS2](id, obj);
+        }
+    };
+
 
     //this.controlCloseOnClick = function (e) {
     //    var ControlTile = $(e.target).parent().parent();
@@ -362,6 +401,7 @@
     //    e.preventDefault();
     //    this.saveObj();
     //};
+
 
     this.updateHTML = function (e) {
         if (this.curControl.attr("id").toString().substr(0, 8) === "GridView") {

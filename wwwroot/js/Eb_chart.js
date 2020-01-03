@@ -328,9 +328,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                     type: 'POST',
                     url: "../DV/getdata",
                     data: { DataVizObjString: JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues, dvRefId: this.Refid },
-                    beforeSend: function (xhr) {
-                        xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                    },
+                    
                     success: this.getDataSuccess.bind(this),
                     error: function () { }
                 });

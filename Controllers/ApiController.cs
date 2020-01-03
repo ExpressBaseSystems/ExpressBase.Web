@@ -4,34 +4,23 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Common;
-using ExpressBase.Common.Connections;
-using ExpressBase.Common.Data;
-using ExpressBase.Common.Messaging;
-using ExpressBase.Common.Messaging.ExpertTexting;
-using ExpressBase.Common.Messaging.Twilio;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-using ExpressBase.Objects;
-using System.Collections.Specialized;
-using Newtonsoft.Json.Linq;
 using Microsoft.AspNetCore.Http;
-using ExpressBase.Web.Models;
-using System.Runtime.Serialization;
 using System.Xml;
-using System.Xml.Serialization;
 using System.IO;
-using System.Text;
 using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Constants;
 using ServiceStack.Auth;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
-using ExpressBase.Common.Structures;
+using ExpressBase.Web.Filters;
+using ExpressBase.Common.LocationNSolution;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -228,9 +217,13 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = (password + username).ToMD5Hash(),
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
                     RememberMe = true
-                    //UseTokenCookie = true
                 });
 
                 if (authResponse != null && authResponse.User != null)
@@ -264,9 +257,13 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = password,
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
                     RememberMe = true
-                    //UseTokenCookie = true
                 });
 
                 if (authResponse != null && authResponse.User != null)
@@ -276,6 +273,24 @@ namespace ExpressBase.Web.Controllers
                     response.RToken = authResponse.RefreshToken;
                     response.UserId = authResponse.User.UserId;
                     response.DisplayName = authResponse.User.FullName;
+                    response.User = authResponse.User;
+
+                    Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
+
+                    if (authResponse.User.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || authResponse.User.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                    {
+                        response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                    }
+                    else if (s_obj != null && authResponse.User.LocationIds != null)
+                    {
+                        foreach (int _locid in authResponse.User.LocationIds)
+                        {
+                            if (s_obj.Locations.ContainsKey(_locid))
+                            {
+                                response.Locations.Add(s_obj.Locations[_locid]);
+                            }
+                        }
+                    }
                 }
                 else
                     response.IsValid = false;
@@ -286,13 +301,6 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("api auth request failed: " + e.Message);
             }
             return response;
-        }
-
-        [HttpGet("/api/logout")]
-        [HttpPost("/api/logout")]
-        public void ApiLogOut()
-        {
-
         }
 
         [HttpPost("/api/upload")]
@@ -352,7 +360,7 @@ namespace ExpressBase.Web.Controllers
             return ApiResp;
         }
 
-        [HttpGet("api/files/{filename}")]
+        [HttpGet("/api/files/{filename}")]
         public IActionResult GetFile(string filename)
         {
             DownloadFileResponse dfs = null;
@@ -404,11 +412,14 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/menu")]
-        public GetMobMenuResonse GetAppData4Mob()
+        public GetMobMenuResonse GetAppData4Mob(int locid = 1)
         {
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
-                return this.ServiceClient.Get(new GetMobMenuRequest());
+                return this.ServiceClient.Get(new GetMobMenuRequest
+                {
+                    LocationId = locid
+                });
             }
             else
             {
@@ -417,57 +428,68 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/objects_by_app")]
-        public ObjectListToMob GetObjectsByApp(int appid, int locid)
+        public GetMobilePagesResponse GetObjectsByApp(int appid, int locid, bool pull_data = false)
         {
             locid = locid == 0 ? 1 : locid;
-            ObjectListToMob _objs = new ObjectListToMob();
+            GetMobilePagesResponse _objs = null;
 
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
                 try
                 {
-                    SidebarUserResponse resultlist = this.ServiceClient.Get<SidebarUserResponse>(new SidebarUserRequest
+                    _objs = this.ServiceClient.Get<GetMobilePagesResponse>(new GetMobilePagesRequest
                     {
-                        LocationId = locid
+                        LocationId = locid,
+                        AppId = appid,
+                        PullData = pull_data
                     });
-
-                    if (resultlist.Data.ContainsKey(appid))
-                    {
-                        foreach (KeyValuePair<int, TypeWrap> pair in resultlist.Data[appid].Types)
-                        {
-                            _objs.Objects.Add(EbObjectTypes.Get(pair.Key).Alias, pair.Value.Objects);
-                        }
-                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
+                    _objs = new GetMobilePagesResponse();
                 }
             }
             return _objs;
         }
 
-        [HttpGet("/api/object_by_ref")]
-        public EbObjectToMobResponse GetObjectByRef(string refid)
+        [HttpPost("/api/push_data")]
+        public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
         {
-            if (string.IsNullOrEmpty(refid))
-                throw new Exception("refid cannot be null");
+            InsertDataFromWebformResponse Resp = null;
 
-            EbObjectToMobResponse resonse = null;
-
-            if (ViewBag.IsValidSol)
+            if (ViewBag.IsValid)
             {
                 try
                 {
-                    resonse = this.ServiceClient.Get(new EbObjectToMobRequest { RefId = refid, User = this.LoggedInUser });
+                    WebformData FormData = JsonConvert.DeserializeObject<WebformData>(form["webform_data"]);
+                    int RowId = Convert.ToInt32(form["rowid"]);
+                    string RefId = form["refid"];
+                    int LocId = Convert.ToInt32(form["locid"]);
+
+                    string Operation = OperationConstants.NEW;
+                    if (RowId > 0)
+                        Operation = OperationConstants.EDIT;
+
+                    if (!this.LoggedInUser.HasFormPermission(RefId, Operation, LocId))
+                        return new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 };
+
+                    Resp = ServiceClient.Post(new InsertDataFromWebformRequest
+                    {
+                        RefId = RefId,
+                        FormData = FormData,
+                        RowId = RowId,
+                        CurrentLoc = LocId,
+                        UserObj = this.LoggedInUser
+                    });
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine(e.StackTrace);
+                    Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
-            return resonse;
+            return Resp;
         }
     }
 }

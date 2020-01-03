@@ -27,7 +27,7 @@ namespace ExpressBase.Web.Components
             this.ServiceClient = _client as JsonServiceClient;
             this.Redis = _redis as RedisClient;
         }
-        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol, string ParentRefid, string wc, string curloc, string submitId)
+        public async Task<IViewComponentResult> InvokeAsync(EbFilterDialog FilterDialogObj, User _user, Eb_Solution _sol, string ParentRefid, string wc, string curloc, string submitId, bool noCtrlOps)
         {
             if (FilterDialogObj != null)
             {
@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Components
                     }
                     else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
                     {
-                        (control as EbPowerSelect).EbSimpleSelect.InitFromDataBase(this.ServiceClient);
+                        (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);
                     }
                     else if (control is EbUserLocation)
                     {
@@ -48,7 +48,8 @@ namespace ExpressBase.Web.Components
                     }
                 }
                 ViewBag.HtmlHead = FilterDialogObj.GetHead();
-                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(FilterDialogObj as EbControlContainer, BuilderType.FilterDialog);
+                if(!noCtrlOps)
+                    ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(FilterDialogObj as EbControlContainer, BuilderType.FilterDialog);
                 ViewBag.HtmlBody = FilterDialogObj.GetHtml();
 
                 ViewBag.FilterObj = Common.EbSerializers.Json_Serialize(FilterDialogObj);

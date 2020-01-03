@@ -1,192 +1,11 @@
 ﻿@{
     @using  ExpressBase.Common
+    @using Newtonsoft.Json;
 }
 @{
-
-    var taskType = JobTypes.ReportTask;
+    var taskType = ViewBag.Tasktype;
 }
-<script type="text/javascript" src="~/src/jquery-cron-quartz.js"></script>
-<link rel="stylesheet" type="text/css" href="~/src/jquery-cron-quartz.css">
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
-<script type="text/javascript" src="~/js/scheduling.js"></script>
-<script>
-    $(document).ready(function () {
-        window.EbCron = {};
-        $('.non-rec').hide();
-        $('#cron').cronBuilder({
-            onChange: function (expression) {
-                $('#result').text(expression);
-            }
-        });
 
-        $('#datetimepicker').datetimepicker({
-            format: 'm/d/Y H:i ',
-            onChangeDateTime: function (dp, $input) {
-                var expression = "0 "; //Seconds
-                expression = expression + dp.getMinutes() + " "; //Minutes
-                expression = expression + dp.getHours() + " "; //Hours
-                expression = expression + dp.getDate() + " "; //Day - of - Month
-                expression = expression + parseInt(dp.getMonth() + 1) + " "; //Month
-                expression = expression + " ? "; //Day - of - Week
-                expression = expression + dp.getFullYear(); //Year(optional field)
-                $('#result').text(expression);
-                EbCron = {
-                    Type: 'nonreccur',
-                    DatTimeestring: dp
-                };
-
-            }
-        });
-
-        $('input[type=radio][name=sch-type]').change(function () {
-            if (this.value === 'reccur') {
-                $('.recur').show();
-                $('.non-rec').hide();
-            }
-            else if (this.value === 'nonreccur') {
-                $('.recur').hide();
-                $('.non-rec').show();
-            }
-        });
-    });
-</script>
-<div>
-    @{
-        int objid = Convert.ToInt32(ViewBag.Obj_id);
-        if (objid != 0)
-        {
-            @await Component.InvokeAsync("SchedulerListing", new { objid })
-        }
-    }
-
-</div>
-<div class="modal SchedulerModal fade" id="SchedulerModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Configure Schedule</h4>
-            </div>
-            <div class="modal-body">
-                <div class="scheduler col-md-6">
-                    <div>
-                        <label class="form-check-label">Name</label>
-                        <input type="text" class="sch-name form-control" id="sch-name">
-                    </div>
-
-                    <div id="result" style="display: none;"></div>@*expression*@
-
-                    <div class="row">
-                        <label class="form-check-label col-md-12 top-pad">
-                            Schedule Type
-                        </label>
-                        <div class="form-check form-check-inline col-md-4">
-                            <input class="form-check-input" type="radio" name="sch-type" id="sch-type1" value="reccur" checked>
-                            <label class="" for="sch-type1">
-                                Recurring
-                            </label>
-                        </div>
-                        <div class="form-check form-check-inline col-md-4">
-                            <input class="form-check-input" type="radio" name="sch-type" id="sch-type2" value="nonreccur">
-                            <label class="form-check-label" for="sch-type2">
-                                Non Recurring
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="recur col-md-12">
-                            <div id="cron" class="cron-builder"></div>
-                        </div>
-
-                        <div class="non-rec col-md-5">
-                            <label class="form-check-label" for="">
-                                Select Time
-                            </label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
-                                <input id="datetimepicker" type="text" class="form-control" placeholder="Date Time">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 top-pad">
-                        <label class="form-check-label row">
-                            Delivery Mechanism
-                        </label>
-                        <div class="row">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="delivery" id="delivery1" value="email" checked>
-                                Email
-                            </div>
-                            <div class="form-check disabled">
-                                <input class="form-check-input" type="radio" name="delivery" id="delivery2" value="sms" disabled>
-                                Sms
-                            </div>
-                            <div class="form-check disabled">
-                                <input class="form-check-input" type="radio" name="delivery" id="delivery3" value="slack" disabled>
-                                Slack
-                            </div>
-                            <div class="form-check disabled">
-                                <input class="form-check-input" type="radio" name="delivery" id="delivery4" value="noti" disabled>
-                                Notifications
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-check-label col-md-12">
-                        Deliver To
-                    </label>
-
-
-                    <div class="col-md-6">
-                        <label class="form-check-label usr">
-                            Users
-                        </label>
-                        <div class="user-common">
-                            @{
-                                Dictionary<int, string> Users = ViewBag.users;
-                                foreach (KeyValuePair<int, string> user in Users)
-                                {
-                                    <div class="form-check form-check-inline user-line">
-                                        <input class="form-check-input user" type="checkbox" id="user+@user.Key" value="@user.Key">
-                                        <label class="form-check-label" for="inlineCheckbox1">@user.Value</label>
-                                    </div>
-                                }
-                            }
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-check-label usr">
-                            UserGroups
-                        </label>
-                        <div class="user-common">
-                            @{ Dictionary<int, string> UserGroups = ViewBag.usergroups;
-                                foreach (KeyValuePair<int, string> userg in UserGroups)
-                                { <div class="form-check form-check-inline user-line">
-                                        <input class="form-check-input usergrp" type="checkbox" id="usergrp+@userg.Key" value="@userg.Key">
-                                        <label class="form-check-label" for="inlineCheckbox1">@userg.Value</label>
-                                    </div>
-                                }
-                            }
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" id="schedule" class="btn btn-success" data-dismiss="modal">Schedule</button>
-                <button type="button" id="edit_sch" class="btn btn-success" data-dismiss="modal">Apply Changes</button>
-                <button type="button" id="del_sch" class="btn btn-danger" data-dismiss="modal">Delete</button>
-            </div>
-        </div>
-    </div>  
-</div>
-
-<script>
-    var schedule = new scheduleO('@taskType');
-</script>
 <style>
     .scheduler {
         padding-bottom: 10px;
@@ -202,9 +21,11 @@
     #cron select {
         width: 25%;
     }
+
     .top-pad {
         padding-top: 4%;
     }
+
     select {
         width: 11%;
         height: 34px;
@@ -247,8 +68,13 @@
         /*height: 190px;*/
     }
 
+    .usergroupmessagepad {
+        padding: 10px;
+        background: lightgray;
+    }
+
     .user-common {
-        height: calc(100vh - 400px);
+        height: 238px;
         overflow: auto;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -270,3 +96,282 @@
             background-color: #e6e6e6;
         }
 </style>
+<script type="text/javascript" src="~/src/jquery-cron-quartz.js"></script>
+<link rel="stylesheet" type="text/css" href="~/src/jquery-cron-quartz.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.css">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.js"></script>
+<script type="text/javascript" src="~/js/scheduling.js"></script>
+
+
+
+<script>
+    $(document).ready(function () {
+        let usergroups = @Html.Raw(JsonConvert.SerializeObject(ViewBag.usergroups));
+        let users = @Html.Raw(JsonConvert.SerializeObject(ViewBag.users));
+        let schedules = @Html.Raw(JsonConvert.SerializeObject(ViewBag.schedules));
+        var schedule = new scheduleO('@taskType', users, usergroups, schedules);
+    });
+</script>
+<div>
+    @{
+        int objid = Convert.ToInt32(ViewBag.Obj_id);
+        if (objid != 0)
+        {
+            @await Component.InvokeAsync("SchedulerListing", new { objid })
+        }
+    }
+
+</div>
+<div class="modal SchedulerModal fade" id="SchedulerModal" role="dialog">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Configure Schedule</h4>
+            </div>
+            <div class="modal-body">
+                <div class="scheduler col-md-5">
+                    <div>
+                        <label class="form-check-label">Name</label>
+                        <input type="text" class="sch-name form-control" id="sch-name">
+                    </div>
+                    <div>
+
+                    </div>
+                    <div id="result" style="display: none;"></div>@*expression*@
+
+                    <div class="row">
+                        <label class="form-check-label col-md-12 top-pad">
+                            Schedule Type
+                        </label>
+                        <div class="form-check form-check-inline col-md-4">
+                            <input class="form-check-input" type="radio" name="sch-type" id="sch-type1" value="reccur" checked>
+                            <label class="" for="sch-type1">
+                                Recurring
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline col-md-4">
+                            <input class="form-check-input" type="radio" name="sch-type" id="sch-type2" value="nonreccur">
+                            <label class="form-check-label" for="sch-type2">
+                                Non Recurring
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="recur col-md-12">
+                            <div id="cron" class="cron-builder"></div>
+                        </div>
+
+                        <div class="non-rec col-md-5">
+                            <label class="form-check-label" for="">
+                                Select Time
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                                <input id="datetimepicker" type="text" class="form-control" placeholder="Date Time">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @{ if (taskType == JobTypes.SqlJobTask)
+                    {
+                    }
+                    else
+                    {
+                        Dictionary<int, string> Users = ViewBag.users;
+                        Dictionary<int, string> UserGroups = ViewBag.usergroups;
+                        Dictionary<int, string> Slackusers = ViewBag.Slackusers;
+                        Dictionary<int, string> SlackChannnel = ViewBag.SlackChannnel;
+
+                        <div class="col-md-7 usergroupmessagepad">
+                            <label class="form-check-label col-md-12">
+                                Deliver To :
+                            </label>
+                            <div>
+                                <div class="col-lg-3">
+                                    <ul class="nav nav-pills nav-stacked" role="tablist">
+                                        <li name="email"><a href="#email" name="email" role="tab" data-toggle="tab"><img class="img-responsive image-vender" name="email" src="~/images/svg/email.svg" style="width:47%" /></a></li>
+                                        <li name="sms"><a href="#SMS" name="sms" role="tab" data-toggle="tab"><img class="img-responsive image-vender" name="sms" src="~/images/svg/text.svg" style="width:47%" /></a></li>
+                                        <li name="slack"><a href="#Slack" name="slack" role="tab" data-toggle="tab"><img class="img-responsive image-vender" name="slack" src="~/images/slack.png" style="width:80%" /></a></li>
+                                    </ul>
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade in active " id="email">
+                                        <div class="col-md-4">
+                                            <label class="form-check-label usr">
+                                                Users
+                                            </label>
+                                            <div class="user-common user-common-all">
+                                                @{
+                                                    foreach (KeyValuePair<int, string> user in Users)
+                                                    {
+                                                        if (user.Value != "")
+                                                        {
+                                                            <div class="form-check form-check-inline user-line">
+                                                                <input class="form-check-input email_user user" type="checkbox" id="user+@user.Key" value="@user.Key">
+                                                                <label class="form-check-label" for="inlineCheckbox1">@user.Value</label>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-check-label usr">
+                                                UserGroups
+                                            </label>
+                                            <div class="user-common usergroup-common-all">
+                                                @{
+                                                    foreach (KeyValuePair<int, string> userg in UserGroups)
+                                                    {
+                                                        if (userg.Value != "")
+                                                        {
+                                                            <div class="form-check form-check-inline user-line">
+                                                                <input class="form-check-input Email_usergrp usergrp" type="checkbox" id="usergrp+@userg.Key" value="@userg.Key">
+                                                                <label class="form-check-label" for="inlineCheckbox1">@userg.Value</label>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-11">
+                                                <label class="form-check-label">Message : </label>
+                                                @*    <input type="text" class="form-control" rows="3" id="sch_email_Message">*@
+                                                <textarea id="sch_email_Message" class="form-control Message" rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="SMS">
+                                        <div class="col-md-4">
+                                            <label class="form-check-label usr">
+                                                Users
+                                            </label>
+                                            <div class="user-common user-common-all">
+                                                @{ /**/
+                                                                                                                      ;
+                                                                    foreach (KeyValuePair<int, string> user in Users)
+                                                                    {
+                                                                        if (user.Value != "")
+                                                                        {
+                                                                            <div class="form-check form-check-inline user-line">
+                                                                                <input class="form-check-input SMS_user user" type="checkbox" id="user+@user.Key" value="@user.Key">
+                                                                                <label class="form-check-label" for="inlineCheckbox1">@user.Value</label>
+                                                                            </div>
+                                                                        }
+                                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-check-label usr">
+                                                UserGroups
+                                            </label>
+                                            <div class="user-common usergroup-common-all">
+                                                @{
+                                                    foreach (KeyValuePair<int, string> userg in UserGroups)
+                                                    {
+                                                        if (userg.Value != "")
+                                                        {
+                                                            <div class="form-check form-check-inline user-line">
+                                                                <input class="form-check-input SMS_usergrp usergrp" type="checkbox" id="usergrp+@userg.Key" value="@userg.Key">
+                                                                <label class="form-check-label" for="inlineCheckbox1">@userg.Value</label>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-11">
+                                                <label class="form-check-label">Message : </label>
+                                                @*<input type="text" class="form-control" id="sch_sms_Message">*@
+                                                <textarea id="sch_sms_Message" class="form-control Message" rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="Slack">
+                                        <div class="col-md-4">
+                                            <label class="form-check-label usr">
+                                                Users
+                                            </label>
+                                            <div class="user-common user-common-all">
+                                                @{
+                                                    if (Slackusers != null)
+                                                    {
+                                                        foreach (KeyValuePair<int, string> user in Slackusers)
+                                                        {
+                                                            if (user.Value != "")
+                                                            {
+                                                                <div class="form-check form-check-inline user-line">
+                                                                    <input class="form-check-input Slack_user user " type="checkbox" id="user+@user.Key" value="@user.Value">
+                                                                    <label class="form-check-label" for="inlineCheckbox1">@user.Value</label>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <label class="form-check-label usr">
+                                                UserGroups
+                                            </label>
+                                            <div class="user-common usergroup-common-all">
+                                                @{
+                                                    if (SlackChannnel != null)
+                                                    {
+                                                        foreach (KeyValuePair<int, string> userg in SlackChannnel)
+                                                        {
+                                                            if (userg.Value != "")
+                                                            {
+                                                                <div class="form-check form-check-inline user-line">
+                                                                    <input class="form-check-input Slack_usergrp usergrp" type="checkbox" id="usergrp+@userg.Key" value="@userg.Value">
+                                                                    <label class="form-check-label" for="inlineCheckbox1">@userg.Value</label>
+                                                                </div>
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-11">
+                                                <label class="form-check-label">Message : </label>
+                                                @*<input type="text" class="form-control" id="sch_slack_Message">*@
+                                                <textarea id="sch_slack_Message" class="form-control Message" rows="2"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="SendNow" class="btn btn-success" data-dismiss="modal">Send Now</button>
+                <button type="button" id="schedule" class="btn btn-success" data-dismiss="modal">Schedule</button>
+                <button type="button" id="edit_sch" class="btn btn-success" data-dismiss="modal">Apply Changes</button>
+                <button type="button" id="del_sch" class="btn btn-danger" data-dismiss="modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+</script>
+

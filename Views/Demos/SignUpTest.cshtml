@@ -71,22 +71,16 @@
         }
 
         function testAjax() {
-            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTp1YyIsImlhdCI6MTU3MTY0NjEzMiwiZXhwIjoxNTcxNjQ2MjIyLCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6InVjIn0.DF9S3wzgkU_EqvQadtyVb1JqT2vqi-obcyWnrZDPGosMYf2xq2EPpS1lcaiT2zCqv1zr8he9al6FJ1aOP4GIm1t96T3bM6-zy8wIHhuPnUacn6vfyePLj5JehrNy4R19dPkkUXsvO9WqtEcR8yf4-JPV_2ovhFYXcwWXI3FeZw8`;
-            r = `eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206dWMiLCJpYXQiOjE1NzE2NDYxMzIsImV4cCI6MTU3MTczMjUzMn0.d7Ip21QLH3nHlLphuDQYS3XMANaz1IbbGbgsAzqJofqzeNxPorT3sTUtdSlM1hzI_yh60KqKdFGzdsYje_XIm7mXlrtwpCDiXk3usTWUbmQ5MMtptCI_dNXvNgxReews7lQfKW1-k9sO-EMoM-Wi70ArtZYn6nt3CqukMjq_ChA`;
             $.ajax({
-                url: "/api/object_by_ref",
+                url: "/api/menu",
                 type: "GET",
                 cache: false,
-                data: {
-                    //"refid": "eb_dbpjl5pgxleq20180130063835-eb_dbpjl5pgxleq20180130063835-3-1712-2448",
-                    "refid": "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-16-2447-3232-2447-3232"
-                },
                 beforeSend: function (xhr) {
-                    xhr.setRequestHeader("bToken", b);
-                    xhr.setRequestHeader("rToken", r);
+                    xhr.setRequestHeader("bToken", getTok());
+                    xhr.setRequestHeader("rToken", getrToken());
                 }
             }).done(function (data) {
-                //$("#test").attr("src", "data:application/pdf;base64," + data.reportResult);
+                
             });
         }
     </script>

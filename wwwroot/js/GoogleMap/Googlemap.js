@@ -230,7 +230,7 @@ var EbGoogleMap = function (option) {
             this.stickBtn.hide();
 
         filterChanged = false;
-        if (this.MainData !== null) {
+        if (this.MainData !== null && !this.isSecondTime) {
             this.drawMapHelper(this.MainData.data);
         }
         else {
@@ -251,15 +251,15 @@ var EbGoogleMap = function (option) {
                     return;
                 this.filterValues = this.getFilterValues();
             }
-            this.isSecondTime = false;
             $("#eb_common_loader").EbLoader("show");
             this.getDataCall();
+            this.isSecondTime = true;
         }
         this.GenerateButtons();
 
     };
 
-    this.getDataCall = function(){
+    this.getDataCall = function () {
         $.ajax({
             type: 'POST',
             url: "../DV/getdata",
@@ -270,7 +270,7 @@ var EbGoogleMap = function (option) {
             success: this.getDataSuccess.bind(this),
             error: function () { }
         });
-    }
+    };
 
     this.getFilterValues = function () {
         var fltr_collection = [];

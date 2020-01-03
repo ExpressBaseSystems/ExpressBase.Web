@@ -28,9 +28,8 @@ namespace ExpressBase.Web.Components
             Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", sid));
             string cust_id = "";
             if (soln == null)
-            {
-                
-                this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = sid});
+            { 
+                this.ServiceClient.Post(new UpdateSolutionObjectRequest { SolnId = sid});
                 soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}",sid));
             }
             ViewBag.MinUsers = soln.NumberOfUsers;

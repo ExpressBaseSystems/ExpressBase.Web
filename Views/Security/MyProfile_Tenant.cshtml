@@ -1310,9 +1310,11 @@
             this.$PhLand.val(this.UserData["ph_landline"]);
             this.$PhExt.val(this.UserData["ph_land_extensn"]);
             //this.DefaultLoc.val(this.UserData[""]);
-            let pobj = JSON.parse(this.UserData["preferences_json"]);
-            this.$Locale.val(pobj.Locale);
-            this.$Timezone.val(pobj.TimeZone);
+            if (this.UserData["preferences_json"]) {
+                let pobj = JSON.parse(this.UserData["preferences_json"]);
+                this.$Locale.val(pobj.Locale);
+                this.$Timezone.val(pobj.TimeZone);
+            }
         }
 
         this.prepareOutData = function () {

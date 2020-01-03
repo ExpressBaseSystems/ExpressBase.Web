@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using ExpressBase.Common;
+using ExpressBase.Common.Data;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
 using ExpressBase.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -29,10 +31,10 @@ namespace ExpressBase.Web.Controllers
 
             return Resp.Data[0].Json;
         }
-        public IActionResult DashBoardView(string refid)
+        public IActionResult DashBoardView(string refid, string rowData, string filterValues, int tabNum)
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
-            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper),typeof(EbObject));
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbObject));
             ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
@@ -47,13 +49,30 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjType = Resp.Data[0].EbObjectType;
             ViewBag.dsObj = Resp.Data[0].Json;
             ViewBag.Status = Resp.Data[0].Status;
+            ViewBag.filterValues = filterValues;
+            ViewBag.tabNum = tabNum;
+            ViewBag.rowData = rowData;
+            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.FilterDialog);
+            //ViewBag.ObjectIds = this.LoggedInUser.EbObjectIds;
             return View();
         }
 
-        public string UserControlGetObj(string refid)
+        public string UserControlGetObj(string refid , List<Param> param)
         {
-            GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid });
+            param = new List<Param> { new Param { Name = "id", Type = "7", Value = "10" } };
+            GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid, Param = param });
+
             return JsonConvert.SerializeObject(Resp);
+        }
+
+        public IActionResult GetFilterBody(string dvobj, string contextId)
+        {
+            var dsObject = EbSerializers.Json_Deserialize(dvobj);
+            dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
+            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            if (dsObject.FilterDialog != null)
+                EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
+            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true }); 
         }
     }
 }

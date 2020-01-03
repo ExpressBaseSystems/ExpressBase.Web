@@ -96,7 +96,7 @@
                             <div class="newObjectContainer-inner">
                                 @foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
                                 {
-                                    List<int> cs = new List<int> { 18, 23, 24, 7, 25 };
+                                    List<int> cs = new List<int> { 18, 23, 7, 25 };
                                     string url = string.Empty, _class = string.Empty;
                                     if (cs.Contains(objectType.IntCode))
                                     {
@@ -138,6 +138,9 @@
                                     </li>
                                     <li klink='true'>
                                         <a class="list-group-item inner_li for_brd" href="/Security/CommonList?type=Roles"><div class="apibox"><i class="fa fa-user-circle-o"></i></div> Roles</a>
+                                    </li>
+                                    <li klink='true'>
+                                        <a class="list-group-item inner_li for_brd" href="/Security/LoginActivity"><div class="apibox"><i class="fa fa-history"></i></div> Login Activity</a>
                                     </li>
                                 </ul>
                             </div>

@@ -1186,6 +1186,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="myLabel">Default DashBoard</label>
+                                <select id="DefaultUserDashBoard" class="form-control myTextField" title="Default DashBoard">
+                                    @{
+                                        foreach (KeyValuePair<string, string> refid in (ViewBag.RefIds as Dictionary<string, string>))
+                                        {
+                                            <option value="@refid.Key"> @refid.Value  </option>
+                                        }
+                                    }
+                                </select>
+                              
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-md-12 col-sm-12 col-lg-12 pd-l-0" style="padding-top:20px;">
                         <button class="btn eb_btnblue eb_btn_md" id="btnSaveMyProf"><i class="fa fa-floppy-o"></i> Save Changes</button>
                     </div>
@@ -1278,6 +1294,7 @@
         this.$DefaultLoc = $("#selDefaultLoc");
         this.$Locale = $("#selLocale");
         this.$Timezone = $("#selTimezone");
+        this.$DefaultDashBoard = $("#DefaultUserDashBoard");
         //CHANGE PWD MODAL ELEMENTS
         this.$ChangePwdModal = $("#MU_ChangePwdModal");
         this.$pwdOld = $("#pwdOld");
@@ -1320,10 +1337,13 @@
             this.$PhSec.val(this.UserData["phnosecondary"]);
             this.$PhLand.val(this.UserData["landline"]);
             this.$PhExt.val(this.UserData["phextension"]);
-            let pobj = JSON.parse(this.UserData["preferencesjson"]);
-            this.$Locale.val(pobj.Locale);
-            this.$Timezone.val(pobj.TimeZone);
-            this.$DefaultLoc.val(pobj.DefaultLocation);
+            if (this.UserData["preferencesjson"]) {
+                let pobj = JSON.parse(this.UserData["preferencesjson"]);
+                this.$Locale.val(pobj.Locale);
+                this.$Timezone.val(pobj.TimeZone);
+                this.$DefaultLoc.val(pobj.DefaultLocation);
+                this.$DefaultDashBoard.val(pobj.DefaultDashBoard);
+            }
 
             if (this.mode !== 'user' || this.UserData['email'] === 'anonymous@anonym.com'){
                 this.$FullName.prop("disabled", true);
@@ -1358,7 +1378,12 @@
                 this.pushToOutData("landline", this.$PhLand.val());
                 this.pushToOutData("phextension", this.$PhExt.val());
             }
-            let tempobj = { Locale: this.$Locale.val(), TimeZone: this.$Timezone.val(), DefaultLocation: parseInt(this.$DefaultLoc.val() || "-1") };
+            let tempobj = {
+                Locale: this.$Locale.val(),
+                TimeZone: this.$Timezone.val(),
+                DefaultLocation: parseInt(this.$DefaultLoc.val() || "-1"),
+                DefaultDashBoard :  this.$DefaultDashBoard.val() || ""
+            };
             let tempjson = JSON.stringify(tempobj);
             if (this.UserData["preferencesjson"] !== tempjson )
                 this.OutDataList.push({ Key: "preferencesjson", Value: tempjson });

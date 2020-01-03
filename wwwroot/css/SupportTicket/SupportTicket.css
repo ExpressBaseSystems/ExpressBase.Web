@@ -109,6 +109,10 @@
     padding-left: 0px;
 }
 
+.supporttkt .mrgbtm, .edtsprt .mrgbtm {
+     margin-bottom: 5px;
+  
+}
 .supporttkt .pdbtm15, .edtsprt .pdbtm15 {
     padding-bottom: 15px;
 }
@@ -152,6 +156,10 @@
 .supporttkt .m-bott10, .edtsprt .m-bott10 {
     margin-bottom: 10px;
 }
+.supporttkt .iosclk, .edtsprt .iosclk {
+    cursor: pointer;
+}
+
 
 
 /*modal close for file view*/

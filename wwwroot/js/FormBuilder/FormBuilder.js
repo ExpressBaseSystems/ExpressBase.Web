@@ -9,7 +9,23 @@
     this.builderType = options.builderType;
     this.toolContClass = "tool-sec-cont";
     this.$propGrid = $("#" + options.PGId);
-    this.BeforeSave = function () { this.PGobj.getvaluesFromPG(); return true; }.bind(this);
+
+    this.beforeSave = function () {
+        let allFlatControls = getAllctrlsFrom(this.EbObject);
+
+        for (let i = 0; i < allFlatControls.length; i++) {
+            let ctrl = allFlatControls[i];
+            if (ctrl.hasOwnProperty("__OSElist"))
+                delete ctrl.__OSElist;
+            if (ctrl.hasOwnProperty("__oldValues"))
+                delete ctrl.__oldValues;
+        }
+
+        this.PGobj.getvaluesFromPG();
+        return true;
+    }.bind(this);
+
+    this.BeforeSave = this.beforeSave;
 
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 
@@ -201,7 +217,7 @@
         $el.attr("ebsid", ebsid);
         if (type !== "UserControl")
             this.updateControlUI(ebsid);
-        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));     
+        this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 
     this.ctrlOnClickBinder = function ($ctrl, type) {
@@ -413,7 +429,7 @@
                 }
 
                 $ctrl.focus();
-              
+
                 ctrlObj.HelpText = "";
                 if (ctrlObj.IsContainer)
                     this.InitContCtrl(ctrlObj, $ctrl);
@@ -529,7 +545,7 @@
                 type: "warning",
                 delay: 3000
             });
-            return false;   
+            return false;
         }
 
         if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "ProvisionLocation" && this.ProvisionLocationCtrl) {
@@ -617,7 +633,7 @@
         }
     }.bind(this);
 
-    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {        
+    this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
         if (CurProp === "TableName" && PropsObj.IsContainer) {
             let TblName = PropsObj.TableName;
             PropsObj.isTableNameFromParent = false;
@@ -638,6 +654,22 @@
                 }.bind(this)
             });
         }
+
+
+        //if (ObjType === "WebForm" && CurProp === "DataPushers") {
+        //    $.LoadingOverlay('show');
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "../WebForm/GetDataPusherJson",
+        //        data: { RefId: PropsObj.DataPushers.$values[0].FormRefId },
+        //        success: function (Json) {
+        //            console.log(Json);
+        //            $.LoadingOverlay('hide');
+        //        }.bind(this)
+        //    });
+        //}
+
+
     }.bind(this);
 
     this.updateChildTablesName = function (PropsObj, TblName) {
@@ -801,23 +833,26 @@
         }
     };
 
-    this.Init = function () {
-        $.contextMenu({
-            selector: '.Eb-ctrlContainer',
-            autoHide: true,
-            build: function ($trigger, e) {
-                return {
-                    items: {
-                        "Delete": {
-                            "name": "Remove",
-                            icon: "fa-trash",
-                            callback: this.del
-                        }
-                    }
-                };
-            }.bind(this)
-        });
+    this.ctxBuildFn = function ($trigger, e) {
+        return {
+            items: {
+                "Delete": {
+                    name: "Remove",
+                    icon: "fa-trash",
+                    callback: this.del
+                }
+            }
+        }
+    }.bind(this)
 
+    this.CtxSettingsObj = {
+        selector: '.Eb-ctrlContainer',
+        autoHide: true,
+        build: this.ctxBuildFn.bind(this)
+    }
+
+    this.Init = function () {
+        $.contextMenu(this.CtxSettingsObj);
         this.drake.on("drop", this.onDropFn.bind(this));
         this.drake.on("drag", this.onDragFn.bind(this));
         this.drake.on("dragend", this.onDragendFn.bind(this));

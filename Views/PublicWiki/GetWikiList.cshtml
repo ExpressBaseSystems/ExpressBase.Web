@@ -234,7 +234,7 @@
                 obj.show_home();
             }
             else {
-                let wname = wiki_name.replace(/\-/g, ' ');
+                let wname = wiki_name.replace(/\~/g, ' ');
                 let id = $(`[val="${wname}"]`).attr("data-id");
                 $(".wikilist").removeClass("CurrentSelection");
                 $(`[data-id='${id}']`).addClass("CurrentSelection");

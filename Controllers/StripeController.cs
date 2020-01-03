@@ -25,7 +25,7 @@ namespace StripeApp.Controllers
         public IActionResult Index()
         {
             ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             if (soln.PricingTier == 0)
             {
                 ViewBag.Status = true;
@@ -50,7 +50,7 @@ namespace StripeApp.Controllers
         public IActionResult StripeHome()
         {
             ViewBag.pb_key = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_STRIPE_PUBLISHABLE_KEY);
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             string cust_id = "";
             if (soln.PricingTier == 0)
             {
@@ -218,7 +218,7 @@ namespace StripeApp.Controllers
 
         public CreateSubscriptionResponse CreateSubscription(string custid, string planid, string coupid, int userno, string sid)
         {
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", sid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             CreateSubscriptionResponse res = this.ServiceClient.Post<CreateSubscriptionResponse>(new CreateSubscriptionRequest
             {
                 Total = userno,
@@ -233,7 +233,7 @@ namespace StripeApp.Controllers
         public Object UpdateCustomerSubscription(int user_no,string cust_id, string sid)
         {
             string planId = "TestPlan-01";
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             UpgradeSubscriptionResponse res = this.ServiceClient.Post<UpgradeSubscriptionResponse>(new UpgradeSubscriptionRequest
             {
                 CustId = cust_id,
@@ -256,7 +256,7 @@ namespace StripeApp.Controllers
         public Object AddCustomerCard(string cust_id,string token, string sid)
         {
             StripeToken Token = JsonConvert.DeserializeObject<StripeToken>(token);
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             AddCustomerCardResponse res = this.ServiceClient.Post<AddCustomerCardResponse>(new AddCustomerCardRequest
             {
                 CustId = cust_id,
@@ -269,7 +269,7 @@ namespace StripeApp.Controllers
 
         public Object UpdateCustomerCard(string cust_id, string name, string email, string address, string city, string state, string zip, string country, string sid)
         {
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             UpdateCustomerCardResponse res = this.ServiceClient.Post<UpdateCustomerCardResponse>(new UpdateCustomerCardRequest
             {
                 CustId = cust_id,
@@ -287,7 +287,7 @@ namespace StripeApp.Controllers
 
         public Object RemoveCustomerCard(string cust_id, string card_id, string sid)
         {
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             RemoveCustomerCardResponse res = this.ServiceClient.Post<RemoveCustomerCardResponse>(new RemoveCustomerCardRequest
             {
                 CustId = cust_id,
@@ -299,7 +299,7 @@ namespace StripeApp.Controllers
 
         public Object EditCardExp(string cust_id, string card_id, int expmonth, int expyear, string sid)
         {
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             EditCardExpResponse res = this.ServiceClient.Post<EditCardExpResponse>(new EditCardExpRequest
             {
                 CustId = cust_id,
@@ -313,7 +313,7 @@ namespace StripeApp.Controllers
 
         public Object ChangeCardSource(string cust_id, string card_id, string sid)
         {
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             ChangeCardSourceResponse res = this.ServiceClient.Post<ChangeCardSourceResponse>(new ChangeCardSourceRequest
             {
                 CustId = cust_id,
@@ -325,7 +325,7 @@ namespace StripeApp.Controllers
 
         public Object GetCustomer(string cust_id, string sid)
         {
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             GetCustomerResponse cust = this.ServiceClient.Post<GetCustomerResponse>(new GetCustomerRequest
             {
                 CustId = cust_id

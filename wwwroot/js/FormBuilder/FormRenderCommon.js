@@ -51,9 +51,11 @@
     };
 
     this.setValueExpValsNC = function (flatControls) {
-        $.each(flatControls, function (k, Obj) {
-            EbRunValueExpr(Obj, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
-        }.bind(this));
+        for (let i = 0; i < flatControls.length; i++) {
+            let ctrl = flatControls[i];
+            if (ctrl.DoNotPersist)
+                EbRunValueExpr(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
+        }
     };
 
 

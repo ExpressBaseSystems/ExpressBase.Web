@@ -1002,19 +1002,31 @@ function EBPSSetDisplayMember(p1, p2) {
     }
 
     if (this.initializer.datatable === null) {//for aftersave actions
-        for (var i = 0; i < this.DataVals.R.length; i++) {
-            let row = this.DataVals.R[i];
-            $.each(row.Columns, function (k, column) {
-                if (!columnVals[column.Name]) {
-                    console.warn('Found mismatch in Columns from datasource and Colums in object');
-                    return true;
-                }
-                let val = EbConvertValue(column.Value, column.Type);
-                columnVals[column.Name].push(val);
-            }.bind(this));
-
+        let colNames = Object.keys(this.DataVals.R);
+        for (let i = 0; i < valMsArr.length; i++) {
+            for (let j = 0; j < colNames.length; j++) {
+                let colName = colNames[j];
+                let val = this.DataVals.R[colName][i];
+                columnVals[colName].push(val);
+            }
         }
     }
+
+    //if (this.initializer.datatable === null) {//for aftersave actions
+    //    for (let i = 0; i < this.DataVals.R.length; i++) {
+    //        let row = this.DataVals.R[i];
+    //        $.each(row.Columns, function (k, column) {
+    //            if (!columnVals[column.Name]) {
+    //                console.warn('Found mismatch in Columns from datasource and Colums in object');
+    //                return true;
+    //            }
+    //            let val = EbConvertValue(column.Value, column.Type);
+    //            columnVals[column.Name].push(val);
+    //        }.bind(this));
+
+    //    }
+    //}
+
     $("#" + this.EbSid_CtxId).val(p1);
 }
 

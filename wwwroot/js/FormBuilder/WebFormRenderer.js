@@ -174,6 +174,9 @@ const WebFormRender = function (option) {
         this.initDGs();
 
 
+        if (this.Mode.isNew)
+            this.initDataMODEL();
+
         this.FRC.fireInitOnchangeNC(this.flatControls);
 
         $.each(this.DGs, function (k, DG) {
@@ -1288,7 +1291,6 @@ const WebFormRender = function (option) {
             this.setEditModeCtrls();
 
         if (this.Mode.isNew) {
-            this.initDataMODEL();
             this.FRC.setDefaultvalsNC(this.flatControls);
         }
         else {
@@ -1307,6 +1309,8 @@ const WebFormRender = function (option) {
             this.FRC.populateDateCtrlsWithInitialVal(this.FormObj);
             this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);
             this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);
+            this.FRC.populateSysLocCtrlsWithInitialVal(this.FormObj);
+            this.FRC.populateCheckBoxCtrlsWithInitialVal(this.FormObj);
         }
     };
 

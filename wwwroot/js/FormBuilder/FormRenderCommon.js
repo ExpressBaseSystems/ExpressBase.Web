@@ -137,6 +137,22 @@
         }
     };
 
+    this.populateSysLocCtrlsWithInitialVal = function (formObj) {
+        let allTypeSLCtrls = getFlatObjOfTypes(formObj, ["SysLocation"]);
+        for (let i = 0; i < allTypeSLCtrls.length; i++) {
+            let ctrl = allTypeSLCtrls[i];
+            ctrl.setValue(ebcontext.locations.CurrentLocObj.LocId);
+        }
+    };
+
+    this.populateCheckBoxCtrlsWithInitialVal = function (formObj) {
+        let allTypeCBCtrls = getFlatObjOfTypes(formObj, ["RadioButton"]);
+        for (let i = 0; i < allTypeCBCtrls.length; i++) {
+            let ctrl = allTypeCBCtrls[i];
+            ctrl.setValue("false");
+        }
+    };
+
     this.populateSSCtrlsWithInitialVal = function (formObj) {
         let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect", "PowerSelect"]);
         for (let i = 0; i < allTypeRGCtrls.length; i++) {
@@ -183,6 +199,7 @@
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) {
+            debugger;
             if (curCtrl.DependedValExp) {
                 $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
                     let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
@@ -193,7 +210,8 @@
                             if (valExpFnStr) {
                                 if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                     //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-                                    depCtrl.setValue(ValueExpr_val);
+                                    if (!this.FO.Mode.isView || depCtrl.DoNotPersist)
+                                        depCtrl.setValue(ValueExpr_val);
                                 }
                                 else {
                                     $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

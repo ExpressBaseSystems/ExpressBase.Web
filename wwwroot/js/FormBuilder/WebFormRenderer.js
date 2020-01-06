@@ -410,7 +410,7 @@ const WebFormRender = function (option) {
                 }
                 this.ProcRecurForDataModels(obj, FVWTObjColl);
             }
-            else if (obj.ObjType !== "FileUploader" && (!obj.DoNotPersist || obj.IsSysControl)) {
+            else if (obj.ObjType !== "FileUploader") {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));

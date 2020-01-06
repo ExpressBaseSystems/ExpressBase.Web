@@ -500,7 +500,7 @@
             Type: 7
         });
         $.each(rowObjectMODEL, function (i, obj) {
-            if (!obj.DoNotPersist) {
+            //if (!obj.DoNotPersist) {
                 if (obj.ObjType === "DGUserControlColumn") {
                     $.each(obj.Columns.$values, function (i, ctrl) {
                         SingleRow.Columns.push(getSingleColumn(ctrl));
@@ -508,7 +508,7 @@
                 }
                 else
                     SingleRow.Columns.push(getSingleColumn(obj));
-            }
+            //}
         }.bind(this));
         return SingleRow;
     };

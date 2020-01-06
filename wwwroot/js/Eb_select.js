@@ -216,7 +216,7 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
-        if (StrValues === "")
+        if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 

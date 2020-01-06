@@ -199,7 +199,6 @@
 
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) {
-            debugger;
             if (curCtrl.DependedValExp) {
                 $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
                     let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);

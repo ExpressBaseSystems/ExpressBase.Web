@@ -19,6 +19,7 @@
     this.GridStackInit = function () {
         this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
         this.grid = $('.grid-stack').data("gridstack");
+        this.grid.cellHeight(30);
     }
     this.GridStackInit();
 
@@ -53,7 +54,7 @@
                 style: { top: "85px" }
             });
             this.filterDialog = FilterDialog;
-            this.placefiltervalues();
+            //this.placefiltervalues();
             $("#btnGo").trigger("click");
         }
         else {
@@ -170,7 +171,7 @@
                 if (flag == true) {
                     $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
-                    <div style="display:flex" id="">
+                    <div style="display:flex" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-refresh tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
@@ -294,9 +295,9 @@
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`[data-id="${id}"]`).parent().css("border", "0px solid");
             $(`#${id} .db-title`).empty();
-            $(`#${id} .db-title`).parent().css("border","0px")
+            $(`#${id}`).addClass("user-control-tile-opt");
             $(`#${id} .i-opt-obj`).hide();
-            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" })
+            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);

@@ -32,9 +32,7 @@ namespace ExpressBase.Web.Controllers
         public void Schedule(string name, string expression, int objId, JobTypes type, string message, string users, string groups, string cronstring/*, int _delMechanism*/)
         {
             List<Param> _param = new List<Param> { new Param { Name = "FromDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString("yyyy-MM-dd") },
-            new Param{ Name = "ToDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() } };
-
-           
+            new Param{ Name = "ToDate", Type = ((int)EbDbTypes.DateTime).ToString(), Value = DateTime.Now.ToString() } };           
                 EbTask task = new EbTask
                 {
                     Name = name,

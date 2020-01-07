@@ -1,4 +1,4 @@
-﻿@*<script>
+﻿<script>
         var cm = new EbHeader().setName("User Home");
         $('title').text("User Home");
     </script>
@@ -7,7 +7,7 @@
             $('#quik_menu').click();
         });
 
-    </script>*@
+    </script>
 
 
 @using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -47,10 +47,11 @@
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
+    @Html.Raw(ViewBag.ControlOperations);
 </script>
 <div class="container-fluid" style="margin-top:60px;background: transparent;">
     <div class="row" style="background: transparent;">
-        <div class="col-sm-12" style="background: transparent;">
+        <div class="col-sm-12" style="background: transparent;width: 99%">
             <div id="dashbord-user-view">
                 <div class="grid-stack"></div>
             </div>

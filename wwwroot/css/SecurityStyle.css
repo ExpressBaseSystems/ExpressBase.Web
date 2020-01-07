@@ -355,3 +355,14 @@ tbody tr:hover td {
 /*.dataTables_wrapper {
 	height: 100%;
 }*/
+
+
+/*login activity*/
+
+.loginActivity {
+    border: 1px solid #eae6e6;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}

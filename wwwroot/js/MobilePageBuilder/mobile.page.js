@@ -16,7 +16,7 @@
         console.log("initialization error");
         return null;
     }
-};
+}
 
 function EbMobStudio(config) {
     this.Conf = config;
@@ -67,7 +67,7 @@ function EbMobStudio(config) {
 
     this.getType = function (assembly) {
         return assembly.split(",")[0].split(".")[2];
-    }
+    };
 
     this.editMobPage = function () {
         this.EbObject = new EbObjects["EbMobilePage"](this.EditObj.Name);
@@ -83,12 +83,13 @@ function EbMobStudio(config) {
     this.setContainerOnEdit = function () {
         let ebtype = this.getType(this.EditObj.Container.$type);
         let id = "Tab" + this.Conf.TabNum + "_" + ebtype + CtrlCounters[ebtype.replace("Eb", "") + "Counter"]++;
-        let o = new EbObjects[ebtype](id)
+        let o = new EbObjects[ebtype](id);
         $.extend(o, this.EditObj.Container);
         this.Procs[id] = o;
         $(this.droparea).append(o.$Control.outerHTML());
         if (ebtype === "EbMobileForm") {
             this.makeDropable(o.EbSid);
+            this.makeSortable(o.EbSid);
             this.setCtrls(o.EbSid);
         }
         else if (ebtype === "EbMobileVisualization") {
@@ -104,13 +105,14 @@ function EbMobStudio(config) {
             let _obj = this.EditObj.Container.ChiledControls.$values[i];
             let ebtype = this.getType(_obj.$type);
             let id = "Tab" + this.Conf.TabNum + "_" + ebtype + CtrlCounters[ebtype.replace("Eb", "") + "Counter"]++;
-            let o = new EbObjects[ebtype](id)
+            let o = new EbObjects[ebtype](id);
             $.extend(o, _obj);
             this.Procs[id] = o;
+            SetControlFunctions(this.Procs[id]);
             $(`#${_containerid} .eb_mob_container_inner`).append(o.$Control.outerHTML());
             this.RefreshControl(this.Procs[id]);
         }
-    }
+    };
 
     this.makeDragable = function () {
         $(".draggable,.container_draggable").draggable({
@@ -140,8 +142,8 @@ function EbMobStudio(config) {
     };
 
     this.makeSortable = function (ebsid) {
-        $(`#${ebsid}`).sortable({
-            //axis: "y",
+        $(`#${ebsid} .eb_mob_container_inner`).sortable({
+            axis: "y",
             appendTo: document.body
         });
     };
@@ -152,7 +154,6 @@ function EbMobStudio(config) {
         let o = this.makeElement(dragged);
         $(event.target).append(o.$Control.outerHTML());
         this.RefreshControl(o);
-        this.makeSortable(o.EbSid);
         if (ebtype === "EbMobileTableLayout") {
             this.Controls.InitTableLayout(o);
         }
@@ -167,6 +168,7 @@ function EbMobStudio(config) {
             dropLoc.append(o.$Control.outerHTML());
             if (ebtype === "EbMobileForm") {
                 this.makeDropable(o.EbSid);
+                this.makeSortable(o.EbSid);
             }
             else if (ebtype === "EbMobileVisualization") {
                 this.Controls.InitVis(o);
@@ -181,7 +183,8 @@ function EbMobStudio(config) {
         let counter = CtrlCounters[ebtype.replace("Eb", "") + "Counter"]++;
         var id = "Tab" + this.Conf.TabNum + "_" + ctrlname + counter;
         this.Procs[id] = new EbObjects[ebtype](id);
-        this.Procs[id].Label = ctrlname + (counter);
+        this.Procs[id].Label = ctrlname + counter;
+        SetControlFunctions(this.Procs[id]);
         return this.Procs[id];
     };
 
@@ -228,9 +231,9 @@ function EbMobStudio(config) {
             cell.ColIndex = colindex;
             cell.Width = parseFloat($(obj).width() / $(table).width() * 100);
 
-            this.EbObject.Container.DataLayout.CellCollection.$values.push(this.getCellControls(cell,$(obj)));
+            this.EbObject.Container.DataLayout.CellCollection.$values.push(this.getCellControls(cell, $(obj)));
         }.bind(this));
-    }
+    };
 
     this.getCellControls = function (eb_cell,$td) {
         $td.find(".mob_control").each(function (i, _obj) {
@@ -246,15 +249,15 @@ function EbMobStudio(config) {
                 type: "POST",
                 cache: false,
                 data: { refID: ds_refid },
-                beforeSend: function () { $("#eb_common_loader").EbLoader("show") },
+                beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
                 success: function (result) {
-                    $("#eb_common_loader").EbLoader("hide")
+                    $("#eb_common_loader").EbLoader("hide");
                     this.Controls.drawDsColTree(result.columns);
                     $(".branch").click();
                     if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
                         $(`#eb_mobtree_body_${this.Conf.TabNum}`).animate({ width: ["toggle", "swing"] });
                 }.bind(this),
-                error: function () { $("#eb_common_loader").EbLoader("hide")}
+                error: function () { $("#eb_common_loader").EbLoader("hide"); }
             });
         }
     };
@@ -263,6 +266,11 @@ function EbMobStudio(config) {
     this.pg.PropertyChanged = function (obj, pname) {
         if (pname === "Label") {
             this.RefreshControl(obj);
+        }
+        else if (obj.constructor.name === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
+            obj._getColumns(obj.DataSourceRefId, function () {
+                this.pg.refresh();
+            }.bind(this));
         }
         else if (pname === "DataSourceRefId") {
             this.getCol(obj.DataSourceRefId);
@@ -287,4 +295,4 @@ function EbMobStudio(config) {
     };
 
     this.exe();
-};
+}

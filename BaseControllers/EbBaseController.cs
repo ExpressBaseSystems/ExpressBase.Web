@@ -1,7 +1,9 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -29,16 +31,39 @@ namespace ExpressBase.Web.BaseControllers
 
         protected User LoggedInUser { get; set; }
 
-		public IHttpContextAccessor httpContextAccessor { get; set; }
+        public IHttpContextAccessor httpContextAccessor { get; set; }
 
-		public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc)
-		{
-			this.ServiceClient = _ssclient as JsonServiceClient;
-			this.Redis = _redis as RedisClient;
-			this.httpContextAccessor = _cxtacc as HttpContextAccessor;
-		}
+        public string RequestSourceIp
+        {
+            get
+            {
+                return this.HttpContext.Request.Headers["X-Real-IP"].Count > 0 ? this.HttpContext.Request.Headers["X-Real-IP"][0] : string.Empty;
+            }
+        }
 
-		public EbBaseController(IServiceClient _ssclient)
+        public string UserAgent
+        {
+            get
+            {
+                return this.HttpContext.Request.Headers["User-Agent"].Count > 0 ? this.HttpContext.Request.Headers["User-Agent"][0] : string.Empty;
+            }
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+        }
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+            this.MqClient = _mqc as EbMqClient;
+        }
+
+        public EbBaseController(IServiceClient _ssclient)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
         }
@@ -47,7 +72,11 @@ namespace ExpressBase.Web.BaseControllers
         {
             this.FileClient = _sfc as EbStaticFileClient;
         }
-
+        public EbBaseController(IEbStaticFileClient _sfc, IRedisClient _redis)
+        {
+            this.FileClient = _sfc as EbStaticFileClient;
+            this.Redis = _redis as RedisClient;
+        }
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
@@ -105,35 +134,50 @@ namespace ExpressBase.Web.BaseControllers
         public bool IsTokensValid(string sRToken, string sBToken, string subdomain)
         {
             bool isvalid = false;
-            if (VerifySignature(sRToken) && VerifySignature(sBToken))
+            try
             {
-                var rToken = new JwtSecurityToken(sRToken);
-                var bToken = new JwtSecurityToken(sBToken);
-
-                string rSub = rToken.Payload[TokenConstants.SUB].ToString();
-                string bSub = bToken.Payload[TokenConstants.SUB].ToString();
-
-                DateTime startDate = new DateTime(1970, 1, 1);
-                DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
-
-                if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
+                if (VerifySignature(sRToken) && VerifySignature(sBToken))
                 {
-                    string[] subParts = rSub.Split(CharConstants.COLON);
+                    var rToken = new JwtSecurityToken(sRToken);
+                    var bToken = new JwtSecurityToken(sBToken);
 
-                    if (rSub.EndsWith(TokenConstants.TC))
-                        isvalid = true;
-                    else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                    string rSub = rToken.Payload[TokenConstants.SUB].ToString();
+                    string bSub = bToken.Payload[TokenConstants.SUB].ToString();
+                    string _ip = bToken.Payload[TokenConstants.IP].ToString();
+                    Console.WriteLine("IP : " + this.RequestSourceIp + " - " + _ip);
+                    if (this.RequestSourceIp == _ip)
                     {
-                        string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
-                        if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
-                            isvalid = true;
-                    }
-                    else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC))
-                    {
-                        isvalid = true;
+                        Console.WriteLine("IP check success");
+                        DateTime startDate = new DateTime(1970, 1, 1);
+                        DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
+
+                        if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
+                        {
+                            string[] subParts = rSub.Split(CharConstants.COLON);
+
+                            if (rSub.EndsWith(TokenConstants.TC))
+                                isvalid = true;
+                            else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                            {
+                                string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
+                                if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                                    isvalid = true;
+                            }
+                            else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC))
+                            {
+                                isvalid = true;
+                            }
+                        }
                     }
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, string.Empty, new CookieOptions());
+                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, string.Empty, new CookieOptions());
+            }
+
             return isvalid;
         }
 
@@ -185,10 +229,34 @@ namespace ExpressBase.Web.BaseControllers
 
         public string GetIsolutionId(string esid)
         {
-            if (this.Redis != null)
-                return this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
-            else
-                return string.Empty;
+            string solnId = string.Empty;
+
+            if (esid == CoreConstants.MYACCOUNT)
+                solnId = CoreConstants.EXPRESSBASE;
+            else if (esid == CoreConstants.ADMIN)
+                solnId = CoreConstants.ADMIN;
+            else if (this.Redis != null)
+            {
+                solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                if (solnId == null || solnId == string.Empty)
+                {
+                    this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest { ExtSolutionId = esid});
+                    solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
+                }
+            }
+            return solnId;
+        }
+
+        public Eb_Solution GetSolutionObject(string cid)
+        {
+            Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+
+            if (s_obj == null)
+            {
+                this.ServiceClient.Post(new UpdateSolutionObjectRequest() { SolnId = cid });
+                s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+            }
+            return s_obj;
         }
     }
 }

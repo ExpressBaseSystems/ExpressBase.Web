@@ -3,6 +3,10 @@
 * to Render FilterDialogForm
 * EXPRESSbase Systems Pvt. Ltd, author: Jith Job
 */
+
+
+var a___MT = 0;
+
 var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSubmitFn, initCompleteCallback) {
     console.log("Eb_FilterDialogRender ....");
     this.FormObj = fObj;
@@ -75,11 +79,26 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         });
     };
 
+    this.initDataModel = function () {
+        this.DataMODEL= {};
+        this.DataMODEL[this.FormObj.TableName] = [{
+            RowId: 0,
+            IsUpdate: false,
+            Columns: []
+        }];
+        for (let i = 0; i < this.FormObj.Controls.$values.length; i++) {
+            let ctrl = this.FormObj.Controls.$values[i];
+            this.DataMODEL[this.FormObj.TableName][0].Columns.push(getSingleColumn(ctrl));
+        }
+    };
+
     this.init = function () {
         this._all_OctrlsInit = false;
         this._allPSsInit = false;
         this.initFormObject2();
+        this.initDataModel();
         this.initFilterDialogCtrls();// order 1
+        this.FRC.bindEbOnChange2Ctrls(this.FormObj.Controls.$values);// order 2
         this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
         this.FRC.setValueExpValsNC(this.FormObj.Controls.$values);//
         this.FRC.bindFnsToCtrls(this.flatControls);// order 4
@@ -90,6 +109,9 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         this.FRC.fireInitOnchangeNC(this.flatControls);
         this._all_OctrlsInit = true;
         //this.bindFuncsToDom();
+        this.FRC.populateDateCtrlsWithInitialVal(this.FormObj);
+        this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);
+        this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);
     };
 
     this.initFilterDialogCtrls = function () {
@@ -150,4 +172,5 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
     };
 
     this.init();
+    a___MT = this.DataMODEL;
 };

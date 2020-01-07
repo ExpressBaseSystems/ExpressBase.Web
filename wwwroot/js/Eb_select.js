@@ -105,7 +105,7 @@ const EbSelect = function (ctrl, options) {
             $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-            this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+            $('#' + this.name + 'Wraper' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
             this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
@@ -143,7 +143,7 @@ const EbSelect = function (ctrl, options) {
         }
     }.bind(this);
 
-    this.getColumn = function (colName) { return this.columnVals[colName]; }.bind(this);
+    this.getColumn = function (colName) { return this.ComboObj.MultiSelect ? this.columnVals[colName] : this.columnVals[colName][0]; }.bind(this);
 
     //this.getColumn = function (colName) {
     //    let columnVals = getEbFormatedPSRows(this.ComboObj);
@@ -216,7 +216,7 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
-        if (StrValues === "")
+        if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -362,6 +362,7 @@ const EbSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rt";
         o.source = "powerselect";
+        o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
@@ -526,19 +527,26 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.addColVals = function () {
+    this.reSetColumnvals_ = function () {
+        $.each(this.ColNames, function (i, name) {
+            this.columnVals[name].clear();
+        }.bind(this));
+        for (let i = 0; i < this.Vobj.valueMembers.length; i++) {
+            this.addColVals(this.Vobj.valueMembers[i]);
+        }
+    };
+
+    this.addColVals = function (val = this.lastAddedOrDeletedVal) {
         $.each(this.ColNames, function (i, name) {
             let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
             let type = obj.Type;
-            let cellData = this.datatable.Api.row($(`${this.DT_tbodySelector} [data-uid=${this.lastAddedOrDeletedVal}]`)).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
-            //if (this.maxLimit === 1)
-            //    this.columnVals[name] = cellData;
-
-            if (this.ComboObj.MultiSelect)
-                this.columnVals[name].push(EbConvertValue(cellData, type));
-            else
-                this.columnVals[name] = [EbConvertValue(cellData, type)];
-
+            let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
+            let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
+            let cellData = this.datatable.Api.row($rowEl).data()[idx];
+            let fval = EbConvertValue(cellData, type);
+            if (type === 5)
+                fval = this.datatable.data[$rowEl.index()][idx];// unformatted data
+            this.columnVals[name].push(fval);
         }.bind(this));
     };
 
@@ -693,7 +701,7 @@ const EbSelect = function (ctrl, options) {
 
         }
         else {
-            this.reSetColumnvals();
+            this.reSetColumnvals_();
             if (this.justInit) {
                 this.$inp.val(this.Vobj.valueMembers);
                 //if (this.afterInitComplete4SetVal)
@@ -702,6 +710,8 @@ const EbSelect = function (ctrl, options) {
             else
                 this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
+
+        this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);

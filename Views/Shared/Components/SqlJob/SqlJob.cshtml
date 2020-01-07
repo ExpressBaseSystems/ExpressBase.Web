@@ -24,28 +24,32 @@
 </script>
 
 
+<div class="Sql-Job-left-pane">
+    <div> Resources</div>
+    <div id="@("tb" + ViewBag.tabnum + "_SqlJob_drag_cont")">
+        <div eb-type="SqlJobReader" ctrname="Data Reader" class="resource_items draggable">
+            <div class="resource_items-inner">  <i class="fa fa-database"></i> Sql Job Reader</div>
+        </div>
+        <div eb-type="SqlJobWriter" ctrname="Data Writer" class="resource_items draggable">
+            <div class="resource_items-inner">  <i class="fa fa-database"></i>Sql job Writer </div>
+        </div>
+        <div eb-type="SqlProcessor" ctrname="Processor" class="resource_items draggable">
+            <div class="resource_items-inner">  <i class="fa fa-code"></i> Sql Job Processor</div>
+        </div>
+        <div eb-type="Loop" ctrname="Loop" class="resource_items draggable">
+            <div class="resource_items-inner">  <i class="fa fa-code"> </i> Eb Loop</div>
+        </div>
+        <div eb-type="Transaction" ctrname="Transaction" class="resource_items draggable">
+            <div class="resource_items-inner">  <i class="fa fa-code"></i> Eb Transaction</div>
+        </div>
+        <div eb-type="SqlFormDataPusher" ctrname="Data Pusher" class="resource_items draggable">
+            <div class="resource_items-inner">  <i class="fa fa-code"></i> Form DataPusher</div>
+        </div>
+    </div>
+</div>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-3 Sql-Job-left-pane">
-            <div> Resources</div>
-            <div id="@("tb" + ViewBag.tabnum + "_SqlJob_drag_cont")">
-                <div eb-type="SqlJobReader" ctrname="Data Reader" class="resource_items draggable">
-                    <div class="resource_items-inner">  <i class="fa fa-database"></i> Sql Job Reader</div>
-                </div>
-                <div eb-type="SqlJobWriter" ctrname="Data Writer" class="resource_items draggable"> 
-                    <div class="resource_items-inner">  <i class="fa fa-database"></i>Sql job Writer </div>
-                </div>
-                <div eb-type="SqlProcessor" ctrname="Processor" class="resource_items draggable">
-                    <div class="resource_items-inner">  <i class="fa fa-code"></i> Sql Job Processor</div>
-                </div>
-                <div eb-type="Loop" ctrname="Loop" class="resource_items draggable"> 
-                    <div class="resource_items-inner">  <i class="fa fa-code"> </i> Eb Loop</div>
-                </div>
-                <div eb-type="Transaction" ctrname="Transaction" class="resource_items draggable"> 
-                    <div class="resource_items-inner">  <i class="fa fa-code"></i> Eb Transaction</div> 
-                </div>
-            </div>
-        </div>
+        <div class="col-sm-3"> </div>
         <div class="col-sm-6">
             <div class="Sql-Job-Cont" id="@("tb" + ViewBag.tabnum + "_SqlJob_drop_cont")">
 

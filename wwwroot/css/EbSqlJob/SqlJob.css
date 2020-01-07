@@ -3,7 +3,7 @@
 .ppt-dash {
     top: 0px;
     right: 0px;
-    width: 385px;
+    width: 25%;
     position: fixed;
     display: block;
     margin-top: 37px;
@@ -19,9 +19,12 @@
     margin-right: -8px;
     border-radius: 6px;
     border: 1px solid #dedede;
+    padding-bottom: 20%;
 }
 .Sql-Job-left-pane {
     height: 650px;
+    width: 25%;
+    position: fixed;
     background-color: white;
     padding: 0px;
     margin-left: 0px;
@@ -29,48 +32,48 @@
     border-radius: 6px;
     border: 1px solid #dedede;
 }
-
+.sql-item-border {
+    border: dashed 1px #bbbbbb;
+    border-radius: 4px;
+}
 .SqlJobItem {
     display: flex;
+    width: 90%;
+    margin: 0 auto;
     justify-content: center;
+}
+.sqljob-item-inner {
     width: 100%;
-    /*margin-left : 15px;
-    margin: 40px 0;
-    width:150px;*/
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-.drpbox {
+/*.drpbox {
     min-height: 60px;
     width: 150px;
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* padding: 0 15px; */
-    /* border-radius: 4px; */
     box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
-    /* cursor: pointer; */
-    /* flex-flow: column; */
-    /* text-align: center; */
     margin: 30px;
-}
-.drpboxInt {
-    min-height: 60px;
-    width: 150px;
+}*/
+
+.lineDrp {
+    min-height: 40px;
+    border-radius: 4px;
     border: 1px solid #ccc;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* padding: 0 15px; */
-    /* border-radius: 4px; */
     box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
-    /* cursor: pointer; */
-    /* flex-flow: column; */
-    /* text-align: center; */
     margin: 30px;
+    padding: 4px 20px;
 }
 
-.Sql_Dropable{
-    min-height:30px;
+.Sql_Dropable {
+    min-height: 30px;
+    width: 100%;
 }
 
 .resource_items-inner {

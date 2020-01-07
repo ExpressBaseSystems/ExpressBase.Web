@@ -1,78 +1,4 @@
-﻿class DPFormControl {
-    constructor(ctrl) {
-        this.control = ctrl;
-        this.$ctrlCont = $(`#cont_${ctrl.EbSid_CtxId}`);
-        this.$btnChange = $(`#cont_${ctrl.EbSid_CtxId} .dpctrl-options-cont .dpctrl-change`);
-        this.ctrlCont = `cont_${ctrl.EbSid_CtxId}`;
-        this.Toggle = `#cont_${ctrl.EbSid_CtxId} .dpctrl-options-cont .dpctrl-change`;
-        this.setupImgUploader();
-        this.initImages($(`#cont_${ctrl.EbSid_CtxId} .ebimg-cont img`));
-        
-        $.extend(ctrl, { getValue: this.GetValue.bind(ctrl), setValue: this.SetValue.bind(ctrl) });
-    }
-
-    initImages($img) {
-        $img.attr('onerror', "this.style.opacity='0.5'; this.src='/images/image.png';");
-        $img.css('height', $img.css('height'));
-        this.$ctrlCont.hover(function (e) { $img.parent().next().show(); }, function (e) { $img.parent().next().hide(); });
-    }
-
-    setupImgUploader() {
-        let resizeViewPort = this.control.CropAspectRatio === 4 ? true : false;
-        let cxt = 'logo';
-        if (this.control.CropAspectRatio === 1)
-            cxt = 'dp';
-        else if (this.control.CropAspectRatio === 2)
-            cxt = 'doc';
-        else if (this.control.CropAspectRatio === 3)
-            cxt = 'location';
-
-        this.fileUpload = new EbFileUpload({
-            Type: "image",
-            Toggle: this.Toggle,
-            TenantId: ebcontext.sid,
-            UserId: ebcontext.user.UserId,
-            SolutionId: ebcontext.sid,
-            Container: this.ctrlCont,
-            Multiple: false,
-            ServerEventUrl: 'https://se.eb-test.xyz',
-            EnableTag: false,
-            EnableCrop: true,
-            ExtraData: {},//extra data for location optional for other
-            Context: cxt,//if single and crop
-            ResizeViewPort: resizeViewPort //if single and crop
-        });
-
-        this.fileUpload.uploadSuccess = function (fileid) {
-            EbMessage("show", { Message: "Uploaded Successfully" });
-            setTimeout(function () {
-                this.control.SetValue(fileid.toString());
-            }.bind(this), 2000);
-        };
-        this.fileUpload.windowClose = function () {
-            EbMessage("show", { Message: "window closed", Background: "red" });
-        };
-    }
-
-    GetValue(p1) {
-        if (this.hasOwnProperty('_fileRefids'))
-            this._fileRefids.join(',');
-        else
-            return '';            
-    }
-
-    SetValue(p1) {
-        this._fileRefids = p1.split(',');
-        $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).attr('src', `../images/${this._fileRefids[0]}.jpg`);
-        $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).css('opacity', `1`);
-    }
-
-
-}
-
-//=======================================================================================================================================
-
-class DisplayPictureControl {
+﻿class DisplayPictureControl {
     constructor(ctrl, options) {
         this.control = ctrl;
         this.Options = $.extend({
@@ -97,10 +23,16 @@ class DisplayPictureControl {
         this.init();
 
         $.extend(ctrl, {
-            getValue: this.GetValue.bind(ctrl),
+            getValueFromDOM: this.GetValueFromDOM.bind(ctrl),
             setValue: this.SetValue.bind(ctrl),
             refresh: this.Refresh.bind(ctrl),
-            clear: this.Clear.bind(ctrl)
+            clear: this.Clear.bind(ctrl),
+            _fileRefids: [],
+            _onChangeFunctions: [],
+            bindOnChange: function (p1) {
+                if (!this._onChangeFunctions.includes(p1))
+                    this._onChangeFunctions.push(p1);
+            }
         });
     }
 
@@ -400,22 +332,39 @@ class DisplayPictureControl {
                         <div class="ebDpFullscreen_wraper" style='padding: 20px 60px 20px 60px;'>
                             <button class="FsClse" onclick="$('.ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade').hide();"><i class="fa fa-close"></i></button>
                             <div class="ebDpFullscreen_inner">
-                                <img src="~/images/web.png" class="FupimgIcon" />                                
+                                <img src="/images/web.png" class="FupimgIcon" />                                
                             </div>
                         </div>`);
         return $(".ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade");
     }
 
-    GetValue(p1) {
+    GetValueFromDOM(p1) {
         if (this.hasOwnProperty('_fileRefids'))
             return this._fileRefids.join(',');
         else
             return '';
     }
     SetValue(p1) {
-        this._fileRefids = p1.split(',');
-        $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).attr('src', `/images/${this._fileRefids[0]}.jpg`);
-        $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`).css('opacity', `1`);
+        let $img = $(`#cont_${this.EbSid_CtxId} .ebimg-cont img`);
+        if (!p1 || p1.toString() === '') {
+            if (this._fileRefids.length !== 0) {
+                this._fileRefids = [];
+                $img.attr('src', `/images/image.png`);
+                $img.css('opacity', `0.5`);
+                for (let j = 0; j < this._onChangeFunctions.length; j++)
+                    this._onChangeFunctions[j]();
+            }
+        }
+        else {
+            let rfids = p1.split(',');
+            if (rfids[0] !== this._fileRefids[0]) {
+                this._fileRefids = rfids;
+                $img.attr('src', `/images/${this._fileRefids[0]}.jpg`);
+                $img.css('opacity', `1`);
+                for (let j = 0; j < this._onChangeFunctions.length; j++)
+                    this._onChangeFunctions[j]();
+            }     
+        }
     }
     Refresh() {
 

@@ -685,10 +685,10 @@ var EditTicket = function () {
             e.stopPropagation();
 
         };
-
+        //code review
         $(".uploaded-image").on("click", function (e) {
 
-            alert("The paragraph was clicked.");
+           // alert("The paragraph was clicked.");
         });
 
         let createImg = function (src, id, cntype, fileno) {
@@ -754,7 +754,7 @@ var EditTicket = function () {
                     $('#diplay_modal').modal('show');
                 }
                 else {
-                    $('#file_disp').html(`   <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block; max-height:550px; width:100%" ">`);
+                    $('#file_disp').html(` <img id="display_file" class="col-lg-12 col-md-12 col-sm-12" src="" style="display: block; max-height:550px; width:100%" ">`);
                     var src1 = $(e.target).closest('img').attr('src');
                     $('#display_file').attr('src', src1)
                     $('#diplay_modal').modal('show');

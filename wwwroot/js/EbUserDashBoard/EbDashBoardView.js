@@ -54,7 +54,7 @@
                 style: { top: "85px" }
             });
             this.filterDialog = FilterDialog;
-            this.placefiltervalues();
+            //this.placefiltervalues();
             $("#btnGo").trigger("click");
         }
         else {

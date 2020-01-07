@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.filterValues = filterValues;
             ViewBag.tabNum = tabNum;
             ViewBag.rowData = rowData;
-            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.FilterDialog);
+            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.WebForm);
             //ViewBag.ObjectIds = this.LoggedInUser.EbObjectIds;
             return View();
         }

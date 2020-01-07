@@ -66,10 +66,10 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
-            //else
-            //{
-            //    ViewBag.formData = getRowdata(refId, 0, _locId);
-            //}
+            else
+            {
+                ViewBag.formData = getRowdata(refId, 0, _locId);
+            }
 
             if (ViewBag.wc == TokenConstants.DC)
             {

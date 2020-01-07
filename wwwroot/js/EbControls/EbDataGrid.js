@@ -334,7 +334,7 @@
     };
 
     this.getBSDispMembrs = function (cellObj, rowId, col) {
-        if (cellObj.Value === "true")
+        if (cellObj.Value === true)
             return col.TrueText;
         else
             return col.FalseText;

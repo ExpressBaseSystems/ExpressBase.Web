@@ -18,6 +18,7 @@ using ExpressBase.Common.Objects.Attributes;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Constants;
+using ExpressBase.Objects.Objects;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -39,7 +40,8 @@ namespace ExpressBase.Web.Controllers
                 if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
                     Console.WriteLine("Webform Render - View mode request identified.");
-                    WebformDataWrapper wfd = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
+                    ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
+                    WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
                     if (wfd.FormData == null)
                     {
                         ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
@@ -49,7 +51,6 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.rowId = ob[0].ValueTo;
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
                     }
-                    ViewBag.formData = JsonConvert.SerializeObject(wfd);
                 }
                 else if ((int)WebFormDVModes.New_Mode == _mode)
                 {
@@ -60,11 +61,15 @@ namespace ExpressBase.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        ViewBag.formData = JsonConvert.SerializeObject( new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace});
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
                         Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
                     }
                 }
             }
+            //else
+            //{
+            //    ViewBag.formData = getRowdata(refId, 0, _locId);
+            //}
 
             if (ViewBag.wc == TokenConstants.DC)
             {
@@ -80,7 +85,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         // to get Table- // refid form refid, rowid - form table entry id, currentloc - location id
-        public WebformDataWrapper getRowdata(string refid, int rowid, int currentloc)
+        public string getRowdata(string refid, int rowid, int currentloc)
         {
             try
             {
@@ -90,13 +95,13 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
-                return new WebformDataWrapper()
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
                     Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
-                };
+                });
             }
         }
 
@@ -160,10 +165,10 @@ namespace ExpressBase.Web.Controllers
 
         public string ExecuteSqlValueExpr(string _refid, string _triggerctrl, List<Param> _params)
         {
-           ExecuteSqlValueExprResponse Resp = this.ServiceClient.Post<ExecuteSqlValueExprResponse>(new ExecuteSqlValueExprRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
+            ExecuteSqlValueExprResponse Resp = this.ServiceClient.Post<ExecuteSqlValueExprResponse>(new ExecuteSqlValueExprRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
             return Resp.Data;
         }
-        
+
         public string GetDataPusherJson(string RefId)
         {
             GetDataPusherJsonResponse Resp = this.ServiceClient.Post<GetDataPusherJsonResponse>(new GetDataPusherJsonRequest { RefId = RefId });
@@ -194,7 +199,7 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
                 return JsonConvert.SerializeObject(Resp);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
                 return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
@@ -245,7 +250,7 @@ namespace ExpressBase.Web.Controllers
                 return true;
 
             EbOperation Op = EbWebForm.Operations.Get(ForWhat);
-            EbObjectType EbType = RefId.GetEbObjectType();            
+            EbObjectType EbType = RefId.GetEbObjectType();
             if (EbType.IntCode == EbObjectTypes.Report)
                 Op = EbReport.Operations.Get(ForWhat);
 
@@ -284,7 +289,7 @@ namespace ExpressBase.Web.Controllers
             s = s.ToBase64();
             return Redirect("/ReportRender/Renderlink?refid=" + refId + "&_params=" + s);
         }
-        
+
         public int InsertBotDetails(string TableName, List<BotFormField> Fields, int Id)
         {
             try
@@ -393,7 +398,7 @@ namespace ExpressBase.Web.Controllers
                     UpdateAllFormTablesResponse r = this.ServiceClient.Post<UpdateAllFormTablesResponse>(new UpdateAllFormTablesRequest());
                     return r.Message;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     return e.Message;
                 }

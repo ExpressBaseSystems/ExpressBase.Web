@@ -174,6 +174,9 @@ const WebFormRender = function (option) {
         this.initDGs();
 
 
+        if (this.Mode.isNew)
+            this.initDataMODEL();
+
         this.FRC.fireInitOnchangeNC(this.flatControls);
 
         $.each(this.DGs, function (k, DG) {
@@ -410,7 +413,7 @@ const WebFormRender = function (option) {
                 }
                 this.ProcRecurForDataModels(obj, FVWTObjColl);
             }
-            else if (obj.ObjType !== "FileUploader" && !obj.DoNotPersist) {
+            else if (obj.ObjType !== "FileUploader") {
                 FVWTObjColl[src_obj.TableName][0].Columns.push(getSingleColumn(obj));
             }
         }.bind(this));
@@ -1168,7 +1171,7 @@ const WebFormRender = function (option) {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
 
-    this.initMultipleTables = function () {
+    this.initDataMODEL = function () {
         this.DataMODEL = {};
         this.FormDataModels = this.getForm_dataModels();
         this.gridTables = this.getDG_tbl();
@@ -1288,7 +1291,6 @@ const WebFormRender = function (option) {
             this.setEditModeCtrls();
 
         if (this.Mode.isNew) {
-            this.initMultipleTables();
             this.FRC.setDefaultvalsNC(this.flatControls);
         }
         else {
@@ -1303,8 +1305,13 @@ const WebFormRender = function (option) {
         }
         this.LocationInit();
 
-        if (this.Mode.isNew)
-            this.FRC.populateDateCtrlsWithCurDate(this.FormObj);
+        if (this.Mode.isNew) {
+            this.FRC.populateDateCtrlsWithInitialVal(this.FormObj);
+            this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);
+            this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);
+            this.FRC.populateSysLocCtrlsWithInitialVal(this.FormObj);
+            this.FRC.populateCheckBoxCtrlsWithInitialVal(this.FormObj);
+        }
     };
 
     let t0 = performance.now();

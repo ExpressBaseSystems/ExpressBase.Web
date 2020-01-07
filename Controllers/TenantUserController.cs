@@ -60,7 +60,7 @@ namespace ExpressBase.Web2.Controllers
                     TypeNameHandling = TypeNameHandling.All
                 });
 
-                if (this.LoggedInUser.Preference.DefaultDashBoard != null)
+                if (this.LoggedInUser.Preference.DefaultDashBoard != null && this.LoggedInUser.Preference.DefaultDashBoard != string.Empty)
                 {
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
                     ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;

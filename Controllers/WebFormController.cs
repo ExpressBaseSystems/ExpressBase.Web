@@ -89,7 +89,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser, CurrentLoc = currentloc });
                 return DataSet.FormDataWrap;
             }
             catch (Exception ex)

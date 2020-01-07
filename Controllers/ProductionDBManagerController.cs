@@ -32,7 +32,7 @@ namespace ExpressBase.Web.Controllers
             {
                 SolutionId = solution_id
             });
-            return resp.Changes;
+            return resp;
         }
 
         public Object UpdateDBFilesByDB(string db_name, string solution)
@@ -58,17 +58,19 @@ namespace ExpressBase.Web.Controllers
             return Redirect("/StatusCode/401");
         }
 
-        public bool UpdateInfraWithSqlScripts()
+        public Object UpdateInfraWithSqlScripts()
         {
+            UpdateInfraWithSqlScriptsResponse resp = null;
             if (ViewBag.cid == "admin")
                 if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
                 {
-                    UpdateInfraWithSqlScriptsResponse resp = this.ServiceClient.Post<UpdateInfraWithSqlScriptsResponse>(new UpdateInfraWithSqlScriptsRequest
+                    resp = this.ServiceClient.Post<UpdateInfraWithSqlScriptsResponse>(new UpdateInfraWithSqlScriptsRequest
                     {
                     });
-                    return true;
+                    resp.isOwner = true;
                 }
-            return false;
+            resp.isOwner = false;
+            return resp;
         }
 
         public Object GetFunctionOrProcedureQueries(Eb_FileDetails change, string solution_id)
@@ -91,13 +93,16 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        public void ExecuteQuery(string query, string solution_id)
+        public Object ExecuteQuery(string query, string solution_id, string filename, string filetype)
         {
-            this.ServiceClient.Post<ExecuteQueriesResponse>((object)new ExecuteQueriesRequest
+            ExecuteQueriesResponse resp = this.ServiceClient.Post<ExecuteQueriesResponse>((object)new ExecuteQueriesRequest
             {
                 Query = query,
-                SolutionId = solution_id
+                SolutionId = solution_id,
+                FileName = filename,
+                FileType = filetype
             });
+            return resp;
         }
 
         public Object GetScriptsForDiffView(string solution, string filename, string filepath, string filetype)

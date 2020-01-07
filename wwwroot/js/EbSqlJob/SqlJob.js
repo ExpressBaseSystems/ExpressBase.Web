@@ -72,7 +72,6 @@ function EbSqlJob(options) {
         this.EbObject.Resources.$values.length = 0;
         this.drawSqlObj();
         this.resetLinks();
-        this.Tilecontext();
         //this.setRequestW(this.EbObject.Request.Default.$values);
         //this.setRequestW(this.EbObject.Request.Custom.$values, 'custom');
         //this.Request.Default = this.EbObject.Request.Default.$values;
@@ -138,7 +137,8 @@ function EbSqlJob(options) {
                 this.drg.containers.push($(`#${o.EbSid} .Sql_Dropable`)[0]);
             }
         }
-            this.resetLinks();
+        this.resetLinks();
+        this.SqlJobcontext();
     };
 
     //this.Dropable_trigger = function (obj) {
@@ -162,9 +162,11 @@ function EbSqlJob(options) {
         this.Procs[id] = new EbObjects["Eb" + ebtype](id);
         this.Procs[id].Label = $(el).attr("ctrname");
         return this.Procs[id];
+       
     };
 
     this.RefreshControl = function (obj) {
+        this.SqlJobcontext();
         var NewHtml = obj.$Control.outerHTML();
         var metas = AllMetas["Eb" + $("#" + obj.EbSid).attr("eb-type")];
         $.each(metas, function (i, meta) {
@@ -174,19 +176,32 @@ function EbSqlJob(options) {
             }
         });
         $("#" + obj.EbSid).replaceWith(NewHtml);
-        $("#" + obj.EbSid + " .drpbox").off("focus").on("focus", this.elementOnFocus.bind(this));
+        $("#" + obj.EbSid + " .drpbox").off("focus").on("focus", this.elementOuterClick.bind(this));
         
     };//render after pgchange
 
-    this.elementOnFocus = function (event) {
+    this.elementOuterClick = function (event) {
         event.stopPropagation();
-        var curControl = $(event.target).closest(".SqlJobItem");
-        var curObject = this.Procs[curControl.attr("id")];
-        var type = curControl.attr('eb-type');
-        this.pg.setObject(curObject, AllMetas["Eb" + type]);
+        if ($(event.target).hasClass("lineDrp") || $(event.target).hasClass("CompLabel")) {
+            var curControl = $(event.target).closest(".SqlJobItem");
+            var curObject = this.Procs[curControl.attr("id")];
+            var type = curControl.attr('eb-type');
+            this.pg.setObject(curObject, AllMetas["Eb" + type]);
+        }
+        else {
+            this.pg.setObject(this.EbObject, AllMetas["EbSqlJob"]);
+        }
     };
 
+    //this.elementOnFocus = function (event) {
+    //    event.stopPropagation();
+    //    var curControl = $(event.target).closest(".SqlJobItem");
+    //    var curObject = this.Procs[curControl.attr("id")];
+    //    var type = curControl.attr('eb-type');
+    //    this.pg.setObject(curObject, AllMetas["Eb" + type]);
+    //};
 
+  
     this.resetLinks = function () {
         this.rmLines();
         let n = 0;
@@ -292,13 +307,13 @@ function EbSqlJob(options) {
         this.ProcIdArr = [];
     };
 
-    this.Tilecontext = function () {
+    this.SqlJobcontext = function () {
         $.contextMenu({
             selector: '.lineDrp',
             trigger: 'right',
             items: {
                 "RemoveTile": {
-                    name: "Remove", icon: "remove", callback: this.RemoveDiv.bind(this),
+                    name: "Delete", icon: "delete", callback: this.RemoveDiv.bind(this),
                 }
             }
         });
@@ -307,6 +322,18 @@ function EbSqlJob(options) {
         selector.$trigger.closest(".SqlJobItem")[0].remove();
         this.resetLinks();
     }
+
+    this.hideLines = function (e) {
+        if (e.target.getAttribute("href") == "#vernav0") {
+          
+        }
+        else {
+            this.rmLines();
+        }
+    };
+    this.hideLinesCompare = function (e) {
+        this.hideLines(e);
+    };
 
     this.start = function () {
         this.DragDrop_Items();
@@ -317,8 +344,10 @@ function EbSqlJob(options) {
              this.editSqlJob();
         }
         
-       
-        $(`#tb${this.TabNum}_SqlJob_drop_cont`).on("click", ".drpboxInt", this.elementOnFocus.bind(this));
+        $(`#tb${this.TabNum}_SqlJob_drop_cont`).on("click", this.elementOuterClick.bind(this));
+        $(`#versionNav li`).on("click", this.hideLines.bind(this));
+        $(`#compare i`).on("click", this.hideLinesCompare.bind(this));
+     
     };
 
 

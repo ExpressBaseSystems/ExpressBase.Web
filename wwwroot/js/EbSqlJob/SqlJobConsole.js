@@ -219,9 +219,10 @@
         $("#show-scheduler").empty().append(result);
         $('#schedulerlistmodal').modal('show');
         $("#schedule").attr("id", "schedule-sql-job");
+        $("#SchedulerModal .modal-body .scheduler").removeClass("col-md-5");
     };
 
-    this.init = function () {
+    this.init = function () {      
         this.DrawJobSelectBox();
         $("#list-of-jobs").on("click", ".retryBtn", this.SqljobRetry.bind(this));
         $("#show-sql-jobs").on("click", this.getJobsList.bind(this));

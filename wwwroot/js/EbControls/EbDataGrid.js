@@ -770,7 +770,7 @@
                 $ctrl.attr("uniq-ok", "true");
                 ctrl.removeInvalidStyle();
             }
-        }        
+        }
     };
 
     this.bindRequired = function ($ctrl, control) {
@@ -1119,8 +1119,12 @@
                 continue;
             if (document.getElementById(inpCtrl.EbSid_CtxId) === document.activeElement)
                 val = document.activeElement.value;
-            else
-                val = inpCtrl.DataVals.Value || 0;
+            else {
+                if (inpCtrl.__isEditing)
+                    val = inpCtrl.curRowDataVals.Value || 0;
+                else
+                    val = inpCtrl.DataVals.Value || 0;
+            }
             sum += parseFloat(val) || 0;
             sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
         }
@@ -1266,6 +1270,7 @@
         }.bind(this));
 
         this.$table.on("keyup", "[tdcoltype=DGNumericColumn][agg=true] [ui-inp]", this.updateAggCol.bind(this));
+        this.$table.on("change", "[tdcoltype=DGNumericColumn][agg=true] [ui-inp]", this.updateAggCol.bind(this));
     };
 
     this.PScallBFn = function (Row) {

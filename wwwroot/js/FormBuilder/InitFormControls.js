@@ -375,6 +375,88 @@ var InitControls = function (option) {
         }
     };
 
+    this.CalendarControl = function (ctrl) {
+        console.log("eached");
+        let userObject = ebcontext.user;
+        let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
+        let stp = userObject.Preference.ShortTimePattern;//"HH mm"
+        let $input = $("#" + ctrl.EbSid_CtxId);
+
+        $input.find("#date").datetimepicker({
+            format: sdp,
+            formatTime: stp,
+            formatDate: sdp,
+            timepicker: false,
+            datepicker: true,
+            mask: true
+        });
+        $input.find("#month").MonthPicker({ Button: $input.children().find("#month").next().removeAttr("onclick") });
+        $input.find("#month").MonthPicker('option', 'ShowOn', 'both');
+        $input.find("#month").MonthPicker('option', 'UseInputMask', true);
+        $input.find("#month").MonthPicker({
+            OnAfterChooseMonth: this.SetDateFromDateTo.bind(this, $input)
+        });
+        $input.find("#year").datetimepickers({
+            format: "YYYY",
+            viewMode: "years",
+        });
+
+        $input.find("#date").next(".input-group-addon").off('click').on('click', function () {
+            $input.find("#date").datetimepicker('show');
+        });
+
+        $input.find("select").on('change', function (e) {
+            $(e.target).siblings("button").find(" .filter-option").text(this.value);
+            $input.find("select option:not([value='" + this.value + "'])").removeAttr("selected");
+            if (this.value === "Hourly") {
+                $input.children("[name=date]").show();
+                $input.children("[name=month]").hide();
+                $input.children("[name=year]").hide();
+            }
+            else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
+                $input.children("[name=month]").show();
+                $input.children("[name=date]").hide();
+                $input.children("[name=year]").hide();
+            }
+            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly") {
+                $input.children("[name=year]").show();
+                $input.children("[name=date]").hide();
+                $input.children("[name=month]").hide();
+            }
+        });
+
+        $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
+        
+        $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
+
+        $input.find("select option[value='Hourly']").attr("selected", "selected");
+        $input.find("select").trigger("change");
+    };
+
+    this.SetDateFromDateTo = function ($input, e) {
+        if ($input.find("select").val() === "Hourly") {
+            $input.find("#datefrom").val($input.find("#date").val());
+            $input.find("#dateto").val($input.find("#date").val()).trigger("change");
+        }
+        else if ($input.find("select").val() === "Weekely" || $input.find("select").val() === "DayWise") {
+            let _month_year = $input.find("#month").val();
+            let month = _month_year.split("/")[0];
+            let year = _month_year.split("/")[1];
+            let startDate = moment([year, month - 1]);
+            let endDate = moment(startDate).endOf('month');
+            $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
+            $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
+        }
+        else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly") {
+            let year = $input.find("#year").val();
+            startDate = moment([year]);
+            endDate = moment([year]).endOf('year');
+            $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
+            $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
+        }
+
+    };
+
     this.InputGeoLocation = function (ctrl) {
         ebcontext.userLoc = { lat: 0, long: 0 };
         if (typeof _rowId === 'undefined' || _rowId === 0) {

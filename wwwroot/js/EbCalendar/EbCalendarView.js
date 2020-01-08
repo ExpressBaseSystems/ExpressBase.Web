@@ -45,7 +45,20 @@
             this.changeColumn = true;
             this.getColumns();
         }
+        if (pname === "DefaultCalendarType") {
+            this.ChangeFDParams(newval);
+        }
         commonO.Current_obj = this.EbObject;
+    };
+
+    this.ChangeFDParams = function (newval) {
+        if (FilterDialog) {
+            let id = FilterDialog.FormObj.Controls.$values[0].EbSid_CtxId;
+            let $input = $("#" + id);
+            newval = getKeyByVal(EbEnums.AttendanceType, newval.toString());
+            $input.find("select option[value='" + newval+"']").attr("selected", "selected");
+            $input.find("select").trigger("change");
+        }
     };
 
     this.getColumns = function () {
@@ -85,6 +98,13 @@
                 label: "Parameters"
             });
             this.filterDialog = FilterDialog;
+            let id = FilterDialog.FormObj.Controls.$values[0].EbSid_CtxId;
+            let $input = $("#" + id);
+
+            $input.find("select").on('change', function (e) {
+                let newval = EbEnums.AttendanceType[$(e.target).val()];
+                this.EbObject.CalendarType = parseInt(newval);
+            }.bind(this));
         }
         else {
             $(".param-div-cont").hide();
@@ -98,6 +118,7 @@
             this.EbObject.DataColumns.$values = _.cloneDeep(this.EbObject.LinesColumns.$values);
         }
         this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
+        this.ChangeFDParams(this.EbObject.DefaultCalendarType);
     };
 
     this.CloseParamDiv = function () {

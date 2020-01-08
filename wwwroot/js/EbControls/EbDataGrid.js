@@ -1010,6 +1010,13 @@
 
     };
 
+    this.row_dblclick = function (e) {
+        let $e = $(e.target);
+        let $tr = $e.closest("tr");
+        if (this.isDGEditable())
+            $tr.find(".edit-row").trigger("click");
+    }.bind(this);
+
     this.checkRow_click = function (e, isAddRow = true, isFromCancel, isSameRow = true) {
         let t0 = performance.now();
         let $td = $(e.target).closest("td");
@@ -1248,11 +1255,21 @@
         $td.find(".ctrl-cover").show(300);
     }.bind(this);
 
+    this.isDGEditable = function () {
+        return (this.Mode.isEdit || this.Mode.isNew);
+    };
+
     this.dg_rowKeydown = function (e) {
+        let $e = $(e.target);
+        let $tr = $e.closest("tr");
         if (e.which === 40)//down arrow
-            $(e.target).next().focus();
+            $e.next().focus();
         if (e.which === 38)//up arrow
-            $(e.target).prev().focus();
+            $e.prev().focus();
+        if (e.which === 27) {//esc
+            if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")
+                $tr.find(".cancel-row").trigger("click");
+        }
         //alt + enter
         if ((event.altKey || event.metaKey) && event.which === 13) {
             if (this.$table.has(document.activeElement).length === 1) {
@@ -1643,8 +1660,9 @@
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
-        $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
+        this.$table.on("dblclick", ".tdtxt", this.row_dblclick);
 
+        $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);

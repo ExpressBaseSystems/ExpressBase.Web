@@ -9,7 +9,7 @@
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
-    //this.RowDataModel = this.formRenderer.formData.MultipleTables[this.ctrl.TableName][0];
+    //this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -360,7 +360,7 @@
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
-            dspMmbr = cellObj.F || "0.00"; // temporary fix
+            dspMmbr = cellObj.F || cellObj.Value || "0.00"; // temporary fix
         }
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)

@@ -9,7 +9,7 @@
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
-    //this.RowDataModel = this.formRenderer.formData.MultipleTables.karikku_dg[0];
+    //this.RowDataModel = this.formRenderer.formData.MultipleTables[this.ctrl.TableName][0];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -502,13 +502,13 @@
         });
         $.each(rowObjectMODEL, function (i, obj) {
             //if (!obj.DoNotPersist) {
-                if (obj.ObjType === "DGUserControlColumn") {
-                    $.each(obj.Columns.$values, function (i, ctrl) {
-                        SingleRow.Columns.push(getSingleColumn(ctrl));
-                    }.bind(this));
-                }
-                else
-                    SingleRow.Columns.push(getSingleColumn(obj));
+            if (obj.ObjType === "DGUserControlColumn") {
+                $.each(obj.Columns.$values, function (i, ctrl) {
+                    SingleRow.Columns.push(getSingleColumn(ctrl));
+                }.bind(this));
+            }
+            else
+                SingleRow.Columns.push(getSingleColumn(obj));
             //}
         }.bind(this));
         return SingleRow;
@@ -734,10 +734,43 @@
         let $ctrl = $(`#${ctrl.EbSid_CtxId}`);
         if (ctrl.Required)
             this.bindRequired($ctrl, ctrl);
-        if (ctrl.Unique)
-            this.formRenderer.FRC.bindUniqueCheck(ctrl);
+        if (ctrl.Unique) {
+            //this.formRenderer.FRC.bindUniqueCheck(ctrl);//DB check
+            this.bindDGUniqueCheck(ctrl);//DB check
+        }
         if (ctrl.Validators.$values.length > 0)
             this.bindValidators($ctrl, ctrl);
+    };
+
+    this.bindDGUniqueCheck = function (control) {
+        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique4DG.bind(this, control), 1000)); //delayed check 
+        ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+    };
+
+    this.checkUnique4DG = function (ctrl) {/////////////// move
+        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)// avoid check if numeric and value is 0
+            return;
+
+        //let unique_flag = true;
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        let val = ctrl.getValueFromDOM();
+        if (isNaNOrEmpty(val))
+            return;
+
+        let colCtrls = this.getColCtrls(ctrl.__Col.Name);
+        for (let i = 0; i < colCtrls.length; i++) {
+            let inpCtrl = colCtrls[i];
+            if (inpCtrl === ctrl)
+                continue;
+            if (inpCtrl.getValue() === val) {
+                $ctrl.attr("uniq-ok", "false");
+                ctrl.addInvalidStyle("This field is unique, try another value");
+            }
+            else {
+                $ctrl.attr("uniq-ok", "true");
+                ctrl.removeInvalidStyle();
+            }
+        }        
     };
 
     this.bindRequired = function ($ctrl, control) {

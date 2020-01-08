@@ -318,6 +318,7 @@ var InitControls = function (option) {
                 $div_detached.width(initDDwidth);
                 $el[0].isOutside = true;
                 $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+                $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
 
             }
             //to set position of dropdrown just below selectpicker btn
@@ -653,7 +654,7 @@ var InitControls = function (option) {
 
         if (!(ctrl.IsDisable)) {
             $.each(ebcontext.locations.Locations, function (intex, obj) {
-                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`)
+                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
         }

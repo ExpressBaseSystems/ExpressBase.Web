@@ -216,7 +216,7 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
-        if (StrValues === "")
+        if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -362,6 +362,7 @@ const EbSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rt";
         o.source = "powerselect";
+        o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
@@ -542,7 +543,10 @@ const EbSelect = function (ctrl, options) {
             let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
             let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
             let cellData = this.datatable.Api.row($rowEl).data()[idx];
-            this.columnVals[name].push(EbConvertValue(cellData, type));
+            let fval = EbConvertValue(cellData, type);
+            if (type === 5)
+                fval = this.datatable.data[$rowEl.index()][idx];// unformatted data
+            this.columnVals[name].push(fval);
         }.bind(this));
     };
 

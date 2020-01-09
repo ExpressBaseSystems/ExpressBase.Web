@@ -66,10 +66,10 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
             }
-            //else
-            //{
-            //    ViewBag.formData = getRowdata(refId, 0, _locId);
-            //}
+            else
+            {
+                ViewBag.formData = getRowdata(refId, 0, _locId);
+            }
 
             if (ViewBag.wc == TokenConstants.DC)
             {
@@ -89,7 +89,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser, CurrentLoc = currentloc });
                 return DataSet.FormDataWrap;
             }
             catch (Exception ex)

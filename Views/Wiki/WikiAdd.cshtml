@@ -1,0 +1,71 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    //Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+@*icon*@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/css/bootstrap-iconpicker.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/htmlmixed/htmlmixed.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/xml/xml.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/javascript/javascript.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/css/css.js"></script>
+<script src="~/js/wiki/AddWiki.js"></script>
+
+<script>
+    $(document).ready(function () {
+        let obj = new Addwiki();
+    });
+</script>
+<div class="container-fluid" style="padding-top:50px">
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12" style="padding: 0px 25px 0px 25px;">
+            <div class="ButtonBox">
+                <div style="display:flex">
+                    <input type="button" value="h1" class="props" val="h1">
+                    <input type="button" value="h2" class="props" val="h2">
+                    <input type="button" value="h3" class="props" val="h3">
+                    <input type="button" value="h4" class="props" val="h4">
+                    <input type="button" value="h5" class="props" val="h5">
+                    <input type="button" value="h6" class="props" val="h6">
+                    <input type="button" value="div" class="props " val="div">
+                    <input type="button" value="P" class="props" val="p">
+                    <input type="button" value="br" class="props" val="br">
+                    <input type="button" class="props fa fa-input" val="b" value="&#xf032" />
+                    <input type="button" class="props fa fa-input" value="&#xf033" val="i" />
+                    <input type="button" class="props fa fa-input" value="&#xf0cd" val="u">
+                    <input type="button" value="&#xf036" class="props fa fa-input" val="left" />
+                    <input type="button" value="&#xf037" val="center" class="fa fa-input props" />
+                    <input type="button" value="&#xf038" class="props fa fa-input" val="right" />
+                    <input type="button" value="&#xf121" class="props fa fa-input" val="code" />
+                    <input type="button" value="&#xf0ca" class="fa fa-input" val="ul" data-toggle="modal" data-target="#ul-modal" />
+                    <input type="button" value="&#xf0cb" class="fa fa-input" val="ol" data-toggle="modal" data-target="#ol-modal" />
+                    <input type="button" value="li" class="props" val="li" />
+                    <input type="button" value="&#xf0c1" class="props fa fa-input" val="a" />
+                    <input type="button" value="&#xf16a" class="props fa fa-input" val="iframe" />
+                    <input type="button" value="&#xf0ce" class="fa fa-input" val="table" data-toggle="modal" data-target="#myModal" />
+                    <button name="icon" role="iconpicker" id="iconselect"></button>
+                    @*<input type="button" class="fa fa-input props2" value="&#xf03e" id="gallery-tab1" />*@
+                    @*<input type="button" class="fa fa-input props2" value="&#xf06e" id="wiki-preview-tab" style="text-decoration:none" />*@
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <textarea id="code">
+        	</textarea>
+        </div>
+    </div>
+    </div>
+
+
+    <script>
+          
+    </script>

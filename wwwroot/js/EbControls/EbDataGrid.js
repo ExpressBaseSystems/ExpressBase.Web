@@ -9,6 +9,7 @@
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
+    //this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -334,7 +335,7 @@
     };
 
     this.getBSDispMembrs = function (cellObj, rowId, col) {
-        if (cellObj.Value === "true")
+        if (cellObj.Value === true)
             return col.TrueText;
         else
             return col.FalseText;
@@ -359,7 +360,7 @@
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
-            dspMmbr = cellObj.F || "0.00"; // temporary fix
+            dspMmbr = cellObj.F || cellObj.Value || "0.00"; // temporary fix
         }
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)
@@ -501,13 +502,13 @@
         });
         $.each(rowObjectMODEL, function (i, obj) {
             //if (!obj.DoNotPersist) {
-                if (obj.ObjType === "DGUserControlColumn") {
-                    $.each(obj.Columns.$values, function (i, ctrl) {
-                        SingleRow.Columns.push(getSingleColumn(ctrl));
-                    }.bind(this));
-                }
-                else
-                    SingleRow.Columns.push(getSingleColumn(obj));
+            if (obj.ObjType === "DGUserControlColumn") {
+                $.each(obj.Columns.$values, function (i, ctrl) {
+                    SingleRow.Columns.push(getSingleColumn(ctrl));
+                }.bind(this));
+            }
+            else
+                SingleRow.Columns.push(getSingleColumn(obj));
             //}
         }.bind(this));
         return SingleRow;
@@ -733,10 +734,43 @@
         let $ctrl = $(`#${ctrl.EbSid_CtxId}`);
         if (ctrl.Required)
             this.bindRequired($ctrl, ctrl);
-        if (ctrl.Unique)
-            this.formRenderer.FRC.bindUniqueCheck(ctrl);
+        if (ctrl.Unique) {
+            //this.formRenderer.FRC.bindUniqueCheck(ctrl);//DB check
+            this.bindDGUniqueCheck(ctrl);//DB check
+        }
         if (ctrl.Validators.$values.length > 0)
             this.bindValidators($ctrl, ctrl);
+    };
+
+    this.bindDGUniqueCheck = function (control) {
+        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique4DG.bind(this, control), 1000)); //delayed check 
+        ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
+    };
+
+    this.checkUnique4DG = function (ctrl) {/////////////// move
+        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)// avoid check if numeric and value is 0
+            return;
+
+        //let unique_flag = true;
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        let val = ctrl.getValueFromDOM();
+        if (isNaNOrEmpty(val))
+            return;
+
+        let colCtrls = this.getColCtrls(ctrl.__Col.Name);
+        for (let i = 0; i < colCtrls.length; i++) {
+            let inpCtrl = colCtrls[i];
+            if (inpCtrl === ctrl)
+                continue;
+            if (inpCtrl.getValue() === val) {
+                $ctrl.attr("uniq-ok", "false");
+                ctrl.addInvalidStyle("This field is unique, try another value");
+            }
+            else {
+                $ctrl.attr("uniq-ok", "true");
+                ctrl.removeInvalidStyle();
+            }
+        }
     };
 
     this.bindRequired = function ($ctrl, control) {
@@ -976,6 +1010,13 @@
 
     };
 
+    this.row_dblclick = function (e) {
+        let $e = $(e.target);
+        let $tr = $e.closest("tr");
+        if (this.isDGEditable())
+            $tr.find(".edit-row").trigger("click");
+    }.bind(this);
+
     this.checkRow_click = function (e, isAddRow = true, isFromCancel, isSameRow = true) {
         let t0 = performance.now();
         let $td = $(e.target).closest("td");
@@ -1085,8 +1126,12 @@
                 continue;
             if (document.getElementById(inpCtrl.EbSid_CtxId) === document.activeElement)
                 val = document.activeElement.value;
-            else
-                val = inpCtrl.DataVals.Value || 0;
+            else {
+                if (inpCtrl.__isEditing)
+                    val = inpCtrl.curRowDataVals.Value || 0;
+                else
+                    val = inpCtrl.DataVals.Value || 0;
+            }
             sum += parseFloat(val) || 0;
             sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
         }
@@ -1210,11 +1255,21 @@
         $td.find(".ctrl-cover").show(300);
     }.bind(this);
 
+    this.isDGEditable = function () {
+        return (this.Mode.isEdit || this.Mode.isNew);
+    };
+
     this.dg_rowKeydown = function (e) {
+        let $e = $(e.target);
+        let $tr = $e.closest("tr");
         if (e.which === 40)//down arrow
-            $(e.target).next().focus();
+            $e.next().focus();
         if (e.which === 38)//up arrow
-            $(e.target).prev().focus();
+            $e.prev().focus();
+        if (e.which === 27) {//esc
+            if (this.isDGEditable() && $tr.find(".cancel-row").css("display") !== "none")
+                $tr.find(".cancel-row").trigger("click");
+        }
         //alt + enter
         if ((event.altKey || event.metaKey) && event.which === 13) {
             if (this.$table.has(document.activeElement).length === 1) {
@@ -1232,6 +1287,7 @@
         }.bind(this));
 
         this.$table.on("keyup", "[tdcoltype=DGNumericColumn][agg=true] [ui-inp]", this.updateAggCol.bind(this));
+        this.$table.on("change", "[tdcoltype=DGNumericColumn][agg=true] [ui-inp]", this.updateAggCol.bind(this));
     };
 
     this.PScallBFn = function (Row) {
@@ -1604,8 +1660,9 @@
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
-        $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
+        this.$table.on("dblclick", ".tdtxt", this.row_dblclick);
 
+        $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);

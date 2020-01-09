@@ -19,6 +19,7 @@
     this.anonymousUserId = null;
     this.dependentList = [];
     this.dominantList = [];
+    this.Preference = {};
 
     //this.divFormHeading = $("#divFormHeading");
     this.txtName = $("#txtFullName");
@@ -269,10 +270,10 @@
         }.bind(this));
 
         if (this.itemId > 1 && this.userinfo["preference"].trim() !== "") {
-            var pobj = JSON.parse(this.userinfo["preference"]);
-            this.selectLocale.val(pobj.Locale);
+            this.Preference = JSON.parse(this.userinfo["preference"]);
+            this.selectLocale.val(this.Preference.Locale);
             this.selectLocaleChangeAction();
-            this.selectTimeZone.val(pobj.TimeZone);
+            this.selectTimeZone.val(this.Preference.TimeZone);
         }
         else {
             this.selectLocale.val("en-IN");
@@ -705,7 +706,7 @@
         dict["usergroups"] = this.userGroupTile.getItemIds();
         dict["statusid"] = newstus;
         dict["hide"] = this.chkboxHide.prop("checked") ? "yes" : "no";
-        dict["preference"] = JSON.stringify({ Locale: this.selectLocale.val(), TimeZone: this.selectTimeZone.val() });
+        dict["preference"] = JSON.stringify($.extend(this.Preference, { Locale: this.selectLocale.val(), TimeZone: this.selectTimeZone.val() }));
         dict["loc_add"] = this.LocCntr.options.added.join();
         dict["loc_delete"] = this.LocCntr.options.deleted.join();
 

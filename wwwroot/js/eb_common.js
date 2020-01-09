@@ -618,7 +618,12 @@ function getValsForViz(formObj) {
             else if (obj.EbDbType === 16)
                 value = "0";
         }
-        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        if (obj.ObjType === "CalendarControl") {
+            fltr_collection.push(new fltr_obj(obj.EbDbType, "datefrom", value.split(",")[0]));
+            fltr_collection.push(new fltr_obj(obj.EbDbType, "dateto", value.split(",")[1]));
+        }
+        else
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });
     return fltr_collection;
 }

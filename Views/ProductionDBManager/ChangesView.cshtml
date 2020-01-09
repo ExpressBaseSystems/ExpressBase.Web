@@ -98,6 +98,11 @@
             text-align: center;
         }
 
+        .table-content-link-font {
+            font-family: inherit;
+            font-size: 13px;
+        }
+
         .table-content-font {
             font-family: inherit;
             color: #162929;
@@ -183,7 +188,7 @@
                             <button id="i_chk_@ViewBag.ChangesLog[i].Solution" name="i_chk_@ViewBag.ChangesLog[i].Solution" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
                         </div>
                     </div>
-                    <div id="@ViewBag.ChangesLog[i].Solution">
+                    <div id="@ViewBag.ChangesLog[i].Solution" class="sol_changes">
 
                     </div>
                     }
@@ -204,6 +209,7 @@
                 </div>
                 <div class="modal-body" id="modalBodyQueryView">
                     <input type="hidden" value="" id="solution_id" name="solution_id" />
+                    <input type="hidden" value="" id="file_type" name="file_type" />
                     <input type="hidden" value="" id="file_header" name="file_header" />
                     <textarea id='editor'>  </textarea>
                 </div>

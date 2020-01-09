@@ -48,6 +48,39 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+        [HttpGet("add/wiki/{id}")]
+        public IActionResult WikiAdd(int id)
+
+        {
+            FileRefByContextResponse res = this.ServiceClient.Get<FileRefByContextResponse>(new FileRefByContextRequest
+            {
+                Context = "eb_wiki"
+            });
+
+            ViewBag.Images = JsonConvert.SerializeObject(res.Images);
+
+            ViewBag.id = id;
+            if (id > 0)
+            {
+                GetWikiByIdResponse resp = this.ServiceClient.Get(new GetWikiByIdRequest()
+                {
+                    Id = Convert.ToInt32(id)
+                });
+                if (resp == null)
+                    return Redirect("0");
+                else
+                    ViewBag.Wiki = resp.Wiki;
+                ViewBag.WikiCat = resp.WikiCat;
+            }
+            else
+            {
+                AddNewWikiResponse resp = this.ServiceClient.Get(new AddNewWikiRequest());
+                ViewBag.WikiCat = resp.WikiCat;
+                ViewBag.Wiki = new Wiki() { Id = 0, CatId = 0 };
+            }
+            return View();
+        }
+
 
 
         //[HttpGet("/apitest")]

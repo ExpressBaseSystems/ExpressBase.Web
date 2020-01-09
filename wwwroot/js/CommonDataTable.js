@@ -1281,7 +1281,8 @@
             this.CreateHeaderTooltip();
             this.addFilterEventListeners();
             this.arrangeFooterWidth();
-            this.placeFilterInText();
+            if (this.Source !== "Calendar")
+                this.placeFilterInText();
 
             $("#eb_common_loader").EbLoader("hide");
             if (this.login === "uc") {
@@ -1746,7 +1747,8 @@
             //if (this.columnSearch.length > 0)
             this.filterDisplay();
             this.addFilterEventListeners();
-            this.placeFilterInText();
+            if (this.Source !== "Calendar")
+                this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
             if (this.Source === "EbDataTable")

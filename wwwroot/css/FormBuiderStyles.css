@@ -595,6 +595,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
 }
 
+.eb-disablebtn {
+    filter: grayscale(90%);
+    pointer-events: none;
+}
+
 .grid-cont {
     /*overflow: auto;*/
 }
@@ -861,6 +866,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .ctrl-cover > .btn-group.bootstrap-select {
+    width: 100% !important;
+}
+.ctrl-cover .bootstrap-select {
     width: 100% !important;
 }
 

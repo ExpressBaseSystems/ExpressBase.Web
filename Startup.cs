@@ -87,16 +87,23 @@ namespace ExpressBase.Web2
             services.AddOptions();
 
 
-
-            var connectionString = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
             services.AddScoped<IServiceClient, JsonServiceClient>(serviceProvider =>
             {
-                return new JsonServiceClient(connectionString);
+                return new JsonServiceClient
+                {
+                    BaseUri = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL),
+                    RefreshTokenUri = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_GET_ACCESS_TOKEN_URL)
+                };
             });
 
             services.AddScoped<IEbMqClient, EbMqClient>(serviceProvider =>
             {
                 return new EbMqClient();
+            });
+
+            services.AddScoped<IEbAuthClient, EbAuthClient>(serviceProvider =>
+            {
+                return new EbAuthClient();
             });
 
             services.AddScoped<IEbStaticFileClient, EbStaticFileClient>(serviceProvider =>

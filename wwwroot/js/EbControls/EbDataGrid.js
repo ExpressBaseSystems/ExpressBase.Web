@@ -162,6 +162,7 @@
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
         //$addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
+        this.$addRowBtn.addClass("eb-disablebtn");
         $tr.attr("is-editing", "true");
         this.spanToCtrl_row($tr);
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
@@ -1030,6 +1031,7 @@
         $td.find(".check-row").hide();
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
+        this.$addRowBtn.removeClass("eb-disablebtn");
 
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
         $addRow.show().attr("is-editing", "true");
@@ -1619,6 +1621,7 @@
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";
         this.rowSLCounter = 0;
+        this.$addRowBtn = $(`#${this.ctrl.EbSid}Wraper .addrow-btn`);
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             col.__DG.objectMODEL = this.objectMODEL;

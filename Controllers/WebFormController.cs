@@ -57,7 +57,8 @@ namespace ExpressBase.Web.Controllers
                     try
                     {
                         GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob });
-                        ViewBag.formData = JsonConvert.SerializeObject(Resp.FormData);
+                        ViewBag.formData = Resp.FormDataWrap;
+                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)
                     {

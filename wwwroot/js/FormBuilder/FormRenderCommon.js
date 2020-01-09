@@ -217,8 +217,8 @@
                                         row[depCtrl.Name].setValue(ValueExpr_val);
                                     }.bind(this));
                                 }
-                                if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
-                                    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
+                                //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                                //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
                             }
                         }
                         else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {

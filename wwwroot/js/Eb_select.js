@@ -543,7 +543,10 @@ const EbSelect = function (ctrl, options) {
             let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
             let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
             let cellData = this.datatable.Api.row($rowEl).data()[idx];
-            this.columnVals[name].push(EbConvertValue(cellData, type));
+            let fval = EbConvertValue(cellData, type);
+            if (type === 5)
+                fval = this.datatable.data[$rowEl.index()][idx];// unformatted data
+            this.columnVals[name].push(fval);
         }.bind(this));
     };
 

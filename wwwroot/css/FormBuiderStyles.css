@@ -350,6 +350,8 @@
         border-right: dotted 1px transparent !important;
     }
 
+
+
 .dgtbl .row-no-td {
     width: 34px;
     text-align: center;
@@ -544,6 +546,11 @@ eb-disable {
 .dgtbl > tbody > tr:nth-child(even) {
     background-color: white;
 }
+
+.dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+    background-color: #e7edf4 !important;
+}
+
 
 .dgtbl > tbody > tr th:last-child, .fs-tbl > tbody > tr th:last-child {
     text-align: center;
@@ -854,6 +861,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .ctrl-cover > .btn-group.bootstrap-select {
+    width: 100% !important;
+}
+.ctrl-cover .bootstrap-select {
     width: 100% !important;
 }
 

@@ -54,9 +54,83 @@ function EbSqlJob(options) {
         $extCont: $("#tb" + this.TabNum + "_SqlJob_PGgrid")
     });
 
+    this.popChanged = function (obj, pname, newval, oldval) {
+        //if (pname === "Reference" && obj.Reference !== "" && obj.Reference !== null) {
+        //    $("#" + obj.EbSid).children(".drpbox").removeClass("refIdMsetNotfy");
+        //    this.getComponent(obj);
+        //}
+        if (pname == "Reference") {
+            if ($(`.Sql-Job-Cont [eb-type="SqlJobReader"]`)[0].id == obj.$Control[0].id) {
+                $.post("../SqlJob/AppendFRKColomns", { Refid: newval }, this.AppendFRColomns.bind(this));
+            }
+            this.getComponent(obj);
+        }
+        if (pname == "Filter_Dialogue") {
+            $.post("../SqlJob/AppendPKColomns", { Refid: newval }, this.AppendPKColomns.bind(this));
+        }
+    };
 
+    this.AppendFRColomns = function (data) {
+        this.EbObject.FirstReaderKeyColumnsColl = JSON.parse(data);
+        this.pg.setObject(this.EbObject, AllMetas["EbSqlJob"]);
+    };
+
+    this.AppendPKColomns = function (data) {
+        this.EbObject.ParameterKeyColumnsColl = JSON.parse(data);
+        this.pg.setObject(this.EbObject, AllMetas["EbSqlJob"]);
+    };
+
+    this.AppendGroupBox = function () {
+        let refid = this.Procs[$(`.Sql-Job-Cont [eb-type="SqlJobReader"]`)[0].id].Reference;
+        $.post("../SqlJob/AppendFRKColomns", { Refid: refid }, this.AppendFRColomns.bind(this));
+        $.post("../SqlJob/AppendPKColomns", { Refid: this.EbObject.Filter_Dialogue }, this.AppendPKColomns.bind(this));
+    };
+
+    this.getComponent = function (obj) {
+        if (obj.Reference) {
+            $.ajax({
+                url: "../Dev/GetComponent",
+                type: "GET",
+                cache: false,
+                beforeSend: function () {
+                },
+                data: { "refid": obj.Reference },
+                success: function (component) {
+                    obj.RefName = component.name;
+                    obj.Version = component.version;
+                    this.RefreshControl(obj);
+                    this.resetLinks();
+                    this.setApiRequest(JSON.parse(component.parameters));
+                }.bind(this)
+            });
+        }
+    };
+
+    this.setApiRequest = function (p) {
+        //for (i = 0; i < p.length; i++) {
+        //    this.EbObject.Request.Default.$values.push(p[i]);
+        //    this.setRequestW([p[i]]);
+        //}
+    };
+
+    this.setRequestW = function (o, type) {
+        //let html = [];
+        //for (let i = 0, n = o.length; i < n; i++) {
+        //    edit = (type == "custom") ? "<td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>" : "";
+        //    html.push(`<tr p-name='${o[i].Name}'>
+        //                <td>${o[i].Name}</td>
+        //                <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o[i].Type)}</td>
+        //                <td><input type='text' style='width:100%;' Json-prop='${o[i].Name}' value='${o[i].Value || ""}'></input></td>
+        //                ${edit}
+        //               </tr>`);
+        //}
+        //$(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonReq_CMW .table tbody`).append(html.join(""));
+    };
+
+    this.GenerateButtons = function () {};
+    
     this.newSqlJob = function () {
-        this.EbObject = new EbObjects["EbSqlJob"]("tb" + options.TabNum + "SqlJob");
+        this.EbObject = new EbObjects["EbSqlJob"]("SqlJob" + Date.now().toString(36));
         this.pg.setObject(this.EbObject, AllMetas["EbSqlJob"]);
         //this.setLine('start', 'stop');
         this.resetLinks();
@@ -72,6 +146,7 @@ function EbSqlJob(options) {
         this.EbObject.Resources.$values.length = 0;
         this.drawSqlObj();
         this.resetLinks();
+        this.AppendGroupBox();
         //this.setRequestW(this.EbObject.Request.Default.$values);
         //this.setRequestW(this.EbObject.Request.Custom.$values, 'custom');
         //this.Request.Default = this.EbObject.Request.Default.$values;
@@ -325,17 +400,15 @@ function EbSqlJob(options) {
 
     this.hideLines = function (e) {
         if (e.target.getAttribute("href") == "#vernav0") {
-          
+            this.resetLinks();
         }
         else {
             this.rmLines();
         }
     };
-    this.hideLinesCompare = function (e) {
-        this.hideLines(e);
-    };
-
+   
     this.start = function () {
+        this.pg.PropertyChanged = this.popChanged.bind(this);
         this.DragDrop_Items();
         if (this.EditObj === null || this.EditObj === "undefined") {
             this.newSqlJob();
@@ -345,8 +418,7 @@ function EbSqlJob(options) {
         }
         
         $(`#tb${this.TabNum}_SqlJob_drop_cont`).on("click", this.elementOuterClick.bind(this));
-        $(`#versionNav li`).on("click", this.hideLines.bind(this));
-        $(`#compare i`).on("click", this.hideLinesCompare.bind(this));
+        $(document).on('shown.bs.tab', 'a[data-toggle="tab"]', this.hideLines.bind(this));
      
     };
 

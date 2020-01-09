@@ -63,8 +63,49 @@ namespace ExpressBase.Web.Controllers
             resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumnsForSqlJob(resp.SqlJobsColumns));
             return resp;
         }
+        public string AppendFRKColomns(string Refid)
+        {
+            List<string> ColomnList = new List<string>();
+            DataSourceColumnsResponse columnresp = this.Redis.Get<DataSourceColumnsResponse>(string.Format("{0}_columns", Refid));
+            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
+            {
+                RefId = Refid
+            });
+            var drObj = EbSerializers.Json_Deserialize(Resp.Data[0].Json) as EbDataReader;
+            drObj.AfterRedisGet(this.Redis, this.ServiceClient);
+            if (columnresp == null || columnresp.Columns.Count == 0)
+            {
+                Console.WriteLine("Column Object in Redis is null or count 0");
+                columnresp = this.ServiceClient.Get<DataSourceColumnsResponse>(new TableColumnsRequest { RefId = Refid, Params = (drObj.FilterDialog != null) ? drObj.FilterDialog.GetDefaultParams() : null });
+                if (columnresp == null || columnresp.Columns.Count == 0)
+                {
+                    Console.WriteLine("Column Object from SS is null or count 0");
+                    throw new Exception("Object Not found(Redis + SS)");
+                }
+            }
+           for(int i=0;i< columnresp.Columns[0].Count; i++)
+            {
+                ColomnList.Add(columnresp.Columns[0][i].ColumnName);
+            }
+            //return EbSerializers.Json_Serialize(ColomnList);
+            return EbSerializers.Json_Serialize(columnresp.Columns[0]);
+        }
 
-
+        public string AppendPKColomns (string Refid)
+        {
+            List<string> ColomnList = new List<string>();
+            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
+            {
+                RefId = Refid
+            });
+            var drObj = EbSerializers.Json_Deserialize(Resp.Data[0].Json) as EbFilterDialog;
+            List<Param> Para  = drObj.GetDefaultParams();
+            for (int i = 0; i < Para.Count; i++)
+            {
+                ColomnList.Add(Para[i].Name);
+            }
+            return EbSerializers.Json_Serialize(Para);
+        }
         public string GetSqljobObject(string refid)
         {
             EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()

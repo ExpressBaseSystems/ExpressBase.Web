@@ -9,7 +9,7 @@
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
-    //this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
+    this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -491,28 +491,36 @@
     };
 
     this.getRowDataModel = function (rowId, rowObjectMODEL) {
-        let SingleRow = {};
-        SingleRow.RowId = rowId;
-        SingleRow.IsUpdate = (rowId !== 0);
-        SingleRow.IsDelete = rowObjectMODEL.IsDelete;
-        SingleRow.Columns = [];
-        SingleRow.Columns.push({
-            Name: "eb_row_num",
-            Value: parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx")),
-            Type: 7
-        });
-        $.each(rowObjectMODEL, function (i, obj) {
-            //if (!obj.DoNotPersist) {
-            if (obj.ObjType === "DGUserControlColumn") {
-                $.each(obj.Columns.$values, function (i, ctrl) {
-                    SingleRow.Columns.push(getSingleColumn(ctrl));
-                }.bind(this));
-            }
-            else
-                SingleRow.Columns.push(getSingleColumn(obj));
-            //}
-        }.bind(this));
-        return SingleRow;
+        //let SingleRow = {};
+        //SingleRow.RowId = rowId;
+        //SingleRow.IsUpdate = (rowId !== 0);
+        //SingleRow.IsDelete = rowObjectMODEL.IsDelete;
+        //SingleRow.Columns = [];
+        //SingleRow.Columns.push({
+        //    Name: "eb_row_num",
+        //    Value: parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx")),
+        //    Type: 7
+        //});
+
+        //$.each(rowObjectMODEL, function (i, obj) {
+        //    //if (!obj.DoNotPersist) {
+        //    if (obj.ObjType === "DGUserControlColumn") {
+        //        $.each(obj.Columns.$values, function (i, ctrl) {
+        //            SingleRow.Columns.push(getSingleColumn(ctrl));
+        //        }.bind(this));
+        //    }
+        //    else
+        //        SingleRow.Columns.push(getSingleColumn(obj));
+        //    //}
+        //}.bind(this));
+        //return SingleRow;
+
+        let rowDataModel = JSON.parse(JSON.stringify(this.RowDataModel));
+        let eb_row_num = parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx"));
+        rowDataModel.RowId = rowId;
+        getObjByval(rowDataModel.Columns, "Name", "eb_row_num").Value = eb_row_num;
+        this.attachModalCellRef_Row(rowDataModel, rowObjectMODEL);
+        return rowDataModel;
     };
 
     this.changedRowWT = function () {

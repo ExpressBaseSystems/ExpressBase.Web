@@ -1740,7 +1740,7 @@
                     this.show(immediate);
                 }
                 //lazy load function
-               // $('.viewerLzyImg').Lazy();
+                // $('.viewerLzyImg').Lazy();
                 return this;
             }
 
@@ -2541,12 +2541,13 @@
         //for image information
         info: function info() {
             if (this.infono) {
-                                $(".viewer-canvas").append(`<div class='imgDetail'><h4>${this.image.dtls}</h4</div>`);
-                                this.infono = 0;
-                            } else {
-                                $(".imgDetail").remove();
-                                this.infono = 1;
-                            }
+                if (!(this.image.dtls === ""))
+                    $(".viewer-canvas").append(`<div class='imgDetail'><h5>${this.image.dtls}</h5></div>`);
+                this.infono = 0;
+            } else {
+                $(".imgDetail").remove();
+                this.infono = 1;
+            }
         },
 
         //for image download

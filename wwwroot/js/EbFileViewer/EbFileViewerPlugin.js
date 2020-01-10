@@ -20,13 +20,14 @@
                 let ulview = (`<div id='viewdiv' > <ul id='imageContainer'>`);
 
                 this.pgSettings.forEach(function (obj) {
-                    let filethumbnail = obj.file_src.replace("/images/", "/images/small/");;
-                    ulview += `<li><img data-original='' data-src='${obj.file_src}' src='${filethumbnail}' dtls='${obj.file_info}' alt='${obj.file_name}'></li>`
+                    let filethumbnail = obj.file_src.replace("/images/", "/images/small/");
+                    let filedtls = (typeof (obj.file_info) === 'undefined') ? "" : obj.file_info;
+                    ulview += `<li><img data-original='' data-src='${obj.file_src}' src='${filethumbnail}' dtls='${filedtls}' alt='${obj.file_name}'></li>`
                 });
                 ulview += `</ul> </div>`
                 $("body").append(ulview);
                 if (typeof (tlbar) === 'undefined') {
-                    let tlbar = {
+                     tlbar = {
                         info: 1,
                         zoomIn: 1,
                         zoomOut: 1,
@@ -97,7 +98,7 @@
 
                 this.viewer = new Viewer($('#imageContainer')[0], {
                     url: 'data-src',
-                    navbar:1,
+                    navbar:0,
                     toolbar: tlbar
                 }
                 );

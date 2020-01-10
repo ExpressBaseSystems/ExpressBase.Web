@@ -1102,9 +1102,11 @@
     };
 
     this.updateAggCol = function (e) {
-        let $td = $(e.target).closest("td");
-        let colname = $td.attr("colname");
-        $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+        setTimeout(function () {// need to change=====================================================================================
+            let $td = $(e.target).closest("td");
+            let colname = $td.attr("colname");
+            $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+        }.bind(this), 10);
     }.bind(this);
 
     this.getColCtrls = function (colName) {

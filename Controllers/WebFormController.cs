@@ -30,7 +30,6 @@ namespace ExpressBase.Web.Controllers
         {
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
             ViewBag.rowId = 0;
-            ViewBag.formData = "null";
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
             _mode = _mode > 0 ? _mode % 10 : _mode;

@@ -25,6 +25,8 @@ namespace ExpressBase.Web.BaseControllers
 
         protected RedisClient Redis { get; set; }
 
+        protected EbAuthClient AuthClient { get; set; }
+
         protected EbStaticFileClient FileClient { get; set; }
 
         public CustomUserSession Session { get; set; }
@@ -122,6 +124,15 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
             this.MqClient = _mqc as EbMqClient;
             this.FileClient = _sfc as EbStaticFileClient;
+        }
+
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.httpContextAccessor = _cxtacc as HttpContextAccessor;
+            this.MqClient = _mqc as EbMqClient;
+            this.AuthClient = _auth as EbAuthClient;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)

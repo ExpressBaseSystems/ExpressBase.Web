@@ -595,6 +595,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
 }
 
+.eb-disablebtn {
+    filter: grayscale(90%);
+    pointer-events: none;
+}
+
 .grid-cont {
     /*overflow: auto;*/
 }

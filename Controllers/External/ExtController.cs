@@ -36,7 +36,7 @@ namespace ExpressBase.Web.Controllers
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
 
-        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc) : base(_client, _redis, _cxtacc, _mqc) { }
+        public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_client, _redis, _cxtacc, _mqc, _auth) { }
 
         [HttpPost]
         [EnableCors("AllowSpecificOrigin")]
@@ -443,7 +443,7 @@ namespace ExpressBase.Web.Controllers
             if (Social.UniqueEmail)
             {
                 Console.WriteLine("reached UniqueEmail");
-                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                MyAuthenticateResponse authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = Social.Email,
@@ -496,8 +496,7 @@ namespace ExpressBase.Web.Controllers
                         try
                         {
                             string tenantid = lgid.Id.ToString();
-                            var authClient = this.ServiceClient;
-                            authResponse = authClient.Get<MyAuthenticateResponse>(new Authenticate
+                            authResponse = AuthClient.Get<MyAuthenticateResponse>(new Authenticate
                             {
                                 provider = CredentialsAuthProvider.Name,
                                 UserName = Social.Email,
@@ -760,7 +759,7 @@ namespace ExpressBase.Web.Controllers
                 try
                 {
                     string tenantid = ViewBag.cid;
-                    authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                    authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],
@@ -867,8 +866,7 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                var authClient = this.ServiceClient;
-                MyAuthenticateResponse authResponse = authClient.Send<MyAuthenticateResponse>(new Authenticate
+                MyAuthenticateResponse authResponse = AuthClient.Send<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = "NIL",

@@ -9,7 +9,8 @@
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
-    //this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
+    this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
+    this.DataMODEL = this.formRenderer.DataMODEL[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -38,7 +39,7 @@
     this.setEditModeRows = function (dataModel) {
         this.DataMODEL = dataModel;
         this.curRowDataMODEL = this.getRowDataModel_();
-        this.constructObjectModel(this.DataMODEL);// 
+        this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
         this.drawHTMLView();
 
@@ -162,6 +163,7 @@
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
         //$addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
+        this.$addRowBtn.addClass("eb-disablebtn");
         $tr.attr("is-editing", "true");
         this.spanToCtrl_row($tr);
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
@@ -490,28 +492,36 @@
     };
 
     this.getRowDataModel = function (rowId, rowObjectMODEL) {
-        let SingleRow = {};
-        SingleRow.RowId = rowId;
-        SingleRow.IsUpdate = (rowId !== 0);
-        SingleRow.IsDelete = rowObjectMODEL.IsDelete;
-        SingleRow.Columns = [];
-        SingleRow.Columns.push({
-            Name: "eb_row_num",
-            Value: parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx")),
-            Type: 7
-        });
-        $.each(rowObjectMODEL, function (i, obj) {
-            //if (!obj.DoNotPersist) {
-            if (obj.ObjType === "DGUserControlColumn") {
-                $.each(obj.Columns.$values, function (i, ctrl) {
-                    SingleRow.Columns.push(getSingleColumn(ctrl));
-                }.bind(this));
-            }
-            else
-                SingleRow.Columns.push(getSingleColumn(obj));
-            //}
-        }.bind(this));
-        return SingleRow;
+        //let SingleRow = {};
+        //SingleRow.RowId = rowId;
+        //SingleRow.IsUpdate = (rowId !== 0);
+        //SingleRow.IsDelete = rowObjectMODEL.IsDelete;
+        //SingleRow.Columns = [];
+        //SingleRow.Columns.push({
+        //    Name: "eb_row_num",
+        //    Value: parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx")),
+        //    Type: 7
+        //});
+
+        //$.each(rowObjectMODEL, function (i, obj) {
+        //    //if (!obj.DoNotPersist) {
+        //    if (obj.ObjType === "DGUserControlColumn") {
+        //        $.each(obj.Columns.$values, function (i, ctrl) {
+        //            SingleRow.Columns.push(getSingleColumn(ctrl));
+        //        }.bind(this));
+        //    }
+        //    else
+        //        SingleRow.Columns.push(getSingleColumn(obj));
+        //    //}
+        //}.bind(this));
+        //return SingleRow;
+
+        let rowDataModel = JSON.parse(JSON.stringify(this.RowDataModel));
+        let eb_row_num = parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx"));
+        rowDataModel.RowId = rowId;
+        getObjByval(rowDataModel.Columns, "Name", "eb_row_num").Value = eb_row_num;
+        this.attachModalCellRef_Row(rowDataModel, rowObjectMODEL);
+        return rowDataModel;
     };
 
     this.changedRowWT = function () {
@@ -954,6 +964,7 @@
             let SingleColumn = getObjByval(row.Columns, "Name", inpCtrl.Name);
             if (SingleColumn) {
                 inpCtrl.DataVals = SingleColumn;
+                inpCtrl.curRowDataVals = $.extend(true, {}, SingleColumn);
             }
         }
     }.bind(this);
@@ -1030,6 +1041,7 @@
         $td.find(".check-row").hide();
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
+        this.$addRowBtn.removeClass("eb-disablebtn");
 
         $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
         $addRow.show().attr("is-editing", "true");
@@ -1092,9 +1104,11 @@
     };
 
     this.updateAggCol = function (e) {
-        let $td = $(e.target).closest("td");
-        let colname = $td.attr("colname");
-        $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+        setTimeout(function () {// need to change=====================================================================================
+            let $td = $(e.target).closest("td");
+            let colname = $td.attr("colname");
+            $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
+        }.bind(this), 10);
     }.bind(this);
 
     this.getColCtrls = function (colName) {
@@ -1619,6 +1633,7 @@
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";
         this.rowSLCounter = 0;
+        this.$addRowBtn = $(`#${this.ctrl.EbSid}Wraper .addrow-btn`);
         $.each(this.ctrl.Controls.$values, function (i, col) {
             col.__DG = this.ctrl;
             col.__DG.objectMODEL = this.objectMODEL;

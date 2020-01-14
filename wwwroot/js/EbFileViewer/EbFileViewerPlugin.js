@@ -1,9 +1,10 @@
 ﻿(function ($) {
-    $.fn.ebFileViewer = function (options) {
+    $.fn.ebFileViewer = function (options,tlbar) {
         let defaults = [{
             file_src: "",
             file_name: "",
-            file_type: ""
+            file_type: "",
+            file_info:""
 
         }];
 
@@ -11,8 +12,6 @@
 
         this.init = function () {
             this.initViewer();
-            //$("li.viewer-info").on("mouseenter", this.printImagefn2.bind(this));
-            //$("li.viewer-info").on("mouseleave", this.printImagefn3.bind(this));
         }
 
         this.initViewer = function () {
@@ -21,49 +20,86 @@
                 let ulview = (`<div id='viewdiv' > <ul id='imageContainer'>`);
 
                 this.pgSettings.forEach(function (obj) {
-                    ulview += `<li><img data-original='' src='${obj.file_src}' dtls='${obj.file_name}' alt='${obj.file_name}'></li>`
+                    let filethumbnail = obj.file_src.replace("/images/", "/images/small/");
+                    let filedtls = (typeof (obj.file_info) === 'undefined') ? "" : obj.file_info;
+                    ulview += `<li><img data-original='' data-src='${obj.file_src}' src='${filethumbnail}' dtls='${filedtls}' alt='${obj.file_name}'></li>`
                 });
                 ulview += `</ul> </div>`
                 $("body").append(ulview);
-                this.viewer = new Viewer($('#imageContainer')[0], {
-                    toolbar: {
-                        //info: function () {
-                        //    if (this.infono) {
-                        //        $(".viewer-canvas").append(`<div class='imgDetail'><h4>${this.viewer.image.dtls}</h4</div>`);
-                        //        this.infono = 0;
-                        //    } else {
-                        //        $(".imgDetail").remove();
-                        //        this.infono = 1;
-                        //    }
-
-                        //}.bind(this),
+                if (typeof (tlbar) === 'undefined') {
+                     tlbar = {
+                        info: 1,
                         zoomIn: 1,
                         zoomOut: 1,
                         oneToOne: 1,
                         reset: 1,
-                        //prev: 1,
-                        //play: {
-                        //    show: 1,
-                        //    size: 'large',
-                        //},
-                        //next: 1,
+                        prev: 1,
+                         play: {
+                            show: 1,
+                            size: 'large',
+                        },
+                        next: 1,
                         rotateLeft: 1,
                         rotateRight: 1,
                         flipHorizontal: 1,
                         flipVertical: 1,
-                        download: function () {
-                            const a = $("<a>").attr("href", `${this.viewer.image.src}`)
-                                .attr("download", "")
-                                .appendTo("body");
-                            a[0].click();
-                            a.remove();
-                        }.bind(this),
-                        print: function () {
-                            let win = window.open('');
-                            win.document.write(`<img src=${this.viewer.image.src} onload="window.print();window.close()" />`);
-                            win.focus();
-                        }.bind(this)
+                        download: 1,
+                        print: 1
                     }
+                }
+
+                //remove once stable.......****************************************
+
+                //this.viewer = new Viewer($('#imageContainer')[0], {
+                //    toolbar: {
+                //        //info: function () {
+                //        //    if (this.infono) {
+                //        //        $(".viewer-canvas").append(`<div class='imgDetail'><h4>${this.viewer.image.dtls}</h4</div>`);
+                //        //        this.infono = 0;
+                //        //    } else {
+                //        //        $(".imgDetail").remove();
+                //        //        this.infono = 1;
+                //        //    }
+
+                //        //}.bind(this),
+                //        info:1,
+                //        zoomIn: 1,
+                //        zoomOut: 1,
+                //        oneToOne: 1,
+                //        reset: 1,
+                //        //prev: 1,
+                //        //play: {
+                //        //    show: 1,
+                //        //    size: 'large',
+                //        //},
+                //        //next: 1,
+                //        rotateLeft: 1,
+                //        rotateRight: 1,
+                //        flipHorizontal: 1,
+                //        flipVertical: 1,
+                //        download: 1,
+                //        print:1
+                //        //download: function () {
+                //        //    const a = $("<a>").attr("href", `${this.viewer.image.src}`)
+                //        //        .attr("download", "")
+                //        //        .appendTo("body");
+                //        //    a[0].click();
+                //        //    a.remove();
+                //        //}.bind(this),
+                //        //print: function () {
+                //        //    let win = window.open('');
+                //        //    win.document.write(`<img src=${this.viewer.image.src} onload="window.print();window.close()" />`);
+                //        //    win.focus();
+                //        //}.bind(this)
+                //    }
+                //}
+
+
+
+                this.viewer = new Viewer($('#imageContainer')[0], {
+                    url: 'data-src',
+                    navbar:0,
+                    toolbar: tlbar
                 }
                 );
 
@@ -77,12 +113,6 @@
 
 
         }
-        //this.printImagefn2 = function () {
-        //    $(".viewer-canvas").append("<div class='imgDetail'><h4> Nature</h4><h3>What a beautiful sunrise</h3></div>");
-        //}
-        //this.printImagefn3 = function () {
-        //    $(".imgDetail").remove();
-        //}
 
         this.init();
         return this;

@@ -22,7 +22,7 @@ var InitControls = function (option) {
             catTitle.push(obj.CategoryTitle);
         }.bind(catTitle));
 
-        if (ctrlOpts.FormDataExtdObj.val !== null) {
+        if (ctrlOpts.FormDataExtdObj.val !== null && ctrlOpts.FormDataExtdObj.val[ctrl.EbSid] !== undefined) {
             files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.EbSid][0].Columns[0].Value);
         }
 
@@ -41,7 +41,7 @@ var InitControls = function (option) {
             SolutionId: this.Cid,
             Container: ctrl.EbSid,
             Multiple: ctrl.IsMultipleUpload,
-            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.xyz',
+            ServerEventUrl: this.Env === "Production" ? 'https://se.expressbase.com' : 'https://se.eb-test.cloud',
             EnableTag: ctrl.EnableTag,
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
@@ -243,13 +243,17 @@ var InitControls = function (option) {
             //$input.mask(ctrl.MaskPattern || '00/00/0000');
             $input.next(".input-group-addon").off('click').on('click', function () { $input.datetimepicker('show'); }.bind(this));
         }
-        this.setCurrentDate(ctrl, $input);
         if (ctrl.IsNullable) {
-            if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
-                $input.val('');
+            //if (!($('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked')))
+            //    $input.val('');
+            //else
+            $('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').attr('checked', false);
+            $input.val("");
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
+        else
+            this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
         //console.dev_log("date 2 init --- took " + (t1 - t0) + " milliseconds.");
@@ -274,18 +278,20 @@ var InitControls = function (option) {
     };
 
     this.setCurrentDate = function (ctrl, $input) {
+        let val;
         if (ctrl.ShowDateAs_ === 1) {
-            $input.val(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+            val = moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY');
         }
         else if (ctrl.EbDateType === 5) { //Date
-            $input.val(ebcontext.user.Preference.ShortDate);
+            val = moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('YYYY-MM-DD');
         }
         else if (ctrl.EbDateType === 17) { //Time
-            $input.val(ebcontext.user.Preference.ShortTime);
+            val = moment(ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortTimePattern).format('HH:mm:ss');
         }
         else {
-            $input.val(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime);
+            val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
+        ctrl.setValue(val);
     };
 
     this.SimpleSelect = function (ctrl) {
@@ -307,11 +313,12 @@ var InitControls = function (option) {
                 let ofsetval = $drpdwn.offset();
                 let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
                 let $div_detached = $drpdwn.detach();
-                let $form_div = $(e.target).closest("[eb-type='WebForm']");
+                let $form_div = $(e.target).closest("[eb-root-obj-container]");
                 $div_detached.appendTo($form_div).wrap($divclone);
                 $div_detached.width(initDDwidth);
                 $el[0].isOutside = true;
                 $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+                $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
 
             }
             //to set position of dropdrown just below selectpicker btn
@@ -329,6 +336,7 @@ var InitControls = function (option) {
         this.SimpleSelect(ctrl);
     };
 
+    // http://davidstutz.de/bootstrap-multiselect
     this.UserLocation = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
         $input.multiselect({
@@ -351,6 +359,8 @@ var InitControls = function (option) {
                     $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(1)').children().find("input").trigger('click');
             }
         }
+
+        ctrl.DataVals.Value = ctrl.getValueFromDOM();
     };
 
     this.UserLocationCheckboxChanged = function (ctrl) {
@@ -364,6 +374,88 @@ var InitControls = function (option) {
                 $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
 
         }
+    };
+
+    this.CalendarControl = function (ctrl) {
+        console.log("eached");
+        let userObject = ebcontext.user;
+        let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
+        let stp = userObject.Preference.ShortTimePattern;//"HH mm"
+        let $input = $("#" + ctrl.EbSid_CtxId);
+
+        $input.find("#date").datetimepicker({
+            format: sdp,
+            formatTime: stp,
+            formatDate: sdp,
+            timepicker: false,
+            datepicker: true,
+            mask: true
+        });
+        $input.find("#month").MonthPicker({ Button: $input.children().find("#month").next().removeAttr("onclick") });
+        $input.find("#month").MonthPicker('option', 'ShowOn', 'both');
+        $input.find("#month").MonthPicker('option', 'UseInputMask', true);
+        $input.find("#month").MonthPicker({
+            OnAfterChooseMonth: this.SetDateFromDateTo.bind(this, $input)
+        });
+        $input.find("#year").datetimepickers({
+            format: "YYYY",
+            viewMode: "years",
+        });
+
+        $input.find("#date").next(".input-group-addon").off('click').on('click', function () {
+            $input.find("#date").datetimepicker('show');
+        });
+
+        $input.find("select").on('change', function (e) {
+            $(e.target).siblings("button").find(" .filter-option").text(this.value);
+            $input.find("select option:not([value='" + this.value + "'])").removeAttr("selected");
+            if (this.value === "Hourly") {
+                $input.children("[name=date]").show();
+                $input.children("[name=month]").hide();
+                $input.children("[name=year]").hide();
+            }
+            else if (this.value === "DayWise" || this.value === "Weekely" || this.value === "Fortnightly") {
+                $input.children("[name=month]").show();
+                $input.children("[name=date]").hide();
+                $input.children("[name=year]").hide();
+            }
+            else if (this.value === "Monthly" || this.value === "Quarterly" || this.value === "HalfYearly") {
+                $input.children("[name=year]").show();
+                $input.children("[name=date]").hide();
+                $input.children("[name=month]").hide();
+            }
+        });
+
+        $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
+        
+        $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
+
+        $input.find("select option[value='Hourly']").attr("selected", "selected");
+        $input.find("select").trigger("change");
+    };
+
+    this.SetDateFromDateTo = function ($input, e) {
+        if ($input.find("select").val() === "Hourly") {
+            $input.find("#datefrom").val($input.find("#date").val());
+            $input.find("#dateto").val($input.find("#date").val()).trigger("change");
+        }
+        else if ($input.find("select").val() === "Weekely" || $input.find("select").val() === "DayWise") {
+            let _month_year = $input.find("#month").val();
+            let month = _month_year.split("/")[0];
+            let year = _month_year.split("/")[1];
+            let startDate = moment([year, month - 1]);
+            let endDate = moment(startDate).endOf('month');
+            $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
+            $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
+        }
+        else if ($input.find("select").val() === "Monthly" || $input.find("select").val() === "Quarterly" || $input.find("select").val() === "HalfYearly") {
+            let year = $input.find("#year").val();
+            startDate = moment([year]);
+            endDate = moment([year]).endOf('year');
+            $input.find("#datefrom").val(startDate.format("YYYY-MM-DD"));
+            $input.find("#dateto").val(endDate.format("YYYY-MM-DD")).trigger("change");
+        }
+
     };
 
     this.InputGeoLocation = function (ctrl) {
@@ -562,7 +654,7 @@ var InitControls = function (option) {
 
         if (!(ctrl.IsDisable)) {
             $.each(ebcontext.locations.Locations, function (intex, obj) {
-                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`)
+                $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
         }
@@ -653,14 +745,13 @@ var InitControls = function (option) {
         });
         itemList.ctrl = ctrl;
         ctrl.setValue = itemList.setValue;
-        ctrl.getValue = itemList.getValue;
         ctrl.getDisplayMember = itemList.getDisplayMember;
         ctrl.refresh = itemList.refresh;
         ctrl.clear = itemList.clear;
-        ctrl._onChangeFunction = [];
+        ctrl._onChangeFunctions = [];
         ctrl.bindOnChange = function (p1) {
-            if (!this._onChangeFunction.includes(p1))
-                this._onChangeFunction.push(p1);
+            if (!this._onChangeFunctions.includes(p1))
+                this._onChangeFunctions.push(p1);
         };
         if (ctrl.LoadCurrentUser) {
             ctrl.setValue(ebcontext.user.UserId.toString());

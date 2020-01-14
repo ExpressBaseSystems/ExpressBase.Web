@@ -75,10 +75,7 @@ var EbBasicChart = function (Option) {
         $.ajax({
             type: 'POST',
             url: "../DV/getdata",
-            data: { draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.getFilterValues() },
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-            },
+            data: { draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.getFilterValues() },            
             success: this.getDataSuccess.bind(this),
             error: function () { }
         });

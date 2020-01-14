@@ -170,7 +170,7 @@
                 SolutionId: "@ViewBag.SolnId",
                 Container: "mb_" + this.wraperId,
                 Multiple: false,
-                ServerEventUrl: 'https://se.eb-test.xyz',
+                ServerEventUrl: 'https://se.eb-test.cloud',
                 EnableTag: false,
                 EnableCrop: false,
                 MaxSize: 2,//in MegaBytes

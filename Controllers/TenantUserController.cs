@@ -36,11 +36,11 @@ namespace ExpressBase.Web2.Controllers
                 Console.WriteLine("############################ ======------Google Key : " + Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY));
                 ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("key not found" + e.Message + e.StackTrace );
+                Console.WriteLine("key not found" + e.Message + e.StackTrace);
             }
-           
+
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
@@ -60,7 +60,7 @@ namespace ExpressBase.Web2.Controllers
                     TypeNameHandling = TypeNameHandling.All
                 });
 
-                if (this.LoggedInUser.Preference.DefaultDashBoard != null)
+                if (this.LoggedInUser.Preference.DefaultDashBoard != null && this.LoggedInUser.Preference.DefaultDashBoard != string.Empty)
                 {
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
                     ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;
@@ -68,7 +68,7 @@ namespace ExpressBase.Web2.Controllers
                     ViewBag.Status = ViewBag.GetObjectId.Status;
                 }
                 else
-                {  
+                {
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds.ElementAt(0);
                     ViewBag.VersionNumber = ViewBag.GetObjectId.Value.VersionNumber;
                     ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId.Value);
@@ -100,7 +100,13 @@ namespace ExpressBase.Web2.Controllers
         public IActionResult Logout()
         {
             ViewBag.Fname = null;
-            var abc = this.ServiceClient.Post(new Authenticate { provider = "logout" });
+            var abc = this.ServiceClient.Post(new Authenticate
+            {
+                provider = "logout",
+                Meta = new Dictionary<string, string> {
+                    { TokenConstants.CID, ViewBag.cid }
+                }
+            });
             HttpContext.Response.Cookies.Delete(RoutingConstants.BEARER_TOKEN);
             HttpContext.Response.Cookies.Delete(RoutingConstants.REFRESH_TOKEN);
             HttpContext.Response.Cookies.Delete(TokenConstants.USERAUTHID);

@@ -312,7 +312,7 @@ function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type 
 
 function EbHideCtrlMsg(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel} .req-cont:first`).animate({ opacity: "0" }, 300).remove();
+    $(`${contSel} .msg-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
 
@@ -505,6 +505,23 @@ function RecurFlatContControls(src_obj, dest_coll) {
     });
 }
 
+
+function getAllctrlsFrom(formObj) {
+    let coll = [];
+    coll.push(formObj);
+    RecurgetAllctrlsFrom(formObj, coll);
+    return coll;
+}
+
+function RecurgetAllctrlsFrom(src_obj, dest_coll) {
+    $.each(src_obj.Controls.$values, function (i, obj) {
+        dest_coll.push(obj);
+        if (obj.IsContainer) {
+            RecurgetAllctrlsFrom(obj, dest_coll);
+        }
+    });
+}
+
 function getFlatCtrlObjs(formObj) {
     let coll = [];
     RecurFlatCtrlObjs(formObj, coll);
@@ -542,6 +559,8 @@ function getValsFromForm(formObj) {
     let fltr_collection = [];
     let flag = 1;
     $.each(getFlatCtrlObjs(formObj), function (i, obj) {
+        if (obj.ObjType === "FileUploader")
+            return;
         fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, obj.getValue()));
         //if (obj.ObjType === "PowerSelect")
         //    flag++;
@@ -569,6 +588,16 @@ function getFlatContObjsOfType(ContObj, type) {
     return ctrls;
 }
 
+function getFlatObjOfTypes(ContObj, typesArr) {
+    let ctrls = [];
+    let flat = getFlatControls(ContObj);
+    $.each(flat, function (i, ctrl) {
+        if (typesArr.contains(ctrl.ObjType))
+            ctrls.push(ctrl);
+    });
+    return ctrls;
+}
+
 function getFlatObjOfType(ContObj, type) {
     let ctrls = [];
     let flat = getFlatControls(ContObj);
@@ -589,7 +618,12 @@ function getValsForViz(formObj) {
             else if (obj.EbDbType === 16)
                 value = "0";
         }
-        fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
+        if (obj.ObjType === "CalendarControl") {
+            fltr_collection.push(new fltr_obj(obj.EbDbType, "datefrom", value.split(",")[0]));
+            fltr_collection.push(new fltr_obj(obj.EbDbType, "dateto", value.split(",")[1]));
+        }
+        else
+            fltr_collection.push(new fltr_obj(obj.EbDbType, obj.Name, value));
     });
     return fltr_collection;
 }
@@ -603,7 +637,7 @@ function getSingleColumn(obj) {
     //SingleColumn.ObjType = obj.ObjType;
     SingleColumn.D = "";
     SingleColumn.C = undefined;
-    SingleColumn.R = undefined;
+    SingleColumn.R = [];
     obj.DataVals = SingleColumn;
     obj.curRowDataVals = $.extend(true, {}, SingleColumn);
 
@@ -785,18 +819,23 @@ function dgOnChangeBind() {
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
         let FnString = `
-                        let __this = form.__getCtrlByPath(this.__path);
-                        let $curRow = getRow__(__this);
-                        if(__this.DataVals !== undefined){
-                            if(__this.__isEditing){
-                                __this.curRowDataVals.Value = __this.getValueFromDOM();
-                                __this.curRowDataVals.D = __this.getDisplayMemberFromDOM();
-                            }
-                            else{
-                                __this.DataVals.Value = __this.getValueFromDOM();
-                                __this.DataVals.D = __this.getDisplayMemberFromDOM();
-                            }
-                        }`;
+let __this = form.__getCtrlByPath(this.__path);
+let $curRow = getRow__(__this);
+if (__this.DataVals !== undefined) {
+    let v = __this.getValueFromDOM();
+    let d = __this.getDisplayMemberFromDOM();
+    if (__this.ObjType === 'Numeric')
+        v = parseFloat(v);
+
+    if (__this.__isEditing) {
+        __this.curRowDataVals.Value = v;
+        __this.curRowDataVals.D = d;
+    }
+    else {
+        __this.DataVals.Value = v;
+        __this.DataVals.D = d;
+    }
+}`;
         let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
         col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
@@ -856,17 +895,17 @@ function REFF_attachModalCellRef(MultipleTables) {
 }
 
 
-function attachModalCellRef_form(container, multipleTable) {
+function attachModalCellRef_form(container, dataModel) {
     $.each(container.Controls.$values, function (i, obj) {
         if (obj.IsSpecialContainer)
             return true;
         if (obj.IsContainer) {
             obj.TableName = (typeof obj.TableName === "string") ? obj.TableName.trim() : false;
             obj.TableName = obj.TableName || container.TableName;
-            attachModalCellRef_form(obj, multipleTable);
+            attachModalCellRef_form(obj, dataModel);
         }
         else {
-            setSingleColumnRef(container.TableName, obj.Name, multipleTable, obj);
+            setSingleColumnRef(container.TableName, obj.Name, dataModel, obj);
         }
     });
 }
@@ -942,11 +981,9 @@ document.addEventListener("click", function (e) {
     }
 });
 
-function EBPSGetColummn(colName) {
-    return this.DataVals.R[colName];
-}
 
 function EBPSSetDisplayMember(p1, p2) {
+    p1 = p1 + "";
     if (p1 === '')
         return;
     let VMs = this.initializer.Vobj.valueMembers || [];
@@ -970,21 +1007,31 @@ function EBPSSetDisplayMember(p1, p2) {
     }
 
     if (this.initializer.datatable === null) {//for aftersave actions
-
-
-        for (var i = 0; i < this.DataVals.R.length; i++) {
-            let row = this.DataVals.R[i];
-            $.each(row.Columns, function (k, column) {
-                if (!columnVals[column.Name]) {
-                    console.warn('Found mismatch in Columns from datasource and Colums in object');
-                    return true;
-                }
-                let val = EbConvertValue(column.Value, column.Type);
-                columnVals[column.Name].push(val);
-            }.bind(this));
-
+        let colNames = Object.keys(this.DataVals.R);
+        for (let i = 0; i < valMsArr.length; i++) {
+            for (let j = 0; j < colNames.length; j++) {
+                let colName = colNames[j];
+                let val = this.DataVals.R[colName][i];
+                columnVals[colName].push(val);
+            }
         }
     }
+
+    //if (this.initializer.datatable === null) {//for aftersave actions
+    //    for (let i = 0; i < this.DataVals.R.length; i++) {
+    //        let row = this.DataVals.R[i];
+    //        $.each(row.Columns, function (k, column) {
+    //            if (!columnVals[column.Name]) {
+    //                console.warn('Found mismatch in Columns from datasource and Colums in object');
+    //                return true;
+    //            }
+    //            let val = EbConvertValue(column.Value, column.Type);
+    //            columnVals[column.Name].push(val);
+    //        }.bind(this));
+
+    //    }
+    //}
+
     $("#" + this.EbSid_CtxId).val(p1);
 }
 

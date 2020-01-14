@@ -9,7 +9,23 @@
     this.builderType = options.builderType;
     this.toolContClass = "tool-sec-cont";
     this.$propGrid = $("#" + options.PGId);
-    this.BeforeSave = function () { this.PGobj.getvaluesFromPG(); return true; }.bind(this);
+
+    this.beforeSave = function () {
+        let allFlatControls = getAllctrlsFrom(this.EbObject);
+
+        for (let i = 0; i < allFlatControls.length; i++) {
+            let ctrl = allFlatControls[i];
+            if (ctrl.hasOwnProperty("__OSElist"))
+                delete ctrl.__OSElist;
+            if (ctrl.hasOwnProperty("__oldValues"))
+                delete ctrl.__oldValues;
+        }
+
+        this.PGobj.getvaluesFromPG();
+        return true;
+    }.bind(this);
+
+    this.BeforeSave = this.beforeSave;
 
     $(`[eb-form=true]`).attr("ebsid", this.formId).attr("id", this.formId);
 
@@ -638,6 +654,22 @@
                 }.bind(this)
             });
         }
+
+
+        //if (ObjType === "WebForm" && CurProp === "DataPushers") {
+        //    $.LoadingOverlay('show');
+        //    $.ajax({
+        //        type: "POST",
+        //        url: "../WebForm/GetDataPusherJson",
+        //        data: { RefId: PropsObj.DataPushers.$values[0].FormRefId },
+        //        success: function (Json) {
+        //            console.log(Json);
+        //            $.LoadingOverlay('hide');
+        //        }.bind(this)
+        //    });
+        //}
+
+
     }.bind(this);
 
     this.updateChildTablesName = function (PropsObj, TblName) {

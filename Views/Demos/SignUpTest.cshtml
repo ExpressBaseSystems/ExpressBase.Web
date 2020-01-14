@@ -72,20 +72,20 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/objects_by_app",
+                url: "/api/get_data",
                 type: "GET",
                 cache: false,
                 data: {
-                    appid: 44,
-                    locid: 1,
-                    pull_data: false
+                    "refid": "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3532-2662-3532",
+                    "limit": 1,
+                    "offset": 0
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());
                 }
             }).done(function (data) {
-                
+
             });
         }
     </script>

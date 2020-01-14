@@ -129,7 +129,7 @@ namespace ExpressBase.Web.BaseControllers
                     controller.ViewBag.UserObject = JsonConvert.SerializeObject(this.LoggedInUser);
                     controller.ViewBag.EbObjectTypeMeta = JsonConvert.SerializeObject(this.GetObjectTypeMeta());
 
-                    if (controller.ViewBag.wc == TokenConstants.UC|| controller.ViewBag.wc == TokenConstants.TC)
+                    if (controller.ViewBag.wc == TokenConstants.UC || controller.ViewBag.wc == TokenConstants.TC)
                     {
                         ViewBag.Locations = GetAccessLoc(controller);
                         controller.ViewBag.CurrentLocation = this.LoggedInUser.Preference.DefaultLocation;
@@ -170,13 +170,7 @@ namespace ExpressBase.Web.BaseControllers
             List<EbLocation> list = new List<EbLocation>();
             try
             {
-                Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", contrlr.ViewBag.cid));
-
-                if (s_obj == null)
-                {
-                    this.ServiceClient.Post(new UpdateSolutionRequest() { SolnId = contrlr.ViewBag.cid});
-                    s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", contrlr.ViewBag.cid));
-                }
+                Eb_Solution s_obj = GetSolutionObject(contrlr.ViewBag.cid);                
                 if (this.LoggedInUser.LocationIds.Contains(-1) || this.LoggedInUser.Roles.Contains("SolutionAdmin"))
                     list = s_obj.Locations.Values.ToList();
                 else
@@ -193,9 +187,9 @@ namespace ExpressBase.Web.BaseControllers
                 }
                 _json = JsonConvert.SerializeObject(list);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Console.WriteLine("Error GetAccessLoc :" + e.StackTrace + "\n"+ e.Message);
+                Console.WriteLine("Error GetAccessLoc :" + e.StackTrace + "\n" + e.Message);
             }
             return _json;
         }

@@ -21,6 +21,7 @@ using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
 using ExpressBase.Web.Filters;
 using ExpressBase.Common.LocationNSolution;
+using ExpressBase.Common.Data;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -217,9 +218,13 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = (password + username).ToMD5Hash(),
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
                     RememberMe = true
-                    //UseTokenCookie = true
                 });
 
                 if (authResponse != null && authResponse.User != null)
@@ -253,9 +258,13 @@ namespace ExpressBase.Web.Controllers
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
                     Password = password,
-                    Meta = new Dictionary<string, string> { { RoutingConstants.WC, RoutingConstants.UC }, { TokenConstants.CID, this.SultionId } },
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
                     RememberMe = true
-                    //UseTokenCookie = true
                 });
 
                 if (authResponse != null && authResponse.User != null)
@@ -403,6 +412,29 @@ namespace ExpressBase.Web.Controllers
             return doc.InnerXml;
         }
 
+        [HttpGet("api/validate_solution")]
+        public ValidateSidResponse ValidateSolution()
+        {
+            ValidateSidResponse resp = new ValidateSidResponse();
+            try
+            {
+                resp.IsValid = ViewBag.IsValidSol;
+                if (resp.IsValid)
+                {
+                    DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
+                    {
+                        SolnId = this.SultionId,
+                    });
+                    resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return resp;
+        }
+
         [HttpGet("api/menu")]
         public GetMobMenuResonse GetAppData4Mob(int locid = 1)
         {
@@ -482,6 +514,38 @@ namespace ExpressBase.Web.Controllers
                 }
             }
             return Resp;
+        }
+
+        [HttpGet("api/get_data")]
+        public GetMobileVisDataResponse GetMobileVisData(string refid, string param, int limit, int offset)
+        {
+            GetMobileVisDataResponse resp = null;
+            try
+            {
+                if (ViewBag.IsValid)
+                {
+                    GetMobileVisDataRequest request = new GetMobileVisDataRequest()
+                    {
+                        DataSourceRefId = refid,
+                        Limit = limit,
+                        Offset = offset
+                    };
+
+                    if (param != null)
+                    {
+                        var p = JsonConvert.DeserializeObject<List<Param>>(param);
+                        request.Params.AddRange(p);
+                    }
+
+                    resp = this.ServiceClient.Get(request);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return resp;
         }
     }
 }

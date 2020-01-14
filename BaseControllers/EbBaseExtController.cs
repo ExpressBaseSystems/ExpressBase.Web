@@ -16,13 +16,17 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBaseExtController(IEbStaticFileClient _sfc) : base(_sfc) { }
 
+        public EbBaseExtController(IEbStaticFileClient _sfc, IRedisClient _redis) : base(_sfc, _redis) { }
+
         public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-		public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc) : base(_ssclient, _redis, _cxtacc) { }
+        public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc) : base(_ssclient, _redis, _cxtacc, _mqc) { }
 
-		public EbBaseExtController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
+        public EbBaseExtController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
         public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
+
+        public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_ssclient, _redis, _cxtacc, _mqc, _auth) { }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {

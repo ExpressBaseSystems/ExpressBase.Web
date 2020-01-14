@@ -105,7 +105,7 @@ const EbSelect = function (ctrl, options) {
             $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
             $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
-            this.$searchBoxes.dblclick(this.V_showDD.bind(this));//serch box double click -DDenabling
+            $('#' + this.name + 'Wraper' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
             this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
@@ -216,7 +216,7 @@ const EbSelect = function (ctrl, options) {
 
     this.setValues = function (StrValues, callBFn = function () { }) {
         this.clearValues();
-        if (StrValues === "")
+        if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
@@ -362,6 +362,7 @@ const EbSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rt";
         o.source = "powerselect";
+        o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
@@ -385,7 +386,7 @@ const EbSelect = function (ctrl, options) {
             let xtra_wdth = tbl_cod.left;
             if ((contWidth + tbl_cod.left) > brow_wdth)
                 xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
-            let $form_div = $('#' + this.name).closest("[eb-type='WebForm']");
+            let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
             div_detach.appendTo($form_div).offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
 
         }.bind(this), 30);
@@ -542,7 +543,10 @@ const EbSelect = function (ctrl, options) {
             let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
             let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
             let cellData = this.datatable.Api.row($rowEl).data()[idx];
-            this.columnVals[name].push(EbConvertValue(cellData, type));
+            let fval = EbConvertValue(cellData, type);
+            if (type === 5)
+                fval = this.datatable.data[$rowEl.index()][idx];// unformatted data
+            this.columnVals[name].push(fval);
         }.bind(this));
     };
 

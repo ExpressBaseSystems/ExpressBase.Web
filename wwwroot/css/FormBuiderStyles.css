@@ -350,6 +350,8 @@
         border-right: dotted 1px transparent !important;
     }
 
+
+
 .dgtbl .row-no-td {
     width: 34px;
     text-align: center;
@@ -426,7 +428,7 @@ eb-disable {
 
 
 .ctrlstd {
-    display: flex;
+    /*display: flex;*/
 }
 
 
@@ -545,6 +547,11 @@ eb-disable {
     background-color: white;
 }
 
+.dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+    background-color: #e7edf4 !important;
+}
+
+
 .dgtbl > tbody > tr th:last-child, .fs-tbl > tbody > tr th:last-child {
     text-align: center;
 }
@@ -586,6 +593,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
     border: none;
+}
+
+.eb-disablebtn {
+    filter: grayscale(90%);
+    pointer-events: none;
 }
 
 .grid-cont {
@@ -856,6 +868,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ctrl-cover > .btn-group.bootstrap-select {
     width: 100% !important;
 }
+.ctrl-cover .bootstrap-select {
+    width: 100% !important;
+}
 
 [ctype=SimpleSelect] .ctrl-cover .dropdown-toggle,
 [ctype=PowerSelect] .ctrl-cover .dropdown-toggle,
@@ -920,7 +935,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .msg-cont {
-    position: relative;
+    /*position: relative;*/
 }
 
     .msg-cont > label, .req-cont > label {

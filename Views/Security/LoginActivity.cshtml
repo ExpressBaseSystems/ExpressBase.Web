@@ -1,0 +1,69 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    //Html.RenderPartial("ExtPageHeader");
+}
+@using ExpressBase.Objects.ServiceStack_Artifacts;
+
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+
+<link rel="stylesheet" href="~/css/SecurityStyle.css">
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
+<link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
+<script src="~/js/SupportTicket/SupportTicketjs.js" type="text/javascript"></script>
+<script src="~/js/CommonDataTable.js"></script>
+<script src="~/js/Eb_Basic_DataTable.js"></script>
+<script src="~/js/Eb_select.js"></script>
+<script type="text/javascript" src="~/js/datatables.min.js"></script>
+
+<div class="row s-dash-container h-100">
+
+    <div class="s-dash-workplace activity_workpane">
+        <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
+            <div class="col-md-7 col-lg-7 col-xs-12 col-sm-6 pd-0">
+                <h4 class="mr-t-0 mr-b-0">Login Activity </h4>
+            </div>
+
+        </div>
+        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs">
+            <div class="tdash-box-body">
+                <div class="loginActivity w-100">
+                    <div class="w-100 loginActivitywrp">
+                        <div id="activity_div">
+                            <table class="table  " id="activity_table">
+                                @*<thead class=" ">
+                                        <tr>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="activitytblbody">
+                                    </tbody>*@
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var o = {};
+    o.columns =  @Html.Raw(ViewBag.ColumnEb);
+    o.data = @Html.Raw(ViewBag.RowsEb);
+    o.containerId = 'activity_div';
+    o.tableId = 'activity_table';
+    o.showFilterRow = false;
+    o.showCheckboxColumn = false;
+    o.datetimeformat = true;
+    o.IsPaging = true;
+    this.datatable = new EbBasicDataTable(o);
+</script>

@@ -48,12 +48,7 @@ namespace ExpressBase.Web.Controllers
             HttpContext.Items["ObjectType"] = type;
             ViewBag.mode = buildermode;
 
-            Eb_Solution soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (soln == null)
-            {
-                this.ServiceClient.Post(new UpdateSolutionRequest { SolnId = ViewBag.cid, UserId = ViewBag.UId });
-                soln = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            }
+            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
             ViewBag.versioning = soln.IsVersioningEnabled;
 
             if (objid != "null")
@@ -282,7 +277,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 List<int> types = new List<int>() { 14, 16, 17, 21 };
                 GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
-                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.WebForm);
                 ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
             }
             else if (type.Equals(EbObjectTypes.CalendarView))

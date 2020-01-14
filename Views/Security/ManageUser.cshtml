@@ -12,6 +12,8 @@
     <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="~/css/SecurityStyle.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap2-toggle.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
+    <link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd>
 }
 @section JavaScript{
     <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap2-toggle.min.js"></script>
@@ -19,6 +21,11 @@
     <script type="text/javascript" src="~/js/ManageUser.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/TileSetup.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <script src="~/js/CommonDataTable.js"></script>
+    <script src="~/js/Eb_Basic_DataTable.js"></script>
+    <script src="~/js/Eb_select.js"></script>
+    <script type="text/javascript" src="~/js/datatables.min.js"></script>
+
 }
 
 @{
@@ -36,8 +43,8 @@
     var LocConstraint = (Html.Raw(ViewBag.LocConstraint).ToString() == "") ? "null" : Html.Raw(ViewBag.LocConstraint);
 }
 
-    <div class="row s-dash-container h-100">
-        @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
+<div class="row s-dash-container h-100">
+    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
             <div class="t-container">
                 <ul class="list-group eb-dashbord-sidebar">
                     <li class="list-group-item outer_li text-center">
@@ -85,245 +92,254 @@
                 </ul>
             </div>
         </div>*@
-        <div class="s-dash-workplace tenant_workpane h-100">
-            <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs h-100">
-                <div class="mu-parent-div">
-                        <div class="col-md-3 col-lg-3">
-                            <div id="profimage" style="text-align:center;">
+    <div class="s-dash-workplace tenant_workpane h-100">
+        <div class="col-md-12 col-lg-12 col-sm-12 col-xs-12 pd-0 s-dash-workplace-tabs h-100">
+            <div class="mu-parent-div">
+                <div class="col-md-3 col-lg-3">
+                    <div id="profimage" style="text-align:center;">
 
-                                @{
-                                    var dpurl = "/images/dp/" + ViewBag.itemid + ".png";
-                                    if (ViewBag.itemid == 0)
-                                    {
-                                        dpurl = "/images/nulldp.png";
-                                    }
-                                    <img src="@dpurl" id="imgprofimage" style="height: 128px; border-radius: 50%;" onerror="this.src = '/images/imagenotfound.svg';" />
-                                }
+                        @{
+                            var dpurl = "/images/dp/" + ViewBag.itemid + ".png";
+                            if (ViewBag.itemid == 0)
+                            {
+                                dpurl = "/images/nulldp.png";
+                            }
+                            <img src="@dpurl" id="imgprofimage" style="height: 128px; border-radius: 50%;" onerror="this.src = '/images/imagenotfound.svg';" />
+                        }
 
-                            </div>
-                            <div class="form-group">
-                                <label class="label-custom-style">Full Name</label>
-                                <input id="txtFullName" class="form-control input-custom-style" type="text" title="Name" autocomplete="off">
-                            </div>
-                            <div class="form-group" style="">
-                                <label class="label-custom-style">Nick Name</label>
-                                <input id="txtNickName" class="form-control input-custom-style" type="text" title="Nick Name" autocomplete="off">
-                            </div>
-                            <div class="form-group">
-                                <label class="label-custom-style">Email ID</label>
+                    </div>
+                    <div class="form-group">
+                        <label class="label-custom-style">Full Name</label>
+                        <input id="txtFullName" class="form-control input-custom-style" type="text" title="Name" autocomplete="off">
+                    </div>
+                    <div class="form-group" style="">
+                        <label class="label-custom-style">Nick Name</label>
+                        <input id="txtNickName" class="form-control input-custom-style" type="text" title="Nick Name" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label class="label-custom-style">Email ID</label>
+                        <div class="input-group">
+                            <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                            <input style="padding-right: 25px;" class="form-control input-custom-style txtEmail" type="text" title="Email ID" autocomplete="off">
+                            @*<span class="input-group-addon form-control-feedback" id="spanEmail" style="border: none; background-color: transparent; padding: 0px; right: 26px;top: -1px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>*@
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div id="divPassword" style="width: 100%;">
+                            <div style="margin-bottom: 15px;">
+                                <label class="label-custom-style">Password</label>
                                 <div class="input-group">
-                                    <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                                    <input style="padding-right: 25px;" class="form-control input-custom-style txtEmail" type="text" title="Email ID" autocomplete="off">
-                                    @*<span class="input-group-addon form-control-feedback" id="spanEmail" style="border: none; background-color: transparent; padding: 0px; right: 26px;top: -1px;"><i class="fa fa-times" aria-hidden="true" style="color: transparent; padding: 9px;"></i></span>*@
+                                    <span class="input-group-addon span-custom-style"><i class="fa fa-key" aria-hidden="true"></i></span>
+                                    <input id="pwdPassword" type="password" class="form-control input-custom-style" title="Password" autocomplete="off">
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <div id="divPassword" style="width: 100%;">
-                                    <div style="margin-bottom: 15px;">
-                                        <label class="label-custom-style">Password</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon span-custom-style"><i class="fa fa-key" aria-hidden="true"></i></span>
-                                            <input id="pwdPassword" type="password" class="form-control input-custom-style" title="Password" autocomplete="off">
-                                        </div>
-                                    </div>
-                                    <div style="margin-bottom: 15px;">
-                                        <label class="label-custom-style">Confirm Password</label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon span-custom-style"><i class="fa fa-key" aria-hidden="true"></i></span>
-                                            <input id="pwdPasswordCon" type="password" class="form-control input-custom-style" title="Confirm Password" autocomplete="off" style="border-radius: 0 4px 4px 0;">
-                                        </div>
-                                    </div>
+                            <div style="margin-bottom: 15px;">
+                                <label class="label-custom-style">Confirm Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon span-custom-style"><i class="fa fa-key" aria-hidden="true"></i></span>
+                                    <input id="pwdPasswordCon" type="password" class="form-control input-custom-style" title="Confirm Password" autocomplete="off" style="border-radius: 0 4px 4px 0;">
                                 </div>
-                                <div id="divChangePassword" style="padding: 8px 0; display:none;">
-                                    <button id="btnChangePassword" class="btn-resetpw" title="Change Password">Change Password</button>
-                                </div>
-                                <div id="divResetPassword" style="padding: 8px 0; display:none;">
-                                    <button id="btnResetPassword" class="ebbtn eb_btn-sm btn-resetpw" title="Reset Password">Reset Password</button>
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin: 0">
-                                <input id="email" type="email" class="form-control" style="padding: 0; width: 0; border: none; height: 0;">
                             </div>
                         </div>
+                        <div id="divChangePassword" style="padding: 8px 0; display:none;">
+                            <button id="btnChangePassword" class="btn-resetpw" title="Change Password">Change Password</button>
+                        </div>
+                        <div id="divResetPassword" style="padding: 8px 0; display:none;">
+                            <button id="btnResetPassword" class="ebbtn eb_btn-sm btn-resetpw" title="Reset Password">Reset Password</button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin: 0">
+                        <input id="email" type="email" class="form-control" style="padding: 0; width: 0; border: none; height: 0;">
+                    </div>
+                </div>
 
-                        <div class="col-md-9">
-                            <div class="user-tab-paneInner h-100">
-                                <ul class="nav nav-tabs eb-styledTab">
-                                    <li><a data-toggle="tab" href="#settings"><i class="fa fa-cog"></i> Settings</a></li>
-                                    <li><a data-toggle="tab" href="#menu1"><i class="fa fa-user-plus"></i> Roles</a></li>
-                                    <li><a data-toggle="tab" href="#menu2"><i class="fa fa-ban"></i> Constraints</a></li>
-                                    <li><a data-toggle="tab" href="#menu3"><i class="fa fa-users"></i> User Groups</a></li>
-                                    <li><a data-toggle="tab" href="#menu4"><i class="fa fa-heart"></i> Preference</a></li>
-                                    <li><a data-toggle="tab" href="#api"><i class="fa fa-code"></i> Api</a></li>
-                                    <li class="active"><a data-toggle="tab" href="#profile"><i class="fa fa-user"></i> Profile</a></li>
-                                </ul>
-                                <div class="tab-content" style="background-color:transparent;">
-                                    <div id="settings" class="tab-pane fade">
-                                        <div class="form-group user-status-div" id="divStatus" style="display: none;">
+                <div class="col-md-9">
+                    <div class="user-tab-paneInner h-100">
+                        <ul class="nav nav-tabs eb-styledTab">
+                            <li><a data-toggle="tab" href="#settings"><i class="fa fa-cog"></i> Settings</a></li>
+                            <li><a data-toggle="tab" href="#menu1"><i class="fa fa-user-plus"></i> Roles</a></li>
+                            <li><a data-toggle="tab" href="#menu2"><i class="fa fa-ban"></i> Constraints</a></li>
+                            <li><a data-toggle="tab" href="#menu3"><i class="fa fa-users"></i> User Groups</a></li>
+                            <li><a data-toggle="tab" href="#menu4"><i class="fa fa-heart"></i> Preference</a></li>
+                            <li><a data-toggle="tab" href="#api"><i class="fa fa-code"></i> Api</a></li>
+                            <li class="active"><a data-toggle="tab" href="#profile"><i class="fa fa-user"></i> Profile</a></li>
+                            <li><a data-toggle="tab" href="#login_activity"><i class="fa fa-history"></i> Login Activity</a></li>
+                        </ul>
+                        <div class="tab-content" style="background-color:transparent;">
+                            <div id="settings" class="tab-pane fade">
+                                <div class="form-group user-status-div" id="divStatus" style="display: none;">
+                                    <div class="form-group">
+                                        <label class="label-custom-style">User Status</label>
+                                        <br />
+                                        <label class="radio-inline"><input type="radio" name="status" value="0" checked>Active</label>
+                                        <label class="radio-inline"><input type="radio" name="status" value="1">Suspend</label>
+                                        <label class="radio-inline"><input type="radio" name="status" value="2">Terminate</label>
+                                        <label class="radio-inline" style="display: none;"><input type="radio" name="status" value="3">Delete</label>
+                                    </div>
+                                    <div class="form-group" id="divVisibility">
+                                        <label class="label-custom-style w-100">Visibility </label>
+                                        <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="menu1" class="tab-pane fade"></div>
+                            <div id="menu2" class="tab-pane fade" style="padding-top:30px;">
+                                <div class="row home-tab-cont">
+                                    <div class="col-md-6">
+                                        <div class="form-group" id="divLocConstraint">
+                                            <label class="label-custom-style">Locations white list</label>
+                                            <input id="txtLocations" class="form-control input-custom-style" type="text" title="Locations" autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="label-custom-style">Mobile Device IDs white list</label>
+                                            <input id="" class="form-control input-custom-style" data-role="tagsinput" type="text" title="Mobile Device ID" autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                @*<div style="text-align: center; padding-top: 28%; font-size: 28px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>*@
+                            </div>
+                            <div id="menu3" class="tab-pane fade"></div>
+                            <div id="menu4" class="tab-pane fade" style="padding-top:30px">
+                                <div class="row home-tab-cont">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="label-custom-style">Select Time Zone:</label>
+                                            <select id="seltimezone" name="timezone" class="form-control input-custom-style"></select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="label-custom-style">Select Locale:</label>
+                                            <select class="form-control input-custom-style" id="sellocale" name="locale"></select>
+                                        </div>
+                                        <div class="form-group" id="divLocaleInfo"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" style="display:none">
+                                            <label class="label-custom-style">Default Location:</label>
+                                            <select id="selDefaultLocation" name="DefaultLocation" class="form-control input-custom-style"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="api" class="tab-pane fade">
+                                <label class="label-custom-style">Api Key</label>
+                                <div style="display:flex;">
+                                    <div class="col-md-6 pd-l-0">
+                                        <div class="form-group">
+                                            <label class="" style="font-weight: 300;">Development</label>
+                                            <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 pd-r-0">
+                                        <div class="form-group">
+                                            <label class="" style="font-weight: 300;">Live</label>
+                                            <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button class="ebbtn eb_btn-sm eb_btnblue" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Api key generation was temporarily suspended'); $(event.target).prop('disabled', false);}, 2000, event);">Generate</button>
+                            </div>
+                            <div id="profile" class="tab-pane fade in active">
+                                <div class="row home-tab-cont">
+                                    <div class="col-md-12">
+                                        <div class="col-md-4 pd-0">
                                             <div class="form-group">
-                                                <label class="label-custom-style">User Status</label>
+                                                <label class="label-custom-style">Alternate Email ID</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
+                                                    <input class="form-control txtAlternateEmail input-custom-style" type="text" title="Alternate Email ID" autocomplete="off">
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="divGender">
+                                                <label class="label-custom-style">Gender</label>
                                                 <br />
-                                                <label class="radio-inline"><input type="radio" name="status" value="0" checked>Active</label>
-                                                <label class="radio-inline"><input type="radio" name="status" value="1">Suspend</label>
-                                                <label class="radio-inline"><input type="radio" name="status" value="2">Terminate</label>
-                                                <label class="radio-inline" style="display: none;"><input type="radio" name="status" value="3">Delete</label>
+                                                <label class="radio-inline"><input type="radio" name="gender" value="Male" checked>Male</label>
+                                                <label class="radio-inline"><input type="radio" name="gender" value="Female">Female</label>
+                                                <label class="radio-inline"><input type="radio" name="gender" value="Other">Other</label>
                                             </div>
-                                            <div class="form-group" id="divVisibility">
-                                                <label class="label-custom-style w-100">Visibility </label>
-                                                <input id="chkboxHide" type="checkbox" data-toggle="toggle" data-on="Hidden" data-off="Exposed">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="menu1" class="tab-pane fade"></div>
-                                    <div id="menu2" class="tab-pane fade" style="padding-top:30px;">
-                                        <div class="row home-tab-cont">
-                                            <div class="col-md-6">
-                                                <div class="form-group" id="divLocConstraint">
-                                                    <label class="label-custom-style">Locations white list</label>
-                                                    <input id="txtLocations" class="form-control input-custom-style" type="text" title="Locations" autocomplete="off">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label-custom-style">Mobile Device IDs white list</label>
-                                                    <input id="" class="form-control input-custom-style" data-role="tagsinput" type="text" title="Mobile Device ID" autocomplete="off">
+                                            <div class="form-group">
+                                                <label class="label-custom-style">Date of Birth</label>
+                                                <div class="input-group">
+                                                    <input class="form-control input-custom-style" style="border: 1px solid #ccc;border-right:none;" type="text" id="txtDateOfBirth" title="Date of Birth" autocomplete="off">
+                                                    <span class="input-group-addon span-custom-style" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-8 col-lg-8">
 
-
-                                        @*<div style="text-align: center; padding-top: 28%; font-size: 28px; color: #bbb; height: calc(100vh - 120px);"> Coming Soon </div>*@
+                                        </div>
                                     </div>
-                                    <div id="menu3" class="tab-pane fade"></div>
-                                    <div id="menu4" class="tab-pane fade" style="padding-top:30px">
-                                        <div class="row home-tab-cont">
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label-custom-style">Select Time Zone:</label>
-                                                    <select id="seltimezone" name="timezone" class="form-control input-custom-style"></select>
+                                    <div class="col-md-12">
+                                        <div class="col-md-4 pd-0">
+                                            <div class="form-group">
+                                                <label class="label-custom-style">Primary Phone Number</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                                    <input id="txtPhPrimary" class="form-control input-custom-style" type="text" title="Primary Phone Number" autocomplete="off">
                                                 </div>
-                                                <div class="form-group">
-                                                    <label class="label-custom-style">Select Locale:</label>
-                                                    <select class="form-control input-custom-style" id="sellocale" name="locale"></select>
-                                                </div>
-                                                <div class="form-group" id="divLocaleInfo"></div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="label-custom-style">Default Location:</label>
-                                                    <select id="selDefaultLocation" name="DefaultLocation" class="form-control input-custom-style"></select>
+                                        </div>
+                                        <div class="col-md-4 pd-r-0">
+                                            <div class="form-group">
+                                                <label class="label-custom-style">Secondary Phone Number</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                                    <input id="txtPhSecondary" class="form-control input-custom-style" type="text" title="Secondary Phone Number" autocomplete="off">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="label-custom-style">Land Phone Number</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
+                                                    <input id="txtLandPhone" class="form-control input-custom-style" type="text" title="Land Phone Number" autocomplete="off">
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="api" class="tab-pane fade">
-                                        <label class="label-custom-style">Api Key</label>
-                                        <div style="display:flex;">
-                                            <div class="col-md-6 pd-l-0">
-                                                <div class="form-group">
-                                                    <label class="" style="font-weight: 300;">Development</label>
-                                                    <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 pd-r-0">
-                                                <div class="form-group">
-                                                    <label class="" style="font-weight: 300;">Live</label>
-                                                    <textarea id="" class="form-control input-custom-style" type="text" title="" style="height: 100px; resize: none;" autocomplete="off"></textarea>
-                                                </div>
+                                    <div class="col-md-12">
+                                        <div class="col-md-4 pd-0">
+                                            <div class="form-group">
+                                                <label class="label-custom-style">Extension</label>
+                                                <input id="txtExtension" class="form-control input-custom-style" type="text" title="Extension" autocomplete="off">
                                             </div>
                                         </div>
-                                        
-                                        <button class="ebbtn eb_btn-sm eb_btnblue" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Api key generation was temporarily suspended'); $(event.target).prop('disabled', false);}, 2000, event);">Generate</button>
-                                    </div>
-                                    <div id="profile" class="tab-pane fade in active">
-                                        <div class="row home-tab-cont">
-                                            <div class="col-md-12">
-                                                <div class="col-md-4 pd-0">
-                                                    <div class="form-group">
-                                                        <label class="label-custom-style">Alternate Email ID</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon span-custom-style"><i class="fa fa-envelope" aria-hidden="true"></i></span>
-                                                            <input class="form-control txtAlternateEmail input-custom-style" type="text" title="Alternate Email ID" autocomplete="off">
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-group" id="divGender">
-                                                        <label class="label-custom-style">Gender</label>
-                                                        <br />
-                                                        <label class="radio-inline"><input type="radio" name="gender" value="Male" checked>Male</label>
-                                                        <label class="radio-inline"><input type="radio" name="gender" value="Female">Female</label>
-                                                        <label class="radio-inline"><input type="radio" name="gender" value="Other">Other</label>
-                                                    </div>
-                                                    <div class="form-group">
-                                                        <label class="label-custom-style">Date of Birth</label>
-                                                        <div class="input-group">
-                                                            <input class="form-control input-custom-style" style="border: 1px solid #ccc;border-right:none;" type="text" id="txtDateOfBirth" title="Date of Birth" autocomplete="off">
-                                                            <span class="input-group-addon span-custom-style" onclick="if(!($('#txtDateOfBirth').attr('disabled'))) $('#txtDateOfBirth').datetimepicker('show');"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-8 col-lg-8">
-                                                   
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="col-md-4 pd-0">
-                                                    <div class="form-group">
-                                                        <label class="label-custom-style">Primary Phone Number</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                                            <input id="txtPhPrimary" class="form-control input-custom-style" type="text" title="Primary Phone Number" autocomplete="off">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 pd-r-0">
-                                                    <div class="form-group">
-                                                        <label class="label-custom-style">Secondary Phone Number</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                                            <input id="txtPhSecondary" class="form-control input-custom-style" type="text" title="Secondary Phone Number" autocomplete="off">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label class="label-custom-style">Land Phone Number</label>
-                                                        <div class="input-group">
-                                                            <span class="input-group-addon span-custom-style"><i class="fa fa-phone-square" aria-hidden="true"></i></span>
-                                                            <input id="txtLandPhone" class="form-control input-custom-style" type="text" title="Land Phone Number" autocomplete="off">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="col-md-4 pd-0">
-                                                    <div class="form-group">
-                                                        <label class="label-custom-style">Extension</label>
-                                                        <input id="txtExtension" class="form-control input-custom-style" type="text" title="Extension" autocomplete="off">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group">
-                                                        <label id="lblFbId" style="font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
-                                                        <br />
-                                                        <img id="imgUserFbProfPic" src="" alt="Prof Pic" height="42" width="42" style="display:none;">
-                                                        <a id="userFbLink" href="#" target="_blank" style="display:none;"></a>
-                                                        <button id="btnFbConnect" class="" title="Connect Facebook" style="display:none;">Connect Facebook</button>
-                                                        <button id="btnFbInvite" class="ebbtn eb_btnblue" title="Invite Facebook" style="display:none;" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Unable to Connect'); $(event.target).prop('disabled', false);}, 1500, event);">Invite Facebook</button>
-                                                    </div>
-                                                </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label id="lblFbId" style="font-weight: 300;" data-id=""><i class="fa fa-facebook-square" aria-hidden="true"></i> &nbsp; Facebook</label>
+                                                <br />
+                                                <img id="imgUserFbProfPic" src="" alt="Prof Pic" height="42" width="42" style="display:none;">
+                                                <a id="userFbLink" href="#" target="_blank" style="display:none;"></a>
+                                                <button id="btnFbConnect" class="" title="Connect Facebook" style="display:none;">Connect Facebook</button>
+                                                <button id="btnFbInvite" class="ebbtn eb_btnblue" title="Invite Facebook" style="display:none;" onclick="$(event.target).prop('disabled', true); setTimeout(function(){ alert('Unable to Connect'); $(event.target).prop('disabled', false);}, 1500, event);">Invite Facebook</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
-                            @*<button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>*@
-                            <label id="lblMessage" style="color:red;padding-left: 36px;display:none; font-weight: 500;">  </label>
+                            <div id="login_activity" class="tab-pane fade">
+                                <div class="loginActivity w-100">
+                                    <div id="activity_div">
+                                        <table class="table" id="activity_table">
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <input type="hidden" id="userid" name="userid" value="@ViewBag.itemid" />
+                    @*<button id="btnCreateUser" type="button" class="btn btn-info" style="margin:20px 40px; float:right;">Create</button>*@
+                    <label id="lblMessage" style="color:red;padding-left: 36px;display:none; font-weight: 500;">  </label>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 <div id="MU_ChangePwdModal" class="modal fade" role="dialog">
     <div class="modal-dialog" style="width:445px">
@@ -389,7 +405,7 @@
             </div>
             <div class="modal-footer" style="border-style:none;">
                 <div style="display:flex;">
-                    <button id="btnResetPwd" style="margin-left:auto;margin-right:10px;"class="ebbtn eb_btn-sm eb_btnblue"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Reset</button>
+                    <button id="btnResetPwd" style="margin-left:auto;margin-right:10px;" class="ebbtn eb_btn-sm eb_btnblue"><i class="fa fa-spinner fa-pulse" aria-hidden="true" style=" display:none;"></i>Reset</button>
                     <button class="ebbtn eb_btn-sm eb_btnplain" data-dismiss="modal">Cancel</button>
                 </div>
             </div>
@@ -435,6 +451,23 @@
         d.windowClose = function () {
             EbMessage("show", { Message: "window closed",Background: "red" });
         }
+        //for login activity
+         var o = {};
+        o.columns =  @Html.Raw(ViewBag.ColumnEb);
+        o.data = @Html.Raw(ViewBag.RowsEb);
+        o.containerId = 'activity_div';
+        o.tableId = 'activity_table';
+        o.showFilterRow = false;
+        o.showCheckboxColumn = false;
+        o.datetimeformat = true;
+        o.IsPaging = true;
+        var datatable = new EbBasicDataTable(o);
+    });
+
+    $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr("href") // activated tab
+        if(target == "#login_activity")
+            $('#activity_table').DataTable().columns.adjust();
     });
     </script>
 }

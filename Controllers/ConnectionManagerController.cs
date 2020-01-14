@@ -665,6 +665,25 @@ namespace ExpressBase.Web.Controllers
                     Id = Convert.ToInt32(req["Id"])
                 };
             }
+            if (vendor == DatabaseVendors.MSSQL)
+            {
+                con = new MSSqlConfig()
+                {
+                    DatabaseName = req["databaseName"],
+                    Server = req["server"],
+                    Port = Convert.ToInt32(req["port"]),
+                    UserName = req["userName"],
+                    Password = req["password"],
+                    ReadWriteUserName = req["readWriteUserName"],
+                    ReadWritePassword = req["readWritePassword"],
+                    ReadOnlyUserName = req["readOnlyUserName"],
+                    ReadOnlyPassword = req["readOnlyPassword"],
+                    Timeout = Convert.ToInt32(req["timeout"]),
+                    IsSSL = (req["IsSSL"] == "on") ? true : false,
+                    NickName = req["nickname"],
+                    Id = Convert.ToInt32(req["Id"])
+                };
+            }
             try
             {
                 AddDBResponse response = this.ServiceClient.Post<AddDBResponse>(new AddDBRequest
@@ -1184,7 +1203,7 @@ namespace ExpressBase.Web.Controllers
 
             try
             {
-                if (preferancetype != null)
+                if (preferancetype == string.Empty)
                 {
                     var req = JsonConvert.DeserializeObject<EbIntegration>(preferancetype);
                     res = this.ServiceClient.Post<EbIntegrationResponse>(new EbIntegrationRequest { IntegrationO = req, SolnId = sid });

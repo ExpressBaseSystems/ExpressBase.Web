@@ -10,7 +10,7 @@
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
     this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
-    this.DataMODEL = this.formRenderer.formData.MultipleTables[this.ctrl.TableName];
+    this.DataMODEL = this.formRenderer.DataMODEL[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -39,7 +39,7 @@
     this.setEditModeRows = function (dataModel) {
         this.DataMODEL = dataModel;
         this.curRowDataMODEL = this.getRowDataModel_();
-        this.constructObjectModel(this.DataMODEL);// 
+        this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
         this.drawHTMLView();
 
@@ -964,6 +964,7 @@
             let SingleColumn = getObjByval(row.Columns, "Name", inpCtrl.Name);
             if (SingleColumn) {
                 inpCtrl.DataVals = SingleColumn;
+                inpCtrl.curRowDataVals = $.extend(true, {}, SingleColumn);
             }
         }
     }.bind(this);

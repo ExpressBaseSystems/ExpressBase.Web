@@ -1036,7 +1036,7 @@
             $tr.find(".edit-row").trigger("click");
             setTimeout(function () {
                 $e.closest("td").find("[ui-inp]").select();
-            },310);
+            }, 310);
         }
     }.bind(this);
 
@@ -1709,7 +1709,44 @@
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);
+        $.contextMenu(this.CtxSettingsObj);
     };
+
+    this.ctxBuildFn = function ($trigger, e) {
+        return {
+            items: {
+                "deleteRow": {
+                    name: "Delete row",
+                    icon: "fa-trash",
+                    callback: this.del
+                },
+                "insertRowBelow": {
+                    name: "Insert row below",
+                    icon: "fa-trash",
+                    callback: this.del
+
+                },
+                "Remove": {
+                    name: "insertRowAbove",
+                    icon: "fa-trash",
+                    callback: this.del
+
+                }
+            }
+        };
+    }.bind(this);
+
+    this.CtxSettingsObj = {
+        selector: '[eb-form="true"][mode="edit"] .dgtr',
+        autoHide: true,
+        build: this.ctxBuildFn.bind(this)
+    };
+
+    this.del = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let $tr = $e.closest("tr");
+        $tr.find(".del-row").trigger("click");
+    }.bind(this);
 
     this.dg_HScroll = function (e) {
         let $e = $(event.target);

@@ -1063,7 +1063,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
     display: inline-block;
     margin: 1px 0;
-    /*z-index: -1;*/
+    z-index: -1;
 }
 
 .eb-lbltxtb {

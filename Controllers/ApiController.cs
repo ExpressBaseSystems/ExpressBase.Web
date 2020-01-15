@@ -361,6 +361,90 @@ namespace ExpressBase.Web.Controllers
             return ApiResp;
         }
 
+        [HttpPost("/api/files/upload")]
+        public async Task<ApiResponse> UploadFiles()
+        {
+            ApiResponse ApiResp = new ApiResponse { Name = "fileupload", Result = new List<ApiFileData>() };
+            ApiResp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+
+            var watch = new System.Diagnostics.Stopwatch(); watch.Start();
+            var req = this.HttpContext.Request.Form;
+            string _filename = string.Empty;
+
+            if (!ViewBag.IsValid)
+                throw new Exception();
+
+            try
+            {
+                FileUploadRequest fileRequest = new FileUploadRequest();
+                foreach (IFormFile formFile in req.Files)
+                {
+                    if (formFile.Length <= 0)
+                        return ApiResp;
+
+                    _filename = formFile.FileName.ToLower();
+                    fileRequest.FileCategory = this.GetFileType(_filename);
+
+                    byte[] myFileContent;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await formFile.CopyToAsync(memoryStream);
+                        memoryStream.Seek(0, SeekOrigin.Begin);
+                        myFileContent = new byte[memoryStream.Length];
+                        await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+                        fileRequest.FileByte = myFileContent;
+                    }
+
+                    fileRequest.FileDetails.FileName = _filename;
+                    fileRequest.FileDetails.FileType = _filename.SplitOnLast(CharConstants.DOT).Last();
+                    fileRequest.FileDetails.Length = fileRequest.FileByte.Length;
+                    fileRequest.FileDetails.FileCategory = fileRequest.FileCategory;
+                    fileRequest.FileDetails.MetaDataDictionary = new Dictionary<String, List<string>>();
+
+                    if (req.ContainsKey("context") && !string.IsNullOrEmpty(req["context"]))
+                        fileRequest.FileDetails.Context = req["context"];
+
+                    if (req.ContainsKey("categories") && !string.IsNullOrEmpty(req["categories"]))
+                        fileRequest.FileDetails.MetaDataDictionary.Add("Category", req["categories"].ToString().Split(CharConstants.COMMA).ToList());
+
+                    if (req.ContainsKey("tags") && !string.IsNullOrEmpty(req["tags"]))
+                        fileRequest.FileDetails.MetaDataDictionary.Add("Tags", req["tags"].ToString().Split(CharConstants.COMMA).ToList());
+
+                    var res = this.FileClient.Post<UploadAsyncResponse>(fileRequest);
+
+                    (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
+                    {
+                        FileName = _filename,
+                        FileType = _filename.SplitOnLast(CharConstants.DOT).Last(),
+                        FileRefId = res.FileRefId
+                    });
+                    ApiResp.Message.Status = "Success";
+                }
+                watch.Stop();
+                ApiResp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
+            }
+            catch (Exception ex)
+            {
+                watch.Stop();
+                ApiResp.Message.Status = "Failed";
+                ApiResp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
+                Console.WriteLine("Exception:" + ex.ToString());
+            }
+            return ApiResp;
+        }
+
+        private EbFileCategory GetFileType(string FileName)
+        {
+            string ext = FileName.SplitOnLast(CharConstants.DOT).Last();
+
+            List<string> imageTypes = new List<string> { "jpg", "jpeg", "bmp", "gif", "png" };
+
+            if (imageTypes.Contains(ext))
+                return EbFileCategory.Images;
+            else
+                return EbFileCategory.File;
+        }
+
         [HttpGet("/api/files/{filename}")]
         public IActionResult GetFile(string filename)
         {

@@ -842,14 +842,14 @@
                     callback: this.del
                 }
             }
-        }
-    }.bind(this)
+        };
+    }.bind(this);
 
     this.CtxSettingsObj = {
         selector: '.Eb-ctrlContainer',
         autoHide: true,
         build: this.ctxBuildFn.bind(this)
-    }
+    };
 
     this.Init = function () {
         $.contextMenu(this.CtxSettingsObj);

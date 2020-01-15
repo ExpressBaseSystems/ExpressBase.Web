@@ -30,7 +30,6 @@
     this.resetBuffers = function () {
         this.curRowObjectMODEL = {};
         this.curRowDataMODEL = {};
-        //this.AllRowHiddenCtrls = {};
         this.newRowCounter = 0;
         this.rowSLCounter = 0;
     }.bind(this);
@@ -42,7 +41,6 @@
         this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
         this.drawHTMLView();
-
         this.updateAggCols(false);
     }.bind(this);
 
@@ -606,7 +604,6 @@
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
                     <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.objectMODEL[rowid] = [];
-        //this.AllRowHiddenCtrls[rowid] = [];
 
         let visibleCtrlIdx = 0;
         //$.each(this.ctrl.Controls.$values, function (i, col) {
@@ -619,7 +616,6 @@
                 //inpCtrl.EbSid_CtxId = ctrlEbSid;
                 //inpCtrl.__rowid = rowid;
                 //inpCtrl.__Col = col;
-                //this.AllRowHiddenCtrls[rowid].push(inpCtrl);
                 continue;
             }
             if (inpCtrlType === "EbUserControl")
@@ -1022,16 +1018,52 @@
     };
 
     this.row_dblclick = function (e) {
+        let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
+        let rowId = $activeTr.attr("rowid");
+        if ($activeTr.length === 1) {
+            if (!this.RowRequired_valid_Check(rowId))
+                return;
+
+            //let td = $activeTr.find(".ctrlstd")[0];
+            //this.checkRow_click({ target: td }, false);
+            this.confirmRow(rowId);
+        }
         let $e = $(e.target);
         let $tr = $e.closest("tr");
-        if (this.isDGEditable())
+        if (this.isDGEditable()) {
             $tr.find(".edit-row").trigger("click");
+
+            $tr.find(".edit-row").trigger("click");
+            setTimeout(function () {
+                $e.closest("td").find("[ui-inp]").select();
+            }, 310);
+        }
     }.bind(this);
 
+    this.confirmRow = function (rowId) {
+        if (!this.RowRequired_valid_Check(rowId))
+            return false;
+
+        let $td = $(`#${this.TableId}>tbody>tr[rowid=${rowId}] td.ctrlstd`);
+        let $activeTr = $td.closest("tr");
+        $td.find(".check-row").hide();
+        $td.find(".del-row").show();
+        $td.find(".edit-row").show();
+        this.$addRowBtn.removeClass("eb-disablebtn");
+        if ($activeTr.attr("is-checked") === "true") {
+            this.setcurRowDataMODELWithNewVals(rowId);
+            this.changeEditFlagInRowCtrls(false, rowId);
+        }
+
+        this.ctrlToSpan_row(rowId);
+        $activeTr.attr("is-checked", "true").attr("is-editing", "false");
+        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
+        return true;
+
+    };
+
     this.checkRow_click = function (e, isAddRow = true, isFromCancel, isSameRow = true) {
-        let t0 = performance.now();
         let $td = $(e.target).closest("td");
-        //let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']:last`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
         let $addRow = $(`#${this.TableId}>tbody>[is-editing=true]`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
         let $tr = $td.closest("tr");
         $tr.attr("mode", "false");
@@ -1043,7 +1075,7 @@
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
 
-        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();// show all rows edit button
         $addRow.show().attr("is-editing", "true");
         if (!isFromCancel && isSameRow) {
             this.setcurRowDataMODELWithNewVals(rowid);
@@ -1055,11 +1087,7 @@
         else
             this.setCurRow($addRow.attr("rowid"));
         $tr.attr("is-checked", "true").attr("is-editing", "false");
-        //this.updateAggCols();
-        //$addRow.focus();
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
-        console.dev_log("checkRow_click : took " + (performance.now() - t0) + " milliseconds.");
-
         return true;
     }.bind(this);
 
@@ -1681,7 +1709,44 @@
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);
+        $.contextMenu(this.CtxSettingsObj);
     };
+
+    this.ctxBuildFn = function ($trigger, e) {
+        return {
+            items: {
+                "deleteRow": {
+                    name: "Delete row",
+                    icon: "fa-trash",
+                    callback: this.del
+                },
+                "insertRowBelow": {
+                    name: "Insert row below",
+                    icon: "fa-trash",
+                    callback: this.del
+
+                },
+                "Remove": {
+                    name: "insertRowAbove",
+                    icon: "fa-trash",
+                    callback: this.del
+
+                }
+            }
+        };
+    }.bind(this);
+
+    this.CtxSettingsObj = {
+        selector: '[eb-form="true"][mode="edit"] .dgtr',
+        autoHide: true,
+        build: this.ctxBuildFn.bind(this)
+    };
+
+    this.del = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let $tr = $e.closest("tr");
+        $tr.find(".del-row").trigger("click");
+    }.bind(this);
 
     this.dg_HScroll = function (e) {
         let $e = $(event.target);

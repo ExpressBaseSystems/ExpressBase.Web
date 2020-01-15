@@ -330,6 +330,7 @@ var InitControls = function (option) {
                 $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
             }
         });
+        ctrl.setValue(ctrl.DataVals.Value);
     };
 
     this.BooleanSelect = function (ctrl) {

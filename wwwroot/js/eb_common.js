@@ -895,17 +895,17 @@ function REFF_attachModalCellRef(MultipleTables) {
 }
 
 
-function attachModalCellRef_form(container, multipleTable) {
+function attachModalCellRef_form(container, dataModel) {
     $.each(container.Controls.$values, function (i, obj) {
         if (obj.IsSpecialContainer)
             return true;
         if (obj.IsContainer) {
             obj.TableName = (typeof obj.TableName === "string") ? obj.TableName.trim() : false;
             obj.TableName = obj.TableName || container.TableName;
-            attachModalCellRef_form(obj, multipleTable);
+            attachModalCellRef_form(obj, dataModel);
         }
         else {
-            setSingleColumnRef(container.TableName, obj.Name, multipleTable, obj);
+            setSingleColumnRef(container.TableName, obj.Name, dataModel, obj);
         }
     });
 }

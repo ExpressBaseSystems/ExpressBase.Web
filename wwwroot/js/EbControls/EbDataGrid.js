@@ -1762,7 +1762,7 @@
     }.bind(this);
 
     this.CtxSettingsObj = {
-        selector: '[eb-form="true"][mode="edit"] .dgtr,[eb-form="true"][mode="new"] .dgtr',
+        selector: '[eb-form="true"][mode="edit"] .dgtr .tdtxt,[eb-form="true"][mode="new"] .dgtr .tdtxt',
         autoHide: true,
         build: this.ctxBuildFn.bind(this)
     };

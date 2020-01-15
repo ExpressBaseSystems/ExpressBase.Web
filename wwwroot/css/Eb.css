@@ -484,7 +484,7 @@
 }
 
     .v-select .selected-tag:nth-child(5n - 4), [iblock] .selected-tag:nth-child(5n - 4) {
-        background-color: rgb(91, 142, 206) !important;
+        background-color: rgba(91, 142, 206, 0.9) !important;
     }
 
     .v-select .selected-tag:nth-child(5n - 3), [iblock] .selected-tag:nth-child(5n - 3) {

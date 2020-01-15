@@ -42,18 +42,12 @@
                 let ulview = (`<div id='viewdiv' > <ul id='imageContainer'>`);
                 ulview += `</ul> </div>`
                 $("body").append(ulview);
-                //this.pgSettings.forEach(function (obj) {
-                //    let filethumbnail = obj.file_src.replace("/images/", "/images/small/");
-                //    let filedtls = (typeof (obj.file_info) === 'undefined') ? "" : obj.file_info;
-                //    ulview += `<li class="fileviewerimg"><img data-original='' data-src='${obj.file_src}' src='${filethumbnail}' dtls='${filedtls}' alt='${obj.file_name}'></li>`
-                //});
                 this.pgSettings.forEach(function (obj) {
                     if (obj.FileCategory == 1) {
                         let filethumbnail = `/images/small/${obj.FileRefId}.jpg`;
                         let filesrc = `/images/${obj.FileRefId}.jpg`;
-                        //let filedtls = (typeof (obj.file_info) === 'undefined') ? "" : obj.file_info;
-                        //ulview += `<li class="fileviewerimg"><img data-original='' data-src='${filesrc}' src='${filethumbnail}' data-ditals='${obj.Meta}' dtls='${obj.FileName}' alt='${obj.FileName}'></li>`
-                        let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${obj.FileName}' alt='${obj.FileName}'></li>`);
+                        let filename = obj.FileName || "image";
+                        let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${obj.FileName}' alt='${filename}'></li>`);
                       var l= lk.find("img").data("details", obj.Meta);
                         $('#imageContainer').append(lk);
 
@@ -75,7 +69,6 @@
             }
         }
         this.showimage = function (imgviewindex) {
-            //this.viewer.update()
             if (!(!imgviewindex || imgviewindex.trim().length === 0)) {
                 let ln = this.pgSettings.length, j;
 
@@ -83,12 +76,9 @@
                     let flsrc = this.pgSettings[j].FileRefId;
                     if (flsrc == imgviewindex) {
                         this.viewer.view(j);
-                        this.viewer.rotate(60)
                     }
                 }
             }
-            //this.viewer.view(imgviewindex);
-
         }
 
         this.init();

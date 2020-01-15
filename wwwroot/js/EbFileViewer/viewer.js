@@ -92,6 +92,9 @@
         return target;
     }
 
+    function imgdivremove() {
+        $(".imgDetail").remove();
+    }
     var DEFAULTS = {
         /**
          * Enable a modal backdrop, specify `static` for a backdrop
@@ -1036,7 +1039,6 @@
                 var src = image.src;
                 var alt = image.alt || getImageNameFromURL(src);
                 var url = options.url;
-                var dtls = image.attributes.dtls.value;
 
                 if (isString(url)) {
                     url = image.getAttribute(url);
@@ -1295,14 +1297,18 @@
                         }
                     } else {
                         this.hide();
-                        $(".viewer-container").remove();
+                        imgdivremove();
+                        this.infono = 1;
+                       // $(".viewer-container").remove();
                     }
 
                     break;
 
                 case 'hide':
                     this.hide();
-                    $(".viewer-container").remove();
+                    imgdivremove();
+                    this.infono = 1;
+                   // $(".viewer-container").remove();
                     break;
 
                 case 'view':
@@ -1328,6 +1334,7 @@
 
                 case 'prev':
                     this.infono = 1;
+                    imgdivremove();
                     this.prev(options.loop);
                     break;
 
@@ -1337,6 +1344,7 @@
 
                 case 'next':
                     this.infono = 1;
+                    imgdivremove();
                     this.next(options.loop);
                     break;
 
@@ -1479,7 +1487,8 @@
                         }
                     } else {
                         this.hide();
-                        $(".viewer-container").remove();
+                        imgdivremove();
+                       // $(".viewer-container").remove();
                     }
 
                     break;
@@ -2313,7 +2322,7 @@
                 var image = document.createElement('img');
                 image.src = getData(img, 'originalUrl');
                 image.alt = img.getAttribute('alt');
-                image.dtls = img.getAttribute('dtls');
+             //   image.dtls = img.getAttribute('dtls');
                 total += 1;
                 addClass(image, CLASS_FADE);
                 toggleClass(image, CLASS_TRANSITION, options.transition);
@@ -2541,11 +2550,23 @@
         //for image information
         info: function info() {
             if (this.infono) {
-                if (!(this.image.dtls === ""))
-                    $(".viewer-canvas").append(`<div class='imgDetail'><h5>${this.image.dtls}</h5></div>`);
+                //if (!(this.image.dtls === ""))
+                //    $(".viewer-canvas").append(`<div class='imgDetail'><h5>${this.image.dtls}</h5></div>`);
+                let indx = this.index;
+                var obj = this.$images[indx];
+                if (!(Object.keys(obj).length == 0)) {
+                    
+                    var ky = "";
+                    $(".viewer-footer").prepend(`<div class='imgDetail'></div>`);
+                    Object.entries(obj).forEach(([key, value]) => {
+
+                        ky = key + " : " + value.values().next().value;
+                        $(".imgDetail").append(`<P>${ky}</P>`);
+                    })
+                }
                 this.infono = 0;
             } else {
-                $(".imgDetail").remove();
+                imgdivremove();
                 this.infono = 1;
             }
         },
@@ -2901,18 +2922,23 @@
                     element[NAMESPACE] = this;
                     var isImg = element.tagName.toLowerCase() === 'img';
                     var images = [];
+                    var $imgarr = [];
                     forEach(isImg ? [element] : element.querySelectorAll('img'), function (image) {
                         if (isFunction(options.filter)) {
                             if (options.filter.call(_this, image)) {
                                 images.push(image);
+                                $imgarr.push($(image));
                             }
                         } else {
                             images.push(image);
+                            $imgarr.push($(image).data("details"));
                         }
                     });
                     this.isImg = isImg;
                     this.length = images.length;
                     this.images = images;
+// this.$images - to store .data(), ie meta from ebfileviewerplugin to use in info click
+                    this.$images=$imgarr;
                     var ownerDocument = element.ownerDocument;
                     var body = ownerDocument.body || ownerDocument.documentElement;
                     this.body = body;

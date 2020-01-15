@@ -159,6 +159,7 @@
     border-radius: 4px;
     border: 1px solid #ccc;
     height: 25px;
+    padding: 0 5px;
 }
 
 .drop-hover{
@@ -180,10 +181,27 @@
     width: 49%;
     border-radius: 4px;
 }
-
+.geoloc-ctrlwrapr {
+    height: 100px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 5px;
+    display: flex;
+    flex-flow: column;
+}
+    .geoloc-ctrlwrapr .map-container {
+        display: flex;
+        flex: 1;
+        margin-top: 5px;
+        background-color: #eee;
+        background: url(/images/LocMapImg3.PNG) center no-repeat;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
 /*table layout*/
 .eb_mob_tablelayout {
-    display:flex;
+    display: flex;
 }
     .eb_mob_tablelayout .eb_mob_tablelayout_inner {
         display: flex;

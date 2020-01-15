@@ -31,8 +31,6 @@
 
     <script>
         function upload() {
-            b = `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImlwNCJ9.eyJpc3MiOiJzc2p3dCIsInN1YiI6ImViZGJsbHoyM25rcWQ2MjAxODAyMjAxMjAwMzA6YmluaXZhcmdoZXNlQGdtYWlsLmNvbTpkYyIsImlhdCI6MTU1NzgzMjczOCwiZXhwIjoxNTU3ODMyODI4LCJlbWFpbCI6ImJpbml2YXJnaGVzZUBnbWFpbC5jb20iLCJjaWQiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwIiwidWlkIjo1LCJ3YyI6ImRjIn0.VNmF0eRkkU5lt1hrVDDMFBGxcQlNzdLoSRhffeLLh3rO6UFV2-2SaKTMiXE3fHaFz495yfSozs70CEZvc_foDjtkblRgSG8oNU-KWKd9ET_k2lNp5JLz8IRj2XTevPRg4UjOeVmD8KXfWVWmBB6pcJCYgELoUvAKxURAkf_5-VM`;
-            r = 'eyJ0eXAiOiJKV1RSIiwiYWxnIjoiUlMyNTYiLCJraWQiOiJpcDQifQ.eyJzdWIiOiJlYmRibGx6MjNua3FkNjIwMTgwMjIwMTIwMDMwOmJpbml2YXJnaGVzZUBnbWFpbC5jb206ZGMiLCJpYXQiOjE1NTc4MzI3MzgsImV4cCI6MTU1NzkxOTEzOH0.K4GyRI9DmgYT5rTTq29I-CzVoadSko4joVcx8TMuW-nMAoHz2IzmVpJnpPVWKV3ddcjY3-GMSqfUL3L7cJzWJJt3grmzm2QSRMA1K85mjcuIA-5OJP1H9Ee7Zjguryle8uxn6hp33f6pgtpGTVfCXlE85j05AyTm89Cc-suvZDk';
             var f = [];
             let files = event.target.files; // FileList object
 
@@ -52,18 +50,17 @@
             for (i = 0; i < f.length; i++) {
                 formData.append(i, f[i]);
             }
-            formData.append("FileType", "image");
 
             $.ajax({
-                url: "../api/upload",
+                url: "../api/files/upload",
                 type: "POST",
                 data: formData,
                 cache: false,
                 contentType: false,
                 processData: false,
                 beforeSend: function (xhr) {
-                    xhr.setRequestHeader("bToken", b);
-                    xhr.setRequestHeader("rToken", r);
+                    xhr.setRequestHeader("bToken", getTok());
+                    xhr.setRequestHeader("rToken", getrToken());
                 }
             }).done(function (refid) {
 
@@ -153,7 +150,7 @@
     </script>
 </head>
 <body>
-    @*<div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
+    <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
             <form action="../Ext/TenantExtSignup" method="post">
                 <div class="input-group">
                     <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
@@ -166,7 +163,7 @@
             <button onclick="testAjax()">test</button>
         </div>
         <div id="div">
-        </div>*@
+        </div>
 
     @*<table border="1" cellpadding="0" width="500">
             <tr>

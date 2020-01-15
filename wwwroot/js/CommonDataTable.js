@@ -1256,7 +1256,7 @@
         else if (this.Source === "Calendar") {
             this.CreateContextmenu4ObjectSelector();
         }
-        if (this.login == "uc") {
+        if (this.login === "uc") {
             this.initCompleteflag = true;
             //if (this.isSecondTime) { }
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");            
@@ -1611,22 +1611,24 @@
             }
         }.bind(this));
         //}
-    }
+    };
 
     this.CreateHeaderTooltip = function () {
-        $.each($('#' + this.tableId + '_wrapper .dataTables_scrollHead th.holiday_class'), this.AddHeaderTooltip.bind(this));
+        this.visColumn = this.EbObject.Columns.$values.filter(col => col.bVisible);
+        $.each($('#' + this.tableId + '_wrapper .dataTables_scrollHead th.tdheight'), this.AddHeaderTooltip.bind(this));
         this.DrawTooltipForHeader();
     };
 
     this.AddHeaderTooltip = function (i, _th) {
-        let hCol = this.EbObject.Columns.$values.filter(col => col.className.includes("holiday_class"));
-        $(_th).attr("title", hCol[i].HeaderTooltipText);
+        let hCol = this.visColumn[i];
+        $(_th).attr("title", hCol.HeaderTooltipText || "");
     };
 
     this.DrawTooltipForHeader = function () {
-        $('th.holiday_class').tooltip({
+        $('th.tdheight').tooltip({
             placement: 'bottom',
-            container: 'body'
+            container: 'body',
+            html:true
         });
     };
 
@@ -2597,7 +2599,7 @@
             file_name: "api",
             file_type: "jpeg"
         }];
-        $("#test12").ebFileViewer(fileimg);
+        var x = $("#test12").ebFileViewer(fileimg);
     };
 
     this.OnErrorImage = function () {

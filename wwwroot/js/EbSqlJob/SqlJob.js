@@ -82,8 +82,8 @@ function EbSqlJob(options) {
 
     this.AppendGroupBox = function () {
         let refid = this.Procs[$(`.Sql-Job-Cont [eb-type="SqlJobReader"]`)[0].id].Reference;
-        $.post("../SqlJob/AppendFRKColomns", { Refid: refid }, this.AppendFRColomns.bind(this));
-        $.post("../SqlJob/AppendPKColomns", { Refid: this.EbObject.Filter_Dialogue }, this.AppendPKColomns.bind(this));
+        //$.post("../SqlJob/AppendFRKColomns", { Refid: refid }, this.AppendFRColomns.bind(this));
+        //$.post("../SqlJob/AppendPKColomns", { Refid: this.EbObject.Filter_Dialogue }, this.AppendPKColomns.bind(this));
     };
 
     this.getComponent = function (obj) {
@@ -146,7 +146,8 @@ function EbSqlJob(options) {
         this.EbObject.Resources.$values.length = 0;
         this.drawSqlObj();
         this.resetLinks();
-        this.AppendGroupBox();
+        //this.AppendGroupBox();
+        //this.pg.HideProperty('ParameterKeyColumnsTemp');
         //this.setRequestW(this.EbObject.Request.Default.$values);
         //this.setRequestW(this.EbObject.Request.Custom.$values, 'custom');
         //this.Request.Default = this.EbObject.Request.Default.$values;

@@ -60,7 +60,12 @@
         this.FullScreen = this.fullScreen();
         if (this.Options.ShowGallery) {
             this.Gallery = this.appendGallery();
-            this.GalleryFS = this.appendFSHtml();//full screen preview init html
+            // this.GalleryFS = this.appendFSHtml();//full screen preview init html
+            //ebfileviewer start
+            $("#ebfileviewdiv").remove();
+            $("body").append("<div id='ebfileviewdiv'></div>");
+            this.ebFilezview = $("#ebfileviewdiv").ebFileViewer(this.Options.Files);
+             //ebfileviewer end
             this.pullFile();
             $(".prevImgrout,.nextImgrout").off("click").on("click", this.fscreenN_P.bind(this));
         }
@@ -147,16 +152,26 @@
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
-            if ($.isEmptyObject(this.FileList[i].Meta) || this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
+            if ($.isEmptyObject(this.FileList[i].Meta)) {
+                $portdef.append(this.thumbNprevHtml(this.FileList[i]));
+                $countdef.text("(" + $portdef.children().length + ")");
+            }
+            else if (!this.FileList[i].Meta.hasOwnProperty("Category")) {
                 $portdef.append(this.thumbNprevHtml(this.FileList[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
             else {
-                for (let k = 0; k < this.FileList[i].Meta.Category.length; k++) {
-                    let $portcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_apndBody_apndPort`);
-                    let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_head .FcnT`);
-                    $portcat.append(this.thumbNprevHtml(this.FileList[i]));
-                    $countcat.text("(" + $portcat.children().length + ")");
+                if (this.FileList[i].Meta.Category[0] === "Category") {
+                    $portdef.append(this.thumbNprevHtml(this.FileList[i]));
+                    $countdef.text("(" + $portdef.children().length + ")");
+                }
+                else {
+                    for (let k = 0; k < this.FileList[i].Meta.Category.length; k++) {
+                        let $portcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_apndBody_apndPort`);
+                        let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_head .FcnT`);
+                        $portcat.append(this.thumbNprevHtml(this.FileList[i]));
+                        $countcat.text("(" + $portcat.children().length + ")");
+                    }
                 }
             }
             $(`#prev-thumb${this.FileList[i].FileRefId}`).data("meta", JSON.stringify(this.FileList[i]));
@@ -223,32 +238,37 @@
             return this.thumbSelection(ev);
 
         let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
-        this.GalleryFS.show();//show full screen 
-        let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
-        let urls = "", urll = "";
 
-        if (o.FileCategory === 0) {
-            urls = `/files/${fileref}.jpg`;
-            urll = urls;
-        }
-        else {
-            urls = `/images/small/${fileref}.jpg`;
-            urll = `/images/large/${fileref}.jpg`;
-        }
+        //ebfileviewer 
+        this.ebFilezview.showimage(fileref);
 
-        if (is_cached(location.origin + urll)) {
-            this.GalleryFS.eq(1).find('img').attr("src", urll);
-        }
-        else {
-            this.GalleryFS.eq(1).find('img').attr("src", urls);
-            this.GalleryFS.eq(1).find('img').attr("data-src", urll);
-            this.GalleryFS.eq(1).find('img').Lazy({
-                onError: function (element) { }
-            });
-        }
-        this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Fname").text(o.FileName);
-        this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Tags").html(this.getTagsHtml(o));
-        this.CurrentFimg = $(ev.target).closest(".trggrFprev");
+
+        //this.GalleryFS.show();//show full screen 
+        //let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
+        //let urls = "", urll = "";
+
+        //if (o.FileCategory === 0) {
+        //    urls = `/files/${fileref}.jpg`;
+        //    urll = urls;
+        //}
+        //else {
+        //    urls = `/images/small/${fileref}.jpg`;
+        //    urll = `/images/large/${fileref}.jpg`;
+        //}
+
+        //if (is_cached(location.origin + urll)) {
+        //    this.GalleryFS.eq(1).find('img').attr("src", urll);
+        //}
+        //else {
+        //    this.GalleryFS.eq(1).find('img').attr("src", urls);
+        //    this.GalleryFS.eq(1).find('img').attr("data-src", urll);
+        //    this.GalleryFS.eq(1).find('img').Lazy({
+        //        onError: function (element) { }
+        //    });
+        //}
+        //this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Fname").text(o.FileName);
+        //this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Tags").html(this.getTagsHtml(o));
+        //this.CurrentFimg = $(ev.target).closest(".trggrFprev");
     }
 
     getTagsHtml(o) {

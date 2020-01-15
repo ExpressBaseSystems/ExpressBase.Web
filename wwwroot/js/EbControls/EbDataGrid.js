@@ -94,7 +94,8 @@
 
     this.getTrsHTML_ = function () {
         let TrsHTML = [];
-        let rowIds = Object.keys(this.objectMODEL);
+        //let rowIds = Object.keys(this.objectMODEL);
+        let rowIds = this.DataMODEL.map(a => a.RowId);
         for (let i = 0; i < rowIds.length; i++) {
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
@@ -515,7 +516,7 @@
         //return SingleRow;
 
         let rowDataModel = JSON.parse(JSON.stringify(this.RowDataModel));
-        let eb_row_num = parseInt($(`#${this.TableId} tbody tr[rowid=${rowId}] td.row-no-td`).attr("idx"));
+        let eb_row_num = parseInt($(`#${this.TableId} tbody tr:last td.row-no-td`).attr("idx")) + 1;
         rowDataModel.RowId = rowId;
         getObjByval(rowDataModel.Columns, "Name", "eb_row_num").Value = eb_row_num;
         this.attachModalCellRef_Row(rowDataModel, rowObjectMODEL);
@@ -685,38 +686,62 @@
     this.addRow = function (opt = {}) {
         let rowid = opt.rowid;
         let isAdded = opt.isAdded;
+        let insertIdx = opt.insertIdx;
         let isAddBeforeLast = opt.isAddBeforeLast;
         let editModeData = opt.editModeData;
         rowid = rowid || --this.newRowCounter;
         let tr = this.getNewTrHTML(rowid, isAdded);
         let $tr = $(tr).hide();
-        if (!this.ctrl.AscendingOrder) {
-            if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {
-                $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
+        this.addRowDataModel(rowid, this.objectMODEL[rowid]);
+        if (insertIdx) {
+            this.insertRowAt(insertIdx, $tr);
+        } else {
+            if (!this.ctrl.AscendingOrder) {
+                if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {
+                    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
+                }
+                else
+                    $(`#${this.TableId}>tbody`).prepend($tr);
             }
-            else
-                $(`#${this.TableId}>tbody`).prepend($tr);
-        }
-        else {
-            if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
-                $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
+            else {
+                if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
+                    $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
+                }
+                else
+                    $(`#${this.TableId}>tbody`).append($tr);
             }
-            else
-                $(`#${this.TableId}>tbody`).append($tr);
         }
         if (!this.ctrl.AscendingOrder)
             this.UpdateSlNo();
         $tr.show(300);
         this.setCurRow(rowid);
-        let t1 = performance.now();
-        this.addRowDataModel(rowid, this.objectMODEL[rowid]);
         let rowCtrls = this.initRowCtrls(rowid, editModeData);
         this.bindReq_Vali_UniqRow($tr);
         this.updateAggCols();
-        console.dev_log("initRowCtrls : took " + (performance.now() - t1) + " milliseconds.");
         return [$tr, rowCtrls];
 
     }.bind(this);
+
+    this.insertRowAt = function (insertIdx, $tr) {
+        if (insertIdx > 2)
+            $(`#${this.TableId}>tbody`).prepend($tr);
+        else
+            $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(${insertIdx})`));
+
+        let rowDataModel = getObjByval(this.DataMODEL, "RowId", $tr.attr("rowid"));
+        let rowDataModelIdx = this.DataMODEL.indexOf(rowDataModel);
+        this.DataMODEL.splice(rowDataModelIdx, 1);
+
+        this.DataMODEL.splice(insertIdx, 0, rowDataModel);
+        //this.objectMODEL.splice(insertIdx, 0, item);
+
+        for (let i = 0, j = 1; i < this.DataMODEL.length; i++) {
+            let row = this.DataMODEL[i];
+            let eb_row_num = getObjByval(row.Columns, "Name", "eb_row_num");
+            if (eb_row_num.Value > 0)
+                eb_row_num.Value = j++;
+        }
+    };
 
     this.addSlNo = function () {
         let slnoTrHtml = `<tr><td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td></tr>`;
@@ -1723,13 +1748,13 @@
                 "insertRowBelow": {
                     name: "Insert row below",
                     icon: "fa-trash",
-                    callback: this.del
+                    callback: this.insertRowBelow
 
                 },
                 "Remove": {
                     name: "insertRowAbove",
                     icon: "fa-trash",
-                    callback: this.del
+                    callback: this.insertRowAbove
 
                 }
             }
@@ -1737,10 +1762,16 @@
     }.bind(this);
 
     this.CtxSettingsObj = {
-        selector: '[eb-form="true"][mode="edit"] .dgtr',
+        selector: '[eb-form="true"][mode="edit"] .dgtr,[eb-form="true"][mode="new"] .dgtr',
         autoHide: true,
         build: this.ctxBuildFn.bind(this)
     };
+
+    this.insertRowBelow = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let $tr = $e.closest("tr");
+        this.addRow({ insertIdx: $tr.index() + 1 });
+    }.bind(this);
 
     this.del = function (eType, selector, action, originalEvent) {
         let $e = selector.$trigger;

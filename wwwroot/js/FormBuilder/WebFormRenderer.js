@@ -7,6 +7,7 @@ var a___builder = 0;
 var a___MT = 0;
 
 const WebFormRender = function (option) {
+    ebcontext.renderContext = "WebForm";
     this.FormObj = option.formObj;
     this.$form = $(`#${this.FormObj.EbSid}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);

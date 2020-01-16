@@ -1107,6 +1107,7 @@
         this.tableName = dd.tableName;
         this.treeData = dd.tree;
         this.SetColumnRef();
+        this.ImageArray =JSON.parse( dd.imageList);
         return dd.formattedData;
     };
 
@@ -1737,8 +1738,14 @@
     }
 
     this.drawCallBackFunc = function (settings) {
-        if (this.Source === "EbDataTable")
+        if (this.Source === "EbDataTable") {
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            if (this.ImageArray.length > 0) {
+                $("#test12").remove();
+                $("body").append("<div id='test12'></div>");
+                this.FileViewer = $("#test12").ebFileViewer(this.ImageArray);
+            }
+        }
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.EbObject.RowGroupCollection.$values.length > 0)
             this.doRowgrouping();
@@ -2591,15 +2598,8 @@
     };
 
     this.ViewImage = function (e) {
-        $("#test12").remove();
-        $("body").append("<div id='test12'></div>");
-        let data = $(e.target).attr("src").replace("/small", "").replace("/medium", "");
-        let fileimg = [{
-            file_src: data,
-            file_name: "api",
-            file_type: "jpeg"
-        }];
-        var x = $("#test12").ebFileViewer(fileimg);
+        let data = $(e.target).attr("src").replace("/images/", "").replace("small/", "").replace("medium/", "").replace(".jpg", "");
+        this.FileViewer.showimage(data);
     };
 
     this.OnErrorImage = function () {
@@ -4057,10 +4057,10 @@
                 this.EbObject.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.EbObject.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
             }
-            else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
-                this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-                this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-            }
+            //else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
+            //    this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+            //    this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+            //}
             else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
                 this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
                 this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);

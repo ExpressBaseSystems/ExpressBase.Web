@@ -330,7 +330,8 @@ var InitControls = function (option) {
                 $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
             }
         });
-        ctrl.setValue(ctrl.DataVals.Value);
+        if (ctrl.DataVals.Value)
+            ctrl.setValue(ctrl.DataVals.Value);
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -428,7 +429,7 @@ var InitControls = function (option) {
         });
 
         $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
-        
+
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select option[value='Hourly']").attr("selected", "selected");

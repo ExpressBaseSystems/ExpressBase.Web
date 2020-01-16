@@ -11,6 +11,7 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.css" />
+<link rel="stylesheet" href="~/css/EbWiki/themes/3024-night.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/htmlmixed/htmlmixed.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/xml/xml.js"></script>
@@ -20,52 +21,340 @@
 
 <script>
     $(document).ready(function () {
-        let obj = new Addwiki();
+    $("#status").val("@ViewBag.Wiki.Status");
     });
 </script>
-<div class="container-fluid" style="padding-top:50px">
-    <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12" style="padding: 0px 25px 0px 25px;">
-            <div class="ButtonBox">
-                <div style="display:flex">
-                    <input type="button" value="h1" class="props" val="h1">
-                    <input type="button" value="h2" class="props" val="h2">
-                    <input type="button" value="h3" class="props" val="h3">
-                    <input type="button" value="h4" class="props" val="h4">
-                    <input type="button" value="h5" class="props" val="h5">
-                    <input type="button" value="h6" class="props" val="h6">
-                    <input type="button" value="div" class="props " val="div">
-                    <input type="button" value="P" class="props" val="p">
-                    <input type="button" value="br" class="props" val="br">
-                    <input type="button" class="props fa fa-input" val="b" value="&#xf032" />
-                    <input type="button" class="props fa fa-input" value="&#xf033" val="i" />
-                    <input type="button" class="props fa fa-input" value="&#xf0cd" val="u">
-                    <input type="button" value="&#xf036" class="props fa fa-input" val="left" />
-                    <input type="button" value="&#xf037" val="center" class="fa fa-input props" />
-                    <input type="button" value="&#xf038" class="props fa fa-input" val="right" />
-                    <input type="button" value="&#xf121" class="props fa fa-input" val="code" />
-                    <input type="button" value="&#xf0ca" class="fa fa-input" val="ul" data-toggle="modal" data-target="#ul-modal" />
-                    <input type="button" value="&#xf0cb" class="fa fa-input" val="ol" data-toggle="modal" data-target="#ol-modal" />
-                    <input type="button" value="li" class="props" val="li" />
-                    <input type="button" value="&#xf0c1" class="props fa fa-input" val="a" />
-                    <input type="button" value="&#xf16a" class="props fa fa-input" val="iframe" />
-                    <input type="button" value="&#xf0ce" class="fa fa-input" val="table" data-toggle="modal" data-target="#myModal" />
-                    <button name="icon" role="iconpicker" id="iconselect"></button>
-                    @*<input type="button" class="fa fa-input props2" value="&#xf03e" id="gallery-tab1" />*@
-                    @*<input type="button" class="fa fa-input props2" value="&#xf06e" id="wiki-preview-tab" style="text-decoration:none" />*@
+<script type="text/javascript" src="~/js/wiki/tagsinput.js"></script>
+<link rel="stylesheet" type="text/css" href="~/css/EbWiki/eb_wiki.css">
+<link rel="stylesheet" type="text/css" href="~/css/EbWiki/tagsinput.css">
+<style>
+    .cm-s-default .cm-tag {
+    color: #128100;
+    font-weight: 600;
+        }
+    .cm-s-default .cm-attribute {
+    color: #00c;
+    font-weight: 600;
+        }
+    .CodeMirror {
+  border: 1px solid #8d8c8c;
+  height: 100%;
+        }
+    .eb-expndLinkswrpr {
+    z-index: 23;}
+
+</style>
+
+<div style="padding-top:40px"></div>
+<div class="container-fluid wiki-add">
+    <div style="display:flex" class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12">
+            <ul class="nav nav-tabs eb-styledTab">
+                <li class="active"><a data-toggle="tab" href="#builder">Builder</a></li>
+                <li><a data-toggle="tab" href="#wiki-preview" id="preview">Preview</a></li>
+                <li><a data-toggle="tab" href="#wiki-gallery" id="gallery">Gallery</a></li>
+                <li><a data-toggle="tab" href="#internal-links" id="internal-a">Internal Links</a></li>
+                <li style="float:right"> <input type="submit" value="Save" name="submit" class="Save_Btn" id="wikisave" /></li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="tab-content">
+        <div id="builder" class="tab-pane fade in active">
+            <div class="row">
+
+
+
+
+                <div class="row fullViewtoggle" style="padding-left:10px;padding-right:10px">
+                    <div class="col-sm-4 col-md-4 col-lg-4">  <input type="text" placeholder="Title" name="title" id="title" value="@ViewBag.Wiki.Title" class="GrpAddSel" style="margin-right: 4%;" required /> </div>
+                    <div class="col-sm-2 col-md-2 col-lg-2">
+                        <select name="category" id="category" class="GrpAddSel" style="    margin-right: 4%;">
+                            <option value="0" disabled>Select Category</option>
+                            @foreach (WikiCat categ in ViewBag.WikiCat)
+                            {
+                                <option value="@categ.WikiCatId">@categ.WikiCategory</option>
+                            }
+                        </select>
+                        <script>
+                            $('#category option[value="@ViewBag.Wiki.CatId"]').attr("selected", "selected");
+                        </script>
+                    </div>
+                    <div class="col-sm-2 col-md-2 col-lg-2">
+                        <select name="status" id="status" value="@ViewBag.Wiki.Status" class="GrpAddSel">
+                            <option value="" disabled selected>Select Status</option>
+                            <option>Draft</option>
+                            <option>Publish</option>
+                            <option>Unpublish</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-4 col-md-4 col-lg-4">  <input type="text" value="@ViewBag.Wiki.Tags" data-role="tagsinput" name="tagbox" id="tagbox" class="form-control" placeholder="Add tags" style="" /> </div>
+
+                </div>
+                <div class="row fullViewtoggle">
+                    <div class="col-sm-12 col-md-12 col-lg-12" style="padding: 4px 10px 4px 25px;">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12" style="padding: 0px 25px 0px 25px;">
+                        <div class="ButtonBox">
+                            <div style="display:flex">
+                                <input type="button" value="h1" class="props" val="h1">
+                                <input type="button" value="h2" class="props" val="h2">
+                                <input type="button" value="h3" class="props" val="h3">
+                                <input type="button" value="h4" class="props" val="h4">
+                                <input type="button" value="h5" class="props" val="h5">
+                                <input type="button" value="h6" class="props" val="h6">
+                                <input type="button" value="div" class="props " val="div">
+                                <input type="button" value="P" class="props" val="p">
+                                <input type="button" value="br" class="props" val="br">
+                                <input type="button" class="props fa fa-input" val="b" value="&#xf032" />
+                                <input type="button" class="props fa fa-input" value="&#xf033" val="i" />
+                                <input type="button" class="props fa fa-input" value="&#xf0cd" val="u">
+                                <input type="button" value="&#xf036" class="props fa fa-input" val="left" />
+                                <input type="button" value="&#xf037" val="center" class="fa fa-input props" />
+                                <input type="button" value="&#xf038" class="props fa fa-input" val="right" />
+                                <input type="button" value="&#xf121" class="props fa fa-input" val="code" />
+                                <input type="button" value="&#xf0ca" class="fa fa-input" val="ul" data-toggle="modal" data-target="#ul-modal" />
+                                <input type="button" value="&#xf0cb" class="fa fa-input" val="ol" data-toggle="modal" data-target="#ol-modal" />
+                                <input type="button" value="li" class="props" val="li" />
+                                <input type="button" value="&#xf0c1" class="props fa fa-input" val="a" />
+                                <input type="button" value="&#xf16a" class="props fa fa-input" val="iframe" />
+                                <input type="button" value="&#xf0ce" class="fa fa-input" val="table" data-toggle="modal" data-target="#myModal" />
+                                <button name="icon" role="iconpicker" id="iconselect"></button>
+                                @*<input type="button" class="fa fa-input props2" value="&#xf03e" id="gallery-tab1" />*@
+                                @*<input type="button" class="fa fa-input props2" value="&#xf06e" id="wiki-preview-tab" style="text-decoration:none" />*@
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row" style="padding: 0px 10px 0px 10px">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="fixed">  <textarea class="readtext" id="code" name="content" style="width: 100%;height: 100%;">@ViewBag.Wiki.HTML</textarea></div>
+                        <style>
+                            div.fixed {
+                                border: 0px solid;
+                                position: relative;
+                                top: 0px;
+                                /* bottom: 13px; */
+                                /* right: 5px; */
+                                /* left: 15px; */
+                                /* width: 1310px; */
+                                height: 507px;
+                                /* border-top: 1px solid #fff; */
+                                /* border-left: 1px solid #ccc; */
+                                /* border-right: 1px solid #ccc; */
+                                background: transparent;
+                            }
+                        </style>
+                    </div>
+                </div>
+                <div style="display: flex;justify-content: center;">
+
+                </div>
+                <div class="col-sm-2 col-md-2 col-lg-2"><input type="hidden" name="id" id="wiki-id" value="@ViewBag.Id" /></div>
+
+            </div>
+        </div>
+
+        <div id="wiki-preview" class="tab-pane fade wiki-preview">
+            <div class="render" name="render" id="render">
+            </div>
+        </div>
+
+        <div id="wiki-gallery" class="tab-pane fade">
+
+            <button id="btnUploadImg" type="button" value="Upload Image"> Upload Image</button>
+            <div class="imageGallery" id="ImageGallery">
+            </div>
+        </div>
+
+        <div id="internal-links" class="tab-pane fade">
+            <div id="internal-links-view">
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container-fluid">
+</div>
+
+<div class="modal-class">
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="myModal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and colums</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p>
+                        <select id="tbl-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+
+                        <p>X</p><p>Cols</p><select id="tbl-col">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="tbl-size-select">Add Table</button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-12">
-            <textarea id="code">
-        	</textarea>
+
+
+
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="ol-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and style</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p><select id="ol-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div style="display:flex">
+                        <p>Style</p><select id="ol-style-sel">
+                            <option selected>type="1"</option>
+                            <option>type="A"</option>
+                            <option>type="a"</option>
+                            <option>type="I"</option>
+                            <option>type="i"</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ol-type-select">Add O-List</button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade tblmodal" id="ul-modal" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h6 class="modal-title">select rows and style</h6>
+                </div>
+                <div class="modal-body">
+                    <div style="display:flex">
+                        <p>Rows</p><select id="ul-row">
+                            <option selected> 0 </option>
+                            @{
+                                for (int i = 1; i < 20; i++)
+                                {
+                                    <option> @i </option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div style="display:flex">
+                        <p>Style</p><select id="ul-style-sel">
+                            <option>disc</option>
+                            <option>square</option>
+                            <option>circle</option>
+                            <option>none</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ul-type-select">Add UO-list</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 
-    <script>
-          
-    </script>
+</div>
+
+
+<script>
+    let abc = $('#text').val();
+    $('#render').html(abc);
+    $('#new1').append('');
+
+     var imgup = new EbFileUpload({
+        Type: "image",
+        PreviewWraper: "#ImageGallery",
+        FilesUrl: @Html.Raw(ViewBag.Images),
+        Context:"eb_wiki",
+        Toggle: "#btnUploadImg",
+        Container: "eb-wiki-uploader",
+        Multiple: true,
+        ServerEventUrl: 'https://se.eb-test.xyz',
+        EnableCrop: true,
+        MaxSize:(("@ViewBag.Env" === "Staging")? 15: 2),//in MegaBytes
+        CustomMenu: [{ name: "Copy link", icon: "fa-user" }]
+    });
+
+    imgup.uploadSuccess = function (fileid) {
+
+    }
+    imgup.windowClose = function () {
+
+    }
+    imgup.customTrigger = function (name, refids) {
+        let imgtag = "";
+        for (let i = 0; i < refids.length; i++) {
+            imgtag += `<img style="width:100px;height:100px;" src="/wiki/images/original/${refids[i]}.jpg" class="WikiDefaultImage"/>`;
+        }
+        copyStringToClipboard(imgtag);
+    }
+
+    function copyStringToClipboard(str) {
+        var el = document.createElement('textarea');
+        el.value = str;
+        el.setAttribute('readonly', '');
+        el.style = { position: 'absolute', left: '-9999px' };
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+    }
+    $(".Col_head").click();
+
+    //$('#AppIcon').iconpicker({
+    //iconset: 'fontawesome',
+    //rows: 5,
+    //cols: 5,
+    //placement: 'bottom',
+    //});
+
+</script>
+

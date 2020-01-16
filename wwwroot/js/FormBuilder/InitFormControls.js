@@ -92,6 +92,7 @@ var InitControls = function (option) {
                                         imgup.deleteFromGallery(refids);
                                         EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
                                     }
+                                    imgup.customMenuCompleted("Delete", refids);
                                 }
                             }
                         });
@@ -174,18 +175,21 @@ var InitControls = function (option) {
         let formObject = ctrlOpts.formObject;
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
-        let fun = null;
         if (ctrl.ShowDateAs_ === 1) {
-            $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
+            $input.MonthPicker({
+                Button: $input.next().removeAttr("onclick"),
+                OnAfterChooseMonth: function () { $input.trigger("change"); }
+            });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-            if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
-                fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
-                $input.MonthPicker({
-                    OnAfterChooseMonth: fun.bind(this, formObject, userObject)
-                });
-            }
+            
             //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+        }
+        else if (ctrl.ShowDateAs_ === 2) {
+            $input.datetimepickers({
+                format: "YYYY",
+                viewMode: "years"
+            });
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
@@ -330,6 +334,8 @@ var InitControls = function (option) {
                 $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
             }
         });
+        if (ctrl.DataVals.Value)
+            ctrl.setValue(ctrl.DataVals.Value);
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -427,7 +433,7 @@ var InitControls = function (option) {
         });
 
         $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
-        
+
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select option[value='Hourly']").attr("selected", "selected");

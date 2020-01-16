@@ -21,16 +21,16 @@ namespace ExpressBase.Web.Controllers
     {
         public SqlJobController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public SqlJobResponse ExecuteSqlJob(string Refid , List<Param> Param)
+        public SqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
         {
             SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
             {
                 RefId = Refid,
-                GlobalParams = new List<Param> { new Param { Name = "date_to_consolidate", Type = "6", Value = "28-02-2015" } }
+                GlobalParams = Param
             });
             return resp;
         }
-         
+
         public IActionResult SqlJobConsole()
         {
             Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
@@ -51,7 +51,7 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("SchedulerWindow", new { objid = ObjId, tasktype = JobTypes.SqlJobTask });
         }
 
-        public SqlJobsListGetResponse Get_Jobs_List(string Refid , string Date)
+        public SqlJobsListGetResponse Get_Jobs_List(string Refid, string Date)
         {
             SqlJobsListGetResponse resp = this.ServiceClient.Get(new SqlJobsListGetRequest()
             {
@@ -83,7 +83,7 @@ namespace ExpressBase.Web.Controllers
                     throw new Exception("Object Not found(Redis + SS)");
                 }
             }
-           for(int i=0;i< columnresp.Columns[0].Count; i++)
+            for (int i = 0; i < columnresp.Columns[0].Count; i++)
             {
                 ColomnList.Add(columnresp.Columns[0][i].ColumnName);
             }
@@ -91,18 +91,22 @@ namespace ExpressBase.Web.Controllers
             return EbSerializers.Json_Serialize(columnresp.Columns[0]);
         }
 
-        public string AppendPKColomns (string Refid)
+        public string AppendPKColomns(string Refid)
         {
             List<string> ColomnList = new List<string>();
-            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
+            List<Param> Para = null;
+            if (Refid != null)
             {
-                RefId = Refid
-            });
-            var drObj = EbSerializers.Json_Deserialize(Resp.Data[0].Json) as EbFilterDialog;
-            List<Param> Para  = drObj.GetDefaultParams();
-            for (int i = 0; i < Para.Count; i++)
-            {
-                ColomnList.Add(Para[i].Name);
+                EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
+                {
+                    RefId = Refid
+                });
+                var drObj = EbSerializers.Json_Deserialize(Resp.Data[0].Json) as EbFilterDialog;
+                Para = drObj.GetDefaultParams();
+                for (int i = 0; i < Para.Count; i++)
+                {
+                    ColomnList.Add(Para[i].Name);
+                }
             }
             return EbSerializers.Json_Serialize(Para);
         }
@@ -124,9 +128,11 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
         }
 
-        public RetryJobResponse JobRetry(int id)
+        public RetryJobResponse JobRetry(int id, string RefId)
         {
-            RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-26-2642-3506-2642-3506" });
+            RetryJobResponse response = null;
+            if (id > 0 && RefId != null && RefId != String.Empty)
+                 response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
             return response;
         }
 

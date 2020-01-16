@@ -922,7 +922,6 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.getDisplayMemberModel = function () {
-
         let newDMs = {};
         let DmClone = removePropsOfType($.extend(true, {}, this.Vobj.displayMembers), 'function');
         let ValueMembers = this.Vobj.valueMembers.toString().split(",");

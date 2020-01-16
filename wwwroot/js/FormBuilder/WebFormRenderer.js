@@ -7,6 +7,7 @@ var a___builder = 0;
 var a___MT = 0;
 
 const WebFormRender = function (option) {
+    ebcontext.renderContext = "WebForm";
     this.FormObj = option.formObj;
     this.$form = $(`#${this.FormObj.EbSid}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
@@ -1305,12 +1306,12 @@ const WebFormRender = function (option) {
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
+        attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
         this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
         this.setMode();
 
-        attachModalCellRef_form(this.FormObj, this.DataMODEL);
 
         //if (this.Mode.isNew && this.EditModeFormData)
         //    this.setEditModeCtrls();

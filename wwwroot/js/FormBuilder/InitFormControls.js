@@ -334,7 +334,7 @@ var InitControls = function (option) {
                 $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
             }
         });
-        if (ctrl.DataVals.Value)
+        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
     };
 

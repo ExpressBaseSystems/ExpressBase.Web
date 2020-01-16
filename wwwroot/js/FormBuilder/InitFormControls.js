@@ -92,6 +92,7 @@ var InitControls = function (option) {
                                         imgup.deleteFromGallery(refids);
                                         EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
                                     }
+                                    imgup.customMenuCompleted("Delete", refids);
                                 }
                             }
                         });

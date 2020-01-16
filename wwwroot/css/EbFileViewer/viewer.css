@@ -576,11 +576,18 @@
 }
 
 .imgDetail {
-    position: absolute;
+    position: fixed;
+    float: right;
     bottom: 150px;
     /*right: 20px;*/
     background-color: #000000a1;
     color: white;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 20px;
+    max-width: 200px
+    /*padding-right: 20px;*/
 }
+
+    .imgDetail > p {
+        font-size: 14px;
+        line-height: 1.6;
+    }

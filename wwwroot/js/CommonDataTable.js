@@ -1107,6 +1107,7 @@
         this.tableName = dd.tableName;
         this.treeData = dd.tree;
         this.SetColumnRef();
+        this.ImageArray =JSON.parse( dd.imageList);
         return dd.formattedData;
     };
 
@@ -1256,7 +1257,7 @@
         else if (this.Source === "Calendar") {
             this.CreateContextmenu4ObjectSelector();
         }
-        if (this.login == "uc") {
+        if (this.login === "uc") {
             this.initCompleteflag = true;
             //if (this.isSecondTime) { }
             //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "initComplete");            
@@ -1611,22 +1612,24 @@
             }
         }.bind(this));
         //}
-    }
+    };
 
     this.CreateHeaderTooltip = function () {
-        $.each($('#' + this.tableId + '_wrapper .dataTables_scrollHead th.holiday_class'), this.AddHeaderTooltip.bind(this));
+        this.visColumn = this.EbObject.Columns.$values.filter(col => col.bVisible);
+        $.each($('#' + this.tableId + '_wrapper .dataTables_scrollHead th.tdheight'), this.AddHeaderTooltip.bind(this));
         this.DrawTooltipForHeader();
     };
 
     this.AddHeaderTooltip = function (i, _th) {
-        let hCol = this.EbObject.Columns.$values.filter(col => col.className.includes("holiday_class"));
-        $(_th).attr("title", hCol[i].HeaderTooltipText);
+        let hCol = this.visColumn[i];
+        $(_th).attr("title", hCol.HeaderTooltipText || "");
     };
 
     this.DrawTooltipForHeader = function () {
-        $('th.holiday_class').tooltip({
+        $('th.tdheight').tooltip({
             placement: 'bottom',
-            container: 'body'
+            container: 'body',
+            html:true
         });
     };
 
@@ -1735,8 +1738,14 @@
     }
 
     this.drawCallBackFunc = function (settings) {
-        if (this.Source === "EbDataTable")
+        if (this.Source === "EbDataTable") {
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
+            if (this.ImageArray.length > 0) {
+                $("#test12").remove();
+                $("body").append("<div id='test12'></div>");
+                this.FileViewer = $("#test12").ebFileViewer(this.ImageArray);
+            }
+        }
         $('tbody [data-toggle=toggle]').bootstrapToggle();
         if (this.EbObject.RowGroupCollection.$values.length > 0)
             this.doRowgrouping();
@@ -2589,15 +2598,8 @@
     };
 
     this.ViewImage = function (e) {
-        $("#test12").remove();
-        $("body").append("<div id='test12'></div>");
-        let data = $(e.target).attr("src").replace("/small", "").replace("/medium", "");
-        let fileimg = [{
-            file_src: data,
-            file_name: "api",
-            file_type: "jpeg"
-        }];
-        $("#test12").ebFileViewer(fileimg);
+        let data = $(e.target).attr("src").replace("/images/", "").replace("small/", "").replace("medium/", "").replace(".jpg", "");
+        this.FileViewer.showimage(data);
     };
 
     this.OnErrorImage = function () {
@@ -4055,10 +4057,10 @@
                 this.EbObject.Columns.$values[i].render = this.lineGraphDiv.bind(this);
                 this.EbObject.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
             }
-            else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
-                this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-                this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-            }
+            //else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
+            //    this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+            //    this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+            //}
             else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
                 this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
                 this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);

@@ -92,6 +92,7 @@ var InitControls = function (option) {
                                         imgup.deleteFromGallery(refids);
                                         EbMessage("show", { Message: 'Changes Affect only if Form is Saved', AutoHide: true, Background: '#0000aa' });
                                     }
+                                    imgup.customMenuCompleted("Delete", refids);
                                 }
                             }
                         });
@@ -330,6 +331,8 @@ var InitControls = function (option) {
                 $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
             }
         });
+        if (ctrl.DataVals.Value)
+            ctrl.setValue(ctrl.DataVals.Value);
     };
 
     this.BooleanSelect = function (ctrl) {
@@ -427,7 +430,7 @@ var InitControls = function (option) {
         });
 
         $input.find("#date").change(this.SetDateFromDateTo.bind(this, $input));
-        
+
         $input.find("#year").on('dp.change', this.SetDateFromDateTo.bind(this, $input));
 
         $input.find("select option[value='Hourly']").attr("selected", "selected");

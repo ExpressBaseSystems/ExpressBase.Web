@@ -248,7 +248,8 @@ function MobileMenu(option) {
 function SetControlFunctions(obj) {
     var Name = obj.constructor.name;
     var Functions = {
-        "EbMobileSimpleSelect": null
+        "EbMobileSimpleSelect": null,
+        "EbMobileGeoLocation": null
     };
     if (Name in Functions) {
         let o = window.ControlFunctions[Name];
@@ -288,6 +289,16 @@ window.ControlFunctions = {
                         }.bind(this));
                     }.bind(this)
                 });
+            }
+        }
+    },
+    "EbMobileGeoLocation": {
+        _toggleSearchBar: function () {
+            if (this.HideSearchBox) {
+                $(`#${this.EbSid} .eb_mob_textbox`).hide();
+            }
+            else {
+                $(`#${this.EbSid} .eb_mob_textbox`).show();
             }
         }
     }

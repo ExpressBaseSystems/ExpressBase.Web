@@ -71,6 +71,7 @@
 
 
     this.SqljobRetry = function (e) {
+        let Refid = $("#select-sql-job").children("option:selected").val();
         let id = e.target.getAttribute("id");
         if (id) {
             $.ajax(
@@ -78,7 +79,8 @@
                     type: 'POST',
                     url: "/SqlJob/JobRetry",
                     data: {
-                        id: id
+                        id: id,
+                        RefId: Refid
                     },
                     success: function (result) {
                         $("#show-sql-jobs").click();

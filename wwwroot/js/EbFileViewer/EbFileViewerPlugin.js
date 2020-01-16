@@ -48,12 +48,12 @@
                         let filesrc = `/images/${obj.FileRefId}.jpg`;
                         let filename = obj.FileName || "image";
                         let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${obj.FileName}' alt='${filename}'></li>`);
-                      var l= lk.find("img").data("details", obj.Meta);
+                        var l = lk.find("img").data("details", obj.Meta);
                         $('#imageContainer').append(lk);
 
                     }
                 });
-               
+
 
                 this.viewer = new Viewer($('#viewdiv')[0], {
                     url: 'data-src',
@@ -68,16 +68,24 @@
                 EbMessage("show", { Message: "No image found", Background: 'red' });
             }
         }
-        this.showimage = function (imgviewindex) {
-            if (!(!imgviewindex || imgviewindex.trim().length === 0)) {
-                let ln = this.pgSettings.length, j;
-
-                for (j = 0; j < ln; j++) {
-                    let flsrc = this.pgSettings[j].FileRefId;
-                    if (flsrc == imgviewindex) {
-                        this.viewer.view(j);
+        this.showimage = function (rfid) {
+            if (!(!rfid || rfid.length === 0)) {
+                let indx = this.pgSettings.findIndex(item => item.FileRefId == rfid);
+                this.viewer.view(indx);
+            }
+           
+        }
+        this.deleteimage = function (refidarr) {
+            if (refidarr.length > 0) {
+                let refids = "";
+                for (i = refidarr.length; i >= 0; i--) {
+                    refids = refidarr[i];
+                    if (!(!refids || refids.length === 0)) {
+                        let indx = this.pgSettings.findIndex(item => item.FileRefId == refids);
+                        this.pgSettings.splice(indx, 1);
                     }
                 }
+                this.initViewer();
             }
         }
 

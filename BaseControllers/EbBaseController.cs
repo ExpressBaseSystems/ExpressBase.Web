@@ -155,8 +155,8 @@ namespace ExpressBase.Web.BaseControllers
                     string rSub = rToken.Payload[TokenConstants.SUB].ToString();
                     string bSub = bToken.Payload[TokenConstants.SUB].ToString();
                     string _ip = bToken.Payload[TokenConstants.IP].ToString();
-                    Console.WriteLine("IP : " + this.RequestSourceIp + " - " + _ip);
-                    if (this.RequestSourceIp == _ip)
+                    Console.WriteLine("Reqst IP : " + this.RequestSourceIp + " - Auth IP : " + _ip);
+                    if (this.RequestSourceIp == _ip || Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
                     {
                         Console.WriteLine("IP check success");
                         DateTime startDate = new DateTime(1970, 1, 1);
@@ -179,6 +179,10 @@ namespace ExpressBase.Web.BaseControllers
                                 isvalid = true;
                             }
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("IP check failed");
                     }
                 }
             }

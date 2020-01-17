@@ -100,8 +100,6 @@
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
-        if (!this.ctrl.AscendingOrder)
-            TrsHTML.reverse();
         return TrsHTML.join();
     };
 
@@ -680,7 +678,10 @@
     };
 
     this.addRowDataModel = function (rowId, rowObjectMODEL) {
-        this.DataMODEL.push(this.getRowDataModel(rowId, rowObjectMODEL));
+        if (!this.ctrl.AscendingOrder)
+            this.DataMODEL.unshift(this.getRowDataModel(rowId, rowObjectMODEL));
+        else
+            this.DataMODEL.push(this.getRowDataModel(rowId, rowObjectMODEL));
     };
 
     this.addRow = function (opt = {}) {
@@ -1751,12 +1752,12 @@
                     callback: this.insertRowBelow
 
                 },
-                "Remove": {
-                    name: "insertRowAbove",
-                    icon: "fa-trash",
-                    callback: this.insertRowAbove
+                //"insertRowAbove": {
+                //    name: "Insert row above",
+                //    icon: "fa-trash",
+                //    callback: this.insertRowAbove
 
-                }
+                //}
             }
         };
     }.bind(this);

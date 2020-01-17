@@ -806,4 +806,11 @@
             this.Gallery.find(`div[filref="${filerefs[i]}"]`).remove();
         }
     }
+
+    customMenuCompleted(name, refids) {
+        if (name === "Delete") {
+            this.ebFilezview.deleteimage(refids);
+        }
+       
+    }
 }

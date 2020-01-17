@@ -220,28 +220,34 @@ const WebFormRender = function (option) {
 
     };
 
+    // to add fetched values to data model 
+    // parameter - _respObj : data model of imported data
     this.modifyFormData4Import = function (_respObj) {
 
         this.EditModeFormData = _respObj.FormData.MultipleTables;
-        this.DataMODEL = this.EditModeFormData;
-        attachModalCellRef_form(this.FormObj, this.EditModeFormData);
-        let SourceEditModeFormDataExceptDG = this.EditModeFormData[this.FormObj.Name];
+        let editModeFormData = _respObj.FormData.MultipleTables;
 
-        $.each(this.EditModeFormData, function (CtrlName, Data) {
-            // data except DGs
-            if (CtrlName === this.FormObj.Name) {
-                this.EditModeFormData[this.FormObj.TableName] = SourceEditModeFormDataExceptDG;
-                delete this.EditModeFormData[this.FormObj.Name];
+        let SourceEditModeFormDataExceptDG = editModeFormData[this.FormObj.Name];
+
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let ctrl = this.flatControls[i];
+            let dataObj = getObjByval(SourceEditModeFormDataExceptDG[0].Columns, "Name", ctrl.Name);
+            if (dataObj) {
+                let val = dataObj.Value;
+                ctrl.DataVals.Value = val;
             }
-            // data DGs
-            else {
+        }
 
+        // DG = replace DG dataModel with  new one
+        $.each(editModeFormData, function (CtrlName, Data) {
+            if (CtrlName !== this.FormObj.Name) {
                 let DG = getObjByval(this.DGs, "Name", CtrlName);
                 if (!DG)
                     return true;
                 let DGTblName = DG.TableName;
-                this.EditModeFormData[DGTblName] = Data;
                 delete this.EditModeFormData[CtrlName];
+                this.EditModeFormData[DGTblName] = Data;
+                this.DataMODEL[DGTblName] = Data;
             }
         }.bind(this));
 

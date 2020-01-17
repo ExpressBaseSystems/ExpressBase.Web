@@ -2,18 +2,23 @@
     Layout = "~/Views/Shared/LayoutBuilders.cshtml";
 }
 
-
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" />
 <link rel="stylesheet" type="text/css" href="~/css/CalendarStyles.css" />
 <link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" />
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />
 <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
 <script src="~/js/EbCalendar/EbCalendarView.js"></script>
 <script src="~/js/CommonDataTable.js"></script>
+<script src="~/js/EbDataTable.js"></script>
+<script src="~/js/splitWindow.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
-<div class="container-fluid" style="height:100vh">
-    <div class="row" style="height:inherit">
+
+@await Component.InvokeAsync("PageHeaderCommon")
+
+<div class="container-fluid calendar_wrapper" style="height: calc(100vh - 55px);margin-top: 38px;">
+    <div class="row calendar-user-view-cont" style="height:inherit;">
         <div class="col-sm-12" id="calendar-user-view" style="height:inherit">
         </div>
     </div>
@@ -21,10 +26,46 @@
     <div id="ppt-calendar-view" class="PGgrid"> <div id="propGridView"> </div></div>
 </div>
 <script type="text/javascript">
+    $("body").prepend(`
+<div class="modal fade" id="iFrameFormPopupModal" role="dialog">
+    <div class="modal-dialog" style="width: 60%; margin: 8% auto;">
+        <div class="modal-content">
+            <div class="modal-body" style="height: 60vh; padding: 0px;">
+                <div>
+                    <div id="iFrameFormPopupOverlay" style=" text-align: center; position: absolute; height: 60vh; width: 100%; background-color: white; border-radius: 6px;">
+                        <div style="position: relative; top: 50%;"><i class="fa fa-spinner fa-pulse" aria-hidden="true"></i> Loading...</div>
+                    </div>
+                    <iframe id="iFrameFormPopup" style="width: 100%; height: 60vh; border: none; border-radius: 6px;" ></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`);
+    window.closeModal = function (func) {// receives call from iFrame
+        //func();
+        $('#iFrameFormPopupModal').modal('hide');
+    };
+    $('#iFrameFormPopupModal').on('hidden.bs.modal', function () {
+        $('#iFrameFormPopup').removeAttr("src");
+        $("#iFrameFormPopupOverlay").show();
+    });
+    $("#iFrameFormPopup").on('load', function (evt) {
+        console.log(evt.target);
+        if ($(evt.target).attr("src") !== undefined)
+            $("#iFrameFormPopupOverlay").hide();
+    });
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectType);
     var DBobj = new EbCalendar({
-        dvObj: '',
+         RefId: '@ViewBag.Refid',
+        Version: '@ViewBag.VersionNumber',
+        ObjType: @ViewBag.ObjType,
+        dvObj: @Html.Raw(ViewBag.dsObj),
+        Status: '@ViewBag.Status',
+        ServiceUrl: '@ViewBag.ServiceUrl',
+        Wc: '@ViewBag.wc',
+        Cid: '@ViewBag.cid',
     });
 </script>

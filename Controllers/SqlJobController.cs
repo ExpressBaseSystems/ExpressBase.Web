@@ -23,11 +23,11 @@ namespace ExpressBase.Web.Controllers
 
         public SqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
         {
-             SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
+            SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
             {
                 RefId = Refid,
                 GlobalParams = Param
-             });
+            });
             return resp;
         }
 
@@ -128,9 +128,11 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
         }
 
-        public RetryJobResponse JobRetry(int id)
+        public RetryJobResponse JobRetry(int id, string RefId)
         {
-            RetryJobResponse response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-26-2642-3506-2642-3506" });
+            RetryJobResponse response = null;
+            if (id > 0 && RefId != null && RefId != String.Empty)
+                 response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
             return response;
         }
 

@@ -22,8 +22,8 @@
             $extCont: $("#ppt-calendar-view"),
             isDraggable: true
         });
-
-        commonO.Current_obj = this.EbObject;
+        if (this.Wc === "dc")
+            commonO.Current_obj = this.EbObject;
         this.propGrid.setObject(this.EbObject, AllMetas["EbCalendarView"]);
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
         if (this.EbObject.KeyColumns.$values.length > 0) {
@@ -48,7 +48,8 @@
         if (pname === "DefaultCalendarType") {
             this.ChangeFDParams(newval);
         }
-        commonO.Current_obj = this.EbObject;
+        if(this.Wc === "dc")
+            commonO.Current_obj = this.EbObject;
     };
 
     this.ChangeFDParams = function (newval) {

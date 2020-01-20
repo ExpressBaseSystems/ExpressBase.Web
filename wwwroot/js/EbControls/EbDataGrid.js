@@ -100,8 +100,6 @@
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
-        if (!this.ctrl.AscendingOrder)
-            TrsHTML.reverse();
         return TrsHTML.join();
     };
 
@@ -342,6 +340,13 @@
             return col.FalseText;
     };
 
+    this.getBooleanDispMembrs = function (cellObj, rowId, col) {
+        if (cellObj.Value === true)
+            return "✔";
+        else
+            return "✖";
+    };
+
     this.getDispMembr = function (inpCtrl) {
         let rowId = inpCtrl.__rowid;
         let cellObj = inpCtrl.DataVals;
@@ -359,6 +364,9 @@
         }
         else if (col.ObjType === "DGBooleanSelectColumn") {
             dspMmbr = this.getBSDispMembrs(cellObj, rowId, col);
+        }
+        else if (col.ObjType === "DGBooleanColumn") {
+            dspMmbr = this.getBooleanDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
             dspMmbr = cellObj.F || cellObj.Value || "0.00"; // temporary fix
@@ -680,7 +688,10 @@
     };
 
     this.addRowDataModel = function (rowId, rowObjectMODEL) {
-        this.DataMODEL.push(this.getRowDataModel(rowId, rowObjectMODEL));
+        if (!this.ctrl.AscendingOrder)
+            this.DataMODEL.unshift(this.getRowDataModel(rowId, rowObjectMODEL));
+        else
+            this.DataMODEL.push(this.getRowDataModel(rowId, rowObjectMODEL));
     };
 
     this.addRow = function (opt = {}) {
@@ -723,8 +734,10 @@
     }.bind(this);
 
     this.insertRowAt = function (insertIdx, $tr) {
-        if (insertIdx > 2)
+        if (insertIdx < 1)
             $(`#${this.TableId}>tbody`).prepend($tr);
+        else if ($(`#${this.TableId}>tbody>tr`).length === insertIdx)
+            $tr.insertAfter($(`#${this.TableId}>tbody>tr:eq(${insertIdx - 1})`));
         else
             $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(${insertIdx})`));
 
@@ -1751,12 +1764,12 @@
                     callback: this.insertRowBelow
 
                 },
-                "Remove": {
-                    name: "insertRowAbove",
-                    icon: "fa-trash",
-                    callback: this.insertRowAbove
+                //"insertRowAbove": {
+                //    name: "Insert row above",
+                //    icon: "fa-trash",
+                //    callback: this.insertRowAbove
 
-                }
+                //}
             }
         };
     }.bind(this);
@@ -1768,6 +1781,13 @@
     };
 
     this.insertRowBelow = function (eType, selector, action, originalEvent) {
+        let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
+        if ($activeRow.length === 1) {
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))); {
+                let td = $activeRow.find('td:last')[0];
+                this.checkRow_click({ target: td }, false, false);
+            }
+        }
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");
         this.addRow({ insertIdx: $tr.index() + 1 });

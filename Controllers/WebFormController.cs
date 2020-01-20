@@ -105,62 +105,59 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public string getDGdata(string refid, List<Param> _params)
-        {
-            WebformDataWrapper WebformDataWrapper = new WebformDataWrapper();
-            string ObjStr = string.Empty;
-            try
-            {
-                EbDataReader dataReader = this.Redis.Get<EbDataReader>(refid);
-                foreach (Param item in dataReader.InputParams)
-                {
-                    foreach (Param _p in _params)
-                    {
-                        if (item.Name == _p.Name)
-                            _p.Type = item.Type;
-                    }
-                }
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = refid, Params = _params });
-                WebformDataWrapper = new WebformDataWrapper { FormData = Resp.FormData, Status = (int)HttpStatusCodes.OK };
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Exception in getDGdata. Message: " + ex.Message);
-                WebformDataWrapper = new WebformDataWrapper()
-                {
-                    Message = "Error in loading data...",
-                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
-                    MessageInt = ex.Message,
-                    StackTraceInt = ex.StackTrace
-                };
-            }
-            ObjStr = JsonConvert.SerializeObject(WebformDataWrapper);
-            return ObjStr;
-        }
+        //public string getDGdata(string refid, List<Param> _params)
+        //{
+        //    WebformDataWrapper WebformDataWrapper = new WebformDataWrapper();
+        //    string ObjStr = string.Empty;
+        //    try
+        //    {
+        //        EbDataReader dataReader = this.Redis.Get<EbDataReader>(refid);
+        //        foreach (Param item in dataReader.InputParams)
+        //        {
+        //            foreach (Param _p in _params)
+        //            {
+        //                if (item.Name == _p.Name)
+        //                    _p.Type = item.Type;
+        //            }
+        //        }
+        //        GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = refid, Params = _params });
+        //        WebformDataWrapper = new WebformDataWrapper { FormData = Resp.FormData, Status = (int)HttpStatusCodes.OK };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine("Exception in getDGdata. Message: " + ex.Message);
+        //        WebformDataWrapper = new WebformDataWrapper()
+        //        {
+        //            Message = "Error in loading data...",
+        //            Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+        //            MessageInt = ex.Message,
+        //            StackTraceInt = ex.StackTrace
+        //        };
+        //    }
+        //    ObjStr = JsonConvert.SerializeObject(WebformDataWrapper);
+        //    return ObjStr;
+        //}
 
         public string ImportFormData(string _refid, string _triggerctrl, List<Param> _params)
         {
-            WebformDataWrapper _data = null;
             try
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
                 GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
-                _data = Resp.FormDataWrap;
+                return Resp.FormDataWrap;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
-                _data = new WebformDataWrapper()
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
                     Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
-                };
+                });
             }
-
-            return JsonConvert.SerializeObject(_data);
         }
 
         public string ExecuteSqlValueExpr(string _refid, string _triggerctrl, List<Param> _params)

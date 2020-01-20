@@ -175,18 +175,21 @@ var InitControls = function (option) {
         let formObject = ctrlOpts.formObject;
         let userObject = ebcontext.user;
         let $input = $("#" + ctrl.EbSid_CtxId);
-        let fun = null;
         if (ctrl.ShowDateAs_ === 1) {
-            $input.MonthPicker({ Button: $input.next().removeAttr("onclick") });
+            $input.MonthPicker({
+                Button: $input.next().removeAttr("onclick"),
+                OnAfterChooseMonth: function () { $input.trigger("change"); }
+            });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-            if (ctrl.OnChangeFn && ctrl.OnChangeFn.Code) {
-                fun = new Function("form", "User", atob(ctrl.OnChangeFn.Code));
-                $input.MonthPicker({
-                    OnAfterChooseMonth: fun.bind(this, formObject, userObject)
-                });
-            }
+            
             //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
+        }
+        else if (ctrl.ShowDateAs_ === 2) {
+            $input.datetimepickers({
+                format: "YYYY",
+                viewMode: "years"
+            });
         }
         else {
             let sdp = userObject.Preference.ShortDatePattern;//"DD-MM-YYYY";
@@ -331,7 +334,7 @@ var InitControls = function (option) {
                 $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
             }
         });
-        if (ctrl.DataVals.Value)
+        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
     };
 

@@ -29,22 +29,22 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult CalendarView(string refid)
         {
-            Type[] typeArray = typeof(EbCalendarWrapper).GetTypeInfo().Assembly.GetTypes();
 
+            Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.Calendar, typeof(EbCalendarWrapper), typeof(EbObject));
 
             ViewBag.Meta = _jsResult.AllMetas;
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
-            //EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
-            //{
-            //    RefId = refid
-            //});
-            ////ViewBag.Refid = refid;
-            //ViewBag.VersionNumber = Resp.Data[0].VersionNumber;
-            //ViewBag.ObjType = Resp.Data[0].EbObjectType;
-            //ViewBag.dsObj = Resp.Data[0].Json;
-            //ViewBag.Status = Resp.Data[0].Status;
+            EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
+            {
+                RefId = refid
+            });
+            ViewBag.Refid = refid;
+            ViewBag.VersionNumber = Resp.Data[0].VersionNumber;
+            ViewBag.ObjType = Resp.Data[0].EbObjectType;
+            ViewBag.dsObj = Resp.Data[0].Json;
+            ViewBag.Status = Resp.Data[0].Status;
             return View();
         }
 

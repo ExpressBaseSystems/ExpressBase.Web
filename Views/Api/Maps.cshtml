@@ -1,0 +1,60 @@
+﻿@using ExpressBase.Common.Connections;
+@using ExpressBase.Common.Data;
+@using ExpressBase.Common;
+<!DOCTYPE html>
+<html>
+<head>
+    @{
+        EbMapConCollection Maps = ViewBag.Maps;
+        double Latitude = ViewBag.Latitude;
+        double Longitude = ViewBag.Longitude;
+
+        EbMaps Current = Maps.GetMapByType(ViewBag.MapType);
+    }
+    <style>
+        body, html {
+            height: 100%;
+            overflow-y: hidden;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <section class="eb_mobile-map">
+        <div class="container">
+            <div class="row">
+                @{
+                    if (Current == null)
+                    {
+                        <h3>@ViewBag.MapType is not integrated with your solution.</h3>
+                    }
+                    else if (Current.Vendor == MapVendors.GOOGLEMAP && !string.IsNullOrEmpty(Current.Apikey))
+                    {
+                        <div class="map-container" id="map-container"></div>
+
+                        <script>
+                            var cordinates = { lat: @Latitude, lng: @Longitude };
+                            var map;
+                            function initMap() {
+                                map = new google.maps.Map(document.getElementById('map'), {
+                                    center: cordinates,
+                                    zoom: 8
+                                });
+                            }
+                        </script>
+
+                        string src = $"https://maps.googleapis.com/maps/api/js?key={Current.Apikey}&callback=initMap";
+                        <script src="@src" async defer></script>
+                    }
+                }
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+

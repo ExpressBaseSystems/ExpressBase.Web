@@ -347,7 +347,8 @@ const WebFormRender = function (option) {
                 DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
                 continue;
             }
-            let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            //let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
             DGB.setEditModeRows(DataMODEL);
         }
 

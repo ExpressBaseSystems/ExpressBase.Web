@@ -22,6 +22,7 @@ using Microsoft.Net.Http.Headers;
 using ExpressBase.Web.Filters;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Data;
+using ExpressBase.Common.Connections;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -362,12 +363,10 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("/api/files/upload")]
-        public async Task<ApiResponse> UploadFiles()
+        public async Task<List<ApiFileData>> UploadFiles()
         {
-            ApiResponse ApiResp = new ApiResponse { Name = "fileupload", Result = new List<ApiFileData>() };
-            ApiResp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+            List<ApiFileData> ApiFiles = new List<ApiFileData>();
 
-            var watch = new System.Diagnostics.Stopwatch(); watch.Start();
             var req = this.HttpContext.Request.Form;
             string _filename = string.Empty;
 
@@ -380,7 +379,7 @@ namespace ExpressBase.Web.Controllers
                 foreach (IFormFile formFile in req.Files)
                 {
                     if (formFile.Length <= 0)
-                        return ApiResp;
+                        return ApiFiles;
 
                     _filename = formFile.FileName.ToLower();
                     fileRequest.FileCategory = this.GetFileType(_filename);
@@ -412,25 +411,19 @@ namespace ExpressBase.Web.Controllers
 
                     var res = this.FileClient.Post<UploadAsyncResponse>(fileRequest);
 
-                    (ApiResp.Result as List<ApiFileData>).Add(new ApiFileData
+                    ApiFiles.Add(new ApiFileData
                     {
                         FileName = _filename,
                         FileType = _filename.SplitOnLast(CharConstants.DOT).Last(),
                         FileRefId = res.FileRefId
                     });
-                    ApiResp.Message.Status = "Success";
                 }
-                watch.Stop();
-                ApiResp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
             }
             catch (Exception ex)
             {
-                watch.Stop();
-                ApiResp.Message.Status = "Failed";
-                ApiResp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
                 Console.WriteLine("Exception:" + ex.ToString());
             }
-            return ApiResp;
+            return ApiFiles;
         }
 
         private EbFileCategory GetFileType(string FileName)
@@ -630,6 +623,44 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(ex.StackTrace);
             }
             return resp;
+        }
+
+        [HttpGet("api/map")]
+        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude)
+        {
+            try
+            {
+                if (!ViewBag.IsValidSol && !IsTokensValid(rToken, bToken, this.ESolutionId))
+                    return new EmptyResult();
+
+                this.ServiceClient.BearerToken = bToken;
+                this.ServiceClient.RefreshToken = rToken;
+                this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, rToken);
+
+                EbConnectionFactory connection = new EbConnectionFactory(this.SultionId, this.Redis);
+                EbMapConCollection MapCollection = connection.MapConnection;
+
+                ViewBag.Maps = MapCollection;
+                ViewBag.Latitude = latitude;
+                ViewBag.Longitude = longitude;
+
+                MapVendors MapType;
+                if (type == null)
+                {
+                    MapType = MapVendors.GOOGLEMAP;
+                }
+                else
+                {
+                    Enum.TryParse(type, out MapType);
+                }
+
+                ViewBag.MapType = MapType;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return View();
         }
     }
 }

@@ -116,19 +116,24 @@ var DashBoardWrapper = function (options) {
         this.stickBtn4ToolBox.minimise();
     };
 
-
+    //<div class="tool_item_head" data-toggle="collapse" data-target="#toolb_views"><i class="fa fa-caret-down"></i> Views </div>
+    //    <div id="toolb_views" ebclass="tool-sec-cont" class="tool-sec-cont collapse in" aria-expanded="true" style="">
+    //        bqahbbxdw ghvhgwa
+    //    </div>
 
     this.DrawObjectOnMenu = function () {
         let myarr4EbType = [];
         let count = 0;
         let containers = [];
+        $("#Eb-obj-sidebar-cont").append(`<div class="tool_item_head" data-toggle="collapse" data-target="#view_pane"> <i class="fa fa-caret-down"></i>  Views</div>
+            <div id="view_pane" ebclass="tool-sec-cont" class="tool-sec-cont collapse in" ></div>`);
         $.each(this.ebObjList, function (key, Val) {
             $.each(Val, function (i, Obj) {
                 if (myarr4EbType.indexOf(Obj.EbObjectType) === -1) {
-                    $("#Eb-obj-sidebar-cont").append(`<div> 
-                        <div class="sidebar-head" hs-id="${Obj.EbObjectType}" style="display:flex;"> <div class="${this.ObjIcons[Obj.EbObjectType]} db-sidebar-icon"></div>
-                       ${this.ObjTypeName[Obj.EbObjectType]}</div>
-                       <div id="${Obj.EbObjectType}" class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
+                    $("#view_pane").append(`
+                        <div class="tool_item_head" data-toggle="collapse" data-target="#${Obj.EbObjectType}" style="padding-left:30px"><i class="fa fa-caret-down"></i> ${this.ObjTypeName[Obj.EbObjectType]} </div>
+                        <div id="${Obj.EbObjectType}" ebclass="tool-sec-cont" class="tool-sec-cont collapse in" style="">
+                            <div class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
                         </div>`);
                     myarr4EbType.push(Obj.EbObjectType);
                     containers.push(document.getElementById(`${Obj.EbObjectType}`));

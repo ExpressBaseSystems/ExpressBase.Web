@@ -1,0 +1,144 @@
+﻿@using ExpressBase.Common.Connections;
+@using ExpressBase.Common.Data;
+@using ExpressBase.Common;
+
+@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+
+    EbMapConCollection Maps = ViewBag.Maps;
+    double Latitude = ViewBag.Latitude;
+    double Longitude = ViewBag.Longitude;
+
+    MapVendors vendor = ViewBag.MapType;
+    EbMaps CurrentMap = Maps.GetMapByType(vendor);
+}
+<style>
+    .eb_mobile-map, .container, .row {
+        width: 100%;
+        height: 100%;
+    }
+
+    .map-container {
+        width: 100%;
+        height: 100%;
+        flex: 1;
+    }
+
+    .location-wraper {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .location-wraper .loc-head {
+            width: 100%;
+            padding: 10px;
+        }
+</style>
+
+<script>
+    window.Geocordinates = { lat: @Latitude, lng: @Longitude };
+    window.searchBoxDOME = null;
+</script>
+
+<div class="eb_mobile-map">
+    @{
+        if (CurrentMap == null)
+        {
+            <h3>@ViewBag.MapType is not integrated with your solution.</h3>
+        }
+        else if (CurrentMap.Vendor == MapVendors.GOOGLEMAP && !string.IsNullOrEmpty(CurrentMap.Apikey))
+        {
+            <div class="location-wraper">
+                <div class="loc-head">
+                    <input class="form-control" placeholder="Search Place" id="plc-input" type="text" />
+                </div>
+                <div class="map-container" id="map-container">
+
+                </div>
+            </div>
+
+            <script>
+                var map;
+                function initMap() {
+                    map = new google.maps.Map(document.getElementById('map-container'), {
+                        center: window.Geocordinates,
+                        zoom: 8,
+                        mapTypeControl: true,
+                        scaleControl: true,
+                        zoomControl: false,
+                    });
+
+                    var marker = new google.maps.Marker({
+                        position: window.Geocordinates,
+                        map: map,
+                        title: 'you are here'
+                    });
+
+                    window.searchBoxDOME = document.getElementById('plc-input');
+                    searchBox = new google.maps.places.SearchBox(window.searchBoxDOME);
+
+                    map.addListener('bounds_changed', function () {
+                        searchBox.setBounds(map.getBounds());
+                    });
+                    var markers = [];
+
+                    searchBox.addListener('places_changed', function () {
+                        var places = searchBox.getPlaces();
+
+                        if (places.length == 0) {
+                            return;
+                        }
+                        // Clear out the old markers.
+                        markers.forEach(function (marker) { marker.setMap(null); });
+                        markers = [];
+                        // For each place, get the icon, name and location.
+                        var bounds = new google.maps.LatLngBounds();
+                        places.forEach(function (place) {
+                            if (!place.geometry) {
+                                return;
+                            }
+                            // Create a marker for each place.
+                            markers.push(new google.maps.Marker({
+                                map: map,
+                                title: place.name,
+                                draggable: true,
+                                position: place.geometry.location
+                            }));
+
+                            if (place.geometry.viewport) {
+                                bounds.union(place.geometry.viewport);
+                            } else {
+                                bounds.extend(place.geometry.location);
+                            }
+                            if (markers.length >= 1) {
+                                let p = markers[0].getPosition();
+                                window.Geocordinates.lat = p.lat();
+                                window.Geocordinates.lng = p.lng();
+                            }
+                        });
+                        map.fitBounds(bounds);
+                    });
+                }
+            </script>
+
+            string src = $"https://maps.googleapis.com/maps/api/js?key={CurrentMap.Apikey}&sensor=false&libraries=places&callback=initMap";
+            <script src="@src" async defer></script>
+        }
+    }
+</div>
+
+<script>
+    function getCordinates() {
+        return window.Geocordinates;
+    }
+
+    function hideSearchBar() {
+        document.querySelector(".loc-head").style.display = "none";
+    }
+
+    function showSearchBar() {
+        document.querySelector(".loc-head").style.display = "block";
+    }
+</script>

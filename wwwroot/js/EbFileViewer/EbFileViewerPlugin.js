@@ -71,7 +71,13 @@
         this.showimage = function (rfid) {
             if (!(!rfid || rfid.length === 0)) {
                 let indx = this.pgSettings.findIndex(item => item.FileRefId == rfid);
-                this.viewer.view(indx);
+                if (this.pgSettings[indx].FileCategory == 1) {
+                    this.viewer.view(indx);
+                }
+                else if (this.pgSettings[indx].FileCategory == 0) {
+                    //pdf viewer
+                    console, log("need pdf viewer");
+                }
             }
            
         }

@@ -156,7 +156,7 @@ namespace ExpressBase.Web.BaseControllers
                     string bSub = bToken.Payload[TokenConstants.SUB].ToString();
                     string _ip = bToken.Payload[TokenConstants.IP].ToString();
                     Console.WriteLine("Reqst IP : " + this.RequestSourceIp + " - Auth IP : " + _ip);
-                    if (this.RequestSourceIp == _ip || Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT) == CoreConstants.DEVELOPMENT)
+                    if (this.RequestSourceIp == _ip || _ip == string.Empty)
                     {
                         Console.WriteLine("IP check success");
                         DateTime startDate = new DateTime(1970, 1, 1);

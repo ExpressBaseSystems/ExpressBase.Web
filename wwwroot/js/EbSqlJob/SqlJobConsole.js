@@ -27,6 +27,7 @@
 
 
     this.getJobsList = function () {
+        $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
         let Refid = $("#select-sql-job").children("option:selected").val();
         let date = $("#date").val();
         if (date !== "" && Refid !== null) {
@@ -57,6 +58,7 @@
                             o.columns = cols;
                             o.data = result.sqlJobsRows;
                             var data = new EbBasicDataTable(o);
+                            $("#layout_div .loader-fb").empty().removeClass("loader-fb");
                         } 
                     }
                 });
@@ -64,7 +66,8 @@
     };
 
     function renderButtonCol(data, type, row, meta) {
-        if (data[4] === "S")
+       
+        if (data[6] === "S")
             return "";
         else
             return `<button class="retryBtn" id="${data[5]}">Retry</button>`

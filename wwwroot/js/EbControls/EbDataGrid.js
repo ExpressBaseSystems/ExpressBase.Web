@@ -621,19 +621,20 @@
             let inpCtrlType = col.InputControlType;
             let ctrlEbSid = "ctrl_" + Date.now().toString(36) + visibleCtrlIdx;
             let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);
-            if (col.Hidden) {
-                //inpCtrl.EbSid_CtxId = ctrlEbSid;
-                //inpCtrl.__rowid = rowid;
-                //inpCtrl.__Col = col;
-                continue;
-            }
+            //if (col.Hidden) {
+            //    //inpCtrl.EbSid_CtxId = ctrlEbSid;
+            //    //inpCtrl.__rowid = rowid;
+            //    //inpCtrl.__Col = col;
+            //    continue;
+            //}
             if (inpCtrlType === "EbUserControl")
                 this.manageUCObj(inpCtrl, col);
             this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowid);
             inpCtrl = this.attachFns(inpCtrl, col.ObjType);
             this.objectMODEL[rowid].push(inpCtrl);
-
-            tr += this.getTdHtml(inpCtrl, col, visibleCtrlIdx);
+            if (!col.Hidden) {
+                tr += this.getTdHtml(inpCtrl, col, visibleCtrlIdx);
+            }
             if (col.IsEditable)
                 isAnyColEditable = true;
             visibleCtrlIdx++;

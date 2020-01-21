@@ -11,14 +11,14 @@
         this.SingleRefid = null;
         this.FileList = [];
         this.CurrentFimg = null;
-        this.Multiple = (this.Options.Multiple) ? "multiple" : "";
+        this.Multiple = this.Options.Multiple ? "multiple" : "";
         if (this.validateOpt())
             this.init();
-    };
+    }
 
-    uploadSuccess(refId) { this.SingleRefid = refId };
-    windowClose() { };
-    getFileRef() { return this.SingleRefid };
+    uploadSuccess(refId) { this.SingleRefid = refId; }
+    windowClose() { }
+    getFileRef() { return this.SingleRefid; }
     customTrigger(name, filerefs) { }
 
     validateOpt() {
@@ -31,7 +31,7 @@
             return false;
         }
         return true;
-    };
+    }
 
     init() {
         this.Modal = this.outerHtml();
@@ -42,7 +42,7 @@
         $(`#${this.Options.Container}-upload-lin`).off("click").on("click", this.upload.bind(this));
         this.Modal.on("show.bs.modal", this.onToggleM.bind(this));
         $(`#${this.Options.Container}_Upl_btn`).keypress(function (e) {
-            if ((e.which == 13) || (e.keyCode === 13)) {
+            if (e.which === 13 || e.keyCode === 13) {
                 this.click();
             }
         });
@@ -53,14 +53,19 @@
         //        e.preventDefault();
         //    }
         //})
-        
-    };
+
+    }
 
     multiThumbFlow() {
         this.FullScreen = this.fullScreen();
         if (this.Options.ShowGallery) {
             this.Gallery = this.appendGallery();
-            this.GalleryFS = this.appendFSHtml();
+            // this.GalleryFS = this.appendFSHtml();//full screen preview init html
+            //ebfileviewer start
+            $("#ebfileviewdiv").remove();
+            $("body").append("<div id='ebfileviewdiv'></div>");
+            this.ebFilezview = $("#ebfileviewdiv").ebFileViewer(this.Options.Files);
+             //ebfileviewer end
             this.pullFile();
             $(".prevImgrout,.nextImgrout").off("click").on("click", this.fscreenN_P.bind(this));
         }
@@ -78,7 +83,7 @@
         }
         this.Modal.find('.eb-upl-bdy').on("dragover", this.handleDragOver.bind(this));
         this.Modal.find('.eb-upl-bdy').on("drop", this.handleFileSelect.bind(this));
-    };
+    }
 
     fscreenN_P(ev) {
         let action = $(ev.target).closest("button").attr("action");
@@ -88,7 +93,7 @@
         else if (action === "prev" && this.CurrentFimg.prev('.trggrFprev').length > 0) {
             this.galleryFullScreen({ target: this.CurrentFimg.prev('.trggrFprev') });
         }
-    };
+    }
 
     appendGallery() {
         $(`#${this.Options.Container}_FUP_GW .FUP_Bdy_W`).append(`<div id="${this.Options.Container}_GalleryUnq" class="ebFupGalleryOt">
@@ -147,23 +152,33 @@
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
-            if ($.isEmptyObject(this.FileList[i].Meta) || this.FileList[i].Meta.Category.length <= 0 || this.FileList[i].Meta.Category[0] === "Category") {
+            if ($.isEmptyObject(this.FileList[i].Meta)) {
+                $portdef.append(this.thumbNprevHtml(this.FileList[i]));
+                $countdef.text("(" + $portdef.children().length + ")");
+            }
+            else if (!this.FileList[i].Meta.hasOwnProperty("Category")) {
                 $portdef.append(this.thumbNprevHtml(this.FileList[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
             else {
-                for (let k = 0; k < this.FileList[i].Meta.Category.length; k++) {
-                    let $portcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_apndBody_apndPort`);
-                    let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_head .FcnT`);
-                    $portcat.append(this.thumbNprevHtml(this.FileList[i]));
-                    $countcat.text("(" + $portcat.children().length + ")");
+                if (this.FileList[i].Meta.Category[0] === "Category") {
+                    $portdef.append(this.thumbNprevHtml(this.FileList[i]));
+                    $countdef.text("(" + $portdef.children().length + ")");
+                }
+                else {
+                    for (let k = 0; k < this.FileList[i].Meta.Category.length; k++) {
+                        let $portcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_apndBody_apndPort`);
+                        let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_head .FcnT`);
+                        $portcat.append(this.thumbNprevHtml(this.FileList[i]));
+                        $countcat.text("(" + $portcat.children().length + ")");
+                    }
                 }
             }
             $(`#prev-thumb${this.FileList[i].FileRefId}`).data("meta", JSON.stringify(this.FileList[i]));
         }
 
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
-        $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));
+        $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
         $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
         $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
         $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
@@ -223,32 +238,37 @@
             return this.thumbSelection(ev);
 
         let fileref = $(ev.target).closest(".trggrFprev").attr("filref");
-        this.GalleryFS.show();
-        let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
-        let urls = "", urll = "";
 
-        if (o.FileCategory === 0) {
-            urls = `/files/${fileref}.jpg`;
-            urll = urls;
-        }
-        else {
-            urls = `/images/small/${fileref}.jpg`;
-            urll = `/images/large/${fileref}.jpg`;
-        }
+        //ebfileviewer 
+        this.ebFilezview.showimage(fileref);
 
-        if (is_cached(location.origin + urll)) {
-            this.GalleryFS.eq(1).find('img').attr("src", urll);
-        }
-        else {
-            this.GalleryFS.eq(1).find('img').attr("src", urls);
-            this.GalleryFS.eq(1).find('img').attr("data-src", urll);
-            this.GalleryFS.eq(1).find('img').Lazy({
-                onError: function (element) { }
-            });
-        }
-        this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Fname").text(o.FileName);
-        this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Tags").html(this.getTagsHtml(o));
-        this.CurrentFimg = $(ev.target).closest(".trggrFprev");
+
+        //this.GalleryFS.show();//show full screen 
+        //let o = JSON.parse($(ev.target).closest(".trggrFprev").data("meta"));
+        //let urls = "", urll = "";
+
+        //if (o.FileCategory === 0) {
+        //    urls = `/files/${fileref}.jpg`;
+        //    urll = urls;
+        //}
+        //else {
+        //    urls = `/images/small/${fileref}.jpg`;
+        //    urll = `/images/large/${fileref}.jpg`;
+        //}
+
+        //if (is_cached(location.origin + urll)) {
+        //    this.GalleryFS.eq(1).find('img').attr("src", urll);
+        //}
+        //else {
+        //    this.GalleryFS.eq(1).find('img').attr("src", urls);
+        //    this.GalleryFS.eq(1).find('img').attr("data-src", urll);
+        //    this.GalleryFS.eq(1).find('img').Lazy({
+        //        onError: function (element) { }
+        //    });
+        //}
+        //this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Fname").text(o.FileName);
+        //this.GalleryFS.eq(1).find(".ebFupGFscreen_footr .Tags").html(this.getTagsHtml(o));
+        //this.CurrentFimg = $(ev.target).closest(".trggrFprev");
     }
 
     getTagsHtml(o) {
@@ -273,18 +293,18 @@
     }
 
     initCropy() {
-        return (new EbCropper({
+        return new EbCropper({
             Container: 'container_crp',
             Toggle: '._crop',
             ResizeViewPort: this.Options.ResizeViewPort
-        }));
+        });
     }
 
     cropImg(e) {
         this.Cropy.Url = $(e.target).closest(".file-thumb-wraper").find("img").attr("src");
         this.Cropy.FileName = $(e.target).closest(".eb-upl_thumb").attr("exact");
         this.Cropy.toggleModal();
-    };
+    }
 
     onToggleM() {
         if (this.Options.ServerEventUrl)
@@ -293,12 +313,12 @@
 
     toggleM() {
         this.Modal.modal("toggle");
-    };
+    }
 
     ok() {
         this.toggleM();
         this.windowClose();
-    };
+    }
 
     browse(e) {
         if (window.File && window.FileReader && window.FileList && window.Blob) {
@@ -306,7 +326,7 @@
         } else {
             alert('The File APIs are not fully supported in this browser.');
         }
-    };
+    }
 
     handleDragOver(evt) {
         evt.stopPropagation();
@@ -491,7 +511,7 @@
 
     upload(e) {
         this.comUpload();
-    };
+    }
 
     comUpload() {
         let url = "";
@@ -634,7 +654,7 @@
                           </div>`);
 
         return $(`#${this.Options.Container}-upl-fullscreen`);
-    };
+    }
 
     startSE() {
         this.ss = new EbServerEvents({ ServerEventUrl: this.Options.ServerEventUrl, Channels: ["file-upload"] });
@@ -677,7 +697,7 @@
         catch{
             return s.replace(".", "").replace(/\s/g, "");
         }
-    };
+    }
 
     contextMenu() {
         this.DefaultLinks = {
@@ -714,7 +734,7 @@
                     name: this.Options.CustomMenu[i].name,
                     icon: this.Options.CustomMenu[i].icon,
                     callback: this.customeMenuClick.bind(this)
-                }
+                };
             }
         }
         return o;
@@ -786,4 +806,11 @@
             this.Gallery.find(`div[filref="${filerefs[i]}"]`).remove();
         }
     }
-};
+
+    customMenuCompleted(name, refids) {
+        if (name === "Delete") {
+            this.ebFilezview.deleteimage(refids);
+        }
+       
+    }
+}

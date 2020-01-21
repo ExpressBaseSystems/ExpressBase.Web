@@ -27,6 +27,7 @@
 
 
     this.getJobsList = function () {
+        $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
         let Refid = $("#select-sql-job").children("option:selected").val();
         let date = $("#date").val();
         if (date !== "" && Refid !== null) {
@@ -39,31 +40,34 @@
                         Date: date
                     },
                     success: function (result) {
-                        let cols = JSON.parse(result.sqlJobsDvColumns).$values;
-                        cols.push(chkObj);
-                        $("#list-of-jobs").empty();
-                        $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
-
-                        var o = new Object();
-                        o.tableId = "tbl";
-                        o.datetimeformat = true;
-                        //o.showFilterRow = false;
-                        o.showSerialColumn = false;
-                        o.showCheckboxColumn = false;
-                        o.showFilterRow = false;
-                        o.IsPaging = true;
-                        //o.source = "inline";
-                        //o.scrollHeight = "200px";
-                        o.columns = cols;
-                        o.data = result.sqlJobsRows;
-                        var data = new EbBasicDataTable(o);
+                        if (result.sqlJobsColumns != null) {
+                            let cols = JSON.parse(result.sqlJobsDvColumns).$values;
+                            cols.push(chkObj);
+                            $("#list-of-jobs").empty();
+                            $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+                            var o = new Object();
+                            o.tableId = "tbl";
+                            o.datetimeformat = true;
+                            //o.showFilterRow = false;
+                            o.showSerialColumn = false;
+                            o.showCheckboxColumn = false;
+                            o.showFilterRow = false;
+                            o.IsPaging = true;
+                            //o.source = "inline";
+                            //o.scrollHeight = "200px";
+                            o.columns = cols;
+                            o.data = result.sqlJobsRows;
+                            var data = new EbBasicDataTable(o);
+                            $("#layout_div .loader-fb").empty().removeClass("loader-fb");
+                        } 
                     }
                 });
         }
     };
 
     function renderButtonCol(data, type, row, meta) {
-        if (data[4] === "S")
+       
+        if (data[6] === "S")
             return "";
         else
             return `<button class="retryBtn" id="${data[5]}">Retry</button>`
@@ -71,6 +75,7 @@
 
 
     this.SqljobRetry = function (e) {
+        let Refid = $("#select-sql-job").children("option:selected").val();
         let id = e.target.getAttribute("id");
         if (id) {
             $.ajax(
@@ -78,7 +83,8 @@
                     type: 'POST',
                     url: "/SqlJob/JobRetry",
                     data: {
-                        id: id
+                        id: id,
+                        RefId: Refid
                     },
                     success: function (result) {
                         $("#show-sql-jobs").click();
@@ -133,6 +139,7 @@
 
     this.RunsqlJobTrigger = function () {
         let Refid = $("#select-sql-job").children("option:selected").val();
+        $("#sql-job-param").empty().append(`<div class="lds-facebook"><div></div><div></div><div></div></div>`);
         if (Refid !== null) {
             $.ajax(
                 {
@@ -146,6 +153,7 @@
         }
     };
     this.RunsqlJobTriggerAjaxSuccess = function (data) {
+        //$("#sql-job-param").empty();
         this.Obj = JSON.parse(data);
         if (this.Obj.Filter_Dialogue) {
             this.getColumns(this.Obj);
@@ -157,11 +165,15 @@
     }
 
     this.getColumns = function (Obj) {
-        $.post("../SqlJob/GetFilterBody", { dvobj: JSON.stringify(Obj), contextId: "paramdiv" }, this.AppendFD.bind(this));
+        $.post("../SqlJob/GetFilterBody", { dvobj: JSON.stringify(Obj), contextId: "paramdiv" }, this.filterDialogLoader.bind(this));
     };
 
+    this.filterDialogLoader = function (result) {
+        setTimeout(function () { this.AppendFD(result); }.bind(this), 1500);
+    };
 
     this.AppendFD = function (result) {
+        $("#sql-job-param").empty();
         $('.param-div-cont').remove();
         $("#sql-job-param").prepend(`
                 <div id='paramdiv-Cont${this.TabNum}' class='param-div-cont'>
@@ -221,8 +233,15 @@
         $("#schedule").attr("id", "schedule-sql-job");
         $("#SchedulerModal .modal-body .scheduler").removeClass("col-md-5");
     };
-
-    this.init = function () {      
+    this.currentDate = function () {
+        var d = new Date();
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+        var output = (day < 10 ? '0' : '') + day + '-' + (month < 10 ? '0' : '') + month + '-' + d.getFullYear();
+        $("#date").val(output);
+    };
+    this.init = function () {
+        this.currentDate();
         this.DrawJobSelectBox();
         $("#list-of-jobs").on("click", ".retryBtn", this.SqljobRetry.bind(this));
         $("#show-sql-jobs").on("click", this.getJobsList.bind(this));

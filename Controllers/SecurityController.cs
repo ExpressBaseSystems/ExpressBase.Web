@@ -611,6 +611,8 @@ namespace ExpressBase.Web.Controllers
 						_title = "User Name";
 					else if (col.ColumnName == "duration")
 						_title = "Duration";
+					else if (col.ColumnName == "usertype")
+						_title = "User Type";
 					DVBaseColumn ebcol = new DVBaseColumn { Data = col.ColumnIndex, Name = col.ColumnName, sTitle = _title, bVisible = true, Type = col.Type };
 					_columns.Add(ebcol);
 				}

@@ -275,6 +275,12 @@ function EbMobStudio(config) {
         else if (pname === "DataSourceRefId") {
             this.getCol(obj.DataSourceRefId);
         }
+        else if (obj.constructor.name === "EbMobileGeoLocation" && pname === "HideSearchBox") {
+            obj._toggleSearchBar();
+        }
+        else {
+            console.log("pg changed");
+        }
     }.bind(this);
 
     this.exe = function () {

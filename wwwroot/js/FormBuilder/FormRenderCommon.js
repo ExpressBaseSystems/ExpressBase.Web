@@ -292,7 +292,7 @@
 
         //let unique_flag = true;
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        let val = ctrl.getValue();
+        let val = ctrl.getValueFromDOM();
         let tableName = ctrl.TableName || this.FO.FormObj.TableName;
         if (isNaNOrEmpty(val))
             return;

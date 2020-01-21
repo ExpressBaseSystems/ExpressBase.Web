@@ -19,6 +19,7 @@ var DashBoardWrapper = function (options) {
     this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21: "fa fa-map-marker" }
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
+    this.toolboxhtml = options.Toolhtml;
     if (this.EbObject !== null) {
         this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     }
@@ -116,19 +117,24 @@ var DashBoardWrapper = function (options) {
         this.stickBtn4ToolBox.minimise();
     };
 
-
+    //<div class="tool_item_head" data-toggle="collapse" data-target="#toolb_views"><i class="fa fa-caret-down"></i> Views </div>
+    //    <div id="toolb_views" ebclass="tool-sec-cont" class="tool-sec-cont collapse in" aria-expanded="true" style="">
+    //        bqahbbxdw ghvhgwa
+    //    </div>
 
     this.DrawObjectOnMenu = function () {
         let myarr4EbType = [];
         let count = 0;
         let containers = [];
+        $("#Eb-obj-sidebar-cont").append(`<div class="tool_item_head" data-toggle="collapse" data-target="#view_pane"> <i class="fa fa-caret-down"></i>  Views</div>
+            <div id="view_pane" ebclass="tool-sec-cont" class="tool-sec-cont collapse in" ></div>`);
         $.each(this.ebObjList, function (key, Val) {
             $.each(Val, function (i, Obj) {
                 if (myarr4EbType.indexOf(Obj.EbObjectType) === -1) {
-                    $("#Eb-obj-sidebar-cont").append(`<div> 
-                        <div class="sidebar-head" hs-id="${Obj.EbObjectType}" style="display:flex;"> <div class="${this.ObjIcons[Obj.EbObjectType]} db-sidebar-icon"></div>
-                       ${this.ObjTypeName[Obj.EbObjectType]}</div>
-                       <div id="${Obj.EbObjectType}" class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
+                    $("#view_pane").append(`
+                        <div class="tool_item_head" data-toggle="collapse" data-target="#${Obj.EbObjectType}" style="padding-left:30px"><i class="fa fa-caret-down"></i> ${this.ObjTypeName[Obj.EbObjectType]} </div>
+                        <div id="${Obj.EbObjectType}" ebclass="tool-sec-cont" class="tool-sec-cont collapse in views_cont" style="">
+                            <div class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
                         </div>`);
                     myarr4EbType.push(Obj.EbObjectType);
                     containers.push(document.getElementById(`${Obj.EbObjectType}`));
@@ -142,24 +148,41 @@ var DashBoardWrapper = function (options) {
 
 
         }.bind(this));
+        $("#Eb-obj-sidebar-cont").append(this.toolboxhtml);
+
+        //containers.push(document.getElementById("grid-cont"));
+        containers.push(document.getElementById("toolb_basic_ctrls"));
+        containers.push(document.getElementById("toolb_ph_cont_ctrls"));
+        containers.push(document.getElementById("component_cont"));
         //containers.push(document.getElementById('grid-cont'));
+
         this.drake = dragula(containers, {
             copy: true,
-            accepts: function (el, target, source, sibling) {
-                if (source == target) {
-                    return false;
-                }
-                else
-                    return true; // elements can be dropped in any of the `containers` by default
-            },
+            accepts: this.acceptfn,
         });
         this.drake.off("drag").on("drag", this.columnsdrag.bind(this));
         this.drake.off("shadow").on("shadow", this.columnsshadow.bind(this));
         this.drake.off("drop").on("drop", this.columnsdrop.bind(this));
     };
 
+    this.acceptfn = function (el, target, source, sibling) {
+        if (source === target) {
+            return false;
+        }
+        else {
+            if ( ($(source).hasClass("views_cont") || $(source).attr("id") === "toolb_basic_ctrls") && $(target).attr("id") === "component_cont")
+                return false;
+            else if ($(source).attr("id") === "toolb_ph_cont_ctrls" && $(target).attr("id") === "grid-cont")
+                return false;
+            else if ( ($(source).hasClass("views_cont") || $(source).attr("id") === "toolb_ph_cont_ctrls") && $(target).hasClass("tile_dt_cont"))
+                return false;
+            else
+                return true;
+        }// elements can be dropped in any of the `containers` by default
+    };
+
     this.columnsdrag = function (el, source) {
-        if (source === $("#grid-cont")) {
+        if ($(source) === $("#grid-cont")) {
             return false;
         }
         else {
@@ -182,15 +205,31 @@ var DashBoardWrapper = function (options) {
         this.VisRefid = el.getAttribute("refid");
         el.remove();
         if (target && source !== null) {
-            let a = this.AddNewTile();
-            this.TileCollection[this.CurrentTile].RefId = this.VisRefid;
-            $.ajax(
-                {
-                    url: '../DashBoard/DashBoardGetObj',
-                    type: 'POST',
-                    data: { refid: this.VisRefid },
-                    success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
-                });
+            if ($(target).attr("id") === "grid-cont" && $(source).hasClass("views_cont")) {
+                let a = this.AddNewTile();
+                this.TileCollection[this.CurrentTile].RefId = this.VisRefid;
+                $.ajax(
+                    {
+                        url: '../DashBoard/DashBoardGetObj',
+                        type: 'POST',
+                        data: { refid: this.VisRefid },
+                        success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                    });
+            }
+            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls") {
+                let drop_id = this.AddNewTile();
+                $(`#${drop_id}`).append("<div id='gaugeChart' style='border:solid 1px'></div>");
+                this.drake.containers.push(document.getElementById(drop_id));
+                this.TileCollection[this.CurrentTile].ControlsColl.$values.push(new EbObjects.EbGauge("gauge" + Date.now()));
+            }
+            else if ($(target).attr("id") === "component_cont") {
+                $(`#component_cont`).append("<div id='dataobject' style='border:solid 1px red'></div>");
+                let obj = new EbObjects.EbDataObject("EbDataObject" + Date.now());
+            }
+            else if ($(target).hasClass("tile_dt_cont") && $(source).attr("id") === "toolb_basic_ctrls") {
+                $(target).append("<div id='gaugeChart' style='border:solid 1px'></div>");                
+                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(new EbObjects.EbGauge("gauge" + Date.now()));
+            }
         }
 
     };
@@ -335,6 +374,7 @@ var DashBoardWrapper = function (options) {
         let j = this.NewTileCount;
         let tile_id = "t" + j;
         let t_id = "tile" + j;
+        let drop_id = "drop_" + t_id;
         $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
                     <div style="display:flex;" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
@@ -343,10 +383,11 @@ var DashBoardWrapper = function (options) {
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
                     <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
-                 <div data-id="${t_id}" class="db-tbl-wraper"></div></div></div>`), null, null, 4, 3, true);
+                 <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${drop_id}" ></div></div></div>`), null, null, 4, 3, true);
         this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
         this.CurrentTile = t_id;
-    }
+        return drop_id;
+    };
 
     this.TileSelectorJs = function (e) {
         let a = $(event.target).closest(".grid-stack-item-content").attr("id");

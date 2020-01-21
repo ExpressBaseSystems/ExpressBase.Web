@@ -7,6 +7,7 @@ var a___builder = 0;
 var a___MT = 0;
 
 const WebFormRender = function (option) {
+    ebcontext.renderContext = "WebForm";
     this.FormObj = option.formObj;
     this.$form = $(`#${this.FormObj.EbSid}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
@@ -236,28 +237,34 @@ const WebFormRender = function (option) {
 
     };
 
+    // to add fetched values to data model 
+    // parameter - _respObj : data model of imported data
     this.modifyFormData4Import = function (_respObj) {
 
         this.EditModeFormData = _respObj.FormData.MultipleTables;
-        this.DataMODEL = this.EditModeFormData;
-        attachModalCellRef_form(this.FormObj, this.EditModeFormData);
-        let SourceEditModeFormDataExceptDG = this.EditModeFormData[this.FormObj.Name];
+        let editModeFormData = _respObj.FormData.MultipleTables;
 
-        $.each(this.EditModeFormData, function (CtrlName, Data) {
-            // data except DGs
-            if (CtrlName === this.FormObj.Name) {
-                this.EditModeFormData[this.FormObj.TableName] = SourceEditModeFormDataExceptDG;
-                delete this.EditModeFormData[this.FormObj.Name];
+        let SourceEditModeFormDataExceptDG = editModeFormData[this.FormObj.Name];
+
+        for (let i = 0; i < this.flatControls.length; i++) {
+            let ctrl = this.flatControls[i];
+            let dataObj = getObjByval(SourceEditModeFormDataExceptDG[0].Columns, "Name", ctrl.Name);
+            if (dataObj) {
+                let val = dataObj.Value;
+                ctrl.DataVals.Value = val;
             }
-            // data DGs
-            else {
+        }
 
+        // DG = replace DG dataModel with  new one
+        $.each(editModeFormData, function (CtrlName, Data) {
+            if (CtrlName !== this.FormObj.Name) {
                 let DG = getObjByval(this.DGs, "Name", CtrlName);
                 if (!DG)
                     return true;
                 let DGTblName = DG.TableName;
-                this.EditModeFormData[DGTblName] = Data;
                 delete this.EditModeFormData[CtrlName];
+                this.EditModeFormData[DGTblName] = Data;
+                this.DataMODEL[DGTblName] = Data;
             }
         }.bind(this));
 
@@ -357,7 +364,8 @@ const WebFormRender = function (option) {
                 DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
                 continue;
             }
-            let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            //let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
             DGB.setEditModeRows(DataMODEL);
         }
 
@@ -1321,12 +1329,12 @@ const WebFormRender = function (option) {
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
+        attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
         this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
         this.setMode();
 
-        attachModalCellRef_form(this.FormObj, this.DataMODEL);
 
         //if (this.Mode.isNew && this.EditModeFormData)
         //    this.setEditModeCtrls();

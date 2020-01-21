@@ -192,17 +192,20 @@
     this.decideUrl = function (_obj) {
         var _url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
         if (this.login === "uc") {
-            if (_obj.EbType == "TableVisualization" || _obj.EbType == "ChartVisualization" || _obj.EbType == "GoogleMap") {
+            if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "GoogleMap") {
                 _url = "../DV/dv?refid=" + _obj.Refid;
             }
-            else if (_obj.EbType == "Report") {
+            else if (_obj.EbType === "Report") {
                 _url = "../ReportRender/Index?refid=" + _obj.Refid;
             }
-            else if (_obj.EbType == "WebForm") {
+            else if (_obj.EbType === "WebForm") {
                 _url = "../WebForm/Index?refid=" + _obj.Refid;
             }
-            else if (_obj.EbType == "DashBoard") {
+            else if (_obj.EbType === "DashBoard") {
                 _url = "../DashBoard/DashBoardView?refid=" + _obj.Refid;
+            }
+            else if (_obj.EbType === "CalendarView") {
+                _url = "../Calendar/CalendarView?refid=" + _obj.Refid;
             }
         }
         return _url;

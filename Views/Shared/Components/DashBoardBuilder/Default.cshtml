@@ -79,7 +79,7 @@
             Cid: '@ViewBag.cid',
             EbObjList: @Html.Raw(ViewBag.SideBarMenu),
             googlekey: '@ViewBag.googlekey',
-            Toolhtml:@Html.Raw(_toolBox.ToolsHtml),
+            Toolhtml:`@Html.Raw(_toolBox.ToolsHtml)`,
         });
 
         commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DBobj;

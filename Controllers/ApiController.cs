@@ -625,8 +625,8 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("api/map/{bToken}/{rToken}/{type}/{latitude}/{longitude}/{place?}")]
-        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place = null)
+        [HttpGet("api/map")]
+        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place)
         {
             try
             {

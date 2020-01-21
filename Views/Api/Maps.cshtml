@@ -63,28 +63,16 @@
 
     function updateUrl(lat, long) {
         try {
-            //var url = new URL(location.href);
-            //var query_string = url.search;
-            //var search_params = new URLSearchParams(query_string);
+            var url = new URL(location.href);
+            var query_string = url.search;
+            var search_params = new URLSearchParams(query_string);
 
-            //search_params.set('latitude', lat);
-            //search_params.set('longitude', long);
+            search_params.set('latitude', lat);
+            search_params.set('longitude', long);
 
-            //url.search = search_params.toString();
+            url.search = search_params.toString();
 
-            //var obj = { Title: 'map', Url: url.toString() };
-            //history.pushState(obj, obj.Title, obj.Url);
-
-            var url = location.href;
-
-            var urlitems = location.href.split("/").reverse();
-
-            let _lat = urlitems[1];
-            let _lng = urlitems[0]
-
-            //location.href = url.replace(_lat, lat).replace(_lng, long);
-
-            var obj = { Title: 'map', Url: url.replace(_lat, lat).replace(_lng, long) };
+            var obj = { Title: 'map', Url: url.toString() };
             history.pushState(obj, obj.Title, obj.Url);
         }
         catch (err) {

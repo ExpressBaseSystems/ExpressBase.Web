@@ -626,7 +626,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/map")]
-        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude)
+        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place)
         {
             try
             {
@@ -643,6 +643,7 @@ namespace ExpressBase.Web.Controllers
                 ViewBag.Maps = MapCollection;
                 ViewBag.Latitude = latitude;
                 ViewBag.Longitude = longitude;
+                ViewBag.Place = place;
 
                 MapVendors MapType;
                 if (type == null)

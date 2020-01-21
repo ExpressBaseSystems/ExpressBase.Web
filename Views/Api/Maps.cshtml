@@ -8,6 +8,7 @@
     EbMapConCollection Maps = ViewBag.Maps;
     double Latitude = ViewBag.Latitude;
     double Longitude = ViewBag.Longitude;
+    string Place = ViewBag.Place;
 
     MapVendors vendor = ViewBag.MapType;
     EbMaps CurrentMap = Maps.GetMapByType(vendor);
@@ -22,6 +23,8 @@
         width: 100%;
         height: 100%;
         flex: 1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
     }
 
     .location-wraper {
@@ -29,17 +32,53 @@
         width: 100%;
         display: flex;
         flex-direction: column;
+        padding:0 10px;
     }
 
         .location-wraper .loc-head {
             width: 100%;
-            padding: 10px;
+            padding: 10px 0;
         }
 </style>
 
 <script>
     window.Geocordinates = { lat: @Latitude, lng: @Longitude };
     window.searchBoxDOME = null;
+
+    function getCordinates() {
+        return window.Geocordinates;
+    }
+
+    function hideSearchBar() {
+        document.querySelector(".loc-head").style.display = "none";
+    }
+
+    function showSearchBar() {
+        document.querySelector(".loc-head").style.display = "block";
+    }
+
+    function setSearch(text) {
+        document.getElementById("plc-input").value = text;
+    }
+
+    function updateUrl(lat, long) {
+        try {
+            var url = new URL(location.href);
+            var query_string = url.search;
+            var search_params = new URLSearchParams(query_string);
+
+            search_params.set('latitude', lat);
+            search_params.set('longitude', long);
+
+            url.search = search_params.toString();
+
+            var obj = { Title: 'map', Url: url.toString() };
+            history.pushState(obj, obj.Title, obj.Url);
+        }
+        catch (err) {
+            console.log(err);
+        }
+    }
 </script>
 
 <div class="eb_mobile-map">
@@ -52,7 +91,7 @@
         {
             <div class="location-wraper">
                 <div class="loc-head">
-                    <input class="form-control" placeholder="Search Place" id="plc-input" type="text" />
+                    <input class="form-control" placeholder="Search Place" id="plc-input" value="@Place" type="text" />
                 </div>
                 <div class="map-container" id="map-container">
 
@@ -62,6 +101,11 @@
             <script>
                 var map;
                 function initMap() {
+
+                    if ('@Place') {
+                        setSearch('@Place');
+                    }
+
                     map = new google.maps.Map(document.getElementById('map-container'), {
                         center: window.Geocordinates,
                         zoom: 8,
@@ -116,6 +160,7 @@
                                 let p = markers[0].getPosition();
                                 window.Geocordinates.lat = p.lat();
                                 window.Geocordinates.lng = p.lng();
+                                updateUrl(window.Geocordinates.lat, window.Geocordinates.lng);
                             }
                         });
                         map.fitBounds(bounds);
@@ -129,16 +174,3 @@
     }
 </div>
 
-<script>
-    function getCordinates() {
-        return window.Geocordinates;
-    }
-
-    function hideSearchBar() {
-        document.querySelector(".loc-head").style.display = "none";
-    }
-
-    function showSearchBar() {
-        document.querySelector(".loc-head").style.display = "block";
-    }
-</script>

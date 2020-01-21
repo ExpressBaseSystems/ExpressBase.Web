@@ -19,6 +19,7 @@ var DashBoardWrapper = function (options) {
     this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21: "fa fa-map-marker" }
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
+    this.toolboxhtml = options.Toolhtml;
     if (this.EbObject !== null) {
         this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     }
@@ -147,6 +148,7 @@ var DashBoardWrapper = function (options) {
 
 
         }.bind(this));
+        $("#Eb-obj-sidebar-cont").append(this.toolboxhtml);
         //containers.push(document.getElementById('grid-cont'));
         this.drake = dragula(containers, {
             copy: true,

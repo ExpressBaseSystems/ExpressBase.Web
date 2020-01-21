@@ -479,7 +479,6 @@ const WebFormRender = function (option) {
             approvalTable = this.getApprovalRow();
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
-        this.DynamicTabObject.updateDataModel();//Dynamic tab related updation
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
         $.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();

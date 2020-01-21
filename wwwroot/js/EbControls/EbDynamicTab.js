@@ -121,6 +121,7 @@
         
         this.dynamicTabPanes[args.srcId] = {
             ctrlObj: paneCtrlNew,
+            tabCtrl: temp.tab,
             srcRowId: args.srcRowId,
             allFlatControls: allFlatControls,
             flatControls: flatControls,
@@ -130,6 +131,67 @@
         };
         
         this.initializeControls(this.dynamicTabPanes[args.srcId]);
+
+        //binding event + on edit data mngnt
+        $tab.find(`a[href="#${id}"]`).attr('data-srcid', args.srcId);
+        $tab.find(`a[href="#${id}"]`).on('shown.bs.tab', this.onTabSwitched.bind(this));
+    };
+
+    this.onTabSwitched = function (e) {
+        let srcId = $(e.target).attr('data-srcid');
+        if (!this.dynamicTabPanes.hasOwnProperty(srcId)) {
+            console.log('Dynamic tab pane not found. Source Id : ' + srcId);
+            return;
+        }
+        let dObj = this.dynamicTabPanes[srcId];
+
+        if (dObj.srcRowId > 0 && !dObj._DataLoaded) {
+            let targets = [];
+            for (let i = 0; i < dObj.DGs.length; i++) {
+                targets.push(dObj.DGs[i].TableName);
+            }
+
+            this.options.formRenderer.showLoader();
+            $.ajax({
+                type: "POST",
+                url: "/WebForm/GetDynamicGridData",
+                data: {
+                    _refid: this.options.formRenderer.formRefId,
+                    _rowid: this.options.formRenderer.rowId,
+                    _srcid: srcId,
+                    _target: targets
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                    this.options.formRenderer.hideLoader();
+                    dObj._DataLoaded = false;
+                }.bind(this),
+                success: function (result) {
+                    this.options.formRenderer.hideLoader();
+                    dObj._DataLoaded = true;
+                    this.setEditModeCtrls(dObj, result);
+                    //console.log(result);
+                }.bind(this)
+            });
+
+
+        }
+    };
+
+    this.setEditModeCtrls = function (dObj, jsonData) {
+        let dataModel = JSON.parse(jsonData);
+        if (dataModel.Status !== 200)
+            console.log('Data not loaded : ' + dataModel.Message);
+        for (let DGName in dObj.DGBuilderObjs) {
+            let DGB = dObj.DGBuilderObjs[DGName];
+            //if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
+            //    this.DataMODEL[DGB.ctrl.TableName] = [];
+            //    DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
+            //    continue;
+            //}
+            let DataMODEL = dataModel.FormData.MultipleTables[DGB.ctrl.TableName];
+            DGB.setEditModeRows(DataMODEL);
+        }
     };
 
     this.initializeControls = function (dObj) {
@@ -208,6 +270,7 @@
     };
 
     this.getDataModels = function () {
+        this.updateDataModel();
         let mt = {};
         $.each(this.dynamicTabPanes, function (k, dObj) {
             for (let i = 0; i < dObj.DGs.length; i++) {
@@ -220,13 +283,16 @@
     };
 
     this.switchToViewMode = function () {
-        $.each(this.dynamicTabPanes, function (k, dObj) {
-            for (let i = 0; i < dObj.flatControls.length; i++)
-                dObj.flatControls[i].disable();
-            for (let i = 0; i < dObj.DGs.length; i++) {
-                dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToViewMode();
-            }
-        }.bind(this));
+        //$.each(this.dynamicTabPanes, function (k, dObj) {
+        //    for (let i = 0; i < dObj.flatControls.length; i++)
+        //        dObj.flatControls[i].disable();
+        //    for (let i = 0; i < dObj.DGs.length; i++) {
+        //        dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToViewMode();
+        //        dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
+        //        dObj._DataLoaded = true;
+        //    }
+        //}.bind(this));
+        this.disposeDynamicTab();
     };
 
     this.switchToEditMode = function () {
@@ -237,6 +303,8 @@
             }
             for (let i = 0; i < dObj.DGs.length; i++) {
                 dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToEditMode();
+                dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
+                dObj._DataLoaded = true;
             }
         }.bind(this));
     };
@@ -253,6 +321,18 @@
                 Model[dObj.DGs[i].TableName] = Model[dObj.DGs[i].TableName].concat(DgModel);
             }
         }.bind(this));
+    };
+
+    this.disposeDynamicTab = function () {
+        let $tab = $('#cont_' + this.dynamicTabPanes[srcId].tabCtrl.EbSid_CtxId);
+        this.lastActiveTabPane = $tab.find(`li.active a`).attr('data-srcid');//note - must look for all
+        for (let srcId in this.dynamicTabPanes) {
+            let id = this.dynamicTabPanes[srcId].ctrlObj.EbSid_CtxId;
+            $tab.find(`.tab-btn-cont ul li[ebsid="${id}"]`).remove();
+            $tab.find(`.tab-content #${id}`).remove();
+        }
+        this.dynamicTabPanes = {};
+        $($tab.find(`a[data-toggle='tab']`)[0]).tab('show');
     };
 
     this.init();

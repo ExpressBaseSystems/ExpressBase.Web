@@ -323,16 +323,16 @@
         }.bind(this));
     };
 
-    this.disposeDynamicTab = function () {
-        let $tab = $('#cont_' + this.dynamicTabPanes[srcId].tabCtrl.EbSid_CtxId);
-        this.lastActiveTabPane = $tab.find(`li.active a`).attr('data-srcid');//note - must look for all
+    this.disposeDynamicTab = function () {        
+        //this.lastActiveTabPane = $tab.find(`li.active a`).attr('data-srcid');//note - must look for all
         for (let srcId in this.dynamicTabPanes) {
+            let $tab = $('#cont_' + this.dynamicTabPanes[srcId].tabCtrl.EbSid_CtxId);
             let id = this.dynamicTabPanes[srcId].ctrlObj.EbSid_CtxId;
             $tab.find(`.tab-btn-cont ul li[ebsid="${id}"]`).remove();
             $tab.find(`.tab-content #${id}`).remove();
+            $($tab.find(`a[data-toggle='tab']`)[0]).tab('show');
         }
         this.dynamicTabPanes = {};
-        $($tab.find(`a[data-toggle='tab']`)[0]).tab('show');
     };
 
     this.init();

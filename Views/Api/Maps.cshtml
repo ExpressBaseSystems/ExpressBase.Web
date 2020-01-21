@@ -61,7 +61,7 @@
         document.getElementById("plc-input").value = text;
     }
 
-    function updateUrl(lat, long) {
+    function updateUrl(lat, long,place) {
         try {
             var url = new URL(location.href);
             var query_string = url.search;
@@ -70,10 +70,15 @@
             search_params.set('latitude', lat);
             search_params.set('longitude', long);
 
+            if (place) {
+                search_params.set('place', place);
+            }
+
             url.search = search_params.toString();
 
-            var obj = { Title: 'map', Url: url.toString() };
-            history.pushState(obj, obj.Title, obj.Url);
+            location.search = url.search;
+            //var obj = { Title: 'map', Url: url.toString() };
+            //history.pushState(obj, obj.Title, obj.Url);
         }
         catch (err) {
             console.log(err);
@@ -160,7 +165,10 @@
                                 let p = markers[0].getPosition();
                                 window.Geocordinates.lat = p.lat();
                                 window.Geocordinates.lng = p.lng();
-                                updateUrl(window.Geocordinates.lat, window.Geocordinates.lng);
+
+                                let textval = window.searchBoxDOME.value;
+
+                                updateUrl(window.Geocordinates.lat, window.Geocordinates.lng,textval);
                             }
                         });
                         map.fitBounds(bounds);

@@ -10,7 +10,7 @@
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
     this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
-    this.DataMODEL = this.formRenderer.DataMODEL[this.ctrl.TableName];
+    this.DataMODEL = options.isDynamic ? [] :this.formRenderer.DataMODEL[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -1680,11 +1680,16 @@
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
+        if (_respObj.Status !== 200) {
+            console.error('Data not loaded : ' + _respObj.Message);
+            ebcontext._formLastResponse = _respObj;
+            return;
+        }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.MultipleTables[this.ctrl.TableName] = dataModel;
+        this.DataMODEL = dataModel;
         this.setEditModeRows(dataModel);
     };
 

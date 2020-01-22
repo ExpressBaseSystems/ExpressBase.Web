@@ -66,11 +66,10 @@
     };
 
     function renderButtonCol(data, type, row, meta) {
-       
-        if (data[6] === "S")
+        if (data[data.length - 3] === "S")
             return "";
         else
-            return `<button class="retryBtn" id="${data[5]}">Retry</button>`
+            return `<button class="retryBtn" id="${data[data.length - 2]}">Retry</button>`
     };
 
 

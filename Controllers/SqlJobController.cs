@@ -120,19 +120,31 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult GetFilterBody(string dvobj, string contextId)
         {
-            var dsObject = EbSerializers.Json_Deserialize(dvobj);
-            dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (dsObject.FilterDialog != null)
-                EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
-            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
+            ViewComponentResult result = null;
+            try
+            {
+                var dsObject = EbSerializers.Json_Deserialize(dvobj);
+                if (dsObject != null)
+                {
+                    dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
+                    Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                    if (dsObject.FilterDialog != null)
+                        EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
+                    result = ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace + e.Message);
+            }
+            return result;
         }
 
         public RetryJobResponse JobRetry(int id, string RefId)
         {
             RetryJobResponse response = null;
             if (id > 0 && RefId != null && RefId != String.Empty)
-                 response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
+                response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
             return response;
         }
 

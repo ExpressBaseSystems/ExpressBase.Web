@@ -48,6 +48,8 @@ const WebFormRender = function (option) {
     this.uniqCtrlsInitialVals = {};
     this.PSsIsInit = {};
     this.isInitNCs = false;
+    this.DynamicTabObject = null;
+    this.TabControls = null;
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -140,21 +142,20 @@ const WebFormRender = function (option) {
 
     this.initWebFormCtrls = function () {
 
-        //this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        //let opts = {
-        //    allTabCtrls: this.TabControls,
-        //    formModel: _formData,
-        //    initControls: this.initControls,
-        //    mode: this.Mode,
-        //    formObjectGlobal: this.formObject,
-        //    userObject: this.userObject,
-        //    formDataExtdObj: this.FormDataExtdObj,
-        //    formObject_Full: this.FormObj,
-        //    formRefId: this.formRefId,
-        //    formRenderer: this
-        //};
-        //this.DynamicTabObject = new EbDynamicTab(opts);
-        //window.zzzz = this.DynamicTabObject;
+        this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
+        let opts = {
+            allTabCtrls: this.TabControls,
+            formModel: _formData,
+            initControls: this.initControls,
+            mode: this.Mode,
+            formObjectGlobal: this.formObject,
+            userObject: this.userObject,
+            formDataExtdObj: this.FormDataExtdObj,
+            formObject_Full: this.FormObj,
+            formRefId: this.formRefId,
+            formRenderer: this
+        };
+        this.DynamicTabObject = new EbDynamicTab(opts);
 
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
@@ -187,6 +188,22 @@ const WebFormRender = function (option) {
             this.FRC.bindOnChange(_DG);
         }.bind(this));
     };
+
+    DynamicTabPane = function (args) {
+        let $initiatorDG = $(event.path).find("[ctype=DataGrid]");
+        let $initiatorTab = $(event.path).find("[ctype=TabControl]");
+        if ($initiatorDG.length === 0) {
+            console.log('Dynamic tab not supported. Please initiate from a data grid.');
+            return;
+        }
+        if ($initiatorTab.length === 0) {
+            console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
+            return;
+        }
+        let DgCtrl = getObjByval(this.DGs, 'EbSid', $initiatorDG.attr("ebsid"));
+        let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
+        this.DynamicTabObject.initDynamicTabPane($.extend(args, {srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl}));
+    }.bind(this);
 
     this.updateCtrlsUI = function () {
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
@@ -470,9 +487,8 @@ const WebFormRender = function (option) {
             approvalTable = this.getApprovalRow();
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
-
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
-        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getMultipleTables()));
+        $.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
 
@@ -715,7 +731,7 @@ const WebFormRender = function (option) {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
-        //this.DynamicTabObject.switchToViewMode();
+        this.DynamicTabObject.switchToViewMode();
     };
 
     this.SwitchToEditMode = function () {
@@ -736,7 +752,7 @@ const WebFormRender = function (option) {
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
         }.bind(this));
-        //this.DynamicTabObject.switchToEditMode();
+        this.DynamicTabObject.switchToEditMode();
     };
 
     this.BeforeModeSwitch = function (newMode) {

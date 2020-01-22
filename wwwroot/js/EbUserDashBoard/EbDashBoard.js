@@ -20,6 +20,9 @@ var DashBoardWrapper = function (options) {
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.toolboxhtml = options.Toolhtml;
+    this.components = {};
+    this.Procs = {};
+    this.Rowdata = {};
     if (this.EbObject !== null) {
         this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     }
@@ -30,14 +33,12 @@ var DashBoardWrapper = function (options) {
         this.grid.cellHeight(25);
         grid = this.grid;
     }
+
     this.GridStackInit();
-
-
 
     this.getColumns = function () {
         $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
     };
-
 
     this.AppendFD = function (result) {
         $('.param-div-cont').remove();
@@ -77,8 +78,7 @@ var DashBoardWrapper = function (options) {
 
     this.CloseParamDiv = function () {
         this.stickBtn.minimise();
-    }
-
+    };
 
     //Toolbox
     this.AppendToolBox = function () {
@@ -116,11 +116,6 @@ var DashBoardWrapper = function (options) {
     this.CloseToolBoxDiv = function () {
         this.stickBtn4ToolBox.minimise();
     };
-
-    //<div class="tool_item_head" data-toggle="collapse" data-target="#toolb_views"><i class="fa fa-caret-down"></i> Views </div>
-    //    <div id="toolb_views" ebclass="tool-sec-cont" class="tool-sec-cont collapse in" aria-expanded="true" style="">
-    //        bqahbbxdw ghvhgwa
-    //    </div>
 
     this.DrawObjectOnMenu = function () {
         let myarr4EbType = [];
@@ -218,31 +213,76 @@ var DashBoardWrapper = function (options) {
             }
             else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls") {
                 let drop_id = this.AddNewTile();
-                $(`#${drop_id}`).append("<div id='gaugeChart' style='border:solid 1px'></div>");
+                let o = this.makeElement(el);
+                $(`#${drop_id}`).append(o.$Control[0]);
                 this.drake.containers.push(document.getElementById(drop_id));
-                this.TileCollection[this.CurrentTile].ControlsColl.$values.push(new EbObjects.EbGauge("gauge" + Date.now()));
+                this.drake.containers.push(document.getElementById(o.Name));
+                this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
             }
             else if ($(target).attr("id") === "component_cont") {
-                $(`#component_cont`).append("<div id='dataobject' style='border:solid 1px red'></div>");
-                let obj = new EbObjects.EbDataObject("EbDataObject" + Date.now());
+                let o = this.makeElement(el);
+                $(target).append(o.$Control[0])
+                $(target).append(`<div id="Inner_Cont_${o.EbSid}" class="inner_Cont_DataObject"> </div>`);
+                //let obj = new EbObjects.EbDataObject("EbDataObject" + Date.now());
+                //$(`#component_cont`).append(`<div id='${obj.Name}' class='component_class' style='border:solid 1px red; width:30%;height:40%'></div><div id='data-columns'></div>`);
+                this.propGrid.setObject(o, AllMetas["EbDataObject"]);
+                this.drake.containers.push(document.getElementById(`Inner_Cont_${o.EbSid}`));
+                //this.components[obj.Name] = obj;
             }
             else if ($(target).hasClass("tile_dt_cont") && $(source).attr("id") === "toolb_basic_ctrls") {
-                $(target).append("<div id='gaugeChart' style='border:solid 1px'></div>");                
-                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(new EbObjects.EbGauge("gauge" + Date.now()));
+                let obj = this.makeElement(el);
+                $(target).append(obj.$Control[0]);
+                this.drake.containers.push(document.getElementById(obj.Name));
+                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
             }
+            else if ($(target).hasClass("gaugeChart") && $(source).attr("id") === "data-columns") {
+                $(target).append(el);
+                let component = $(el).attr("data-ctrl");
+                let column = $(el).attr("data-column");
+                let controlname = $(target).attr("id");
+                let tileId = $(target).parent().attr("data-id");
+                let obj = getObjByval(this.TileCollection[tileId].ControlsColl.$values, "Name", controlname);
+                obj.DataObjCtrlName = component;
+                obj.DataObjColName = column;
+                this.TileCollection[tileId].ComponentsColl.$values.push(this.components[component]);
+                let index = getObjByval(this.components[component].Columns.$values, "name", column).data;
+                let _data = this.Rowdata[component + "Row"][index];
+                let xx = EbGaugeWrapper({ container: controlname, value: _data});
+            }
+
+            $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
 
     };
 
+    this.FocusOnControlObject = function (e) {
+        this.propGrid.setObject(this.Procs[e.target.id], AllMetas["EbDataObject"]); 
+    };
+
+    this.makeElement = function (el) {
+        let ebtype = $(el).attr("eb-type");
+        var id = "tb" + this.TabNum + ebtype + CtrlCounters[$(el).attr("eb-type") + "Counter"]++;
+        this.Procs[id] = new EbObjects["Eb" + ebtype](id);
+        this.dropedCtrlInit(this.Procs[id].$Control, ebtype, id);
+        return this.Procs[id];
+    };
+
+    this.dropedCtrlInit = function ($ctrl, type, id) {
+        $ctrl.attr("tabindex", "1");
+        $ctrl.attr("id", id).attr("ebsid", id);
+        $ctrl.attr("eb-type", type);
+    };
+
+  
     this.GenerateButtons = function () {
 
-    }
+    };
 
     this.sideBarHeadToggle = function (e) {
         let abc = e.target.getAttribute("hs-id");
         $(`#${abc}`).toggle(100);
 
-    }
+    };
 
     this.init = function () {
         this.AppendToolBox();
@@ -273,6 +313,7 @@ var DashBoardWrapper = function (options) {
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
     }
+
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
         var id = e.target.getAttribute("link");
@@ -308,6 +349,7 @@ var DashBoardWrapper = function (options) {
             this.Ajax4fetchVisualization(Refid);
         }
     }
+
     this.Ajax4fetchVisualization = function (refid) {
         if (refid !== "") {
             $.ajax(
@@ -362,7 +404,7 @@ var DashBoardWrapper = function (options) {
         else {
             $('.grid-stack').gridstack();
         }
-        $(".grid-stack").on("click", this.TileSelectorJs.bind(this));
+        $(".grid-stack , .Eb-ctrlContainer").on("click", this.TileSelectorJs.bind(this));
         //this.addTilecontext()
         this.Tilecontext();
 
@@ -399,10 +441,12 @@ var DashBoardWrapper = function (options) {
         else {
             this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         }
-
+        procId = $(event.target).closest(".gaugeChart").attr("id");
+        metaId = $(event.target).closest(".gaugeChart").attr("eb-type");
+        if (procId != null) {
+            this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]);
+          }
     }.bind(this);
-
-
 
     this.popChanged = function (obj, pname, newval, oldval) {
         if (pname === "TileCount") {
@@ -411,7 +455,7 @@ var DashBoardWrapper = function (options) {
             //            </div>uj
             //        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: block;"></div></div>`)
         }
-        if (pname == "TileRefId") {
+        if (pname === "TileRefId") {
             $(`[name-id="${this.CurrentTile}"]`).empty();
             $(`[data-id="${this.CurrentTile}"]`).empty();
             $(`.eb-loader-prcbar`).remove();
@@ -427,8 +471,7 @@ var DashBoardWrapper = function (options) {
         if (pname === "BackgroundColor") {
             $("#layout_div").css("background-color", "").css("background-color", newval);
         }
-
-        if (pname == "Filter_Dialogue") {
+        if (pname === "Filter_Dialogue") {
             if (newval !== "") {
                 this.getColumns();
             }
@@ -437,47 +480,36 @@ var DashBoardWrapper = function (options) {
                 if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             }
         }
-    }
-    //this.addTilecontext = function () {
-    //    $.contextMenu({
-    //        selector: '.grid-stack',
-    //        trigger: 'right',
-    //        items: {
-    //            "Add Tile": {
-    //                name: "Add Tile", icon: "add", callback: this.AddNewTile.bind(this)
-    //            },
-    //        }
-    //    });
-    //}
+        let Refid = obj[pname];
+        if (obj.$type.indexOf("EbDataObject") > -1 && pname === "DataSource") {
+            $.LoadingOverlay('show');
+            $.ajax({
+                type: "POST",
+                url: "../DS/GetData4DashboardControl",
+                data: { DataSourceRefId: Refid },
+                success: function (resp) {
+                    obj["Columns"] = JSON.parse(resp.columns);
+                    this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
+                    $.LoadingOverlay('hide');
+                    this.DisplayColumns(obj);
+                    this.Rowdata[obj.Name + "Row"] = resp.row;
+                }.bind(this)
+            });
+        }
+    };
 
-
+    this.DisplayColumns = function (obj) {
+        $(`#${obj.EbSid} .eb-ctrl-label`).empty().append(obj.Name);
+        $(`#Inner_Cont_${obj.EbSid}`).empty();
+        for (let i = 0; i < obj['Columns'].$values.length; i++) {
+            let column = obj['Columns'].$values[i];
+            let name = column.name;
+            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.Name}' data-column='${name}' eb-type='Datacolumn' type=${column.Type} class='col-div-blk'> ${name}</div>`);
+        }
+    };
 
     this.Tilecontext = function () {
-        //$.contextMenu({
-        //    selector: '.grid-stack-item-content',
-        //    trigger: 'right',
-        //    items: {
-        //        "RemoveTile": {
-        //            name: "Remove Tile", icon: "add", callback: this.RemoveTile.bind(this),
-        //        },
-        //        "FullScreenView": {
-        //            name: "Open in NewTab ", icon: "fa-external-link", callback: this.FullScreenViewTrigger.bind(this),
-        //        },
-        //    }
-        //});
-    }
-
-    //this.RemoveTile = function (name, selector, event) {
-    //    var grid = $('.grid-stack').data('gridstack');
-    //    el = selector.$trigger.parent();
-    //    grid.removeWidget(el);
-    //}
-    //this.FullScreenViewTrigger = function (name, selector, event) {
-    //    let id = selector.$trigger[0].getAttribute("id");
-    //    let TileRefid = this.TileCollection[id].TileRefId;
-    //    window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
-    //}
-
+    };
 
     this.TileRefidChangesuccess = function (id, data) {
         if (this.filtervalues.length === 0) {
@@ -578,6 +610,7 @@ var DashBoardWrapper = function (options) {
         //this.RemoveColumnRef();
         return true;
     };
+
     this.DashBoardSearch = function (e) {
         $(`#DashB-Searched-Obj`).empty();
         let val = $("#DashB-Search").val().trim();

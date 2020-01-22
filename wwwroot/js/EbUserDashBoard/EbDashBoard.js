@@ -20,7 +20,6 @@ var DashBoardWrapper = function (options) {
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.toolboxhtml = options.Toolhtml;
-    this.components = {};
     this.Procs = {};
     this.Rowdata = {};
     if (this.EbObject !== null) {
@@ -216,36 +215,33 @@ var DashBoardWrapper = function (options) {
                 let o = this.makeElement(el);
                 $(`#${drop_id}`).append(o.$Control[0]);
                 this.drake.containers.push(document.getElementById(drop_id));
-                this.drake.containers.push(document.getElementById(o.Name));
+                this.drake.containers.push(document.getElementById(o.EbSid));
                 this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
             }
             else if ($(target).attr("id") === "component_cont") {
                 let o = this.makeElement(el);
                 $(target).append(o.$Control[0])
                 $(target).append(`<div id="Inner_Cont_${o.EbSid}" class="inner_Cont_DataObject"> </div>`);
-                //let obj = new EbObjects.EbDataObject("EbDataObject" + Date.now());
-                //$(`#component_cont`).append(`<div id='${obj.Name}' class='component_class' style='border:solid 1px red; width:30%;height:40%'></div><div id='data-columns'></div>`);
                 this.propGrid.setObject(o, AllMetas["EbDataObject"]);
                 this.drake.containers.push(document.getElementById(`Inner_Cont_${o.EbSid}`));
-                //this.components[obj.Name] = obj;
             }
             else if ($(target).hasClass("tile_dt_cont") && $(source).attr("id") === "toolb_basic_ctrls") {
                 let obj = this.makeElement(el);
                 $(target).append(obj.$Control[0]);
-                this.drake.containers.push(document.getElementById(obj.Name));
+                this.drake.containers.push(document.getElementById(obj.EbSid));
                 this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
             }
-            else if ($(target).hasClass("gaugeChart") && $(source).attr("id") === "data-columns") {
+            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_Cont_DataObject")) {
                 $(target).append(el);
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
                 let controlname = $(target).attr("id");
                 let tileId = $(target).parent().attr("data-id");
-                let obj = getObjByval(this.TileCollection[tileId].ControlsColl.$values, "Name", controlname);
+                let obj = getObjByval(this.TileCollection[tileId].ControlsColl.$values, "EbSid", controlname);
                 obj.DataObjCtrlName = component;
                 obj.DataObjColName = column;
-                this.TileCollection[tileId].ComponentsColl.$values.push(this.components[component]);
-                let index = getObjByval(this.components[component].Columns.$values, "name", column).data;
+                this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
+                let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
                 let _data = this.Rowdata[component + "Row"][index];
                 let xx = EbGaugeWrapper({ container: controlname, value: _data});
             }
@@ -492,7 +488,7 @@ var DashBoardWrapper = function (options) {
                     this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
                     $.LoadingOverlay('hide');
                     this.DisplayColumns(obj);
-                    this.Rowdata[obj.Name + "Row"] = resp.row;
+                    this.Rowdata[obj.EbSid + "Row"] = resp.row;
                 }.bind(this)
             });
         }
@@ -504,7 +500,7 @@ var DashBoardWrapper = function (options) {
         for (let i = 0; i < obj['Columns'].$values.length; i++) {
             let column = obj['Columns'].$values[i];
             let name = column.name;
-            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.Name}' data-column='${name}' eb-type='Datacolumn' type=${column.Type} class='col-div-blk'> ${name}</div>`);
+            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.EbSid}' data-column='${name}' eb-type='Datacolumn' type=${column.Type} class='col-div-blk'> ${name}</div>`);
         }
     };
 

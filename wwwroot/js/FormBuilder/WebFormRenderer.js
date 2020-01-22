@@ -578,6 +578,7 @@ const WebFormRender = function (option) {
             this.rowId = respObj.RowId;
             this.EditModeFormData = respObj.FormData.MultipleTables;
             this.DataMODEL = this.EditModeFormData;
+            a___MT = this.DataMODEL;
             attachModalCellRef_form(this.FormObj, this.DataMODEL);
 
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;

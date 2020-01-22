@@ -815,3 +815,16 @@ body .stickBtn {
     .grid-stack .user-ctrl-col .Eb-ctrlContainer:last-child {
         margin-bottom: 0px;
     }
+
+/*Dashboard gauge*/
+.tile_dt_cont {
+    display: flex;
+    flex-direction: row;
+    padding: 3px;
+}
+.gaugeChart {
+    border: solid 1px rgb(204, 204, 204);
+    height: 100%;
+    width: 100%;
+
+}

@@ -252,7 +252,16 @@ var DashBoardWrapper = function (options) {
     };
 
     this.FocusOnControlObject = function (e) {
-        this.propGrid.setObject(this.Procs[e.target.id], AllMetas["EbDataObject"]); 
+        let elem = $(e.target).closest("Eb-ctrlContainer");
+        let id = elem.attr("id");
+        if (id === undefined) {
+            elem = $($(e.target).parents(".Eb-ctrlContainer")[0]);
+            id = elem.attr("id");
+        }
+        let eb_type = elem.attr("eb-type");
+        if (eb_type == "EbDataObject") {
+            this.propGrid.setObject(this.Procs[id], AllMetas["EbDataObject"]); 
+        }
     };
 
     this.makeElement = function (el) {

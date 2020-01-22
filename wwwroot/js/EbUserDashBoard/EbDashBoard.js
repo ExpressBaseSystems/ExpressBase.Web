@@ -21,6 +21,7 @@ var DashBoardWrapper = function (options) {
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.toolboxhtml = options.Toolhtml;
     this.components = {};
+    this.Rowdata = {};
     if (this.EbObject !== null) {
         this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     }
@@ -239,7 +240,10 @@ var DashBoardWrapper = function (options) {
                 let obj = getObjByval(this.TileCollection[tileId].ControlsColl.$values, "Name", controlname);
                 obj.DataObjCtrlName = component;
                 obj.DataObjColName = column;
-                this.TileCollection[tileId].ComponentColl.$values.push(this.components[component]);
+                this.TileCollection[tileId].ComponentsColl.$values.push(this.components[component]);
+                let index = getObjByval(this.components[component].Columns.$values, "name", column).data;
+                let _data = this.Rowdata[component + "Row"][index];
+                let xx = EbGaugeWrapper({ container: controlname, value: _data});
             }
 
             $(".component_class, .control_class").off("click").on("click", this.FocusOnControlObject.bind(this));
@@ -458,13 +462,14 @@ var DashBoardWrapper = function (options) {
             $.LoadingOverlay('show');
             $.ajax({
                 type: "POST",
-                url: "../DS/GetColumns4Control",
+                url: "../DS/GetData4DashboardControl",
                 data: { DataSourceRefId: Refid },
-                success: function (Columns) {
-                    obj["Columns"] = JSON.parse(Columns);
+                success: function (resp) {
+                    obj["Columns"] = JSON.parse(resp.columns);
                     this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
                     $.LoadingOverlay('hide');
                     this.DisplayColumns(obj);
+                    this.Rowdata[obj.Name + "Row"] = resp.row;
                 }.bind(this)
             });
         }

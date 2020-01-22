@@ -1,6 +1,8 @@
 ﻿
 @using ExpressBase.Objects.ServiceStack_Artifacts;
 @using ExpressBase.Common.Structures;
+@using ExpressBase.Common.Objects;
+@using ExpressBase.Objects;
 
 @{
     var bApnd = true;
@@ -8,6 +10,16 @@
     {
         bApnd = false;
     }
+}
+
+@{
+    EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
+
+    string builderType_S = type.ToString();
+    int typeInt = Convert.ToInt32(ViewBag.ObjType);
+    var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), builderType_S, true);
+
+    EbToolbox _toolBox = new EbToolbox(_builderType);
 }
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.min.css" asp-append-version=@bApnd />
@@ -41,14 +53,14 @@
     <div class="row" style="background: transparent;">
         <div class="col-sm-12" style="background: transparent; width: 99% ;margin-top: 15px;">
             <div id="dashbord-view" class="drop-target">
-                <div class="grid-stack" id="grid-cont"></div>
+                <div class="grid-stack" id="grid-cont" ></div>
             </div>
-
+            <div id="component_cont" style="border:solid 1px #cecbcb; height:110px;width:100%"></div>
         </div>
+        
     </div>
     <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
 </div>
-
 
 <script type="text/javascript">
 
@@ -66,7 +78,8 @@
             Wc: '@ViewBag.wc',
             Cid: '@ViewBag.cid',
             EbObjList: @Html.Raw(ViewBag.SideBarMenu),
-            googlekey : '@ViewBag.googlekey'
+            googlekey: '@ViewBag.googlekey',
+            Toolhtml:`@Html.Raw(_toolBox.ToolsHtml)`,
         });
 
         commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = DBobj;

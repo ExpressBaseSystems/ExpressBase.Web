@@ -22,6 +22,7 @@ using Microsoft.Net.Http.Headers;
 using ExpressBase.Web.Filters;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Data;
+using ExpressBase.Common.Connections;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -622,6 +623,45 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(ex.StackTrace);
             }
             return resp;
+        }
+
+        [HttpGet("api/map")]
+        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place)
+        {
+            try
+            {
+                if (!ViewBag.IsValidSol && !IsTokensValid(rToken, bToken, this.ESolutionId))
+                    return new EmptyResult();
+
+                this.ServiceClient.BearerToken = bToken;
+                this.ServiceClient.RefreshToken = rToken;
+                this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, rToken);
+
+                EbConnectionFactory connection = new EbConnectionFactory(this.SultionId, this.Redis);
+                EbMapConCollection MapCollection = connection.MapConnection;
+
+                ViewBag.Maps = MapCollection;
+                ViewBag.Latitude = latitude;
+                ViewBag.Longitude = longitude;
+                ViewBag.Place = place;
+
+                MapVendors MapType;
+                if (type == null)
+                {
+                    MapType = MapVendors.GOOGLEMAP;
+                }
+                else
+                {
+                    Enum.TryParse(type, out MapType);
+                }
+
+                ViewBag.MapType = MapType;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return View();
         }
     }
 }

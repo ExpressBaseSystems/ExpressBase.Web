@@ -24,6 +24,14 @@
 }
 
 /*loaders*/
+.loader-fb {
+    position: absolute;
+    top: 0px;
+    background: #ffffff96;
+    height: 100%;
+    width: 100%;
+}
+
 .lds-facebook {
     display: inline-block;
     position: relative;
@@ -32,7 +40,11 @@
     left: 43%;
     height: 80px;
 }
-
+.center-tag-fb {
+    width: 80px;
+    top: 19em;
+    left: 45%;
+}
     .lds-facebook div {
         display: inline-block;
         position: absolute;

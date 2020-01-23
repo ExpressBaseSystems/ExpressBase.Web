@@ -336,6 +336,13 @@
     //update data model before save
     this.updateDataModel = function () {
         let Model = this.formRenderer.DataMODEL;
+
+        $.each(this.dynamicTabPanes, function (k, dObj) {
+            for (let i = 0; i < dObj.DGs.length; i++) {                
+                Model[dObj.DGs[i].TableName] = [];                
+            }
+        }.bind(this));
+
         $.each(this.dynamicTabPanes, function (k, dObj) {
             for (let i = 0; i < dObj.DGs.length; i++) {
                 let DgModel = dObj.DGBuilderObjs[dObj.DGs[i].Name].DataMODEL;

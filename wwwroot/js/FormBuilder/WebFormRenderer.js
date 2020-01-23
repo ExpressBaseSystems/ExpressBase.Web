@@ -630,34 +630,45 @@ const WebFormRender = function (option) {
     //    return IsDGsHavePartialEntry;
     //};
 
-    //this.DGsB4Save = function () {
-    //    if (this.IsDGsHavePartialEntry()) {
-    //        EbDialog("show", {
-    //            Message: "Found uncommited entry in a row, continue without the change?",
-    //            Buttons: {
-    //                "Yes": {
-    //                    Background: "green",
-    //                    Align: "right",
-    //                    FontColor: "white;"
-    //                },
-    //                "No": {
-    //                    Background: "red",
-    //                    Align: "left",
-    //                    FontColor: "white;"
-    //                }
-    //            },
-    //            CallBack: this.dialogboxAction.bind(this)
-    //        });
-    //        return false;
-    //    }
-    //    else
-    //        return true;
-    //};
+    this.IsDGsHaveActiveRows = function () {
+        let hasActiveRows = false;
+        $.each(this.DGBuilderObjs, function (k, DGB) {
+            if (DGB.hasActiveRow()) {
+                hasActiveRows = true;
+                return false;
+            }
+        }.bind(this));
+        return hasActiveRows;
+    };
+    
+    this.DGsB4Save = function () {
+        if (this.IsDGsHaveActiveRows()) {
+            EbDialog("show", {
+                Message: "Please commit or delete uncommited rows",
+                //Buttons: {
+                //    "Yes": {
+                //        Background: "green",
+                //        Align: "right",
+                //        FontColor: "white;"
+                //    },
+                //    "No": {
+                //        Background: "red",
+                //        Align: "left",
+                //        FontColor: "white;"
+                //    }
+                //},
+                //CallBack: this.dialogboxAction.bind(this)
+            });
+            return false;
+        }
+        else
+            return true;
+    };
 
-    //this.dialogboxAction = function (value) {
-    //    if (value === "Yes")
-    //        this.saveForm_call();
-    //};
+    this.dialogboxAction = function (value) {
+        if (value === "Yes")
+            this.saveForm_call();
+    };
 
     this.DGsB4SaveActions = function () {
         $.each(this.DGBuilderObjs, function (k, DGB) {
@@ -674,8 +685,8 @@ const WebFormRender = function (option) {
                 return;
             if (!this.isAllUniqOK())
                 return;
-            //if (!this.DGsB4Save())
-            //    return;
+            if (!this.DGsB4Save())
+                return;
             this.DGsB4SaveActions();
 
             this.saveForm_call();

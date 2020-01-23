@@ -76,6 +76,7 @@
                 if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined)
                     inpCtrl.DataVals.Value = ValueExpr_val;
             }
+            this.onRowPaintFn(["tr"], "check", "e");// --
         }.bind(this));
     };
 

@@ -167,6 +167,7 @@
 </body>
 
 <script>
+    try {
         var stripe = Stripe('@(ViewBag.pb_key)');
 
         // Create an instance of Elements.
@@ -225,6 +226,10 @@
                 }
             });
         });
+    }
+    catch (err) {
+
+    }
 
 
     $('#pay').on('click', function () {

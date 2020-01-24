@@ -1884,8 +1884,10 @@
 
     this.preInit = function () {
         if (this.ctrl.DataSourceId) {
-            this.isDataImport = true;
-            this.setSuggestionVals();
+            if (this.Mode.isNew || (this.IsLoadDataSourceInEditMode && (this.Mode.isEdit || this.Mode.isView))) {
+                this.isDataImport = true;
+                this.setSuggestionVals();
+            }
         }
         this.init();
     }.bind(this);

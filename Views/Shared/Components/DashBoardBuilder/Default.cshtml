@@ -21,7 +21,6 @@
 
     EbToolbox _toolBox = new EbToolbox(_builderType);
 }
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@0.5.5/dist/gridstack.min.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/EbDashBoard/DashBoardStyle.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
@@ -48,16 +47,28 @@
     @Html.Raw(ViewBag.EbObjectTypes);
     @Html.Raw(ViewBag.ControlOperations);
 
+
 </script>
 <div class="container-fluid" style="background: transparent;">
     <div class="row" style="background: transparent;">
         <div class="col-sm-12" style="background: transparent; width: 99% ;margin-top: 15px;">
             <div id="dashbord-view" class="drop-target">
-                <div class="grid-stack" id="grid-cont" ></div>
+                <div class="grid-stack" id="grid-cont"></div>
             </div>
-            <div id="component_cont" style="border:solid 1px #cecbcb; height:110px;width:100%"></div>
+            <div class="component_cont">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#component_cont">Component Container</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade in active component_tab" id="component_cont">
+
+
+                    </div>
+                </div>
+                <div id="component_columns_cont"> </div>
+            </div>
         </div>
-        
+
     </div>
     <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
 </div>

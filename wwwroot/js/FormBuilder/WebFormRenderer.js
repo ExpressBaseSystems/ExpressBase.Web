@@ -189,20 +189,27 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};
     DynamicTabPane = function (args) {
-        let $initiatorDG = $(event.path).find("[ctype=DataGrid]");
-        let $initiatorTab = $(event.path).find("[ctype=TabControl]");
-        if ($initiatorDG.length === 0) {
+        if (DynamicTabPaneGlobals === null) {
             console.log('Dynamic tab not supported. Please initiate from a data grid.');
             return;
         }
+        let $initiatorDG = $("#cont_" + DynamicTabPaneGlobals.DG.EbSid);
+        if ($initiatorDG.length === 0) {
+            console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
+            return;
+        }
+        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");        
         if ($initiatorTab.length === 0) {
             console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
             return;
         }
-        let DgCtrl = getObjByval(this.DGs, 'EbSid', $initiatorDG.attr("ebsid"));
+
+        let DgCtrl = DynamicTabPaneGlobals.DG;
         let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
-        this.DynamicTabObject.initDynamicTabPane($.extend(args, {srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl}));
+        this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
+        DynamicTabPaneGlobals = null;
     }.bind(this);
 
     this.updateCtrlsUI = function () {
@@ -584,6 +591,7 @@ const WebFormRender = function (option) {
 
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
+            this.DynamicTabObject.disposeDynamicTab();
             this.RefreshFormControlValues();
             this.SwitchToViewMode();
 

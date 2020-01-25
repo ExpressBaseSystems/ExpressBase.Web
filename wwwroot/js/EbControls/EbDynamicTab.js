@@ -17,6 +17,7 @@
     this.tabPaneArr = [];
     this.dynamicTabPanes = {};
     this.allDynamicTabs = [];
+    this.continueDispose = false;
 
     this.init = function () {
         if (this.allTabCtrls.length === 0)
@@ -96,17 +97,34 @@
             srcRowId: srcRowId,
             params: { textbox1 : 'haha'}
         }, args);
-
-        if (this.dynamicTabPanes.hasOwnProperty(args.srcId)) {
-            console.log('dynamic tab pane already exists : ' + args.srcId);
-            return;
-        }
+        
         let targetPaneO = getObjByval(this.tabPaneArr, 'name', args.target);
         if (!targetPaneO) {
             console.log('dynamic tab pane not identified : ' + args.target);
             return;
         }
-        this.AppendTabPaneHtml(targetPaneO, args);
+
+        if (args.action === 'check') {
+            if (this.dynamicTabPanes.hasOwnProperty(args.srcId)) {
+                console.log('dynamic tab pane already exists : ' + args.srcId);
+                //update here
+                return;
+            }
+            this.AppendTabPaneHtml(targetPaneO, args);
+        }
+        else if (args.action === 'delete') {
+            if (this.dynamicTabPanes.hasOwnProperty(args.srcId)) {
+                let $tab = $('#cont_' + this.dynamicTabPanes[args.srcId].tabCtrl.EbSid_CtxId);
+                let id = this.dynamicTabPanes[args.srcId].ctrlObj.EbSid_CtxId;
+                $tab.find(`.tab-btn-cont ul li[ebsid="${id}"]`).remove();
+                $tab.find(`.tab-content #${id}`).remove();
+                delete this.dynamicTabPanes[args.srcId];
+            }
+            else
+                console.log('dynamic tab pane not found to delete : ' + args.srcId);
+        }
+
+        
     }.bind(this);
 
     this.AppendTabPaneHtml = function (temp, args) {
@@ -307,16 +325,17 @@
     //};
 
     this.switchToViewMode = function () {
-        //$.each(this.dynamicTabPanes, function (k, dObj) {
-        //    for (let i = 0; i < dObj.flatControls.length; i++)
-        //        dObj.flatControls[i].disable();
-        //    for (let i = 0; i < dObj.DGs.length; i++) {
-        //        dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToViewMode();
-        //        dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
-        //        dObj._DataLoaded = true;
-        //    }
-        //}.bind(this));
-        this.disposeDynamicTab();
+        $.each(this.dynamicTabPanes, function (k, dObj) {
+            for (let i = 0; i < dObj.flatControls.length; i++)
+                dObj.flatControls[i].disable();
+            for (let i = 0; i < dObj.DGs.length; i++) {
+                dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToViewMode();
+                //dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
+                //dObj._DataLoaded = true;
+            }
+        }.bind(this));
+        //if (this.continueDispose)
+        //    this.disposeDynamicTab();
     };
 
     this.switchToEditMode = function () {
@@ -327,8 +346,8 @@
             }
             for (let i = 0; i < dObj.DGs.length; i++) {
                 dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToEditMode();
-                dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
-                dObj._DataLoaded = true;
+                //dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
+                //dObj._DataLoaded = true;
             }
         }.bind(this));
     };
@@ -352,6 +371,8 @@
                 Model[dObj.DGs[i].TableName] = Model[dObj.DGs[i].TableName].concat(DgModel);
             }
         }.bind(this));
+
+        this.continueDispose = true;
     };
 
     this.disposeDynamicTab = function () {        
@@ -361,16 +382,17 @@
             let $tab = $('#cont_' + obj.EbSid_CtxId);
             $($tab.find(`a[data-toggle='tab']`)[0]).tab('show');
         });
-        setTimeout(function () {
-            for (let srcId in this.dynamicTabPanes) {
-                let $tab = $('#cont_' + this.dynamicTabPanes[srcId].tabCtrl.EbSid_CtxId);
-                let id = this.dynamicTabPanes[srcId].ctrlObj.EbSid_CtxId;
+
+        for (let srcId in this.dynamicTabPanes) {
+            let $tab = $('#cont_' + this.dynamicTabPanes[srcId].tabCtrl.EbSid_CtxId);
+            let id = this.dynamicTabPanes[srcId].ctrlObj.EbSid_CtxId;
+            $tab.find(`.tab-btn-cont ul li[ebsid="${id}"]`).css("display", "none");
+            setTimeout(function ($tab, id) {
                 $tab.find(`.tab-btn-cont ul li[ebsid="${id}"]`).remove();
                 $tab.find(`.tab-content #${id}`).remove();
-            }
-            this.dynamicTabPanes = {};
-        }.bind(this), 1000);
-        
+            }.bind(this, $tab, id), 1000);            
+        }
+        this.dynamicTabPanes = {};
 
     };
 

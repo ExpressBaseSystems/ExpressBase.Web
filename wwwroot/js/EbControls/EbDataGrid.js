@@ -1152,20 +1152,25 @@
         this.setcurRowDataMODELWithNewVals(rowid);
         this.changeEditFlagInRowCtrls(false, rowid);
         this.ctrlToSpan_row(rowid);
-        if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
+        if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable) {
+            this.onRowPaintFn($tr, "check", e);
             this.addRow();
-        else
+        }
+        else {
             this.setCurRow($addRow.attr("rowid"));
+            this.onRowPaintFn($tr, "check", e);
+        }
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
-        this.onRowPaintFn($tr, "check", e);
+        //this.onRowPaintFn($tr, "check", e);
         return true;
     }.bind(this);
 
     this.onRowPaintFn = function ($tr, action, event) {
         if ((this.ctrl.OnRowPaint && this.ctrl.OnRowPaint.Code && this.ctrl.OnRowPaint.Code.trim() !== '')) {
             let FnString = atob(this.ctrl.OnRowPaint.Code);
-            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();
+            DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event};
+            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();            
         }
     };
 
@@ -1333,10 +1338,12 @@
             if (index > -1)
                 this.DataMODEL.splice(index, 1);
         }
+        this.setCurRow(rowid);
+        this.onRowPaintFn($tr, "delete", e);
+
         this.removeTr($tr);
         this.resetRowSlNoUnder($tr);
 
-        this.onRowPaintFn($tr, "delete", e);
     }.bind(this);
 
     this.UpdateSlNo = function () {

@@ -149,9 +149,6 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
-        public void ProcessorLogic()
-        {
-            this.ServiceClient.Post<ProcessorResponse>(new ProcessorRequest()); ;
-        }
+       
     }
 }

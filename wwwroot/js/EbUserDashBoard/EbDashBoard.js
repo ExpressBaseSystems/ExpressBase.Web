@@ -15,8 +15,8 @@ var DashBoardWrapper = function (options) {
     this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
-    this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21: "GoogleMap" }
-    this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21: "fa fa-map-marker" }
+    this.ObjTypeName = { 16: "TableVisualization", 17: "ChartVisualization", 14: "UserControl", 21: "GoogleMap" };
+    this.ObjIcons = { 16: "fa fa-table", 17: "fa fa-bar-chart", 14: "fa fa-puzzle-piece", 21: "fa fa-map-marker" };
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.toolboxhtml = options.Toolhtml;
@@ -255,7 +255,8 @@ var DashBoardWrapper = function (options) {
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
                 let _data = this.Rowdata[component + "Row"][index];
-                let xx = EbGaugeWrapper({ container: controlname, value: _data });
+                $("#" + controlname).attr("data-value", _data);
+                let xx = EbGaugeWrapper({ container: controlname, value: _data});
             }
             else if ($(target).hasClass("grid-stack") && $(source).hasClass("inner_com_col_cont")) {
                 let drop_id = this.AddNewTile();

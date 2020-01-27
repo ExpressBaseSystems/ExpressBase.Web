@@ -189,20 +189,27 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};
     DynamicTabPane = function (args) {
-        let $initiatorDG = $(event.path).find("[ctype=DataGrid]");
-        let $initiatorTab = $(event.path).find("[ctype=TabControl]");
-        if ($initiatorDG.length === 0) {
+        if (DynamicTabPaneGlobals === null) {
             console.log('Dynamic tab not supported. Please initiate from a data grid.');
             return;
         }
+        let $initiatorDG = $("#cont_" + DynamicTabPaneGlobals.DG.EbSid);
+        if ($initiatorDG.length === 0) {
+            console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
+            return;
+        }
+        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");        
         if ($initiatorTab.length === 0) {
             console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
             return;
         }
-        let DgCtrl = getObjByval(this.DGs, 'EbSid', $initiatorDG.attr("ebsid"));
+
+        let DgCtrl = DynamicTabPaneGlobals.DG;
         let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
-        this.DynamicTabObject.initDynamicTabPane($.extend(args, {srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl}));
+        this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
+        DynamicTabPaneGlobals = null;
     }.bind(this);
 
     this.updateCtrlsUI = function () {
@@ -584,6 +591,7 @@ const WebFormRender = function (option) {
 
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
+            this.DynamicTabObject.disposeDynamicTab();
             this.RefreshFormControlValues();
             this.SwitchToViewMode();
 
@@ -630,34 +638,45 @@ const WebFormRender = function (option) {
     //    return IsDGsHavePartialEntry;
     //};
 
-    //this.DGsB4Save = function () {
-    //    if (this.IsDGsHavePartialEntry()) {
-    //        EbDialog("show", {
-    //            Message: "Found uncommited entry in a row, continue without the change?",
-    //            Buttons: {
-    //                "Yes": {
-    //                    Background: "green",
-    //                    Align: "right",
-    //                    FontColor: "white;"
-    //                },
-    //                "No": {
-    //                    Background: "red",
-    //                    Align: "left",
-    //                    FontColor: "white;"
-    //                }
-    //            },
-    //            CallBack: this.dialogboxAction.bind(this)
-    //        });
-    //        return false;
-    //    }
-    //    else
-    //        return true;
-    //};
+    this.IsDGsHaveActiveRows = function () {
+        let hasActiveRows = false;
+        $.each(this.DGBuilderObjs, function (k, DGB) {
+            if (DGB.hasActiveRow()) {
+                hasActiveRows = true;
+                return false;
+            }
+        }.bind(this));
+        return hasActiveRows;
+    };
+    
+    this.DGsB4Save = function () {
+        if (this.IsDGsHaveActiveRows()) {
+            EbDialog("show", {
+                Message: "Please commit or delete uncommited rows",
+                //Buttons: {
+                //    "Yes": {
+                //        Background: "green",
+                //        Align: "right",
+                //        FontColor: "white;"
+                //    },
+                //    "No": {
+                //        Background: "red",
+                //        Align: "left",
+                //        FontColor: "white;"
+                //    }
+                //},
+                //CallBack: this.dialogboxAction.bind(this)
+            });
+            return false;
+        }
+        else
+            return true;
+    };
 
-    //this.dialogboxAction = function (value) {
-    //    if (value === "Yes")
-    //        this.saveForm_call();
-    //};
+    this.dialogboxAction = function (value) {
+        if (value === "Yes")
+            this.saveForm_call();
+    };
 
     this.DGsB4SaveActions = function () {
         $.each(this.DGBuilderObjs, function (k, DGB) {
@@ -674,8 +693,8 @@ const WebFormRender = function (option) {
                 return;
             if (!this.isAllUniqOK())
                 return;
-            //if (!this.DGsB4Save())
-            //    return;
+            if (!this.DGsB4Save())
+                return;
             this.DGsB4SaveActions();
 
             this.saveForm_call();

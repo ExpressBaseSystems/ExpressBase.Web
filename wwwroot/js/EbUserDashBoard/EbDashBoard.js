@@ -176,8 +176,15 @@ var DashBoardWrapper = function (options) {
     };
 
     this.columnsdrag = function (el, source) {
+        this.drake.containers.push(document.getElementById("component_cont"));
         if ($(source) === $("#grid-cont")) {
             return false;
+        }
+        else if ($(source).hasClass("data-reader-popup")) {
+            this.drake.containers = this.drake.containers.filter(function (value)
+            {
+                return value != document.getElementById("component_cont");
+            });      
         }
         else {
             if (this.drake.containers.indexOf($("#grid-cont") === -1)) {
@@ -195,7 +202,9 @@ var DashBoardWrapper = function (options) {
     };
 
     this.columnsdrop = function (el, target, source, sibling) {
-        this.drake.containers.pop(document.getElementById('grid-cont'));
+        this.drake.containers = this.drake.containers.filter(function (value) {
+            return value != document.getElementById('grid-cont');
+        });
         this.VisRefid = el.getAttribute("refid");
         el.remove();
         if (target && source !== null) {
@@ -218,12 +227,15 @@ var DashBoardWrapper = function (options) {
                 this.drake.containers.push(document.getElementById(o.EbSid));
                 this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
             }
-            else if ($(target).attr("id") === "component_cont") {
+            else if ($(target).attr("id") === "component_cont" && !$(source).hasClass("data-reader-popup")) {
                 let o = this.makeElement(el);
-                $(target).append(o.$Control[0])
-                $(target).append(`<div id="Inner_Cont_${o.EbSid}" class="inner_Cont_DataObject"> </div>`);
+                $(target).append(o.$Control[0]);
+                $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}">
+                  <i class="fa fa-angle-up" aria-hidden="true"></i> </div>`);
+                $("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" class="inner_com_col_cont" style="display:none"> </div>`);
                 this.propGrid.setObject(o, AllMetas["EbDataObject"]);
                 this.drake.containers.push(document.getElementById(`Inner_Cont_${o.EbSid}`));
+                $(`#Inner_Btn_${o.EbSid}`).off("click").on("click", this.ComponentColumContainerShow.bind(this));
             }
             else if ($(target).hasClass("tile_dt_cont") && $(source).attr("id") === "toolb_basic_ctrls") {
                 let obj = this.makeElement(el);
@@ -243,12 +255,38 @@ var DashBoardWrapper = function (options) {
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
                 let _data = this.Rowdata[component + "Row"][index];
-                let xx = EbGaugeWrapper({ container: controlname, value: _data});
+                let xx = EbGaugeWrapper({ container: controlname, value: _data });
             }
+            else if ($(target).hasClass("grid-stack") && $(source).hasClass("inner_com_col_cont")) {
+                let drop_id = this.AddNewTile();
+                let o = this.makeElement(el);
+                $(`#${drop_id}`).append(el);
+                this.drake.containers.push(document.getElementById(drop_id));
+                this.drake.containers.push(document.getElementById(o.EbSid));
+                this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
+            }
+            else if ($(target).hasClass("tile_dt_cont") && $(source).hasClass("inner_com_col_cont")) {
+                let obj = this.makeElement(el);
+                $(target).append(el);
+                return el;
+                this.drake.containers.push(document.getElementById(obj.EbSid));
+                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
+            }
+            
 
             $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
 
+    };
+    this.ComponentColumContainerShow = function (e) {
+        let TargetId = e.target.getAttribute("target-id");
+        if (TargetId == null) { TargetId = $(e.target).parent()[0].getAttribute("target-id"); }
+        var p = $(e.target).last();
+        var offset = p.offset();
+        //offset.left -= 187;
+        offset.top -= 160;
+        $(`#Inner_Cont_${TargetId}`).css({ "top": offset.top, "left": (offset.left - 177) })
+        $(`#Inner_Cont_${TargetId}`).toggle();
     };
 
     this.FocusOnControlObject = function (e) {
@@ -259,7 +297,7 @@ var DashBoardWrapper = function (options) {
             id = elem.attr("id");
         }
         let eb_type = elem.attr("eb-type");
-        if (eb_type == "EbDataObject") {
+        if (eb_type == "DataObject") {
             this.propGrid.setObject(this.Procs[id], AllMetas["EbDataObject"]); 
         }
     };
@@ -317,7 +355,19 @@ var DashBoardWrapper = function (options) {
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
+        $('#myDropdown').on('hide.bs.dropdown', this.DropDownClose.bind(this));
+        $('#myDropdown').on('click.bs.dropdown.data-api', '.dropdown.keep-inside-clicks-open', this.DropDownClose2.bind(this));
     }
+    this.DropDownClose = function (e) {
+        if (e.clickEvent) {
+            e.preventDefault();
+        }
+    };
+    this.DropDownClose2 = function (e) {
+        if (e.clickEvent) {
+            e.stopPropagation();
+        }
+    };
 
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
@@ -509,7 +559,7 @@ var DashBoardWrapper = function (options) {
         for (let i = 0; i < obj['Columns'].$values.length; i++) {
             let column = obj['Columns'].$values[i];
             let name = column.name;
-            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.EbSid}' data-column='${name}' eb-type='Datacolumn' type=${column.Type} class='col-div-blk'> ${name}</div>`);
+            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.EbSid}' data-column='${name}' type=${column.Type} class='col-div-blk' eb-type="DataLabel"> ${name}</div>`);
         }
     };
 

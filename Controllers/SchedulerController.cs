@@ -51,28 +51,7 @@ namespace ExpressBase.Web.Controllers
                         Message = message
                     }
                 };
-                this.ServiceClient.Post(new ScheduleMQRequest { Task = task });
-
-            //EbTask task = new EbTask
-            //{
-            //    Name = name,
-            //    Expression = expression,
-            //    JobType = type,
-            //    CronString = cronstring,
-            //    JobArgs = new EbJobArguments
-            //    {
-            //        Params = _param,
-            //        ObjId = objId,
-            //        SolnId = ViewBag.cid,
-            //        UserId = ViewBag.UId,
-            //        UserAuthId = ViewBag.UAuthId,
-            //        ToUserIds = users,
-            //        ToUserGroupIds = groups,
-            //        Message = message,
-            //        DeliveryMechanisms = (DeliveryMechanisms)_delMechanism,
-            //    }
-            //};
-            //var ds = this.ServiceClient.Post(new ScheduleMQRequest { Task = task });
+                this.ServiceClient.Post(new ScheduleMQRequest { Task = task });             
         }
 
         [HttpGet]

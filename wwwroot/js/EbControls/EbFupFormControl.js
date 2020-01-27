@@ -657,7 +657,7 @@
     }
 
     startSE() {
-        this.ss = new EbServerEvents({ ServerEventUrl: this.Options.ServerEventUrl, Channels: ["file-upload"] });
+        this.ss = new EbServerEvents({ ServerEventUrl: "http://localhost:41900", Channels: ["file-upload"] });
         this.ss.onUploadSuccess = function (ImageRefid) {
 
         }.bind(this);

@@ -1,4 +1,5 @@
-﻿using ExpressBase.Web.BaseControllers;
+﻿using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using ServiceStack;
 using System;
@@ -15,6 +16,7 @@ namespace ExpressBase.Web.Controllers
          
         public void PushData(string data)
         {
+            IoTDataResponse resultlist = this.ServiceClient.Get<IoTDataResponse>(new IoTDataRequest { Data =  data});
             Console.WriteLine("__________________________________________________Received Input Data : " + data);
 
         }

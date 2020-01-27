@@ -243,7 +243,7 @@ var DashBoardWrapper = function (options) {
                 this.drake.containers.push(document.getElementById(obj.EbSid));
                 this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
             }
-            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_Cont_DataObject")) {
+            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_com_col_cont")) {
                 $(target).append(el);
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
@@ -269,7 +269,6 @@ var DashBoardWrapper = function (options) {
             else if ($(target).hasClass("tile_dt_cont") && $(source).hasClass("inner_com_col_cont")) {
                 let obj = this.makeElement(el);
                 $(target).append(el);
-                return el;
                 this.drake.containers.push(document.getElementById(obj.EbSid));
                 this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
             }

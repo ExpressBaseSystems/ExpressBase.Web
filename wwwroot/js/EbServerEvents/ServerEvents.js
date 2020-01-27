@@ -5,32 +5,46 @@
     this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
     this.onUploadSuccess = function (m, e) { };
+    this.onShowMsg = function (m, e) { };
+    this.onLogOut = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
 
     this.onConnect = function (sub) {
-        //console.log("You've connected! welcome " + sub.displayName);
+        console.log("You've connected! welcome " + sub.displayName);
     };
 
     this.onJoin = function (user) {
-        //console.log("Welcome, " + user.displayName);
+        console.log("Welcome, " + user.displayName);
     }
 
     this.onLeave = function (user) {
-        //console.log(user.displayName + " has left the building");
+        console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
-        //if (console) console.log("onHeartbeat", msg, e);
+        if (console) console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
         this.onUploadSuccess(m,e);
     };
 
+    this.onMsgSuccess = function (m, e) {
+        console.log(m);
+        this.onShowMsg(m, e);
+    };
+
+    this.onLogOutMsg = function (m, e) {
+        console.log(m);
+        document.cookie = "bToken=; rToken=; expires = Thu, 01 Jan 1970 00:00:00 UTC";
+        location.reload();
+        this.onLogOut(m, e);
+    };
+
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-        //console.log("stopped listening");
+        console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
@@ -44,17 +58,17 @@
     });   
 
     this.ES.addEventListener('error', function (e) {
-        //console.log("ERROR!", e);
+        console.log("ERROR!", e);
     }, false);
 
     this.sEvent.eventReceivers = { "document": document }; 
 
     $(document).bindHandlers({
         announce: function (msg) {
-            //console.log("announce");
+            console.log("announce");
         },
         toggle: function () {
-            //console.log("toggle");
+            console.log("toggle");
         },
         removeReceiver: function (name) {
             delete $.ss.eventReceivers[name];
@@ -66,7 +80,7 @@
             this.sEvent.reconnectServerEventsAuth();
         }
     }).on('customEvent', function (e, msg, msgEvent) {
-       // console.log("custom");
+        console.log("custom");
     });
 
     $(this.ES).handleServerEvents({
@@ -77,7 +91,9 @@
             onHeartbeat: this.onHeartbeat.bind(this),
             onUploadSuccess: this.onUploaded.bind(this),
             stopListening: this.stopListening.bind(this),
-            onExportToExcel: this.onExportToExcel.bind(this)
+            onExportToExcel: this.onExportToExcel.bind(this),
+            onMsgSuccess: this.onMsgSuccess.bind(this),
+            onLogOut: this.onLogOutMsg.bind(this)
         }
     });
 };

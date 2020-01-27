@@ -226,9 +226,11 @@
             menu: {},
             locations: {},
             header: {},
+            setup: new Setup(),
             env:'@ViewBag.Env',
             font:@Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
-            EbObjectMeta:@Html.Raw(ViewBag.EbObjectTypeMeta)
+            EbObjectMeta:@Html.Raw(ViewBag.EbObjectTypeMeta),
+            se_url: '@ViewBag.ServerEventUrl'
         };
     </script>
 </head>

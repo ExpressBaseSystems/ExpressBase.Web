@@ -1,4 +1,5 @@
-﻿body {
+﻿/*CRChng - 'check new DG row for every row' related change*/
+body {
     --lightshadow: 0px 2px 3px 0px rgba(41, 41, 41, 0.325);
     --txtarea-bg: linear-gradient(to right, white 10px, transparent 10px), linear-gradient(to left, white 10px, transparent 10px), repeating-linear-gradient(white, white 18px, #f8f8f8 18px, #f8f8f8 19px, white 19px);
 }
@@ -229,7 +230,8 @@
 }
 
 [is-editing="true"][is-checked="false"] .edit-row {
-    display: block;
+    /*display: block;*/ /*CRChng -*/
+    display: none; /*CRChng +*/
     color: gray;
     opacity: 0.5;
     pointer-events: none;
@@ -274,7 +276,7 @@
 }
 
 .check-row {
-    display: none;
+    /*display: none;*/ /*CRChng -*/
     color: #019a01;
 }
 

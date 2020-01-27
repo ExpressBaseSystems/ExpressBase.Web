@@ -12,7 +12,6 @@ namespace ExpressBase.Web.Controllers
     public class IoTController : EbBaseExtController
     {
         public IoTController(IServiceClient _ssclient) : base(_ssclient) { }
-
          
         public void PushData(string data)
         {

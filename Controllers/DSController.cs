@@ -68,5 +68,23 @@ namespace ExpressBase.Web.Controllers
 
             return EbSerializers.Json_Serialize(Columns);
         }
+
+        public DashboardControlReturn GetData4DashboardControl(string DataSourceRefId)
+        {
+            DataSourceDataSetResponse columnresp = this.ServiceClient.Post<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = DataSourceRefId });
+
+            var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
+
+            var Columns = GetColumns(__columns);
+            var _row = columnresp.DataSet.Tables[0].Rows[0];
+
+            return new DashboardControlReturn { Columns =EbSerializers.Json_Serialize( Columns), Row = _row };
+        }
+    }
+
+    public class DashboardControlReturn
+    {
+        public string Columns;
+        public EbDataRow Row;
     }
 }

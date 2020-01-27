@@ -20,6 +20,8 @@ var DashBoardWrapper = function (options) {
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.toolboxhtml = options.Toolhtml;
+    this.Procs = {};
+    this.Rowdata = {};
     if (this.EbObject !== null) {
         this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     }
@@ -30,14 +32,12 @@ var DashBoardWrapper = function (options) {
         this.grid.cellHeight(25);
         grid = this.grid;
     }
+
     this.GridStackInit();
-
-
 
     this.getColumns = function () {
         $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
     };
-
 
     this.AppendFD = function (result) {
         $('.param-div-cont').remove();
@@ -77,8 +77,7 @@ var DashBoardWrapper = function (options) {
 
     this.CloseParamDiv = function () {
         this.stickBtn.minimise();
-    }
-
+    };
 
     //Toolbox
     this.AppendToolBox = function () {
@@ -116,11 +115,6 @@ var DashBoardWrapper = function (options) {
     this.CloseToolBoxDiv = function () {
         this.stickBtn4ToolBox.minimise();
     };
-
-    //<div class="tool_item_head" data-toggle="collapse" data-target="#toolb_views"><i class="fa fa-caret-down"></i> Views </div>
-    //    <div id="toolb_views" ebclass="tool-sec-cont" class="tool-sec-cont collapse in" aria-expanded="true" style="">
-    //        bqahbbxdw ghvhgwa
-    //    </div>
 
     this.DrawObjectOnMenu = function () {
         let myarr4EbType = [];
@@ -182,8 +176,15 @@ var DashBoardWrapper = function (options) {
     };
 
     this.columnsdrag = function (el, source) {
+        this.drake.containers.push(document.getElementById("component_cont"));
         if ($(source) === $("#grid-cont")) {
             return false;
+        }
+        else if ($(source).hasClass("data-reader-popup")) {
+            this.drake.containers = this.drake.containers.filter(function (value)
+            {
+                return value != document.getElementById("component_cont");
+            });      
         }
         else {
             if (this.drake.containers.indexOf($("#grid-cont") === -1)) {
@@ -201,7 +202,9 @@ var DashBoardWrapper = function (options) {
     };
 
     this.columnsdrop = function (el, target, source, sibling) {
-        this.drake.containers.pop(document.getElementById('grid-cont'));
+        this.drake.containers = this.drake.containers.filter(function (value) {
+            return value != document.getElementById('grid-cont');
+        });
         this.VisRefid = el.getAttribute("refid");
         el.remove();
         if (target && source !== null) {
@@ -218,31 +221,111 @@ var DashBoardWrapper = function (options) {
             }
             else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls") {
                 let drop_id = this.AddNewTile();
-                $(`#${drop_id}`).append("<div id='gaugeChart' style='border:solid 1px'></div>");
+                let o = this.makeElement(el);
+                $(`#${drop_id}`).append(o.$Control[0]);
                 this.drake.containers.push(document.getElementById(drop_id));
-                this.TileCollection[this.CurrentTile].ControlsColl.$values.push(new EbObjects.EbGauge("gauge" + Date.now()));
+                this.drake.containers.push(document.getElementById(o.EbSid));
+                this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
             }
-            else if ($(target).attr("id") === "component_cont") {
-                $(`#component_cont`).append("<div id='dataobject' style='border:solid 1px red'></div>");
-                let obj = new EbObjects.EbDataObject("EbDataObject" + Date.now());
+            else if ($(target).attr("id") === "component_cont" && !$(source).hasClass("data-reader-popup")) {
+                let o = this.makeElement(el);
+                $(target).append(o.$Control[0]);
+                $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}">
+                  <i class="fa fa-angle-up" aria-hidden="true"></i> </div>`);
+                $("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" class="inner_com_col_cont" style="display:none"> </div>`);
+                this.propGrid.setObject(o, AllMetas["EbDataObject"]);
+                this.drake.containers.push(document.getElementById(`Inner_Cont_${o.EbSid}`));
+                $(`#Inner_Btn_${o.EbSid}`).off("click").on("click", this.ComponentColumContainerShow.bind(this));
             }
             else if ($(target).hasClass("tile_dt_cont") && $(source).attr("id") === "toolb_basic_ctrls") {
-                $(target).append("<div id='gaugeChart' style='border:solid 1px'></div>");                
-                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(new EbObjects.EbGauge("gauge" + Date.now()));
+                let obj = this.makeElement(el);
+                $(target).append(obj.$Control[0]);
+                this.drake.containers.push(document.getElementById(obj.EbSid));
+                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
             }
+            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_Cont_DataObject")) {
+                $(target).append(el);
+                let component = $(el).attr("data-ctrl");
+                let column = $(el).attr("data-column");
+                let controlname = $(target).attr("id");
+                let tileId = $(target).parent().attr("data-id");
+                let obj = getObjByval(this.TileCollection[tileId].ControlsColl.$values, "EbSid", controlname);
+                obj.DataObjCtrlName = component;
+                obj.DataObjColName = column;
+                this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
+                let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+                let _data = this.Rowdata[component + "Row"][index];
+                let xx = EbGaugeWrapper({ container: controlname, value: _data });
+            }
+            else if ($(target).hasClass("grid-stack") && $(source).hasClass("inner_com_col_cont")) {
+                let drop_id = this.AddNewTile();
+                let o = this.makeElement(el);
+                $(`#${drop_id}`).append(el);
+                this.drake.containers.push(document.getElementById(drop_id));
+                this.drake.containers.push(document.getElementById(o.EbSid));
+                this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
+            }
+            else if ($(target).hasClass("tile_dt_cont") && $(source).hasClass("inner_com_col_cont")) {
+                let obj = this.makeElement(el);
+                $(target).append(el);
+                return el;
+                this.drake.containers.push(document.getElementById(obj.EbSid));
+                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
+            }
+            
+
+            $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
 
     };
+    this.ComponentColumContainerShow = function (e) {
+        let TargetId = e.target.getAttribute("target-id");
+        if (TargetId == null) { TargetId = $(e.target).parent()[0].getAttribute("target-id"); }
+        var p = $(e.target).last();
+        var offset = p.offset();
+        //offset.left -= 187;
+        offset.top -= 160;
+        $(`#Inner_Cont_${TargetId}`).css({ "top": offset.top, "left": (offset.left - 177) })
+        $(`#Inner_Cont_${TargetId}`).toggle();
+    };
 
+    this.FocusOnControlObject = function (e) {
+        let elem = $(e.target).closest("Eb-ctrlContainer");
+        let id = elem.attr("id");
+        if (id === undefined) {
+            elem = $($(e.target).parents(".Eb-ctrlContainer")[0]);
+            id = elem.attr("id");
+        }
+        let eb_type = elem.attr("eb-type");
+        if (eb_type == "DataObject") {
+            this.propGrid.setObject(this.Procs[id], AllMetas["EbDataObject"]); 
+        }
+    };
+
+    this.makeElement = function (el) {
+        let ebtype = $(el).attr("eb-type");
+        var id = "tb" + this.TabNum + ebtype + CtrlCounters[$(el).attr("eb-type") + "Counter"]++;
+        this.Procs[id] = new EbObjects["Eb" + ebtype](id);
+        this.dropedCtrlInit(this.Procs[id].$Control, ebtype, id);
+        return this.Procs[id];
+    };
+
+    this.dropedCtrlInit = function ($ctrl, type, id) {
+        $ctrl.attr("tabindex", "1");
+        $ctrl.attr("id", id).attr("ebsid", id);
+        $ctrl.attr("eb-type", type);
+    };
+
+  
     this.GenerateButtons = function () {
 
-    }
+    };
 
     this.sideBarHeadToggle = function (e) {
         let abc = e.target.getAttribute("hs-id");
         $(`#${abc}`).toggle(100);
 
-    }
+    };
 
     this.init = function () {
         this.AppendToolBox();
@@ -272,7 +355,20 @@ var DashBoardWrapper = function (options) {
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
         $("#DashB-Search").on("keyup", this.DashBoardSearch.bind(this));
+        $('#myDropdown').on('hide.bs.dropdown', this.DropDownClose.bind(this));
+        $('#myDropdown').on('click.bs.dropdown.data-api', '.dropdown.keep-inside-clicks-open', this.DropDownClose2.bind(this));
     }
+    this.DropDownClose = function (e) {
+        if (e.clickEvent) {
+            e.preventDefault();
+        }
+    };
+    this.DropDownClose2 = function (e) {
+        if (e.clickEvent) {
+            e.stopPropagation();
+        }
+    };
+
     this.TileOptions = function (e) {
         var tileid = e.target.parentElement.getAttribute("u-id");
         var id = e.target.getAttribute("link");
@@ -308,6 +404,7 @@ var DashBoardWrapper = function (options) {
             this.Ajax4fetchVisualization(Refid);
         }
     }
+
     this.Ajax4fetchVisualization = function (refid) {
         if (refid !== "") {
             $.ajax(
@@ -362,7 +459,7 @@ var DashBoardWrapper = function (options) {
         else {
             $('.grid-stack').gridstack();
         }
-        $(".grid-stack").on("click", this.TileSelectorJs.bind(this));
+        $(".grid-stack , .Eb-ctrlContainer").on("click", this.TileSelectorJs.bind(this));
         //this.addTilecontext()
         this.Tilecontext();
 
@@ -399,10 +496,12 @@ var DashBoardWrapper = function (options) {
         else {
             this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         }
-
+        procId = $(event.target).closest(".gaugeChart").attr("id");
+        metaId = $(event.target).closest(".gaugeChart").attr("eb-type");
+        if (procId != null) {
+            this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]);
+          }
     }.bind(this);
-
-
 
     this.popChanged = function (obj, pname, newval, oldval) {
         if (pname === "TileCount") {
@@ -411,7 +510,7 @@ var DashBoardWrapper = function (options) {
             //            </div>uj
             //        <div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90; display: block;"></div></div>`)
         }
-        if (pname == "TileRefId") {
+        if (pname === "TileRefId") {
             $(`[name-id="${this.CurrentTile}"]`).empty();
             $(`[data-id="${this.CurrentTile}"]`).empty();
             $(`.eb-loader-prcbar`).remove();
@@ -427,8 +526,7 @@ var DashBoardWrapper = function (options) {
         if (pname === "BackgroundColor") {
             $("#layout_div").css("background-color", "").css("background-color", newval);
         }
-
-        if (pname == "Filter_Dialogue") {
+        if (pname === "Filter_Dialogue") {
             if (newval !== "") {
                 this.getColumns();
             }
@@ -437,47 +535,36 @@ var DashBoardWrapper = function (options) {
                 if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             }
         }
-    }
-    //this.addTilecontext = function () {
-    //    $.contextMenu({
-    //        selector: '.grid-stack',
-    //        trigger: 'right',
-    //        items: {
-    //            "Add Tile": {
-    //                name: "Add Tile", icon: "add", callback: this.AddNewTile.bind(this)
-    //            },
-    //        }
-    //    });
-    //}
+        let Refid = obj[pname];
+        if (obj.$type.indexOf("EbDataObject") > -1 && pname === "DataSource") {
+            $.LoadingOverlay('show');
+            $.ajax({
+                type: "POST",
+                url: "../DS/GetData4DashboardControl",
+                data: { DataSourceRefId: Refid },
+                success: function (resp) {
+                    obj["Columns"] = JSON.parse(resp.columns);
+                    this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
+                    $.LoadingOverlay('hide');
+                    this.DisplayColumns(obj);
+                    this.Rowdata[obj.EbSid + "Row"] = resp.row;
+                }.bind(this)
+            });
+        }
+    };
 
-
+    this.DisplayColumns = function (obj) {
+        $(`#${obj.EbSid} .eb-ctrl-label`).empty().append(obj.Name);
+        $(`#Inner_Cont_${obj.EbSid}`).empty();
+        for (let i = 0; i < obj['Columns'].$values.length; i++) {
+            let column = obj['Columns'].$values[i];
+            let name = column.name;
+            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.EbSid}' data-column='${name}' type=${column.Type} class='col-div-blk' eb-type="DataLabel"> ${name}</div>`);
+        }
+    };
 
     this.Tilecontext = function () {
-        //$.contextMenu({
-        //    selector: '.grid-stack-item-content',
-        //    trigger: 'right',
-        //    items: {
-        //        "RemoveTile": {
-        //            name: "Remove Tile", icon: "add", callback: this.RemoveTile.bind(this),
-        //        },
-        //        "FullScreenView": {
-        //            name: "Open in NewTab ", icon: "fa-external-link", callback: this.FullScreenViewTrigger.bind(this),
-        //        },
-        //    }
-        //});
-    }
-
-    //this.RemoveTile = function (name, selector, event) {
-    //    var grid = $('.grid-stack').data('gridstack');
-    //    el = selector.$trigger.parent();
-    //    grid.removeWidget(el);
-    //}
-    //this.FullScreenViewTrigger = function (name, selector, event) {
-    //    let id = selector.$trigger[0].getAttribute("id");
-    //    let TileRefid = this.TileCollection[id].TileRefId;
-    //    window.open(location.origin + "/DV/dv?refid=" + TileRefid, '_blank');
-    //}
-
+    };
 
     this.TileRefidChangesuccess = function (id, data) {
         if (this.filtervalues.length === 0) {
@@ -578,6 +665,7 @@ var DashBoardWrapper = function (options) {
         //this.RemoveColumnRef();
         return true;
     };
+
     this.DashBoardSearch = function (e) {
         $(`#DashB-Searched-Obj`).empty();
         let val = $("#DashB-Search").val().trim();

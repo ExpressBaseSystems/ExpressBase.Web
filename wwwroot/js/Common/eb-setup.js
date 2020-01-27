@@ -8,7 +8,7 @@
     }
 
     userNotification() {
-        this.ss = new EbServerEvents({ ServerEventUrl: "http://localhost:41900", Channels: ["file-upload"] });
+        this.ss = new EbServerEvents({ ServerEventUrl: ebcontext.se_url, Channels: ["file-upload"] });
         this.ss.onLogOut = function (msg) {
 
         }.bind(this);

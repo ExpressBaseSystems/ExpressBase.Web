@@ -140,7 +140,7 @@
             header: {},
             env:'@ViewBag.Env',
             se_url: '@ViewBag.ServerEventUrl',
-            setup: new Setup()
+            setup: new Setup({ se_url:'@ViewBag.ServerEventUrl'})
         }
     </script>
 </head>

@@ -1,5 +1,9 @@
 ﻿class Setup {
-    constructor() {
+    constructor(option) {
+        this.option = {};
+
+        $.extend(this.option, option);
+
         this.userNotification();
     }
 
@@ -8,7 +12,7 @@
     }
 
     userNotification() {
-        this.ss = new EbServerEvents({ ServerEventUrl: ebcontext.se_url, Channels: ["file-upload"] });
+        this.ss = new EbServerEvents({ ServerEventUrl: this.option.se_url, Channels: ["file-upload"] });
         this.ss.onLogOut = function (msg) {
 
         }.bind(this);

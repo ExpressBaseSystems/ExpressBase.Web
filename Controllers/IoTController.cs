@@ -12,8 +12,7 @@ namespace ExpressBase.Web.Controllers
     {
         public IoTController(IServiceClient _ssclient) : base(_ssclient) { }
 
-
-        [HttpPost]
+         
         public void PushData(string data)
         {
             Console.WriteLine("__________________________________________________Received Input Data : " + data);

@@ -47,39 +47,7 @@ namespace ExpressBase.Web.Controllers
             }
             return Columns;
         }
-         public DVColumnCollection GetColumnsForSqlJob(ColumnColletion __columns)
-        {
-             
-            var Columns = new DVColumnCollection();
-            try
-            {
-                foreach (EbDataColumn column in __columns)
-                {
-                    DVBaseColumn _col = null;
-                    if (column.Type == EbDbTypes.String)
-                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
-                    else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
-                        _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right" };
-                    else if (column.Type == EbDbTypes.Boolean)
-                        _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
-                    else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
-                        _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
-                    else if (column.Type == EbDbTypes.Bytea)
-                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", ClassName = "tdheight" };
-                    _col.RenderType = _col.Type;
-                    if (column.ColumnName == "keyvalues" || column.ColumnName == "logmaster_id" || column.ColumnName == "createdby")
-                        _col.bVisible = false;
-                    Columns.Add(_col);
-                }
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine("no coloms" + e.StackTrace);
-            }
-            
-            return Columns;
-        }
-
+        
         public List<DVColumnCollection> GetDVColumnCollection(List<ColumnColletion> _ColumnColl)
         {
             List<DVColumnCollection> dvColumnCollection = new List<DVColumnCollection>();

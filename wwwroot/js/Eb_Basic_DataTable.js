@@ -50,6 +50,7 @@ var EbBasicDataTable = function (Option) {
     this.datetimeformat = Option.datetimeformat;
 
     this.action = Option.action || null;
+    this.Levels = Option.levels || [];
 
 
     this.init = function () {
@@ -643,7 +644,8 @@ var EbBasicDataTable = function (Option) {
 
     this.drawCallBackFunc = function (settings) {
         //if (this.ebSettings.rowGrouping.$values.length > 0)
-        //    this.doRowgrouping();
+        if (this.source === "sqljob")
+            this.doRowgrouping();
         //this.summarize2();
         //if (this.login === "uc" && !this.modifyDVFlag && this.initCompleteflag) {
         //    //this.ModifyingDVs(dvcontainerObj.currentObj.Name, "draw");
@@ -682,16 +684,34 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.doRowgrouping = function () {
-        var rows = this.Api.rows({ page: 'current' }).nodes();
-        var last = null;
-        var count = this.ebSettings.Columns.$values.length;
-        this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
-            if (last !== group) {
-                $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
-                last = group;
-            }
+        if (this.Api === null)
+            this.Api = $("#" + this.tableId).DataTable();
+        var rows = this.Api.rows().nodes();
+        var count = this.Api.columns()[0].length;
+        $.each(this.Levels, function (i, obj) {
+            if (obj.insertionType !== "After")
+                $(rows).eq(obj.rowIndex).before(obj.html);
+            else
+                $(rows).eq(obj.rowIndex).after(obj.html);
         });
+        var ct = $("#" + this.tableId + " .group[group=1]").length;
+        $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups (${ct}) - `);
+
+        $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
+       
     };
+
+    //this.doRowgrouping = function () {
+    //    var rows = this.Api.rows({ page: 'current' }).nodes();
+    //    var last = null;
+    //    var count = this.ebSettings.Columns.$values.length;
+    //    this.Api.column(this.Api.columns(this.ebSettings.rowGrouping.$values[0].name + ':name').indexes()[0], { page: 'current' }).data().each(function (group, i) {
+    //        if (last !== group) {
+    //            $(rows).eq(i).before("<tr class='group'><td colspan=" + count + ">" + group + "</td></tr>");
+    //            last = group;
+    //        }
+    //    });
+    //};
 
     this.doRowgrouping_inner = function (last, rows, group, i) {
         if (last !== group) {

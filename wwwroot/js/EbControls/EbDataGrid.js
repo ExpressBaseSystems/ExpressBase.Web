@@ -972,14 +972,17 @@
     this.RowRequired_valid_Check = function (rowid = this.curRowId) {//////
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
-        $.each(this.objectMODEL[rowid], function (i, Col) {
-            let $ctrl = $("#" + Col.EbSid_CtxId);
-            if (!this.isRequiredOK(Col)) {
-                required_valid_flag = false;
-                if (!$notOk1stCtrl)
-                    $notOk1stCtrl = $ctrl;
-            }
-        }.bind(this));
+        let $tr = this.get$RowByRowId(rowid);
+        if ($tr.attr('is-initialised') === 'true') {
+            $.each(this.objectMODEL[rowid], function (i, Col) {
+                let $ctrl = $("#" + Col.EbSid_CtxId);
+                if (!this.isRequiredOK(Col)) {
+                    required_valid_flag = false;
+                    if (!$notOk1stCtrl)
+                        $notOk1stCtrl = $ctrl;
+                }
+            }.bind(this));
+        }
 
         if ($notOk1stCtrl) {
             setTimeout(function () {

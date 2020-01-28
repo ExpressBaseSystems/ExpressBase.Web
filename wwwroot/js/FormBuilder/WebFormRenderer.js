@@ -1095,7 +1095,7 @@ const WebFormRender = function (option) {
         if (reqstMode === "Edit Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
-        else if (reqstMode === "New Mode") {
+        else if (reqstMode === "New Mode" || reqstMode === "Prefill Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {

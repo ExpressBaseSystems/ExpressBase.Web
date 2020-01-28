@@ -1039,7 +1039,7 @@
             this.tryAddRow();
         else {
             let td = $curentRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td }, true, true);
+            this.checkRow_click({ target: td }, true, false);
             //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
             //    this.tryAddRow();
         }
@@ -1154,7 +1154,7 @@
         this.ctrlToSpan_row(rowid);
         if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable) {
             this.onRowPaintFn($tr, "check", e);
-            this.addRow();
+            //this.addRow();
         }
         else {
             this.setCurRow($addRow.attr("rowid"));

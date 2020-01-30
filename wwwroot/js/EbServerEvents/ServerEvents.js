@@ -7,22 +7,23 @@
     this.onUploadSuccess = function (m, e) { };
     this.onShowMsg = function (m, e) { };
     this.onLogOut = function (m, e) { };
+    this.onNotification = function (m, e) { };
     this.onExcelExportSuccess = function (m, e) { };
 
     this.onConnect = function (sub) {
-        console.log("You've connected! welcome " + sub.displayName);
+        //console.log("You've connected! welcome " + sub.displayName);
     };
 
     this.onJoin = function (user) {
-        console.log("Welcome, " + user.displayName);
+        //console.log("Welcome, " + user.displayName);
     }
 
     this.onLeave = function (user) {
-        console.log(user.displayName + " has left the building");
+        //console.log(user.displayName + " has left the building");
     };
 
     this.onHeartbeat = function (msg, e) {
-        if (console) console.log("onHeartbeat", msg, e);
+        //if (console) console.log("onHeartbeat", msg, e);
     };
 
     this.onUploaded = function (m, e) {
@@ -30,21 +31,35 @@
     };
 
     this.onMsgSuccess = function (m, e) {
-        console.log(m);
+        //console.log(m);
         this.onShowMsg(m, e);
     };
 
     this.onLogOutMsg = function (m, e) {
-        console.log(m);
-        document.cookie = "bToken=; rToken=; expires = Thu, 01 Jan 1970 00:00:00 UTC";
-        location.reload();
+        //console.log(m);
+        location.href = "../Tenantuser/Logout";
         this.onLogOut(m, e);
     };
+
+    this.onNotifyMsg = function (m, e) {
+        var html = ``;
+        var x = JSON.parse(m);
+        for (var i = 0; i < x.length; i++) {
+            html = html + `
+                        <li class="drp_item" >
+                              <h4>`+ x[i].title + `</h4> 
+                                <p> `+ x[i].link +`</p>
+                            </li>
+                    `;
+        }
+        $('.notifications').append(html);
+        this.onNotification(m, e);
+    }
 
     this.stopListening = function () {
         this.ES.close();
         this.sEvent.eventSourceStop = true;
-        console.log("stopped listening");
+        //console.log("stopped listening");
     };
 
     this.onExportToExcel = function (m, e) {
@@ -93,7 +108,8 @@
             stopListening: this.stopListening.bind(this),
             onExportToExcel: this.onExportToExcel.bind(this),
             onMsgSuccess: this.onMsgSuccess.bind(this),
-            onLogOut: this.onLogOutMsg.bind(this)
+            onLogOut: this.onLogOutMsg.bind(this),
+            onNotification: this.onNotifyMsg.bind(this)
         }
     });
 };

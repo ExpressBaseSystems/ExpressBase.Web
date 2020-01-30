@@ -4,7 +4,7 @@
 
         $.extend(this.option, option);
 
-        this.userNotification();
+        //this.userNotification();
     }
 
     RMW() {
@@ -14,6 +14,9 @@
     userNotification() {
         this.ss = new EbServerEvents({ ServerEventUrl: this.option.se_url, Channels: ["file-upload"] });
         this.ss.onLogOut = function (msg) {
+
+        }.bind(this);
+        this.ss.onNotification = function (msg) {
 
         }.bind(this);
     }

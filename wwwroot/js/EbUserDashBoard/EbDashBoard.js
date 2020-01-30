@@ -27,7 +27,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.GridStackInit = function () {
-        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }} );
+        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
         this.grid = $('.grid-stack').data("gridstack");
         this.grid.cellHeight(25);
         grid = this.grid;
@@ -164,11 +164,11 @@ var DashBoardWrapper = function (options) {
             return false;
         }
         else {
-            if ( ($(source).hasClass("views_cont") || $(source).attr("id") === "toolb_basic_ctrls") && $(target).attr("id") === "component_cont")
+            if (($(source).hasClass("views_cont") || $(source).attr("id") === "toolb_basic_ctrls") && $(target).attr("id") === "component_cont")
                 return false;
             else if ($(source).attr("id") === "toolb_ph_cont_ctrls" && $(target).attr("id") === "grid-cont")
                 return false;
-            else if ( ($(source).hasClass("views_cont") || $(source).attr("id") === "toolb_ph_cont_ctrls") && $(target).hasClass("tile_dt_cont"))
+            else if (($(source).hasClass("views_cont") || $(source).attr("id") === "toolb_ph_cont_ctrls") && $(target).hasClass("tile_dt_cont"))
                 return false;
             else
                 return true;
@@ -258,10 +258,11 @@ var DashBoardWrapper = function (options) {
             }
             else if ($(target).hasClass("tile_dt_cont") && $(source).hasClass("inner_com_col_cont")) {
                 let obj = this.makeElement(el);
+                $(target).append(el);
                 this.drake.containers.push(document.getElementById(obj.EbSid));
                 this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
             }
-            
+
 
             $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
@@ -269,10 +270,12 @@ var DashBoardWrapper = function (options) {
     };
 
     this.GaugeDrop = function (component, column, controlname) {
+        if (component !== "" && column !== "") {
         let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
         let _data = this.Rowdata[component + "Row"][index];
         //$("#" + controlname).attr("data-value", _data);
-        let xx = EbGaugeWrapper({ container: controlname, value: _data });
+            let xx = EbGaugeWrapper({ container: controlname, value: _data });
+        }
     };
 
     this.ComponentDrop = function (target, o) {
@@ -305,14 +308,17 @@ var DashBoardWrapper = function (options) {
         }
         let eb_type = elem.attr("eb-type");
         if (eb_type == "DataObject") {
-            this.propGrid.setObject(this.Procs[id], AllMetas["EbDataObject"]); 
+            this.propGrid.setObject(this.Procs[id], AllMetas["EbDataObject"]);
         }
     };
 
-    this.makeElement = function (el) {
+    this.makeElement = function (el , obj) {
         let ebtype = $(el).attr("eb-type");
-        var id = "tb" + this.TabNum + ebtype + CtrlCounters[$(el).attr("eb-type") + "Counter"]++;
-        this.Procs[id] = new EbObjects["Eb" + ebtype](id);
+        if (ebtype === undefined) {
+            ebtype = el;
+        }
+        var id = "tb" + this.TabNum + ebtype + CtrlCounters[ebtype + "Counter"]++;
+        this.Procs[id] = obj ? $.extend(new EbObjects["Eb" + ebtype](id), obj) : new EbObjects["Eb" + ebtype](id) ;
         this.dropedCtrlInit(this.Procs[id].$Control, ebtype, id);
         return this.Procs[id];
     };
@@ -323,7 +329,7 @@ var DashBoardWrapper = function (options) {
         $ctrl.attr("eb-type", type);
     };
 
-  
+
     this.GenerateButtons = function () {
 
     };
@@ -338,9 +344,12 @@ var DashBoardWrapper = function (options) {
         this.AppendToolBox();
 
         if (this.EbObject === null) {
+            this.edit = false;
             this.EbObject = new EbObjects.EbDashBoard(`EbDashBoar${Date.now()}`);
             this.filterDialogRefid = "";
         }
+        else
+            this.edit = true;
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
             wc: this.Wc,
@@ -463,18 +472,24 @@ var DashBoardWrapper = function (options) {
 
                 }
                 else {
-                    $.each(currentobj.ComponentsColl.$values, function (i, obj) {
-                        if (!this.Procs.hasOwnProperty(obj.EbSid)) {
-                            this.Procs[obj.EbSid] = obj;
-                            this.ComponentDrop("#component_cont", obj);
-                            this.GetComponentColumns(obj);
+                    $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
+                        if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
+                            var eb_type = Cobj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+                            var Cobject = this.makeElement(eb_type, Cobj);
+                            //$.extend(Cobject, Cobj);
+                            this.ComponentDrop("#component_cont", Cobject);
+                            this.GetComponentColumns(Cobject);
                         }
                     }.bind(this));
+
                     $.each(currentobj.ControlsColl.$values, function (i, obj) {
-                        $("#" + this.CurrentTile).append(obj.$Control[0]);
-                        this.Procs[obj.EbSid] = obj;
-                        this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid);
+                        var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+                        var object = this.makeElement(eb_type, obj);
+                        $(`[data-id="${this.CurrentTile}"]`).append(object.$Control[0]);
+                        this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid);
                     }.bind(this));
+
+
                 }
             }
             //this.addTilecontext()
@@ -524,7 +539,7 @@ var DashBoardWrapper = function (options) {
         metaId = $(event.target).closest(".gaugeChart").attr("eb-type");
         if (procId != null) {
             this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]);
-          }
+        }
     }.bind(this);
 
     this.popChanged = function (obj, pname, newval, oldval) {
@@ -571,6 +586,7 @@ var DashBoardWrapper = function (options) {
             type: "POST",
             url: "../DS/GetData4DashboardControl",
             data: { DataSourceRefId: Refid },
+            async: false,
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
@@ -643,7 +659,7 @@ var DashBoardWrapper = function (options) {
                 parentDiv: '#' + id + '_UserCtrl',
                 refId: obj.RefId,
                 params: this.filtervalues,
-                height: height 
+                height: height
             }
             new EbUserCtrlHelper(opts);
             $(`[data-id="${id}"]`).parent().css("background", "transparent");

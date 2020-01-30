@@ -378,16 +378,23 @@ const EbSelect = function (ctrl, options) {
         setTimeout(function () {
             let contWidth = $('#' + this.name + 'Container').width();
             contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
-            let brow_wdth = $(window).width();
             let div_tble = $("#" + o.containerId);
             let tbl_cod = div_tble.offset();
+            let tbl_height = div_tble.height();
             let div_detach = div_tble.detach();
             div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
             let xtra_wdth = tbl_cod.left;
+            let brow_wdth = $(window).width();
             if ((contWidth + tbl_cod.left) > brow_wdth)
                 xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
             let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
-            div_detach.appendTo($form_div).offset({ top: tbl_cod.top, left: xtra_wdth }).width(contWidth);
+
+            let top = tbl_cod.top;
+            if (tbl_height + tbl_cod.top > $form_div.height() && tbl_cod.top > tbl_height + 60) {
+                top = tbl_cod.top - tbl_height - 60;
+                div_tble.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
+            }
+            div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
 
         }.bind(this), 30);
 

@@ -692,3 +692,11 @@ div.dataTables_wrapper div.dataTables_filters {
 .group-All {
     background-color: #f2f2f2 !important;
 }
+.dataTables_scrollBody .match {
+    background-color: yellow;
+    color: black;
+}
+.dataTables_scrollBody .highlighted {
+    background-color: orangered;
+    color: black;
+}

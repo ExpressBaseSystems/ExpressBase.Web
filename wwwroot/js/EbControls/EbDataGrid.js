@@ -972,14 +972,17 @@
     this.RowRequired_valid_Check = function (rowid = this.curRowId) {//////
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
-        $.each(this.objectMODEL[rowid], function (i, Col) {
-            let $ctrl = $("#" + Col.EbSid_CtxId);
-            if (!this.isRequiredOK(Col)) {
-                required_valid_flag = false;
-                if (!$notOk1stCtrl)
-                    $notOk1stCtrl = $ctrl;
-            }
-        }.bind(this));
+        let $tr = this.get$RowByRowId(rowid);
+        if ($tr.attr('is-initialised') === 'true') {
+            $.each(this.objectMODEL[rowid], function (i, Col) {
+                let $ctrl = $("#" + Col.EbSid_CtxId);
+                if (!this.isRequiredOK(Col)) {
+                    required_valid_flag = false;
+                    if (!$notOk1stCtrl)
+                        $notOk1stCtrl = $ctrl;
+                }
+            }.bind(this));
+        }
 
         if ($notOk1stCtrl) {
             setTimeout(function () {
@@ -1039,7 +1042,7 @@
             this.tryAddRow();
         else {
             let td = $curentRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td }, true, true);
+            this.checkRow_click({ target: td }, true, false);
             //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
             //    this.tryAddRow();
         }
@@ -1154,7 +1157,7 @@
         this.ctrlToSpan_row(rowid);
         if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable) {
             this.onRowPaintFn($tr, "check", e);
-            this.addRow();
+            //this.addRow();
         }
         else {
             this.setCurRow($addRow.attr("rowid"));

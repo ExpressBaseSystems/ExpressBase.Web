@@ -1117,7 +1117,7 @@ const WebFormRender = function (option) {
                 }
             }
         }
-        catch (e) { console.log("Error in title expression  " + e.message) }
+        catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);

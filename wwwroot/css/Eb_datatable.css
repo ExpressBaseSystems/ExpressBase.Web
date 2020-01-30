@@ -244,9 +244,11 @@ div.dataTables_wrapper .dataTables_length {
 }
 
 div.dataTables_wrapper div.dataTables_info {
-    display: inline-block;
-    padding-top: 0;
-    margin-left: 20px;
+    text-align: center;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    border-radius: 4px;
+    padding: 6px;
 }
 
 .pagination-wrapper {
@@ -654,6 +656,7 @@ div.dataTables_wrapper div.dataTables_filters {
     text-align: right;
     display: inline-block;
     float: right;
+    margin-bottom: 2px;
 }
 .columnimage {
     cursor:pointer;

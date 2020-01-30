@@ -229,6 +229,7 @@ const WebFormRender = function (option) {
             url: "/WebForm/ImportFormData",
             data: {
                 _refid: this.formRefId,
+                _rowid: this.rowId,
                 _triggerctrl: PScontrol.Name,
                 _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
             },
@@ -1393,6 +1394,15 @@ const WebFormRender = function (option) {
 
     let t1 = performance.now();
     console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
+
+    window.onbeforeunload = function (e) {
+        if (this.Mode.isEdit) {
+            var dialogText = 'Changes you made may not be saved.';
+            e.returnValue = dialogText;
+            return dialogText;
+        }
+    }.bind(this);
+
     a___builder = this;
     a___MT = this.DataMODEL;
     a___EO = this.EditModeFormData;

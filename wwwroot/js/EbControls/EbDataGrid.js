@@ -1732,6 +1732,7 @@
             url: "/WebForm/ImportFormData",
             data: {
                 _refid: this.formRefId,
+                _rowid: this.formRenderer.rowId,
                 _triggerctrl: lastCtrlName,
                 _params: paramsColl
             },

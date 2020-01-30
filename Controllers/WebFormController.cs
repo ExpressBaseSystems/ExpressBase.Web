@@ -138,13 +138,13 @@ namespace ExpressBase.Web.Controllers
         //    return ObjStr;
         //}
 
-        public string ImportFormData(string _refid, string _triggerctrl, List<Param> _params)
+        public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params)
         {
             try
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, RowId = _rowid, Trigger = _triggerctrl, Params = _params });
                 return Resp.FormDataWrap;
             }
             catch (Exception ex)

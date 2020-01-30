@@ -26,7 +26,7 @@ function EbMobStudio(config) {
     this.droparea = `#eb_mobpage_pane${this.Conf.TabNum}`;
     this.Controls = {};
     this.Menu = {};
-    this.Mode = (this.EditObj === null) ? "new" : "edit"; 
+    this.Mode = (this.EditObj === null) ? "new" : "edit";
 
     this.GenerateButtons = function () { };
 
@@ -88,13 +88,17 @@ function EbMobStudio(config) {
         this.Procs[id] = o;
         $(this.droparea).append(o.$Control.outerHTML());
         if (ebtype === "EbMobileForm") {
-            this.makeDropable(o.EbSid);
+            this.makeDropable(o.EbSid, ebtype);
             this.makeSortable(o.EbSid);
             this.setCtrls(o.EbSid);
         }
         else if (ebtype === "EbMobileVisualization") {
             this.getCol(o.DataSourceRefId);
             this.Controls.InitVis(o);
+        }
+        else if (ebtype === "EbMobileDashBoard") {
+            this.makeDropable(o.EbSid, ebtype);
+            this.setCtrls(o.EbSid);//need to change
         }
         $(`#${o.EbSid}`).on("click", this.ContainerOnClick.bind(this));
         this.EditObj = null;
@@ -115,7 +119,7 @@ function EbMobStudio(config) {
     };
 
     this.makeDragable = function () {
-        $(".draggable,.container_draggable").draggable({
+        $(".draggable,.container_draggable,.draggable_dashctrl").draggable({
             cancel: "a.ui-icon",
             revert: "invalid",
             helper: "clone",
@@ -127,12 +131,21 @@ function EbMobStudio(config) {
         });
     };
 
-    this.makeDropable = function (ebsid) {
+    this.makeDropable = function (ebsid, ebtype) {
         $(`#${ebsid} .eb_mob_container_inner`).droppable({
-            accept: ".draggable",
+            accept: this.getDropAcceptClass(ebtype),
             hoverClass: "drop-hover-layout",
             drop: this.onDropFn.bind(this)
         });
+    };
+
+    this.getDropAcceptClass = function (ebtype) {
+        if (ebtype === "EbMobileForm")
+            return ".draggable";
+        else if (ebtype === "EbMobileDashBoard")
+            return ".draggable_dashctrl";
+        else
+            return ".draggable";
     };
 
     this.ContainerOnClick = function (evt) {
@@ -167,11 +180,14 @@ function EbMobStudio(config) {
             let o = this.makeElement(draged);
             dropLoc.append(o.$Control.outerHTML());
             if (ebtype === "EbMobileForm") {
-                this.makeDropable(o.EbSid);
+                this.makeDropable(o.EbSid, ebtype);
                 this.makeSortable(o.EbSid);
             }
             else if (ebtype === "EbMobileVisualization") {
                 this.Controls.InitVis(o);
+            }
+            else if (ebtype === "EbMobileDashBoard") {
+                this.makeDropable(o.EbSid, ebtype);
             }
             $(`#${o.EbSid}`).on("click", this.ContainerOnClick.bind(this));
         }
@@ -203,6 +219,10 @@ function EbMobStudio(config) {
                 let table = $(div).find(".eb_mob_tablelayout")[0];
                 this.findVisContainerItems(table);
             }
+            else if ($(div).hasClass("eb_mob_dashboard_container")) {
+                this.EbObject.Container.ChiledControls.$values.length = 0;
+                $(div).find(".mob_dash_control").each(this.findDashContainerItems.bind(this));
+            }
         }
         commonO.Current_obj = this.EbObject;
         return true;
@@ -214,6 +234,13 @@ function EbMobStudio(config) {
         this.EbObject.Container.ChiledControls.$values.push(jsobj);
     };
 
+    //dash save
+    this.findDashContainerItems = function (i, o) {
+        let jsobj = this.Procs[o.id];
+        this.EbObject.Container.ChiledControls.$values.push(jsobj);
+    };
+
+    //vis save
     this.findVisContainerItems = function (table) {
         let o = this.Procs[table.id];
         o.RowCount = $(`#${o.EbSid} .eb_tablelayout_tr`).length;
@@ -235,7 +262,7 @@ function EbMobStudio(config) {
         }.bind(this));
     };
 
-    this.getCellControls = function (eb_cell,$td) {
+    this.getCellControls = function (eb_cell, $td) {
         $td.find(".mob_control").each(function (i, _obj) {
             eb_cell.ControlCollection.$values.push(this.Procs[_obj.id]);
         }.bind(this));

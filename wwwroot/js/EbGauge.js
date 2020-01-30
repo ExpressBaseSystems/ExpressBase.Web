@@ -1,6 +1,8 @@
 ﻿
 var EbGaugeWrapper = function (option) {
-    this.container = option.container;
+   
+    $("#" + option.container).empty().append(`<canvas id="${option.container}_canvas" class="gauge_canvas"></canvas>`);
+    this.container = option.container + "_canvas";
     this.value = option.value;
     {
         //billiboards.......

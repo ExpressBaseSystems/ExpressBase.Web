@@ -51,7 +51,7 @@
                             o.showSerialColumn = false;
                             o.showCheckboxColumn = false;
                             o.showFilterRow = false;
-                            o.IsPaging = false;
+                            o.IsPaging = true;
                             //o.source = "inline";
                             //o.scrollHeight = "200px";
                             o.columns = cols;

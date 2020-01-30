@@ -176,16 +176,16 @@ var DashBoardWrapper = function (options) {
     };
 
     this.columnsdrag = function (el, source) {
-        this.drake.containers.push(document.getElementById("component_cont"));
+        //this.drake.containers.push(document.getElementById("component_cont"));
         if ($(source) === $("#grid-cont")) {
             return false;
         }
-        else if ($(source).hasClass("data-reader-popup")) {
-            this.drake.containers = this.drake.containers.filter(function (value)
-            {
-                return value != document.getElementById("component_cont");
-            });      
-        }
+        //else if ($(source).hasClass("data-reader-popup")) {
+        //    this.drake.containers = this.drake.containers.filter(function (value)
+        //    {
+        //        return value != document.getElementById("component_cont");
+        //    });      
+        //}
         else {
             if (this.drake.containers.indexOf($("#grid-cont") === -1)) {
 
@@ -227,24 +227,7 @@ var DashBoardWrapper = function (options) {
                 this.drake.containers.push(document.getElementById(o.EbSid));
                 this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
             }
-            else if ($(target).attr("id") === "component_cont" && !$(source).hasClass("data-reader-popup")) {
-                let o = this.makeElement(el);
-                $(target).append(o.$Control[0]);
-                $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}">
-                  <i class="fa fa-angle-up" aria-hidden="true"></i> </div>`);
-                $("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" class="inner_com_col_cont" style="display:none"> </div>`);
-                this.propGrid.setObject(o, AllMetas["EbDataObject"]);
-                this.drake.containers.push(document.getElementById(`Inner_Cont_${o.EbSid}`));
-                $(`#Inner_Btn_${o.EbSid}`).off("click").on("click", this.ComponentColumContainerShow.bind(this));
-            }
-            else if ($(target).hasClass("tile_dt_cont") && $(source).attr("id") === "toolb_basic_ctrls") {
-                let obj = this.makeElement(el);
-                $(target).append(obj.$Control[0]);
-                this.drake.containers.push(document.getElementById(obj.EbSid));
-                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
-            }
-            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_Cont_DataObject")) {
-                $(target).append(el);
+            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_com_col_cont")) {
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
                 let controlname = $(target).attr("id");
@@ -253,10 +236,17 @@ var DashBoardWrapper = function (options) {
                 obj.DataObjCtrlName = component;
                 obj.DataObjColName = column;
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
-                let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
-                let _data = this.Rowdata[component + "Row"][index];
-                $("#" + controlname).attr("data-value", _data);
-                let xx = EbGaugeWrapper({ container: controlname, value: _data});
+                this.GaugeDrop(component, column, controlname);
+            }
+            else if ($(target).hasClass("tile_dt_cont") && $(source).attr("id") === "toolb_basic_ctrls") {
+                let obj = this.makeElement(el);
+                $(target).append(obj.$Control[0]);
+                this.drake.containers.push(document.getElementById(obj.EbSid));
+                this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
+            }
+            else if ($(target).attr("id") === "component_cont" && $(source).attr("id") === "toolb_ph_cont_ctrls") {
+                let o = this.makeElement(el);
+                this.ComponentDrop(target, o);
             }
             else if ($(target).hasClass("grid-stack") && $(source).hasClass("inner_com_col_cont")) {
                 let drop_id = this.AddNewTile();
@@ -268,8 +258,6 @@ var DashBoardWrapper = function (options) {
             }
             else if ($(target).hasClass("tile_dt_cont") && $(source).hasClass("inner_com_col_cont")) {
                 let obj = this.makeElement(el);
-                $(target).append(el);
-                return el;
                 this.drake.containers.push(document.getElementById(obj.EbSid));
                 this.TileCollection[$(target).attr("data-id")].ControlsColl.$values.push(obj);
             }
@@ -279,6 +267,24 @@ var DashBoardWrapper = function (options) {
         }
 
     };
+
+    this.GaugeDrop = function (component, column, controlname) {
+        let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+        let _data = this.Rowdata[component + "Row"][index];
+        //$("#" + controlname).attr("data-value", _data);
+        let xx = EbGaugeWrapper({ container: controlname, value: _data });
+    };
+
+    this.ComponentDrop = function (target, o) {
+        $(target).append(o.$Control[0]);
+        $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}">
+                  <i class="fa fa-angle-up" aria-hidden="true"></i> </div>`);
+        $("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" class="inner_com_col_cont" style="display:none"> </div>`);
+        this.propGrid.setObject(o, AllMetas["EbDataObject"]);
+        this.drake.containers.push(document.getElementById(`Inner_Cont_${o.EbSid}`));
+        $(`#Inner_Btn_${o.EbSid}`).off("click").on("click", this.ComponentColumContainerShow.bind(this));
+    };
+
     this.ComponentColumContainerShow = function (e) {
         let TargetId = e.target.getAttribute("target-id");
         if (TargetId == null) { TargetId = $(e.target).parent()[0].getAttribute("target-id"); }
@@ -359,11 +365,13 @@ var DashBoardWrapper = function (options) {
         $('#myDropdown').on('hide.bs.dropdown', this.DropDownClose.bind(this));
         $('#myDropdown').on('click.bs.dropdown.data-api', '.dropdown.keep-inside-clicks-open', this.DropDownClose2.bind(this));
     }
+
     this.DropDownClose = function (e) {
         if (e.clickEvent) {
             e.preventDefault();
         }
     };
+
     this.DropDownClose2 = function (e) {
         if (e.clickEvent) {
             e.stopPropagation();
@@ -423,6 +431,7 @@ var DashBoardWrapper = function (options) {
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
+                let currentobj = this.EbObject.Tiles.$values[i];
                 let tile_id = "t" + i;
                 let t_id = "tile" + i;
                 let x = this.EbObject.Tiles.$values[i].TileDiv.Data_x;
@@ -453,9 +462,23 @@ var DashBoardWrapper = function (options) {
                         });
 
                 }
+                else {
+                    $.each(currentobj.ComponentsColl.$values, function (i, obj) {
+                        if (!this.Procs.hasOwnProperty(obj.EbSid)) {
+                            this.Procs[obj.EbSid] = obj;
+                            this.ComponentDrop("#component_cont", obj);
+                            this.GetComponentColumns(obj);
+                        }
+                    }.bind(this));
+                    $.each(currentobj.ControlsColl.$values, function (i, obj) {
+                        $("#" + this.CurrentTile).append(obj.$Control[0]);
+                        this.Procs[obj.EbSid] = obj;
+                        this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid);
+                    }.bind(this));
+                }
             }
             //this.addTilecontext()
-            this.Tilecontext()
+            this.Tilecontext();
         }
         else {
             $('.grid-stack').gridstack();
@@ -536,22 +559,26 @@ var DashBoardWrapper = function (options) {
                 if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             }
         }
-        let Refid = obj[pname];
         if (obj.$type.indexOf("EbDataObject") > -1 && pname === "DataSource") {
-            $.LoadingOverlay('show');
-            $.ajax({
-                type: "POST",
-                url: "../DS/GetData4DashboardControl",
-                data: { DataSourceRefId: Refid },
-                success: function (resp) {
-                    obj["Columns"] = JSON.parse(resp.columns);
-                    this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
-                    $.LoadingOverlay('hide');
-                    this.DisplayColumns(obj);
-                    this.Rowdata[obj.EbSid + "Row"] = resp.row;
-                }.bind(this)
-            });
+            this.GetComponentColumns(obj);
         }
+    };
+
+    this.GetComponentColumns = function (obj) {
+        let Refid = obj["DataSource"];
+        $.LoadingOverlay('show');
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetData4DashboardControl",
+            data: { DataSourceRefId: Refid },
+            success: function (resp) {
+                obj["Columns"] = JSON.parse(resp.columns);
+                this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
+                $.LoadingOverlay('hide');
+                this.DisplayColumns(obj);
+                this.Rowdata[obj.EbSid + "Row"] = resp.row;
+            }.bind(this)
+        });
     };
 
     this.DisplayColumns = function (obj) {

@@ -1095,7 +1095,7 @@ const WebFormRender = function (option) {
         if (reqstMode === "Edit Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
-        else if (reqstMode === "New Mode") {
+        else if (reqstMode === "New Mode" || reqstMode === "Prefill Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
@@ -1117,7 +1117,7 @@ const WebFormRender = function (option) {
                 }
             }
         }
-        catch (e) { console.log("Error in title expression  " + e.message) }
+        catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);

@@ -2412,7 +2412,10 @@
     this.createFilterforTree = function () {
         var TRange = null;
         $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="dataTables_filters">
-        <label>Search:<input type="search" class="form-control input-sm" placeholder="" aria-controls="${this.tableId}"></label></div>`);
+        <button class="btn previous_h"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+        <label>Search:<input type="search" class="form-control input-sm" placeholder="" aria-controls="${this.tableId}"></label>
+        <button class="btn next_h"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        </div>`);
         $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
     };
 
@@ -2434,8 +2437,12 @@
 
 
             //this.findString(text);
-            $(".highlighted").removeClass("highlighted").removeClass("match");
-            this.searchAndHighlight(text, ".calendar_wrapper");
+            $(".match").each(function (i, span) {
+                $(span).parent().text($(span).parent().text());
+                $(span).remove();
+            });
+            //$(".match").remove();
+            this.searchAndHighlight(text, ".dataTables_scrollBody");
         }
     };
 
@@ -2483,14 +2490,14 @@
                 $('.highlighted').removeClass('highlighted'); //Remove old search highlights  
 
                 //Remove the previous matches
-                $span = $('.calendar_wrapper span');
+                $span = $(selector).children('span');
                 $span.replaceWith($span.html());
 
                 if (searchTerm === "&") {
                     searchTerm = "&amp;";
                     searchTermRegEx = new RegExp(searchTerm, "ig");
                 }
-                $(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + searchTerm + "</span>"));
+                $(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + matches[0] + "</span>"));
                 $('.match:first').addClass('highlighted');
 
                 var i = 0;
@@ -2502,8 +2509,8 @@
 
                     $('.match').removeClass('highlighted');
                     $('.match').eq(i).addClass('highlighted');
-                    $('.ui-mobile-viewport').animate({
-                        scrollTop: $('.match').eq(i).offset().top
+                    $(selector).animate({
+                        scrollTop: $('.match').eq(i).position().top
                     }, 300);
                 });
                 $('.previous_h').off('click').on('click', function () {
@@ -2514,8 +2521,8 @@
 
                     $('.match').removeClass('highlighted');
                     $('.match').eq(i).addClass('highlighted');
-                    $('.ui-mobile-viewport').animate({
-                        scrollTop: $('.match').eq(i).offset().top
+                    $(selector).animate({
+                        scrollTop: $('.match').eq(i).position().top
                     }, 300);
                 });
 
@@ -2523,14 +2530,13 @@
 
 
                 if ($('.highlighted:first').length) { //if match found, scroll to where the first one appears
-                    $(window).scrollTop($('.highlighted:first').position().top);
+                    $(selector).scrollTop($('.highlighted:first').position().top);
                 }
                 return true;
             }
         }
         return false;
     };
-
 
     this.addFilterEventListeners = function () {
         $(".columnimage").lazy();

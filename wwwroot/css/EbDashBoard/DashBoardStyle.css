@@ -585,7 +585,8 @@
     }
 
 #dashbord-view .wrapper-cont, #dashbord-view .wrapper-cont_inner {
-    height:100% !important;
+    height: 100% !important;
+    width: 100%;
 }
 #dashbord-user-view .wrapper-cont, #dashbord-user-view .wrapper-cont_inner {
     height: 100% !important;

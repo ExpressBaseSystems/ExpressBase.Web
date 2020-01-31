@@ -1,46 +1,28 @@
 ﻿
-var EbGaugeWrapper = function (option) {
-   
-    $("#" + option.container).empty().append(`<canvas id="${option.container}_canvas" class="gauge_canvas"></canvas>`);
-    this.container = option.container + "_canvas";
-    this.value = option.value;
-    {
-        //billiboards.......
-        //this.chart = bb.generate({
-        //    data: {
-        //        columns: [
-        //            ["data", this.value]
-        //        ],
-        //        type: "gauge"
-        //    },
-        //    gauge: {
-        //        max: 100,
-        //        label: {
-        //            format: function (value, ratio) { return value; }
-        //        }
-        //    },
-        //    color: {
-        //        pattern: [
-        //            "#FF0000",
-        //            "#F97600",
-        //            "#F6C600",
-        //            "#60B044"
-        //        ],
-        //        threshold: {
-        //            values: [
-        //                30,
-        //                60,
-        //                90,
-        //                100
-        //            ]
-        //        }
-        //    },
-        //    size: {
-        //        height: 180
-        //    },
-        //    bindto: "#" + this.container
-        //});
+var opts;
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
     }
+    return color;
+}
+
+var EbGaugeWrapper = function (option) {
+    var back = ["#ff0000", "blue", "gray"];
+    var rand = back[Math.floor(Math.random() * back.length)];
+    $("#" + option.GaugeContainer).empty().append(`<canvas id="${option.GaugeContainer}_canvas" class="gauge_canvas"></canvas>`);
+    this.container = option.GaugeContainer + "_canvas";
+    this.value = option.GaugeValue ? option.GaugeValue : Math.floor(Math.random() * 10); 
+    this.colorStart = option.ColorStart ? option.ColorStart : getRandomColor();
+    this.colorStop = option.ColorStop ? option.ColorStop : getRandomColor();
+    this.strokeColor = option.StrokeColor ? option.StrokeColor : getRandomColor();
+    this.pointerLength = option.PointerLength;
+    this.pointerStrokeWidth = option.PointerStrokeWidth;
+    this.pointerColor = option.PointerColor ? option.PointerColor : getRandomColor();   
+    this.angle = option.Angle;
+    this.lineWidth = option.LineWidth;
     {
         //recogizer
         //let element = document.querySelector('#' + this.container);
@@ -61,36 +43,54 @@ var EbGaugeWrapper = function (option) {
     }
     {
         //gauge.cofee
-        var opts = {
-            angle: -0.19, // The span of the gauge arc
-            lineWidth: 0.11, // The line thickness
-            radiusScale: 0.5, // Relative radius
+         opts = {
+            angle: 0, // The span of the gauge arc
+            lineWidth: 0.16, // The line thickness
+            radiusScale: 1, // Relative radius
             pointer: {
-                length: 0.01, // // Relative to gauge radius
-                strokeWidth: 0.035, // The thickness
-                color: '#FFFCFA' // Fill color
+                length: 0.41, // // Relative to gauge radius
+                strokeWidth: 0.055, // The thickness
+                color: this.pointerColor // Fill color
             },
-            staticLabels: {
-                font: "10px sans-serif",  // Specifies font
-                labels: [0, 3000],  // Print labels at these values
-                color: "#000000",  // Optional: Label text color
-                fractionDigits: 0  // Optional: Numerical precision. 0=round off.
-            },
-            limitMax: false,     // If false, max value increases automatically if value > maxValue
-            limitMin: false,     // If true, the min value of the gauge will be fixed
-            colorStart: '#18eaff',   // Colors
-            colorStop: '#8FC0DA',    // just experiment with them
-            strokeColor: '#E0E0E0',  // to see which ones work best for you
+            limitMax: false,     // If true, the pointer will not go past the end of the gauge
+            colorStart: this.colorStart,   // Colors
+            colorStop: this.colorStop ,    // just experiment with them
+            strokeColor: this.strokeColor,
+            // to see which ones work best for you
             generateGradient: true,
-            highDpiSupport: true,     // High resolution support
-
+            highDpiSupport: true,   // High resolution support
+            renderTicks: {
+                divisions: 2,
+                divWidth: 1.3,
+                divLength: 1,
+                divColor: '#331407',
+                subDivisions: 5,
+                subLength: 0.3,
+                subWidth: 1.8,
+                subColor: '#666666'
+            },
+            //staticLabels: {
+            //    font: "10px sans-serif",  // Specifies font
+            //    labels: [0,50,100,150,200,250,300],  // Print labels at these values
+            //    color: "#000000",  // Optional: Label text color
+            //    fractionDigits: 0  // Optional: Numerical precision. 0=round off.
+            //},
+            //staticZones: [      
+            //    { strokeStyle: "#FFDD00", min: 0, max: 150 }, // Yellow
+            //    { strokeStyle: "#30B32D", min: 150, max: 220 }, // Green
+            //    { strokeStyle: "blue", min: 220, max: 260 }, // Yellow
+            //    { strokeStyle: "#F03E3E", min: 260, max: 300 },  // Red
+            //    { strokeStyle: "rgb(80,80,80)", min: 2470, max: 2530, height: 1.3 }
+            //],
         };
+        console.log(document.getElementById('maxVal').textContent);
         var target = document.getElementById(this.container); // your canvas element
         var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-        gauge.maxValue = 100; // set max gauge value
-        gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-        gauge.animationSpeed = 32; // set animation speed (32 is default value)
-        gauge.set(this.value); // set actual value
+        gauge.maxValue = 30; // set max gauge value
+        gauge.animationSpeed = 28; // set animation speed (32 is default value)
+        gauge.set(this.value);
+        gauge.setTextField(document.getElementById("preview-textfield"));
+        percentColors = [[0.0, "#a9d70b"], [0.50, "#f9c802"], [1.0, "#ff0000"]];
     }
     {
         //var myGauge = Gauge(document.getElementById(this.container), {

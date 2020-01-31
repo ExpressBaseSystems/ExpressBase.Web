@@ -1010,15 +1010,16 @@
                 //$.each(this.columnSearch, function (i, search) {
                 search = this.columnSearch[i];
                 var o = new displayFilter();
-                o.name = search.Column;
+                let colObj = getObjByval(this.EbObject.Columns.$values, "name", search.Column);
+                o.name = colObj.sTitle;
                 o.operator = search.Operator;
-                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column });
+                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column; });
                 if (searchobj.length === 1) {
                     if (search.Value.toString().includes("|")) {
                         $.each(search.Value.split("|"), function (j, val) {
                             if (val.trim() !== "") {
                                 var o = new displayFilter();
-                                o.name = search.Column;
+                                o.name = colObj.sTitle;
                                 o.operator = search.Operator;
                                 o.value = val;
                                 if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")

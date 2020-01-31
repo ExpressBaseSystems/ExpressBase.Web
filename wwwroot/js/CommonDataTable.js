@@ -804,7 +804,6 @@
     };
 
     this.ajaxData = function (dq) {
-        $(".info-search-cont").hide();
         if (!this.isSecondTime) {
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").hide();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").hide();
@@ -1011,15 +1010,16 @@
                 //$.each(this.columnSearch, function (i, search) {
                 search = this.columnSearch[i];
                 var o = new displayFilter();
-                o.name = search.Column;
+                let colObj = getObjByval(this.EbObject.Columns.$values, "name", search.Column);
+                o.name = colObj.sTitle;
                 o.operator = search.Operator;
-                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column });
+                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column; });
                 if (searchobj.length === 1) {
                     if (search.Value.toString().includes("|")) {
                         $.each(search.Value.split("|"), function (j, val) {
                             if (val.trim() !== "") {
                                 var o = new displayFilter();
-                                o.name = search.Column;
+                                o.name = colObj.sTitle;
                                 o.operator = search.Operator;
                                 o.value = val;
                                 if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")
@@ -2412,7 +2412,6 @@
 
     this.createFilterforTree = function () {
         var TRange = null;
-        $(".dataTables_info").addClass("col-md-4");
         $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="col-md-4 dataTables_filters">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Search">
@@ -2426,7 +2425,7 @@
         <button class="btn next_h"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
         </div>`);
         $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
-        $(".info-search-cont").show();
+        
     };
 
     this.LocalSearch = function (e) {

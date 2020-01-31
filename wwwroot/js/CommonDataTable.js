@@ -804,7 +804,6 @@
     };
 
     this.ajaxData = function (dq) {
-        $(".info-search-cont").hide();
         if (!this.isSecondTime) {
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").hide();
             $("#" + this.tableId + "_wrapper .DTFC_LeftFootWrapper").hide();
@@ -2412,7 +2411,6 @@
 
     this.createFilterforTree = function () {
         var TRange = null;
-        $(".dataTables_info").addClass("col-md-4");
         $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="col-md-4 dataTables_filters">
         <div class="input-group">
             <input type="text" class="form-control" placeholder="Search">
@@ -2426,7 +2424,7 @@
         <button class="btn next_h"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
         </div>`);
         $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
-        $(".info-search-cont").show();
+        
     };
 
     this.LocalSearch = function (e) {

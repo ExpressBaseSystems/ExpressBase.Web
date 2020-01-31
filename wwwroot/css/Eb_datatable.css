@@ -244,11 +244,9 @@ div.dataTables_wrapper .dataTables_length {
 }
 
 div.dataTables_wrapper div.dataTables_info {
-    text-align: center;
-    border: 1px solid #ddd;
-    background-color: #fff;
-    border-radius: 4px;
-    padding: 6px;
+    display: inline-block;
+    margin-left: 15px;
+    padding-top:0;
 }
 
 .pagination-wrapper {
@@ -654,9 +652,6 @@ table.dataTable tbody > tr.selected > td.context-menu-active {
 }
 div.dataTables_wrapper div.dataTables_filters {
     text-align: right;
-    display: inline-block;
-    float: right;
-    margin-bottom: 2px;
 }
 .columnimage {
     cursor:pointer;
@@ -702,4 +697,13 @@ div.dataTables_wrapper div.dataTables_filters {
 .dataTables_scrollBody .highlighted {
     background-color: orangered;
     color: black;
+}
+div.dataTables_wrapper .info-search-cont {
+    display: flex;
+    margin-bottom: 2px;
+    justify-content: space-between;
+}
+
+div.dataTables_wrapper .info-search-cont .dataTables_info {
+    padding-top:8px;
 }

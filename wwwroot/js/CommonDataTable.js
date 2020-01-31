@@ -756,7 +756,7 @@
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
                 if (this.IsTree ) {
-                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12'i>rt";
+                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
                 else {
@@ -1010,15 +1010,16 @@
                 //$.each(this.columnSearch, function (i, search) {
                 search = this.columnSearch[i];
                 var o = new displayFilter();
-                o.name = search.Column;
+                let colObj = getObjByval(this.EbObject.Columns.$values, "name", search.Column);
+                o.name = colObj.sTitle;
                 o.operator = search.Operator;
-                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column });
+                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column; });
                 if (searchobj.length === 1) {
                     if (search.Value.toString().includes("|")) {
                         $.each(search.Value.split("|"), function (j, val) {
                             if (val.trim() !== "") {
                                 var o = new displayFilter();
-                                o.name = search.Column;
+                                o.name = colObj.sTitle;
                                 o.operator = search.Operator;
                                 o.value = val;
                                 if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")
@@ -2411,39 +2412,31 @@
 
     this.createFilterforTree = function () {
         var TRange = null;
-        $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="dataTables_filters">
-        <button class="btn previous_h"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
-        <label>Search:<input type="search" class="form-control input-sm" placeholder="" aria-controls="${this.tableId}"></label>
-        <button class="btn next_h"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="col-md-4 dataTables_filters">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search">
+            <div class="input-group-btn">
+              <button class="btn btn-default" type="submit">
+                <i class="glyphicon glyphicon-search"></i>
+              </button>
+            </div>
+          </div>
+        <button class="btn previous_h"><i class="fa fa-angle-up" aria-hidden="true"></i></button>
+        <button class="btn next_h"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
         </div>`);
         $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
+        
     };
 
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
-        if (e.keyCode === 13 && text.length > 2) {
-            //window.find(text, false, false, true);
-            //if (window.find && window.getSelection) {
-            //    document.designmode = "on";
-            //    var sel = window.getSelection();
-            //    sel.collapse(document.body, 0);
-
-            //    while (window.find(text)) {
-            //        document.execCommand("backColor", true, "yellow");
-            //        sel.collapseToEnd();
-            //    }
-            //    document.designmode = "off";
-            //}
-
-
-            //this.findString(text);
+        //if (e.keyCode === 13 && text.length > 2) {
             $(".match").each(function (i, span) {
                 $(span).parent().text($(span).parent().text());
                 $(span).remove();
             });
-            //$(".match").remove();
             this.searchAndHighlight(text, ".dataTables_scrollBody");
-        }
+        //}
     };
 
     this.findString = function (str) {
@@ -2497,21 +2490,35 @@
                     searchTerm = "&amp;";
                     searchTermRegEx = new RegExp(searchTerm, "ig");
                 }
-                $(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + matches[0] + "</span>"));
+                var arr = $(selector).find("td").toArray().filter(obj => $(obj).text().toLowerCase().includes(searchTerm.toLowerCase()));
+                arr.forEach(function (obj, i) {
+                    let $target = $(obj);
+                    let $next = $target.children();
+                    while ($next.length) {
+                        $target = $next;
+                        $next = $next.children();
+                    }
+                    let x = $($target).text().match(searchTermRegEx);
+                    $($target).html($($target).html().replace(searchTermRegEx, "<span class='match'>" + x[0] + "</span>"));
+                }); 
+                //$(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + matches[0] + "</span>"));
                 $('.match:first').addClass('highlighted');
 
                 var i = 0;
 
                 $('.next_h').off('click').on('click', function () {
+
                     i++;
 
                     if (i >= $('.match').length) i = 0;
 
                     $('.match').removeClass('highlighted');
                     $('.match').eq(i).addClass('highlighted');
-                    $(selector).animate({
-                        scrollTop: $('.match').eq(i).position().top
-                    }, 300);
+                    if ($('.match').length) {
+                        $(selector).animate({
+                            scrollTop: $('.match').eq(i).position().top
+                        }, 300);
+                    }
                 });
                 $('.previous_h').off('click').on('click', function () {
 
@@ -2521,9 +2528,11 @@
 
                     $('.match').removeClass('highlighted');
                     $('.match').eq(i).addClass('highlighted');
-                    $(selector).animate({
-                        scrollTop: $('.match').eq(i).position().top
-                    }, 300);
+                    if ($('.match').length) {
+                        $(selector).animate({
+                            scrollTop: $('.match').eq(i).position().top
+                        }, 300);
+                    }
                 });
 
 

@@ -277,9 +277,8 @@
                 else {
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                 }
-                setTimeout(function () {
-                    $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
-                }, 1000);
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                $("#iFramePdfModal").modal("show");
             }
         }
         catch (e) {

@@ -26,44 +26,7 @@
 <script>
     var cm = new EbHeader().setName("Developer Console");
 </script>
-<div class="row s-dash-container">
-    <div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group eb-dashbord-sidebar">
-                <li class="list-group-item outer_li text-center pd-l-0 pd-r-0">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">apps</span>
-                        <span class="t__sidebar_text">Applications</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">App Store</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="../Survey/QuestionBank">
-                        <span class="material-icons t__sidebar_icon">account_balance</span>
-                        <span class="t__sidebar_text">Question Bank</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
+<div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-10 pd-0">
@@ -95,7 +58,7 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="home" role="tabpanel">
-                    <div class="float-l col-md-4">
+                    <div class="float-l col-md-4 pd-0">
                         <div class="form-group">
                             <label>Survey Name</label>
                             <input id="txtName" type="text" class="form-control">
@@ -125,7 +88,7 @@
                     </div>
                 </div>
                 <div class="tab-pane appdash_obj_container display-flex" id="ques" role="tabpanel">
-                    <div class="raw">
+                    <div class="raw" style="padding-bottom:0">
                         <button data-toggle="modal" data-target="#questionModal" class="ebbtn eb_btn-sm eb_btnblue pull-right" id="NewQuestion">New Question</button>
                         <button data-toggle="modal" data-target="#AddFromBank" class="ebbtn eb_btn-sm eb_btnblue pull-right mr-r-10px">Add From Bank</button>
                     </div>

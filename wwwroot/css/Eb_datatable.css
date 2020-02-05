@@ -707,3 +707,10 @@ div.dataTables_wrapper .info-search-cont {
 div.dataTables_wrapper .info-search-cont .dataTables_info {
     padding-top:8px;
 }
+.multi-line-column {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* number of lines to show */
+    -webkit-box-orient: vertical;
+}

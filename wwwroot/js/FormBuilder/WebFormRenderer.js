@@ -235,7 +235,7 @@ const WebFormRender = function (option) {
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
-                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+                EbMessage("show", { Message: `Something Unexpected Occurred when tried to import data`, AutoHide: true, Background: '#aa0000' });
             }.bind(this),
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
@@ -282,12 +282,15 @@ const WebFormRender = function (option) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
+        if (_respObj.Status === 200) {
+            this.modifyFormData4Import(_respObj);
 
-        this.modifyFormData4Import(_respObj);
-
-
-        this.isEditModeCtrlsSet = false;
-        this.setEditModeCtrls();
+            this.isEditModeCtrlsSet = false;
+            this.setEditModeCtrls();
+        }
+        else
+            console.error(_respObj.MessageInt);
+        
     }.bind(this);
 
     //this.removeRowIds = function () {

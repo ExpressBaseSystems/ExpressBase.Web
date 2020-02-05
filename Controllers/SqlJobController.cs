@@ -21,9 +21,9 @@ namespace ExpressBase.Web.Controllers
     {
         public SqlJobController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public SqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
+        public ExecuteSqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
         {
-            SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
+            ExecuteSqlJobResponse resp = this.ServiceClient.Post<ExecuteSqlJobResponse>(new ExecuteSqlJobRequest
             {
                 RefId = Refid,
                 GlobalParams = Param
@@ -51,18 +51,17 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("SchedulerWindow", new { objid = ObjId, tasktype = JobTypes.SqlJobTask });
         }
 
-        public SqlJobsListGetResponse Get_Jobs_List(string Refid, string Date)
+        public ListSqlJobsResponse Get_Jobs_List(string Refid, string Date)
         {
-            SqlJobsListGetResponse resp = this.ServiceClient.Get(new SqlJobsListGetRequest()
+            ListSqlJobsResponse resp = this.ServiceClient.Get(new ListSqlJobsRequest()
             {
                 RefId = Refid,
                 Date = Date
 
             });
-            var Temp = new DSController(this.ServiceClient, this.Redis);
-            resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumnsForSqlJob(resp.SqlJobsColumns));
             return resp;
         }
+
         public string AppendFRKColomns(string Refid)
         {
             List<string> ColomnList = new List<string>();
@@ -110,6 +109,7 @@ namespace ExpressBase.Web.Controllers
             }
             return EbSerializers.Json_Serialize(Para);
         }
+
         public string GetSqljobObject(string refid)
         {
             EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
@@ -118,27 +118,37 @@ namespace ExpressBase.Web.Controllers
             });
             return Resp.Data[0].Json;
         }
+
         public IActionResult GetFilterBody(string dvobj, string contextId)
         {
-            var dsObject = EbSerializers.Json_Deserialize(dvobj);
-            dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (dsObject.FilterDialog != null)
-                EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
-            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
+            ViewComponentResult result = null;
+            try
+            {
+                var dsObject = EbSerializers.Json_Deserialize(dvobj);
+                if (dsObject != null)
+                {
+                    dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
+                    Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                    if (dsObject.FilterDialog != null)
+                        EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
+                    result = ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace + e.Message);
+            }
+            return result;
         }
 
         public RetryJobResponse JobRetry(int id, string RefId)
         {
             RetryJobResponse response = null;
             if (id > 0 && RefId != null && RefId != String.Empty)
-                 response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
+                response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
             return response;
         }
 
-        public void ProcessorLogic()
-        {
-            this.ServiceClient.Post<ProcessorResponse>(new ProcessorRequest()); ;
-        }
+       
     }
 }

@@ -138,19 +138,41 @@ namespace ExpressBase.Web.Controllers
         //    return ObjStr;
         //}
 
-        public string ImportFormData(string _refid, string _triggerctrl, List<Param> _params)
+        public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params)
         {
             try
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, RowId = _rowid, Trigger = _triggerctrl, Params = _params });
                 return Resp.FormDataWrap;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
+                {
+                    Message = "Error in loading data...",
+                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                });
+            }
+        }
+
+        public string GetDynamicGridData(string _refid, int _rowid, string _srcid, string[] _target)
+        {
+            try
+            {
+                if (_refid.IsNullOrEmpty() || _srcid.IsNullOrEmpty() || _target.Length == 0)
+                    throw new FormException("Refid, SrcId and Target must be set.");
+                GetDynamicGridDataResponse Resp = ServiceClient.Post<GetDynamicGridDataResponse>(new GetDynamicGridDataRequest { RefId = _refid, RowId = _rowid, SourceId = _srcid, Target = _target });
+                return Resp.FormDataWrap;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GetDynamicGridData. Message: " + ex.Message);
+                return JsonConvert.SerializeObject( new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
                     Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,

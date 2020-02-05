@@ -304,7 +304,7 @@
             type: "POST",
             url: "../WebForm/DoUniqueCheck",
             data: {
-                TableName: tableName, Field: ctrl.Name, Value: ctrl.getValue(), type: "Eb" + ctrl.ObjType
+                TableName: tableName, Field: ctrl.Name, Value: val, type: "Eb" + ctrl.ObjType
             },
             success: function (isUnique) {
                 //this.FO.hideLoader();

@@ -15,6 +15,8 @@
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
+    this.Procs = {};
+    this.Rowdata = {};
 
     this.GridStackInit = function () {
         this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
@@ -147,50 +149,116 @@
     }
 
     this.DrawTiles = function () {
-
         $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
+                let currentobj = this.EbObject.Tiles.$values[i];
                 let tile_id = "t" + i;
                 let t_id = "tile" + i;
                 let x = this.EbObject.Tiles.$values[i].TileDiv.Data_x;
                 let y = this.EbObject.Tiles.$values[i].TileDiv.Data_y;
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
-                let flag = false;
-                if (ebcontext.user.Roles.indexOf("SolutionOwner") !== -1 || ebcontext.user.Roles.indexOf("SolutionAdmin") !== -1)
-                    flag = true;
-                else {
-                    var res = this.EbObject.Tiles.$values[i].RefId.split("-");
-                    for (var j = 0; j < ebcontext.user.EbObjectIds.length; j++) {
-                        if (parseInt(ebcontext.user.EbObjectIds[j]) == parseInt(res[3]))
-                            flag = true;
-                    }
-                }
-                if (flag == true) {
-                    $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
+                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
-                    <i class="fa fa-refresh tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
+                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper">
                     </div></div></div>`), x, y, dw, dh, false);
-                   
-                    this.CurrentTile = t_id;
-                    this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
-                    let refid = this.EbObject.Tiles.$values[i].RefId;
-                    this.Ajax4fetchVisualization(refid);
+                this.CurrentTile = t_id;
+                this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
+                let refid = this.EbObject.Tiles.$values[i].RefId;
+                if (refid !== "") {
+                    $.ajax(
+                        {
+                            url: '../DashBoard/DashBoardGetObj',
+                            type: 'POST',
+                            data: { refid: refid },
+                            success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                        });
+
+                }
+                else {
+                    $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
+                        if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
+                            this.Procs[Cobj.EbSid] = Cobj;
+                            var Cobject = new EbObjects["EbDataObject"](Cobj.EbSid);
+                            $.extend(Cobject, Cobj);
+                            this.ComponentDrop("#component_cont", Cobject);
+                            this.GetComponentColumns(Cobject);
+                        }
+                    }.bind(this));
+
+                    $.each(currentobj.ControlsColl.$values, function (i, obj) {
+                        var eb_type = obj.$type.split('.').join(",").split(',')[2];
+                        var object = new EbObjects[eb_type](obj.EbSid);
+                        $.extend(object, obj);
+                        $(`[data-id="${this.CurrentTile}"]`).append(object.$Control[0]);
+                        this.Procs[obj.EbSid] = object;
+                        this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid);
+                    }.bind(this));
+
 
                 }
             }
-            this.Tilecontext()
-
+            //this.addTilecontext()
+            this.Tilecontext();
         }
+        else {
+            $('.grid-stack').gridstack();
+        }
+        $(".grid-stack , .Eb-ctrlContainer").on("click", this.TileSelectorJs.bind(this));
+        //this.addTilecontext()
+        this.Tilecontext();
     }
+
+
+    this.ComponentDrop = function (target, o) {
+       
+    };
+
+    this.GetComponentColumns = function (obj) {
+        let Refid = obj["DataSource"];
+        $.LoadingOverlay('show');
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetData4DashboardControl",
+            data: { DataSourceRefId: Refid },
+            async: false,
+            success: function (resp) {
+                obj["Columns"] = JSON.parse(resp.columns);
+                //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
+                $.LoadingOverlay('hide');
+                this.DisplayColumns(obj);
+                this.Rowdata[obj.EbSid + "Row"] = resp.row;
+            }.bind(this)
+        });
+    };
+    this.DisplayColumns = function (obj) {
+        $(`#${obj.EbSid} .eb-ctrl-label`).empty().append(obj.Name);
+        $(`#Inner_Cont_${obj.EbSid}`).empty();
+        for (let i = 0; i < obj['Columns'].$values.length; i++) {
+            let column = obj['Columns'].$values[i];
+            let name = column.name;
+            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.EbSid}' data-column='${name}' type=${column.Type} class='col-div-blk' eb-type="DataLabel"> ${name}</div>`);
+        }
+    };
+
+    this.GaugeDrop = function (component, column, controlname) {
+        if (component !== "" && column !== "") {
+            let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+            let _data = this.Rowdata[component + "Row"][index];
+            //$("#" + controlname).attr("data-value", _data);
+            let xx = EbGaugeWrapper({ container: controlname, value: _data });
+        }
+    };
+
 
     this.Ajax4fetchVisualization = function (refid) {
         if (refid !== "") {

@@ -245,8 +245,8 @@ div.dataTables_wrapper .dataTables_length {
 
 div.dataTables_wrapper div.dataTables_info {
     display: inline-block;
-    padding-top: 0;
-    margin-left: 20px;
+    margin-left: 15px;
+    padding-top:0;
 }
 
 .pagination-wrapper {
@@ -652,8 +652,6 @@ table.dataTable tbody > tr.selected > td.context-menu-active {
 }
 div.dataTables_wrapper div.dataTables_filters {
     text-align: right;
-    display: inline-block;
-    float: right;
 }
 .columnimage {
     cursor:pointer;
@@ -691,4 +689,21 @@ div.dataTables_wrapper div.dataTables_filters {
 
 .group-All {
     background-color: #f2f2f2 !important;
+}
+.dataTables_scrollBody .match {
+    background-color: yellow;
+    color: black;
+}
+.dataTables_scrollBody .highlighted {
+    background-color: orangered;
+    color: black;
+}
+div.dataTables_wrapper .info-search-cont {
+    display: flex;
+    margin-bottom: 2px;
+    justify-content: space-between;
+}
+
+div.dataTables_wrapper .info-search-cont .dataTables_info {
+    padding-top:8px;
 }

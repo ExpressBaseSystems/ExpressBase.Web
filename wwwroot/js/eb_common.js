@@ -789,9 +789,9 @@ var EbTags = function (settings) {
         var tempval = $(e.target).parent().attr("data-val");
         var temp = $.grep(this.displayColumnSearchArr, function (obj) {
             if (typeof obj.value === "number")
-                return obj.name === tempcol && obj.value === parseInt(tempval)
+                return obj.name === tempcol && obj.value === parseInt(tempval);
             else
-                return obj.name === tempcol && obj.value === tempval
+                return obj.name === tempcol && obj.value === tempval;
         });
         $(e.target).parent().prev().remove();
         $(e.target).parent().remove();
@@ -800,10 +800,6 @@ var EbTags = function (settings) {
 
     this.show();
 };
-
-function getRow__(__this) {
-    return $(`[ebsid='${__this.__DG.EbSid}'] tr[rowid='${__this.__rowid}']`)
-}
 
 function dgOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {
@@ -820,7 +816,6 @@ function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
         let FnString = `
 let __this = form.__getCtrlByPath(this.__path);
-let $curRow = getRow__(__this);
 if (__this.DataVals !== undefined) {
     let v = __this.getValueFromDOM();
     let d = __this.getDisplayMemberFromDOM();

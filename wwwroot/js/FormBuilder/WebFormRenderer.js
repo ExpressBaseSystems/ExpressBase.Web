@@ -48,6 +48,8 @@ const WebFormRender = function (option) {
     this.uniqCtrlsInitialVals = {};
     this.PSsIsInit = {};
     this.isInitNCs = false;
+    this.DynamicTabObject = null;
+    this.TabControls = null;
     this.FRC = new FormRenderCommon({
         FO: this
     });
@@ -140,21 +142,20 @@ const WebFormRender = function (option) {
 
     this.initWebFormCtrls = function () {
 
-        //this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        //let opts = {
-        //    allTabCtrls: this.TabControls,
-        //    formModel: _formData,
-        //    initControls: this.initControls,
-        //    mode: this.Mode,
-        //    formObjectGlobal: this.formObject,
-        //    userObject: this.userObject,
-        //    formDataExtdObj: this.FormDataExtdObj,
-        //    formObject_Full: this.FormObj,
-        //    formRefId: this.formRefId,
-        //    formRenderer: this
-        //};
-        //this.DynamicTabObject = new EbDynamicTab(opts);
-        //window.zzzz = this.DynamicTabObject;
+        this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
+        let opts = {
+            allTabCtrls: this.TabControls,
+            formModel: _formData,
+            initControls: this.initControls,
+            mode: this.Mode,
+            formObjectGlobal: this.formObject,
+            userObject: this.userObject,
+            formDataExtdObj: this.FormDataExtdObj,
+            formObject_Full: this.FormObj,
+            formRefId: this.formRefId,
+            formRenderer: this
+        };
+        this.DynamicTabObject = new EbDynamicTab(opts);
 
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
@@ -188,6 +189,29 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};
+    DynamicTabPane = function (args) {
+        if (DynamicTabPaneGlobals === null) {
+            console.log('Dynamic tab not supported. Please initiate from a data grid.');
+            return;
+        }
+        let $initiatorDG = $("#cont_" + DynamicTabPaneGlobals.DG.EbSid);
+        if ($initiatorDG.length === 0) {
+            console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
+            return;
+        }
+        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");        
+        if ($initiatorTab.length === 0) {
+            console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
+            return;
+        }
+
+        let DgCtrl = DynamicTabPaneGlobals.DG;
+        let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
+        this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
+        DynamicTabPaneGlobals = null;
+    }.bind(this);
+
     this.updateCtrlsUI = function () {
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
         $.each(allFlatControls, function (k, Obj) {
@@ -205,6 +229,7 @@ const WebFormRender = function (option) {
             url: "/WebForm/ImportFormData",
             data: {
                 _refid: this.formRefId,
+                _rowid: this.rowId,
                 _triggerctrl: PScontrol.Name,
                 _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
             },
@@ -347,7 +372,8 @@ const WebFormRender = function (option) {
                 DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
                 continue;
             }
-            let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            //let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
             DGB.setEditModeRows(DataMODEL);
         }
 
@@ -469,9 +495,9 @@ const WebFormRender = function (option) {
             approvalTable = this.getApprovalRow();
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
-
+        this.DynamicTabObject.updateDataModel();
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
-        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getMultipleTables()));
+        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
 
@@ -561,10 +587,12 @@ const WebFormRender = function (option) {
             this.rowId = respObj.RowId;
             this.EditModeFormData = respObj.FormData.MultipleTables;
             this.DataMODEL = this.EditModeFormData;
+            a___MT = this.DataMODEL;
             attachModalCellRef_form(this.FormObj, this.DataMODEL);
 
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
+            this.DynamicTabObject.disposeDynamicTab();
             this.RefreshFormControlValues();
             this.SwitchToViewMode();
 
@@ -611,34 +639,45 @@ const WebFormRender = function (option) {
     //    return IsDGsHavePartialEntry;
     //};
 
-    //this.DGsB4Save = function () {
-    //    if (this.IsDGsHavePartialEntry()) {
-    //        EbDialog("show", {
-    //            Message: "Found uncommited entry in a row, continue without the change?",
-    //            Buttons: {
-    //                "Yes": {
-    //                    Background: "green",
-    //                    Align: "right",
-    //                    FontColor: "white;"
-    //                },
-    //                "No": {
-    //                    Background: "red",
-    //                    Align: "left",
-    //                    FontColor: "white;"
-    //                }
-    //            },
-    //            CallBack: this.dialogboxAction.bind(this)
-    //        });
-    //        return false;
-    //    }
-    //    else
-    //        return true;
-    //};
+    this.IsDGsHaveActiveRows = function () {
+        let hasActiveRows = false;
+        $.each(this.DGBuilderObjs, function (k, DGB) {
+            if (DGB.hasActiveRow()) {
+                hasActiveRows = true;
+                return false;
+            }
+        }.bind(this));
+        return hasActiveRows;
+    };
+    
+    this.DGsB4Save = function () {
+        if (this.IsDGsHaveActiveRows()) {
+            EbDialog("show", {
+                Message: "Please commit or delete uncommited rows",
+                //Buttons: {
+                //    "Yes": {
+                //        Background: "green",
+                //        Align: "right",
+                //        FontColor: "white;"
+                //    },
+                //    "No": {
+                //        Background: "red",
+                //        Align: "left",
+                //        FontColor: "white;"
+                //    }
+                //},
+                //CallBack: this.dialogboxAction.bind(this)
+            });
+            return false;
+        }
+        else
+            return true;
+    };
 
-    //this.dialogboxAction = function (value) {
-    //    if (value === "Yes")
-    //        this.saveForm_call();
-    //};
+    this.dialogboxAction = function (value) {
+        if (value === "Yes")
+            this.saveForm_call();
+    };
 
     this.DGsB4SaveActions = function () {
         $.each(this.DGBuilderObjs, function (k, DGB) {
@@ -655,8 +694,8 @@ const WebFormRender = function (option) {
                 return;
             if (!this.isAllUniqOK())
                 return;
-            //if (!this.DGsB4Save())
-            //    return;
+            if (!this.DGsB4Save())
+                return;
             this.DGsB4SaveActions();
 
             this.saveForm_call();
@@ -714,7 +753,7 @@ const WebFormRender = function (option) {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
-        //this.DynamicTabObject.switchToViewMode();
+        this.DynamicTabObject.switchToViewMode();
     };
 
     this.SwitchToEditMode = function () {
@@ -735,7 +774,7 @@ const WebFormRender = function (option) {
                 this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
         }.bind(this));
-        //this.DynamicTabObject.switchToEditMode();
+        this.DynamicTabObject.switchToEditMode();
     };
 
     this.BeforeModeSwitch = function (newMode) {
@@ -1057,7 +1096,7 @@ const WebFormRender = function (option) {
         if (reqstMode === "Edit Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
-        else if (reqstMode === "New Mode") {
+        else if (reqstMode === "New Mode" || reqstMode === "Prefill Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
@@ -1079,7 +1118,7 @@ const WebFormRender = function (option) {
                 }
             }
         }
-        catch (e) { console.log("Error in title expression  " + e.message) }
+        catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);
@@ -1355,6 +1394,15 @@ const WebFormRender = function (option) {
 
     let t1 = performance.now();
     console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
+
+    window.onbeforeunload = function (e) {
+        if (this.Mode.isEdit) {
+            var dialogText = 'Changes you made may not be saved.';
+            e.returnValue = dialogText;
+            return dialogText;
+        }
+    }.bind(this);
+
     a___builder = this;
     a___MT = this.DataMODEL;
     a___EO = this.EditModeFormData;

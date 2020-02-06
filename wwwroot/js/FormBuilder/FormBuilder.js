@@ -356,6 +356,7 @@
                 else if (type === "SimpleSelect" || type === "BooleanSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
                 }
+               
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
@@ -372,6 +373,11 @@
                     //this.DraggableConts.push(document.querySelectorAll(".Dt-Rdr-col-cont")[1]);
 
                     this.DraggableConts.push($(`#cont_${ctrlObj.EbSid_CtxId} .Dt-Rdr-col-cont`)[0]);
+
+                }
+                else
+                if (type === "BluePrint") {
+                    var blueprintModal = new blueprintModalfn(ctrlObj);
 
                 }
 

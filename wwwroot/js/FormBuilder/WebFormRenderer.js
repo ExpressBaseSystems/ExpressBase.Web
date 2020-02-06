@@ -189,20 +189,27 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};
     DynamicTabPane = function (args) {
-        let $initiatorDG = $(event.path).find("[ctype=DataGrid]");
-        let $initiatorTab = $(event.path).find("[ctype=TabControl]");
-        if ($initiatorDG.length === 0) {
+        if (DynamicTabPaneGlobals === null) {
             console.log('Dynamic tab not supported. Please initiate from a data grid.');
             return;
         }
+        let $initiatorDG = $("#cont_" + DynamicTabPaneGlobals.DG.EbSid);
+        if ($initiatorDG.length === 0) {
+            console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
+            return;
+        }
+        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");        
         if ($initiatorTab.length === 0) {
             console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
             return;
         }
-        let DgCtrl = getObjByval(this.DGs, 'EbSid', $initiatorDG.attr("ebsid"));
+
+        let DgCtrl = DynamicTabPaneGlobals.DG;
         let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
-        this.DynamicTabObject.initDynamicTabPane($.extend(args, {srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl}));
+        this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
+        DynamicTabPaneGlobals = null;
     }.bind(this);
 
     this.updateCtrlsUI = function () {
@@ -222,12 +229,13 @@ const WebFormRender = function (option) {
             url: "/WebForm/ImportFormData",
             data: {
                 _refid: this.formRefId,
+                _rowid: this.rowId,
                 _triggerctrl: PScontrol.Name,
                 _params: [{ Name: PScontrol.Name, Value: PScontrol.getValue() }]
             },
             error: function (xhr, ajaxOptions, thrownError) {
                 this.hideLoader();
-                EbMessage("show", { Message: `Couldn't Update ${this.ctrl.Label}, Something Unexpected Occurred`, AutoHide: true, Background: '#aa0000' });
+                EbMessage("show", { Message: `Something Unexpected Occurred when tried to import data`, AutoHide: true, Background: '#aa0000' });
             }.bind(this),
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
@@ -274,12 +282,15 @@ const WebFormRender = function (option) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
+        if (_respObj.Status === 200) {
+            this.modifyFormData4Import(_respObj);
 
-        this.modifyFormData4Import(_respObj);
-
-
-        this.isEditModeCtrlsSet = false;
-        this.setEditModeCtrls();
+            this.isEditModeCtrlsSet = false;
+            this.setEditModeCtrls();
+        }
+        else
+            console.error(_respObj.MessageInt);
+        
     }.bind(this);
 
     //this.removeRowIds = function () {
@@ -584,6 +595,7 @@ const WebFormRender = function (option) {
 
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
+            this.DynamicTabObject.disposeDynamicTab();
             this.RefreshFormControlValues();
             this.SwitchToViewMode();
 
@@ -1087,7 +1099,7 @@ const WebFormRender = function (option) {
         if (reqstMode === "Edit Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
-        else if (reqstMode === "New Mode") {
+        else if (reqstMode === "New Mode" || reqstMode === "Prefill Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
@@ -1109,7 +1121,7 @@ const WebFormRender = function (option) {
                 }
             }
         }
-        catch (e) { console.log("Error in title expression  " + e.message) }
+        catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
         this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
         $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);
@@ -1385,6 +1397,15 @@ const WebFormRender = function (option) {
 
     let t1 = performance.now();
     console.dev_log("WebFormRender : init() took " + (t1 - t0) + " milliseconds.");
+
+    window.onbeforeunload = function (e) {
+        if (this.Mode.isEdit) {
+            var dialogText = 'Changes you made may not be saved.';
+            e.returnValue = dialogText;
+            return dialogText;
+        }
+    }.bind(this);
+
     a___builder = this;
     a___MT = this.DataMODEL;
     a___EO = this.EditModeFormData;

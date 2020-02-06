@@ -21,9 +21,9 @@ namespace ExpressBase.Web.Controllers
     {
         public SqlJobController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public SqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
+        public ExecuteSqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
         {
-            SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
+            ExecuteSqlJobResponse resp = this.ServiceClient.Post<ExecuteSqlJobResponse>(new ExecuteSqlJobRequest
             {
                 RefId = Refid,
                 GlobalParams = Param
@@ -51,18 +51,17 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("SchedulerWindow", new { objid = ObjId, tasktype = JobTypes.SqlJobTask });
         }
 
-        public SqlJobsListGetResponse Get_Jobs_List(string Refid, string Date)
+        public ListSqlJobsResponse Get_Jobs_List(string Refid, string Date)
         {
-            SqlJobsListGetResponse resp = this.ServiceClient.Get(new SqlJobsListGetRequest()
+            ListSqlJobsResponse resp = this.ServiceClient.Get(new ListSqlJobsRequest()
             {
                 RefId = Refid,
                 Date = Date
 
             });
-            var Temp = new DSController(this.ServiceClient, this.Redis);
-            resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumnsForSqlJob(resp.SqlJobsColumns));
             return resp;
         }
+
         public string AppendFRKColomns(string Refid)
         {
             List<string> ColomnList = new List<string>();
@@ -110,6 +109,7 @@ namespace ExpressBase.Web.Controllers
             }
             return EbSerializers.Json_Serialize(Para);
         }
+
         public string GetSqljobObject(string refid)
         {
             EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
@@ -118,6 +118,7 @@ namespace ExpressBase.Web.Controllers
             });
             return Resp.Data[0].Json;
         }
+
         public IActionResult GetFilterBody(string dvobj, string contextId)
         {
             ViewComponentResult result = null;
@@ -148,9 +149,6 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
-        public void ProcessorLogic()
-        {
-            this.ServiceClient.Post<ProcessorResponse>(new ProcessorRequest()); ;
-        }
+       
     }
 }

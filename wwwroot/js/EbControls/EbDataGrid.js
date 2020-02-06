@@ -976,14 +976,17 @@
     this.RowRequired_valid_Check = function (rowid = this.curRowId) {//////
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
-        $.each(this.objectMODEL[rowid], function (i, Col) {
-            let $ctrl = $("#" + Col.EbSid_CtxId);
-            if (!this.isRequiredOK(Col)) {
-                required_valid_flag = false;
-                if (!$notOk1stCtrl)
-                    $notOk1stCtrl = $ctrl;
-            }
-        }.bind(this));
+        let $tr = this.get$RowByRowId(rowid);
+        if ($tr.attr('is-initialised') === 'true') {
+            $.each(this.objectMODEL[rowid], function (i, Col) {
+                let $ctrl = $("#" + Col.EbSid_CtxId);
+                if (!this.isRequiredOK(Col)) {
+                    required_valid_flag = false;
+                    if (!$notOk1stCtrl)
+                        $notOk1stCtrl = $ctrl;
+                }
+            }.bind(this));
+        }
 
         if ($notOk1stCtrl) {
             setTimeout(function () {
@@ -1043,7 +1046,7 @@
             this.tryAddRow();
         else {
             let td = $curentRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td }, true, true);
+            this.checkRow_click({ target: td }, true, false);
             //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
             //    this.tryAddRow();
         }
@@ -1156,20 +1159,25 @@
         this.setcurRowDataMODELWithNewVals(rowid);
         this.changeEditFlagInRowCtrls(false, rowid);
         this.ctrlToSpan_row(rowid);
-        if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable)
-            this.addRow();
-        else
+        if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable) {
+            this.onRowPaintFn($tr, "check", e);
+            //this.addRow();
+        }
+        else {
             this.setCurRow($addRow.attr("rowid"));
+            this.onRowPaintFn($tr, "check", e);
+        }
         $tr.attr("is-checked", "true").attr("is-editing", "false");
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
-        this.onRowPaintFn($tr, "check", e);
+        //this.onRowPaintFn($tr, "check", e);
         return true;
     }.bind(this);
 
     this.onRowPaintFn = function ($tr, action, event) {
         if ((this.ctrl.OnRowPaint && this.ctrl.OnRowPaint.Code && this.ctrl.OnRowPaint.Code.trim() !== '')) {
             let FnString = atob(this.ctrl.OnRowPaint.Code);
-            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();
+            DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event};
+            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();            
         }
     };
 
@@ -1337,10 +1345,12 @@
             if (index > -1)
                 this.DataMODEL.splice(index, 1);
         }
+        this.setCurRow(rowid);
+        this.onRowPaintFn($tr, "delete", e);
+
         this.removeTr($tr);
         this.resetRowSlNoUnder($tr);
 
-        this.onRowPaintFn($tr, "delete", e);
     }.bind(this);
 
     this.UpdateSlNo = function () {
@@ -1726,6 +1736,7 @@
             url: "/WebForm/ImportFormData",
             data: {
                 _refid: this.formRefId,
+                _rowid: this.formRenderer.rowId,
                 _triggerctrl: lastCtrlName,
                 _params: paramsColl
             },

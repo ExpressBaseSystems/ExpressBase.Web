@@ -40,14 +40,13 @@
                         Date: date
                     },
                     success: function (result) {
-                        if (result.sqlJobsColumns != null) {
+                        if (result.sqlJobsColumns !== null) {
                             let cols = JSON.parse(result.sqlJobsDvColumns).$values;
                             cols.push(chkObj);
                             $("#list-of-jobs").empty();
                             $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
                             var o = new Object();
                             o.tableId = "tbl";
-                            o.datetimeformat = true;
                             //o.showFilterRow = false;
                             o.showSerialColumn = false;
                             o.showCheckboxColumn = false;
@@ -57,9 +56,11 @@
                             //o.scrollHeight = "200px";
                             o.columns = cols;
                             o.data = result.sqlJobsRows;
+                            o.levels = result.levels;
+                            o.source = "sqljob";
                             var data = new EbBasicDataTable(o);
                             $("#layout_div .loader-fb").empty().removeClass("loader-fb");
-                        } 
+                        }
                     }
                 });
         }
@@ -112,26 +113,12 @@
 
     this.ScheduleSqlJobFunction = function () {
         $.post("/Scheduler/Schedule",
-            //{
-            //    "name": $('#sch-name').val(),
-            //    "expression": $('#result').text(),
-            //    "objId": window.location.search.split("&")[0].split("=")[1],
-            //    "type": taskType,
-            //    "users": JSON.stringify(Alluserlist),
-            //    "groups": JSON.stringify(Allgrouplist),
-            //    "cronstring": JSON.stringify(EbCron),
-            //    "message": JSON.stringify(AllDelMessage),
-            //    "_delMechanism": delMechanism
-            //}
             {
-                "name":"test",
-                "expression": "0 14 16 2 1 ? 2020 *",
+                "name": $('#sch-name').val(),
+                "expression": $('#result').text(),
                 "objId": $("#select-sql-job").children("option:selected").val().split("-")[3],
-                "type": 5,
-                "users": "",
-                "groups": "",
-                "cronstring": "0 14 16 2 1 ? 2020 *",
-                "message": "message" 
+                "type": 5, 
+                "cronstring": JSON.stringify(EbCron)  
             },
             function () { });
     };
@@ -230,6 +217,7 @@
         $("#show-scheduler").empty().append(result);
         $('#schedulerlistmodal').modal('show');
         $("#schedule").attr("id", "schedule-sql-job");
+        $("#schedule-sql-job").off("click").on("click", this.ScheduleSqlJobFunction.bind(this));
         $("#SchedulerModal .modal-body .scheduler").removeClass("col-md-5");
     };
     this.currentDate = function () {

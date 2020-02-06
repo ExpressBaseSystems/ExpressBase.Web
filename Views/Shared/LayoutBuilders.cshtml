@@ -19,12 +19,14 @@
     @*jith*@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    @*<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
+    @*
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-    @*<link rel="stylesheet" type="text/css" href="~/css/commonStyles/bootstrap.min.css" />*@@*jith*@
+    @*
+    <link rel="stylesheet" type="text/css" href="~/css/commonStyles/bootstrap.min.css" />*@@*jith*@
     <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />
@@ -69,7 +71,8 @@
     @*amal*@
     <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd />
     @*amal*@
-    <link rel="stylesheet" href="https://naver.github.io/billboard.js/release/latest/dist/billboard.css" asp-append-version=@bApnd />
+    @*<link rel="stylesheet" href="https://naver.github.io/billboard.js/release/latest/dist/billboard.css" asp-append-version=@bApnd />*@
+
     @*Roby*@
 
 
@@ -83,7 +86,8 @@
 
     @* BOOTSTRAP JS *@
     <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
-    @*<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>*@
+    @*
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>*@
     <script type="text/javascript" src="~/js/CommonJS/bootstrap.min.js"></script>
     @*jith*@
     <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
@@ -92,7 +96,8 @@
     @*Dona*@
     <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
     <script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
-    @*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js" ></script>*@
+    @*
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>*@
 
     @* OTHER JS *@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>
@@ -129,9 +134,13 @@
     <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
     <script type="text/javascript" src="~/js/FormBuilder/MultiLanguage.js"></script>
     @*Roby*@
-    <script src="https://d3js.org/d3.v5.min.js"></script>
     <script type="text/javascript" src="~/js/EbGauge.js"></script>
-    <script src="https://naver.github.io/billboard.js/release/latest/dist/billboard.js"></script>
+    @*<script src="https://d3js.org/d3.v5.min.js"></script>
+        <script src="https://naver.github.io/billboard.js/release/latest/dist/billboard.js"></script>*@
+    @*<script src="https://unpkg.com/gauge-chart@latest/dist/bundle.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/gaugeJS@1.3.7/dist/gauge.js"></script>
+    @*<script src="~/js/gauge.js"></script>*@
+
     @* EB JS *@
 
     <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
@@ -175,6 +184,7 @@
     @*amal*@
     <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>
     @*amal*@
+    <script src="~/js/Common/eb-setup.js" type="text/javascript" asp-append-version=@bApnd></script>
 
     @*code editor*@
     <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
@@ -198,19 +208,19 @@
     <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
     @if (ViewBag.wc == "uc")
     {
-        <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
+    <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>
+    @*amal*@
     }
     @if (IsSectionDefined("StyleSheet"))
     {
-        @RenderSection("StyleSheet")
+    @RenderSection("StyleSheet")
     }
 
     @Html.RenderStyles()
 
     @if (IsSectionDefined("JavaScript"))
     {
-        @RenderSection("JavaScript")
+    @RenderSection("JavaScript")
     }
 
     @Html.RenderScripts()
@@ -224,7 +234,8 @@
             env:'@ViewBag.Env',
             font:@Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
             EbObjectMeta:@Html.Raw(ViewBag.EbObjectTypeMeta),
-            se_url: '@ViewBag.ServerEventUrl'
+            se_url: '@ViewBag.ServerEventUrl',
+            setup: new Setup({se_url: '@ViewBag.ServerEventUrl'})
         };
     </script>
 </head>

@@ -41,6 +41,7 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
 
+
 <script>
      @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
@@ -51,18 +52,22 @@
 </script>
 <div class="container-fluid" style="background: transparent;">
     <div class="row" style="background: transparent;">
-        <div class="col-sm-12" style="background: transparent; width: 99% ;margin-top: 15px;">
+        <div class="col-sm-12" style="background: transparent; width: 99% ;margin-top: 15px;padding: 0px;">
             <div id="dashbord-view" class="drop-target">
+                <div class="gauge">
+                    <canvas id="canvas-preview"></canvas>
+                    <div id="minVal">0</div>
+                    <div id="maxVal">300</div>
+                    <div id="preview-textfield">0%</div>
+                </div>
                 <div class="grid-stack" id="grid-cont"></div>
-            </div>
+            </div>           
             <div class="component_cont">
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#component_cont">Component Container</a></li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade in active component_tab" id="component_cont">
-
-
                     </div>
                 </div>
                 <div id="component_columns_cont"> </div>

@@ -227,7 +227,7 @@ var DashBoardWrapper = function (options) {
                 this.drake.containers.push(document.getElementById(drop_id));
                 this.drake.containers.push(document.getElementById(o.EbSid));
                 this.TileCollection[this.CurrentTile].ControlsColl.$values.push(o);
-                let xx = EbGaugeWrapper({ GaugeContainer: o.EbSid });
+                let xx = EbGaugeWrapper(o, { isEdit: false });
             }
             else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_com_col_cont")) {
                 let component = $(el).attr("data-ctrl");
@@ -281,7 +281,7 @@ var DashBoardWrapper = function (options) {
         let _data = this.Rowdata[component + "Row"][index];
             this.Procs[controlname].GaugeConfig.GaugeValue = _data;
             this.Procs[controlname].GaugeConfig.GaugeContainer = controlname;
-            let xx = EbGaugeWrapper(this.Procs[controlname].GaugeConfig);
+            let xx = EbGaugeWrapper(this.Procs[controlname], { isEdit: true });
         }
     };
 
@@ -453,6 +453,7 @@ var DashBoardWrapper = function (options) {
                 let y = this.EbObject.Tiles.$values[i].TileDiv.Data_y;
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
+                this.drop_id = "drop_" + t_id;
                 $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent">
@@ -462,7 +463,7 @@ var DashBoardWrapper = function (options) {
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
                     <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close"></i>
                     </div></div>
-                    <div data-id="${t_id}" class="db-tbl-wraper">
+                    <div data-id="${t_id}" class="db-tbl-wraper" id="${this.drop_id}">
                     </div></div></div>`), x, y, dw, dh, false);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
@@ -496,7 +497,11 @@ var DashBoardWrapper = function (options) {
                         let object = this.Procs[this.currentId];
                         this.TileCollection[t_id].ControlsColl.$values[i] = object;
                         $(`[data-id="${this.CurrentTile}"]`).append(object.$Control[0]);
+                        let xx = EbGaugeWrapper(object, { isEdit: false });
                         this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid);
+                        this.drake.containers.push(document.getElementById(this.currentId));
+                        this.drake.containers.push(document.getElementById(this.drop_id));
+                        this.propGrid.setObject(object, AllMetas["Eb"+eb_type]);
                     }.bind(this));
 
 
@@ -538,20 +543,21 @@ var DashBoardWrapper = function (options) {
     };
 
     this.TileSelectorJs = function (e) {
+        procId = $(event.target).closest(".gaugeChart").attr("id");
+        metaId = $(event.target).closest(".gaugeChart").attr("eb-type");
         let a = $(event.target).closest(".grid-stack-item-content").attr("id");
-        if (a != null) {
+        if (procId != null) {
+            this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]);
+        }
+        else if (a != null) {
             this.CurrentTile = a;
             this.propGrid.setObject(this.TileCollection[`${this.CurrentTile}`], AllMetas["Tiles"]);
-
         }
         else {
             this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         }
-        procId = $(event.target).closest(".gaugeChart").attr("id");
-        metaId = $(event.target).closest(".gaugeChart").attr("eb-type");
-        if (procId != null) {
-            this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]);
-        }
+
+      
     }.bind(this);
 
     this.popChanged = function (obj, pname, newval, oldval) {
@@ -593,11 +599,15 @@ var DashBoardWrapper = function (options) {
 
         }
         if (obj.$type.indexOf("Gauge") > 0) {
-            //this.Procs[obj.EbSid][pname] = newval;
-            //if (pname == "RadiusScale" || pname === "Angle" || pname === "LineWidth") {
-            //    this.Procs[obj.EbSid][pname] = newval/100;
-            //}
-            let xx = EbGaugeWrapper(this.Procs[obj.EbSid].GaugeConfig);
+            if (pname === "Angle") {
+                if (newval > 50) { this.Procs[obj.EbSid].Angle = 50; }
+                else if (newval < -50) { this.Procs[obj.EbSid].Angle = -50; }
+            }
+            else if (pname === "LineWidth") {
+                if (newval > 70) { this.Procs[obj.EbSid].LineWidth = 70;}
+                else if (newval < 0) { this.Procs[obj.EbSid].LineWidth = 0; }
+            }
+            let xx = EbGaugeWrapper(this.Procs[obj.EbSid], { isEdit: true });
         }
     };
 

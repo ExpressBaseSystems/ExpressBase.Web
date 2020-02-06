@@ -36,11 +36,11 @@
     this.resetBuffers();
 
     this.setEditModeRows = function (dataModel) {
-        //{ last change
-        //this.DataMODEL = dataModel;
-        this.DataMODEL.clear();
-        this.DataMODEL.push(...dataModel);
-        //}
+        this.DataMODEL = dataModel;
+        ////{ last change
+        //this.DataMODEL.clear();
+        //this.DataMODEL.push(...dataModel);
+        ////}
         this.curRowDataMODEL = this.getRowDataModel_();
         this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();

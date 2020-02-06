@@ -295,7 +295,10 @@ var InitControls = function (option) {
         else {
             val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
-        ctrl.setValue(val);
+        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+            ctrl.setValue(ctrl.DataVals.Value);
+        else
+            ctrl.setValue(val);
     };
 
     this.SimpleSelect = function (ctrl) {
@@ -760,7 +763,10 @@ var InitControls = function (option) {
                 this._onChangeFunctions.push(p1);
         };
         if (ctrl.LoadCurrentUser) {
-            ctrl.setValue(ebcontext.user.UserId.toString());
+            if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+                ctrl.setValue(ctrl.DataVals.Value);
+            else
+                ctrl.setValue(ebcontext.user.UserId.toString());
         }
     };
 

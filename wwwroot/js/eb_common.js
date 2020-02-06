@@ -1048,6 +1048,15 @@ function getEbFormatedPSRows(ctrl) {
     return columnVals;
 }
 
+function copyObj(destObj, srcObj) {
+    Object.keys(destObj).forEach(function (key) { delete destObj[key]; });
+    let key;
+    for (key in destObj, srcObj) {
+        srcObj[key] = srcObj[key]; // copies each property to the objCopy object
+    }
+    return srcObj;
+}
+
 function GetFontCss(obj) {
     let font = [];
     font.push(`font-size:${obj.Size}px ;`);

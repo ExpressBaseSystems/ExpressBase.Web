@@ -260,6 +260,13 @@ function EbMobStudio(config) {
 
             this.EbObject.Container.DataLayout.CellCollection.$values.push(this.getCellControls(cell, $(obj)));
         }.bind(this));
+
+        this.EbObject.Container.Filters.$values.length = 0;
+
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j,obj) {
+            let o = this.Procs[obj.id];
+            this.EbObject.Container.Filters.$values.push(o);
+        }.bind(this));
     };
 
     this.getCellControls = function (eb_cell, $td) {

@@ -37,6 +37,10 @@
 
     this.setEditModeRows = function (dataModel) {
         this.DataMODEL = dataModel;
+        ////{ last change
+        //this.DataMODEL.clear();
+        //this.DataMODEL.push(...dataModel);
+        ////}
         this.curRowDataMODEL = this.getRowDataModel_();
         this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
@@ -1761,7 +1765,6 @@
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.DataMODEL = dataModel;
         this.setEditModeRows(dataModel);
     };
 

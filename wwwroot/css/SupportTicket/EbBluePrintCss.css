@@ -1,0 +1,50 @@
+﻿.BluprntModal {
+    background-color: #0000008f;
+}
+
+    .BluprntModal .modal-content {
+        background-color: #353435;
+    }
+
+    .BluprntModal .modal-header {
+        color: white;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .BluprntModal .close {
+        color: white !important;
+    }
+
+#svgContainer {
+    text-align: center;
+}
+
+#svgContainer, #toolbar_divBP {
+    background-color: #4c4c4c6b;
+    border: 1px solid black;
+}
+
+#toolbar_divBP {
+    height: 100%;
+    padding: 20px 15px 20px 15px;
+    text-align: center;
+}
+
+    #toolbar_divBP .vertical-align_tlbr {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        vertical-align: middle;
+    }
+
+    #toolbar_divBP .bp_toolbarproperties {
+        padding: 10px 6px 10px 6px;
+        margin: 10px;
+        border: 1px solid black;
+    }
+
+        #toolbar_divBP .bp_toolbarproperties i {
+            color: #bdb9b9;
+            font-size: 18px;
+        }

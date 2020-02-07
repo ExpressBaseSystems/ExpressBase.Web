@@ -21,14 +21,14 @@ namespace ExpressBase.Web.Controllers
     {
         public SqlJobController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public ExecuteSqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
+        public string ExecuteSqlJob(string Refid, List<Param> Param)
         {
             ExecuteSqlJobResponse resp = this.ServiceClient.Post<ExecuteSqlJobResponse>(new ExecuteSqlJobRequest
             {
                 RefId = Refid,
                 GlobalParams = Param
             });
-            return resp;
+            return resp.Message;
         }
 
         public IActionResult SqlJobConsole()
@@ -141,14 +141,21 @@ namespace ExpressBase.Web.Controllers
             return result;
         }
 
-        public RetryJobResponse JobRetry(int id, string RefId)
+        // retry a single line
+        public RetryLineResponse JobRetry(int id, string RefId)
         {
-            RetryJobResponse response = null;
+            RetryLineResponse response = null;
             if (id > 0 && RefId != null && RefId != String.Empty)
-                response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
+                response = this.ServiceClient.Post(new RetryLineRequest { JoblogId = id, RefId = RefId });
             return response;
         }
 
-       
+        //run a job again
+        public string RetryMaster(int masteId, string RefId, List<Param> Param)
+        {
+            RetryMasterResponse resp = this.ServiceClient.Post(new RetryMasterRequest { MasterId = masteId, RefId = RefId, GlobalParams = Param });
+
+            return resp.ResponseStatus.Message;
+        }
     }
 }

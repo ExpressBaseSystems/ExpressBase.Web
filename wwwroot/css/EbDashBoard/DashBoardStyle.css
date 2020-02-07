@@ -310,7 +310,7 @@
     color: transparent;
     width: 25px;
     font-size: 15px;
-    padding: 3px;
+    padding: 6px;
     cursor: pointer;
 }
 
@@ -877,7 +877,6 @@ body .stickBtn {
     .gaugeChart .gauge_canvas {
         width: 100% !important;
         height: 100% !important;
-        position: absolute;
     }
 
 /*DataReader input Dashboard*/
@@ -976,4 +975,34 @@ body .stickBtn {
     left: 3vh;
     top: 65vh;
     background: #fff;
+}
+
+
+.gauge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#canvas-preview {
+    background-color: transparent;
+}
+
+#minVal {
+    display: none;
+    position: fixed;
+    left: 18%;
+    color: white;
+}
+
+#maxVal, #preview-textfield {
+    display: none;
+}
+
+.gaugeChart .label_value {
+    position: absolute;
+    padding: 0px;
+    display:flex;
+    flex-flow:row;
 }

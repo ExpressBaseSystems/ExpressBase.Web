@@ -58,6 +58,8 @@
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
         }
         else if (type === 1) {    // If options create drop-down list
+            if (meta.PropDataSourceJsFn)
+                meta.enumoptions = { ...meta.PropDataSourceJsFn() };
             if (typeof value === "string")
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
             else

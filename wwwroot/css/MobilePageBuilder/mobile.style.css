@@ -287,34 +287,41 @@
     display: flex;
     flex-flow: column;
 }
-
-.eb_mob_vis_container .eb_mob_listprevwraper {
-    flex-grow: 1;
-    margin-top: 10px;
-}
-
-    .eb_mob_vis_container .eb_mob_listprevwraper .eb_mob_listprevwraper_inner {
+    .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container {
         display: flex;
-        height: 90%;
         background: white;
         border: 1px solid #ccc;
     }
-
-    .eb_mob_vis_container .eb_mob_listprevwraper .list_view {
-        height: 100%;
-        width: 100%;
-    }
-
-    .eb_mob_vis_container .eb_mob_listprevwraper .list_item {
-        border-bottom: 1px solid #ccc;
-        min-height: 50px;
-        padding: 5px;
-    }
-
-        .eb_mob_vis_container .eb_mob_listprevwraper .list_item .eb_tablelayout_table {
-            width: 100%;
+        .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container .list_item {
+            min-height: 50px;
+            padding: 5px;
+            width:100%;
         }
 
+            .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container .list_item .eb_tablelayout_table {
+                width: 100%;
+            }
+
+    .eb_mob_vis_container .eb_mob_container_inner .vis-table-container {
+        margin-bottom:15px;
+    }
+    .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container {
+        min-height: 100px;
+        background: white;
+        border: 1px solid #ccc;
+        margin-bottom: 15px;
+        flex-flow: row wrap;
+        overflow-y: auto;
+    }
+        .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container .data_column {
+            background: #316396;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin:5px;
+            width:auto;
+        }
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {
     width: 100%;

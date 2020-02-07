@@ -37,6 +37,10 @@
 
     this.setEditModeRows = function (dataModel) {
         this.DataMODEL = dataModel;
+        ////{ last change
+        //this.DataMODEL.clear();
+        //this.DataMODEL.push(...dataModel);
+        ////}
         this.curRowDataMODEL = this.getRowDataModel_();
         this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
@@ -375,12 +379,14 @@
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)
                 dspMmbr = "";//ebcontext.user.Preference.ShortDatePattern.replace(/-/g, "/").replace(/D|M|Y|d|m|y/g, "-");
-            else if (col.EbDbType === 6)
-                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
-            else if (col.EbDbType === 5)
-                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
-            else if (col.EbDbType === 17)
-                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
+            else
+                dspMmbr = cellObj.F;
+            //else if (col.EbDbType === 6)
+            //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
+            //else if (col.EbDbType === 5)
+            //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
+            //else if (col.EbDbType === 17)
+            //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
         }
         else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
             let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
@@ -1761,7 +1767,6 @@
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.DataMODEL = dataModel;
         this.setEditModeRows(dataModel);
     };
 

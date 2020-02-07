@@ -326,6 +326,7 @@ namespace ExpressBase.Web.Controllers
                     EbWebForm _dsobj = dsobj as EbWebForm;
                     _dsobj.AfterRedisGet(Redis, this.ServiceClient);
                     ViewBag.dsObj = _dsobj;
+                    ViewBag.roles = JsonConvert.SerializeObject(result.Roles);
                 }
                 else if (dsobj is EbUserControl)
                 {

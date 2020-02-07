@@ -1047,3 +1047,26 @@ function getEbFormatedPSRows(ctrl) {
     }
     return columnVals;
 }
+
+function copyObj(destObj, srcObj) {
+    Object.keys(destObj).forEach(function (key) { delete destObj[key]; });
+    let key;
+    for (key in destObj, srcObj) {
+        srcObj[key] = srcObj[key]; // copies each property to the objCopy object
+    }
+    return srcObj;
+}
+
+function GetFontCss(obj) {
+    let font = [];
+    font.push(`font-size:${obj.Size}px ;`);
+    font.push(`color:${obj.color} ;`);
+    font.push(`font-family:${obj.FontName} ;`);
+    if (font.Underline) { font.push(`text-decoration: underline ;`); }
+    if (font.Strikethrough) { font.push(`text-decoration: line-through ;`); }
+    if (font.Caps) { font.push(`text-transform: uppercase;`); }
+    if (font.Style === 1) { font.push(`font: bold;`); }
+    if (font.Style === 2) { font.push(`font: italic;`); }
+    if (font.Style === 3) { font.push(`font: italic bold;`); }
+    return (font.join().replace(/\,/g, ''));
+}

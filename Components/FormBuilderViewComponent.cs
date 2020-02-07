@@ -33,7 +33,7 @@ namespace ExpressBase.Web.Components
             {
                 UserControls.Controls.Clear();
             }
-
+            ViewBag.RolesList = ViewBag.roles ?? "[]";
             ViewBag.dsObj = EbSerializers.Json_Serialize(webForm);
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;

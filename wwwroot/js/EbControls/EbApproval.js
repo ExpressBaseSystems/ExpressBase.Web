@@ -10,7 +10,7 @@
     this.$table = $(`#${this.TableId}`);
     this.Mode = options.Mode;
     this.stages = this.ctrl.FormStages.$values;
-    this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[0].ApproverRole + "");
+    this.nextRole = this.stages[0].ApproverRole + "";
 
     ctrl.enableAccessibleRow = function (SingleTable) {/////////// need change
         if (this.isEditable())
@@ -43,9 +43,9 @@
         }
         else {
             if (pevStatusInt === "1")
-                this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[nextStageIdx].ApproverRole + "");
+                this.nextRole = this.stages[nextStageIdx].ApproverRole + "";
             else
-                this.nextRole = getKeyByVal(EbEnums.KuSApproverRole, this.stages[prevStageIdx].ApproverRole + "");
+                this.nextRole = this.stages[prevStageIdx].ApproverRole + "";
 
             this.disableAllCtrls();
             this.isStagesCompleted = false;
@@ -178,7 +178,7 @@
     };
 
     this.isEditable = function () {
-        if (this.userObj.Roles.includes(this.nextRole) && this.Mode.isEdit && !this.isStagesCompleted)
+        if (this.ctrl.Roles.hasOwnProperty(this.nextRole) && this.Mode.isEdit && !this.isStagesCompleted)
             this.editable = true;
         else
             this.editable = false;

@@ -1,13 +1,5 @@
 ﻿function sqljobconsole(options) {
     this.AllObj = options.AllObj;
-    let chkObj = new Object();
-    chkObj.data = null;
-    chkObj.title = "Action";
-    chkObj.orderable = false;
-    chkObj.bVisible = true;
-    chkObj.name = "action";
-    chkObj.Type = 1;
-    chkObj.render = renderButtonCol;
 
     this.DrawJobSelectBox = function () {
         let $Opt = $("<select class='form-control' id='select-sql-job'> </select>");
@@ -40,37 +32,32 @@
                         Date: date
                     },
                     success: function (result) {
-                        if (result.sqlJobsColumns !== null) {
-                            let cols = JSON.parse(result.sqlJobsDvColumns).$values;
-                            cols.push(chkObj);
+                        if (result.sqlJobsRows.length > 0) {
                             $("#list-of-jobs").empty();
                             $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
                             var o = new Object();
                             o.tableId = "tbl";
-                            //o.showFilterRow = false;
                             o.showSerialColumn = false;
                             o.showCheckboxColumn = false;
                             o.showFilterRow = false;
                             o.IsPaging = true;
-                            //o.source = "inline";
-                            //o.scrollHeight = "200px";
-                            o.columns = cols;
-                            o.data = result.sqlJobsRows;
-                            o.levels = result.levels;
-                            o.source = "sqljob";
-                            var data = new EbBasicDataTable(o);
-                            $("#layout_div .loader-fb").empty().removeClass("loader-fb");
+                            o.dvObject = JSON.parse(result.visualization);
+                            o.dvObject.Columns.$values[o.dvObject.Columns.$values.length - 1].render = renderButtonCol;
+                            o.data = { data: result.sqlJobsRows, formattedData: result.formattedData, levels: result.levels };
+                            o.Source = "sqljob";
+                            var data = new EbCommonDataTable(o);
                         }
+                        $("#layout_div .loader-fb").empty().removeClass("loader-fb");
                     }
                 });
         }
     };
 
     function renderButtonCol(data, type, row, meta) {
-        if (data[data.length - 3] === "S")
+        if (row[row.length - 5] === "Success")
             return "";
         else
-            return `<button class="retryBtn" id="${data[data.length - 2]}">Retry</button>`
+            return `<button class="retryBtn" id="${row[row.length - 4]}">Retry</button>`
     };
 
 

@@ -382,7 +382,8 @@ const WebFormRender = function (option) {
 
         if (this.ApprovalCtrl) {
             if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-                let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+                let DataMODEL = this.DataMODEL[this.ApprovalCtrl.TableName];
+                //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
                 this.ApprovalCtrl.setEditModeRows(DataMODEL);
             }
         }
@@ -414,15 +415,15 @@ const WebFormRender = function (option) {
     //    });
     //};
 
-    //this.getApprovalRow = function () {
-    //    let FVWTObjColl = {};
-    //    if (this.ApprovalCtrl) {
-    //        let tOb = this.ApprovalCtrl.ChangedRowObject();
-    //        if (tOb)
-    //            FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
-    //    }
-    //    return FVWTObjColl;
-    //};
+    this.getApprovalRow = function () {
+        let FVWTObjColl = {};
+        if (this.ApprovalCtrl) {
+            let tOb = this.ApprovalCtrl.ChangedRowObject();
+            if (tOb)
+                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        }
+        return FVWTObjColl;
+    };
 
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
@@ -500,6 +501,7 @@ const WebFormRender = function (option) {
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         this.DynamicTabObject.updateDataModel();
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+        WebformData.MultipleTables = $.extend(WebformData.MultipleTables, approvalTable);// attach approvalTable 
         //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");

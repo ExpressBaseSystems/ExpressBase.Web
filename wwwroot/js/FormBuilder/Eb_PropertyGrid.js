@@ -58,12 +58,15 @@
                 this.getValueFuncs[name] = function () { return $('#' + elemId).prop('checked'); };
         }
         else if (type === 1) {    // If options create drop-down list
-            if (meta.PropDataSourceJsFn)
+            if (meta.PropDataSourceJsFn) {////// check
                 meta.enumoptions = { ...meta.PropDataSourceJsFn() };
-            if (typeof value === "string")
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
+            }
             else
-                value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
+                if (typeof value === "string")
+                    value = parseInt(getKeyByVal(meta.enumoptions, value));
+                else
+                    value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, IsCElimitEditor);
             if (!IsCElimitEditor)
                 this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };

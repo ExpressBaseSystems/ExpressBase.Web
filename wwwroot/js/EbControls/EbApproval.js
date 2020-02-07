@@ -22,6 +22,8 @@
     }.bind(this);
 
     this.setEditModeRows = function (SingleTable) {
+        if (SingleTable.length === 0)
+            return;
         let sortedSingleTable = SingleTable.sort(function (a, b) { return parseInt(b.RowId) - parseInt(a.RowId); });
         let lastRow = sortedSingleTable[0];
         let lastInsertedrowId = lastRow.RowId;

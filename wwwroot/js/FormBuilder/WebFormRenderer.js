@@ -752,6 +752,8 @@ const WebFormRender = function (option) {
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
+        if (this.ApprovalCtrl)
+            this.ApprovalCtrl.disableAllCtrls();
         $.each(this.flatControls, function (k, ctrl) {
             ctrl.disable();
         }.bind(this));
@@ -768,7 +770,7 @@ const WebFormRender = function (option) {
         this.Mode.isNew = false;
         this.setEditModeCtrls();
         if (this.ApprovalCtrl)
-            this.ApprovalCtrl.enableAccessibleRow();
+            this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions

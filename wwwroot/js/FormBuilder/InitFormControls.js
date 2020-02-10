@@ -182,7 +182,7 @@ var InitControls = function (option) {
             });
             $input.MonthPicker('option', 'ShowOn', 'both');
             $input.MonthPicker('option', 'UseInputMask', true);
-            
+
             //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else if (ctrl.ShowDateAs_ === 2) {
@@ -915,6 +915,9 @@ var InitControls = function (option) {
         //    }
         //});
         //}.bind(this), 0);
+        var elm = $input[0];
+        if (ctrl.MaxLimit !== 0 || ctrl.MinLimit !== 0)
+            elm.onblur = createValidator(elm);
     };
 
     this.getKeyByValue = function (Obj, value) {
@@ -927,3 +930,18 @@ var InitControls = function (option) {
     };
 
 };
+
+function createValidator(element) {
+    return function () {
+        //if (!isPrintable(event))
+        //    return;
+        var min = parseInt(element.getAttribute("min")) || 0;
+        var max = parseInt(element.getAttribute("max")) || 0;
+
+        var value = parseInt(element.value) || min;
+        element.value = value; // make sure we got an int
+
+        if (value < min && min !== 0) element.value = min;
+        if (value > max && max !== 0) element.value = max;
+    };
+}

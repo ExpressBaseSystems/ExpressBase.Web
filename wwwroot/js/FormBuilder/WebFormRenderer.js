@@ -283,7 +283,9 @@ const WebFormRender = function (option) {
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
         if (_respObj.Status === 200) {
-            this.modifyFormData4Import(_respObj);
+            //this.modifyFormData4Import(_respObj);
+            this.EditModeFormData = _respObj.FormData.MultipleTables;
+            this.DataMODEL = this.EditModeFormData;
 
             this.isEditModeCtrlsSet = false;
             this.setEditModeCtrls();
@@ -315,6 +317,8 @@ const WebFormRender = function (option) {
                 return true;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+            if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
+                return true;
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
                 //ctrl.setDisplayMember = EBPSSetDisplayMember;
@@ -331,7 +335,7 @@ const WebFormRender = function (option) {
         let FlatContControls = getFlatContControls(this.FormObj);
         $.each(FlatContControls, function (i, CC) {
             let TableName = CC.TableName.trim();
-            if (!CC.IsSpecialContainer && TableName !== '')
+            if (!CC.IsSpecialContainer && TableName !== '' && !NCCTblNames.includes(TableName))
                 NCCTblNames.push(TableName);
         });
         return NCCTblNames;

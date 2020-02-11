@@ -267,6 +267,7 @@
             }
 
             if (curCtrl.DataImportId) {
+                curCtrl.isDataImportCtrl = true;
                 this.FO.psDataImport(curCtrl);
             }
         }.bind(this);

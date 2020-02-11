@@ -151,9 +151,10 @@ namespace ExpressBase.Web.Controllers
         }
 
         //run a job again
-        public string RetryMaster(int masteId, string RefId, List<Param> Param)
+        public string RetryMaster(int masterId, string RefId, List<Param> Param)
         {
-            RetryMasterResponse resp = this.ServiceClient.Post(new RetryMasterRequest { MasterId = masteId, RefId = RefId, GlobalParams = Param });
+            masterId = 187;
+            RetryMasterResponse resp = this.ServiceClient.Post(new RetryMasterRequest { MasterId = masterId, RefId = RefId, GlobalParams = Param });
 
             return resp.ResponseStatus.Message;
         }

@@ -15,16 +15,15 @@ namespace ExpressBase.Web.Controllers
 
         public string PushData(string data)
         {
-            //try
-            //{
-            //    IoTDataResponse resultlist = this.ServiceClient.Get<IoTDataResponse>(new IoTDataRequest { Data = data });
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message + e.StackTrace); 
-            //}
-
-
+            try
+            {
+                IoTDataResponse resultlist = this.ServiceClient.Get<IoTDataResponse>(new IoTDataRequest { Data = data });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+            }
+            
             Console.WriteLine("__________________________________________________Received Input Data : " + data);
             return "Success";
         }

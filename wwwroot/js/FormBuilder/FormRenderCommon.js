@@ -266,7 +266,7 @@
                 }.bind(this));
             }
 
-            if (curCtrl.DataImportId) {
+            if (curCtrl.DataImportId && this.FO.Mode.isNew) {
                 curCtrl.isDataImportCtrl = true;
                 this.FO.psDataImport(curCtrl);
             }

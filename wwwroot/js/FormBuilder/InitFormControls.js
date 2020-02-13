@@ -776,10 +776,7 @@ var InitControls = function (option) {
         }
     };
 
-    this.Numeric = function (ctrl) {
-        //setTimeout(function () {
-        var id = ctrl.EbSid_CtxId;
-        let $input = $("#" + ctrl.EbSid_CtxId);
+    this.initNumeric = function (ctrl, $input) {
         let initValue = "0";
         if ($input.val() === "") {
             if (ctrl.DecimalPlaces > 0)
@@ -918,6 +915,20 @@ var InitControls = function (option) {
         var elm = $input[0];
         if (ctrl.MaxLimit !== 0 || ctrl.MinLimit !== 0)
             elm.onblur = createValidator(elm);
+    };
+
+    this.Numeric = function (ctrl) {
+        //setTimeout(function () {
+        var id = ctrl.EbSid_CtxId;
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        if (ctrl.InputMode === 0) {
+            this.initNumeric(ctrl, $input);
+        }
+        else if (ctrl.InputMode === 1)// currency
+            this.initNumeric(ctrl, $input);
+        else if (ctrl.InputMode === 2) {// phone
+            $input.inputmask("999-999-9999");
+        }
     };
 
     this.getKeyByValue = function (Obj, value) {

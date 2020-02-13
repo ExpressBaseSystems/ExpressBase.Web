@@ -24,6 +24,10 @@ using Google.Apis.Upload;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using System.Collections.Generic;
 using ServiceStack.Auth;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.DrawingCore;
+using Rectangle = iTextSharp.text.Rectangle;
 //using Unifonic;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -278,11 +282,6 @@ namespace ExpressBase.Web.Controllers
             {
                 new memberobject();
             }
-
-            //if (credential.Token.IsExpired(Google.Apis.Util.SystemClock.Default))
-            //{
-            //    var refreshResult = credential.RefreshTokenAsync(CancellationToken.None).Result;
-            //}
         }
 
         public IActionResult GetAPIKey(int a)
@@ -299,6 +298,44 @@ namespace ExpressBase.Web.Controllers
             ViewBag.APIKey = apiSList;
 
             return View();
+        }
+
+        public void ReportTest()
+        {
+            string oldFile = "C:\\Users\\donaj\\Desktop\\quotation.pdf";
+            string newFile = "C:\\Users\\donaj\\Desktop\\newFile3.pdf";
+
+            PdfReader reader = new PdfReader(oldFile);
+            using (var fileStream = new FileStream(newFile, FileMode.Create, FileAccess.Write))
+            {
+                var document = new Document(reader.GetPageSizeWithRotation(1));
+                var writer = PdfWriter.GetInstance(document, fileStream);
+
+                document.Open();
+
+                for (var i = 1; i <= reader.NumberOfPages; i++)
+                {
+                    document.NewPage();
+
+                    var baseFont = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    var importedPage = writer.GetImportedPage(reader, i); 
+                    Anchor click = new Anchor("Click to go to Target");
+                    click.Reference = "#target";
+                    Paragraph p1 = new Paragraph();
+                    p1.Add(click);
+                    document.Add(p1);
+                    Anchor target = new Anchor("Target");
+
+                    target.Name = "target";
+                    document.Add(target);
+                    Chunk chunk = new Chunk("Go to page 2");
+                    PdfAction action = PdfAction.GotoLocalPage(2, new PdfDestination(0), writer);
+                    chunk.SetAction(action);
+                }
+
+                document.Close();
+                writer.Close();
+            }
         }
     }
     internal class memberobject

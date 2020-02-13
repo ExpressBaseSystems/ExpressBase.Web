@@ -390,9 +390,13 @@ const EbSelect = function (ctrl, options) {
             let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
 
             let top = tbl_cod.top;
-            if (tbl_height + tbl_cod.top > $form_div.height() && tbl_cod.top > tbl_height + 60) {
+            let scrollTop = $form_div.scrollTop();
+            let scrollH = $form_div.prop("scrollHeight");
+            if (scrollTop + tbl_cod.top + tbl_height > scrollH && scrollTop + tbl_cod.top - 60 > tbl_height) {
                 top = tbl_cod.top - tbl_height - 60;
                 div_tble.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
+                if (ebcontext.renderContext !== "WebForm")
+                    top += 38;
             }
             div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
 

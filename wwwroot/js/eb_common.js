@@ -1070,3 +1070,16 @@ function GetFontCss(obj) {
     if (font.Style === 3) { font.push(`font: italic bold;`); }
     return (font.join().replace(/\,/g, ''));
 }
+
+function blink(el, delay = 1000) {
+    if (el.jquery) {
+
+        $e = $(el);
+        $e.addClass("blink");
+        setTimeout(function () {
+            $e.removeClass("blink");
+        }, delay);
+    }
+    else
+        blink($(el), delay);
+}

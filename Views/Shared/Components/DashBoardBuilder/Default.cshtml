@@ -40,7 +40,9 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbGaugeConfig.js" asp-append-version=@bApnd></script>
 
+<script src="~/js/EbGauges/gauge.js"></script>
 
 <script>
      @Html.Raw(ViewBag.Meta);
@@ -61,7 +63,7 @@
                     <div id="preview-textfield">0%</div>
                 </div>
                 <div class="grid-stack" id="grid-cont"></div>
-            </div>           
+            </div>
             <div class="component_cont">
                 <ul class="nav nav-tabs">
                     <li class="active"><a data-toggle="tab" href="#component_cont">Component Container</a></li>
@@ -77,7 +79,7 @@
     </div>
     <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
 </div>
-
+<div  id="modal-gauge"></div>
 <script type="text/javascript">
 
         if (@ViewBag.tabnum === 0) {

@@ -295,7 +295,10 @@ var InitControls = function (option) {
         else {
             val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
-        ctrl.setValue(val);
+        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+            ctrl.setValue(ctrl.DataVals.Value);
+        else
+            ctrl.setValue(val);
     };
 
     this.SimpleSelect = function (ctrl) {
@@ -760,7 +763,10 @@ var InitControls = function (option) {
                 this._onChangeFunctions.push(p1);
         };
         if (ctrl.LoadCurrentUser) {
-            ctrl.setValue(ebcontext.user.UserId.toString());
+            if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+                ctrl.setValue(ctrl.DataVals.Value);
+            else
+                ctrl.setValue(ebcontext.user.UserId.toString());
         }
     };
 
@@ -770,10 +776,7 @@ var InitControls = function (option) {
         }
     };
 
-    this.Numeric = function (ctrl) {
-        //setTimeout(function () {
-        var id = ctrl.EbSid_CtxId;
-        let $input = $("#" + ctrl.EbSid_CtxId);
+    this.initNumeric = function (ctrl, $input) {
         let initValue = "0";
         if ($input.val() === "") {
             if (ctrl.DecimalPlaces > 0)
@@ -909,6 +912,23 @@ var InitControls = function (option) {
         //    }
         //});
         //}.bind(this), 0);
+        var elm = $input[0];
+        if (ctrl.MaxLimit !== 0 || ctrl.MinLimit !== 0)
+            elm.onblur = createValidator(elm);
+    };
+
+    this.Numeric = function (ctrl) {
+        //setTimeout(function () {
+        var id = ctrl.EbSid_CtxId;
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        if (ctrl.InputMode === 0) {
+            this.initNumeric(ctrl, $input);
+        }
+        else if (ctrl.InputMode === 1)// currency
+            this.initNumeric(ctrl, $input);
+        else if (ctrl.InputMode === 2) {// phone
+            $input.inputmask("999-999-9999");
+        }
     };
 
     this.getKeyByValue = function (Obj, value) {

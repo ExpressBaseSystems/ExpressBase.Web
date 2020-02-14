@@ -261,20 +261,7 @@ const WebFormRender = function (option) {
                 let val = dataObj.Value;
                 ctrl.DataVals.Value = val;
             }
-        }
-
-        // DG = replace DG dataModel with  new one
-        $.each(editModeFormData, function (CtrlName, Data) {
-            if (CtrlName !== this.FormObj.Name) {
-                let DG = getObjByval(this.DGs, "Name", CtrlName);
-                if (!DG)
-                    return true;
-                let DGTblName = DG.TableName;
-                delete this.EditModeFormData[CtrlName];
-                this.EditModeFormData[DGTblName] = Data;
-                this.DataMODEL[DGTblName] = Data;
-            }
-        }.bind(this));
+        }      
 
     };
 
@@ -283,7 +270,8 @@ const WebFormRender = function (option) {
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
         if (_respObj.Status === 200) {
-            this.modifyFormData4Import(_respObj);
+            //this.modifyFormData4Import(_respObj);
+            this.resetDataMODEL(_respObj);
 
             this.isEditModeCtrlsSet = false;
             this.setEditModeCtrls();
@@ -292,6 +280,29 @@ const WebFormRender = function (option) {
             console.error(_respObj.MessageInt);
         
     }.bind(this);
+
+    this.resetDataMODEL = function (_respObj) {
+        let editModeFormData = _respObj.FormData.MultipleTables;
+
+        // DG = replace DG dataModel with  new one
+        $.each(editModeFormData, function (tblName, Data) {
+            if (tblName !== this.FormObj.TableName) {
+                let DG = getObjByval(this.DGs, "TableName", tblName);
+                if (!DG)
+                    return true;
+                let DGTblName = DG.TableName;
+                delete this.EditModeFormData[tblName];
+                this.EditModeFormData[DGTblName] = Data;
+                this.DataMODEL[DGTblName] = Data;
+            }
+        }.bind(this));
+
+
+
+
+        //this.EditModeFormData = _respObj.FormData.MultipleTables;
+        //this.DataMODEL = this.EditModeFormData;
+    };
 
     //this.removeRowIds = function () {
 
@@ -315,6 +326,8 @@ const WebFormRender = function (option) {
                 return true;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+            if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
+                return true;
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
                 //ctrl.setDisplayMember = EBPSSetDisplayMember;
@@ -331,7 +344,7 @@ const WebFormRender = function (option) {
         let FlatContControls = getFlatContControls(this.FormObj);
         $.each(FlatContControls, function (i, CC) {
             let TableName = CC.TableName.trim();
-            if (!CC.IsSpecialContainer && TableName !== '')
+            if (!CC.IsSpecialContainer && TableName !== '' && !NCCTblNames.includes(TableName))
                 NCCTblNames.push(TableName);
         });
         return NCCTblNames;
@@ -382,7 +395,8 @@ const WebFormRender = function (option) {
 
         if (this.ApprovalCtrl) {
             if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-                let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+                let DataMODEL = this.DataMODEL[this.ApprovalCtrl.TableName];
+                //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
                 this.ApprovalCtrl.setEditModeRows(DataMODEL);
             }
         }
@@ -414,15 +428,15 @@ const WebFormRender = function (option) {
     //    });
     //};
 
-    //this.getApprovalRow = function () {
-    //    let FVWTObjColl = {};
-    //    if (this.ApprovalCtrl) {
-    //        let tOb = this.ApprovalCtrl.ChangedRowObject();
-    //        if (tOb)
-    //            FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
-    //    }
-    //    return FVWTObjColl;
-    //};
+    this.getApprovalRow = function () {
+        let FVWTObjColl = {};
+        if (this.ApprovalCtrl) {
+            let tOb = this.ApprovalCtrl.ChangedRowObject();
+            if (tOb)
+                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+        }
+        return FVWTObjColl;
+    };
 
     this.getDG_FVWTObjColl = function () {
         let FVWTObjColl = {};
@@ -500,6 +514,7 @@ const WebFormRender = function (option) {
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         this.DynamicTabObject.updateDataModel();
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+        WebformData.MultipleTables = $.extend(WebformData.MultipleTables, approvalTable);// attach approvalTable 
         //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
@@ -750,6 +765,8 @@ const WebFormRender = function (option) {
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
+        if (this.ApprovalCtrl)
+            this.ApprovalCtrl.disableAllCtrls();
         $.each(this.flatControls, function (k, ctrl) {
             ctrl.disable();
         }.bind(this));
@@ -766,7 +783,7 @@ const WebFormRender = function (option) {
         this.Mode.isNew = false;
         this.setEditModeCtrls();
         if (this.ApprovalCtrl)
-            this.ApprovalCtrl.enableAccessibleRow();
+            this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions

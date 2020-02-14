@@ -310,7 +310,7 @@
     color: transparent;
     width: 25px;
     font-size: 15px;
-    padding: 3px;
+    padding: 6px;
     cursor: pointer;
 }
 
@@ -998,4 +998,11 @@ body .stickBtn {
 
 #maxVal, #preview-textfield {
     display: none;
+}
+
+.gaugeChart .label_value {
+    position: absolute;
+    padding: 0px;
+    display:flex;
+    flex-flow:row;
 }

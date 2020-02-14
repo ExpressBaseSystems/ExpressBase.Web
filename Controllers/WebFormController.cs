@@ -173,7 +173,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in GetDynamicGridData. Message: " + ex.Message);
-                return JsonConvert.SerializeObject( new WebformDataWrapper()
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
                     Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
@@ -230,7 +230,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (!this.HasPermission(RefId, OperationConstants.DELETE, CurrentLoc))
                 return -2; //Access Denied
-            DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
+            DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = new List<int> { RowId }, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
         }
 

@@ -1,4 +1,4 @@
-﻿//var tabNum = 0;
+﻿ 
 var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     this.Code;
     this.ObjectType = type;
@@ -9,8 +9,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.rel_arr = [];
     this.Filter_Params;
     this.Parameter_Count;
-    this.Object_String_WithVal;
-    //this.FD = false;
+    this.Object_String_WithVal; 
     this.Ssurl = ssurl;
     this.delay = 300;
     this.isPw = false;
@@ -28,8 +27,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
-    this.Sql = null;
-    //this.propGrid = new Eb_PropertyGrid("dspropgrid" + tabNum);
+    this.Sql = null; 
 
     this.propGrid = new Eb_PropertyGrid({
         id: "dspropgrid" + tabNum,
@@ -168,7 +166,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.RunClick = function () {
-        if (this.EbObject.FilterDialogRefId) {
+        if (this.EbObject.FilterDialogRefId === "") {
             this.isPw = false;
             this.RunDs();
         }
@@ -287,16 +285,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             alert(err.message);
             $('#save').addClass('disabled');
             $('#commit_outer').addClass('disabled');
-        }
-        // commonO.Current_obj = this.EbObject;
+        } 
     };
 
     this.propGrid.PropertyChanged = function (obj, pname) {
-        this.EbObject = obj;
-        //commonO.Current_obj = this.EbObject;
+        this.EbObject = obj; 
         if (pname === "FilterDialogRefId") {
-            if (obj[pname] !== null) {
-                //this.FD = true;
+            if (obj[pname] !== null) { 
                 this.GetFD();
                 this.GenerateButtons();
             }
@@ -307,8 +302,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     }.bind(this);
 
     this.GetFD = function (callback) {
-        this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
-        //this.relatedObjects += this.FilterDialogRefId;
+        this.FilterDialogRefId = this.EbObject.FilterDialogRefId; 
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
             $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + tabNum }, this.AppendFD.bind(this, callback));
     };
@@ -324,13 +318,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     </div>
                     </div>
                     </div>
-                `);
-        //$('#codewindow' + tabNum).removeClass("col-md-10").addClass("col-md-8 col-md-offset-2");
+                `); 
 
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
-        $("#btnGo").off("click").on("click", this.RunDs.bind(this));
-        //$.LoadingOverlay("hide");
+        $("#btnGo").off("click").on("click", this.RunDs.bind(this)); 
         this.stickBtn = new EbStickButton({
             $wraper: $(".param-div"),
             $extCont: $(".param-div"),
@@ -368,20 +360,21 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.RunDs = function () {
         commonO.flagRun = true;
-        //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
-        if (this.EbObject.VersionNumber === "")
-            commonO.Save();
-        else if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
-            if (this.EbObject.VersionNumber.slice(-1) === "w") {
-                commonO.Save();
-            }
-            else {
-                this.SaveSuccess();
-            }
-        }
+
+        if (!commonObj.isversioned)
+            commonO.SingleSave();
         else
-            commonO.Save();
+            if (this.EbObject.VersionNumber === "")
+                commonO.Save();
+            else if (this.EbObject.VersionNumber !== null && this.EbObject.VersionNumber !== undefined) {
+                if (this.EbObject.VersionNumber.slice(-1) === "w")
+                    commonO.Save();
+                else
+                    this.SaveSuccess();
+            }
+            else
+                commonO.Save();
     };
 
     this.SaveSuccess = function () {
@@ -431,8 +424,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         commonO.tabNum++;
         var title = " Result";
         if (commonObj.isversioned)
-            title = title + "(" + this.EbObject.VersionNumber+")";
-      
+            title = title + "(" + this.EbObject.VersionNumber + ")";
+
         var nav = "<li><a data-toggle='tab' tnum =" + commonO.tabNum + " href='#vernav" + commonO.tabNum + "'>" + title + "<button class='close closeTab' type='button' style='font-size: 20px;margin: -2px 0 0 10px;'>×</button></a></li>";
         var tab = "<div id='vernav" + commonO.tabNum + "' class='tab-pane fade'>";
         this.AddTab(nav, tab);
@@ -459,8 +452,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             else {
                 var colscollection = JSON.parse(result.data);
                 $.each(colscollection.$values, function (i, columns) {
-                    //var ariastring = (i === 0) ? "aria-expanded='true'" : "";
-                    //var showstring = (i === 0) ? "in" : "";
                     var ariastring = "aria-expanded='true'";
                     var showstring = "in";
                     $('#vernav' + commonO.tabNum + ' .accordion').append(`<div class="card">
@@ -489,29 +480,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     let res = new EbBasicDataTable(o);
                     res.Api.columns.adjust();
                 }.bind(this));
-                //$("#sample" + commonO.tabNum).dataTable({
-                //    aoColumns: cols,
-                //    serverSide: true,
-                //    lengthMenu: [[20, 50, 100], [20, 50, 100]],
-                //    scrollX: "100%",
-                //    scrollY: "300px",
-                //    processing: true,
-                //    dom: "<lip>rt",
-                //    paging: true,
-                //    lengthChange: true,
-                //    ajax: {
-                //        //url: this.Ssurl + "/ds/data/" + this.Refid,
-                //        url: "../CE/getData",
-                //        type: "POST",
-                //        data: this.Load_tble_Data.bind(this),
-                //        crossDomain: true,
-                //        beforeSend: function (xhr) {
-                //            xhr.setRequestHeader("Authorization", "Bearer " + getToken());
-                //        },
-                //        dataSrc: function (dd) { return dd.data; },
-                //    }
-                //});
-
                 $("#versionNav a[href='#vernav" + commonO.tabNum + "']").tab('show');
             }
         }
@@ -533,8 +501,9 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         return dq;
     };
 
-    this.AfterCommit = function () {
-        window["editor" + tabNum].options.readOnly = true;
+    this.AfterCommit = function (isversioned) {
+        if (isversioned)
+            window["editor" + tabNum].options.readOnly = true;
     };
 
     this.SetSqlFnName = function () {
@@ -564,29 +533,6 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
         if (filter_dialog_refid === "Select Filter Dialog") {
             filter_dialog_refid = null;
         }
-        //this.rel_arr.push(filter_dialog_refid);
-        //this.relatedObjects = this.rel_arr.toString();
-        //this.EbObject.Sql = btoa(this.EbObject.Sql);
-        //var tagvalues = $('#tags').val();
-        //if (issave === true) {
-        //    $.post("../Eb_ObjectController/SaveEbObject",
-        //        {
-        //            "Id": this.ver_Refid,
-        //            "json": JSON.stringify(this.Current_obj),
-        //            "rel_obj": "",
-        //            "tags": tagvalues
-        //        }, this.CallDrawTable.bind(this, needRun));
-        //}
-        //else {
-
-        //    $.post("../Eb_ObjectController/CommitEbObject", {
-        //        "id": this.ver_Refid,
-        //        "changeLog": this.changeLog,
-        //        "json": JSON.stringify(this.Current_obj),
-        //        "rel_obj": this.relatedObjects,
-        //        "tags": tagvalues
-        //    }, this.CallDrawTable.bind(this, needRun));
-        //}
     };
 
     this.CallDrawTable = function (needRun, result) {
@@ -600,8 +546,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.DrawTable();
         }
         alert("Success");
-        $("#close_popup").click();
-        //$.LoadingOverlay("hide");
+        $("#close_popup").click(); 
         $("#eb_common_loader").EbLoader("hide");
     };
 

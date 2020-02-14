@@ -9,104 +9,159 @@ function getRandomColor() {
     return color;
 }
 
-var EbGaugeWrapper = function (option) {
+var EbGaugeWrapper = function (option, ref) {
     var back = ["#ff0000", "blue", "gray"];
     var rand = back[Math.floor(Math.random() * back.length)];
-    $("#" + option.GaugeContainer).empty().append(`<canvas id="${option.GaugeContainer}_canvas" class="gauge_canvas"></canvas>`);
-    this.container = option.GaugeContainer + "_canvas";
-    this.value = option.GaugeValue ? option.GaugeValue : Math.floor(Math.random() * 10); 
-    this.colorStart = option.ColorStart ? option.ColorStart : getRandomColor();
-    this.colorStop = option.ColorStop ? option.ColorStop : getRandomColor();
-    this.strokeColor = option.StrokeColor ? option.StrokeColor : getRandomColor();
-    this.pointerLength = option.PointerLength;
-    this.pointerStrokeWidth = option.PointerStrokeWidth;
-    this.pointerColor = option.PointerColor ? option.PointerColor : getRandomColor();   
-    this.angle = option.Angle;
-    this.lineWidth = option.LineWidth;
-    {
-        //recogizer
-        //let element = document.querySelector('#' + this.container);
+    var LabelFont = option.LabelFont ? GetFontCss(option.LabelFont) : "";
+    var ValueFont = option.ValueFont ? GetFontCss(option.ValueFont) : "";
+    $("#" + option.EbSid).empty().append(`<canvas id="${option.EbSid}_canvas" class="gauge_canvas"></canvas>
+            <div class="label_value" style="${ValueFont} left:${option.ValuePosition.Left}%; top:${option.ValuePosition.Top}%">
+            <span  class="gauge_text" id="${option.EbSid}_text"></span>
+            <span>${option.ValueText}</span>
+            </div>
+            <span  class="gauge_Name" id="${option.EbSid}_Name" style=" position:absolute ; ${LabelFont} left:${option.LabelPosition.Left}%; top:${option.LabelPosition.Top}%">
+                ${option.LabelName}</span>
+            `);
+    let Config = option.GaugeConfig;
+    let Pointer = option.Pointer;
+    let Ticks = option.TicksConfig;
+    this.container = Config.GaugeContainer ? Config.GaugeContainer + "_canvas" : option.EbSid + "_canvas";
+    this.value = Config.GaugeValue ? Config.GaugeValue : Math.floor(Math.random() * 10);
+    this.colorStart = Config.ColorStart ? Config.ColorStart : getRandomColor();
+    this.colorStop = Config.ColorStop ? Config.ColorStop : getRandomColor();
+    this.strokeColor = Config.StrokeColor ? Config.StrokeColor : getRandomColor();
 
-        //// Properties of the gauge
-        //let gaugeOptions = {
-        //    hasNeedle: true,
-        //    needleColor: 'gray',
-        //    needleUpdateSpeed: 1000,
-        //    arcColors: ['rgb(44, 151, 222)', 'lightgray'],
-        //    arcDelimiters: [50],
-        //    rangeLabel: ['0', '100'],
-        //    centralLabel: this.value
-        //};
+    this.RenderTicks = option.RenderTicks;
+    this.PointerConfig = option.PointerConfig;
+    this.LimitMax = option.LimitMax;
+    this.LimitMin = option.LimitMin;
 
-        //// Drawing and updating the chart
-        //GaugeChart.gaugeChart(element, 300, gaugeOptions).updateNeedle(this.value);
-    }
-    {
-        //gauge.cofee
-         opts = {
+    this.angle = Config.Angle ? Config.Angle / 100 : 0;
+    this.RadiusScale = Config.RadiusScale ? Config.RadiusScale / 100 : 1;
+    this.lineWidth = Config.LineWidth ? Config.LineWidth / 100 : 0.16;
+
+
+    if (!ref.isEdit) {
+        opts = {
             angle: 0, // The span of the gauge arc
-            lineWidth: 0.16, // The line thickness
-            radiusScale: 1, // Relative radius
+            lineWidth: 0.33, // The line thickness
+            radiusScale: 0.99, // Relative radius
             pointer: {
-                length: 0.41, // // Relative to gauge radius
-                strokeWidth: 0.055, // The thickness
-                color: this.pointerColor // Fill color
+                length: 0.48, // // Relative to gauge radius
+                strokeWidth: 0.053, // The thickness
+                color: '#000000' // Fill color
             },
-            limitMax: false,     // If true, the pointer will not go past the end of the gauge
-            colorStart: this.colorStart,   // Colors
-            colorStop: this.colorStop ,    // just experiment with them
-            strokeColor: this.strokeColor,
-            // to see which ones work best for you
+            limitMax: false,     // If false, max value increases automatically if value > maxValue
+            limitMin: false,     // If true, the min value of the gauge will be fixed
+            colorStart: '#6FADCF',   // Colors
+            colorStop: '#8FC0DA',    // just experiment with them
+            strokeColor: '#E0E0E0',  // to see which ones work best for you
             generateGradient: true,
-            highDpiSupport: true,   // High resolution support
-            renderTicks: {
-                divisions: 2,
-                divWidth: 1.3,
-                divLength: 1,
-                divColor: '#331407',
-                subDivisions: 5,
-                subLength: 0.3,
-                subWidth: 1.8,
-                subColor: '#666666'
-            },
-            //staticLabels: {
-            //    font: "10px sans-serif",  // Specifies font
-            //    labels: [0,50,100,150,200,250,300],  // Print labels at these values
-            //    color: "#000000",  // Optional: Label text color
-            //    fractionDigits: 0  // Optional: Numerical precision. 0=round off.
-            //},
-            //staticZones: [      
-            //    { strokeStyle: "#FFDD00", min: 0, max: 150 }, // Yellow
-            //    { strokeStyle: "#30B32D", min: 150, max: 220 }, // Green
-            //    { strokeStyle: "blue", min: 220, max: 260 }, // Yellow
-            //    { strokeStyle: "#F03E3E", min: 260, max: 300 },  // Red
-            //    { strokeStyle: "rgb(80,80,80)", min: 2470, max: 2530, height: 1.3 }
-            //],
+            highDpiSupport: true,     // High resolution support
+
         };
-        console.log(document.getElementById('maxVal').textContent);
-        var target = document.getElementById(this.container); // your canvas element
+        var target = document.getElementById(`${option.EbSid}_canvas`); // your canvas element
         var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-        gauge.maxValue = 30; // set max gauge value
-        gauge.animationSpeed = 28; // set animation speed (32 is default value)
+        gauge.maxValue = 3000; // set max gauge value
+        gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge.animationSpeed = 32; // set animation speed (32 is default value)
+        gauge.set(1250);
+    }
+    else {
+        opts = {
+            angle: this.angle, // The span of the gauge arc
+            lineWidth: this.lineWidth, // The line thickness
+            radiusScale: this.RadiusScale, // Relative radius
+            limitMax: false, // If true, the pointer will not go past the end of the gauge
+            limitMin: false,  // If true, the min value of the gauge will be fixed
+            colorStart: this.colorStart,   // Colors
+            colorStop: this.colorStop,    // just experiment with them
+            strokeColor: this.strokeColor, // to see which ones work best for you
+            generateGradient: true,
+            highDpiSupport: true,
+
+            //staticZones: [
+            //    { strokeStyle: "#d30000", min: 1, max: 5 },
+            //    { strokeStyle: "#f6db2d", min: 5, max: 10 },
+            //    { strokeStyle: "#f6db2d", min: 10, max: 15 },
+            //    { strokeStyle: "#f6db2d", min: 15, max: 20 },
+            //    { strokeStyle: "#f6db2d", min: 20, max: 25 },
+            //    { strokeStyle: "#f6db2d", min: 25, max: 40 },
+            //    { strokeStyle: "#3eea34", min: 40, max: 45 },
+            //    { strokeStyle: "#3eea34", min: 45, max: 50 },
+            //    { strokeStyle: "#3eea34", min: 50, max: 55 },
+            //    { strokeStyle: "#3eea34", min: 55, max: 60 },
+            //    { strokeStyle: "#45caff", min: 60, max: 65 },
+            //    { strokeStyle: "#45caff", min: 65, max: 70 }
+            //],
+            staticLabels: {
+                font: "11px sans-serif",
+                labels: [1, 10, 20, 30, 40, 50],
+                color: "#000000",
+                fractionDigits: 0
+            }
+        };
+
+        //Pointer
+        if (option.PointerConfig) {
+            opts.pointer = {
+                length: Pointer.PointerLength / 100,
+                strokeWidth: Pointer.PointerStrokeWidth / 100,
+                color: Pointer.PointerColor
+            }
+        }
+        else {
+        opts.pointer = {
+            length: 0,
+            strokeWidth: 0,
+            color: "#fff"
+        }
+        }
+
+        if (option.RenderTicks) {
+            opts.renderTicks = {
+                divisions: Ticks.Divisions,
+                divWidth: Ticks.DivWidth / 10,
+                divLength: Ticks.DivLength / 100,
+                divColor: Ticks.DivColor,
+                subDivisions: Ticks.SubDivisions,
+                subLength: Ticks.SubLength / 100,
+                subWidth: Ticks.SubWidth / 10,
+                subColor: Ticks.SubColor,
+            }
+        }
+        var target = document.getElementById(`${option.EbSid}_canvas`);
+        //var target = $("#" + this.container);
+        //target.gauge(opts);
+
+        // your canvas element
+        var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
+        gauge.maxValue = 50; // set max gauge value
+        gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge.animationSpeed = 32; // set animation speed (32 is default value)
         gauge.set(this.value);
-        gauge.setTextField(document.getElementById("preview-textfield"));
-        percentColors = [[0.0, "#a9d70b"], [0.50, "#f9c802"], [1.0, "#ff0000"]];
+        gauge.setTextField(document.getElementById(`${option.EbSid}_text`));
+
     }
-    {
-        //var myGauge = Gauge(document.getElementById(this.container), {
-        //    dialRadius: 40,
-        //    dialStartAngle: 135,
-        //    dialEndAngle: 45,
-        //    value: 50,
-        //    max: 100,
-        //    min: 0,
-        //    valueDialClass: "value",
-        //    valueClass: "value-text",
-        //    dialClass: "dial",
-        //    gaugeClass: "gauge",
-        //    showValue: true,
-        //    gaugeColor: null,
-        //    label: function (val) { return Math.round(val); } // returns a string label that will be rendered in the center
-        //});
-    }
-};
+}
+
+//$.fn.gauge = function (opts) {
+//    this.each(function () {
+//        var $this = $(this),
+//            data_gauge = $this.data();
+
+//        if (data_gauge.gauge) {
+//            data_gauge.gauge.stop();
+//            delete data.gauge;
+//        }
+//        if (opts !== false) {
+//            data_gauge.gauge = new Gauge(this).setOptions(opts);
+//            data_gauge.gauge.maxValue = 70; // set max gauge value
+//            data_gauge.gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+//            data_gauge.gauge.animationSpeed = 32; // set animation speed (32 is default value)
+//            data_gauge.gauge.set(this.value);
+//            //data.gauge.setTextField(document.getElementById(`${option.GaugeContainer}_text`));
+//        }
+//    });
+//    return this;
+//};

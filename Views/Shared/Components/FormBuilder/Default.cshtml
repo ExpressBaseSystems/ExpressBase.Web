@@ -65,7 +65,8 @@
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
 
-
+    if (!ebcontext.Roles)
+        ebcontext.Roles = @Html.Raw(ViewBag.RolesList);
     let BuilderType = '@builderType_S';
     let formBuilderObj = null;
     let objid =$("#objid").val();

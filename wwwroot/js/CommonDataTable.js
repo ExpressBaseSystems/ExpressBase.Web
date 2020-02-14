@@ -397,6 +397,7 @@
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RowHeight = this.RowHeight;
         }
+        this.getNotvisibleColumns();
         this.initCompleteflag = false;
         this.extraCol = [];
         this.check4Customcolumn();
@@ -440,6 +441,11 @@
 
         }
         this.Init();
+    };
+
+    this.getNotvisibleColumns = function () {
+        if (this.EbObject.NotVisibleColumns.$values.length === 0)
+            this.EbObject.NotVisibleColumns.$values = this.EbObject.Columns.$values.filter((obj) => !obj.bVisible);
     };
 
     this.Do4EbdataTable = function () {
@@ -1108,7 +1114,7 @@
         this.tableName = dd.tableName;
         this.treeData = dd.tree;
         this.SetColumnRef();
-        this.ImageArray =JSON.parse( dd.imageList);
+        this.ImageArray = dd.imageList ? JSON.parse( dd.imageList) : [];
         return dd.formattedData;
     };
 
@@ -1847,15 +1853,17 @@
             this.Api = $("#" + this.tableId).DataTable();
         var rows = this.Api.rows().nodes();
         var count = this.Api.columns()[0].length;
-        $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'></tr>`);
-        $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" class="rowgroupselect"></select></td>`);
-        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-            if (obj.RowGrouping.$values.length > 0) {
-                $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
-            }
-        }.bind(this));
-        $(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
-        $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
+        if (this.Source === "EbDataTable") {
+            $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'></tr>`);
+            $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" class="rowgroupselect"></select></td>`);
+            $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+                if (obj.RowGrouping.$values.length > 0) {
+                    $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
+                }
+            }.bind(this));
+            $(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
+            $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
+        }
         if (this.CurrentRowGroup !== null) {
             $(`#group-All_${this.tableId}`).prepend(`<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td>`);
             $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
@@ -1869,14 +1877,13 @@
             });
             var ct = $("#" + this.tableId + " .group[group=1]").length;
             $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups (${ct}) - `);
-
-            $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
-            $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
         }
         else {
             $(`#rowgroupDD_${this.tableId} [value=None`).attr("selected", "selected");
             $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups `);
         }
+        $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
+        $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
     };
 
     this.singlelevelRowgrouping = function () {
@@ -4079,7 +4086,7 @@
             else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
                 this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
                 this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
-            }
+            } 
 
             if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.EbObject.Columns.$values[i].className += " tdheight dt-left";
@@ -4090,7 +4097,7 @@
         }
         if (col.name === "eb_created_by" || col.name === "eb_lastmodified_by")
             col.className += " dt-left";
-        if (col.Font !== null) {
+        if (col.Font !== null && col.Font !== undefined) {
             var style = document.createElement('style');
             style.type = 'text/css';
             var array = [this.tableId, col.name, col.Font.FontName, col.Font.Size, col.Font.color.replace("#", "")];

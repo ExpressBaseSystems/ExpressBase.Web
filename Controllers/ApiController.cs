@@ -288,10 +288,26 @@ namespace ExpressBase.Web.Controllers
                         foreach (int _locid in authResponse.User.LocationIds)
                         {
                             if (s_obj.Locations.ContainsKey(_locid))
-                            {
                                 response.Locations.Add(s_obj.Locations[_locid]);
-                            }
                         }
+                    }
+
+                    try
+                    {
+                        DownloadFileResponse dfs = this.FileClient.Get(new DownloadDpRequest
+                        {
+                            ImageInfo = new ImageMeta
+                            {
+                                FileName = response.UserId.ToString(),
+                                FileType = StaticFileConstants.PNG,
+                                FileCategory = EbFileCategory.Dp
+                            }
+                        });
+                        response.DisplayPicture = dfs.StreamWrapper.Memorystream.ToArray();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine("api auth request getdp: " + ex.Message);
                     }
                 }
                 else
@@ -647,13 +663,9 @@ namespace ExpressBase.Web.Controllers
 
                 MapVendors MapType;
                 if (type == null)
-                {
                     MapType = MapVendors.GOOGLEMAP;
-                }
                 else
-                {
                     Enum.TryParse(type, out MapType);
-                }
 
                 ViewBag.MapType = MapType;
             }

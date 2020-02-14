@@ -124,7 +124,15 @@
             return false;
 
         $(`[validator="submit"]`).prop("disabled", true);
-        grecaptcha.execute();
+
+        let env = $(e.target).closest(`[validator="submit"]`).attr("env");
+
+        if (env === "Production") {
+            grecaptcha.execute();
+        }
+        else {
+            validator_recaptcha("nhjsnbnby-edrjewrh");
+        }
     });
 
     $(document).on("keypress", function (e) {

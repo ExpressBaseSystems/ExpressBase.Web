@@ -11,9 +11,9 @@
     }
     if (ViewBag.Env == "Staging")
     {
-        home = "https://eb-test.xyz";
-        sociallink = "https://ss.eb-test.xyz";
-        signinLink = "https://myaccount.eb-test.xyz";
+        home = "https://eb-test.cloud";
+        sociallink = "https://ss.eb-test.cloud";
+        signinLink = "https://myaccount.eb-test.cloud";
     }
     if (ViewBag.Env == "Production")
     {
@@ -216,7 +216,7 @@
                              data-size="invisible">
                         </div>
                         <div class="form-group">
-                            <button validator="submit" id="logNow" class="btn signin-btn eb_blue">
+                            <button validator="submit" id="logNow" env="@ViewBag.Env" class="btn signin-btn eb_blue">
                                 Sign In
                             </button>
                         </div>

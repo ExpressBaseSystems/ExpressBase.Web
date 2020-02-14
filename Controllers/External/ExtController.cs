@@ -724,7 +724,9 @@ namespace ExpressBase.Web.Controllers
                 authresp.ErrorMessage = "Recaptcha error, try again";
             }
 
-            if (!data.Success)
+            Console.WriteLine("ENVIRONMENT-------->" + ViewBag.Env);
+
+            if (!data.Success && ViewBag.Env == "Production")
             {
                 authresp.AuthStatus = false;
                 if (data.ErrorCodes.Count <= 0)

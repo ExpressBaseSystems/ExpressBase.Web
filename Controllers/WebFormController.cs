@@ -19,6 +19,7 @@ using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Constants;
 using ExpressBase.Objects.Objects;
+using System.IO;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -429,5 +430,71 @@ namespace ExpressBase.Web.Controllers
                 return ViewBag.wc;
         }
 
-    }
+
+
+		//for ebblueprint (save bg img,svg)
+		public object SaveBluePrint(string svgtxtdata,string bpmeta, int bluprntid, string savBPobj)
+		{
+			SaveBluePrintRequest Svgreq = new SaveBluePrintRequest();
+			Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
+			var httpreq = this.HttpContext.Request.Form;
+			if (httpreq.Files.Count > 0)
+			{
+
+				var BgFile = httpreq.Files[0];
+				byte[] fileData = null;
+				using (var memoryStream = new MemoryStream())
+				{
+					BgFile.CopyTo(memoryStream);
+					memoryStream.Seek(0, SeekOrigin.Begin);
+					fileData = new byte[memoryStream.Length];
+					memoryStream.ReadAsync(fileData, 0, fileData.Length);
+					Svgreq.BgFile = fileData;
+					Svgreq.BgFileName = BgFile.FileName;
+				}
+			}
+			Svgreq.Txtsvg = svgtxtdata;
+			Svgreq.MetaBluePrint = bpmeta;
+			Svgreq.BluePrintID = bluprntid;
+			Svgreq.BP_FormData = objBP;
+
+
+			SaveBluePrintResponse BPres = this.ServiceClient.Post<SaveBluePrintResponse>(Svgreq);
+			return BPres;
+		}
+		public object RetriveBluePrint(int idno)
+		{
+			RetriveBluePrintResponse rsvg = this.ServiceClient.Post<RetriveBluePrintResponse>(new RetriveBluePrintRequest { Idno = idno });
+			return rsvg;
+
+		}
+
+		public object UpdateBluePrint_Dev(int bluprntid,string uptBPobj)
+		{
+			UpdateBluePrint_DevRequest UpReq = new UpdateBluePrint_DevRequest();
+			UpReq.BluePrintID = 0;
+			Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(uptBPobj);
+			var httpreq = this.HttpContext.Request.Form;
+			if (httpreq.Files.Count > 0)
+			{
+
+				var BgFile = httpreq.Files[0];
+				byte[] fileData = null;
+				using (var memoryStream = new MemoryStream())
+				{
+					BgFile.CopyTo(memoryStream);
+					memoryStream.Seek(0, SeekOrigin.Begin);
+					fileData = new byte[memoryStream.Length];
+					memoryStream.ReadAsync(fileData, 0, fileData.Length);
+					UpReq.BgFile = fileData;
+					UpReq.BgFileName = BgFile.FileName;
+				}
+			}
+			UpReq.BluePrintID = bluprntid;
+			UpReq.BP_FormData_Dict = objBP;
+
+			UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
+			return UpResp;
+		}
+	}
 }

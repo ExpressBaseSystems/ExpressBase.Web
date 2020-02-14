@@ -40,12 +40,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Console.WriteLine("Webform Render - View mode request identified.");
                     ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
-                    WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-                    if (wfd.FormData == null)
-                    {
-                        ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-                    }
-                    else if (ob[0].ValueTo > 0)
+                    if (ob[0].ValueTo > 0)
                     {
                         ViewBag.rowId = ob[0].ValueTo;
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
@@ -68,12 +63,20 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                ViewBag.formData = getRowdata(refId, 0, _locId);
+                ViewBag.formData = getRowdata(refId, 0, _locId);               
             }
 
             if (ViewBag.wc == TokenConstants.DC)
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
+            }
+            else
+            {
+                WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+                if (wfd.FormData == null)
+                {
+                    ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
+                }
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);

@@ -192,8 +192,8 @@ namespace ExpressBase.Web2
                 context.Response.Headers.Remove("X-Frame-Options");
                 if (env.IsStaging())
                 {
-                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.eb-test.xyz");
-                    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.xyz *.eb-test.xyz;");
+                    context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN *.eb-test.cloud");
+                    context.Response.Headers.Add("Content-Security-Policy", "frame-ancestors 'self' eb-test.cloud *.eb-test.cloud;");
                 }
                 if (env.IsProduction())
                     context.Response.Headers.Add("X-Frame-Options", "ALLOW-FROM SAMEDOMAIN");

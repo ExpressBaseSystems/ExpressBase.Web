@@ -294,6 +294,10 @@ namespace ExpressBase.Web.Controllers
 
                     try
                     {
+                        this.FileClient.BearerToken = response.BToken;
+                        this.FileClient.RefreshToken = response.RToken;
+                        this.FileClient.Headers.Add(CacheConstants.RTOKEN, response.RToken);
+
                         DownloadFileResponse dfs = this.FileClient.Get(new DownloadDpRequest
                         {
                             ImageInfo = new ImageMeta

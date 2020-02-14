@@ -217,6 +217,10 @@
         $el.attr("ebsid", ebsid);
         if (type !== "UserControl")
             this.updateControlUI(ebsid);
+        if (type == "BluePrint") {
+            let ctrlobjt = this.rootContainerObj.Controls.GetByName(ebsid);
+            var blueprintModaledt = new blueprintModalfn(ctrlobjt);
+        }
         this.PGobj.addToDD(this.rootContainerObj.Controls.GetByName(ebsid));
     };
 
@@ -356,7 +360,7 @@
                 else if (type === "SimpleSelect" || type === "BooleanSelect") {
                     $ctrl.find(".selectpicker").selectpicker();
                 }
-               
+
 
                 this.dropedCtrlInit($ctrl, type, ebsid);
                 if (sibling) {
@@ -376,10 +380,10 @@
 
                 }
                 else
-                if (type === "BluePrint") {
-                    var blueprintModal = new blueprintModalfn(ctrlObj);
+                    if (type === "BluePrint") {
+                        var blueprintModal = new blueprintModalfn(ctrlObj);
 
-                }
+                    }
 
                 $ctrl.focus();
                 ctrlObj.Label = ebsid;
@@ -591,7 +595,7 @@
 
     this.drake = new dragula(this.DraggableConts, {
         revertOnSpill: true,
-        copy: function (el, source) { return (source.className.includes('tool-sec-cont') || source.className.includes('Dt-Rdr-col-cont') ); },
+        copy: function (el, source) { return (source.className.includes('tool-sec-cont') || source.className.includes('Dt-Rdr-col-cont')); },
         copySortSource: true,
         moves: this.movesfn.bind(this),
         accepts: this.acceptFn.bind(this)

@@ -979,7 +979,7 @@
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let $tr = this.get$RowByRowId(rowid);
-        if ($tr.attr('is-initialised') === 'true') {
+        if (!(this.Mode.isEdit && $tr.attr('is-initialised') !== 'true')) {
             $.each(this.objectMODEL[rowid], function (i, Col) {
                 let $ctrl = $("#" + Col.EbSid_CtxId);
                 if (!this.isRequiredOK(Col)) {
@@ -1178,8 +1178,8 @@
     this.onRowPaintFn = function ($tr, action, event) {
         if ((this.ctrl.OnRowPaint && this.ctrl.OnRowPaint.Code && this.ctrl.OnRowPaint.Code.trim() !== '')) {
             let FnString = atob(this.ctrl.OnRowPaint.Code);
-            DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event};
-            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();            
+            DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event };
+            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();
         }
     };
 

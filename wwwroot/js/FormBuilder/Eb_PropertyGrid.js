@@ -829,9 +829,11 @@
     // fires when a prop row is focused To show help text
     this.rowFocus = function (e) {
         let $e = $(e.target);
-        let prop = $e.attr("name").slice(0, -2); let helpText = getObjByval(this.Metas, "name", prop).helpText;
+        let prop = $e.attr("name").slice(0, -2);
+        let helpText = getObjByval(this.Metas, "name", prop).helpText;
+        let alias = getObjByval(this.Metas, "name", prop).alias;
         if (helpText) {
-            let ht = prop + " : &nbsp;&nbsp;" + (($e.closest("tr").attr("tr-for") === "23") ? "" : helpText);
+            let ht = (alias || prop) + " : &nbsp;&nbsp;" + (($e.closest("tr").attr("tr-for") === "23") ? "" : helpText);
             $("#" + this.wraperId + "_HelpBox").html(ht);
         } else
             $("#" + this.wraperId + "_HelpBox").html("");

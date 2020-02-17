@@ -76,7 +76,7 @@
                 }
                 else if (this.pgSettings[indx].FileCategory == 0) {
                     //pdf viewer
-                    console, log("need pdf viewer");
+                    console.log("need pdf viewer");
                 }
             }
            

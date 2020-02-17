@@ -1103,10 +1103,11 @@ const WebFormRender = function (option) {
         this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn"]);
 
         if (this.isPartial === "True") {
-            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
-                $(".objectDashB-toolbar").find(".pd-0:first-child").children("button").remove();
+            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
+                $(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").remove();
+                $(".objectDashB-toolbar").find(".pd-0:first-child").children(".solution_logo_cont").remove();
                 $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
-                $("#Eb_com_menu").remove();
+                $("#quik_menu").remove();
             }
             this.headerObj.showElement(["webformclose"]);
         }

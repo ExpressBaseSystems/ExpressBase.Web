@@ -1,0 +1,142 @@
+﻿.BluprntModal {
+    background-color: #0000008f;
+}
+
+    .BluprntModal .modal-content {
+        background-color: #353435;
+    }
+
+    .BluprntModal .modal-header {
+        color: white;
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+
+    .BluprntModal .close {
+        color: white !important;
+    }
+    .BluprntModal .modal-footer {
+        padding-top: 2px;
+        padding-bottom: 2px;
+    }
+    .BluprntModal .modal-body {
+        height: calc(90vh - 30px);
+        padding-top: 4px;
+        padding-bottom: 4px;
+    }
+
+    .BluprntModal #svgContainer {
+        padding-top: 3px;
+        height: 100%;
+    }
+    .BluprntModal .svgcntnrBP_dev {
+        height: 100%;
+    }
+
+#svgContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+#svgContainer, #toolbar_divBP {
+    background-color: #4c4c4c6b;
+    border: 1px solid black;
+}
+
+#toolbar_divBP {
+    height: 100%;
+    padding: 10px 15px 10px 15px;
+    text-align: center;
+}
+
+    #toolbar_divBP .vertical-align_tlbr {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        vertical-align: middle;
+    }
+
+    #toolbar_divBP .bp_toolbarproperties {
+        padding: 10px 6px 10px 6px;
+        margin: 10px;
+        border: 1px solid black;
+    }
+
+        #toolbar_divBP .bp_toolbarproperties i {
+            color: #e6e6e6;
+            font-size: 18px;
+        }
+        #toolbar_divBP .bp_toolbarproperties:focus {
+            background-color: #4e4d4d;
+        }
+        #toolbar_divBP .bp_toolbarproperties:active {
+            background-color: #333333;
+        }
+#bpmeta_modal {
+  top: 20%;
+}
+
+#bpmeta_modal .modal-header {
+    padding: 2px;
+}
+    #bpmeta_modal .modal-footer {
+        padding: 3px;
+    }
+.bpdiv_retrive {
+    background-color: #353435;
+    height: 100%;
+}
+.toolbarBP_cls_usr{
+
+}
+.toolbarBP_cls_dev {
+
+}
+.svgcntnrBP_usr {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+
+.element_blink_slct {
+    animation-name: transcolor;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+.element_blink_edtmode {
+    animation-name: transclr_edtmode;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes transcolor {
+    from {
+        fill: #84829e99;
+    }
+
+    to {
+        fill: #c3bbc329;
+    }
+}
+
+
+@keyframes transclr_edtmode {
+    from {
+        fill: #da0f0f82;
+    }
+
+    to {
+        fill: #da0f0f30;
+    }
+}

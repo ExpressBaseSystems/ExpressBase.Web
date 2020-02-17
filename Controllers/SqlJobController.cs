@@ -153,9 +153,15 @@ namespace ExpressBase.Web.Controllers
         //run a job again
         public string RetryMaster(int masterId, string RefId, List<Param> Param)
         {
-            masterId = 187;
+            masterId = 188;
             RetryMasterResponse resp = this.ServiceClient.Post(new RetryMasterRequest { MasterId = masterId, RefId = RefId, GlobalParams = Param });
+            return resp.ResponseStatus.Message;
+        }
 
+        public string DeleteJobExecution(int masterId)
+        {
+            masterId = 189; 
+            DeleteJobExecutionResponse resp = this.ServiceClient.Post(new DeleteJobExecutionRequest {MasterId = masterId});
             return resp.ResponseStatus.Message;
         }
     }

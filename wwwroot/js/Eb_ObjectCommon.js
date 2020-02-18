@@ -156,7 +156,7 @@
                 }
                 $(`#versionNav [href='${target}']`).html("<i class='fa " + icon + "'  aria-hidden='true' ></i > v. " + this.Current_obj.VersionNumber);
             } else {
-                $(`#versionNav [href='${target}']`).html("<i class='fa fa-pencil' aria - hidden='true' ></i >" + ((this.Current_obj.DisplayName.length > 8) ? this.Current_obj.DisplayName.substring(0, 8) + "..." : this.Current_obj.DisplayName.length));
+                $(`#versionNav [href='${target}']`).html(" <i class='fa fa-pencil' aria-hidden='true' ></i > " + ((this.Current_obj.DisplayName.length > 8) ? this.Current_obj.DisplayName.substring(0, 8) + "..." : this.Current_obj.DisplayName.length));
             }
             //$("#versionNav li.active a").attr("data-verNum", this.Current_obj.VersionNumber);
             //$("#versionNav li.active a").text("v." + this.Current_obj.VersionNumber);
@@ -542,7 +542,7 @@
     };
 
     this.AfterCommit = function () {
-        this.ObjCollection[this.target].AfterCommit();
+        this.ObjCollection[this.target].AfterCommit(this.isversioned);
     };
 
     this.UpdateCreateVersionDD = function () {

@@ -261,20 +261,7 @@ const WebFormRender = function (option) {
                 let val = dataObj.Value;
                 ctrl.DataVals.Value = val;
             }
-        }
-
-        // DG = replace DG dataModel with  new one
-        $.each(editModeFormData, function (CtrlName, Data) {
-            if (CtrlName !== this.FormObj.Name) {
-                let DG = getObjByval(this.DGs, "Name", CtrlName);
-                if (!DG)
-                    return true;
-                let DGTblName = DG.TableName;
-                delete this.EditModeFormData[CtrlName];
-                this.EditModeFormData[DGTblName] = Data;
-                this.DataMODEL[DGTblName] = Data;
-            }
-        }.bind(this));
+        }      
 
     };
 
@@ -284,8 +271,7 @@ const WebFormRender = function (option) {
         console.log(_respObj);
         if (_respObj.Status === 200) {
             //this.modifyFormData4Import(_respObj);
-            this.EditModeFormData = _respObj.FormData.MultipleTables;
-            this.DataMODEL = this.EditModeFormData;
+            this.resetDataMODEL(_respObj);
 
             this.isEditModeCtrlsSet = false;
             this.setEditModeCtrls();
@@ -294,6 +280,29 @@ const WebFormRender = function (option) {
             console.error(_respObj.MessageInt);
         
     }.bind(this);
+
+    this.resetDataMODEL = function (_respObj) {
+        let editModeFormData = _respObj.FormData.MultipleTables;
+
+        // DG = replace DG dataModel with  new one
+        $.each(editModeFormData, function (tblName, Data) {
+            if (tblName !== this.FormObj.TableName) {
+                let DG = getObjByval(this.DGs, "TableName", tblName);
+                if (!DG)
+                    return true;
+                let DGTblName = DG.TableName;
+                delete this.EditModeFormData[tblName];
+                this.EditModeFormData[DGTblName] = Data;
+                this.DataMODEL[DGTblName] = Data;
+            }
+        }.bind(this));
+
+
+
+
+        //this.EditModeFormData = _respObj.FormData.MultipleTables;
+        //this.DataMODEL = this.EditModeFormData;
+    };
 
     //this.removeRowIds = function () {
 
@@ -1094,10 +1103,11 @@ const WebFormRender = function (option) {
         this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn"]);
 
         if (this.isPartial === "True") {
-            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("button").length > 0) {
-                $(".objectDashB-toolbar").find(".pd-0:first-child").children("button").remove();
+            if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
+                $(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").remove();
+                $(".objectDashB-toolbar").find(".pd-0:first-child").children(".solution_logo_cont").remove();
                 $(".objectDashB-toolbar").find(".pd-0:nth-child(2)").find(".form-group").remove();
-                $("#Eb_com_menu").remove();
+                $("#quik_menu").remove();
             }
             this.headerObj.showElement(["webformclose"]);
         }

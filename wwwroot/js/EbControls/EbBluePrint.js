@@ -1,14 +1,17 @@
 ﻿//in clear and on new load code duplication
-
+////called from 1)FormBuilder.JS -> onDropFn 2)FormBuilder ->initCtrl //for editmode dev side
 var blueprintModalfn = function (ctrlObj) {
     this.init2 = function () {
         $("#edit_buleprintbtn").on("click", this.modalBluePrintfn.bind(this));
     }
     this.ContID = ctrlObj.EbSid_CtxId;
-
+    var drawBP;
     this.modalBluePrintfn = function () {
+        var Bpmdlshow = 0;
+        if (!($(`#BP_Modal_${this.ContID}`) && $(`#BP_Modal_${this.ContID}`).length)) {
 
-        var modalHTML = ` 
+            var modalHTML = ` 
+        <div class='BPmodaldiv'>
         <div class='modal fade BluprntModal' id='BP_Modal_${this.ContID}'  role='dialog'>
             <div class='modal-dialog' style=" width: 90%; margin-top: 10px;margin-bottom: 10px;">
 
@@ -17,99 +20,78 @@ var blueprintModalfn = function (ctrlObj) {
                         <button type='button' class='close' data-dismiss='modal'>&times;</button>
                         <h4 class='modal-title'>SVG creator</h4>
                     </div>
-                    <div class='modal-body' style="height:calc(90vh - 70px);">
-                         <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1'>
+                    <div class='modal-body'>
+                         <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
                            <div class='vertical-align_tlbr' >
                                 
-                                    <div  id='addPolygon_BP' class='bp_toolbarproperties ' title="Add polygon">
+                                    <div  id='addPolygon_BP' class='bp_toolbarproperties '  tabindex='1' title="Mark">
                                         <i class="fa fa-object-ungroup "></i>   
                                     </div>
 
-                                    <div  id='bg_image_BP' class='bp_toolbarproperties 'title="Image upload">
+                                    <div  id='bg_image_BP' class='bp_toolbarproperties ' tabindex='1' title="Image upload">
                                         <label for="bg_image">
                                            <i class='fa fa-picture-o'></i>
                                         </label>
                                         <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
                                     </div> 
 
-                                    <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
+                                    <div id='removecircle_BP' class='bp_toolbarproperties ' tabindex='1' title="Remove circles">
                                         <i class='fa fa-minus-circle'></i>
                                     </div>
 
-                                     <div id='resetsvg_BP' class='bp_toolbarproperties 'title="Reset position">
+                                     <div id='resetsvg_BP' class='bp_toolbarproperties ' tabindex='1' title="Reset position">
                                         <i class='fa fa-refresh'></i>
                                     </div>
 
-                                    <div id='clearsvg_BP' class='bp_toolbarproperties 'title="Clear layers">
+                                    <div id='clearsvg_BP' class='bp_toolbarproperties ' tabindex='1' title="Clear layers">
                                         <i class='fa fa-eraser '></i>
                                     </div>
 
-                                    <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Clear layers">
+                                    <div id='zoomToggle_BP' class='bp_toolbarproperties ' tabindex='1' title="Zoom">
                                         <i class='fa fa-search  '></i>
                                     </div>
-            
-     
-
                             </div>
                         </div>
-                        <div class="col-md-11 col-lg-11 col-sm-11">
+                        <div class="col-md-11 col-lg-11 col-sm-11 svgcntnrBP_dev">
 
                             <div id="svgContainer"></div>
                         </div>
                     </div>
-                    <div class='modal-footer'>
-                        <button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>
+                    <div class='modal-footer' id= BP_Modal_${ this.ContID}_footer>
+                        <button type='button' id='savesvg' class='btn btn-default' data-dismiss='modal'>OK</button>
                     </div>
                 </div>
 
             </div>
+            </div>  
         </div>`;
 
 
-        $("body").append(modalHTML);
-        $('#BP_Modal_' + this.ContID).modal();
 
-        var kj = drawBluePrintfn(ctrlObj);
-        //        var modalHTML = ` 
-        //<div class="fup" id="BP_Modal_${this.ContID}">
-        //    <div class="imgup-bg">
-        //        <div class="imgup-Cont">
-        //            <div class="modal-header">
-        //                <button type="button" class="close" onclick="$('#BP_Modal_${this.ContID} .imgup-bg').hide(500);" >&times;</button>
-        //                <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Multi Language Key Settings.</h4> </div>
-        //            </div>
-        //            <div class="modal-body" style="height: 420px;">
-        //                 <div id="buttondiv" class="col-md-2 col-lg-2 col-sm-2">
-        //                    <input type="file" id="bg_image" accept="image/jpeg,image/png,image/jpg,svg" />
-        //                    <button id="add">Add Polygon Points</button>
-        //                    <button id="savesvg">Save</button><br />
-        //                    <input type="text" id="idnotxt" />
-        //                    <button id="relodsvg">reload</button><br />
-        //                    <button id="clearsvg">Clear svg</button><br />
-        //                    <button id="removecircle">remove circle</button>
-        //                    <button id="resetsvg">Reset</button>
+            $("body").append(modalHTML);
+            Bpmdlshow = 1;
+        }
 
-        //                    <button class="zoomToggle">Toggle zoom</button>
-        //                </div>
-        //                <div class="col-md-10 col-lg-10 col-sm-10">
-
-        //                    <div id="svgContainer" style="background-color:transparent; border:1px solid blue"></div>
-        //                </div>
+        $('#BP_Modal_' + this.ContID).modal({
+            backdrop: 'static',
+            keyboard: false
+        });
 
 
 
-        //            </div>
-        //            <div class="modal-footer">
-        //                <div class="modal-footer-body">
+        if (Bpmdlshow) {
 
-        //                    <button type="button" name="CXE_OK" id="${this.ContID}_close" class="btn"  onclick="$('#BP_Modal_${this.ContID} .imgup-bg').hide(500);">OK</button>
 
-        //                    <button type="button" class="btn btn-default" onclick="$('#BP_Modal_${this.ContID} .imgup-bg').hide(500);">Cancel</button>
-        //                </div>
-        //            </div>
-        //        </div>
-        //    </div>
-        //</div>`;
+            if (ctrlObj.BlueprintId) {
+                let ftrhtml = `<button type='button' id='updatesvgdtls_dev' class='btn btn-default' data-dismiss='modal'>OK</button>`
+                $(`#BP_Modal_${this.ContID}_footer`).html(ftrhtml);
+                drawBP = new drawBluePrintfn(ctrlObj);
+                drawBP.redrawSVGelements_dev();
+            }
+            else {
+                drawBP = new drawBluePrintfn(ctrlObj);
+            }
+        }
 
 
     }
@@ -118,30 +100,38 @@ var blueprintModalfn = function (ctrlObj) {
 
     this.init2();
 }
-
+////called from 1)EbBlueprint ->blueprintModalfn 2)InitFormControls.js ->BluePrint
 var drawBluePrintfn = function (ctrlObj) {
 
     this.init = function () {
-        $("svg").on("click", 'polygon', this.detect.bind(this));
+        $("#svgID").on("click", 'polygon', this.AddSvgMeta.bind(this));
 
         $("#addPolygon_BP").on("click", this.Addpolygon.bind(this));
         $("#clearsvg_BP").on("click", this.clearSvg.bind(this));
-        $("#savesvg").on("click", this.saveSvg.bind(this));
-        $("#relodsvg").on("click", this.relodSvg.bind(this));
+        $("#savesvg").on("click", this.saveBluePrint.bind(this));
+        $("#updatesvgdtls_dev").on("click", this.updateBluePrint_dev.bind(this));
+        //$("#relodsvg").on("click", this.relodSvg.bind(this));
         $("#removecircle_BP").on("click", this.removeCircle.bind(this));
         $("#bg_image_BP").on("change", this.setBackground.bind(this));
         $("#resetsvg_BP").on("click", this.resetSvg.bind(this));
 
-    }
 
+    }
+    var bpretrive_data;
+    var chkbox = 0;
     isAddPoints = 0;
     var polyNo = 100;
+    var plgnID;
     this.imageUrl;
+    var selectedPoly_lst = [];
     var points = [], g;
     var dragging = false, drawing = false, startPoint;
+    var bluprnt_meta = {};
+    var ContID = ctrlObj.EbSid_CtxId;
+    var storeSetval;
 
     var svg = d3.select('#svgContainer').append('svg')
-        .attr('height', 576)
+        .attr('height', 540)
         .attr('width', 720)
         .attr('id', 'svgID')
         .style('border', ' 1px solid blue')
@@ -171,7 +161,7 @@ var drawBluePrintfn = function (ctrlObj) {
 
     //reset svg to initial position
     this.resetSvg = function () {
-       
+
         svg_g.transition().call(zoom_handler.transform, d3.zoomIdentity);
         //svg_g = d3.select('svg')
         //    .append('g')
@@ -195,7 +185,6 @@ var drawBluePrintfn = function (ctrlObj) {
 
 
     var dragger = d3.drag()
-        .on("start", dragstarted)
         .on("drag", handleDrag)
         .on("end", dragended);
 
@@ -240,7 +229,7 @@ var drawBluePrintfn = function (ctrlObj) {
     function closePolygon() {
         svg.select('g.drawPoly').remove();
         var g = svg_g.append('g');
-        var polyId = "ebpoly" + polyNo++;
+        var polyId = ContID + "poly" + polyNo++;
         g.append('polygon')
             .attr('id', polyId)
             .attr('points', points)
@@ -265,9 +254,9 @@ var drawBluePrintfn = function (ctrlObj) {
         isAddPoints = 0;
     }
 
-    function dragstarted(d) {
-        d3.select(this).raise().classed("active", true);
-    }
+    //function dragstarted(d) {
+    //    d3.select(this).raise().classed("active", true);
+    //}
 
     function dragged(d) {
         d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
@@ -281,15 +270,15 @@ var drawBluePrintfn = function (ctrlObj) {
 
     svg.on('mousemove', function () {
         if (!drawing) return;
-        //var g = d3.select('g.drawPoly');
-        //g.select('line').remove();
-        //var line = g.append('line')
-        //    .attr('x1', startPoint[0])
-        //    .attr('y1', startPoint[1])
-        //    .attr('x2', d3.mouse(this)[0] + 2)
-        //    .attr('y2', d3.mouse(this)[1])
-        //    .attr('stroke', '#53DBF3')
-        //    .attr('stroke-width', 1);
+        var g = d3.select('g.drawPoly');
+        g.select('line').remove();
+        var line = g.append('line')
+            .attr('x1', startPoint[0])
+            .attr('y1', startPoint[1])
+            .attr('x2', d3.mouse(this)[0] + 2)
+            .attr('y2', d3.mouse(this)[1])
+            .attr('stroke', '#53DBF3')
+            .attr('stroke-width', 1);
     })
     function handleDrag() {
         if (drawing) return;
@@ -315,64 +304,105 @@ var drawBluePrintfn = function (ctrlObj) {
     }
 
 
-    this.saveSvg = function () {
 
-        var tempSvg = $('#svgOuter_g').clone();
-        var data = new FormData();
-        var savsvg = d3.select(tempSvg[0]);
+    this.saveBluePrint = function () {
+        let savBPobj = {};
+        let tempSvg = $('#svgOuter_g').clone();
+        let data = new FormData();
+        let savsvg = d3.select(tempSvg[0]);
         savsvg.select("#ebSvgBGimg").remove();
 
+        data.append("bluprntid", ctrlObj.BlueprintId);
 
-        var txtsvg = savsvg._groups[0][0].innerHTML;
+        let txtsvg = savsvg._groups[0][0].innerHTML;
         data.append("svgtxtdata", txtsvg);
         data.append("bgimg", this.imageUrl);
+        data.append("bpmeta", JSON.stringify(bluprnt_meta));
+        savBPobj.svgtext = txtsvg;
+        savBPobj.bp_meta = JSON.stringify(bluprnt_meta);
+        data.append("savBPobj", JSON.stringify(savBPobj));
         $.ajax({
-            url: "../Vrgs_test/StoreSVG",
+            url: "../WebForm/SaveBluePrint",
             type: 'POST',
             data: data,
+            contentType: "application/json",
+            dataType: "json",
             processData: false,
             contentType: false,
-            //data: { svgtxtdata: txtsvg,  bgimg: bgimgfile},
-            success: function () {
-                svg.selectAll("*").remove();
+            success: function (bpRes) {
+                alert(bpRes.bprntid)
+                ctrlObj.BlueprintId = bpRes.bprntid;
+                //svg.selectAll("*").remove();
             }
         });
     }
-    this.relodSvg = function () {
-        var vl = $("#idnotxt").val();
 
-        $.ajax({
-            url: "../Vrgs_test/RetriveSVG",
-            type: 'POST',
-            cache: false,
-            data: { idno: vl },
-            success: function (svgdata) {
-                svg.select("#svgOuter_g").remove();
-                svg_g = d3.select('svg')
-                    .append('g')
-                    .attr('id', 'svgOuter_g');
-                var svgimg = svg_g.insert('g')
-                    .attr('id', 'ebSvgBGimg')
-                    .append('image')
-                    .attr('xlink:href', svgdata.fileDataURL)
-                    .attr("height", '100%')
-                    .attr("width", '100%');
-
-                d3.select("#svgOuter_g").html(d3.select("#svgOuter_g").html() + svgdata.svgPolyData);
-                //$('svg').html(svgdata.svgPolyData);
-                var crcl = svg.selectAll("circle");
-                dragger(crcl);
-                //$('body').append(`<img src="${svgdata.fileDataURL}" cntype="image/jpeg">`)
-
-            }
-        });
+    this.updateBluePrint_dev = function () {
+        alert("");
+        if (ctrlObj.BlueprintId) {
+            let uptBPobj = {};
+            let tempSvg = $('#svgOuter_g').clone();
+            let data = new FormData();
+            let savsvg = d3.select(tempSvg[0]);
+            savsvg.select("#ebSvgBGimg").remove();
+            let txtsvg = savsvg._groups[0][0].innerHTML;
+            data.append("bluprntid", ctrlObj.BlueprintId);
+            data.append("bgimg", this.imageUrl);
+            uptBPobj.svgtext = txtsvg;
+            uptBPobj.bp_meta = JSON.stringify(bluprnt_meta);
+            data.append("uptBPobj", JSON.stringify(uptBPobj));
+            $.ajax({
+                url: "../WebForm/UpdateBluePrint_Dev",
+                type: 'POST',
+                data: data,
+                contentType: "application/json",
+                dataType: "json",
+                processData: false,
+                contentType: false,
+                success: function (bpRes) {
+                    alert(bpRes.bprntid)
+                    ctrlObj.BlueprintId = bpRes.bprntid;
+                    //svg.selectAll("*").remove();
+                }
+            });
+        }
     }
+    //this.relodSvg = function () {
+    //    var vl = $("#idnotxt").val();
+
+    //    $.ajax({
+    //        url: "../Vrgs_test/RetriveSVG",
+    //        type: 'POST',
+    //        cache: false,
+    //        data: { idno: vl },
+    //        success: function (svgdata) {
+    //            svg.select("#svgOuter_g").remove();
+    //            svg_g = d3.select('svg')
+    //                .append('g')
+    //                .attr('id', 'svgOuter_g');
+    //            var svgimg = svg_g.insert('g')
+    //                .attr('id', 'ebSvgBGimg')
+    //                .append('image')
+    //                .attr('xlink:href', svgdata.fileDataURL)
+    //                .attr("height", '100%')
+    //                .attr("width", '100%');
+
+    //            d3.select("#svgOuter_g").html(d3.select("#svgOuter_g").html() + svgdata.svgPolyData);
+    //            //$('svg').html(svgdata.svgPolyData);
+    //            var crcl = svg.selectAll("circle");
+    //            dragger(crcl);
+    //            //$('body').append(`<img src="${svgdata.fileDataURL}" cntype="image/jpeg">`)
+
+    //        }
+    //    });
+    //}
 
     this.clearSvg = function (e) {
-        svg.select("#svgOuter_g").remove();
-        svg_g = d3.select('svg')
-            .append('g')
-            .attr('id', 'svgOuter_g');
+        //svg.select("#svgOuter_g").remove();
+        //svg_g = d3.select('svg')
+        //    .append('g')
+        //    .attr('id', 'svgOuter_g');
+        svg.selectAll('#svgOuter_g > *').remove();
     }
     this.removeCircle = function (e) {
         svg.selectAll("circle").remove();
@@ -381,29 +411,239 @@ var drawBluePrintfn = function (ctrlObj) {
 
 
     //detect svg element id on click
-    this.detect = function (e) {
-        var kz = e.target.id;
-        alert(kz);
+    this.AddSvgMeta = function (e) {
+        if (!drawing) {
+            var bp_metamdl = 0;
+            var bdyhtml = "";
+            var ftrhtml = "";
+            if (!($(`#bpmeta_modal`) && $(`#bpmeta_modal`).length)) {
+                var metacltr = `  <div class='modal fade' id='bpmeta_modal' role='dialog'>
+                            <div class='modal-dialog'>
+                              <div class='modal-content'>
+                                <div class='modal-header'>
+                                  <h4 class='modal-title'>Meta</h4>
+                                </div>
+                                <div class='modal-body'>
+                                  <input type='text' id='bpMetakey' >
+                                 <input type='text' id='bpMetavalue' >
+                                </div>
+                                <div class='modal-footer'>
+                                  <button type='button' id='add_bpmeta' class='btn btn-default' >Add</button>
+                                  <button type='button' id='close_bpmeta_modal' class='btn btn-close btn-default' data-dismiss='modal'>Close</button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>`
+
+                // $('#BP_Modal_' + this.ContID).append(metacltr);
+                $('body').append(metacltr);
+                bp_metamdl = 1;
+            }
+            ////for user side Blueprint drawing
+            if (ebcontext.user.wc == 'uc') {
+                var obj = JSON.parse(bpretrive_data.bpMeta);
+                plgnID = $(e.target).closest('polygon').attr('id');
+                var objval = obj[`${plgnID}`];
+                $("#bpMetakey").val(Object.keys(objval)[0]).prop('disabled', true);
+                $("#bpMetavalue").val(objval[Object.keys(objval)[0]]).prop('disabled', true);
+                if (chkbox == 0) {
+                    bdyhtml = `<br><input type='checkbox' id='bppoly_slct' value='1'>select<br>`;
+                    ftrhtml = `<button type='button' id='ok_bpmeta' class='btn btn-default' >Ok</button>
+                       <button type='button' id='close_bpmeta_modal' class='btn btn-default' data-dismiss='modal'>Close</button>`;
+                    $('#bpmeta_modal').find('.modal-body').append(bdyhtml);
+                    $('#bpmeta_modal').find('.modal-footer').html(ftrhtml);
+                }
+                $("#bppoly_slct").prop("checked", false);
+                if (selectedPoly_lst.includes(plgnID))
+                    $("#bppoly_slct").prop("checked", true);
+                chkbox = 1;
+
+            }
+            else
+            ////for Dev side Blueprint drawing
+            {
+                ////for Dev side - edit mode
+                if (ctrlObj.BlueprintId) {
+                    var obj = JSON.parse(bpretrive_data.bpMeta);
+                    plgnID = $(e.target).closest('polygon').attr('id');
+                    if (obj.hasOwnProperty(plgnID)) {
+                        var objval = obj[`${plgnID}`];
+                        $("#bpMetakey").val(Object.keys(objval)[0]);
+                        $("#bpMetavalue").val(objval[Object.keys(objval)[0]]);
+                    }
+                }
+                else
+                    ////for Dev side - new mode
+                $("#bpMetakey").val("");
+                $("#bpMetavalue").val("");
+                plgnID = $(e.target).closest('polygon').attr('id');
+                if (bluprnt_meta.hasOwnProperty(plgnID)) {
+                    var objval = bluprnt_meta[`${plgnID}`];
+                    $("#bpMetakey").val(Object.keys(objval)[0]);
+                    $("#bpMetavalue").val(objval[Object.keys(objval)[0]]);
+                }
+
+            }
+
+
+            $('#bpmeta_modal').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+
+            $("#add_bpmeta").on("click", this.Add_Bpmetafn.bind(this));
+            $("#ok_bpmeta").on("click", this.getMarkedPosfn.bind(this));
+        }
     }.bind(this);
 
+    //add metadata of polygon to list
+    this.Add_Bpmetafn = function (e) {
+        valObj = {};
+        var metakey = $("#bpMetakey").val();
+        var metavalue = $("#bpMetavalue").val();
+        if (((metakey.length) && (metavalue.length))) {
+            //  bluprnt_meta[plgnID] = { metakey, metavalue };
+            valObj[`${metakey}`] = metavalue;
+            bluprnt_meta[plgnID] = valObj;
+        }
+        $("#bpMetakey").val("");
+        $("#bpMetavalue").val("");
+        $("#close_bpmeta_modal").click();
+        // $('#bpmeta_modal').modal('toggle');
+    }
 
-    this.setBackground = function (e) {
-        svg.select("#svgOuter_g").remove();
-        svg_g = d3.select('svg')
-            .append('g')
-            .attr('id', 'svgOuter_g');
-        this.imageUrl = e.target.files[0];
-        var src1 = URL.createObjectURL(this.imageUrl);
-        var svgimg = svg_g.insert('g')
-            .attr('id', 'ebSvgBGimg')
-            .append('image')
-            .attr('xlink:href', src1)
-            .attr("height", '100%')
-            .attr("width", '100%');
+    this.getMarkedPosfn = function (e) {
+        if ($("#bppoly_slct").prop('checked') == true) {
+            d3.select(`#${plgnID}`).classed('element_blink_slct', true);
+            if (!selectedPoly_lst.includes(plgnID))
+                selectedPoly_lst.push(plgnID);
+            for (let i = 0; i < ctrlObj._onChangeFunctions.length; i++)
+                ctrlObj._onChangeFunctions[i]();
+        }
+        else {
+            d3.select(`#${plgnID}`).classed('element_blink_slct', false);
+            d3.select(`#${plgnID}`).classed('element_blink_edtmode', false);
+            if (selectedPoly_lst.includes(plgnID))
+                selectedPoly_lst.pop(plgnID);
+            for (let i = 0; i < ctrlObj._onChangeFunctions.length; i++)
+                ctrlObj._onChangeFunctions[i]();
+        }
 
+        $("#close_bpmeta_modal").click();
+        //$('#bpmeta_modal').modal('toggle');
     }
 
 
+    this.setBackground = function (e) {
+        if (e.target.files[0]) {
+            svg.selectAll('#svgOuter_g > *').remove();
+            this.imageUrl = e.target.files[0];
+            var src1 = URL.createObjectURL(this.imageUrl);
+            var svgimg = svg_g.insert('g')
+                .attr('id', 'ebSvgBGimg')
+                .append('image')
+                .attr('xlink:href', src1)
+                .attr("height", '100%')
+                .attr("width", '100%');
+        }
+    }
+
+
+    this.redrawSVGelements_usr = function () {
+        let BpID = ctrlObj.BlueprintId;
+        storeSetval = "";
+        $.ajax({
+            url: "../WebForm/RetriveBluePrint",
+            type: 'POST',
+            cache: false,
+            data: { idno: BpID },
+            success: function (svgdata) {
+                svg_g = d3.select('svg').select('#svgOuter_g');
+                //.append('g');
+                //.attr('id', 'svgOuter_g');
+                var svgimg = svg_g.insert('g')
+                    .attr('id', 'ebSvgBGimg')
+                    .append('image')
+                    .attr('xlink:href', svgdata.fileDataURL)
+                    .attr("height", '100%')
+                    .attr("width", '100%');
+
+                d3.select("#svgOuter_g").html(d3.select("#svgOuter_g").html() + svgdata.svgPolyData);
+
+                var crcl = svg_g.selectAll("circle").remove();
+                bpretrive_data = svgdata;
+                if (storeSetval.length>0) {
+                    var arr = JSON.parse(storeSetval);
+                    $.each(arr, function (index, value) {
+                        d3.select(`#${value}`).classed('element_blink_edtmode', true);
+                        selectedPoly_lst.push(value);
+                    });
+                    for (let i = 0; i < ctrlObj._onChangeFunctions.length; i++)
+                        ctrlObj._onChangeFunctions[i]();
+                }
+            }
+
+        });
+
+    }
+
+    this.redrawSVGelements_dev = function () {
+        let BpID = ctrlObj.BlueprintId;
+        $.ajax({
+            url: "../WebForm/RetriveBluePrint",
+            type: 'POST',
+            cache: false,
+            data: { idno: BpID },
+            success: function (svgdata) {
+                svg_g = d3.select('svg').select('#svgOuter_g');
+                //.append('g');
+                //.attr('id', 'svgOuter_g');
+                let svgimg = svg_g.insert('g')
+                    .attr('id', 'ebSvgBGimg')
+                    .append('image')
+                    .attr('xlink:href', svgdata.fileDataURL)
+                    .attr("height", '100%')
+                    .attr("width", '100%');
+
+                d3.select("#svgOuter_g").html(d3.select("#svgOuter_g").html() + svgdata.svgPolyData);
+
+                let crcl = svg_g.selectAll("circle");
+                dragger(crcl);
+                bpretrive_data = svgdata;
+                polyNo += d3.selectAll('polygon')._groups[0].length;
+                bluprnt_meta = JSON.parse(svgdata.bpMeta);
+
+            }
+
+        });
+
+    }
+
+    this.getvalueSelected = function () {
+        return JSON.stringify(selectedPoly_lst);
+    }
+
+    this.setvalueSelected = function (p1) {
+
+        var arr = JSON.parse(p1);
+        $.each(arr, function (index, value) {
+            d3.select(`#${value}`).classed('element_blink_edtmode', true);
+            selectedPoly_lst.push(value);
+        });
+        for (let i = 0; i < ctrlObj._onChangeFunctions.length; i++)
+            ctrlObj._onChangeFunctions[i]();
+        storeSetval = p1;
+    }
+
+    this.clear_ctrlAftrsave = function (p2) {
+
+        $.each(selectedPoly_lst, function (key, value) {
+            d3.select(`#${value}`).classed('element_blink_slct', false);
+        });
+
+        selectedPoly_lst = [];
+
+    }
 
 
     this.init();

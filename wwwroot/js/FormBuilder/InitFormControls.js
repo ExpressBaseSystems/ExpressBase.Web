@@ -774,6 +774,10 @@ var InitControls = function (option) {
         if (ctrl.AutoSuggestion === true) {
             $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
         }
+        if (ctrl.TextTransform === 1)
+            $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+        else if (ctrl.TextTransform === 2)
+            $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
     };
 
     this.initNumeric = function (ctrl, $input) {

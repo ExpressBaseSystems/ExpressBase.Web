@@ -170,7 +170,7 @@ namespace ExpressBase.Web.Controllers
                     { "emailId", anon_email },
                     { "anonymous", "true" },
                     { "appid", appid },
-                    { "user_ip", user_ip },
+                    { "user_ip", this.RequestSourceIp },
                     { "user_browser", user_browser },
                     { "user_name", user_name },
                     { "city", IpApi.City},

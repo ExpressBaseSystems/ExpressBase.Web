@@ -11,6 +11,7 @@
 .grid-stack {
     min-height: 500px;
     background-color: transparent;
+    margin-top: 15px;
 }
 
     .grid-stack.grid-stack-rtl {
@@ -56,9 +57,9 @@
             z-index: 0 !important;
             overflow-x: unset;
             overflow-y: unset;
-            border: solid 1px #eaeaea;
-            background-color: #fff;
             border-radius: 4px;
+            background-color:white;
+            border: solid 1px rgb(204, 204, 204);
         }
 
         .grid-stack > .grid-stack-item > .ui-resizable-handle {
@@ -250,11 +251,12 @@
 
 .db-tbl-wraper {
     height: calc(100% - 30px);
+    display: flex;
 }
 
 
 #dashbord-view {
-    margin-right: -15px;
+    margin-right: -14px;
     height: 72.2vh;
     overflow-x: hidden;
     overflow-y: auto;
@@ -276,6 +278,7 @@
 
     #dashbord-view .CanvasDiv {
         height: 100% !important;
+        width: 100%;
     }
 
     #dashbord-view .chart-div {
@@ -543,32 +546,7 @@
         margin-left: 70%;
     }
 
-#Eb-obj-sidebar-cont {
-    width: 99%;
-    height: 640px;
-    overflow: auto;
-}
 
-
-    #Eb-obj-sidebar-cont .sidebar-head {
-        padding: 5px 0px 0px 10px;
-        font-size: 16px;
-        font-weight: 500;
-    }
-
-    #Eb-obj-sidebar-cont .sidebar-content {
-    }
-
-    #Eb-obj-sidebar-cont .db-draggable-obj {
-        font-size: 12px;
-        padding: 3px 0px 3px 7px;
-        color: #3c3b3b;
-        cursor: all-scroll;
-        border: dotted 1px #bebaba;
-        margin: 5px;
-        margin-left: 25px;
-        margin-right: 15px;
-    }
 
 .db-sidebar-icon {
     padding: 4px
@@ -721,24 +699,150 @@
 
 
 
-
+/*  ======  ToolBox Style Dashboard ==========*/
 
 .ToolBox-div {
     top: 0px;
     left: 0px;
-    width: 350px;
+    width: 35vh;
     position: fixed;
     display: block;
     margin-top: 37px;
     height: 100%;
     z-index: 9;
     background-color: white;
+    border-right: solid 1px #888;
 }
 
     .ToolBox-div .nav > li > a {
         font-size: 13px;
         padding: 5px 10px 3px 10px;
     }
+
+.tool-sec-cont .tool {
+    padding: 8px 10px;
+    font-size: 0.8em;
+    margin: 2px;
+    cursor: move;
+    width: calc( 50% - 6px);
+    display: inline-block;
+    border-radius: 2px;
+    border: solid 1px rgba(240, 240, 240, 0);
+    border-bottom: solid 1px rgba(240, 240, 240, 0.6);
+    /* box-shadow: 0px 1px 0px 0px rgba(185, 185, 185, 0.15); */
+    transition-duration: 0.05s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .tool-sec-cont .tool:hover {
+        border: dashed 1px #555555;
+    }
+
+.tool-sec-cont .tool-icon-cont {
+    width: 26px;
+    display: inline-block;
+    text-align: center;
+    margin-right: 0 !important;
+    margin-left: -6px;
+}
+
+.tool-sec-cont .db-draggable-obj {
+    padding: 8px 10px;
+    font-size: 0.8em;
+    margin: 2px;
+    cursor: move;
+    width: calc( 50% - 6px);
+    display: inline-block;
+    border-radius: 2px;
+    border: solid 1px rgba(240, 240, 240, 0);
+    border-bottom: solid 1px rgba(240, 240, 240, 0.6);
+    box-shadow: 0px 1px 0px 0px rgba(185, 185, 185, 0.15);
+    transition-duration: 0.05s;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+    .tool-sec-cont .db-draggable-obj:hover {
+        border: dashed 1px #555555;
+    }
+
+    .tool-sec-cont .db-draggable-obj .obj-icon {
+        width: 26px;
+        display: inline-block;
+        text-align: center;
+        margin-right: 0 !important;
+        margin-left: -6px;
+    }
+
+#toolbox-dashboard .tool_item_head {
+    padding: 5px 5px;
+    border-bottom: none;
+    background: #fff;
+    font-size: 11.3px;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.12), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.1px;
+}
+#toolbox-dashboard .tool_item_inner_head {
+    padding: 5px 5px;
+    border-bottom: none;
+    background: #fff;
+    font-size: 11.3px;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.12), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.1px;
+    margin-left: -15px;
+}
+
+/*#Eb-obj-sidebar-cont .sidebar-head {
+    padding: 5px 0px 0px 10px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#Eb-obj-sidebar-cont .sidebar-content {
+}
+
+#Eb-obj-sidebar-cont .db-draggable-obj {
+    font-size: 12px;
+    padding: 3px 0px 3px 7px;
+    color: #3c3b3b;
+    cursor: all-scroll;
+    border: dotted 1px #bebaba;
+    margin: 5px;
+    margin-left: 25px;
+    margin-right: 15px;
+}*/
+#Eb-obj-sidebar-cont {
+    width: 99%;
+    height: 640px;
+    overflow: auto;
+}
+
+    #Eb-obj-sidebar-cont::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    /* Track */
+    #Eb-obj-sidebar-cont::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    #Eb-obj-sidebar-cont::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+        /* Handle on hover */
+        #Eb-obj-sidebar-cont::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
 
 .db-user-filter {
     top: 0px;
@@ -794,7 +898,7 @@ body .stickBtn {
     right: 0px;
     bottom: 0;
     width: auto;
-    z-index: 0 !important;
+    z-index: 9 !important;
     overflow-x: unset;
     overflow-y: unset;
     border-radius: 4px;
@@ -865,15 +969,16 @@ body .stickBtn {
 .tile_dt_cont {
     display: flex;
     flex-direction: row;
-    padding: 3px;
+    padding: 3px 3px;
 }
 
 .gaugeChart {
-    border: solid 1px rgb(204, 204, 204);
     width: 100%;
     height: 100%;
-    border: solid 1px #ffff;
+    max-width: 360px;
+    max-height: 360px;
 }
+
     .gaugeChart .gauge_canvas {
         width: 100% !important;
         height: 100% !important;
@@ -916,13 +1021,6 @@ body .stickBtn {
     flex-flow: row;
 }
 
-.col-div-blk {
-    border: solid 1px rgba(0,0,0,0.11);
-    width: 88%;
-    padding: 3px;
-    margin: 5px 10px;
-}
-
 .eb-ctrl-label {
     position: relative;
     font-size: 11.5px;
@@ -941,20 +1039,31 @@ body .stickBtn {
 /*component container*/
 .component_cont {
     height: 20%;
-    width: 99%;
+    width: 97%;
     position: fixed;
     top: 80%;
     left: .5%;
+    margin-left: 1%;
 }
 
     .component_cont .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-        color: #555;
-        height: 30px;
         cursor: default;
-        background-color: #fff;
         border: 1px solid #ddd;
         padding: 5px 15px;
-        border-bottom-color: transparent;
+        background: #316396;
+        color: white;
+        padding: 2px 30px 2px 15px;
+        font-size: 14px;
+        text-align: center;
+        -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+        clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    }
+
+    .component_cont .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a > i {
+        font-size: 13px;
+        margin-top: 3px;
+        margin-right: 0;
+        cursor: pointer;
     }
 
 #component_cont {
@@ -977,7 +1086,7 @@ body .stickBtn {
     background: #fff;
 }
 
-
+/*============= Gauges ==========*/
 .gauge {
     position: absolute;
     top: 50%;
@@ -1003,6 +1112,61 @@ body .stickBtn {
 .gaugeChart .label_value {
     position: absolute;
     padding: 0px;
-    display:flex;
-    flex-flow:row;
+    display: flex;
+    flex-flow: row;
 }
+
+.progressGauge {
+    width: 100% !important;
+    height: 100% !important;
+}
+/*Dashboard label*/
+.label-cont {
+    margin-left: 2.6vh;
+    border: solid 1px;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background-image: linear-gradient(to left, rgb(123, 206, 255), rgb(112, 147, 255));
+    border: 0px;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .label-cont .db-static-label {
+        padding-top: 2vh;
+        text-align: center;
+        font-size: 20px;
+        position: relative;
+    }
+
+    .label-cont .db-label-desc {
+        padding: 4px 0px 0px 15px;
+        font-size: 16px;
+        position: relative;
+    }
+
+    .label-cont .db-dynamic-label {
+        font-size: 30px;
+        position: relative;
+        line-height: 20px;
+        text-align: center;
+    }
+
+    .label-cont:first-child {
+        margin-left: 0px;
+    }
+
+    .label-cont:last-child {
+        margin-right: 0px;
+    }
+
+    .label-cont .dash-static-label {
+        padding: 1px;
+    }
+
+    .label-cont .dash-dynamic-label {
+        padding: 1px;
+    }

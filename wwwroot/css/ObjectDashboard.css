@@ -128,7 +128,17 @@
     z-index: 10;
     padding: 2px 2px 2px 2px;
     box-shadow: 0 0 5px 0 rgba(0,0,0,0.35);
+    display: flex;
+    flex-flow: row;
 }
+
+    .objectDashB-toolbar .toolbar-brd-Container {
+
+    }
+
+    .objectDashB-toolbar .toolbar-buttons-Container {
+        margin-left:auto;
+    }
 
 .app_div {
     padding-right: 0px;
@@ -213,7 +223,7 @@
         right: 4px;
         left: unset;
         padding: 0;
-        border-radius:6px;
+        border-radius: 6px;
     }
 
 .drp_ul {
@@ -239,17 +249,19 @@
     color: #333;
     align-items: center;
 }
+
 .drp_item:hover {
     background: #f1f1f1;
     border-radius: 6px;
 }
-    .drp_item:hover a{
-        text-decoration:none;
+
+    .drp_item:hover a {
+        text-decoration: none;
     }
 
-    .drp_item a i {
-        margin-right: 3rem;
-    }
+.drp_item a i {
+    margin-right: 3rem;
+}
 
 .drp_item .user_info {
     padding: 5px 5px 5px 10px;
@@ -266,7 +278,7 @@
     }
 
 .proimage_inner {
-    width:50px;
+    width: 50px;
 }
 
 .obj_dash_proimage {
@@ -279,7 +291,7 @@
     position: relative;
 }
 
-    /*.notification_menu:after {
+/*.notification_menu:after {
         content: "10";
         position: absolute;
         font-size: 9px;
@@ -417,7 +429,7 @@ li:hover {
 
 .txt-area:empty:not(:focus):before {
     content: attr(placeholder);
-    color:gray;
+    color: gray;
 }
 
 .imagesec {
@@ -432,6 +444,7 @@ li:hover {
 .text-sec {
     height: 150px;
 }
+
 .commit-btn {
     background-color: #316396;
     padding: 5px 10px;
@@ -661,21 +674,20 @@ input:checked + .proslider:before {
     padding: 0 10px;
     font-family: Montserrat;
     font-weight: 500;
-    cursor:pointer;
+    cursor: pointer;
 }
-    .LocInfCr:hover, .LocInfCr:active, .LocInfCr:focus{
+
+    .LocInfCr:hover, .LocInfCr:active, .LocInfCr:focus {
         background: #3487da;
         color: white;
     }
 
 /*medial queries for mobile*/
 @media (min-width: 20px) and (max-width: 450px) {
-   
 }
 
 /*medial queries for tablets*/
 @media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (-webkit-min-device-pixel-ratio: 1) {
-   
 }
 
 
@@ -727,6 +739,3 @@ input:checked + .proslider:before {
     font-family: roboto;
     font-weight: 300;
 }
-
-
-

@@ -206,7 +206,9 @@
         let firstSymbol = "";
         $.each(this.VisibleDataCols, function (i, obj) {
             let symbol = "";
-            if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Count)
+            if (obj.ConditionalFormating.$values.length > 0)
+                symbol = "";
+            else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Count)
                 symbol = "&lowast;";
             else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Sum)
                 symbol = "&sum;";

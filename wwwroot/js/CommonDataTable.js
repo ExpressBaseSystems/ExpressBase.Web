@@ -746,7 +746,7 @@
             }
             else {
                 if (this.Source === "Calendar") {
-                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12'i>rt";
+                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
                 else {

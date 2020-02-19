@@ -69,13 +69,12 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/get_data",
+                url: "/api/objects_by_app",
                 type: "GET",
                 cache: false,
                 data: {
-                    "refid": "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3532-2662-3532",
-                    "limit": 1,
-                    "offset": 0
+                    "appid": 170,
+                    "locid": 1,
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());

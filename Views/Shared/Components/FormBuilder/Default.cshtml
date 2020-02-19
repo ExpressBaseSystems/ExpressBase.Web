@@ -7,7 +7,7 @@
 @*<script src="~/js/FormBuilder/contextMenu.min.js"></script>*@
 <link rel="stylesheet" href="/css/FormBuilder/contextMenu.css">
 @*varghese*@
-<link rel="stylesheet" href="~/css/SupportTicket/EbBluePrintCss.css">
+<link rel="stylesheet" href="~/css/EbControls/EbBluePrintCss.css">
 <script src="~/js/EbControls/EbBluePrint.js" type="text/javascript"></script>
 @*varghese*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.js"></script>
@@ -65,7 +65,8 @@
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
 
-
+    if (!ebcontext.Roles)
+        ebcontext.Roles = @Html.Raw(ViewBag.RolesList);
     let BuilderType = '@builderType_S';
     let formBuilderObj = null;
     let objid =$("#objid").val();

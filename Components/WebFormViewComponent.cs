@@ -103,8 +103,15 @@ namespace ExpressBase.Web.Components
 					else if (control is EbDGStringColumn)
 					{
 						(control as EbDGStringColumn).InitFromDataBase(this.ServiceClient);
-					}
+					}                    
 
+                }
+                foreach (EbControl control in WebForm_L.Controls.FlattenAllEbControls())
+                {
+                    if (control is EbApproval)
+                    {
+                        (control as EbApproval).InitRoles(this.ServiceClient, WebForm.UserObj);
+                    }
                 }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();

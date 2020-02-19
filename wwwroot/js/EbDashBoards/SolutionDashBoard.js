@@ -11,20 +11,20 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     var preventContextMenu = 0;
     var postDataGoogleDrive = "";
     var Imageurl = {
-        "PGSQL": "<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height:50px' />",
+        "PGSQL": "<img class='img-responsive' src='../images/postgres.png' align='middle' style='height:50px' />",
         "MSSQL": "<img class='img-responsive' src='../images/sqlserver.png' align='middle' style='height: 50px;' />",
         "MYSQL": "<img class='img-responsive' src='../images/mysql.png' align='middle' style='height:35px' />",
         "ORACLE": "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />",
-        "MongoDB": "<img class='img-responsive' src='../images/MongodB.png' align='middle' style='height:40px' />",
+        "MongoDB": "<img class='img-responsive' src='../images/mongodb.png' align='middle' style='height:40px' />",
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/Expert Texting.png' align='middle' style='height:26px' />",
-        "Twilio": "<img class='img-responsive' src='../images/Twilio.png' align='middle' style='height: 38px;' />",
+        "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
-        "SendGrid": "<img class='img- responsive image-vender' src='../images/SendGrid.png' style='width: 100 %' />",
-        "GoogleDrive": "<img class='img- responsive image-vender' src='../images/Google-Drive-Logo.png' style='width:68%' />",
+        "SendGrid": "<img class='img- responsive image-vender' src='../images/sendgrid.png' style='width: 100 %' />",
+        "GoogleDrive": "<img class='img- responsive image-vender' src='../images/google-drive-logo.png' style='width:68%' />",
         "AWSS3": "<img class='img- responsive image-vender' src='../images/amazon-s3.png' style='width:100%' />",
-        "DropBox": "<img class='img- responsive image-vender' src='../images/Dropbox-logo.png' style='width:100%' />",
+        "DropBox": "<img class='img- responsive image-vender' src='../images/dropbox-logo.png' style='width:100%' />",
         "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />",
         "Facebook": "<img class='img- responsive image-vender' src='../images/fb_logo.png' style='width:46%' />",
         "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"

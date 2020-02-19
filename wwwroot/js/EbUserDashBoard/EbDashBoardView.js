@@ -286,6 +286,16 @@
     }
 
 
+    this.labelstyleApply = function (tileId) {
+        $(`[data-id="${tileId}"]`).parent().css("background", "transparent");
+        $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
+        $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
+        $(`#${tileId} .db-title`).empty();
+        $(`#${tileId}`).addClass("user-control-tile-opt");
+        $(`#${tileId} .i-opt-obj`).hide();
+        $(`#${tileId} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+    }
+
     this.GaugeDrop = function (component, column, controlname, type) {
         if (component !== "" && column !== "") {
             let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;

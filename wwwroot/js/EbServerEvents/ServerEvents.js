@@ -42,17 +42,7 @@
     };
 
     this.onNotifyMsg = function (m, e) {
-        var html = ``;
-        var x = JSON.parse(m);
-        for (var i = 0; i < x.length; i++) {
-            html = html + `
-                        <li class="drp_item" >
-                              <h4>`+ x[i].title + `</h4> 
-                                <p> `+ x[i].link +`</p>
-                            </li>
-                    `;
-        }
-        $('.notifications').append(html);
+        //console.log("Notification");
         this.onNotification(m, e);
     }
 

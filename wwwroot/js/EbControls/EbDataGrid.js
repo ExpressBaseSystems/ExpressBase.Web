@@ -202,6 +202,7 @@
 
     this.initRowCtrls = function (rowId, IsNoValExp) {
         let CurRowCtrls = this.objectMODEL[rowId];
+        this.changeEditFlagInRowCtrls(true, rowId);
 
         //// initialise all controls in added row
         for (let i = 0; i < CurRowCtrls.length; i++) {

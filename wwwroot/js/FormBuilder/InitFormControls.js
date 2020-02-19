@@ -975,6 +975,10 @@ var InitControls = function (option) {
                                         <i class='fa fa-eraser '></i>
                                     </div>
 
+                                    <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
+                                        <i class='fa fa-stop-circle-o '></i>
+                                    </div>
+
                                     <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
                                         <i class='fa fa-search  '></i>
                                     </div>
@@ -1012,3 +1016,18 @@ var InitControls = function (option) {
 
     }
 };
+
+function createValidator(element) {
+    return function () {
+        //if (!isPrintable(event))
+        //    return;
+        var min = parseInt(element.getAttribute("min")) || 0;
+        var max = parseInt(element.getAttribute("max")) || 0;
+
+        var value = parseInt(element.value) || min;
+        element.value = value; // make sure we got an int
+
+        if (value < min && min !== 0) element.value = min;
+        if (value > max && max !== 0) element.value = max;
+    };
+}

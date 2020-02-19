@@ -51,7 +51,7 @@
         }
         if(this.Wc === "dc")
             commonO.Current_obj = this.EbObject;
-        if (Pname === "Name") {
+        if (pname === "Name") {
             $("#objname").text(obj.DisplayName);
             console.log(obj);
         }

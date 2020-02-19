@@ -298,6 +298,8 @@
     }
 
     let header = new EbHeader();
+    header.insertButton(`<button id="webformclone" class='btn' title='Copy this form to a new form' style='display: none;'><i class="fa fa-files-o" aria-hidden="true"></i></button>`);
+
     header.insertButton(`<button id="webformclose" class='btn' title='Close' style='display: none;'><i class="fa fa-times" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformdelete" class='btn' title='Delete' style='display: none;'><i class="fa fa-trash" aria-hidden="true"></i></button>`);
     header.insertButton(`<button id="webformcancel" class='btn' title='Cancel' style='display: none;'><i class="fa fa-ban" aria-hidden="true"></i></button>`);
@@ -333,6 +335,12 @@
     let _ispartial = "@ViewBag.IsPartial";
     let _formPermissions = @Html.Raw(ViewBag.FormPermissions);
 
+    let isFromClone = getUrlParameter("mode") === "clone";
+    let cloneRowId;
+    if (isFromClone) {
+        cloneRowId = getUrlParameter("rowid");
+    }
+
     //to store refids of uploaded files via all fileuploader ctrls
     let uploadedFileRefList = {};
     let DynamicTabPane = function() { console.log('Not Implemented');};
@@ -344,6 +352,7 @@
 </script>
 @Html.JsCode(
     @<script>
+        debugger;
          const renderer = new WebFormRender({
              formObj: _formObj,
              headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose" },
@@ -356,7 +365,8 @@
              env: _env,
              isPartial: _ispartial,
              formPermissions: _formPermissions,
-             headerObj: header
+             headerObj: header,
+             cloneRowId: cloneRowId
          });
 
          dateDisplayNone();

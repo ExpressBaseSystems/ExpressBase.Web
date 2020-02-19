@@ -975,6 +975,10 @@ var InitControls = function (option) {
                                         <i class='fa fa-eraser '></i>
                                     </div>
 
+                                    <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
+                                        <i class='fa fa-stop-circle-o '></i>
+                                    </div>
+
                                     <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
                                         <i class='fa fa-search  '></i>
                                     </div>

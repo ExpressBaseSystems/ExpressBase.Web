@@ -1057,16 +1057,35 @@ function copyObj(destObj, srcObj) {
     return srcObj;
 }
 
-function GetFontCss(obj) {
-    let font = [];
-    font.push(`font-size:${obj.Size}px ;`);
-    font.push(`color:${obj.color} ;`);
-    font.push(`font-family:${obj.FontName} ;`);
-    if (font.Underline) { font.push(`text-decoration: underline ;`); }
-    if (font.Strikethrough) { font.push(`text-decoration: line-through ;`); }
-    if (font.Caps) { font.push(`text-transform: uppercase;`); }
-    if (font.Style === 1) { font.push(`font: bold;`); }
-    if (font.Style === 2) { font.push(`font: italic;`); }
-    if (font.Style === 3) { font.push(`font: italic bold;`); }
-    return (font.join().replace(/\,/g, ''));
+function GetFontCss(obj, jqueryObj) {
+    if (obj) {
+        let font = [];
+        let fontobj = {};
+        font.push(`font-size:${obj.Size}px ;`);
+        font.push(`color:${obj.color} ;`);
+        font.push(`font-family:${obj.FontName} ;`);
+        if (font.Underline) { font.push(`text-decoration: underline ;`); }
+        if (font.Strikethrough) { font.push(`text-decoration: line-through ;`); }
+        if (font.Caps) { font.push(`text-transform: uppercase;`); }
+        if (font.Style === 1) { font.push(`font: bold;`); }
+        if (font.Style === 2) { font.push(`font: italic;`); }
+        if (font.Style === 3) { font.push(`font: italic bold;`); }
+
+        if (jqueryObj !== undefined) {
+            jqueryObj.css(`font-size`, `${obj.Size}px`);
+            jqueryObj.css(`color`, `${obj.color}`);
+            jqueryObj.css(`font-family`, `${obj.FontName}`);
+            if (font.Underline) { jqueryObj.css(`text-decoration`, `underline`); }
+            if (font.Strikethrough) { jqueryObj.css(`text-decoration`, `line-through`); }
+            if (font.Caps) { jqueryObj.css(`text-transform`, `uppercase`); }
+            if (font.Style === 0) { jqueryObj.css(`font`, `normal`); }
+            if (font.Style === 1) { jqueryObj.css(`font`, `bold`); }
+            if (font.Style === 2) { jqueryObj.css(`font`, `italic`); }
+            if (font.Style === 3) { jqueryObj.css(`font`, ` italic bold`); }
+        }
+        else {
+            return (font.join().replace(/\,/g, ''));
+        }
+}
+ 
 }

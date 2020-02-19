@@ -69,17 +69,17 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/auth",
+                url: "/api/objects_by_app",
                 type: "GET",
                 cache: false,
                 data: {
-                    "username": "binivarghese@gmail.com",
-                    "password": "9426c88284e04851ca670684c310d44f",
+                    "appid": 170,
+                    "locid": 1,
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("bToken", getTok());
+                    xhr.setRequestHeader("rToken", getrToken());
                 }
-                //beforeSend: function (xhr) {
-                //    xhr.setRequestHeader("bToken", getTok());
-                //    xhr.setRequestHeader("rToken", getrToken());
-                //}
             }).done(function (data) {
 
             });

@@ -1,6 +1,5 @@
 ﻿
 
-const arrayColumn = (arr, n) => arr.map(x => x[n]);
 
 //refid, ver_num, type, dsobj, cur_status, tabNum, ssurl
 var EbDataTable = function (Option) {
@@ -3948,18 +3947,6 @@ var ConditionalFormat = function () {
     this.getModal();
 };
 
-function returnOperator(op) {
-    if (op === "x*")
-        return "startwith";
-    else if (op === "*x")
-        return "endswith";
-    else if (op === "*x*")
-        return "contains";
-    else if (op === "=")
-        return "=";
-    else
-        return op;
-}
 
 function csv(gdata) {
     //gdata = ["201607:58179.28","201608:66329.35","201609:67591.27","201610:61900.93","201611:38628.72","201612:48536.31","201701:25256.74","201702:0"];
@@ -4029,35 +4016,6 @@ $.fn.setCursorPosition = function (pos) {
         }
     });
     return this;
-};
-
-function splitval(val) {
-    return val.split(/\|\s*/);
-}
-
-function extractLast(term) {
-    return splitval(term).pop();
-}
-
-if (!String.prototype.splice) {
-    String.prototype.splice = function (start, delCount, newSubStr) {
-        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
-    };
-};
-
-Array.prototype.max = function () {
-    return Math.max.apply(null, this);
-};
-
-Array.prototype.min = function () {
-    return Math.min.apply(null, this);
-};
-
-var displayFilter = function (col, oper, val, Loper) {
-    this.name = col;
-    this.operator = oper;
-    this.value = val;
-    this.logicOp = Loper;
 };
 
 function formatDate(date) {

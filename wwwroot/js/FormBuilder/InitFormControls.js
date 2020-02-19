@@ -774,6 +774,10 @@ var InitControls = function (option) {
         if (ctrl.AutoSuggestion === true) {
             $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
         }
+        if (ctrl.TextTransform === 1)
+            $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+        else if (ctrl.TextTransform === 2)
+            $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
     };
 
     this.initNumeric = function (ctrl, $input) {
@@ -1012,3 +1016,18 @@ var InitControls = function (option) {
 
     }
 };
+
+function createValidator(element) {
+    return function () {
+        //if (!isPrintable(event))
+        //    return;
+        var min = parseInt(element.getAttribute("min")) || 0;
+        var max = parseInt(element.getAttribute("max")) || 0;
+
+        var value = parseInt(element.value) || min;
+        element.value = value; // make sure we got an int
+
+        if (value < min && min !== 0) element.value = min;
+        if (value > max && max !== 0) element.value = max;
+    };
+}

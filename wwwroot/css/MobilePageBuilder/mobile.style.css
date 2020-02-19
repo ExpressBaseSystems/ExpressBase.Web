@@ -287,15 +287,17 @@
     display: flex;
     flex-flow: column;
 }
+
     .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container {
         display: flex;
         background: white;
         border: 1px solid #ccc;
     }
+
         .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container .list_item {
             min-height: 50px;
             padding: 5px;
-            width:100%;
+            width: 100%;
         }
 
             .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container .list_item .eb_tablelayout_table {
@@ -303,8 +305,9 @@
             }
 
     .eb_mob_vis_container .eb_mob_container_inner .vis-table-container {
-        margin-bottom:15px;
+        margin-bottom: 15px;
     }
+
     .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container {
         min-height: 100px;
         background: white;
@@ -313,14 +316,15 @@
         flex-flow: row wrap;
         overflow-y: auto;
     }
+
         .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container .data_column {
             background: #316396;
             color: white;
             padding: 5px;
             border-radius: 4px;
             font-size: 12px;
-            margin:5px;
-            width:auto;
+            margin: 5px;
+            width: auto;
         }
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {
@@ -336,22 +340,41 @@
         .eb_mob_dashboard_container:focus .eb_mob_container_inner {
             border-color: #316396;
         }
+
 .mob_dash_control {
     display: flex;
     width: 100%;
     background: white;
     padding: 5px;
     box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
-    border-radius:4px;
+    border-radius: 4px;
 }
-.mob_dash_control .eb_dash_ctrlhtml {
-    display:flex;
-    width:100%;
-}
-    .mob_dash_control .eb_dash_ctrlhtml table {
+
+    .mob_dash_control .eb_dash_ctrlhtml {
+        display: flex;
         width: 100%;
     }
-        .mob_dash_control .eb_dash_ctrlhtml table th {
-            height: 20px;
-            border: 1px solid #ccc;
+
+        .mob_dash_control .eb_dash_ctrlhtml table {
+            width: 100%;
+        }
+
+            .mob_dash_control .eb_dash_ctrlhtml table th {
+                height: 20px;
+                border: 1px solid #ccc;
+            }
+
+/*pdf container*/
+.eb_mob_pdf_container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+    .eb_mob_pdf_container:focus {
+        outline: none;
+    }
+
+        .eb_mob_pdf_container:focus .eb_mob_container_inner {
+            border-color: #316396;
         }

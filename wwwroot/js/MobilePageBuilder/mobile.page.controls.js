@@ -5,13 +5,40 @@
         let id = "Tab" + this.Root.Conf.TabNum + "_TableLayout" + CtrlCounters["MobileTableLayoutCounter"]++;
         var obj = new EbObjects.EbMobileTableLayout(id);
         this.Root.Procs[id] = obj;
-        $(`#${o.EbSid} .eb_mob_container_inner`).append(obj.$Control.outerHTML());
+        $(`#${o.EbSid} .eb_mob_container_inner .vis-table-container`).append(obj.$Control.outerHTML());
+
+        if (this.Root.Mode === "edit") {
+            $.extend(obj, this.Root.EditObj.Container.DataLayout);
+        }
+
         $(`#${obj.EbSid} .eb_mob_tablelayout_inner`).append(this.getTableHtml(obj));
+        this.makeFilterColsDropable(o);
         this.makeTdDropable(o);
         this.makeResizable(o);
-        this.setListPrev(o);
         if (this.Root.Mode === "edit" && this.Root.EditObj !== null)
             this.renderVisOnEdit(obj);
+    };
+
+    this.makeFilterColsDropable = function (container) {
+        $(`#${container.EbSid} .vis-filter-container`).droppable({
+            accept: ".draggable_column",
+            hoverClass: "drop-hover-td",
+            drop: function (event,ui) {
+                let dragged = $(ui.draggable);
+                let id = "Tab" + this.Root.Conf.TabNum + "DataColumn" + CtrlCounters["MobileDataColumnCounter"]++;
+                var obj = new EbObjects.EbMobileDataColumn(id);
+
+                obj.Type = dragged.attr("DbType");
+                obj.ColumnName = dragged.attr("ColName");
+                obj.ColumnIndex = dragged.attr("index");
+                obj.TableIndex = dragged.attr("tableIndex");
+
+                this.Root.Procs[id] = obj;
+                $(event.target).append(obj.$Control.outerHTML());
+                this.Root.RefreshControl(obj);
+                $("#" + obj.EbSid).off("focus");
+            }.bind(this)
+        });
     };
 
     this.renderVisOnEdit = function (o) {
@@ -19,7 +46,23 @@
         for (let i = 0; i < cellcollection.length; i++) {
             this.renderCellControl(o, cellcollection[i]);
         }
+
+        let filters = this.Root.EditObj.Container.Filters.$values;
+        for (let i = 0; i < filters.length; i++) {
+            this.renderFilter(filters[i]);
+        }
+
         this.refreshList();
+    };
+
+    this.renderFilter = function (filterCol) {//render filter cols on edit
+        let id = "Tab" + this.Root.Conf.TabNum + "DataColumn" + CtrlCounters["MobileDataColumnCounter"]++;
+        var obj = new EbObjects.EbMobileDataColumn(id);
+        $.extend(obj, filterCol);
+        this.Root.Procs[id] = obj;
+        $(".mob_container .vis-filter-container").append(obj.$Control.outerHTML());
+        this.Root.RefreshControl(obj);
+        $("#" + obj.EbSid).off("focus");
     };
 
     this.renderCellControl = function (eb_table, cell) {
@@ -51,17 +94,9 @@
         });
     };
 
-    this.setListPrev = function (o) {
-        $(`#${o.EbSid} .eb_mob_container_inner`).append(this.getListPrevHtml());
-        this.refreshList();
-    };
-
     this.refreshList = function () {
-        $(`div[eb-type="EbMobileVisualization"] .eb_mob_listprevwraper .list_view`).empty();
         let html = $(`div[eb-type="EbMobileVisualization"] [eb-type="EbMobileTableLayout"]`).html();
-        for (let i = 0; i < 5; i++) {
-            $(`div[eb-type="EbMobileVisualization"] .eb_mob_listprevwraper .list_view`).append(`<div class="list_item">${html}</div>`);
-        }
+        $(`div[eb-type="EbMobileVisualization"] .vis-preview-container`).html(`<div class="list_item">${html}</div>`);
     };
 
     this.onDropColumn = function (event, ui) {
@@ -79,7 +114,7 @@
         this.Root.RefreshControl(obj);
         this.refreshList();
         $(`#${obj.EbSid}`).off("focus").on("focus", this.Root.elementOnFocus.bind(this.Root));
-    }
+    };
 
     this.getListHtml = function () {
         let html = [];
@@ -106,17 +141,6 @@
             html.push(`</tr>`);
         }
         html.push(`</table>`);
-        return html.join("");
-    };
-
-    this.getListPrevHtml = function (o) {
-        let html = [];
-        html.push(`<div class='eb_mob_listprevwraper'>
-                        <label>Preview</label>
-                        <div class="eb_mob_listprevwraper_inner">
-                            <div class="list_view"></div>
-                        </div>
-                </div>`);
         return html.join("");
     };
 
@@ -212,8 +236,25 @@ function MobileMenu(option) {
         }
     };
 
+    this.disableMenuItem = function (key, opt) {
+        let flag = opt.$trigger.data('cutDisabled');
+        let ebtype = opt.$trigger.attr("eb-type");
+
+        if (key === "delete") {
+            if (ebtype === "EbMobileTableLayout" && opt.$trigger.closest(".mob_container").hasClass("eb_mob_vis_container")) {
+                flag = !opt.$trigger.data('cutDisabled');
+            }
+        }
+        return flag;
+    };
+
     this.options = {
-        "delete": { name: "Delete", icon: "delete", callback: this.contextMenudelete.bind(this) }
+        "delete": {
+            name: "Delete",
+            icon: "delete",
+            callback: this.contextMenudelete.bind(this),
+            disabled: this.disableMenuItem.bind(this)
+        }
     };
 
     this.ContextLinks = {

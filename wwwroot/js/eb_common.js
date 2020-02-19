@@ -814,24 +814,42 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
-        let FnString = `
-let __this = form.__getCtrlByPath(this.__path);
-if (__this.DataVals !== undefined) {
-    let v = __this.getValueFromDOM();
-    let d = __this.getDisplayMemberFromDOM();
-    if (__this.ObjType === 'Numeric')
-        v = parseFloat(v);
+//        let FnString = `
+//let __this = form.__getCtrlByPath(this.__path);
+//if (__this.DataVals !== undefined) {
+//    let v = __this.getValueFromDOM();
+//    let d = __this.getDisplayMemberFromDOM();
+//    if (__this.ObjType === 'Numeric')
+//        v = parseFloat(v);
+//debugger;
+//    if (__this.__isEditing) {
+//        __this.curRowDataVals.Value = v;
+//        __this.curRowDataVals.D = d;
+//    }
+//    else {
+//        __this.DataVals.Value = v;
+//        __this.DataVals.D = d;
+//    }
+//}`;
+        let OnChangeFn = function (form, user, event) {
+            let __this = form.__getCtrlByPath(this.__path);
+            if (__this.DataVals !== undefined) {
+                let v = __this.getValueFromDOM();
+                let d = __this.getDisplayMemberFromDOM();
+                if (__this.ObjType === 'Numeric')
+                    v = parseFloat(v);
+                if (__this.__isEditing) {
+                    __this.curRowDataVals.Value = v;
+                    __this.curRowDataVals.D = d;
+                }
+                else {
+                    __this.DataVals.Value = v;
+                    __this.DataVals.D = d;
+                }
+            }
+        }.bind(col, this.formObject, this.__userObject);
 
-    if (__this.__isEditing) {
-        __this.curRowDataVals.Value = v;
-        __this.curRowDataVals.D = d;
-    }
-    else {
-        __this.DataVals.Value = v;
-        __this.DataVals.D = d;
-    }
-}`;
-        let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+        //let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
         col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
     }.bind(this));
@@ -1046,4 +1064,40 @@ function getEbFormatedPSRows(ctrl) {
         }
     }
     return columnVals;
+}
+
+function copyObj(destObj, srcObj) {
+    Object.keys(destObj).forEach(function (key) { delete destObj[key]; });
+    let key;
+    for (key in destObj, srcObj) {
+        srcObj[key] = srcObj[key]; // copies each property to the objCopy object
+    }
+    return srcObj;
+}
+
+function GetFontCss(obj) {
+    let font = [];
+    font.push(`font-size:${obj.Size}px ;`);
+    font.push(`color:${obj.color} ;`);
+    font.push(`font-family:${obj.FontName} ;`);
+    if (font.Underline) { font.push(`text-decoration: underline ;`); }
+    if (font.Strikethrough) { font.push(`text-decoration: line-through ;`); }
+    if (font.Caps) { font.push(`text-transform: uppercase;`); }
+    if (font.Style === 1) { font.push(`font: bold;`); }
+    if (font.Style === 2) { font.push(`font: italic;`); }
+    if (font.Style === 3) { font.push(`font: italic bold;`); }
+    return (font.join().replace(/\,/g, ''));
+}
+
+function blink(el, delay = 1000) {
+    if (el.jquery) {
+
+        $e = $(el);
+        $e.addClass("blink");
+        setTimeout(function () {
+            $e.removeClass("blink");
+        }, delay);
+    }
+    else
+        blink($(el), delay);
 }

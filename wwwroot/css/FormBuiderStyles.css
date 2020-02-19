@@ -1065,6 +1065,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
     display: inline-block;
     margin: 1px 0;
+}
+
+[isrendermode=true] .eb-ctrl-label {
     z-index: -1;
 }
 

@@ -320,6 +320,8 @@ namespace ExpressBase.Web.Controllers
                 }
 
                 ViewBag.UserControlHtml = string.Concat(HtmlConstants.TOOL_HTML.Replace("@id@", "toolb_user_ctrls").Replace("@label@", "User Controls"), UserControlsHtml, "</div>");
+                if (type.Equals(EbObjectTypes.WebForm))
+                    ViewBag.roles = JsonConvert.SerializeObject(result.Roles);
 
                 if (dsobj is EbWebForm)
                 {

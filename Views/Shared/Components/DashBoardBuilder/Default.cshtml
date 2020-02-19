@@ -40,6 +40,9 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbGaugeConfig.js" asp-append-version=@bApnd></script>
+
+<script src="~/js/EbGauges/gauge.js"></script>
 
 <script>
      @Html.Raw(ViewBag.Meta);
@@ -51,8 +54,14 @@
 </script>
 <div class="container-fluid" style="background: transparent;">
     <div class="row" style="background: transparent;">
-        <div class="col-sm-12" style="background: transparent; width: 99% ;margin-top: 15px;">
+        <div class="col-sm-12" style="background: transparent; width: 99% ;margin-top: 15px;padding: 0px;">
             <div id="dashbord-view" class="drop-target">
+                <div class="gauge">
+                    <canvas id="canvas-preview"></canvas>
+                    <div id="minVal">0</div>
+                    <div id="maxVal">300</div>
+                    <div id="preview-textfield">0%</div>
+                </div>
                 <div class="grid-stack" id="grid-cont"></div>
             </div>
             <div class="component_cont">
@@ -61,8 +70,6 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane fade in active component_tab" id="component_cont">
-
-
                     </div>
                 </div>
                 <div id="component_columns_cont"> </div>
@@ -72,7 +79,7 @@
     </div>
     <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
 </div>
-
+<div  id="modal-gauge"></div>
 <script type="text/javascript">
 
         if (@ViewBag.tabnum === 0) {

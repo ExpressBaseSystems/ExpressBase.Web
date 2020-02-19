@@ -30,7 +30,8 @@
 
 <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbSignaturePad.css" asp-append-version=@bApnd />
 @*amal*@
-
+@*varghese*@
+<link rel="stylesheet" href="~/css/EbControls/EbBluePrintCss.css">
 
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
 @*jith*@
@@ -70,6 +71,11 @@
 @*amal*@
 <script type="text/javascript" src="~/js/EbControls/EbSignaturePad.js"></script>
 @*amal*@
+
+@*varghese*@
+<script src="~/js/EbControls/EbBluePrint.js" type="text/javascript"></script>
+@*varghese*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.js"></script>
 
 @{
 
@@ -277,9 +283,8 @@
                 else {
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#aa0000' });
                 }
-                setTimeout(function () {
-                    $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
-                }, 1000);
+                $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "#WebForm-cont" } });
+                $("#iFramePdfModal").modal("show");
             }
         }
         catch (e) {

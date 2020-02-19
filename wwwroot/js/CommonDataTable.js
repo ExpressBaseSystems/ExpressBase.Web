@@ -397,6 +397,7 @@
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
             this.EbObject.RowHeight = this.RowHeight;
         }
+        this.getNotvisibleColumns();
         this.initCompleteflag = false;
         this.extraCol = [];
         this.check4Customcolumn();
@@ -440,6 +441,11 @@
 
         }
         this.Init();
+    };
+
+    this.getNotvisibleColumns = function () {
+        if (this.EbObject.NotVisibleColumns.$values.length === 0)
+            this.EbObject.NotVisibleColumns.$values = this.EbObject.Columns.$values.filter((obj) => !obj.bVisible);
     };
 
     this.Do4EbdataTable = function () {
@@ -751,12 +757,15 @@
             }
         }
         else {
-            o.dom = "<'pagination-wrapper'liBp>rt";
+            if (this.Source === "EbDataTable")
+                o.dom = "<'pagination-wrapper'liBp>rt";
+            else
+                o.dom = "<'pagination-wrapper'lip>rt";
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
                 if (this.IsTree ) {
-                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12'i>rt";
+                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
                 else {
@@ -1010,15 +1019,16 @@
                 //$.each(this.columnSearch, function (i, search) {
                 search = this.columnSearch[i];
                 var o = new displayFilter();
-                o.name = search.Column;
+                let colObj = getObjByval(this.EbObject.Columns.$values, "name", search.Column);
+                o.name = colObj.sTitle;
                 o.operator = search.Operator;
-                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column });
+                var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column; });
                 if (searchobj.length === 1) {
                     if (search.Value.toString().includes("|")) {
                         $.each(search.Value.split("|"), function (j, val) {
                             if (val.trim() !== "") {
                                 var o = new displayFilter();
-                                o.name = search.Column;
+                                o.name = colObj.sTitle;
                                 o.operator = search.Operator;
                                 o.value = val;
                                 if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")
@@ -1107,7 +1117,7 @@
         this.tableName = dd.tableName;
         this.treeData = dd.tree;
         this.SetColumnRef();
-        this.ImageArray =JSON.parse( dd.imageList);
+        this.ImageArray = dd.imageList ? JSON.parse( dd.imageList) : [];
         return dd.formattedData;
     };
 
@@ -1846,15 +1856,17 @@
             this.Api = $("#" + this.tableId).DataTable();
         var rows = this.Api.rows().nodes();
         var count = this.Api.columns()[0].length;
-        $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'></tr>`);
-        $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" class="rowgroupselect"></select></td>`);
-        $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
-            if (obj.RowGrouping.$values.length > 0) {
-                $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
-            }
-        }.bind(this));
-        $(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
-        $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
+        if (this.Source === "EbDataTable") {
+            $(rows).eq(0).before(`<tr class='group-All' id='group-All_${this.tableId}'></tr>`);
+            $(`#group-All_${this.tableId}`).append(`<td  colspan="${count}"><select id="rowgroupDD_${this.tableId}" class="rowgroupselect"></select></td>`);
+            $.each(this.EbObject.RowGroupCollection.$values, function (i, obj) {
+                if (obj.RowGrouping.$values.length > 0) {
+                    $(`#rowgroupDD_${this.tableId}`).append(`<option value="${obj.Name.trim()}">${obj.DisplayName}</option>`);
+                }
+            }.bind(this));
+            $(`#rowgroupDD_${this.tableId}`).append(`<option value="None">None</option>`);
+            $(`#rowgroupDD_${this.tableId}`).off("change").on("change", this.rowGroupHandler.bind(this));
+        }
         if (this.CurrentRowGroup !== null) {
             $(`#group-All_${this.tableId}`).prepend(`<td><i class='fa fa-minus-square-o' style='cursor:pointer;'></i></td>`);
             $(`#rowgroupDD_${this.tableId} [value=${this.CurrentRowGroup.Name.trim()}]`).attr("selected", "selected");
@@ -1868,14 +1880,13 @@
             });
             var ct = $("#" + this.tableId + " .group[group=1]").length;
             $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups (${ct}) - `);
-
-            $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
-            $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
         }
         else {
             $(`#rowgroupDD_${this.tableId} [value=None`).attr("selected", "selected");
             $(`#group-All_${this.tableId} td[colspan=${count}]`).prepend(` Groups `);
         }
+        $("#" + this.tableId + " tbody").off("click", "tr.group").on("click", "tr.group", this.collapseGroup);
+        $("#" + this.tableId + " tbody").off("click", "tr.group-All").on("click", "tr.group-All", this.collapseAllGroup);
     };
 
     this.singlelevelRowgrouping = function () {
@@ -2411,39 +2422,31 @@
 
     this.createFilterforTree = function () {
         var TRange = null;
-        $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="dataTables_filters">
-        <button class="btn previous_h"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
-        <label>Search:<input type="search" class="form-control input-sm" placeholder="" aria-controls="${this.tableId}"></label>
-        <button class="btn next_h"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+        $(".dataTables_info").after(`<div id="${this.tableId}_filter" class="col-md-4 dataTables_filters">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search">
+            <div class="input-group-btn">
+              <button class="btn btn-default" type="submit">
+                <i class="glyphicon glyphicon-search"></i>
+              </button>
+            </div>
+          </div>
+        <button class="btn previous_h"><i class="fa fa-angle-up" aria-hidden="true"></i></button>
+        <button class="btn next_h"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
         </div>`);
         $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
+        
     };
 
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
-        if (e.keyCode === 13 && text.length > 2) {
-            //window.find(text, false, false, true);
-            //if (window.find && window.getSelection) {
-            //    document.designmode = "on";
-            //    var sel = window.getSelection();
-            //    sel.collapse(document.body, 0);
-
-            //    while (window.find(text)) {
-            //        document.execCommand("backColor", true, "yellow");
-            //        sel.collapseToEnd();
-            //    }
-            //    document.designmode = "off";
-            //}
-
-
-            //this.findString(text);
+        //if (e.keyCode === 13 && text.length > 2) {
             $(".match").each(function (i, span) {
                 $(span).parent().text($(span).parent().text());
                 $(span).remove();
             });
-            //$(".match").remove();
             this.searchAndHighlight(text, ".dataTables_scrollBody");
-        }
+        //}
     };
 
     this.findString = function (str) {
@@ -2497,21 +2500,35 @@
                     searchTerm = "&amp;";
                     searchTermRegEx = new RegExp(searchTerm, "ig");
                 }
-                $(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + matches[0] + "</span>"));
+                var arr = $(selector).find("td").toArray().filter(obj => $(obj).text().toLowerCase().includes(searchTerm.toLowerCase()));
+                arr.forEach(function (obj, i) {
+                    let $target = $(obj);
+                    let $next = $target.children();
+                    while ($next.length) {
+                        $target = $next;
+                        $next = $next.children();
+                    }
+                    let x = $($target).text().match(searchTermRegEx);
+                    $($target).html($($target).html().replace(searchTermRegEx, "<span class='match'>" + x[0] + "</span>"));
+                }); 
+                //$(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + matches[0] + "</span>"));
                 $('.match:first').addClass('highlighted');
 
                 var i = 0;
 
                 $('.next_h').off('click').on('click', function () {
+
                     i++;
 
                     if (i >= $('.match').length) i = 0;
 
                     $('.match').removeClass('highlighted');
                     $('.match').eq(i).addClass('highlighted');
-                    $(selector).animate({
-                        scrollTop: $('.match').eq(i).position().top
-                    }, 300);
+                    if ($('.match').length) {
+                        $(selector).animate({
+                            scrollTop: $('.match').eq(i).position().top
+                        }, 300);
+                    }
                 });
                 $('.previous_h').off('click').on('click', function () {
 
@@ -2521,9 +2538,11 @@
 
                     $('.match').removeClass('highlighted');
                     $('.match').eq(i).addClass('highlighted');
-                    $(selector).animate({
-                        scrollTop: $('.match').eq(i).position().top
-                    }, 300);
+                    if ($('.match').length) {
+                        $(selector).animate({
+                            scrollTop: $('.match').eq(i).position().top
+                        }, 300);
+                    }
                 });
 
 
@@ -3224,6 +3243,7 @@
         if (tempobj.length > 0)
             var idx = tempobj[0].data;
         var data = arrayColumn(this.unformatedData, idx);
+        data = data.filter(val => val !== null && val !== undefined);
         data = data.filter(function (elem, pos) {
             return data.indexOf(elem) === pos;
         });
@@ -3453,6 +3473,7 @@
             case EbEnums.StringOperators.Startwith: op = 'x*'; break;
             case EbEnums.StringOperators.EndsWith: op = '*x'; break;
             case EbEnums.StringOperators.Between: op = '*x*'; break;
+            case EbEnums.StringOperators.Contains: op = '*x*'; break;
             default: op = '=';
         }
         var coltype = " data-coltyp='string'";
@@ -4070,7 +4091,7 @@
             else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
                 this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
                 this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
-            }
+            } 
 
             if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
                 this.EbObject.Columns.$values[i].className += " tdheight dt-left";
@@ -4081,7 +4102,7 @@
         }
         if (col.name === "eb_created_by" || col.name === "eb_lastmodified_by")
             col.className += " dt-left";
-        if (col.Font !== null) {
+        if (col.Font !== null && col.Font !== undefined) {
             var style = document.createElement('style');
             style.type = 'text/css';
             var array = [this.tableId, col.name, col.Font.FontName, col.Font.Size, col.Font.color.replace("#", "")];
@@ -4296,6 +4317,50 @@
     else
         this.start4Other();
 };
+
+const arrayColumn = (arr, n) => arr.map(x => x[n]);
+
+function splitval(val) {
+    return val.split(/\|\s*/);
+}
+
+function extractLast(term) {
+    return splitval(term).pop();
+}
+
+if (!String.prototype.splice) {
+    String.prototype.splice = function (start, delCount, newSubStr) {
+        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+    };
+};
+
+Array.prototype.max = function () {
+    return Math.max.apply(null, this);
+};
+
+Array.prototype.min = function () {
+    return Math.min.apply(null, this);
+};
+
+var displayFilter = function (col, oper, val, Loper) {
+    this.name = col;
+    this.operator = oper;
+    this.value = val;
+    this.logicOp = Loper;
+};
+
+function returnOperator(op) {
+    if (op === "x*")
+        return "startwith";
+    else if (op === "*x")
+        return "endswith";
+    else if (op === "*x*")
+        return "contains";
+    else if (op === "=")
+        return "=";
+    else
+        return op;
+}
 
 (function ($) {
     if ($.fn.style) {

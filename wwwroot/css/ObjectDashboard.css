@@ -721,5 +721,12 @@ input:checked + .proslider:before {
     font-weight: 400;
 }
 
+.no_notification {
+    margin: 20px 112px;
+    font-size: 13px;
+    font-family: roboto;
+    font-weight: 300;
+}
+
 
 

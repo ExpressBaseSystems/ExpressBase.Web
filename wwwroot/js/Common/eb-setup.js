@@ -30,10 +30,13 @@
             
             if (len == 0) {
                 $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
+                var html1 = `<p class="no_notification">No Notifications</p>`;
+                $('.new_notifications').append(html1);
             }
             else {
                 $('#notification-count').attr("style", "");
                 $('#notification-count').html(len);
+                $('.no_notification').detach();
             }
             $('#notification-count').attr("count", len);
             for (var i = 0; i < x.Notification.length; i++) {
@@ -47,8 +50,8 @@
                             </li>`;
             }
             $('.new_notifications').append(html);
-            $('.notification-update').on('click', this.UpdateNotification.bind(this));
-            $('.notification-close').on('click', this.CloseNotification.bind(this));
+            $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
+            $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
         }.bind(this);
     }
 
@@ -66,10 +69,13 @@
         var x = parseInt($('#notification-count').attr("count"))-1;
         if (x == 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
+            var html = `<p class="no_notification">No Notifications</p>`;
+            $('.new_notifications').append(html);
         }
         else {
             $('#notification-count').attr("style", "");
             $('#notification-count').html(x);
+            $('.no_notification').detach();
         }
 
         $('#notification-count').attr("count", x);
@@ -101,13 +107,7 @@
                         <div id="notification" class="tab-pane active" role="tabpanel">
                             <ul class="drp_ul new_notifications" style="overflow: scroll;height: 100vh;padding: 2px;width: 350px;">
                     `;
-        if (data.notifications.length == 0) {
-            $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
-        }
-        else {
-            $('#notification-count').attr("style", "");
-            $('#notification-count').html(data.notifications.length);
-        }
+       
         $('#notification-count').attr("count", data.notifications.length);
         for (var i = 0; i < data.notifications.length; i++) {
             var height = Math.ceil((data.notifications[i].title.length / 53)) * 20;
@@ -132,8 +132,18 @@
                    </div>`;
         $('.notifications').empty();
         $('.notifications').append(html);
-        $('.notification-update').on('click', this.UpdateNotification.bind(this));
-        $('.notification-close').on('click', this.CloseNotification.bind(this));
+        if (data.notifications.length == 0) {
+            $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
+            var html1 = `<p class="no_notification">No Notifications</p>`;
+            $('.new_notifications').append(html1);
+        }
+        else {
+            $('#notification-count').attr("style", "");
+            $('#notification-count').html(data.notifications.length);
+            $('.no_notification').detach();
+        }
+        $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
+        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
         $('#myTabs').on('click', '.nav-tabs a', function () {
             $(this).closest('.dropdown').addClass('dontClose');
         })
@@ -149,6 +159,7 @@
     
     CloseNotification = function (e) {
         let notification_id = $(e.target).siblings('div').attr("notification-id");
+        e.stopPropagation();
         $.ajax({
             type: "POST",
             url: "../NotificationTest/GetNotificationFromDB",
@@ -159,10 +170,13 @@
         if (x == 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
             $('#notification-count').empty();
+            var html = `<p class="no_notification">No Notifications</p>`;
+            $('.new_notifications').append(html);
         }
         else {
             $('#notification-count').attr("style", "");
             $('#notification-count').html(x);
+            $('.no_notification').detach();
         }
         $('#notification-count').attr("count", x);
     }

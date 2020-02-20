@@ -1347,10 +1347,24 @@ const WebFormRender = function (option) {
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.on("click", function () { window.parent.closeModal(); });
         this.$cloneBtn.on("click", this.cloneForm.bind(this));
+        //$("body").on("blur", "[ui-inp]", function () {
+        //    window.justbluredElement = event.target;
+        //});
         $("body").on("focus", "[ui-inp]", function () {
-            if (event && event.target)
+            let el = event.target;
+            if (event && event.target &&
+                !(el.getAttribute("type") === "search" &&
+                $(el).closest("[ctype='PowerSelect']").length === 1))
                 $(event.target).select();
         });
+
+        //$("body").on("focus", "[ui-inp]", function () {
+        //    let el = event.target;
+        //    if (event && el) {
+        //        if (el.getAttribute("type") === "search" && window.justbluredElement !== el && $(el).closest("[ctype='PowerSelect']").length === 1)
+        //            $(event.target).select();
+        //    }
+        //});
         $(window).off("keydown").on("keydown", this.windowKeyDown);
     };
 
@@ -1375,8 +1389,23 @@ const WebFormRender = function (option) {
         else if (this.mode === "Preview Mode")
             this.Mode.isPreview = true;
     };
+    this.resetRowIds = function (multipleTables) {
+        debugger;
+        multipleTables[this.MasterTable][0].RowId = 0;// foem data
 
-    this.fillCloneData = function (rowId) {         
+        $.each(this.DGs, function (k, DG) { // all dg datas
+            let rows = multipleTables[DG.TableName];
+            let i = 0;
+            for (i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                row.RowId = -(i + 1);
+            }
+            DG.newRowCounter = i;
+        }.bind(this));
+
+    };
+
+    this.fillCloneData = function (rowId) {
         this.showLoader();
         $.ajax({
             type: "POST",
@@ -1392,6 +1421,7 @@ const WebFormRender = function (option) {
                 this.hideLoader();
                 let _respObj = JSON.parse(_respObjStr);
                 if (_respObj.Status === 200) {
+                    this.resetRowIds(_respObj.FormData.MultipleTables);
                     this.resetDataMODEL(_respObj);
                     this.RefreshFormControlValues(_respObj.FormData.MultipleTables);
                 }

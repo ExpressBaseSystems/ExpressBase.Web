@@ -248,7 +248,7 @@ namespace ExpressBase.Web.Controllers
 			{
 				UserObject = this.LoggedInUser,
 				Alluser = false,
-				UserId= itemid
+				TargetUser = itemid
 			});
 			ActivityLogin(Lar);
 

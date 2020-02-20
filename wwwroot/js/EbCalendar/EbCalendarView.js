@@ -31,6 +31,7 @@
             this.getColumns();
             this.GenerateButtons();
         }
+        $("#objname").text(this.EbObject.DisplayName);
     };
 
     this.GenerateButtons = function () {
@@ -50,6 +51,10 @@
         }
         if(this.Wc === "dc")
             commonO.Current_obj = this.EbObject;
+        if (pname === "Name") {
+            $("#objname").text(obj.DisplayName);
+            console.log(obj);
+        }
     };
 
     this.ChangeFDParams = function (newval) {
@@ -206,7 +211,9 @@
         let firstSymbol = "";
         $.each(this.VisibleDataCols, function (i, obj) {
             let symbol = "";
-            if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Count)
+            if (obj.ConditionalFormating.$values.length > 0)
+                symbol = "";
+            else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Count)
                 symbol = "&lowast;";
             else if (obj.AggregateFun.toString() === EbEnums.AggregateFun.Sum)
                 symbol = "&sum;";

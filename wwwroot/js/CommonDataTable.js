@@ -746,7 +746,7 @@
             }
             else {
                 if (this.Source === "Calendar") {
-                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12'i>rt";
+                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
                 else {
@@ -757,7 +757,10 @@
             }
         }
         else {
-            o.dom = "<'pagination-wrapper'liBp>rt";
+            if (this.Source === "EbDataTable")
+                o.dom = "<'pagination-wrapper'liBp>rt";
+            else
+                o.dom = "<'pagination-wrapper'lip>rt";
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
@@ -3240,6 +3243,7 @@
         if (tempobj.length > 0)
             var idx = tempobj[0].data;
         var data = arrayColumn(this.unformatedData, idx);
+        data = data.filter(val => val !== null && val !== undefined);
         data = data.filter(function (elem, pos) {
             return data.indexOf(elem) === pos;
         });
@@ -3469,6 +3473,7 @@
             case EbEnums.StringOperators.Startwith: op = 'x*'; break;
             case EbEnums.StringOperators.EndsWith: op = '*x'; break;
             case EbEnums.StringOperators.Between: op = '*x*'; break;
+            case EbEnums.StringOperators.Contains: op = '*x*'; break;
             default: op = '=';
         }
         var coltype = " data-coltyp='string'";
@@ -4312,6 +4317,50 @@
     else
         this.start4Other();
 };
+
+const arrayColumn = (arr, n) => arr.map(x => x[n]);
+
+function splitval(val) {
+    return val.split(/\|\s*/);
+}
+
+function extractLast(term) {
+    return splitval(term).pop();
+}
+
+if (!String.prototype.splice) {
+    String.prototype.splice = function (start, delCount, newSubStr) {
+        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+    };
+};
+
+Array.prototype.max = function () {
+    return Math.max.apply(null, this);
+};
+
+Array.prototype.min = function () {
+    return Math.min.apply(null, this);
+};
+
+var displayFilter = function (col, oper, val, Loper) {
+    this.name = col;
+    this.operator = oper;
+    this.value = val;
+    this.logicOp = Loper;
+};
+
+function returnOperator(op) {
+    if (op === "x*")
+        return "startwith";
+    else if (op === "*x")
+        return "endswith";
+    else if (op === "*x*")
+        return "contains";
+    else if (op === "=")
+        return "=";
+    else
+        return op;
+}
 
 (function ($) {
     if ($.fn.style) {

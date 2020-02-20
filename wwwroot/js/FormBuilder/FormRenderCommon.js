@@ -183,17 +183,23 @@
 
     this.setFormObjHelperfns = function myfunction() {
         this.FO.formObject.__getCtrlByPath = function (path) {
-            let form = this.FO.formObject;
-            let ctrl = {};
-            let pathArr = path.split(".");
-            if (pathArr.length === 3) {
-                path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
-                ctrl = eval(path);
-                ctrl.IsDGCtrl = true;
-            } else {
-                ctrl = eval(path);
+            try {
+                let form = this.FO.formObject;
+                let ctrl = {};
+                let pathArr = path.split(".");
+                if (pathArr.length === 3) {
+                    path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+                    ctrl = eval(path);
+                    ctrl.IsDGCtrl = true;
+                } else {
+                    ctrl = eval(path);
+                }
+                return ctrl;
             }
-            return ctrl;
+            catch (e) {
+                console.warn("could not find:"+ path);
+                return "not found";
+            }
         }.bind(this);
     }.bind(this);
 
@@ -202,6 +208,8 @@
             if (curCtrl.DependedValExp) {
                 $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
                     let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                    if (depCtrl === "not found")
+                        return;
                     try {
                         let valExpFnStr = atob(depCtrl.ValueExpr.Code);
                         if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
@@ -224,14 +232,11 @@
                         else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
                             let params = [];
 
-                            depCtrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
-
-                            $.each(depCtrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                            $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
                                 try {
                                     let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
                                     let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
-                                    let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                    let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" }; // hard code
+                                    let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
                                     params.push(param);
                                 }
                                 catch (e) {

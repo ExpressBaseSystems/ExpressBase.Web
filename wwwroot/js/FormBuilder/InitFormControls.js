@@ -445,8 +445,10 @@ var InitControls = function (option) {
 
     this.SetDateFromDateTo = function ($input, e) {
         if ($input.find("select").val() === "Hourly") {
-            $input.find("#datefrom").val($input.find("#date").val());
-            $input.find("#dateto").val($input.find("#date").val()).trigger("change");
+            let _date = $input.find("#date").val();
+            _date = moment(_date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+            $input.find("#datefrom").val(_date);
+            $input.find("#dateto").val(_date).trigger("change");
         }
         else if ($input.find("select").val() === "Weekely" || $input.find("select").val() === "DayWise") {
             let _month_year = $input.find("#month").val();
@@ -774,6 +776,10 @@ var InitControls = function (option) {
         if (ctrl.AutoSuggestion === true) {
             $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
         }
+        if (ctrl.TextTransform === 1)
+            $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+        else if (ctrl.TextTransform === 2)
+            $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
     };
 
     this.initNumeric = function (ctrl, $input) {
@@ -971,6 +977,10 @@ var InitControls = function (option) {
                                         <i class='fa fa-eraser '></i>
                                     </div>
 
+                                    <div id='mark_position' class='bp_toolbarproperties ' tabindex='1' title="Mark Positions">
+                                        <i class='fa fa-stop-circle-o '></i>
+                                    </div>
+
                                     <div id='zoomToggle_BP' class='bp_toolbarproperties 'title="Zoom">
                                         <i class='fa fa-search  '></i>
                                     </div>
@@ -1008,3 +1018,18 @@ var InitControls = function (option) {
 
     }
 };
+
+function createValidator(element) {
+    return function () {
+        //if (!isPrintable(event))
+        //    return;
+        var min = parseInt(element.getAttribute("min")) || 0;
+        var max = parseInt(element.getAttribute("max")) || 0;
+
+        var value = parseInt(element.value) || min;
+        element.value = value; // make sure we got an int
+
+        if (value < min && min !== 0) element.value = min;
+        if (value > max && max !== 0) element.value = max;
+    };
+}

@@ -202,6 +202,7 @@
 
     this.initRowCtrls = function (rowId, IsNoValExp) {
         let CurRowCtrls = this.objectMODEL[rowId];
+        this.changeEditFlagInRowCtrls(true, rowId);
 
         //// initialise all controls in added row
         for (let i = 0; i < CurRowCtrls.length; i++) {
@@ -1773,6 +1774,7 @@
     this.init = function () {
         this.curRowObjectMODEL = {};
         this.ctrl.currentRow = this.curRowObjectMODEL;
+        this.ctrl.newRowCounter = this.newRowCounter;
         this.colNames = this.ctrl.Controls.$values.map(function (obj) { return obj["Name"]; }.bind(this));
         //this.lastEditedRowDMvalues = {};
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;

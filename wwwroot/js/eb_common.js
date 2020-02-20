@@ -814,24 +814,42 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
-        let FnString = `
-let __this = form.__getCtrlByPath(this.__path);
-if (__this.DataVals !== undefined) {
-    let v = __this.getValueFromDOM();
-    let d = __this.getDisplayMemberFromDOM();
-    if (__this.ObjType === 'Numeric')
-        v = parseFloat(v);
+//        let FnString = `
+//let __this = form.__getCtrlByPath(this.__path);
+//if (__this.DataVals !== undefined) {
+//    let v = __this.getValueFromDOM();
+//    let d = __this.getDisplayMemberFromDOM();
+//    if (__this.ObjType === 'Numeric')
+//        v = parseFloat(v);
+//debugger;
+//    if (__this.__isEditing) {
+//        __this.curRowDataVals.Value = v;
+//        __this.curRowDataVals.D = d;
+//    }
+//    else {
+//        __this.DataVals.Value = v;
+//        __this.DataVals.D = d;
+//    }
+//}`;
+        let OnChangeFn = function (form, user, event) {
+            let __this = form.__getCtrlByPath(this.__path);
+            if (__this.DataVals !== undefined) {
+                let v = __this.getValueFromDOM();
+                let d = __this.getDisplayMemberFromDOM();
+                if (__this.ObjType === 'Numeric')
+                    v = parseFloat(v);
+                if (__this.__isEditing) {
+                    __this.curRowDataVals.Value = v;
+                    __this.curRowDataVals.D = d;
+                }
+                else {
+                    __this.DataVals.Value = v;
+                    __this.DataVals.D = d;
+                }
+            }
+        }.bind(col, this.formObject, this.__userObject);
 
-    if (__this.__isEditing) {
-        __this.curRowDataVals.Value = v;
-        __this.curRowDataVals.D = d;
-    }
-    else {
-        __this.DataVals.Value = v;
-        __this.DataVals.D = d;
-    }
-}`;
-        let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
+        //let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
         col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);
     }.bind(this));
@@ -1083,3 +1101,18 @@ function blink(el, delay = 1000) {
     else
         blink($(el), delay);
 }
+
+const getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = window.location.search.substring(1),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+        }
+    }
+};

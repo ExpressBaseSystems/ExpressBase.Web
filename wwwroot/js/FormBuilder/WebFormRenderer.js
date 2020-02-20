@@ -16,6 +16,7 @@ const WebFormRender = function (option) {
     this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
     this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
     this.$closeBtn = $('#' + option.headerBtns['Close']);
+    this.$cloneBtn = $('#webformclone');
     this.Env = option.env;
     this.Cid = option.cid;
     this.initControls = new InitControls(this);
@@ -24,6 +25,7 @@ const WebFormRender = function (option) {
     this.rowId = option.rowId;
     this.mode = option.mode;
     this.userObject = option.userObject;
+    this.cloneRowId = option.cloneRowId;
     this.isPartial = option.isPartial;//value is true if form is rendering in iframe
     this.headerObj = option.headerObj;//EbHeader
     this.formPermissions = option.formPermissions;
@@ -200,7 +202,7 @@ const WebFormRender = function (option) {
             console.log('Dynamic tab not supported. Data grid not found. EbSid : ' + DynamicTabPaneGlobals.DG.EbSid);
             return;
         }
-        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");        
+        let $initiatorTab = $initiatorDG.closest("[ctype=TabControl]");
         if ($initiatorTab.length === 0) {
             console.log('Dynamic tab not supported. Please initiate from a data grid placed in tab control.');
             return;
@@ -261,7 +263,7 @@ const WebFormRender = function (option) {
                 let val = dataObj.Value;
                 ctrl.DataVals.Value = val;
             }
-        }      
+        }
 
     };
 
@@ -278,7 +280,7 @@ const WebFormRender = function (option) {
         }
         else
             console.error(_respObj.MessageInt);
-        
+
     }.bind(this);
 
     this.resetDataMODEL = function (_respObj) {
@@ -550,11 +552,11 @@ const WebFormRender = function (option) {
         return multipleTables;
     };
 
-    this.getCellObjFromEditModeObj = function (ctrl) {
+    this.getCellObjFromEditModeObj = function (ctrl, formData) {
         let CellObj;
         for (let i = 0; i < this.TableNames.length; i++) {
             let tableName = this.TableNames[i];
-            CellObj = getObjByval(this.EditModeFormData[tableName][0].Columns, "Name", ctrl.Name);
+            CellObj = getObjByval(formData[tableName][0].Columns, "Name", ctrl.Name);
             if (CellObj)
                 return CellObj;
         }
@@ -562,10 +564,10 @@ const WebFormRender = function (option) {
         return CellObj;
     };
 
-    this.RefreshOuterFormControls = function () {
+    this.RefreshOuterFormControls = function (formData) {
         for (let i = 0; i < this.flatControls.length; i++) {
             let ctrl = this.flatControls[i];
-            let cellObj = this.getCellObjFromEditModeObj(ctrl);
+            let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
             if (cellObj !== undefined)
                 ctrl.reset(cellObj.Value);
             else
@@ -573,10 +575,10 @@ const WebFormRender = function (option) {
         }
     };
 
-    this.RefreshDGControlValues = function () {
+    this.RefreshDGControlValues = function (formData) {
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
-            let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
+            let DataMODEL = formData[DGB.ctrl.TableName];
             if (DataMODEL)
                 DGB.resetControlValues(DataMODEL);
             else
@@ -584,9 +586,9 @@ const WebFormRender = function (option) {
         }
     };
 
-    this.RefreshFormControlValues = function () {
-        this.RefreshOuterFormControls();
-        this.RefreshDGControlValues();
+    this.RefreshFormControlValues = function (formData) {
+        this.RefreshOuterFormControls(formData);
+        this.RefreshDGControlValues(formData);
     };
 
     this.saveSuccess = function (_respObj) {
@@ -611,7 +613,7 @@ const WebFormRender = function (option) {
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
             this.DynamicTabObject.disposeDynamicTab();
-            this.RefreshFormControlValues();
+            this.RefreshFormControlValues(this.EditModeFormData);
             this.SwitchToViewMode();
 
             this.afterSaveAction();
@@ -667,7 +669,7 @@ const WebFormRender = function (option) {
         }.bind(this));
         return hasActiveRows;
     };
-    
+
     this.DGsB4Save = function () {
         if (this.IsDGsHaveActiveRows()) {
             EbDialog("show", {
@@ -702,6 +704,10 @@ const WebFormRender = function (option) {
             DGB.B4saveActions();
         }.bind(this));
 
+    };
+
+    this.cloneForm = function () {
+        window.open("index?refid=" + this.formRefId + "&mode=clone&rowid=" + this.rowId);
     };
 
     this.saveForm = function () {
@@ -757,6 +763,7 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
+        this.$cloneBtn.show(200);
         this.formObject.__mode = "view";
         this.Mode.isView = true;
         this.Mode.isEdit = false;
@@ -777,6 +784,7 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToEditMode = function () {
+        this.$cloneBtn.hide(200);
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;
@@ -1338,10 +1346,25 @@ const WebFormRender = function (option) {
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.on("click", function () { window.parent.closeModal(); });
+        this.$cloneBtn.on("click", this.cloneForm.bind(this));
+        //$("body").on("blur", "[ui-inp]", function () {
+        //    window.justbluredElement = event.target;
+        //});
         $("body").on("focus", "[ui-inp]", function () {
-            if (event && event.target)
+            let el = event.target;
+            if (event && event.target &&
+                !(el.getAttribute("type") === "search" &&
+                $(el).closest("[ctype='PowerSelect']").length === 1))
                 $(event.target).select();
         });
+
+        //$("body").on("focus", "[ui-inp]", function () {
+        //    let el = event.target;
+        //    if (event && el) {
+        //        if (el.getAttribute("type") === "search" && window.justbluredElement !== el && $(el).closest("[ctype='PowerSelect']").length === 1)
+        //            $(event.target).select();
+        //    }
+        //});
         $(window).off("keydown").on("keydown", this.windowKeyDown);
     };
 
@@ -1366,6 +1389,48 @@ const WebFormRender = function (option) {
         else if (this.mode === "Preview Mode")
             this.Mode.isPreview = true;
     };
+    this.resetRowIds = function (multipleTables) {
+        debugger;
+        multipleTables[this.MasterTable][0].RowId = 0;// foem data
+
+        $.each(this.DGs, function (k, DG) { // all dg datas
+            let rows = multipleTables[DG.TableName];
+            let i = 0;
+            for (i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                row.RowId = -(i + 1);
+            }
+            DG.newRowCounter = i;
+        }.bind(this));
+
+    };
+
+    this.fillCloneData = function (rowId) {
+        this.showLoader();
+        $.ajax({
+            type: "POST",
+            url: "/WebForm/getRowdata",
+            data: {
+                refid: this.formRefId, rowid: parseInt(rowId)
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.hideLoader();
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            success: function (_respObjStr) {
+                this.hideLoader();
+                let _respObj = JSON.parse(_respObjStr);
+                if (_respObj.Status === 200) {
+                    this.resetRowIds(_respObj.FormData.MultipleTables);
+                    this.resetDataMODEL(_respObj);
+                    this.RefreshFormControlValues(_respObj.FormData.MultipleTables);
+                }
+                else
+                    console.error(_respObj.MessageInt);
+                this.hideLoader();
+            }.bind(this)
+        });
+    };
 
     this.init = function () {
         this.TableNames = this.getNCCTblNames();
@@ -1386,6 +1451,8 @@ const WebFormRender = function (option) {
 
         else if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
+            if (this.cloneRowId)
+                this.fillCloneData(this.cloneRowId);
         }
         //else {
         //    this.DataMODEL = this.EditModeFormData;

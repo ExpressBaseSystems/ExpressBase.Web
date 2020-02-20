@@ -21,11 +21,50 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public void MessageNotify()
+        public void NotifyLogOut()
         {
-            NotifyTestResponse res = this.ServiceClient.Post<NotifyTestResponse>(new NotifyTestRequest
+            NotifyLogOutResponse res = this.ServiceClient.Post<NotifyLogOutResponse>(new NotifyLogOutRequest
             {
             });
         }
+
+        public void NotifyByUserId(string user_id)
+        {
+            NotifyByUserIDResponse res = this.ServiceClient.Post<NotifyByUserIDResponse>(new NotifyByUserIDRequest
+            {
+                UsersID = int.Parse(user_id)
+            });
+        }
+
+        public void NotifyByUserRole(string role_name)
+        {
+            NotifyByUserRoleResponse res = this.ServiceClient.Post<NotifyByUserRoleResponse>(new NotifyByUserRoleRequest
+            {
+                RoleName = role_name
+            });
+        }
+
+        public void NotifyByUserGroup(string grp_name)
+        {
+            NotifyByUserGroupResponse res = this.ServiceClient.Post<NotifyByUserGroupResponse>(new NotifyByUserGroupRequest
+            {
+                GroupName = grp_name
+            });
+        }
+
+        public object GetNotificationFromDB(string notification_id)
+        {
+            GetNotificationFromDbResponse res = this.ServiceClient.Post<GetNotificationFromDbResponse>(new GetNotificationFromDbRequest
+            {
+                NotificationId = notification_id
+            });
+            return res;
+        }
+
+        public object GetCompleteNotificationDetailsFromDB()
+        {
+            return this.ServiceClient.Post(new GetNotificationsRequest());
+        }
+        
     }
 }

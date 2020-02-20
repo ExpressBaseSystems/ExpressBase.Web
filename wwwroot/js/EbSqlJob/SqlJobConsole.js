@@ -32,21 +32,16 @@
                         Date: date
                     },
                     success: function (result) {
-                        if (result.sqlJobsRows.length > 0) {
                             $("#list-of-jobs").empty();
                             $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
                             var o = new Object();
                             o.tableId = "tbl";
-                            o.showSerialColumn = false;
                             o.showCheckboxColumn = false;
-                            o.showFilterRow = false;
+                            o.showFilterRow = true;
                             o.IsPaging = true;
                             o.dvObject = JSON.parse(result.visualization);
-                            o.dvObject.Columns.$values[o.dvObject.Columns.$values.length - 1].render = renderButtonCol;
-                            o.data = { data: result.sqlJobsRows, formattedData: result.formattedData, levels: result.levels };
                             o.Source = "sqljob";
                             var data = new EbCommonDataTable(o);
-                        }
                         $("#layout_div .loader-fb").empty().removeClass("loader-fb");
                     }
                 });

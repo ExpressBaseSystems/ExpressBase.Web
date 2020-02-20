@@ -1073,7 +1073,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     this.getType = function (type) {
         let html = [];
         if (type == "PGSQL") {
-            html.push('<img class="img-responsive" src="../images/POSTGRES.png" align="middle" style="height:50px" />');
+            html.push('<img class="img-responsive" src="../images/postgres.png" align="middle" style="height:50px" />');
         } else if (type == "MYSQL") {
             html.push('<img class="img-responsive" src="../images/mysql.png" align="middle" style="height: 50px;" />');
         } else if (type == "ORACLE") {
@@ -1081,7 +1081,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         } else if (type == "MSSQL") {
             html.push('<img class="img-responsive" src="../images/sqlserver.png" style="height: 50px;" />');
         } else if (type == "MongoDB") {
-            html.push('<img class="img-responsive" src="../images/MongodB.png" style="height: 50px;" />');
+            html.push('<img class="img-responsive" src="../images/mongodb.png" style="height: 50px;" />');
         } else if (type == "Cloudinary") {
             html.push('<img class="img-responsive" src="../images/cloudnary.png" style="height: 25px;" />');
         } else if (type == "SMTP") {

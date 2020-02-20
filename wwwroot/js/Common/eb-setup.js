@@ -49,7 +49,8 @@
                                 </div>
                             </li>`;
             }
-            $('.new_notifications').append(html);
+            html = html + $('.new_notifications').html();
+            $('.new_notifications').html(html);
             $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
             $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
         }.bind(this);
@@ -147,7 +148,7 @@
         $('#myTabs').on('click', '.nav-tabs a', function () {
             $(this).closest('.dropdown').addClass('dontClose');
         })
-
+        
         $('#myDropDown').on('hide.bs.dropdown', function (e) {
             if ($(this).hasClass('dontClose')) {
                 e.preventDefault();
@@ -159,7 +160,6 @@
     
     CloseNotification = function (e) {
         let notification_id = $(e.target).siblings('div').attr("notification-id");
-        e.stopPropagation();
         $.ajax({
             type: "POST",
             url: "../NotificationTest/GetNotificationFromDB",
@@ -179,5 +179,7 @@
             $('.no_notification').detach();
         }
         $('#notification-count').attr("count", x);
+        $('#myDropDown').addClass("open");
+        e.stopPropagation();
     }
 }

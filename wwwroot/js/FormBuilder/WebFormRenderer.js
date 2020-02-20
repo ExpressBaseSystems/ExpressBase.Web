@@ -26,6 +26,7 @@ const WebFormRender = function (option) {
     this.mode = option.mode;
     this.userObject = option.userObject;
     this.cloneRowId = option.cloneRowId;
+    this.isOpenedInCloneMode = !!option.cloneRowId;
     this.isPartial = option.isPartial;//value is true if form is rendering in iframe
     this.headerObj = option.headerObj;//EbHeader
     this.formPermissions = option.formPermissions;
@@ -568,6 +569,8 @@ const WebFormRender = function (option) {
         for (let i = 0; i < this.flatControls.length; i++) {
             let ctrl = this.flatControls[i];
             let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
+            if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
+                continue;
             if (cellObj !== undefined)
                 ctrl.reset(cellObj.Value);
             else

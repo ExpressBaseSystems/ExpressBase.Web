@@ -1774,6 +1774,7 @@
     this.init = function () {
         this.curRowObjectMODEL = {};
         this.ctrl.currentRow = this.curRowObjectMODEL;
+        this.ctrl.newRowCounter = this.newRowCounter;
         this.colNames = this.ctrl.Controls.$values.map(function (obj) { return obj["Name"]; }.bind(this));
         //this.lastEditedRowDMvalues = {};
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;

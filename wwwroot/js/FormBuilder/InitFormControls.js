@@ -445,8 +445,10 @@ var InitControls = function (option) {
 
     this.SetDateFromDateTo = function ($input, e) {
         if ($input.find("select").val() === "Hourly") {
-            $input.find("#datefrom").val($input.find("#date").val());
-            $input.find("#dateto").val($input.find("#date").val()).trigger("change");
+            let _date = $input.find("#date").val();
+            _date = moment(_date, 'DD-MM-YYYY').format('YYYY-MM-DD');
+            $input.find("#datefrom").val(_date);
+            $input.find("#dateto").val(_date).trigger("change");
         }
         else if ($input.find("select").val() === "Weekely" || $input.find("select").val() === "DayWise") {
             let _month_year = $input.find("#month").val();

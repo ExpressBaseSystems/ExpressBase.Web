@@ -1354,7 +1354,7 @@ const WebFormRender = function (option) {
             let el = event.target;
             if (event && event.target &&
                 !(el.getAttribute("type") === "search" &&
-                $(el).closest("[ctype='PowerSelect']").length === 1))
+                    ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))
                 $(event.target).select();
         });
 
@@ -1390,17 +1390,16 @@ const WebFormRender = function (option) {
             this.Mode.isPreview = true;
     };
     this.resetRowIds = function (multipleTables) {
-        debugger;
         multipleTables[this.MasterTable][0].RowId = 0;// foem data
 
-        $.each(this.DGs, function (k, DG) { // all dg datas
-            let rows = multipleTables[DG.TableName];
+        $.each(this.DGBuilderObjs, function (k, DGB) { // all dg datas
+            let rows = multipleTables[DGB.ctrl.TableName];
             let i = 0;
             for (i = 0; i < rows.length; i++) {
                 let row = rows[i];
                 row.RowId = -(i + 1);
             }
-            DG.newRowCounter = i;
+            DGB.cloneMode = true;
         }.bind(this));
 
     };

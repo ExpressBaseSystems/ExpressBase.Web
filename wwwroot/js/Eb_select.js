@@ -97,7 +97,8 @@ const EbSelect = function (ctrl, options) {
     this.init = function () {
         try {
             $('#' + this.name + 'Wraper [class=open-indicator]').hide();
-            this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]').on("click", function () { $(this).focus(); });
+            this.$searchBoxes = $('#' + this.name + 'Wraper [type=search]');
+            this.$searchBoxes.on("click", function () { $(this).focus(); });
             this.$searchBoxes.keyup(this.searchboxKeyup);
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 

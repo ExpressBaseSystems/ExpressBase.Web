@@ -1068,7 +1068,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 [isrendermode=true] .eb-ctrl-label {
-    z-index: -1;
+    z-index: 0;
 }
 
 .eb-lbltxtb {

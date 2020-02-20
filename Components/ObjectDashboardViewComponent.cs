@@ -38,7 +38,7 @@ namespace ExpressBase.Web.Components
             ViewBag.Tags = _tags;
             GetApplicationResponse resultlist = ServiceClient.Get(new GetApplicationRequest());
             ViewBag.Apps =JsonConvert.SerializeObject(resultlist.Data);
-            EbObjectGetAllTagsResponse result = ServiceClient.Get<EbObjectGetAllTagsResponse>(new EbObjectGetAllTagsRequest());
+            EbObjectGetAllTagsResponse result = ServiceClient.Get(new EbObjectGetAllTagsRequest());
             ViewBag.AllTags = result.Data;
             ViewBag.AppId = _apps;
             if (_dashbord_tiles != null)

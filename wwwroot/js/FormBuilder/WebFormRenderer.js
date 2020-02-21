@@ -26,6 +26,7 @@ const WebFormRender = function (option) {
     this.mode = option.mode;
     this.userObject = option.userObject;
     this.cloneRowId = option.cloneRowId;
+    this.isOpenedInCloneMode = !!option.cloneRowId;
     this.isPartial = option.isPartial;//value is true if form is rendering in iframe
     this.headerObj = option.headerObj;//EbHeader
     this.formPermissions = option.formPermissions;
@@ -568,6 +569,8 @@ const WebFormRender = function (option) {
         for (let i = 0; i < this.flatControls.length; i++) {
             let ctrl = this.flatControls[i];
             let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
+            if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
+                continue;
             if (cellObj !== undefined)
                 ctrl.reset(cellObj.Value);
             else
@@ -1347,10 +1350,24 @@ const WebFormRender = function (option) {
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
         this.$closeBtn.on("click", function () { window.parent.closeModal(); });
         this.$cloneBtn.on("click", this.cloneForm.bind(this));
+        //$("body").on("blur", "[ui-inp]", function () {
+        //    window.justbluredElement = event.target;
+        //});
         $("body").on("focus", "[ui-inp]", function () {
-            if (event && event.target)
+            let el = event.target;
+            if (event && event.target &&
+                !(el.getAttribute("type") === "search" &&
+                    ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))
                 $(event.target).select();
         });
+
+        //$("body").on("focus", "[ui-inp]", function () {
+        //    let el = event.target;
+        //    if (event && el) {
+        //        if (el.getAttribute("type") === "search" && window.justbluredElement !== el && $(el).closest("[ctype='PowerSelect']").length === 1)
+        //            $(event.target).select();
+        //    }
+        //});
         $(window).off("keydown").on("keydown", this.windowKeyDown);
     };
 
@@ -1375,8 +1392,22 @@ const WebFormRender = function (option) {
         else if (this.mode === "Preview Mode")
             this.Mode.isPreview = true;
     };
+    this.resetRowIds = function (multipleTables) {
+        multipleTables[this.MasterTable][0].RowId = 0;// foem data
 
-    this.fillCloneData = function (rowId) {         
+        $.each(this.DGBuilderObjs, function (k, DGB) { // all dg datas
+            let rows = multipleTables[DGB.ctrl.TableName];
+            let i = 0;
+            for (i = 0; i < rows.length; i++) {
+                let row = rows[i];
+                row.RowId = -(i + 1);
+            }
+            DGB.cloneMode = true;
+        }.bind(this));
+
+    };
+
+    this.fillCloneData = function (rowId) {
         this.showLoader();
         $.ajax({
             type: "POST",
@@ -1392,6 +1423,7 @@ const WebFormRender = function (option) {
                 this.hideLoader();
                 let _respObj = JSON.parse(_respObjStr);
                 if (_respObj.Status === 200) {
+                    this.resetRowIds(_respObj.FormData.MultipleTables);
                     this.resetDataMODEL(_respObj);
                     this.RefreshFormControlValues(_respObj.FormData.MultipleTables);
                 }

@@ -15,13 +15,49 @@
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
+    this.Procs = {};
+    this.Rowdata = {};
 
     this.GridStackInit = function () {
-        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' } });
+        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
         this.grid = $('.grid-stack').data("gridstack");
-        this.grid.cellHeight(30);
-    }
+        this.grid.cellHeight(20);
+        $('.grid-stack').on('gsresizestop', this.Redrawfn.bind(this));
+    };
+
+
+    this.Redrawfn = function (items, element) {
+        var newHeight = $(element).attr('data-gs-height');
+        var id = $(element).context.children[0].id;
+        let currentobj = this.TileCollection[id];
+        var height = $(`[data-id=${id}`).height();
+        $.each(currentobj.ControlsColl.$values, function (i, obj) {
+            $(`[data-id=${id}] #${obj.EbSid}`).css("max-height", `${height} !important`);
+            var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+            //this.labelstyleApply(this.CurrentTile);
+            if (eb_type === "Gauge") {
+                if (obj.DataObjCtrlName === "" || obj.DataObjColName === "") {
+                    let xx = EbGaugeWrapper(obj, { isEdit: false });
+                }
+                this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "Gauge");
+            }
+            else if (eb_type === "SpeedoMeter") {
+                if (obj.DataObjCtrlName === "" || obj.DataObjColName === "") {
+                    let xx = SpeedoMeterWrapper(obj, { isEdit: false });
+                }
+                this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "speedometer");
+            }
+            else if (eb_type === "ProgressGauge") {
+                if (obj.DataObjCtrlName === "" || obj.DataObjColName === "") {
+                    let xx = ProgressGaugeWrapper(obj, { isEdit: false });
+                }
+                $(`#${obj.EbSid}`).css("max-width", $(`#${obj.EbSid}`).height() + 10 + "px");
+                this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "ProgressGauge");
+            }
+        }.bind(this));
+    };
     this.GridStackInit();
+
 
     //Filter Dialogue
     this.getColumns = function () {
@@ -147,50 +183,210 @@
     }
 
     this.DrawTiles = function () {
-
         $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
+                let currentobj = this.EbObject.Tiles.$values[i];
                 let tile_id = "t" + i;
                 let t_id = "tile" + i;
                 let x = this.EbObject.Tiles.$values[i].TileDiv.Data_x;
                 let y = this.EbObject.Tiles.$values[i].TileDiv.Data_y;
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
-                let flag = false;
-                if (ebcontext.user.Roles.indexOf("SolutionOwner") !== -1 || ebcontext.user.Roles.indexOf("SolutionAdmin") !== -1)
-                    flag = true;
-                else {
-                    var res = this.EbObject.Tiles.$values[i].RefId.split("-");
-                    for (var j = 0; j < ebcontext.user.EbObjectIds.length; j++) {
-                        if (parseInt(ebcontext.user.EbObjectIds[j]) == parseInt(res[3]))
-                            flag = true;
-                    }
-                }
-                if (flag == true) {
-                    $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
+                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
-                    <i class="fa fa-refresh tile-opt i-opt-restart" aria-hidden="true" link="restart-tile"></i>
-                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link"></i>
+                    <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
+                    <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
+                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper">
                     </div></div></div>`), x, y, dw, dh, false);
-                   
-                    this.CurrentTile = t_id;
-                    this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
-                    let refid = this.EbObject.Tiles.$values[i].RefId;
-                    this.Ajax4fetchVisualization(refid);
+                this.CurrentTile = t_id;
+                this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
+                let refid = this.EbObject.Tiles.$values[i].RefId;
+                if (refid !== "") {
+                    $(`[data-id = ${this.CurrentTile}]`).css("display", "block");
+                    $.ajax(
+                        {
+                            url: '../DashBoard/DashBoardGetObj',
+                            type: 'POST',
+                            data: { refid: refid },
+                            success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
+                        });
 
                 }
-            }
-            this.Tilecontext()
+                else {
+                    $(`#${this.TabNum}_restart_${t_id}`).remove();
+                    $(`#${this.TabNum}_link_${t_id}`).remove();
+                    $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
+                        if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
+                            this.Procs[Cobj.EbSid] = Cobj;
+                            var Cobject = new EbObjects["EbDataObject"](Cobj.EbSid);
+                            $.extend(Cobject, Cobj);
+                            this.ComponentDrop("#component_cont", Cobject);
+                            this.GetComponentColumns(Cobject);
+                        }
+                    }.bind(this));
 
+                    $.each(currentobj.ControlsColl.$values, function (i, obj) {
+                        var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+                        this.makeElement(eb_type, obj);
+                        let object = this.Procs[this.currentId];
+                        this.TileCollection[t_id].ControlsColl.$values[i] = object;
+                        $(`[data-id="${this.CurrentTile}"]`).append(object.$Control[0]);
+                        //this.labelstyleApply(this.CurrentTile);
+                        if (eb_type === "Gauge") {
+                            if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
+                                let xx = EbGaugeWrapper(obj, { isEdit: false });
+                            }
+                            this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "Gauge");
+                        }
+                        else if (eb_type === "SpeedoMeter") {
+                            if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
+                                let xx = SpeedoMeterWrapper(obj, { isEdit: false });
+                            }
+                            this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "speedometer");
+                        }
+                        else if (eb_type === "ProgressGauge") {
+                            if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
+                                let xx = ProgressGaugeWrapper(obj, { isEdit: false });
+                            }
+                            $(`#${object.EbSid}`).css("max-width", $(`#${object.EbSid}`).height() + 10 + "px");
+                            this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "ProgressGauge");
+                        }                          
+                    }.bind(this));
+
+                    $.each(currentobj.LabelColl.$values, function (i, obj) {
+                        var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+                        this.makeElement(eb_type, obj);
+                        this.LabelDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid);
+                        let object = this.Procs[this.currentId];
+                        let designHtml = this.MakeDashboardLabel(object);
+                        $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+                        this.labelstyleApply(this.CurrentTile);
+                        EbDataLabelFn(obj);
+                        this.TileCollection[t_id].LabelColl.$values[i] = object;                        
+                    }.bind(this));
+                }
+                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
+            }
+            //this.addTilecontext()
+            this.Tilecontext();
         }
+        else {
+            $('.grid-stack').gridstack();
+        }
+        var grid = $('.grid-stack').data('gridstack');
+        grid.enableMove(false, true);
+        grid.enableResize(false, true);
     }
+
+
+    this.labelstyleApply = function (tileId) {
+        $(`[data-id="${tileId}"]`).parent().css("background", "transparent");
+        $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
+        $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
+        $(`#${tileId} .db-title`).empty();
+        $(`#${tileId}`).addClass("user-control-tile-opt");
+        $(`#${tileId} .i-opt-obj`).hide();
+        $(`#${tileId} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+    }
+
+    this.GaugeDrop = function (component, column, controlname, type) {
+        if (component !== "" && column !== "") {
+            let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+            let _data = this.Rowdata[component + "Row"][index];
+
+            if (type === "ProgressGauge") {
+                this.Procs[controlname].GaugeValue = _data;
+                this.Procs[controlname].GaugeContainer = controlname;
+                ProgressGaugeWrapper(this.Procs[controlname], { isEdit: false });
+            }
+            else if (type === "Gauge") {
+                this.Procs[controlname].GaugeConfig.GaugeValue = _data;
+                this.Procs[controlname].GaugeConfig.GaugeContainer = controlname;
+                let xx = EbGaugeWrapper(this.Procs[controlname], { isEdit: true });
+            }
+            else if (type === "speedometer") {
+                this.Procs[controlname].GaugeValue = _data;
+                this.Procs[controlname].GaugeContainer = controlname;
+                SpeedoMeterWrapper(this.Procs[controlname], { isEdit: false });
+            }
+        }
+    };
+
+    this.LabelDrop = function (component, column, controlname, tileid) {
+        if (component !== "" && column !== "") {
+            let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+            let _data = this.Rowdata[component + "Row"][index];
+            this.Procs[controlname].DynamicLabel = _data;
+            if (this.Procs[controlname].StaticLabel == "") {
+                this.Procs[controlname].StaticLabel = column;
+            }
+            this.Procs[controlname].DataObjCtrlName = component;
+            this.Procs[controlname].DataObjColName = column;
+        }
+    };
+
+    this.makeElement = function (el, obj) {
+        let ebtype = $(el).attr("eb-type");
+        if (ebtype === undefined) {
+            ebtype = el;
+        }
+        this.currentId = "tb" + this.TabNum + ebtype + CtrlCounters[ebtype + "Counter"]++;
+        if (obj) { obj.EbSid = this.currentId; }
+        this.Procs[this.currentId] = obj ? $.extend(new EbObjects["Eb" + ebtype](this.currentId), obj) : new EbObjects["Eb" + ebtype](this.currentId);
+        this.dropedCtrlInit(this.Procs[this.currentId].$Control, ebtype, this.currentId);
+    };
+    this.MakeDashboardLabel = function (obj) {
+        let a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
+        <div class="db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class="db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div></div>`;
+        return a;
+    };
+
+    this.dropedCtrlInit = function ($ctrl, type, id) {
+        $ctrl.attr("tabindex", "1");
+        $ctrl.attr("id", id).attr("ebsid", id);
+        $ctrl.attr("eb-type", type);
+    };
+
+    this.ComponentDrop = function (target, o) {
+       
+    };
+
+    this.GetComponentColumns = function (obj) {
+        let Refid = obj["DataSource"];
+        $.LoadingOverlay('show');
+        $.ajax({
+            type: "POST",
+            url: "../DS/GetData4DashboardControl",
+            data: { DataSourceRefId: Refid },
+            async: false,
+            success: function (resp) {
+                obj["Columns"] = JSON.parse(resp.columns);
+                //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
+                $.LoadingOverlay('hide');
+                this.DisplayColumns(obj);
+                this.Rowdata[obj.EbSid + "Row"] = resp.row;
+            }.bind(this)
+        });
+    };
+    this.DisplayColumns = function (obj) {
+        $(`#${obj.EbSid} .eb-ctrl-label`).empty().append(obj.Name);
+        $(`#Inner_Cont_${obj.EbSid}`).empty();
+        for (let i = 0; i < obj['Columns'].$values.length; i++) {
+            let column = obj['Columns'].$values[i];
+            let name = column.name;
+            $(`#Inner_Cont_${obj.EbSid}`).append(`<div data-ctrl='${obj.EbSid}' data-column='${name}' type=${column.Type} class='col-div-blk' eb-type="DataLabel"> ${name}</div>`);
+        }
+    };
+
 
     this.Ajax4fetchVisualization = function (refid) {
         if (refid !== "") {
@@ -339,3 +535,107 @@
     };
     this.init();
 }
+
+
+
+//DataLabel Style Function
+
+function EbDataLabelFn(Label) {
+
+    if (Label.ChangeTextPositon) {
+        if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
+            $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
+        }
+
+        if (Label.DescriptionPosition.Left !== 0 && Label.DescriptionPosition.Top !== 0) {
+            $(`#${Label.EbSid}_description`).css({ "left": `${Label.DescriptionPosition.Left}%`, "top": `${Label.DescriptionPosition.Top}%`, "position": "absolute" });
+        }
+
+        if (Label.DynamicLabelPositon.Left !== 0 && Label.DynamicLabelPositon.Top !== 0) {
+            $(`#${Label.EbSid}_dynamic`).css({ "left": `${Label.DynamicLabelPositon.Left}%`, "top": `${Label.DynamicLabelPositon.Top}%`, "position": "absolute" });
+        }
+
+    }
+    else {
+        $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
+        $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
+        $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
+    }
+
+    //Static label style
+    $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
+    if (Label.StaticLabelFont !== null) {
+        GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
+    }
+
+
+
+    //description style
+    $(`#${Label.EbSid}_description`).empty().append(Label.Description);
+    if (Label.DescriptionFont !== null) {
+        GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
+    }
+
+
+    //Dynamic label style
+    if (Label.DynamicLabelFont !== null) {
+        GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
+    }
+
+
+    $(`#${Label.EbSid}`).css("border-radius", Label.LabelBorderRadius);
+    $(`#${Label.EbSid}`).css("border-color", Label.LabelBorderColor);
+    if (!Label.IsGradient) {
+        $(`#${Label.EbSid}`).css("background", Label.LabelBackColor);
+    }
+    if (Label.IsGradient) {
+        $(`#${Label.EbSid}`).css("background", "");
+        let direction = GradientDirection(Label.Direction);
+        let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
+        $(`#${Label.EbSid}`).css('background-image', bg);
+    }
+
+}
+
+
+function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
+    //Tile Back Color
+    if (Tile.IsGradient) {
+        let direction = GradientDirection(Tile.Direction);
+        let bg = "linear-gradient(" + direction + "," + Tile.GradientColor1 + "," + Tile.GradientColor2 + ")";
+        $(`#${TileId}`).css("background-image", bg);
+    }
+    else {
+        $(`#${TileId}`).css("background", Tile.TileBackColor);
+    }
+
+    //Tile border
+    $(`#${TileId}`).css("border-radius", Tile.BorderRadius == 0 ? 4 + "px" : Tile.BorderRadius + "px");
+    $(`#${TileId}`).css("border", `solid 1px ${Tile.BorderColor}`);
+
+    //Tile Label
+    $(`#${TabNum}_Label_${TileId}`).empty().append(Tile.Label);
+    $(`#${TabNum}_Label_${TileId}`).css("left", Tile.Left + "%").css("top", Tile.Top + "%").css("position", "absolute");
+    if (Tile.LabelFont !== null) {
+        GetFontCss(Tile.LabelFont, $(`#${TabNum}_Label_${TileId}`));
+    }
+
+
+}
+
+function GradientDirection(val) {
+    gradient = [];
+    gradient[0] = "to right";
+    gradient[1] = "to left";
+    gradient[2] = "to bottom";
+    gradient[3] = "to bottom right";
+    gradient[4] = "to bottom left";
+    gradient[5] = "to top right";
+    gradient[6] = "to top left";
+
+    return gradient[val];
+}
+
+$(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+});

@@ -11,6 +11,7 @@
 .grid-stack {
     min-height: 500px;
     background-color: transparent;
+    margin-top: 15px;
 }
 
     .grid-stack.grid-stack-rtl {
@@ -56,9 +57,9 @@
             z-index: 0 !important;
             overflow-x: unset;
             overflow-y: unset;
-            border: solid 1px #eaeaea;
-            background-color: #fff;
             border-radius: 4px;
+            background-color:white;
+            border: solid 1px rgb(204, 204, 204);
         }
 
         .grid-stack > .grid-stack-item > .ui-resizable-handle {
@@ -218,6 +219,7 @@
         height: auto !important
     }
 }
+
 .grid-stack .box-shadow-style {
     -webkit-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.11);
     -moz-box-shadow: 3px 3px 5px 0px rgba(0,0,0,0.11);
@@ -225,7 +227,7 @@
 }
 
 /*DashBoard*/
-        #ppt-dash {
+#ppt-dash {
     top: 0px;
     right: 0px;
     width: 350px;
@@ -246,34 +248,44 @@
     height: 26px;
     line-height: 20px;
 }
+
 .db-tbl-wraper {
     height: calc(100% - 30px);
+    display: flex;
 }
 
 
 #dashbord-view {
-    margin-right: -15px;
+    margin-right: -14px;
+    height: 72.2vh;
+    overflow-x: hidden;
+    overflow-y: auto;
     padding: 0px 20px 30px 20px;
 }
-#dashbord-view .dataTables_wrapper, #dashbord-view .dataTables_scroll {
-    height: 100%;
-}
-#dashbord-view .dataTables_scrollBody {
-    height: calc(100% - 38px) !important; 
-}
-#dashbord-view .dataTables_scrollHeadInner .table {
-    margin-top: 0px !important;
-}
+
+    #dashbord-view .dataTables_wrapper, #dashbord-view .dataTables_scroll {
+        height: 100%;
+    }
+
+    #dashbord-view .dataTables_scrollBody {
+        height: calc(100% - 38px) !important;
+    }
+
+    #dashbord-view .dataTables_scrollHeadInner .table {
+        margin-top: 0px !important;
+    }
 
 
-#dashbord-view .CanvasDiv  {
-    height: 100% !important;
-}
-#dashbord-view .chart-div {
-    height: 100% !important;
-    width: 100% !important;
-    padding: 20px
-}
+    #dashbord-view .CanvasDiv {
+        height: 100% !important;
+        width: 100%;
+    }
+
+    #dashbord-view .chart-div {
+        height: 100% !important;
+        width: 100% !important;
+        padding: 20px
+    }
 
 
 /*DashBoard-user-view style*/
@@ -301,14 +313,16 @@
     color: transparent;
     width: 25px;
     font-size: 15px;
-    padding: 3px;
-    cursor:pointer;
+    padding: 6px;
+    cursor: pointer;
 }
+
 .grid-stack-item:hover .tile-opt {
-    color: #909090;
-    width: 32px;
-    font-size: 20px;
-    padding: 4px 0px 0px 8px;
+    color: #717171;
+    width: 25px;
+    font-size: 15px;
+    font-weight: 100;
+    padding: 6px;
     cursor: pointer;
 }
 
@@ -321,10 +335,12 @@
     width: 100% !important;
     padding: 20px
 }
+
 #dashbord-user-view .grid-stack {
     min-height: 650px;
     background-color: transparent;
 }
+
 #ppt-dash-view {
     top: 0px;
     right: 0px;
@@ -378,23 +394,24 @@
     box-shadow: 2px 3px 5px 0px rgba(0,0,0,0.08);
 }*/
 
-        .grid-stack .Db-user-ctrl .ctrl-cover:first-child .ctrl-cover {
-            margin-right: 0%;
-        }
-        .grid-stack  .Eb-ctrlContainer {
-            min-height: 28.18px;
-            padding-top: 0px;
-           
-        }
-            .grid-stack .Eb-ctrlContainer [ctype="DataObject"] {
-                min-height: 28.18px;
-                padding-top: 0px;
-                height: 0%;
-            }
-       
-      .grid-stack .grid-stack .ctrl-cover :first-child {
-       padding-left:10px;
+.grid-stack .Db-user-ctrl .ctrl-cover:first-child .ctrl-cover {
+    margin-right: 0%;
+}
+
+.grid-stack .Eb-ctrlContainer {
+    min-height: 28.18px;
+    padding-top: 0px;
+}
+
+    .grid-stack .Eb-ctrlContainer [ctype="DataObject"] {
+        min-height: 28.18px;
+        padding-top: 0px;
+        height: 0%;
     }
+
+.grid-stack .grid-stack .ctrl-cover :first-child {
+    padding-left: 10px;
+}
 
 
 .ctrl-cover .data-static-label {
@@ -425,7 +442,7 @@
 }
 
 .form-render-table-Td:last-child .Eb-ctrlContainer {
-    padding-right:0px;
+    padding-right: 0px;
 }
 
 /*user control left*/
@@ -443,15 +460,19 @@
     -moz-box-shadow: 2px 3px 5px 0px rgba(0,0,0,0.08);
     box-shadow: 2px 3px 5px 0px rgba(0,0,0,0.08);
 }
+
 .grid-stack .Db-user-ctrl table div, .grid-stack .Db-user-ctrl table td {
     height: 100%;
 }
-.grid-stack .Db-user-ctrl table div{
-    height:100%;
+
+.grid-stack .Db-user-ctrl table div {
+    height: 100%;
 }
-.grid-stack .Db-user-ctrl table{
-    height:100%;
+
+.grid-stack .Db-user-ctrl table {
+    height: 100%;
 }
+
 .grid-stack .user-ctrl-row div:first-child {
     height: 100%;
 }
@@ -460,10 +481,12 @@
     padding: 1px;
     padding-right: 1.2%;
 }
-.grid-stack .Db-user-ctrl table .form-render-table-Td:last-child{
-    padding: 1px;
-    padding-right: 0px;
-}
+
+    .grid-stack .Db-user-ctrl table .form-render-table-Td:last-child {
+        padding: 1px;
+        padding-right: 0px;
+    }
+
 .sidenav {
 }
 
@@ -509,6 +532,7 @@
     z-index: 5;
     font-size: 95%;
 }
+
 .stickBtnHide {
     height: 25px;
     width: 100%;
@@ -517,38 +541,15 @@
     color: white;
     background: #2b2b2b;
 }
+
     .stickBtnHide i {
         margin-left: 70%;
     }
-#Eb-obj-sidebar-cont {
-    width: 99%;
-    height: 640px;
-    overflow: auto;
-}
 
 
-    #Eb-obj-sidebar-cont .sidebar-head {
-        padding: 5px 0px 0px 10px;
-        font-size: 16px;
-        font-weight: 500;
-    }
-    #Eb-obj-sidebar-cont .sidebar-content {
-        
-    }
 
-    #Eb-obj-sidebar-cont .db-draggable-obj {
-        font-size: 12px;
-        padding: 3px 0px 3px 7px;
-        color: #3c3b3b;
-        cursor: all-scroll;
-        border: dotted 1px #bebaba;
-        margin: 5px;
-        margin-left: 25px;
-        margin-right: 15px;
-    }
-
-.db-sidebar-icon{
-    padding:4px
+.db-sidebar-icon {
+    padding: 4px
 }
 
 #DashB-Searched-Obj {
@@ -556,6 +557,7 @@
     height: 85%;
     overflow: auto;
 }
+
     #DashB-Searched-Obj .db-draggable-obj {
         font-size: 12px;
         padding: 3px 0px 3px 7px;
@@ -566,17 +568,20 @@
         margin-left: 25px;
         margin-right: 15px;
     }
+
     #DashB-Searched-Obj .sidebar-head {
         padding: 5px 0px 0px 10px;
         font-size: 16px;
         font-weight: 500;
     }
+
     #DashB-Searched-Obj .sidebar-content {
     }
 
 .search-div {
     padding: 5px 10px 10px 25px;
 }
+
     .search-div #DashB-Search {
         width: 97%;
         border: 1px solid #bababa;
@@ -585,8 +590,10 @@
     }
 
 #dashbord-view .wrapper-cont, #dashbord-view .wrapper-cont_inner {
-    height:100% !important;
+    height: 100% !important;
+    width: 100%;
 }
+
 #dashbord-user-view .wrapper-cont, #dashbord-user-view .wrapper-cont_inner {
     height: 100% !important;
 }
@@ -600,10 +607,12 @@
     background-color: #fff;
     border: none;
 }
-#objname #DashBoardObjectSelection  option {
-    border: solid 0px;
-    font-size:16px;
-}
+
+    #objname #DashBoardObjectSelection option {
+        border: solid 0px;
+        font-size: 16px;
+    }
+
 #UserDashBoardSwitchList {
     position: absolute;
     z-index: 1000;
@@ -617,6 +626,7 @@
     border-radius: 4px;
     box-shadow: 0 6px 12px rgba(0,0,0,.175);
 }
+
 #UserDashBoardSwitchBtn {
     background: #fff;
     border: solid 0px #d6d4d4;
@@ -624,6 +634,7 @@
     height: 19px;
     border-radius: 2px;
 }
+
 .Btn4SwitchDB {
     width: 100%;
     height: 27px;
@@ -631,17 +642,19 @@
     padding: 0px 0px 0px 10px;
     border: none;
 }
+
     .Btn4SwitchDB:hover {
         background: #3586cc;
         color: white;
     }
+
     .Btn4SwitchDB:disabled {
         background: #dcdcdc;
         color: black;
     }
 
 
-    /*filter dialog*/
+/*filter dialog*/
 .param-div-cont {
     top: 0px;
     left: 0px;
@@ -652,55 +665,184 @@
     height: 100%;
     z-index: 9;
 }
+
     .param-div-cont .param-div {
         display: block;
         background: white;
         height: 100%;
     }
-    .param-div-cont #filterBox{
-        padding:15px;
+
+    .param-div-cont #filterBox {
+        padding: 15px;
     }
 
-    #dashbord-view .stickBtn {
-        display: none;
-        position: fixed;
-        width: auto;
-        font-family: serif;
-        font-size: 14.5px;
-        padding: 3px 14px;
-        top: 208px !important;
-        color: white;
-        background-color: #333;
-        -ms-transform: rotate(-90deg);
-        -webkit-transform: rotate(-90deg);
-        transform: rotate(90deg);
-        border-radius: 2px;
-        /* box-shadow: 1px 1px 2px 0 rgba(255, 255, 255, 0.49); */
-        box-shadow: 4px 2px 4px 0 rgba(26, 26, 26, 0.26);
-        z-index: 99;
-        cursor: pointer;
-        animation-duration: 0.3s;
-    }
+#dashbord-view .stickBtn {
+    display: none;
+    position: fixed;
+    width: auto;
+    font-family: serif;
+    font-size: 14.5px;
+    padding: 3px 14px;
+    top: 208px !important;
+    color: white;
+    background-color: #333;
+    -ms-transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
+    transform: rotate(90deg);
+    border-radius: 2px;
+    /* box-shadow: 1px 1px 2px 0 rgba(255, 255, 255, 0.49); */
+    box-shadow: 4px 2px 4px 0 rgba(26, 26, 26, 0.26);
+    z-index: 99;
+    cursor: pointer;
+    animation-duration: 0.3s;
+}
 
 
 
-
+/*  ======  ToolBox Style Dashboard ==========*/
 
 .ToolBox-div {
     top: 0px;
     left: 0px;
-    width: 350px;
+    width: 35vh;
     position: fixed;
     display: block;
     margin-top: 37px;
     height: 100%;
     z-index: 9;
     background-color: white;
+    border-right: solid 1px #888;
 }
+
     .ToolBox-div .nav > li > a {
         font-size: 13px;
         padding: 5px 10px 3px 10px;
     }
+
+.tool-sec-cont .tool {
+    padding: 8px 10px;
+    font-size: 0.8em;
+    margin: 2px;
+    cursor: move;
+    width: calc( 50% - 6px);
+    display: inline-block;
+    border-radius: 2px;
+    border: solid 1px rgba(240, 240, 240, 0);
+    border-bottom: solid 1px rgba(240, 240, 240, 0.6);
+    /* box-shadow: 0px 1px 0px 0px rgba(185, 185, 185, 0.15); */
+    transition-duration: 0.05s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .tool-sec-cont .tool:hover {
+        border: dashed 1px #555555;
+    }
+
+.tool-sec-cont .tool-icon-cont {
+    width: 26px;
+    display: inline-block;
+    text-align: center;
+    margin-right: 0 !important;
+    margin-left: -6px;
+}
+
+.tool-sec-cont .db-draggable-obj {
+    padding: 8px 10px;
+    font-size: 0.8em;
+    margin: 2px;
+    cursor: move;
+    width: calc( 50% - 6px);
+    display: inline-block;
+    border-radius: 2px;
+    border: solid 1px rgba(240, 240, 240, 0);
+    border-bottom: solid 1px rgba(240, 240, 240, 0.6);
+    box-shadow: 0px 1px 0px 0px rgba(185, 185, 185, 0.15);
+    transition-duration: 0.05s;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+    .tool-sec-cont .db-draggable-obj:hover {
+        border: dashed 1px #555555;
+    }
+
+    .tool-sec-cont .db-draggable-obj .obj-icon {
+        width: 26px;
+        display: inline-block;
+        text-align: center;
+        margin-right: 0 !important;
+        margin-left: -6px;
+    }
+
+#toolbox-dashboard .tool_item_head {
+    padding: 5px 5px;
+    border-bottom: none;
+    background: #fff;
+    font-size: 11.3px;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.12), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.1px;
+}
+#toolbox-dashboard .tool_item_inner_head {
+    padding: 5px 5px;
+    border-bottom: none;
+    background: #fff;
+    font-size: 11.3px;
+    cursor: pointer;
+    font-weight: 500;
+    box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.12), 0 -1px 0px 0px rgba(0, 0, 0, 0.05);
+    letter-spacing: 0.1px;
+    margin-left: -15px;
+}
+
+/*#Eb-obj-sidebar-cont .sidebar-head {
+    padding: 5px 0px 0px 10px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#Eb-obj-sidebar-cont .sidebar-content {
+}
+
+#Eb-obj-sidebar-cont .db-draggable-obj {
+    font-size: 12px;
+    padding: 3px 0px 3px 7px;
+    color: #3c3b3b;
+    cursor: all-scroll;
+    border: dotted 1px #bebaba;
+    margin: 5px;
+    margin-left: 25px;
+    margin-right: 15px;
+}*/
+#Eb-obj-sidebar-cont {
+    width: 99%;
+    height: 640px;
+    overflow: auto;
+}
+
+    #Eb-obj-sidebar-cont::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    /* Track */
+    #Eb-obj-sidebar-cont::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+
+    /* Handle */
+    #Eb-obj-sidebar-cont::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+        /* Handle on hover */
+        #Eb-obj-sidebar-cont::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
 
 .db-user-filter {
     top: 0px;
@@ -738,10 +880,11 @@
     transform: rotate(90deg);
     border-radius: 2px;
     /* box-shadow: 1px 1px 2px 0 rgba(255, 255, 255, 0.49); */
-        box-shadow: 4px 2px 4px 0 rgba(26, 26, 26, 0.26);
-        cursor: pointer;
-        animation-duration: 0.3s;
-    }
+    box-shadow: 4px 2px 4px 0 rgba(26, 26, 26, 0.26);
+    cursor: pointer;
+    animation-duration: 0.3s;
+}
+
 body .stickBtn {
     z-index: 8;
 }
@@ -755,15 +898,16 @@ body .stickBtn {
     right: 0px;
     bottom: 0;
     width: auto;
-    z-index: 0 !important;
+    z-index: 9 !important;
     overflow-x: unset;
     overflow-y: unset;
     border-radius: 4px;
     height: 27px;
 }
-    .user-control-tile-opt .db-tbl-wraper{
-        height:100%;
-    }
+
+.user-control-tile-opt .db-tbl-wraper {
+    height: 100%;
+}
 
 .chart-tile-opt .db-title-parent {
     display: flex;
@@ -780,17 +924,21 @@ body .stickBtn {
     border-radius: 4px;
     height: 27px;
 }
-    .chart-tile-opt .db-tbl-wraper {
-        height: 100%;
-    }
+
+.chart-tile-opt .db-tbl-wraper {
+    height: 100%;
+}
+
 .grid-stack-item:hover .Db-user-ctrl {
     border: solid 0px;
 }
+
 .chart-tile-opt .db-title {
-    margin-left: 30px;
-    font-size: 18px;
+    margin-left: 3px;
+    font-size: 2.2vh;
     font-weight: 100;
     line-height: 35px;
+    margin-top: -5px;
 }
 
 
@@ -798,6 +946,7 @@ body .stickBtn {
 .user-ctrl-col .user-ctrl, .user-ctrl-col .user-ctrl div {
     height: 99%;
 }
+
 .user-ctrl-col .Eb-ctrlContainer .ctrl-cover {
     padding: 5px 0px 0px 15px;
     border-radius: 7px;
@@ -814,4 +963,210 @@ body .stickBtn {
 
     .grid-stack .user-ctrl-col .Eb-ctrlContainer:last-child {
         margin-bottom: 0px;
+    }
+
+/*Dashboard gauge*/
+.tile_dt_cont {
+    display: flex;
+    flex-direction: row;
+    padding: 3px 3px;
+}
+
+.gaugeChart {
+    width: 100%;
+    height: 100%;
+    max-width: 360px;
+    max-height: 360px;
+}
+
+    .gaugeChart .gauge_canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+/*DataReader input Dashboard*/
+.component_cont .Eb-ctrlContainer {
+    border: solid 1px #ccc;
+    width: 13%;
+    display: flex;
+    height: 7vh;
+    flex-direction: row;
+    margin: 0% 2%;
+    padding: 0px;
+    margin-top: 1%;
+    border-radius: 4px;
+}
+
+    .component_cont.Eb-ctrlContainer:first-child {
+        margin-left: 10px;
+    }
+
+    .component_cont .Eb-ctrlContainer:last-child {
+        margin-left: 10px;
+    }
+
+    .component_cont .Eb-ctrlContainer .Dt-Rdr-col-cont {
+        width: 15%;
+        border-left: solid 1px #d8d8d8;
+    }
+
+        .component_cont .Eb-ctrlContainer .Dt-Rdr-col-cont .inner_col_up {
+            padding: 14px 10px;
+            height: 100%;
+            width: 100%;
+        }
+
+.inner_Cont_DataObject {
+    display: flex;
+    flex-flow: row;
+}
+
+.eb-ctrl-label {
+    position: relative;
+    font-size: 11.5px;
+    font-weight: 500;
+    font-family: Roboto;
+    letter-spacing: 0.3PX;
+    border: none;
+    display: inline-block;
+    margin: 0px 0;
+    z-index: 0;
+    width: 90%;
+    padding: 15px 10px;
+}
+
+
+/*component container*/
+.component_cont {
+    height: 20%;
+    width: 97%;
+    position: fixed;
+    top: 80%;
+    left: .5%;
+    margin-left: 1%;
+}
+
+    .component_cont .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+        cursor: default;
+        border: 1px solid #ddd;
+        padding: 5px 15px;
+        background: #316396;
+        color: white;
+        padding: 2px 30px 2px 15px;
+        font-size: 14px;
+        text-align: center;
+        -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+        clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    }
+
+    .component_cont .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a > i {
+        font-size: 13px;
+        margin-top: 3px;
+        margin-right: 0;
+        cursor: pointer;
+    }
+
+#component_cont {
+    display: flex;
+    background: white;
+    flex-direction: row;
+    height: 100px;
+    border-left: solid 1px #e0e0e0;
+    border-right: solid 1px #e0e0e0;
+}
+
+#component_columns_cont .inner_com_col_cont {
+    position: fixed;
+    height: 20%;
+    overflow-y: auto;
+    border: solid 1px #d8d7d7;
+    min-width: 14%;
+    left: 3vh;
+    top: 65vh;
+    background: #fff;
+}
+
+/*============= Gauges ==========*/
+.gauge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#canvas-preview {
+    background-color: transparent;
+}
+
+#minVal {
+    display: none;
+    position: fixed;
+    left: 18%;
+    color: white;
+}
+
+#maxVal, #preview-textfield {
+    display: none;
+}
+
+.gaugeChart .label_value {
+    position: absolute;
+    padding: 0px;
+    display: flex;
+    flex-flow: row;
+}
+
+.progressGauge {
+    width: 100% !important;
+    height: 100% !important;
+}
+/*Dashboard label*/
+.label-cont {
+    margin-left: 2.6vh;
+    border: solid 1px;
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+    background-image: linear-gradient(to left, rgb(123, 206, 255), rgb(112, 147, 255));
+    border: 0px;
+    color: white;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .label-cont .db-static-label {
+        padding-top: 2vh;
+        text-align: center;
+        font-size: 20px;
+        position: relative;
+    }
+
+    .label-cont .db-label-desc {
+        padding: 4px 0px 0px 15px;
+        font-size: 16px;
+        position: relative;
+    }
+
+    .label-cont .db-dynamic-label {
+        font-size: 30px;
+        position: relative;
+        line-height: 20px;
+        text-align: center;
+    }
+
+    .label-cont:first-child {
+        margin-left: 0px;
+    }
+
+    .label-cont:last-child {
+        margin-right: 0px;
+    }
+
+    .label-cont .dash-static-label {
+        padding: 1px;
+    }
+
+    .label-cont .dash-dynamic-label {
+        padding: 1px;
     }

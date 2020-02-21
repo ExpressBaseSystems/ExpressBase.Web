@@ -2,8 +2,11 @@
 using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
+using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
+using ExpressBase.ServiceStack;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -14,6 +17,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using ExpressBase.Security;
+using System.Globalization;
+using ExpressBase.Common.Singletons;
+using System.Data.Common;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -21,14 +28,14 @@ namespace ExpressBase.Web.Controllers
     {
         public SqlJobController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
 
-        public SqlJobResponse ExecuteSqlJob(string Refid, List<Param> Param)
+        public string ExecuteSqlJob(string Refid, List<Param> Param)
         {
-            SqlJobResponse resp = this.ServiceClient.Post<SqlJobResponse>(new SqlJobRequest
+            ExecuteSqlJobResponse resp = this.ServiceClient.Post<ExecuteSqlJobResponse>(new ExecuteSqlJobRequest
             {
                 RefId = Refid,
                 GlobalParams = Param
             });
-            return resp;
+            return resp.Message;
         }
 
         public IActionResult SqlJobConsole()
@@ -51,18 +58,82 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("SchedulerWindow", new { objid = ObjId, tasktype = JobTypes.SqlJobTask });
         }
 
-        public SqlJobsListGetResponse Get_Jobs_List(string Refid, string Date)
+        public ListSqlJobsResponse Get_Jobs_List(string Refid, string Date)
         {
-            SqlJobsListGetResponse resp = this.ServiceClient.Get(new SqlJobsListGetRequest()
-            {
-                RefId = Refid,
-                Date = Date
+            //ListSqlJobsResponse resp = this.ServiceClient.Get(new ListSqlJobsRequest()
+            //{
+            //    RefId = Refid,
+            //    Date = Date
 
-            });
-            var Temp = new DSController(this.ServiceClient, this.Redis);
-            resp.SqlJobsDvColumns = EbSerializers.Json_Serialize(Temp.GetColumnsForSqlJob(resp.SqlJobsColumns));
+            //});
+            //return resp;
+
+            ListSqlJobsResponse resp = new ListSqlJobsResponse();
+            string query = @"
+                    SELECT
+                        logmaster_id , message, u.firstname as executed_by, l.createdat as executed_at, COALESCE(status, 'F') status, l.id, keyvalues 
+                    FROM
+                        eb_joblogs_lines l, eb_users u 
+                    WHERE
+                        u.id =l.createdby AND
+                        logmaster_id IN (SELECT id FROM eb_joblogs_master WHERE to_char(created_at, 'dd-mm-yyyy') = :date AND refid = :refid AND COALESCE(eb_del,'F') = 'F') AND 
+                        l.id NOT IN (SELECT retry_of FROM eb_joblogs_lines) AND COALESCE(l.eb_del,'F') = 'F'
+                    ORDER BY 
+                        logmaster_id DESC, status ASC; ";
+            List<Param> _params = new List<Param>();
+            _params.Add(new Param { Name = "date",Type = ((int)EbDbTypes.String).ToString() , Value = Date });
+            _params.Add(new Param { Name = "refid", Type = ((int)EbDbTypes.String).ToString(), Value = Refid });
+            string[] arrayy = new string[] { "logmaster_id", "message", "executed_by", "executed_at", "status", "id", "keyvalues" };
+            DVColumnCollection DVColumnCollection = GetColumnsForSqlJob(arrayy);
+            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params,  Columns = DVColumnCollection, AutoGen = false, IsPaging=true };
+            List<DVBaseColumn> RowGroupingColumns = new List<DVBaseColumn> { Visualization.Columns.Get("logmaster_id") };
+            (Visualization as EbTableVisualization).RowGroupCollection.Add(new SingleLevelRowGroup { RowGrouping = RowGroupingColumns, Name = "singlelevel" });
+            (Visualization as EbTableVisualization).CurrentRowGroup = (Visualization as EbTableVisualization).RowGroupCollection[0];
+            resp.Visualization = EbSerializers.Json_Serialize(Visualization);
+            var x = EbSerializers.Json_Serialize(resp);
             return resp;
         }
+
+        public DVColumnCollection GetColumnsForSqlJob(string[] strArray)
+        {
+            var Columns = new DVColumnCollection();
+            try
+            {
+                foreach (string str in strArray)
+                {
+                    DVBaseColumn _col = null;
+                    if (str == "logmaster_id")
+                        _col = new DVNumericColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };                   
+                   if (str == "executed_by")
+                        _col = new DVStringColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                   if (str == "executed_at")
+                        _col = new DVDateTimeColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.Date, bVisible = true,Format = DateFormat.DateTime };
+                   if (str == "status")
+                        _col = new DVStringColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                   if (str == "id")
+                        _col = new DVNumericColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+                   if (str == "keyvalues")
+                        _col = new DVStringColumn { Data = 6,  sTitle = str, Type = EbDbTypes.String, bVisible = false };
+                    if (str == "message")
+                        _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
+                    _col.Name = str;
+                    _col.RenderType = _col.Type;
+                    _col.ClassName = "tdheight";
+                    _col.Font = null;
+                    _col.Align = Align.Left;
+                    Columns.Add(_col);
+                }
+                var str1 = String.Format("T0.status == \"{0}\"", "F");
+                Columns.Add(new DVButtonColumn { Data = 7, Name = "Action", sTitle = "Action", ButtonText = "Retry", bVisible = true, IsCustomColumn = true, RenderCondition = new AdvancedCondition { Value = new EbScript { Code = str1, Lang = ScriptingLanguage.CSharp } } });
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("no coloms" + e.StackTrace);
+            }
+
+            return Columns;
+        }
+
         public string AppendFRKColomns(string Refid)
         {
             List<string> ColomnList = new List<string>();
@@ -110,6 +181,7 @@ namespace ExpressBase.Web.Controllers
             }
             return EbSerializers.Json_Serialize(Para);
         }
+
         public string GetSqljobObject(string refid)
         {
             EbObjectParticularVersionResponse Resp = this.ServiceClient.Post(new EbObjectParticularVersionRequest()
@@ -118,27 +190,51 @@ namespace ExpressBase.Web.Controllers
             });
             return Resp.Data[0].Json;
         }
+
         public IActionResult GetFilterBody(string dvobj, string contextId)
         {
-            var dsObject = EbSerializers.Json_Deserialize(dvobj);
-            dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
-            if (dsObject.FilterDialog != null)
-                EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
-            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
+            ViewComponentResult result = null;
+            try
+            {
+                var dsObject = EbSerializers.Json_Deserialize(dvobj);
+                if (dsObject != null)
+                {
+                    dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
+                    Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                    if (dsObject.FilterDialog != null)
+                        EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
+                    result = ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace + e.Message);
+            }
+            return result;
         }
 
-        public RetryJobResponse JobRetry(int id, string RefId)
+        // retry a single line
+        public RetryLineResponse JobRetry(int id, string RefId)
         {
-            RetryJobResponse response = null;
+            RetryLineResponse response = null;
             if (id > 0 && RefId != null && RefId != String.Empty)
-                 response = this.ServiceClient.Post<RetryJobResponse>(new RetryJobRequest { JoblogId = id, RefId = RefId });
+                response = this.ServiceClient.Post(new RetryLineRequest { JoblogId = id, RefId = RefId });
             return response;
         }
 
-        public void ProcessorLogic()
+        //run a job again
+        public string RetryMaster(int masterId, string RefId, List<Param> Param)
         {
-            this.ServiceClient.Post<ProcessorResponse>(new ProcessorRequest()); ;
+            masterId = 188;
+            RetryMasterResponse resp = this.ServiceClient.Post(new RetryMasterRequest { MasterId = masterId, RefId = RefId, GlobalParams = Param });
+            return resp.ResponseStatus.Message;
+        }
+
+        public string DeleteJobExecution(int masterId)
+        {
+            masterId = 189; 
+            DeleteJobExecutionResponse resp = this.ServiceClient.Post(new DeleteJobExecutionRequest {MasterId = masterId});
+            return resp.ResponseStatus.Message;
         }
     }
 }

@@ -10,7 +10,7 @@
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
     this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
-    this.DataMODEL = this.formRenderer.DataMODEL[this.ctrl.TableName];
+    this.DataMODEL = options.isDynamic ? [] : this.formRenderer.DataMODEL[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
@@ -37,6 +37,10 @@
 
     this.setEditModeRows = function (dataModel) {
         this.DataMODEL = dataModel;
+        ////{ last change
+        //this.DataMODEL.clear();
+        //this.DataMODEL.push(...dataModel);
+        ////}
         this.curRowDataMODEL = this.getRowDataModel_();
         this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
@@ -76,6 +80,7 @@
                 if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined)
                     inpCtrl.DataVals.Value = ValueExpr_val;
             }
+            this.onRowPaintFn(["tr"], "check", "e");// --
         }.bind(this));
     };
 
@@ -96,10 +101,13 @@
         let TrsHTML = [];
         //let rowIds = Object.keys(this.objectMODEL);
         let rowIds = this.DataMODEL.map(a => a.RowId);
-        for (let i = 0; i < rowIds.length; i++) {
+        let i = 0;
+        for (i = 0; i < rowIds.length; i++) {
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
+        if (this.cloneMode && this.formRenderer.notSavedOnce)
+            this.newRowCounter = -i;
         return TrsHTML.join();
     };
 
@@ -197,6 +205,7 @@
 
     this.initRowCtrls = function (rowId, IsNoValExp) {
         let CurRowCtrls = this.objectMODEL[rowId];
+        this.changeEditFlagInRowCtrls(true, rowId);
 
         //// initialise all controls in added row
         for (let i = 0; i < CurRowCtrls.length; i++) {
@@ -374,12 +383,14 @@
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)
                 dspMmbr = "";//ebcontext.user.Preference.ShortDatePattern.replace(/-/g, "/").replace(/D|M|Y|d|m|y/g, "-");
-            else if (col.EbDbType === 6)
-                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
-            else if (col.EbDbType === 5)
-                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
-            else if (col.EbDbType === 17)
-                dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
+            else
+                dspMmbr = cellObj.F;
+            //else if (col.EbDbType === 6)
+            //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern);
+            //else if (col.EbDbType === 5)
+            //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortDatePattern);
+            //else if (col.EbDbType === 17)
+            //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
         }
         else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
             let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
@@ -696,15 +707,15 @@
     };
 
     this.addRow = function (opt = {}) {
-        let rowid = opt.rowid;
+        let rowId = opt.rowid;
         let isAdded = opt.isAdded;
         let insertIdx = opt.insertIdx;
         let isAddBeforeLast = opt.isAddBeforeLast;
         let editModeData = opt.editModeData;
-        rowid = rowid || --this.newRowCounter;
-        let tr = this.getNewTrHTML(rowid, isAdded);
+        rowId = rowId || --this.newRowCounter;
+        let tr = this.getNewTrHTML(rowId, isAdded);
         let $tr = $(tr).hide();
-        this.addRowDataModel(rowid, this.objectMODEL[rowid]);
+        this.addRowDataModel(rowId, this.objectMODEL[rowId]);
         if (insertIdx) {
             this.insertRowAt(insertIdx, $tr);
         } else {
@@ -726,8 +737,11 @@
         if (!this.ctrl.AscendingOrder)
             this.UpdateSlNo();
         $tr.show(300);
-        this.setCurRow(rowid);
-        let rowCtrls = this.initRowCtrls(rowid, editModeData);
+        this.setCurRow(rowId);
+        let rowCtrls = this.initRowCtrls(rowId, editModeData);
+
+        this.changeEditFlagInRowCtrls(true, rowId);
+
         this.bindReq_Vali_UniqRow($tr);
         this.updateAggCols();
         return [$tr, rowCtrls];
@@ -968,14 +982,17 @@
     this.RowRequired_valid_Check = function (rowid = this.curRowId) {//////
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
-        $.each(this.objectMODEL[rowid], function (i, Col) {
-            let $ctrl = $("#" + Col.EbSid_CtxId);
-            if (!this.isRequiredOK(Col)) {
-                required_valid_flag = false;
-                if (!$notOk1stCtrl)
-                    $notOk1stCtrl = $ctrl;
-            }
-        }.bind(this));
+        let $tr = this.get$RowByRowId(rowid);
+        if (!(this.Mode.isEdit && $tr.attr('is-initialised') !== 'true')) {
+            $.each(this.objectMODEL[rowid], function (i, Col) {
+                let $ctrl = $("#" + Col.EbSid_CtxId);
+                if (!this.isRequiredOK(Col)) {
+                    required_valid_flag = false;
+                    if (!$notOk1stCtrl)
+                        $notOk1stCtrl = $ctrl;
+                }
+            }.bind(this));
+        }
 
         if ($notOk1stCtrl) {
             setTimeout(function () {
@@ -1035,7 +1052,7 @@
             this.tryAddRow();
         else {
             let td = $curentRow.find(".ctrlstd")[0];
-            this.checkRow_click({ target: td }, true, true);
+            this.checkRow_click({ target: td }, true, false);
             //if ($curentRow.length === 1 && $curentRow.attr("is-editing") === "false")
             //    this.tryAddRow();
         }
@@ -1129,6 +1146,46 @@
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
         return true;
     }.bind(this);
+
+    this.checkRow_click_New = function (e) {
+        let $td = $(e.target).closest("td");
+        let $addRow = $(`#${this.TableId}>tbody>[is-editing=true]`);//fresh row. ':last' to handle dynamic addrow()(delayed check if row contains PoweSelect)
+        let $tr = $td.closest("tr");
+        $tr.attr("mode", "false");
+        let rowid = $tr.attr("rowid");
+        if (!this.RowRequired_valid_Check(rowid))
+            return false;
+        $td.find(".check-row").hide();
+        $td.find(".del-row").show();
+        $td.find(".edit-row").show();
+        this.$addRowBtn.removeClass("eb-disablebtn");
+
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).show();// show all rows edit button
+        $addRow.show().attr("is-editing", "true");
+        this.setcurRowDataMODELWithNewVals(rowid);
+        this.changeEditFlagInRowCtrls(false, rowid);
+        this.ctrlToSpan_row(rowid);
+        if (($tr.attr("is-checked") !== "true") && $tr.attr("is-added") === "true" && !this.ctrl.IsDisable) {
+            this.onRowPaintFn($tr, "check", e);
+            //this.addRow();
+        }
+        else {
+            this.setCurRow($addRow.attr("rowid"));
+            this.onRowPaintFn($tr, "check", e);
+        }
+        $tr.attr("is-checked", "true").attr("is-editing", "false");
+        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
+        //this.onRowPaintFn($tr, "check", e);
+        return true;
+    }.bind(this);
+
+    this.onRowPaintFn = function ($tr, action, event) {
+        if ((this.ctrl.OnRowPaint && this.ctrl.OnRowPaint.Code && this.ctrl.OnRowPaint.Code.trim() !== '')) {
+            let FnString = atob(this.ctrl.OnRowPaint.Code);
+            DynamicTabPaneGlobals = { DG: this.ctrl, $tr: $tr, action: action, event: event };
+            new Function("form", "user", "tr", "action", `event`, FnString).bind(this.ctrl.currentRow, this.ctrl.formObject, this.ctrl.__userObject, $tr[0], action, event)();
+        }
+    };
 
     this.setcurRowDataMODELWithNewVals = function (rowId) {
         $.each(this.objectMODEL[rowId], function (i, inpCtrl) {
@@ -1294,8 +1351,12 @@
             if (index > -1)
                 this.DataMODEL.splice(index, 1);
         }
+        this.setCurRow(rowid);
+        this.onRowPaintFn($tr, "delete", e);
+
         this.removeTr($tr);
         this.resetRowSlNoUnder($tr);
+
     }.bind(this);
 
     this.UpdateSlNo = function () {
@@ -1549,6 +1610,26 @@
         });
     };
 
+    //this.isCurRowEmpty = function () {
+    //    let isCurRowEmpty = true;
+    //    $.each(this.objectMODEL[this.curRowId], function (name, ctrl) {
+    //        console.log(name);
+    //        if (!ctrl.isEmpty()) {
+    //            isCurRowEmpty = false;
+    //            return false;
+    //        }
+    //    });
+    //    return isCurRowEmpty;
+    //}.bind(this);
+
+    this.hasActiveRow = function () {
+        let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
+        if ($activeRow.length === 1)
+            return true;
+        else
+            return false;
+    };
+
     this.isCurRowEmpty = function () {
         let isCurRowEmpty = true;
         $.each(this.objectMODEL[this.curRowId], function (name, ctrl) {
@@ -1661,6 +1742,7 @@
             url: "/WebForm/ImportFormData",
             data: {
                 _refid: this.formRefId,
+                _rowid: this.formRenderer.rowId,
                 _triggerctrl: lastCtrlName,
                 _params: paramsColl
             },
@@ -1680,11 +1762,15 @@
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
+        if (_respObj.Status !== 200) {
+            console.error('Data not loaded : ' + _respObj.Message);
+            ebcontext._formLastResponse = _respObj;
+            return;
+        }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.MultipleTables[this.ctrl.TableName] = dataModel;
         this.setEditModeRows(dataModel);
     };
 
@@ -1737,7 +1823,7 @@
                 this.addRowBtn_click();
             }
         }.bind(this));
-        this.$table.on("click", ".check-row", this.checkRow_click);
+        this.$table.on("click", ".check-row", this.checkRow_click_New);
         this.$table.on("click", ".cancel-row", this.cancelRow_click);
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);
@@ -1818,8 +1904,10 @@
 
     this.preInit = function () {
         if (this.ctrl.DataSourceId) {
-            this.isDataImport = true;
-            this.setSuggestionVals();
+            if (this.Mode.isNew || (this.IsLoadDataSourceInEditMode && (this.Mode.isEdit || this.Mode.isView))) {
+                this.isDataImport = true;
+                this.setSuggestionVals();
+            }
         }
         this.init();
     }.bind(this);

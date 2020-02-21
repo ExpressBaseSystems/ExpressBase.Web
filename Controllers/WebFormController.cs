@@ -19,6 +19,7 @@ using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Constants;
 using ExpressBase.Objects.Objects;
+using System.IO;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -40,12 +41,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Console.WriteLine("Webform Render - View mode request identified.");
                     ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
-                    WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-                    if (wfd.FormData == null)
-                    {
-                        ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-                    }
-                    else if (ob[0].ValueTo > 0)
+                    if (ob[0].ValueTo > 0)
                     {
                         ViewBag.rowId = ob[0].ValueTo;
                         ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
@@ -68,12 +64,20 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                ViewBag.formData = getRowdata(refId, 0, _locId);
+                ViewBag.formData = getRowdata(refId, 0, _locId);               
             }
 
             if (ViewBag.wc == TokenConstants.DC)
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
+            }
+            else
+            {
+                WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+                if (wfd.FormData == null)
+                {
+                    ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
+                }
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
@@ -138,18 +142,40 @@ namespace ExpressBase.Web.Controllers
         //    return ObjStr;
         //}
 
-        public string ImportFormData(string _refid, string _triggerctrl, List<Param> _params)
+        public string ImportFormData(string _refid, int _rowid, string _triggerctrl, List<Param> _params)
         {
             try
             {
                 if (_refid.IsNullOrEmpty() || _triggerctrl.IsNullOrEmpty())
                     throw new FormException("Refid and TriggerCtrl must be set");
-                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, Trigger = _triggerctrl, Params = _params });
+                GetImportDataResponse Resp = ServiceClient.Post<GetImportDataResponse>(new GetImportDataRequest { RefId = _refid, RowId = _rowid, Trigger = _triggerctrl, Params = _params });
                 return Resp.FormDataWrap;
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Exception in ImportFormData. Message: " + ex.Message);
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
+                {
+                    Message = "Error in loading data...",
+                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                });
+            }
+        }
+
+        public string GetDynamicGridData(string _refid, int _rowid, string _srcid, string[] _target)
+        {
+            try
+            {
+                if (_refid.IsNullOrEmpty() || _srcid.IsNullOrEmpty() || _target.Length == 0)
+                    throw new FormException("Refid, SrcId and Target must be set.");
+                GetDynamicGridDataResponse Resp = ServiceClient.Post<GetDynamicGridDataResponse>(new GetDynamicGridDataRequest { RefId = _refid, RowId = _rowid, SourceId = _srcid, Target = _target });
+                return Resp.FormDataWrap;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in GetDynamicGridData. Message: " + ex.Message);
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
@@ -207,7 +233,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (!this.HasPermission(RefId, OperationConstants.DELETE, CurrentLoc))
                 return -2; //Access Denied
-            DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
+            DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = new List<int> { RowId }, UserObj = this.LoggedInUser });
             return Resp.RowAffected;
         }
 
@@ -404,5 +430,71 @@ namespace ExpressBase.Web.Controllers
                 return ViewBag.wc;
         }
 
-    }
+
+
+		//for ebblueprint (save bg img,svg)
+		public object SaveBluePrint(string svgtxtdata,string bpmeta, int bluprntid, string savBPobj)
+		{
+			SaveBluePrintRequest Svgreq = new SaveBluePrintRequest();
+			Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
+			var httpreq = this.HttpContext.Request.Form;
+			if (httpreq.Files.Count > 0)
+			{
+
+				var BgFile = httpreq.Files[0];
+				byte[] fileData = null;
+				using (var memoryStream = new MemoryStream())
+				{
+					BgFile.CopyTo(memoryStream);
+					memoryStream.Seek(0, SeekOrigin.Begin);
+					fileData = new byte[memoryStream.Length];
+					memoryStream.ReadAsync(fileData, 0, fileData.Length);
+					Svgreq.BgFile = fileData;
+					Svgreq.BgFileName = BgFile.FileName;
+				}
+			}
+			Svgreq.Txtsvg = svgtxtdata;
+			Svgreq.MetaBluePrint = bpmeta;
+			Svgreq.BluePrintID = bluprntid;
+			Svgreq.BP_FormData = objBP;
+
+
+			SaveBluePrintResponse BPres = this.ServiceClient.Post<SaveBluePrintResponse>(Svgreq);
+			return BPres;
+		}
+		public object RetriveBluePrint(int idno)
+		{
+			RetriveBluePrintResponse rsvg = this.ServiceClient.Post<RetriveBluePrintResponse>(new RetriveBluePrintRequest { Idno = idno });
+			return rsvg;
+
+		}
+
+		public object UpdateBluePrint_Dev(int bluprntid,string uptBPobj)
+		{
+			UpdateBluePrint_DevRequest UpReq = new UpdateBluePrint_DevRequest();
+			UpReq.BluePrintID = 0;
+			Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(uptBPobj);
+			var httpreq = this.HttpContext.Request.Form;
+			if (httpreq.Files.Count > 0)
+			{
+
+				var BgFile = httpreq.Files[0];
+				byte[] fileData = null;
+				using (var memoryStream = new MemoryStream())
+				{
+					BgFile.CopyTo(memoryStream);
+					memoryStream.Seek(0, SeekOrigin.Begin);
+					fileData = new byte[memoryStream.Length];
+					memoryStream.ReadAsync(fileData, 0, fileData.Length);
+					UpReq.BgFile = fileData;
+					UpReq.BgFileName = BgFile.FileName;
+				}
+			}
+			UpReq.BluePrintID = bluprntid;
+			UpReq.BP_FormData_Dict = objBP;
+
+			UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
+			return UpResp;
+		}
+	}
 }

@@ -288,10 +288,30 @@ namespace ExpressBase.Web.Controllers
                         foreach (int _locid in authResponse.User.LocationIds)
                         {
                             if (s_obj.Locations.ContainsKey(_locid))
-                            {
                                 response.Locations.Add(s_obj.Locations[_locid]);
-                            }
                         }
+                    }
+
+                    try
+                    {
+                        this.FileClient.BearerToken = response.BToken;
+                        this.FileClient.RefreshToken = response.RToken;
+                        this.FileClient.Headers.Add(CacheConstants.RTOKEN, response.RToken);
+
+                        DownloadFileResponse dfs = this.FileClient.Get(new DownloadDpRequest
+                        {
+                            ImageInfo = new ImageMeta
+                            {
+                                FileName = response.UserId.ToString(),
+                                FileType = StaticFileConstants.PNG,
+                                FileCategory = EbFileCategory.Dp
+                            }
+                        });
+                        response.DisplayPicture = dfs.StreamWrapper.Memorystream.ToArray();
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine("api auth request getdp: " + ex.Message);
                     }
                 }
                 else
@@ -625,8 +645,8 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
-        [HttpGet("api/map/{bToken}/{rToken}/{type}/{latitude}/{longitude}/{place?}")]
-        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place = null)
+        [HttpGet("api/map")]
+        public IActionResult Maps(string bToken, string rToken, string type, double latitude, double longitude, string place)
         {
             try
             {
@@ -647,13 +667,9 @@ namespace ExpressBase.Web.Controllers
 
                 MapVendors MapType;
                 if (type == null)
-                {
                     MapType = MapVendors.GOOGLEMAP;
-                }
                 else
-                {
                     Enum.TryParse(type, out MapType);
-                }
 
                 ViewBag.MapType = MapType;
             }

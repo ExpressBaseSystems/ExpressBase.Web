@@ -260,7 +260,7 @@
     left: 0;
 }
 .survey_container{
-    padding:15px;
+    padding:10px;
     float:left;
 }
 .rating_star_control span {
@@ -314,8 +314,8 @@
 }
 .MarkQues {
     position: absolute;
-    right: 15px;
-    top: 15px;
+    right: 5px;
+    top: 5px;
     border-radius: 0;
     margin: 0;
 }

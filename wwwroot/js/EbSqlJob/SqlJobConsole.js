@@ -1,13 +1,5 @@
 ﻿function sqljobconsole(options) {
     this.AllObj = options.AllObj;
-    let chkObj = new Object();
-    chkObj.data = null;
-    chkObj.title = "Action";
-    chkObj.orderable = false;
-    chkObj.bVisible = true;
-    chkObj.name = "action";
-    chkObj.Type = 1;
-    chkObj.render = renderButtonCol;
 
     this.DrawJobSelectBox = function () {
         let $Opt = $("<select class='form-control' id='select-sql-job'> </select>");
@@ -40,37 +32,27 @@
                         Date: date
                     },
                     success: function (result) {
-                        if (result.sqlJobsColumns != null) {
-                            let cols = JSON.parse(result.sqlJobsDvColumns).$values;
-                            cols.push(chkObj);
                             $("#list-of-jobs").empty();
                             $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
                             var o = new Object();
                             o.tableId = "tbl";
-                            o.datetimeformat = true;
-                            //o.showFilterRow = false;
-                            o.showSerialColumn = false;
                             o.showCheckboxColumn = false;
-                            o.showFilterRow = false;
+                            o.showFilterRow = true;
                             o.IsPaging = true;
-                            //o.source = "inline";
-                            //o.scrollHeight = "200px";
-                            o.columns = cols;
-                            o.data = result.sqlJobsRows;
-                            var data = new EbBasicDataTable(o);
-                            $("#layout_div .loader-fb").empty().removeClass("loader-fb");
-                        } 
+                            o.dvObject = JSON.parse(result.visualization);
+                            o.Source = "sqljob";
+                            var data = new EbCommonDataTable(o);
+                        $("#layout_div .loader-fb").empty().removeClass("loader-fb");
                     }
                 });
         }
     };
 
     function renderButtonCol(data, type, row, meta) {
-       
-        if (data[6] === "S")
+        if (row[row.length - 5] === "Success")
             return "";
         else
-            return `<button class="retryBtn" id="${data[5]}">Retry</button>`
+            return `<button class="retryBtn" id="${row[row.length - 4]}">Retry</button>`
     };
 
 
@@ -113,26 +95,12 @@
 
     this.ScheduleSqlJobFunction = function () {
         $.post("/Scheduler/Schedule",
-            //{
-            //    "name": $('#sch-name').val(),
-            //    "expression": $('#result').text(),
-            //    "objId": window.location.search.split("&")[0].split("=")[1],
-            //    "type": taskType,
-            //    "users": JSON.stringify(Alluserlist),
-            //    "groups": JSON.stringify(Allgrouplist),
-            //    "cronstring": JSON.stringify(EbCron),
-            //    "message": JSON.stringify(AllDelMessage),
-            //    "_delMechanism": delMechanism
-            //}
             {
-                "name":"test",
-                "expression": "0 14 16 2 1 ? 2020 *",
+                "name": $('#sch-name').val(),
+                "expression": $('#result').text(),
                 "objId": $("#select-sql-job").children("option:selected").val().split("-")[3],
-                "type": 5,
-                "users": "",
-                "groups": "",
-                "cronstring": "0 14 16 2 1 ? 2020 *",
-                "message": "message" 
+                "type": 5, 
+                "cronstring": JSON.stringify(EbCron)  
             },
             function () { });
     };
@@ -231,6 +199,7 @@
         $("#show-scheduler").empty().append(result);
         $('#schedulerlistmodal').modal('show');
         $("#schedule").attr("id", "schedule-sql-job");
+        $("#schedule-sql-job").off("click").on("click", this.ScheduleSqlJobFunction.bind(this));
         $("#SchedulerModal .modal-body .scheduler").removeClass("col-md-5");
     };
     this.currentDate = function () {

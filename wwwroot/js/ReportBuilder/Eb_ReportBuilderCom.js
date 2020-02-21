@@ -235,7 +235,7 @@
         $($sectionselect.val()).append(obj.$Control.outerHTML());
         obj.SummaryOf = fields.val();
         obj.Name = Objid;
-        obj.Title = $funcselect.val() + "(" + fields.find('option:selected').text() + ")";
+        obj.Title = $funcselect.val() + "_" + fields.find('option:selected').text();
         obj.Function = $funcselect.val();
         obj.Left = this.RbObj.objCollection[fields.find('option:selected').attr("EbSid")].Left;
         this.RbObj.objCollection[Objid] = obj;

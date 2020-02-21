@@ -68,7 +68,11 @@ namespace ExpressBase.Web.Controllers
         }
 
 
-
+        public void Excel()
+        {
+            string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
+            var _excelobj = this.ServiceClient.Get<ExcelDownloadResponse>(new ExcelDownloadRequest { _refid = _refid});
+        }
         //public async System.Threading.Tasks.Task slacktestAsync(string data12)
         //{
         //    try
@@ -314,5 +318,7 @@ namespace ExpressBase.Web.Controllers
         public string AppId { get; set; }
         public string TeamId { get; set; }
     }
+
+   
 
 }

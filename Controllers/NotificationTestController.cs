@@ -36,11 +36,11 @@ namespace ExpressBase.Web.Controllers
             });
         }
 
-        public void NotifyByUserRole(List<string> role_name)
+        public void NotifyByUserRole(List<int> role_id)
         {
             NotifyByUserRoleResponse res = this.ServiceClient.Post<NotifyByUserRoleResponse>(new NotifyByUserRoleRequest
             {
-                RoleName = role_name
+                RoleID = role_id
             });
         }
 

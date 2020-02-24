@@ -41,11 +41,10 @@
             $('#notification-count').attr("count", len);
             for (var i = 0; i < x.Notification.length; i++) {
                 if (x.Notification[i].Title != null && x.Notification[i].Link != null) {
-                    var height = Math.ceil((x.Notification[i].Title.length / 53)) * 20;
                     html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
                                 <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>
                                 <div notification-id = "${x.Notification[i].NotificationId}" link-url="${x.Notification[i].Link}" class="notification-update" >
-                                    <p style="height: ${height}px;">${x.Notification[i].Title}</p>
+                                    <p>${x.Notification[i].Title}</p>
                                     <h6 class="notification-duration" style="margin-top: 0px;">${x.Notification[i].Duration}</h6>
                                 </div>
                             </li>`;
@@ -114,12 +113,11 @@
         $('#notification-count').attr("count", data.notifications.length);
         for (var i = 0; i < data.notifications.length; i++) {
             if (data.notifications[i].title != null && data.notifications[i].link != null) {
-                var height = Math.ceil((data.notifications[i].title.length / 53)) * 20;
                 html = html + `
                             <li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
                                 <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>
                                 <div notification-id = "${data.notifications[i].notificationId}" link-url="${data.notifications[i].link}" class="notification-update" >
-                                    <p style="height: ${height}px;">${data.notifications[i].title}</p>
+                                    <p>${data.notifications[i].title}</p>
                                     <h6 class="notification-duration" style="margin-top: 0px;">${data.notifications[i].duration}</h6>
                                 </div>
                             </li>`;

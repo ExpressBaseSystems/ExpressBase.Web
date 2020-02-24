@@ -166,7 +166,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     };
 
     this.RunClick = function () {
-        if (this.EbObject.FilterDialogRefId === "") {
+        if (this.EbObject.FilterDialogRefId) {
             this.isPw = false;
             this.RunDs();
         }

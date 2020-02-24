@@ -101,10 +101,13 @@
         let TrsHTML = [];
         //let rowIds = Object.keys(this.objectMODEL);
         let rowIds = this.DataMODEL.map(a => a.RowId);
-        for (let i = 0; i < rowIds.length; i++) {
+        let i = 0;
+        for (i = 0; i < rowIds.length; i++) {
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
+        if (this.cloneMode && this.formRenderer.notSavedOnce)
+            this.newRowCounter = -i;
         return TrsHTML.join();
     };
 
@@ -980,7 +983,7 @@
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let $tr = this.get$RowByRowId(rowid);
-        if (!(this.Mode.isEdit && $tr.attr('is-initialised') !== 'true')) {
+        if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true')) {
             $.each(this.objectMODEL[rowid], function (i, Col) {
                 let $ctrl = $("#" + Col.EbSid_CtxId);
                 if (!this.isRequiredOK(Col)) {

@@ -1,0 +1,44 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutExternal.cshtml";
+
+}
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" />
+
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/datatables.min.js"></script>
+
+
+@using (Html.BeginForm(FormMethod.Post, new { id = "excelform", enctype = "multipart/form-data" }))
+{
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+    </head>
+    <body>
+
+        @*<input type ="file" id="excelfile" name="excelfile" onchange="excelUpload()" accept=".xls,.xlsx"/>*@
+        <input type ="submit" value="Download" onclick="excelDownload()"/>
+     </body>
+}
+
+<script>
+    console.log("Excel Download");
+    function excelDownload() {
+        $.ajax({
+            type: "POST",
+            url: "Excel/download",
+            contentType: false,
+            processData: false,
+            data: null,
+            success: function (message) {
+                $("#alert").text("Success");
+            },
+            error: function () {
+                $("#alert").text("Error");
+            }
+
+        })
+    }
+
+</script>

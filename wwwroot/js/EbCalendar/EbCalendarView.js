@@ -31,6 +31,7 @@
             this.getColumns();
             this.GenerateButtons();
         }
+        $("#objname").text(this.EbObject.DisplayName);
     };
 
     this.GenerateButtons = function () {
@@ -50,6 +51,10 @@
         }
         if(this.Wc === "dc")
             commonO.Current_obj = this.EbObject;
+        if (pname === "Name") {
+            $("#objname").text(obj.DisplayName);
+            console.log(obj);
+        }
     };
 
     this.ChangeFDParams = function (newval) {

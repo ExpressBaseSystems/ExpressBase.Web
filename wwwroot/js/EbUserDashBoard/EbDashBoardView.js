@@ -259,7 +259,7 @@
                             this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "ProgressGauge");
                         }                          
                     }.bind(this));
-
+                    Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                     $.each(currentobj.LabelColl.$values, function (i, obj) {
                         var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
                         this.makeElement(eb_type, obj);
@@ -267,12 +267,17 @@
                         let object = this.Procs[this.currentId];
                         let designHtml = this.MakeDashboardLabel(object);
                         $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+
                         this.labelstyleApply(this.CurrentTile);
                         EbDataLabelFn(obj);
-                        this.TileCollection[t_id].LabelColl.$values[i] = object;                        
+                        this.TileCollection[t_id].LabelColl.$values[i] = object;
                     }.bind(this));
+                   
+                    if (currentobj.Transparent) {
+                        this.labelstyleApply(this.CurrentTile);
+                    }
                 }
-                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
+               
             }
             //this.addTilecontext()
             this.Tilecontext();

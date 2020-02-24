@@ -59,8 +59,15 @@ namespace ExpressBase.Web2.Controllers
                 {
                     TypeNameHandling = TypeNameHandling.All
                 });
-
-                if (this.LoggedInUser.Preference.DefaultDashBoard != null && this.LoggedInUser.Preference.DefaultDashBoard != string.Empty)
+                try
+                {
+                    ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
+                }
+                catch(Exception e){
+                   Console.WriteLine("Default Dashboard not found" + e.Message + e.StackTrace);
+                   ViewBag.GetObjectId = null;
+                }
+                if (this.LoggedInUser.Preference.DefaultDashBoard != null && this.LoggedInUser.Preference.DefaultDashBoard != string.Empty && ViewBag.GetObjectId != null)
                 {
                     ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
                     ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;

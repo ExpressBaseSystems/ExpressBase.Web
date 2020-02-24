@@ -983,7 +983,7 @@
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let $tr = this.get$RowByRowId(rowid);
-        if (!(this.Mode.isEdit && $tr.attr('is-initialised') !== 'true')) {
+        if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true')) {
             $.each(this.objectMODEL[rowid], function (i, Col) {
                 let $ctrl = $("#" + Col.EbSid_CtxId);
                 if (!this.isRequiredOK(Col)) {

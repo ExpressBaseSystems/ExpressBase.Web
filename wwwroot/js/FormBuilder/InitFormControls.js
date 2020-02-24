@@ -295,7 +295,7 @@ var InitControls = function (option) {
         else {
             val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
-        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+        if (ctrl.DataVals.Value !== null &&ctrl.DataVals.Value !== "" && ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
         else
             ctrl.setValue(val);

@@ -44,11 +44,11 @@ namespace ExpressBase.Web.Controllers
             });
         }
 
-        public void NotifyByUserGroup(List<string> grp_name)
+        public void NotifyByUserGroup(List<int> grp_id)
         {
             NotifyByUserGroupResponse res = this.ServiceClient.Post<NotifyByUserGroupResponse>(new NotifyByUserGroupRequest
             {
-                GroupName = grp_name
+                GroupId = grp_id
             });
         }
 

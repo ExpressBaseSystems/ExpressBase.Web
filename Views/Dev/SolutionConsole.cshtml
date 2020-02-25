@@ -1,0 +1,43 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+    Dictionary<string, List<EbObjectWrapper>> ObjList = ViewBag.objlist;
+    string signupFormRefid = ViewBag.signupFormRefid;
+}
+
+    <div class="form-group objlist col-md-4" style="margin-top:100px;">
+        <h3 style="margin-bottom:50px;">Solution Console</h3>
+        <label> Select Signup Form</label>
+        <select class="form-control" id="signup_object">
+            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in ObjList)
+            {
+                @foreach (EbObjectWrapper ver in obj.Value)
+                {
+                    <option value="@ver.RefId"> @obj.Key  (@ver.VersionNumber)</option>
+                }
+            }
+        </select>
+        <div class="pull-right" style="margin-top :10px;">
+            <button id="save" class="btn-primary">Save</button>
+        </div>
+    </div>
+
+
+<script>
+    $(document).ready(function () { 
+        if("@signupFormRefid"!="")
+            $("#signup_object").val("@signupFormRefid");
+        else
+             $("#signup_object").val("");
+    });
+
+    $("#save").on("click", function () {
+        let obj = {
+            SignupFormRefid: $("#signup_object").val()
+        };
+        $.post("../Dev/SaveSolutionSettings",
+            { obj: JSON.stringify(obj) },
+            function (result) { alert(result); }
+        );
+    });
+</script>

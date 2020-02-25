@@ -343,7 +343,8 @@ var DashBoardWrapper = function (options) {
                 this.LabelDrop(component, column, controlname, drop_id.split("_")[1]);
                 $(`#${drop_id}`).append(this.MakeDashboardLabel(o));
                 this.labelstyleApply(tileId);
-                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], tileId , this.TabNum) 
+                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], tileId, this.TabNum);
+                EbDataLabelFn(this.Procs[controlname]);
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 this.drake.containers.push(document.getElementById(drop_id));
                 this.drake.containers.push(document.getElementById(o.EbSid));
@@ -360,6 +361,7 @@ var DashBoardWrapper = function (options) {
                 let drop_id = $(target)[0].getAttribute("id");
                 this.LabelDrop(component, column, controlname, tileId);
                 $(target).append(this.MakeDashboardLabel(o));
+                EbDataLabelFn(this.Procs[controlname]);
                 this.drake.containers.push(document.getElementById(drop_id));
                 this.drake.containers.push(document.getElementById(o.EbSid));
                 this.TileCollection[this.CurrentTile].LabelColl.$values.push(o);
@@ -631,8 +633,9 @@ var DashBoardWrapper = function (options) {
     }
 
     this.DrawTiles = function () {
-        $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
-        $(".component_cont .nav").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        //$(".component_cont .nav").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        Eb_Dashboard_Bg(this.EbObject);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -659,6 +662,7 @@ var DashBoardWrapper = function (options) {
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                 let refid = this.EbObject.Tiles.$values[i].RefId;
+                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                 if (refid !== "") {
                     $(`[data-id = ${this.CurrentTile}]`).css("display", "block");
                     $.ajax(
@@ -829,9 +833,6 @@ var DashBoardWrapper = function (options) {
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
-        if (pname === "BackgroundColor") {
-            $("#layout_div").css("background-color", "").css("background-color", newval);
-        }
         if (pname === "Filter_Dialogue") {
             if (newval !== "") {
                 this.getColumns();
@@ -852,6 +853,9 @@ var DashBoardWrapper = function (options) {
         }
         if (obj.$type.split(".")[2].split(",")[0] === "Tiles") {
             Eb_Tiles_StyleFn(obj, this.CurrentTile , this.TabNum);
+        }
+        if (obj.$type.split(".")[2].split(",")[0] === "EbDashBoard") {
+            Eb_Dashboard_Bg(this.EbObject);
         }
         if (obj.$type.indexOf("ProgressGauge") > 0) {
             let xx = ProgressGaugeWrapper(this.Procs[obj.EbSid], { isEdit: true });
@@ -934,6 +938,7 @@ var DashBoardWrapper = function (options) {
             o.drawCallBack = this.drawCallBack.bind(this, id);
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
             var dt = new EbCommonDataTable(o);
+           
             //$(`[data-id="${id}"]`).parent().removeAttr("style");
             //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
             //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
@@ -987,8 +992,9 @@ var DashBoardWrapper = function (options) {
 
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");
-        let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
+        let a = $(`#${id} .dataTables_scrollHeadInner`).height();
         $(`#${id} .dataTables_scrollBody`).css("max-height", `calc(100% - ${a}px)`);
+        Eb_Tiles_StyleFn(this.TileCollection[id], id, this.TabNum);
     }.bind(this);
 
     this.BeforeSave = function () {
@@ -1158,9 +1164,10 @@ function EbDataLabelFn(Label) {
         let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
         $(`#${Label.EbSid}`).css('background-image', bg);
     }
-
+    $(`#${Label.EbSid}`).css("border", `solid 1px ${Label.LabelBorderColor}`);
 }
 
+//Tile style function
 
 function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     //Tile Back Color
@@ -1183,7 +1190,28 @@ function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     if (Tile.LabelFont !== null) {
         GetFontCss(Tile.LabelFont, $(`#${TabNum}_Label_${TileId}`));
     }
-   
+    //Tile Text Font 
+        $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} th`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} td`).css("color", Tile.FontColor);
+        $(`#${TileId} a`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} .db-title`).css("color", Tile.FontColor);
+        $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
+ 
+    $(`#${TileId} td`).css("border-bottom" , "1px solid #2b2b2b;!important")
+}
+
+function Eb_Dashboard_Bg(EbObject) {
+    if (EbObject.IsGradient) {
+        let direction = GradientDirection(EbObject.Direction);
+        let bg = "linear-gradient(" + direction + "," + EbObject.GradientColor1 + "," + EbObject.GradientColor2 + ")";
+        $("#layout_div").css("background-color", "").css("background-image", bg);
+        $(".component_cont .nav").css("background-color", "").css("background-image", bg);
+    }
+    else {
+        $("#layout_div").css("background-image", "").css("background", EbObject.BackgroundColor);
+        $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
+    }
 
 }
 

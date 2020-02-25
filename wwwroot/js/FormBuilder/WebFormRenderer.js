@@ -170,6 +170,7 @@ const WebFormRender = function (option) {
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
+        //this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();
@@ -600,6 +601,14 @@ const WebFormRender = function (option) {
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {
+            if (_renderMode === 3) {
+                EbMessage("show", { Message: "Sign up success. Plaese check mail to login ", AutoHide: false, Background: '#00aa00' });
+                setTimeout(function () {
+                    ebcontext.setup.ss.onLogOutMsg();
+                }, 3000);
+                return;
+            }
+
             respObj.FormData = JSON.parse(respObj.FormData);
             let locName = ebcontext.locations.CurrentLocObj.LongName;
             let formName = this.FormObj.DisplayName;
@@ -626,7 +635,7 @@ const WebFormRender = function (option) {
             EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
         }
         else {
-            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#aa0000' });
+            EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000' });
             console.error(respObj.MessageInt);
         }
     };
@@ -1434,7 +1443,16 @@ const WebFormRender = function (option) {
         });
     };
 
+    this.CheckSubmitButton = function () {
+        let btn = getFlatObjOfType(this.FormObj, "SubmitButton");
+        if (btn && btn.length > 0) {
+            $('#webformsave-selbtn').remove();
+            this.$saveBtn = $('#webformsave');
+        }
+    };
+
     this.init = function () {
+        this.CheckSubmitButton();
         this.TableNames = this.getNCCTblNames();
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip

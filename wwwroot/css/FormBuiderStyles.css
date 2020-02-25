@@ -283,6 +283,7 @@ body {
 .tdtxt {
     display: none;
     padding: 5px 6px;
+    word-break: break-word;
 }
 
 .rowc {

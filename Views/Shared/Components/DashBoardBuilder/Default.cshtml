@@ -60,33 +60,37 @@
 
 </script>
 <div class="container-fluid" style="background: transparent;">
-    <div class="row" style="background: transparent; display:flex ; margin-right: -30px;">
-        <div id="toolbox-dashboard"> </div>
-        <div class="col-sm-12" style="background: transparent; width: 99% ;padding: 0px;">
+    <div id="toolbox-dashboard"> </div>
+    <div class="row" style="background: transparent; display:flex ;">
+        <div class="col-sm-12" style="background: transparent; width: 100% ;padding: 0px;">
             <div id="dashbord-view" class="drop-target" style="width:100%">
                 <div class="grid-stack" id="grid-cont"></div>
             </div>
+        </div>
+    </div>
+    <div class="row" style="background: transparent; display:flex ;">
+        <div class="col-sm-12" style="background: transparent; width: 100% ;padding: 0px;">
+            <div class="component_cont">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#component_cont" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseExample">
+                            Component Container
+                            <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg); display: block;" id="tb0_pin_jswindow"></i>
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-pane fade in active component_tab" id="component_cont">
+                </div>
+            </div>
+            <div id="component_columns_cont"> </div>
 
         </div>
     </div>
-    <div class="component_cont">
-        <ul class="nav nav-tabs">
-            <li class="active">
-                <a data-toggle="tab" href="#component_cont">
-                    Component Container
-                    <i class="fa fa-thumb-tack pull-right" style="transform: rotate(90deg); display: block;" id="tb0_pin_jswindow"></i>
-                </a>
-            </li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane fade in active component_tab" id="component_cont">
-            </div>
-        </div>
-        <div id="component_columns_cont"> </div>
-    </div>
-    <div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
 </div>
-<div  id="modal-gauge"></div>
+
+<div id="ppt-dash" class="PGgrid"> <div id="propGrid"> </div></div>
+
+<div id="modal-gauge"></div>
 <script type="text/javascript">
 
         if (@ViewBag.tabnum === 0) {

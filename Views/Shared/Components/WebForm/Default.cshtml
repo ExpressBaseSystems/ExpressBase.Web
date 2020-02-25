@@ -334,6 +334,7 @@
     let _env = "@ViewBag.Env";
     let _ispartial = "@ViewBag.IsPartial";
     let _formPermissions = @Html.Raw(ViewBag.FormPermissions);
+    let _renderMode = @ViewBag.renderMode;
 
     let isFromClone = getUrlParameter("mode") === "clone";
     let cloneRowId;
@@ -349,6 +350,11 @@
     //$("#webformaudittrail").on("click", function () {
     //    $("#iFrameFormModal").modal("show");
     //});
+
+    if (_renderMode === 3) {
+        $('#quik_menu').remove();
+        $('#notificaionandprofile').remove();
+    }
 </script>
 @Html.JsCode(
     @<script>

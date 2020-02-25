@@ -655,6 +655,10 @@ var InitControls = function (option) {
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
+     this.SubmitButton = function (ctrl) {
+        $('#webformsave').removeAttr("disabled");
+    }.bind(this);
+
     this.iFrameOpen = function (ctrl) {
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
         $("#iFrameForm").attr("src", url);

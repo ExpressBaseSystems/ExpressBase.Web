@@ -156,7 +156,10 @@ namespace ExpressBase.Web.Controllers
                         Description = form["desc"]
                     });
                     if (resp.Status)
+                    {
+                        this.ServiceClient.Post(new UpdateSolutionObjectRequest() { SolnId = ViewBag.cid });
                         resp.Message = "Solution upgraded successfully :)";
+                    }
                     else
                         resp.Message = "Unable to upgrade!";
                 }

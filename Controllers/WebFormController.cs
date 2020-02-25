@@ -30,6 +30,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index(string refId, string _params, int _mode, int _locId)
         {
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+            ViewBag.renderMode = 1; 
             ViewBag.rowId = 0;
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
@@ -89,9 +90,10 @@ namespace ExpressBase.Web.Controllers
         }
 
         //[HttpGet("WebFormRender/{refId}/{_params}/{_mode}/{_locId}/{rendermode}")]
-        public IActionResult WebFormRender(string refId, string _params, int _mode, int _locId, int renderMode)
+        public IActionResult WebFormRender(string refId, string _params, int _mode, int _locId, int renderMode = 1)
         {
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+            ViewBag.renderMode = renderMode;
             ViewBag.rowId = 0;
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;

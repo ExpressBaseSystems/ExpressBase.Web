@@ -13,7 +13,7 @@
             {
                 @foreach (EbObjectWrapper ver in obj.Value)
                 {
-                    <option value="@ver.RefId"> @obj.Key  (@ver.VersionNumber)</option>
+                    <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
                 }
             }
         </select>

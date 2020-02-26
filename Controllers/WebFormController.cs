@@ -436,7 +436,7 @@ namespace ExpressBase.Web.Controllers
 		public object SaveBluePrint(string svgtxtdata,string bpmeta, int bluprntid, string savBPobj)
 		{
 			SaveBluePrintRequest Svgreq = new SaveBluePrintRequest();
-			Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
+			//Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
 			var httpreq = this.HttpContext.Request.Form;
 			if (httpreq.Files.Count > 0)
 			{
@@ -456,7 +456,7 @@ namespace ExpressBase.Web.Controllers
 			Svgreq.Txtsvg = svgtxtdata;
 			Svgreq.MetaBluePrint = bpmeta;
 			Svgreq.BluePrintID = bluprntid;
-			Svgreq.BP_FormData = objBP;
+			//Svgreq.BP_FormData = objBP;
 
 
 			SaveBluePrintResponse BPres = this.ServiceClient.Post<SaveBluePrintResponse>(Svgreq);

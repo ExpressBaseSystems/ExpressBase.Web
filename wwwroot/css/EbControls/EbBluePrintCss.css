@@ -76,11 +76,11 @@
             background-color: #333333;
         }
 #bpmeta_modal {
-  top: 20%;
+  /*top: 20%;*/
 }
 
 #bpmeta_modal .modal-header {
-    padding: 2px;
+    /*padding: 2px;*/
 }
     #bpmeta_modal .modal-footer {
         padding: 3px;
@@ -139,4 +139,7 @@
     to {
         fill: #da0f0f30;
     }
+}
+.drag_svg {
+    cursor:grabbing;
 }

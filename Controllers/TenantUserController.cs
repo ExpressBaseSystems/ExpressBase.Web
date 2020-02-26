@@ -29,61 +29,67 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet("UserDashBoard")]
         public IActionResult UserDashboard()
         {
-            Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
-            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
-            try
+            if (ViewBag.UId > 1  || ViewBag.cide =="demo")
             {
-                Console.WriteLine("############################ ======------Google Key : " + Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY));
-                ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("key not found" + e.Message + e.StackTrace);
-            }
-
-            ViewBag.Meta = _jsResult.AllMetas;
-            ViewBag.JsObjects = _jsResult.JsObjects;
-            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
-
-            GetUserDashBoardObjectsResponse Resp = this.ServiceClient.Post(new GetUserDashBoardObjectsRequest
-            {
-                ObjectIds = this.LoggedInUser.GetDashBoardIds(),
-                SolutionOwner = (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) ? true : false
-            });
-
-            if (Resp.DashBoardObjectIds.Count != 0)
-            {
-                ViewBag.ObjType = 22;
-                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.WebForm);
-                ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds, new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                });
+                Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
+                Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
                 try
                 {
-                    ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
+                    Console.WriteLine("############################ ======------Google Key : " + Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY));
+                    ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
                 }
-                catch(Exception e){
-                   Console.WriteLine("Default Dashboard not found" + e.Message + e.StackTrace);
-                   ViewBag.GetObjectId = null;
-                }
-                if (this.LoggedInUser.Preference.DefaultDashBoard != null && this.LoggedInUser.Preference.DefaultDashBoard != string.Empty && ViewBag.GetObjectId != null)
+                catch (Exception e)
                 {
-                    ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
-                    ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;
-                    ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId);
-                    ViewBag.Status = ViewBag.GetObjectId.Status;
+                    Console.WriteLine("key not found" + e.Message + e.StackTrace);
                 }
-                else
+
+                ViewBag.Meta = _jsResult.AllMetas;
+                ViewBag.JsObjects = _jsResult.JsObjects;
+                ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
+                GetUserDashBoardObjectsResponse Resp = this.ServiceClient.Post(new GetUserDashBoardObjectsRequest
                 {
-                    ViewBag.GetObjectId = Resp.DashBoardObjectIds.ElementAt(0);
-                    ViewBag.VersionNumber = ViewBag.GetObjectId.Value.VersionNumber;
-                    ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId.Value);
-                    ViewBag.Status = ViewBag.GetObjectId.Value.Status;
-                    //ViewBag.DashBoardObjects = Resp.DashBoardObjectIds;
+                    ObjectIds = this.LoggedInUser.GetDashBoardIds(),
+                    SolutionOwner = (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString())) ? true : false
+                });
+
+                if (Resp.DashBoardObjectIds.Count != 0)
+                {
+                    ViewBag.ObjType = 22;
+                    ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
+                    ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    });
+                    try
+                    {
+                        ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("Default Dashboard not found" + e.Message + e.StackTrace);
+                        ViewBag.GetObjectId = null;
+                    }
+                    if (this.LoggedInUser.Preference.DefaultDashBoard != null && this.LoggedInUser.Preference.DefaultDashBoard != string.Empty && ViewBag.GetObjectId != null)
+                    {
+                        ViewBag.GetObjectId = Resp.DashBoardObjectIds[this.LoggedInUser.Preference.DefaultDashBoard];
+                        ViewBag.VersionNumber = ViewBag.GetObjectId.VersionNumber;
+                        ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId);
+                        ViewBag.Status = ViewBag.GetObjectId.Status;
+                    }
+                    else
+                    {
+                        ViewBag.GetObjectId = Resp.DashBoardObjectIds.ElementAt(0);
+                        ViewBag.VersionNumber = ViewBag.GetObjectId.Value.VersionNumber;
+                        ViewBag.dsObj = EbSerializers.Json_Serialize(ViewBag.GetObjectId.Value);
+                        ViewBag.Status = ViewBag.GetObjectId.Value.Status;
+                        //ViewBag.DashBoardObjects = Resp.DashBoardObjectIds;
+                    }
                 }
+                return View();
             }
-            return View();
+            else
+                return Redirect("/StatusCode/404");
         }
 
         [HttpGet]

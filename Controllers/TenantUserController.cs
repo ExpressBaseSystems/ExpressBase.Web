@@ -54,7 +54,7 @@ namespace ExpressBase.Web2.Controllers
             if (Resp.DashBoardObjectIds.Count != 0)
             {
                 ViewBag.ObjType = 22;
-                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbUserControl()) as EbControlContainer, BuilderType.UserControl);
+                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.WebForm);
                 ViewBag.AllDashBoard = JsonConvert.SerializeObject(Resp.DashBoardObjectIds, new JsonSerializerSettings
                 {
                     TypeNameHandling = TypeNameHandling.All

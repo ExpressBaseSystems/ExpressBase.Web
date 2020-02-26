@@ -27,29 +27,31 @@
             else {
                 len = len + x.Notification.length;
             }
-            
+
             if (len == 0) {
                 $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
                 var html1 = `<p class="no_notification">No Notifications</p>`;
                 $('.new_notifications').append(html1);
             }
             else {
-                $('#notification-count').attr("style", "");
+                $('#notification-count').attr("style", "display:block;");
                 $('#notification-count').html(len);
                 $('.no_notification').detach();
             }
             $('#notification-count').attr("count", len);
             for (var i = 0; i < x.Notification.length; i++) {
-                var height = Math.ceil((x.Notification[i].Title.length / 53)) * 20;
-                html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
+                if (x.Notification[i].Title != null && x.Notification[i].Link != null) {
+                    html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
                                 <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>
                                 <div notification-id = "${x.Notification[i].NotificationId}" link-url="${x.Notification[i].Link}" class="notification-update" >
-                                    <p style="height: ${height}px;">${x.Notification[i].Title}</p>
+                                    <p>${x.Notification[i].Title}</p>
                                     <h6 class="notification-duration" style="margin-top: 0px;">${x.Notification[i].Duration}</h6>
                                 </div>
                             </li>`;
+                }
             }
-            $('.new_notifications').append(html);
+            html = html + $('.new_notifications').html();
+            $('.new_notifications').html(html);
             $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
             $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
         }.bind(this);
@@ -66,7 +68,7 @@
                 this.NotificationSuccessFun.bind(this, link_url)
         });
         $(e.target).closest("li").detach();
-        var x = parseInt($('#notification-count').attr("count"))-1;
+        var x = parseInt($('#notification-count').attr("count")) - 1;
         if (x == 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
             var html = `<p class="no_notification">No Notifications</p>`;
@@ -90,7 +92,7 @@
         $.ajax({
             type: "POST",
             url: "../NotificationTest/GetCompleteNotificationDetailsFromDB",
-            data: { },
+            data: {},
             success:
                 this.CompleteNotificationDisplayFunc.bind(this)
         });
@@ -100,25 +102,26 @@
         var html = ``;
         html = html + `
                     <ul class="nav nav-tabs eb-styledTab" >
-                          <li class="nav-item devdshtab active"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#notification" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;">Notifications</a></li>
+                          <li class="nav-item devdshtab active"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#notification" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Notifications</a></li>
                     </ul>
                     
                     <div class="tab-content">
                         <div id="notification" class="tab-pane active" role="tabpanel">
                             <ul class="drp_ul new_notifications" style="overflow: scroll;height: 100vh;padding: 2px;width: 350px;">
                     `;
-       
+
         $('#notification-count').attr("count", data.notifications.length);
         for (var i = 0; i < data.notifications.length; i++) {
-            var height = Math.ceil((data.notifications[i].title.length / 53)) * 20;
-            html = html + `
-                        <li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
+            if (data.notifications[i].title != null && data.notifications[i].link != null) {
+                html = html + `
+                            <li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
                                 <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>
                                 <div notification-id = "${data.notifications[i].notificationId}" link-url="${data.notifications[i].link}" class="notification-update" >
-                                    <p style="height: ${height}px;">${data.notifications[i].title}</p>
+                                    <p>${data.notifications[i].title}</p>
                                     <h6 class="notification-duration" style="margin-top: 0px;">${data.notifications[i].duration}</h6>
                                 </div>
                             </li>`;
+            }
         }
         html = html + `
                             </ul>
@@ -144,11 +147,11 @@
         }
         $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
         $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
-        $('#myTabs').on('click', '.nav-tabs a', function () {
+        $('#notificationTabs').on('click', '.nav-tabs a', function () {
             $(this).closest('.dropdown').addClass('dontClose');
         })
 
-        $('#myDropDown').on('hide.bs.dropdown', function (e) {
+        $('#notificationDropDown').on('hide.bs.dropdown', function (e) {
             if ($(this).hasClass('dontClose')) {
                 e.preventDefault();
             }
@@ -156,10 +159,9 @@
         });
 
     }
-    
+
     CloseNotification = function (e) {
         let notification_id = $(e.target).siblings('div').attr("notification-id");
-        e.stopPropagation();
         $.ajax({
             type: "POST",
             url: "../NotificationTest/GetNotificationFromDB",
@@ -179,5 +181,7 @@
             $('.no_notification').detach();
         }
         $('#notification-count').attr("count", x);
+        $('#notificationDropDown').addClass("open");
+        e.stopPropagation();
     }
 }

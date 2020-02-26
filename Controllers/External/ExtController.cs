@@ -1,6 +1,7 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Extensions;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects.Helpers;
@@ -326,15 +327,28 @@ namespace ExpressBase.Web.Controllers
             {
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
                 string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
-
+                bool IsInternal = false;
                 if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
                 {
                     if (IsTokensValid(sRToken, sBToken, hostParts[0]))
                     {
+                        IsInternal = true;
                         if (hostParts[0].EndsWith(RoutingConstants.DASHDEV))
                             return Redirect(RoutingConstants.MYAPPLICATIONS);
                         else
                             return RedirectToAction("UserDashboard", "TenantUser");
+                    }
+                }
+                if (!IsInternal)
+                {
+                    ViewBag.HasSignupForm = false;
+                    if (!hostParts[0].EndsWith(RoutingConstants.DASHDEV))
+                    {
+                        Eb_Solution solutionObj = GetSolutionObject(ViewBag.SolutionId);
+                        if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
+                        {
+                            ViewBag.HasSignupForm = true;
+                        }
                     }
                 }
                 ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -1082,6 +1096,52 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
+
+        public IActionResult UsrSignUp()
+        {
+            MyAuthenticateResponse authResponse = null;
+            try
+            {
+                string tenantid = ViewBag.SolutionId;
+                authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+                {
+                    provider = CredentialsAuthProvider.Name,
+                    UserName = "NIL",
+                    Password = "NIL",
+                    Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, "uc" },
+                        { "anonymous", "true"},
+                        { "emailId", "user@signup.com" },
+                        { TokenConstants.CID, tenantid },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
+                    RememberMe = true
+                });
+
+            }
+            catch (Exception wse)
+            {
+                Console.WriteLine("Exception:" + wse.ToString());
+            }
+            if (authResponse != null)
+            {
+                CookieOptions options = new CookieOptions();
+                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+                Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+
+                Eb_Solution solutionObj = GetSolutionObject(ViewBag.SolutionId);
+                if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
+                {
+
+                    return RedirectToAction("WebFormRender", "WebForm", new { refId = solutionObj.SolutionSettings.SignupFormRefid, _locId = 0 , renderMode = 3});
+                } 
+            }
+            return Redirect("/StatusCode/404");
+        }
+
 
     }
 }

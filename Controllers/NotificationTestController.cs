@@ -36,19 +36,19 @@ namespace ExpressBase.Web.Controllers
             });
         }
 
-        public void NotifyByUserRole(string role_name)
+        public void NotifyByUserRole(List<int> role_id)
         {
             NotifyByUserRoleResponse res = this.ServiceClient.Post<NotifyByUserRoleResponse>(new NotifyByUserRoleRequest
             {
-                RoleName = role_name
+                RoleID = role_id
             });
         }
 
-        public void NotifyByUserGroup(string grp_name)
+        public void NotifyByUserGroup(List<int> grp_id)
         {
             NotifyByUserGroupResponse res = this.ServiceClient.Post<NotifyByUserGroupResponse>(new NotifyByUserGroupRequest
             {
-                GroupName = grp_name
+                GroupId = grp_id
             });
         }
 

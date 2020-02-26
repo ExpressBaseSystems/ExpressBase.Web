@@ -314,7 +314,7 @@ var DashBoardWrapper = function (options) {
                 }
             }
             //Connect Gauge Value from component Container
-            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_com_col_cont")) {
+            else if ($(target).hasClass("gaugeChart") && $(source).hasClass("inner_tree_structure")) {
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
                 let controlname = $(target).attr("id");
@@ -332,7 +332,7 @@ var DashBoardWrapper = function (options) {
                 this.ComponentDrop(target, o);
             }
             //Add Labels 
-            else if ($(target).hasClass("grid-stack") && $(source).hasClass("inner_com_col_cont")) {
+            else if ($(target).hasClass("grid-stack") && $(source).hasClass("inner_tree_structure")) {
                 let drop_id = this.AddNewTile(8, 3);
                 this.makeElement(el);
                 let o = this.Procs[this.currentId];
@@ -343,13 +343,15 @@ var DashBoardWrapper = function (options) {
                 this.LabelDrop(component, column, controlname, drop_id.split("_")[1]);
                 $(`#${drop_id}`).append(this.MakeDashboardLabel(o));
                 this.labelstyleApply(tileId);
+                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], tileId, this.TabNum);
+                EbDataLabelFn(this.Procs[controlname]);
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 this.drake.containers.push(document.getElementById(drop_id));
                 this.drake.containers.push(document.getElementById(o.EbSid));
                 this.TileCollection[this.CurrentTile].LabelColl.$values.push(o);
             }
             //Add Label tp existing tile
-            else if ($(target).hasClass("tile_dt_cont") && $(source).hasClass("inner_com_col_cont")) {
+            else if ($(target).hasClass("tile_dt_cont") && $(source).hasClass("inner_tree_structure")) {
                 this.makeElement(el);
                 let o = this.Procs[this.currentId];
                 let component = $(el).attr("data-ctrl");
@@ -359,13 +361,14 @@ var DashBoardWrapper = function (options) {
                 let drop_id = $(target)[0].getAttribute("id");
                 this.LabelDrop(component, column, controlname, tileId);
                 $(target).append(this.MakeDashboardLabel(o));
+                EbDataLabelFn(this.Procs[controlname]);
                 this.drake.containers.push(document.getElementById(drop_id));
                 this.drake.containers.push(document.getElementById(o.EbSid));
                 this.TileCollection[this.CurrentTile].LabelColl.$values.push(o);
             }
 
               //Connect progressGauge to exisitng gauge
-            else if ($(target).hasClass("progressGauge") && $(source).hasClass("inner_com_col_cont")) {
+            else if ($(target).hasClass("progressGauge") && $(source).hasClass("inner_tree_structure")) {
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
                 let controlname = $(target).attr("id");
@@ -377,7 +380,7 @@ var DashBoardWrapper = function (options) {
                 this.GaugeDrop(component, column, controlname, "ProgressGauge");
             }
                 //Connect speedometer to exisitng gauge
-            else if ($(target).hasClass("speedometer") && $(source).hasClass("inner_com_col_cont")) {
+            else if ($(target).hasClass("speedometer") && $(source).hasClass("inner_tree_structure")) {
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
                 let controlname = $(target).attr("id");
@@ -395,7 +398,7 @@ var DashBoardWrapper = function (options) {
     };
 
     this.labelstyleApply = function (tileId) {
-        $(`[data-id="${tileId}"]`).parent().css("background", "transparent");
+        //$(`[data-id="${tileId}"]`).parent().css("background", "transparent");
         $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
         $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
         $(`#${tileId} .db-title`).empty();
@@ -459,22 +462,46 @@ var DashBoardWrapper = function (options) {
 
     this.ComponentDrop = function (target, o) {
         $(target).append(o.$Control[0]);
-        $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}">
+        $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}" rel="popover" data-content="" data-original-title="A Title">
                   <i class="fa fa-angle-up" aria-hidden="true"></i> </div>`);
-        $("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" style="display:none"> <ul id="Inner_tree_${o.EbSid}" class="inner_com_col_cont"> </ul></div>`);
+        //$("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" style="display:none" class="component_col_div"> 
+        //    <ul id="Inner_tree_${o.EbSid}" class="inner_com_col_cont"> </ul> 
+        //    </div></div>`);
+        $("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" style="display:none" class="component_colomn_div">
+              <div class="inner_component_colomn_div"><ul id="Inner_tree_${o.EbSid}" class="inner_tree_structure"> </ul></div>
+              <div id="tailShadow"></div>
+              <div id="tail1"></div>
+              <div id="tail2"></div>
+            </div>`);
         this.propGrid.setObject(o, AllMetas["EbDataObject"]);
         this.drake.containers.push(document.getElementById(`Inner_tree_${o.EbSid}`));
         $(`#Inner_Btn_${o.EbSid}`).off("click").on("click", this.ComponentColumContainerShow.bind(this));
-    };
+        //$(`#Inner_Btn_${o.EbSid}`).off("click").on("click", this.PopOverTest.bind(this));
 
+    };
+    //this.PopOverTest = function (e) {
+    //    var TargetId = e.target.getAttribute("target-id");
+    //    if (TargetId == null) { TargetId = $(e.target).parent()[0].getAttribute("target-id"); }      
+    //    $('[rel=popover]').popover({
+    //        html: true,
+    //        title: 'Schedule an appointment',
+    //        content: function() {
+    //            this.drake.containers.push(document.getElementById(`Inner_tree_${TargetId}`));
+    //            return $(`#Inner_Cont_${TargetId}`).html();              
+    //        }.bind(this),           
+    //    }); 
+       
+    //};
+
+    //Component Division
     this.ComponentColumContainerShow = function (e) {
         let TargetId = e.target.getAttribute("target-id");
         if (TargetId == null) { TargetId = $(e.target).parent()[0].getAttribute("target-id"); }
         var p = $(e.target).last();
         var offset = p.offset();
-        //offset.left -= 187;
-        offset.top -= 160;
-        $(`#Inner_Cont_${TargetId}`).css({ "top": offset.top, "left": (offset.left - 177) })
+        var percentLeft = offset.left / $(window).width() * 100;
+        var percentTop = offset.top / $(window).height() * 100;
+        $(`#Inner_Cont_${TargetId}`).css({ "top": percentTop - 22 + "%", "left": percentLeft - 11 +  "%" })
         $(`#Inner_Cont_${TargetId}`).toggle();
     };
 
@@ -606,7 +633,9 @@ var DashBoardWrapper = function (options) {
     }
 
     this.DrawTiles = function () {
-        $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        //$(".component_cont .nav").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        Eb_Dashboard_Bg(this.EbObject);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -633,6 +662,7 @@ var DashBoardWrapper = function (options) {
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                 let refid = this.EbObject.Tiles.$values[i].RefId;
+                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                 if (refid !== "") {
                     $(`[data-id = ${this.CurrentTile}]`).css("display", "block");
                     $.ajax(
@@ -647,15 +677,7 @@ var DashBoardWrapper = function (options) {
                 else {
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
-                    if (currentobj.Transparent) {
-                        //$(`[data-id="${this.CurrentTile}"]`).parent().css("background", "transparent");
-                        //$(`[data-id="${this.CurrentTile}"]`).parent().css("border", "0px solid");
-                        //$(`[data-id="${this.CurrentTile}"]`).parent().css("border", "0px solid");
-                        $(`#${this.CurrentTile} .db-title`).empty();
-                        $(`#${this.CurrentTile}`).addClass("user-control-tile-opt");
-                        $(`#${this.CurrentTile} .i-opt-obj`).hide();
-                        $(`#${this.CurrentTile} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
-                    }
+                   
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
                             var eb_type = Cobj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
@@ -714,10 +736,19 @@ var DashBoardWrapper = function (options) {
                         //this.drake.containers.push(document.getElementById(this.drop_id));
                         this.propGrid.setObject(object, AllMetas["Eb" + eb_type]);
                     }.bind(this));
-
+                    Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
+                    if (currentobj.Transparent) {
+                        $(`[data-id="${this.CurrentTile}"]`).parent().css("background", "transparent");
+                        $(`[data-id="${this.CurrentTile}"]`).parent().css("border", "0px solid");
+                        $(`[data-id="${this.CurrentTile}"]`).parent().css("border", "0px solid");
+                        $(`#${this.CurrentTile} .db-title`).empty();
+                        $(`#${this.CurrentTile}`).addClass("user-control-tile-opt");
+                        $(`#${this.CurrentTile} .i-opt-obj`).hide();
+                        $(`#${this.CurrentTile} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+                    }
 
                 }
-                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
+              
             }
             //this.addTilecontext()
             this.Tilecontext();
@@ -802,9 +833,6 @@ var DashBoardWrapper = function (options) {
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
-        if (pname === "BackgroundColor") {
-            $("#layout_div").css("background-color", "").css("background-color", newval);
-        }
         if (pname === "Filter_Dialogue") {
             if (newval !== "") {
                 this.getColumns();
@@ -825,6 +853,9 @@ var DashBoardWrapper = function (options) {
         }
         if (obj.$type.split(".")[2].split(",")[0] === "Tiles") {
             Eb_Tiles_StyleFn(obj, this.CurrentTile , this.TabNum);
+        }
+        if (obj.$type.split(".")[2].split(",")[0] === "EbDashBoard") {
+            Eb_Dashboard_Bg(this.EbObject);
         }
         if (obj.$type.indexOf("ProgressGauge") > 0) {
             let xx = ProgressGaugeWrapper(this.Procs[obj.EbSid], { isEdit: true });
@@ -907,6 +938,7 @@ var DashBoardWrapper = function (options) {
             o.drawCallBack = this.drawCallBack.bind(this, id);
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
             var dt = new EbCommonDataTable(o);
+           
             //$(`[data-id="${id}"]`).parent().removeAttr("style");
             //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
             //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
@@ -960,8 +992,9 @@ var DashBoardWrapper = function (options) {
 
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");
-        let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
+        let a = $(`#${id} .dataTables_scrollHeadInner`).height();
         $(`#${id} .dataTables_scrollBody`).css("max-height", `calc(100% - ${a}px)`);
+        Eb_Tiles_StyleFn(this.TileCollection[id], id, this.TabNum);
     }.bind(this);
 
     this.BeforeSave = function () {
@@ -1066,7 +1099,12 @@ var DashBoardWrapper = function (options) {
     //}
 
     this.init();
-
+    $('.component_cont').on('hide.bs.collapse', function (e) {
+        $("#dashbord-view").css("height", 85+"vh" );
+    })
+    $('.component_cont').on('show.bs.collapse', function (e) {;
+        $("#dashbord-view").css("height", 72.2 + "vh");
+    })
 }
 
 //DataLabel Style Function
@@ -1092,15 +1130,16 @@ function EbDataLabelFn(Label) {
         $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
         $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
     }
-
+    if (Label.TextPosition == 0) { this.TextPosition = "left" }
+    if (Label.TextPosition == 1) { this.TextPosition = "center" }
+    if (Label.TextPosition == 2) { this.TextPosition = "right" }
+    $(`#${Label.EbSid}`).css("text-align", this.TextPosition);
     //Static label style
     $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
     if (Label.StaticLabelFont !== null) {
         GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
     }
    
-
-
     //description style
     $(`#${Label.EbSid}_description`).empty().append(Label.Description);
     if (Label.DescriptionFont !== null) {
@@ -1125,9 +1164,10 @@ function EbDataLabelFn(Label) {
         let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
         $(`#${Label.EbSid}`).css('background-image', bg);
     }
-
+    $(`#${Label.EbSid}`).css("border", `solid 1px ${Label.LabelBorderColor}`);
 }
 
+//Tile style function
 
 function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     //Tile Back Color
@@ -1150,7 +1190,28 @@ function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     if (Tile.LabelFont !== null) {
         GetFontCss(Tile.LabelFont, $(`#${TabNum}_Label_${TileId}`));
     }
-   
+    //Tile Text Font 
+        $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} th`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} td`).css("color", Tile.FontColor);
+        $(`#${TileId} a`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} .db-title`).css("color", Tile.FontColor);
+        $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
+ 
+    $(`#${TileId} td`).css("border-bottom" , "1px solid #2b2b2b;!important")
+}
+
+function Eb_Dashboard_Bg(EbObject) {
+    if (EbObject.IsGradient) {
+        let direction = GradientDirection(EbObject.Direction);
+        let bg = "linear-gradient(" + direction + "," + EbObject.GradientColor1 + "," + EbObject.GradientColor2 + ")";
+        $("#layout_div").css("background-color", "").css("background-image", bg);
+        $(".component_cont .nav").css("background-color", "").css("background-image", bg);
+    }
+    else {
+        $("#layout_div").css("background-image", "").css("background", EbObject.BackgroundColor);
+        $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
+    }
 
 }
 
@@ -1170,3 +1231,4 @@ function GradientDirection(val ) {
 $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
 });
+

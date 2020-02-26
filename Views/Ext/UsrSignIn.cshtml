@@ -49,6 +49,12 @@
                         <button validator="submit" id="logNow" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
                             Sign In
                         </button>
+                        @if (ViewBag.HasSignupForm)
+                        {
+                            <a href="../Ext/UsrSignUp" id="Signupform" class="pull-right Signupform " style="margin-top:10px; ">
+                                Create an account
+                            </a>
+                        }
                     </div>
                 </div>
                 <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
@@ -67,3 +73,10 @@
         });
     </script>
 }
+<style>
+    .Signupform:hover {
+        font-weight : 500;
+        color : #337ab7;
+        text-decoration : underline;
+    }
+</style>

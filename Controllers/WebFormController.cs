@@ -30,6 +30,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index(string refId, string _params, int _mode, int _locId)
         {
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+            ViewBag.renderMode = 1; 
             ViewBag.rowId = 0;
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
@@ -40,7 +41,7 @@ namespace ExpressBase.Web.Controllers
                 if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
                 {
                     Console.WriteLine("Webform Render - View mode request identified.");
-                    ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId);
+                    ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId, 1);
                     if (ob[0].ValueTo > 0)
                     {
                         ViewBag.rowId = ob[0].ValueTo;
@@ -64,7 +65,70 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
-                ViewBag.formData = getRowdata(refId, 0, _locId);               
+                ViewBag.formData = getRowdata(refId, 0, _locId, 1);
+            }
+
+            if (ViewBag.wc == TokenConstants.DC)
+            {
+                ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
+            }
+            else
+            {
+                WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+                if (wfd.FormData == null)
+                {
+                    ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
+                }
+            }
+            ViewBag.formRefId = refId;
+            ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
+
+            ViewBag.__Solution = GetSolutionObject(ViewBag.cid);
+            ViewBag.__User = this.LoggedInUser;
+
+            return ViewComponent("WebForm", new string[] { refId, this.LoggedInUser.Preference.Locale });
+        }
+
+        //[HttpGet("WebFormRender/{refId}/{_params}/{_mode}/{_locId}/{rendermode}")]
+        public IActionResult WebFormRender(string refId, string _params, int _mode, int _locId, int renderMode = 1)
+        {
+            Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
+            ViewBag.renderMode = renderMode;
+            ViewBag.rowId = 0;
+            ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
+            ViewBag.IsPartial = _mode > 10;
+            _mode = _mode > 0 ? _mode % 10 : _mode;
+            if (_params != null)
+            {
+                List<Param> ob = JsonConvert.DeserializeObject<List<Param>>(_params.FromBase64());
+                if ((int)WebFormDVModes.View_Mode == _mode && ob.Count == 1)
+                {
+                    Console.WriteLine("Webform Render - View mode request identified.");
+                    ViewBag.formData = getRowdata(refId, Convert.ToInt32(ob[0].ValueTo), _locId, renderMode);
+                    if (ob[0].ValueTo > 0)
+                    {
+                        ViewBag.rowId = ob[0].ValueTo;
+                        ViewBag.Mode = WebFormModes.View_Mode.ToString().Replace("_", " ");
+                    }
+                }
+                else if ((int)WebFormDVModes.New_Mode == _mode)
+                {
+                    try
+                    {
+                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob });
+                        ViewBag.formData = Resp.FormDataWrap;
+                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
+                    }
+                    catch (Exception ex)
+                    {
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                        Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                ViewBag.formData = getRowdata(refId, 0, _locId, renderMode);
             }
 
             if (ViewBag.wc == TokenConstants.DC)
@@ -89,11 +153,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         // to get Table- // refid form refid, rowid - form table entry id, currentloc - location id
-        public string getRowdata(string refid, int rowid, int currentloc)
+        public string getRowdata(string refid, int rowid, int currentloc, int renderMode)
         {
             try
             {
-                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser, CurrentLoc = currentloc });
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser, CurrentLoc = currentloc, RenderMode = (WebFormRenderModes)renderMode });
                 return DataSet.FormDataWrap;
             }
             catch (Exception ex)
@@ -459,42 +523,42 @@ namespace ExpressBase.Web.Controllers
 			//Svgreq.BP_FormData = objBP;
 
 
-			SaveBluePrintResponse BPres = this.ServiceClient.Post<SaveBluePrintResponse>(Svgreq);
-			return BPres;
-		}
-		public object RetriveBluePrint(int idno)
-		{
-			RetriveBluePrintResponse rsvg = this.ServiceClient.Post<RetriveBluePrintResponse>(new RetriveBluePrintRequest { Idno = idno });
-			return rsvg;
+            SaveBluePrintResponse BPres = this.ServiceClient.Post<SaveBluePrintResponse>(Svgreq);
+            return BPres;
+        }
+        public object RetriveBluePrint(int idno)
+        {
+            RetriveBluePrintResponse rsvg = this.ServiceClient.Post<RetriveBluePrintResponse>(new RetriveBluePrintRequest { Idno = idno });
+            return rsvg;
 
-		}
+        }
 
-		public object UpdateBluePrint_Dev(int bluprntid,string uptBPobj)
-		{
-			UpdateBluePrint_DevRequest UpReq = new UpdateBluePrint_DevRequest();
-			UpReq.BluePrintID = 0;
-			Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(uptBPobj);
-			var httpreq = this.HttpContext.Request.Form;
-			if (httpreq.Files.Count > 0)
-			{
+        public object UpdateBluePrint_Dev(int bluprntid, string uptBPobj)
+        {
+            UpdateBluePrint_DevRequest UpReq = new UpdateBluePrint_DevRequest();
+            UpReq.BluePrintID = 0;
+            Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(uptBPobj);
+            var httpreq = this.HttpContext.Request.Form;
+            if (httpreq.Files.Count > 0)
+            {
 
-				var BgFile = httpreq.Files[0];
-				byte[] fileData = null;
-				using (var memoryStream = new MemoryStream())
-				{
-					BgFile.CopyTo(memoryStream);
-					memoryStream.Seek(0, SeekOrigin.Begin);
-					fileData = new byte[memoryStream.Length];
-					memoryStream.ReadAsync(fileData, 0, fileData.Length);
-					UpReq.BgFile = fileData;
-					UpReq.BgFileName = BgFile.FileName;
-				}
-			}
-			UpReq.BluePrintID = bluprntid;
-			UpReq.BP_FormData_Dict = objBP;
+                var BgFile = httpreq.Files[0];
+                byte[] fileData = null;
+                using (var memoryStream = new MemoryStream())
+                {
+                    BgFile.CopyTo(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+                    fileData = new byte[memoryStream.Length];
+                    memoryStream.ReadAsync(fileData, 0, fileData.Length);
+                    UpReq.BgFile = fileData;
+                    UpReq.BgFileName = BgFile.FileName;
+                }
+            }
+            UpReq.BluePrintID = bluprntid;
+            UpReq.BP_FormData_Dict = objBP;
 
-			UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
-			return UpResp;
-		}
-	}
+            UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
+            return UpResp;
+        }
+    }
 }

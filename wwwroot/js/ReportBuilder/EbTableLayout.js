@@ -363,7 +363,7 @@
         this.Table.find("tr").eq(tri).css({ "height": this.calcPercentTop(l - ltd) + "%" });
         this.setNextTr(tri);
         this.refreshCols();
-    }
+    };
 
     this.setNextCol = function (tdi) {
         let index = tdi + 1;
@@ -409,7 +409,7 @@
 
     this.startDragV = function (e, ui) {
         _dragpos = $(e.target).position().top;
-    }
+    };
 
     this.start = function () {
         if ($.isEmptyObject(this.EditCtrl)) {

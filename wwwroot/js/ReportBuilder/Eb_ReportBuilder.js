@@ -172,7 +172,7 @@
         for (let i = 0; i < this.EditObj.ReportGroups.$values.length; i++) {
             let o = this.AddGroupSection(null, null, null, this.EditObj.ReportGroups.$values[i]);
         }
-    }
+    };
 
     this.syncHeight = function () {
         for (let i = 0; i < 5; i++) {
@@ -276,13 +276,13 @@
         return { header: h, footer: f };
     };
 
-    this.appendMSplitGroup = function (h, f,c) {
+    this.appendMSplitGroup = function (h, f, c) {
         $(".multiSplit .ReportDetail").find(".ReportDetail_sub:eq(0)").before(`<div class='multiSplitHboxSub GroupHeader_sub' id="GroupHeader_ms${h.Order}" eb-type='MultiSplitBox' style='height:${h.SectionHeight}'>
                 <p class="sub_sec_notation">G${c}H</p></div>`);
         $(".multiSplit .ReportDetail .ReportDetail_sub").last().after(`<div class='multiSplitHboxSub GroupFooter${h.Order}_sub' id="GroupFooter_ms${f.Order}" eb-type='MultiSplitBox' style='height:${f.SectionHeight}'>
                 <p class="sub_sec_notation">G${c}F</p></div>`);
         this.syncHeight();
-    }
+    };
 
     this.appendMSplitSec = function (sections, obj,_new) {
         let h = $(`.page .${sections}`).height();
@@ -486,7 +486,7 @@
         $(event.target).css({ "text-overflow": "ellipsis", "overflow": "hidden" });
         if ($(event.target).hasClass("ui-resizable"))
             $(event.target).resizable("destroy");
-    }
+    };
 
     this.addImageFn = function (obj) {
         if (obj.ImageRefId)
@@ -581,7 +581,7 @@
         this.objCollection[elemId].Height = $(`#${elemId}`).height();
         this.objCollection[elemId].Left = $(`#${elemId}`).position().left;
         this.objCollection[elemId].Top = $(`#${elemId}`).position().top;
-    }
+    };
 
     this.pushToSections = function ($elements, index, eb_typeCntl, section) {
         var elemId = $elements.attr('id');
@@ -622,7 +622,7 @@
             if (array[i].EbSid === id)
                 return i;
         }
-    }
+    };
 
     this.setpageSize = function (obj) {
         this.type = obj.PaperSize;

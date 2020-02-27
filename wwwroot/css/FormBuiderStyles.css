@@ -419,6 +419,13 @@ eb-disable {
     display: block;
 }*/
 
+.grid-cont[is-disabled='true'] .addrow-btn {
+    color: #333;
+    pointer-events: none;
+    background: #dddddd;
+    box-shadow: none;
+}
+
 .dgtbl[is-disabled='true'] .rowc {
     color: gray;
     pointer-events: none;

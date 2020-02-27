@@ -309,7 +309,7 @@ namespace ExpressBase.Web.Controllers
                         });
                         response.DisplayPicture = dfs.StreamWrapper.Memorystream.ToArray();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         Console.WriteLine("api auth request getdp: " + ex.Message);
                     }
@@ -613,7 +613,7 @@ namespace ExpressBase.Web.Controllers
             return Resp;
         }
 
-        [HttpGet("api/get_data")]
+        [HttpGet("api/get_data")] //refid = datasourcerefid
         public GetMobileVisDataResponse GetMobileVisData(string refid, string param, int limit, int offset)
         {
             GetMobileVisDataResponse resp = null;
@@ -650,28 +650,40 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (!ViewBag.IsValidSol && !IsTokensValid(rToken, bToken, this.ESolutionId))
-                    return new EmptyResult();
+                string host = HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
+                string[] hostParts = host.Split(CharConstants.DOT);
 
-                this.ServiceClient.BearerToken = bToken;
-                this.ServiceClient.RefreshToken = rToken;
-                this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, rToken);
+                //to use internally also check token in cookie
+                if (bToken == null && rToken == null)
+                {
+                    bToken = HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+                    rToken = HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+                }
 
-                EbConnectionFactory connection = new EbConnectionFactory(this.SultionId, this.Redis);
-                EbMapConCollection MapCollection = connection.MapConnection;
+                if (ViewBag.IsValidSol && IsTokensValid(rToken, bToken, hostParts[0]))
+                {
+                    this.ServiceClient.BearerToken = bToken;
+                    this.ServiceClient.RefreshToken = rToken;
+                    this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, rToken);
 
-                ViewBag.Maps = MapCollection;
-                ViewBag.Latitude = latitude;
-                ViewBag.Longitude = longitude;
-                ViewBag.Place = place;
+                    EbConnectionFactory connection = new EbConnectionFactory(this.SultionId, this.Redis);
+                    EbMapConCollection MapCollection = connection.MapConnection;
 
-                MapVendors MapType;
-                if (type == null)
-                    MapType = MapVendors.GOOGLEMAP;
+                    ViewBag.Maps = MapCollection;
+                    ViewBag.Latitude = latitude;
+                    ViewBag.Longitude = longitude;
+                    ViewBag.Place = place;
+
+                    MapVendors MapType;
+                    if (type == null)
+                        MapType = MapVendors.GOOGLEMAP;
+                    else
+                        Enum.TryParse(type, out MapType);
+
+                    ViewBag.MapType = MapType;
+                }
                 else
-                    Enum.TryParse(type, out MapType);
-
-                ViewBag.MapType = MapType;
+                    return new EmptyResult();
             }
             catch (Exception ex)
             {

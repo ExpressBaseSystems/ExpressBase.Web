@@ -373,7 +373,7 @@
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
-            data: { DataSourceRefId: Refid },
+            data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);

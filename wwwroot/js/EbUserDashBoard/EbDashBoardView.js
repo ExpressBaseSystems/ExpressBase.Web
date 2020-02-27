@@ -569,14 +569,15 @@ function EbDataLabelFn(Label) {
         $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
         $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
     }
-
+    if (Label.TextPosition == 0) { this.TextPosition = "left" }
+    if (Label.TextPosition == 1) { this.TextPosition = "center" }
+    if (Label.TextPosition == 2) { this.TextPosition = "right" }
+    $(`#${Label.EbSid}`).css("text-align", this.TextPosition);
     //Static label style
     $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
     if (Label.StaticLabelFont !== null) {
         GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
     }
-
-
 
     //description style
     $(`#${Label.EbSid}_description`).empty().append(Label.Description);

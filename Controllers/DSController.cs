@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using ExpressBase.Common;
+using ExpressBase.Common.Data;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
@@ -69,9 +70,9 @@ namespace ExpressBase.Web.Controllers
             return EbSerializers.Json_Serialize(Columns);
         }
 
-        public DashboardControlReturn GetData4DashboardControl(string DataSourceRefId)
+        public DashboardControlReturn GetData4DashboardControl(string DataSourceRefId, List<Param> param)
         {
-            DataSourceDataSetResponse columnresp = this.ServiceClient.Post<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = DataSourceRefId });
+            DataSourceDataSetResponse columnresp = this.ServiceClient.Post<DataSourceDataSetResponse>(new DataSourceDataSetRequest { RefId = DataSourceRefId , Params = param  });
 
             var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
 

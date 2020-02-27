@@ -103,14 +103,25 @@
         html = html + `
                     <ul class="nav nav-tabs eb-styledTab" >
                           <li class="nav-item devdshtab active"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#notification" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Notifications</a></li>
+                          <li class="nav-item devdshtab"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#pendingAction" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Pending Actions</a></li>
                     </ul>
                     
                     <div class="tab-content">
                         <div id="notification" class="tab-pane active" role="tabpanel">
                             <ul class="drp_ul new_notifications" style="overflow: scroll;height: 100vh;padding: 2px;width: 350px;">
+                             </ul>
+                        </div>
+                        <div id="pendingAction" class="tab-pane" role="tabpanel">
+                            <ul class="drp_ul pending_Actions" style="overflow: scroll;height: 100vh;padding: 2px;width: 350px;">
+                             </ul>
+                        </div>
+                   </div>
                     `;
+        $('.notifications').empty();
+        $('.notifications').append(html);
 
         $('#notification-count').attr("count", data.notifications.length);
+        html = ``;
         for (var i = 0; i < data.notifications.length; i++) {
             if (data.notifications[i].title != null && data.notifications[i].link != null) {
                 html = html + `
@@ -123,18 +134,14 @@
                             </li>`;
             }
         }
-        html = html + `
-                            </ul>
-                        </div>
-                        <div id="old" class="tab-pane" role="tabpanel">
+        $("#notification .new_notifications").append(html);
+        html = ``;
+        html = `<div id="old" class="tab-pane" role="tabpanel">
                             <ul class="drp_ul old_notifications" style="overflow: scroll;height: 100vh;">
-                    `;
-        html = html + `
                             </ul>
                         </div>
-                   </div>`;
-        $('.notifications').empty();
-        $('.notifications').append(html);
+                    `;
+        $("#notification").after(html);
         if (data.notifications.length == 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
             var html1 = `<p class="no_notification">No Notifications</p>`;
@@ -145,6 +152,17 @@
             $('#notification-count').html(data.notifications.length);
             $('.no_notification').detach();
         }
+        //html = ``;
+        //for (i = 0; i < data.pendingActions.length; i++) {
+        //    html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
+        //                        ${data.pendingActions[i]}
+        //                    </li>`;
+        //}
+        //html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
+        //                        <a href="/NotificationTest/GetAllActions" target="_blank">See All Actions</a>
+        //                    </li>`;
+        //$("#pendingAction .pending_Actions").append(html);
+
         $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
         $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
         $('#notificationTabs').on('click', '.nav-tabs a', function () {
@@ -157,7 +175,6 @@
             }
             $(this).removeClass('dontClose');
         });
-
     }
 
     CloseNotification = function (e) {

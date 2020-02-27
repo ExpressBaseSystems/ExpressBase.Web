@@ -152,16 +152,19 @@
             $('#notification-count').html(data.notifications.length);
             $('.no_notification').detach();
         }
-        //html = ``;
-        //for (i = 0; i < data.pendingActions.length; i++) {
-        //    html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
-        //                        ${data.pendingActions[i]}
-        //                    </li>`;
-        //}
-        //html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
-        //                        <a href="/NotificationTest/GetAllActions" target="_blank">See All Actions</a>
-        //                    </li>`;
-        //$("#pendingAction .pending_Actions").append(html);
+        html = ``;
+        for (i = 0; i < data.pendingActions.length; i++) {
+            let filters = [];
+            filters.push( new fltr_obj(11, "id", data.pendingActions[i].dataId));
+            let url = `../webform/index?refid=${data.pendingActions[i].link}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filters))))}&_mode=1&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
+                                <a href="${url}" target="_blank">${data.pendingActions[i].description}</a>
+                            </li>`;
+        }
+        html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
+                                <a href="/NotificationTest/GetAllActions" target="_blank">See All Actions</a>
+                            </li>`;
+        $("#pendingAction .pending_Actions").append(html);
 
         $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
         $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));

@@ -69,12 +69,13 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/objects_by_app",
+                url: "/api/get_data",
                 type: "GET",
                 cache: false,
                 data: {
-                    "appid": 170,
-                    "locid": 1,
+                    "refid": "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3569-2662-3569",
+                    "limit": 10,
+                    "offset": 10
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
@@ -150,19 +151,19 @@
 </head>
 <body>
     <div class="col-md-4 col-lg-4 col-md-offset-4 col-lg-offset-4" style="margin-top:150px;">
-            <form action="../Ext/TenantExtSignup" method="post">
-                <div class="input-group">
-                    <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
-                    <span class="input-group-btn">
-                        <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
-                    </span>
-                </div>
-            </form>
-            <input type="file" onchange="upload(this)" multiple />
-            <button onclick="testAjax()">test</button>
-        </div>
-        <div id="div">
-        </div>
+        <form action="../Ext/TenantExtSignup" method="post">
+            <div class="input-group">
+                <input type="email" name="email" class="form-control emailtxt" placeholder="Enter your email" required />
+                <span class="input-group-btn">
+                    <button type="submit" id="getstart" class="btn getstarted">Get Started </button>
+                </span>
+            </div>
+        </form>
+        <input type="file" onchange="upload(this)" multiple />
+        <button onclick="testAjax()">test</button>
+    </div>
+    <div id="div">
+    </div>
 
     @*<table border="1" cellpadding="0" width="500">
             <tr>

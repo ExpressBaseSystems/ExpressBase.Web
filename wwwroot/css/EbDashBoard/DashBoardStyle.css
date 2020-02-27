@@ -1325,10 +1325,13 @@ body {
     overflow: hidden !important;
     white-space: nowrap !important;
     font-size: 15px;
+    font-weight:400;
     border-left: 0px !important;
     border-right: 0px !important;
 }
-
+.grid-stack .group td b {
+    font-weight:500;
+}
 .grid-stack td {
     background-color: transparent !important;
     font-size: 16px;
@@ -1344,12 +1347,20 @@ body {
     background-color: transparent !important;
 }
 .grid-stack .group td {
-    background-color: rgba(0,0,0,0.11) !important;
+    background-color: #00000029 !important;
 }
-
+.grid-stack .group-sum td {
+    background-color: #00000029 !important;
+    border-bottom: solid 1px #ffffff14 !important;
+}
 .grid-stack tr {
     background-color: transparent !important;
     border-bottom: 1px !important;
     border-bottom: solid #dcdcdc !important;
     border-bottom-width: 1px !important;
+}
+.grid-stack table.dataTable thead .sorting:after {
+    opacity: 0.2;
+    content: "\e150";
+    font-size: 12px;
 }

@@ -6,10 +6,9 @@
     this.dpiX = $(".get_ScreenDpi_div").height();
     this.GroupSelect = [];
 
-
     this.appendFontLink = function (cssfont) {
         $("head").append("<link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family='" + cssfont + "'/>");
-    }
+    };
 
     this.keyInteractions = function (event) {
         var eb_cntrol = this.Rpt.objCollection[event.target.id];
@@ -29,7 +28,7 @@
         }
         else if (event.ctrlKey)
             this.markEbCntrol(js_cntrol, eb_cntrol);
-    }
+    };
 
     this.moveCtrl = function (js_cntrol, eb_cntrol) {
         var jq_cntrol = $(js_cntrol.target);
@@ -110,7 +109,7 @@
                     source[objPropIndex] = destination[objPropIndex];
             }
         }
-    }
+    };
 
     this.replaceWOPtConvProp = function (source, destination) {
         for (var objPropIndex in source) {
@@ -118,18 +117,19 @@
                 source[objPropIndex] = destination[objPropIndex];
             }
         }
-    }
+    };
 
     this.convertTopoints = function (val) {
         var pixel = val;
         var point = (pixel * 72) / this.dpiX;
         return point;
-    }
+    };
+
     this.convertPointToPixel = function (val) {
         var points = val;
         var pixel = (points * this.dpiX) / 72;
         return pixel;
-    }
+    };
 
     this.convertPixelToPercent = function (SubsecHArr) {
         var tot = SubsecHArr.reduce((x, y) => x + y);
@@ -137,7 +137,7 @@
             SubsecHArr[i] = (SubsecHArr[i] / tot) * 100;
         }
         return SubsecHArr;
-    }
+    };
 
     this.ControlCollection = ["ReportHeaders", "ReportFooters", "PageHeaders", "PageFooters", "Detail"];
     this.emptyControlCollection = function (rptObj) {
@@ -160,7 +160,7 @@
         for (var i = 0; i < rptObjsubsec.$values.length; i++) {
             rptObjsubsec.$values[i].Fields.$values.length = 0;
         }
-    }
+    };
 
     this.setFontProp = function (fobj) {
         var _font = ("Font" in fobj) ? fobj.Font : null;
@@ -213,4 +213,4 @@
     };
 
     $('body').off("keydown").on("keydown", ".dropped", this.keyInteractions.bind(this));
-}
+};

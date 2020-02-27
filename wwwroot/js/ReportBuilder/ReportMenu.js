@@ -157,7 +157,6 @@
     };
 
     this.alignGroup = function (eType, selector, action, originalEvent) {
-
         var top = $(selector.$trigger).position().top;
         var left = $(selector.$trigger).position().left;
         var parent = $(selector.$trigger).parent();

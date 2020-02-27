@@ -94,12 +94,6 @@ var EbGaugeWrapper = function (option, ref) {
             //    { strokeStyle: "#45caff", min: 60, max: 65 },
             //    { strokeStyle: "#45caff", min: 65, max: 70 }
             //],
-            staticLabels: {
-                font: "11px sans-serif",
-                labels: [1, 10, 20, 30, 40, 50],
-                color: "#000000",
-                fractionDigits: 0
-            }
         };
 
         //Pointer
@@ -111,11 +105,37 @@ var EbGaugeWrapper = function (option, ref) {
             }
         }
         else {
-        opts.pointer = {
-            length: 0,
-            strokeWidth: 0,
-            color: "#fff"
+            opts.pointer = {
+                length: 0,
+                strokeWidth: 0,
+                color: "#fff"
+            }
         }
+
+        //Digit COnfig
+        if (option.DigitPointConfig) {
+            let labelArr = [option.MinValue];
+            let abc = (option.MaxValue - option.MinValue) / option.DigitPointConfig.DigitCount;
+            for (let i = 1; i < option.DigitPointConfig.DigitCount; i++) {
+                labelArr.push(i * abc);
+            }
+            labelArr.push(option.MaxValue);
+            if (option.RenderDigitPoints) {
+                opts.staticLabels = {
+                    font: `${option.DigitPointConfig.DigitFontSize}px sans-serif`,
+                    labels: labelArr,
+                    color: `${option.DigitPointConfig.DigitFontColor}`,
+                    fractionDigits: option.DigitPointConfig.FractionalDigit
+                }
+            }
+            else {
+                opts.staticLabels = {
+                    font: "0px sans-serif",
+                    labels: [],
+                    color: "#000000",
+                    fractionDigits: 0
+                }
+            }
         }
 
         if (option.RenderTicks) {
@@ -136,8 +156,8 @@ var EbGaugeWrapper = function (option, ref) {
 
         // your canvas element
         var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-        gauge.maxValue = 50; // set max gauge value
-        gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
+        gauge.maxValue = option.MaxValue; // set max gauge value
+        gauge.setMinValue(option.MinValue);  // Prefer setter over gauge.minValue = 0
         gauge.animationSpeed = 32; // set animation speed (32 is default value)
         gauge.set(this.value);
         gauge.setTextField(document.getElementById(`${option.EbSid}_text`));

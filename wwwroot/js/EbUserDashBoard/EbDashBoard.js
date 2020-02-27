@@ -1192,9 +1192,9 @@ function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     }
     //Tile Text Font 
         $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
-        $(`#${TileId} th`).css("color", `${Tile.FontColor}`);
-        $(`#${TileId} td`).css("color", Tile.FontColor);
-        $(`#${TileId} a`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} th`).css({ "color": `${Tile.FontColor} !important;` });
+        $(`#${TileId} td`).css({ "color": `${Tile.FontColor} !important;` });
+    $(`#${TileId} a`).css("color", `${Tile.LinkColor} !important;`).css("font-size: 14px;");
         $(`#${TileId} .db-title`).css("color", Tile.FontColor);
         $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
  

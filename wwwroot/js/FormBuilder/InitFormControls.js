@@ -295,7 +295,7 @@ var InitControls = function (option) {
         else {
             val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
-        if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
+        if (ctrl.DataVals.Value !== null &&ctrl.DataVals.Value !== "" && ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
         else
             ctrl.setValue(val);
@@ -570,6 +570,10 @@ var InitControls = function (option) {
         return new EbApproval(ctrl, ctrlOpts);
     };
 
+    this.Review = function (ctrl, ctrlOpts) {
+        return new EbReview(ctrl, ctrlOpts);
+    };
+
     this.PowerSelect = function (ctrl, ctrlOpts) {
 
         let t0 = performance.now();
@@ -653,6 +657,10 @@ var InitControls = function (option) {
     this.Button = function (ctrl) {
         $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
+    }.bind(this);
+
+     this.SubmitButton = function (ctrl) {
+        $('#webformsave').removeAttr("disabled");
     }.bind(this);
 
     this.iFrameOpen = function (ctrl) {

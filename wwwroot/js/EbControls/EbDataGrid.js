@@ -26,6 +26,7 @@
         this.mode_s = "view";
 
     this.objectMODEL = {};
+    this.objectMODELdict = {};
 
     this.resetBuffers = function () {
         this.curRowObjectMODEL = {};
@@ -50,6 +51,7 @@
 
     this.constructObjectModel = function (dataRows) {
         this.objectMODEL = {};
+        this.objectMODELdict = {};
         for (let i = 0; i < dataRows.length; i++) {
             let dataRow = dataRows[i];
             let rowId = dataRow.RowId;
@@ -101,10 +103,13 @@
         let TrsHTML = [];
         //let rowIds = Object.keys(this.objectMODEL);
         let rowIds = this.DataMODEL.map(a => a.RowId);
-        for (let i = 0; i < rowIds.length; i++) {
+        let i = 0;
+        for (i = 0; i < rowIds.length; i++) {
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
+        if (this.cloneMode && this.formRenderer.notSavedOnce)
+            this.newRowCounter = -i;
         return TrsHTML.join();
     };
 
@@ -980,7 +985,7 @@
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let $tr = this.get$RowByRowId(rowid);
-        if (!(this.Mode.isEdit && $tr.attr('is-initialised') !== 'true')) {
+        if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true')) {
             $.each(this.objectMODEL[rowid], function (i, Col) {
                 let $ctrl = $("#" + Col.EbSid_CtxId);
                 if (!this.isRequiredOK(Col)) {
@@ -1055,20 +1060,6 @@
         }
 
     }.bind(this);
-
-    this.setCurRow = function (rowId) {
-        this.curRowId = rowId;
-        this.curRowObjectMODEL = {};
-        this.ctrl.currentRow = this.curRowObjectMODEL;
-        let inpctrls = this.objectMODEL[rowId];
-
-        for (var i = 0; i < inpctrls.length; i++) {
-            let inpctrl = inpctrls[i];
-            if (!this.curRowObjectMODEL[inpctrl.__Col.Name])
-                this.curRowObjectMODEL[inpctrl.__Col.Name] = inpctrl;
-        }
-
-    };
 
     this.row_dblclick = function (e) {
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
@@ -1514,12 +1505,44 @@
         this.updateRowByRowId(rowId, rowData);
     };
 
-    this.getRowBySlno = function (slno) {
-        let rowId = this.getRowIdBySlno(slno);
-        if (rowId)
-            return this.objectMODEL[rowId];
+    this.getRowBySlno = function (slno, rowId) {
+        if (rowId === undefined)
+            rowId = this.getRowIdBySlno(slno);
+        if (rowId) {
+            let rowDict = this.Arr2dict(this.objectMODEL[rowId]);
+            return rowDict;
+        }
         else
             console.eb_error(`Row with Serial number '${slno}' not found`);
+    };
+
+
+    this.getRowByIndex = function (idx) {
+        let rowId = $(`#${this.TableId}>tbody>tr.dgtr:eq(${idx})`).attr("rowid");
+        return this.getRowBySlno(false, rowId);
+    }.bind(this);
+
+    this.Arr2dict = function (Arr) {
+        let dict = {};
+        for (let i = 0; i < Arr.length; i++) {
+            let obj = Arr[i];
+            dict[obj.Name] = obj;
+        }
+        return dict;
+    };
+
+    this.setCurRow = function (rowId) {
+        this.curRowId = rowId;
+        this.curRowObjectMODEL = {};
+        this.ctrl.currentRow = this.curRowObjectMODEL;
+        let inpctrls = this.objectMODEL[rowId];
+
+        for (var i = 0; i < inpctrls.length; i++) {
+            let inpctrl = inpctrls[i];
+            if (!this.curRowObjectMODEL[inpctrl.__Col.Name])
+                this.curRowObjectMODEL[inpctrl.__Col.Name] = inpctrl;
+        }
+
     };
 
     this.updateRowByRowId = function (rowId, rowData) {
@@ -1779,6 +1802,7 @@
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
         this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;
         this.ctrl.sum = this.sumOfCol;
+        this.ctrl.getRowByIndex = this.getRowByIndex;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

@@ -35,6 +35,7 @@ using ExpressBase.Objects.Helpers;
 using Newtonsoft.Json.Linq;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Application;
+using ExpressBase.Common.LocationNSolution;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -56,7 +57,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [EbBreadCrumbFilter("Applications/", "AppName",new string[] { "/MyApplications" })]
+        [EbBreadCrumbFilter("Applications/", "AppName", new string[] { "/MyApplications" })]
         [HttpGet]
         public IActionResult AppDashBoard(int Id, EbApplicationTypes Type)
         {
@@ -69,12 +70,12 @@ namespace ExpressBase.Web.Controllers
                     _dict.Add(objectType.IntCode, objectType.Name);
                 }
             }
-            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });            
+            GetObjectsByAppIdResponse _objects = this.ServiceClient.Get(new GetObjectsByAppIdRequest { Id = Id, AppType = Type });
             ViewBag.ObjectCollection = _objects.Data;
             ViewBag.AppInfo = _objects.AppInfo;
 
             if (Type == EbApplicationTypes.Web)
-                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings)?? new EbWebSettings();
+                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
             else if (Type == EbApplicationTypes.Mobile)
                 ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
             else if (Type == EbApplicationTypes.Bot)
@@ -87,7 +88,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public UpdateAppSettingsResponse UpdateAppSettingsMob(string settings,int appid, EbApplicationTypes type)
+        public UpdateAppSettingsResponse UpdateAppSettingsMob(string settings, int appid, EbApplicationTypes type)
         {
             UpdateAppSettingsResponse resp = null;
             try
@@ -99,7 +100,7 @@ namespace ExpressBase.Web.Controllers
                     AppType = type
                 });
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -356,7 +357,7 @@ namespace ExpressBase.Web.Controllers
 
         }
 
-        [EbBreadCrumbFilter("Application/","link")]
+        [EbBreadCrumbFilter("Application/", "link")]
         [HttpGet]
         public IActionResult CreateApplication(int Id, EbApplicationTypes Type)
         {
@@ -371,7 +372,7 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Op = "New Application";
                 HttpContext.Items["link"] = "New";
-                ViewBag.AppInfo = new AppWrapper { Id=0,AppType = 1, Icon = "fa-home" };
+                ViewBag.AppInfo = new AppWrapper { Id = 0, AppType = 1, Icon = "fa-home" };
             }
             return View();
         }
@@ -407,7 +408,9 @@ namespace ExpressBase.Web.Controllers
 
             if (resultlist.Id > 0)
             {
-                return RedirectToAction("AppDashBoard", new RouteValueDictionary(new { Id = resultlist.Id,
+                return RedirectToAction("AppDashBoard", new RouteValueDictionary(new
+                {
+                    Id = resultlist.Id,
                     Type = Convert.ToInt32(req["AppType"])
                 }));
             }
@@ -750,6 +753,23 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(resp);
         }
 
+        public IActionResult SolutionConsole()
+        {
+            EbObjectObjListAllVerResponse res = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
+            Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
+            if (solutionObj != null && solutionObj.SolutionSettings != null)
+                ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
+            ViewBag.objlist = res.Data;
+            return View();
+        }
+
+        public string SaveSolutionSettings(string obj)
+        {
+            //SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
+            SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
+            return resp.Message;
+        }
+
         public IActionResult ApiConsole()
         {
             //string _json = @"{'Name':'Form1','MasterTable':'dg3f','MultipleTables':{'dg3f':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'textbox0','Value':'abhilasha','Type':16,'AutoIncrement':false}]}],'dg3c':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'date0','Value':'2018-11-17','Type':5,'AutoIncrement':false},{'Name':'textbox1','Value':'pushpam','Type':16,'AutoIncrement':false}]}]}}";
@@ -790,4 +810,5 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
     }
+
 }

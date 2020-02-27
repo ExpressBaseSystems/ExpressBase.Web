@@ -658,7 +658,7 @@
     };
 
     this.changeSummaryFunc = function (obj) {
-        obj.Title = obj.Title.replace(obj.Title.substr(0, obj.Title.indexOf('(')), summaryFunc[obj.Function]);
+        obj.Title = obj.Title.replace(obj.Title.substr(0, obj.Title.indexOf('_')), summaryFunc[obj.Function]);
     };
 
     this.minimap = function () {

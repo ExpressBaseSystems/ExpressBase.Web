@@ -695,7 +695,6 @@ input:checked + .proslider:before {
 
 .drp_item p {
     cursor: pointer;
-    height: 20px;
     margin: 3px 5px;
     overflow: hidden;
     padding: 5px;

@@ -13,6 +13,7 @@
     this.DataMODEL = options.isDynamic ? [] : this.formRenderer.DataMODEL[this.ctrl.TableName];
     this.TableId = `tbl_${this.ctrl.EbSid_CtxId}`;
     this.$table = $(`#${this.TableId}`);
+    this.$gridCont = $(`#cont_${this.ctrl.EbSid} .grid-cont`);
     this.$SlTable = $(`#slno_${this.ctrl.EbSid}`);
     this.SlTableId = `#slno_${this.ctrl.EbSid}`;
     this.$DGbody = $(`#${this.ctrl.EbSid}Wraper .Dg_body`);
@@ -1607,12 +1608,14 @@
 
     this.enable = function () {
         $(`#${this.TableId}`).attr("is-disabled", "false");
+        this.$gridCont.attr("is-disabled", "false");
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).show(300);
     };
 
     this.disable = function () {
         $(`#${this.TableId}`).attr("is-disabled", "true");
+        this.$gridCont.attr("is-disabled", "true");
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).hide(300);
     };

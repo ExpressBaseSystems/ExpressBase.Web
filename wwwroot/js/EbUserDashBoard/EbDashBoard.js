@@ -44,7 +44,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.GridStackInit = function () {
-        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' },  column: 40 });
+        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
         this.grid = $('.grid-stack').data("gridstack");
         this.grid.cellHeight(20);
         //this.grid.cellWidth(20);
@@ -61,8 +61,11 @@ var DashBoardWrapper = function (options) {
     this.Redrawfn = function (items, element) {
         var newHeight = $(element).attr('data-gs-height');
         var id = $(element).context.children[0].id;
+        this.RedrwFnHelper(id);
+    };
+    this.RedrwFnHelper = function (id) {
         let currentobj = this.TileCollection[id];
-        var height =  $(`[data-id=${id}`).height();
+        var height = $(`[data-id=${id}`).height();
         $.each(currentobj.ControlsColl.$values, function (i, obj) {
             $(`[data-id=${id}] #${obj.EbSid}`).css("max-height", `${height} !important`);
             var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
@@ -85,7 +88,7 @@ var DashBoardWrapper = function (options) {
                 }
                 $(`#${obj.EbSid}`).css("max-width", $(`#${obj.EbSid}`).height() + 10 + "px");
                 this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "ProgressGauge");
-            }    
+            }
         }.bind(this));
     };
 
@@ -153,8 +156,8 @@ var DashBoardWrapper = function (options) {
                     </div>
                     </div>
                 `);
-       $("#Eb-obj-sidebar-cont").append(this.toolboxhtml);
-       this.DrawObjectOnMenu();
+        $("#Eb-obj-sidebar-cont").append(this.toolboxhtml);
+        this.DrawObjectOnMenu();
         $('#close_ToolBoxdiv' + this.TabNum).off('click').on('click', this.CloseToolBoxDiv.bind(this));
         $(".ToolBox-div").hide();
         this.stickBtn4ToolBox = new EbStickButton({
@@ -198,7 +201,7 @@ var DashBoardWrapper = function (options) {
 
 
         }.bind(this));
-        
+
         //containers.push(document.getElementById("grid-cont"));
         containers.push(document.getElementById("toolb_basic_ctrls"));
         containers.push(document.getElementById("toolb_ph_cont_ctrls"));
@@ -367,7 +370,7 @@ var DashBoardWrapper = function (options) {
                 this.TileCollection[this.CurrentTile].LabelColl.$values.push(o);
             }
 
-              //Connect progressGauge to exisitng gauge
+            //Connect progressGauge to exisitng gauge
             else if ($(target).hasClass("progressGauge") && $(source).hasClass("inner_tree_structure")) {
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
@@ -379,7 +382,7 @@ var DashBoardWrapper = function (options) {
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 this.GaugeDrop(component, column, controlname, "ProgressGauge");
             }
-                //Connect speedometer to exisitng gauge
+            //Connect speedometer to exisitng gauge
             else if ($(target).hasClass("speedometer") && $(source).hasClass("inner_tree_structure")) {
                 let component = $(el).attr("data-ctrl");
                 let column = $(el).attr("data-column");
@@ -411,7 +414,7 @@ var DashBoardWrapper = function (options) {
         if (component !== "" && column !== "") {
             let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
             let _data = this.Rowdata[component + "Row"][index];
-           
+
             if (type === "ProgressGauge") {
                 this.Procs[controlname].GaugeValue = _data;
                 this.Procs[controlname].GaugeContainer = controlname;
@@ -426,7 +429,7 @@ var DashBoardWrapper = function (options) {
                 this.Procs[controlname].GaugeValue = _data;
                 this.Procs[controlname].GaugeContainer = controlname;
                 SpeedoMeterWrapper(this.Procs[controlname], { isEdit: false });
-            }           
+            }
         }
     };
     this.LabelDrop = function (component, column, controlname, tileid) {
@@ -436,7 +439,7 @@ var DashBoardWrapper = function (options) {
             this.Procs[controlname].DynamicLabel = _data;
             if (this.Procs[controlname].StaticLabel == "") {
                 this.Procs[controlname].StaticLabel = column;
-            }          
+            }
             this.Procs[controlname].DataObjCtrlName = component;
             this.Procs[controlname].DataObjColName = column;
         }
@@ -490,7 +493,7 @@ var DashBoardWrapper = function (options) {
     //            return $(`#Inner_Cont_${TargetId}`).html();              
     //        }.bind(this),           
     //    }); 
-       
+
     //};
 
     //Component Division
@@ -501,7 +504,7 @@ var DashBoardWrapper = function (options) {
         var offset = p.offset();
         var percentLeft = offset.left / $(window).width() * 100;
         var percentTop = offset.top / $(window).height() * 100;
-        $(`#Inner_Cont_${TargetId}`).css({ "top": percentTop - 22 + "%", "left": percentLeft - 11 +  "%" })
+        $(`#Inner_Cont_${TargetId}`).css({ "top": percentTop - 22 + "%", "left": percentLeft - 11 + "%" })
         $(`#Inner_Cont_${TargetId}`).toggle();
     };
 
@@ -677,7 +680,7 @@ var DashBoardWrapper = function (options) {
                 else {
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
-                   
+
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
                             var eb_type = Cobj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
@@ -717,7 +720,7 @@ var DashBoardWrapper = function (options) {
                             }
                             $(`#${object.EbSid}`).css("max-width", $(`#${object.EbSid}`).height() + 10 + "px");
                             this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "ProgressGauge");
-                        }    
+                        }
                         this.drake.containers.push(document.getElementById(this.currentId));
                         //this.drake.containers.push(document.getElementById(this.drop_id));
                         this.propGrid.setObject(object, AllMetas["Eb" + eb_type]);
@@ -746,9 +749,9 @@ var DashBoardWrapper = function (options) {
                         $(`#${this.CurrentTile} .i-opt-obj`).hide();
                         $(`#${this.CurrentTile} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
                     }
-
+                    this.RedrwFnHelper(this.CurrentTile);
                 }
-              
+
             }
             //this.addTilecontext()
             this.Tilecontext();
@@ -852,7 +855,7 @@ var DashBoardWrapper = function (options) {
             EbDataLabelFn(obj);
         }
         if (obj.$type.split(".")[2].split(",")[0] === "Tiles") {
-            Eb_Tiles_StyleFn(obj, this.CurrentTile , this.TabNum);
+            Eb_Tiles_StyleFn(obj, this.CurrentTile, this.TabNum);
         }
         if (obj.$type.split(".")[2].split(",")[0] === "EbDashBoard") {
             Eb_Dashboard_Bg(this.EbObject);
@@ -863,12 +866,12 @@ var DashBoardWrapper = function (options) {
     };
 
     this.GetComponentColumns = function (obj) {
-        let Refid = obj["DataSource"];
+        let Refid = obj["DataSource"];     
         $.LoadingOverlay('show');
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
-            data: { DataSourceRefId: Refid },
+            data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
@@ -938,7 +941,7 @@ var DashBoardWrapper = function (options) {
             o.drawCallBack = this.drawCallBack.bind(this, id);
             o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(this.filtervalues))));
             var dt = new EbCommonDataTable(o);
-           
+
             //$(`[data-id="${id}"]`).parent().removeAttr("style");
             //let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
             //$(`#${id} .dataTables_scrollBody`).css("height", `calc(100% - ${a}px)`);
@@ -1069,7 +1072,6 @@ var DashBoardWrapper = function (options) {
 
     this.GetFilterValues = function () {
         this.filtervalues = [];
-
         if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
 
@@ -1100,9 +1102,10 @@ var DashBoardWrapper = function (options) {
 
     this.init();
     $('.component_cont').on('hide.bs.collapse', function (e) {
-        $("#dashbord-view").css("height", 85+"vh" );
+        $("#dashbord-view").css("height", 85 + "vh");
     })
-    $('.component_cont').on('show.bs.collapse', function (e) {;
+    $('.component_cont').on('show.bs.collapse', function (e) {
+        ;
         $("#dashbord-view").css("height", 72.2 + "vh");
     })
 }
@@ -1126,7 +1129,7 @@ function EbDataLabelFn(Label) {
 
     }
     else {
-        $(`#${Label.EbSid}_static`).css("position", "").css("left","").css("top","");
+        $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
         $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
         $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
     }
@@ -1139,19 +1142,19 @@ function EbDataLabelFn(Label) {
     if (Label.StaticLabelFont !== null) {
         GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
     }
-   
+
     //description style
     $(`#${Label.EbSid}_description`).empty().append(Label.Description);
     if (Label.DescriptionFont !== null) {
         GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
     }
-  
+
 
     //Dynamic label style
     if (Label.DynamicLabelFont !== null) {
         GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
     }
-    
+
 
     $(`#${Label.EbSid}`).css("border-radius", Label.LabelBorderRadius);
     $(`#${Label.EbSid}`).css("border-color", Label.LabelBorderColor);
@@ -1181,7 +1184,7 @@ function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     }
 
     //Tile border
-    $(`#${TileId}`).css("border-radius", Tile.BorderRadius == 0 ? 4 + "px" : Tile.BorderRadius+"px" );
+    $(`#${TileId}`).css("border-radius", Tile.BorderRadius == 0 ? 4 + "px" : Tile.BorderRadius + "px");
     $(`#${TileId}`).css("border", `solid 1px ${Tile.BorderColor}`);
 
     //Tile Label
@@ -1191,14 +1194,14 @@ function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
         GetFontCss(Tile.LabelFont, $(`#${TabNum}_Label_${TileId}`));
     }
     //Tile Text Font 
-        $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
-        $(`#${TileId} th`).css("color", `${Tile.FontColor}`);
-        $(`#${TileId} td`).css("color", Tile.FontColor);
-        $(`#${TileId} a`).css("color", `${Tile.FontColor}`);
-        $(`#${TileId} .db-title`).css("color", Tile.FontColor);
-        $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
- 
-    $(`#${TileId} td`).css("border-bottom" , "1px solid #2b2b2b;!important")
+    $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
+    $(`#${TileId} th`).css({ "color": `${Tile.FontColor} !important;` });
+    $(`#${TileId} td`).css({ "color": `${Tile.FontColor} !important;` });
+    $(`#${TileId} a`).css("color", `${Tile.LinkColor} !important;`).css("font-size: 14px;");
+    $(`#${TileId} .db-title`).css("color", Tile.FontColor);
+    $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
+
+    $(`#${TileId} td`).css("border-bottom", "1px solid #2b2b2b;!important")
 }
 
 function Eb_Dashboard_Bg(EbObject) {
@@ -1215,7 +1218,7 @@ function Eb_Dashboard_Bg(EbObject) {
 
 }
 
-function GradientDirection(val ) {
+function GradientDirection(val) {
     gradient = [];
     gradient[0] = "to right";
     gradient[1] = "to left";

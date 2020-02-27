@@ -27,8 +27,8 @@
             Int16: null,
             Int32: null,
             Json: null,
-            String: null,
-        }
+            String: null
+        };
         this.BuilderMode = {
             NEW: "new",
             EDIT: "edit"
@@ -79,7 +79,7 @@
 
             $("#obj_icons,#save,#commit_outer,#create_button").hide();
             $('#compare,#status,#ver_his').show();
-        }.bind(this))
+        }.bind(this));
     }
 
     renderDataTable(ds, params) {

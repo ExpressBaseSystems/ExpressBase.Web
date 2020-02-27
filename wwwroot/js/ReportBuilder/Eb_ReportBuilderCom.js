@@ -6,7 +6,7 @@
     var fields = $("#summarry-editor-modal-container #summary-fieldname").empty();
     var $summModal = $("#summarry-editor-modal-container");
     var EbParams = {
-        Icons:{
+        Icons: {
             "Numeric": "fa-sort-numeric-asc",
             "String": "fa-font",
             "DateTime": "fa-calendar",
@@ -28,7 +28,7 @@
         Countrptfooter: 1
     };
 
-    this.RbObjProps = ["ReportHeaders", "ReportFooters", "PageHeaders", "PageFooters", "Detail","ReportGroups"];
+    this.RbObjProps = ["ReportHeaders", "ReportFooters", "PageHeaders", "PageFooters", "Detail", "ReportGroups"];
 
     this.EbObjectSections = ["ReportHeader", "PageHeader", "ReportDetail", "PageFooter", "ReportFooter"];
 
@@ -43,7 +43,7 @@
     this.pages = {
         0: {
             width: 1191,
-            height:1684
+            height: 1684
         },//A2
         1: {
             width: 841.8898,
@@ -81,16 +81,17 @@
             label: "tickLabel-inch",
             len: 9.6
         }
-    }
+    };
+
     this.TextAlign = {
         0: "left",
         2: "right",
         1: "center",
         3: "justify"
-    }
+    };
 
     this.GenUniqName = function (ctrl_name) {
-        return ctrl_name+ "_" + Math.floor(Date.now() / 1000);
+        return ctrl_name + "_" + Math.floor(Date.now() / 1000);
     };
 
     this.setMarginOnedit = function (margin) {
@@ -124,24 +125,24 @@
 
     this.getsummaryfns = function (eb_type) {//neeed to change
         var fn = null;
-        if (eb_type == "EbDataFieldText" || eb_type == "Text")
+        if (eb_type === "EbDataFieldText" || eb_type === "Text")
             fn = "SummaryFunctionsText";
-        else if (eb_type == "EbDataFieldDateTime" || eb_type == "DateTime")
+        else if (eb_type === "EbDataFieldDateTime" || eb_type === "DateTime")
             fn = "SummaryFunctionsDateTime";
-        else if (eb_type == "EbDataFieldBoolean" || eb_type == "Boolean")
+        else if (eb_type === "EbDataFieldBoolean" || eb_type === "Boolean")
             fn = "SummaryFunctionsBoolean";
-        else if (eb_type == "EbDataFieldNumeric" || eb_type == "Numeric")
+        else if (eb_type === "EbDataFieldNumeric" || eb_type === "Numeric")
             fn = "SummaryFunctionsNumeric";
         return EbEnums[fn];
-    }
+    };
 
     this.getSectionToAddSum = function () {
         var objlist = [];
         $("#ReportDetail0").parent().nextAll().not("#ReportDetail").each(function (i, obj) {
             $(obj).children().each(function (j, sections) {
                 objlist.push($(sections));
-            })
-        })
+            });
+        });
         return objlist;
     };
 
@@ -158,7 +159,7 @@
                 this.setCalcFieldType(obj, JSON.parse(result));
             }.bind(this)
         });
-    }
+    };
 
     this.setCalcFieldType = function (obj, result) {
         obj.CalcFieldIntType = result.Type;
@@ -402,27 +403,27 @@
 
     commonO.saveOrCommitSuccess = function (res) {
         this.refid = res.refid || null;
-            $.ajax({
-                url: "../ReportRender/Index",
-                type: "POST",
-                cache: false,
-                data: {
-                    refid: this.refid,
-                    renderLimit: true
-                },
-                beforeSend: function () {
-                    $("#eb_common_loader").EbLoader("show");
-                },
-                success: function (result) {
-                    $("#preview_wrapper").html(result);
-                    $("#btnGo").off("click").on("click", this.render.bind(this));
-                    if ($("#btnGo").length <= 0) {
-                        $("#sub_windows_sidediv_dv").hide();
-                        $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
-                        $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}`);
-                    }
-                }.bind(this)
-            });
+        $.ajax({
+            url: "../ReportRender/Index",
+            type: "POST",
+            cache: false,
+            data: {
+                refid: this.refid,
+                renderLimit: true
+            },
+            beforeSend: function () {
+                $("#eb_common_loader").EbLoader("show");
+            },
+            success: function (result) {
+                $("#preview_wrapper").html(result);
+                $("#btnGo").off("click").on("click", this.render.bind(this));
+                if ($("#btnGo").length <= 0) {
+                    $("#sub_windows_sidediv_dv").hide();
+                    $("#content_dv").removeClass("col-md-9").addClass("col-md-12");
+                    $("#reportIframe").attr("src", `../ReportRender/RenderReport2?refid=${this.refid}`);
+                }
+            }.bind(this)
+        });
     }.bind(this);
 
     this.render = function () {
@@ -430,8 +431,8 @@
         //$("#content_dv").removeClass("col-md-9").addClass("col-md-12");
         //$.LoadingOverlay("show");
         $("#eb_common_loader").EbLoader("show");
-		var ParamsArray = FilterDialog.getFormVals();
-        
+        var ParamsArray = FilterDialog.getFormVals();
+
 
         //if (!validateFD()) {
         //    //$.LoadingOverlay("hide");
@@ -439,11 +440,11 @@
         //    $("#filter").trigger("click");
         //    return;
         //}
-		$("#reportIframe").attr("src", `../ReportRender/Renderlink?refid=${this.refid}&_params=${btoa(JSON.stringify(ParamsArray))}`);
+        $("#reportIframe").attr("src", `../ReportRender/Renderlink?refid=${this.refid}&_params=${btoa(JSON.stringify(ParamsArray))}`);
         // $("#RptModal").modal('hide');
         //$.LoadingOverlay("hide");
         $("#eb_common_loader").EbLoader("hide");
-    }
+    };
 
     this.start = function () {
         $('.tracker_drag').draggable({ axis: "x", containment: ".page-outer-container", stop: this.onTrackerStop.bind(this) });
@@ -454,4 +455,4 @@
     };
 
     this.start();
-}
+};

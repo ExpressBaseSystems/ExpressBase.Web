@@ -170,6 +170,7 @@ const WebFormRender = function (option) {
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
+        //this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();

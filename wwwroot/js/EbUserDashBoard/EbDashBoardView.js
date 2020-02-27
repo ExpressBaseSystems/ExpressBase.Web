@@ -183,7 +183,8 @@
     }
 
     this.DrawTiles = function () {
-        $("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
+        Eb_Dashboard_Bg(this.EbObject);
         if (this.EbObject.Tiles.$values.length > 0) {
 
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
@@ -208,6 +209,7 @@
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                 let refid = this.EbObject.Tiles.$values[i].RefId;
+                Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                 if (refid !== "") {
                     $(`[data-id = ${this.CurrentTile}]`).css("display", "block");
                     $.ajax(
@@ -516,8 +518,9 @@
 
     this.drawCallBack = function (id) {
         $(`[data-id="${id}"]`).parent().removeAttr("style");
-        let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 5;
+        let a = $(`#${id} .dataTables_scrollHeadInner`).height() - 3;
         $(`#${id} .dataTables_scrollBody`).css("max-height", `calc(100% - ${a}px)`);
+        Eb_Tiles_StyleFn(this.TileCollection[id], id, this.TabNum);
     }.bind(this);
 
     this.GetFilterValues = function () {
@@ -599,9 +602,9 @@ function EbDataLabelFn(Label) {
         let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
         $(`#${Label.EbSid}`).css('background-image', bg);
     }
+    $(`#${Label.EbSid}`).css("border", `solid 1px ${Label.LabelBorderColor}`);
 
 }
-
 
 function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     //Tile Back Color
@@ -624,7 +627,27 @@ function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     if (Tile.LabelFont !== null) {
         GetFontCss(Tile.LabelFont, $(`#${TabNum}_Label_${TileId}`));
     }
+    //Tile Text Font 
+    $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
+    $(`#${TileId} th`).css("color", `${Tile.FontColor}`);
+    $(`#${TileId} td`).css("color", Tile.FontColor);
+    $(`#${TileId} a`).css("color", `${Tile.FontColor}`);
+    $(`#${TileId} .db-title`).css("color", Tile.FontColor);
+    $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
 
+}
+
+function Eb_Dashboard_Bg(EbObject) {
+    if (EbObject.IsGradient) {
+        let direction = GradientDirection(EbObject.Direction);
+        let bg = "linear-gradient(" + direction + "," + EbObject.GradientColor1 + "," + EbObject.GradientColor2 + ")";
+        $("#layout_div").css("background-color", "").css("background-image", bg);
+        $(".component_cont .nav").css("background-color", "").css("background-image", bg);
+    }
+    else {
+        $("#layout_div").css("background-image", "").css("background", EbObject.BackgroundColor);
+        $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
+    }
 
 }
 

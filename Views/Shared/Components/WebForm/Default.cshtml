@@ -51,6 +51,8 @@
 <script type="text/javascript" src="~/js/EbControls/EbDynamicTab.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbControls/EbApproval.js" asp-append-version=@bApnd></script>
 @*jith*@
+<script type="text/javascript" src="~/js/EbControls/EbReview.js" asp-append-version=@bApnd></script>
+@*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
 @*jith*@
 <script type="text/javascript" src="~/js/FormBuilder/DGUCcolumn.js" asp-append-version=@bApnd></script>
@@ -354,6 +356,10 @@
     if (_renderMode === 3) {
         $('#quik_menu').remove();
         $('#notificaionandprofile').remove();
+        $('.fmode').hide();
+        $('#switch_loc').hide();
+        $('.eb_context').remove();
+
     }
 </script>
 @Html.JsCode(

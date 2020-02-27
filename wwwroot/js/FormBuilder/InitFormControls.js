@@ -570,6 +570,10 @@ var InitControls = function (option) {
         return new EbApproval(ctrl, ctrlOpts);
     };
 
+    this.Review = function (ctrl, ctrlOpts) {
+        return new EbReview(ctrl, ctrlOpts);
+    };
+
     this.PowerSelect = function (ctrl, ctrlOpts) {
 
         let t0 = performance.now();

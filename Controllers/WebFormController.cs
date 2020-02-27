@@ -496,31 +496,31 @@ namespace ExpressBase.Web.Controllers
 
 
 
-        //for ebblueprint (save bg img,svg)
-        public object SaveBluePrint(string svgtxtdata, string bpmeta, int bluprntid, string savBPobj)
-        {
-            SaveBluePrintRequest Svgreq = new SaveBluePrintRequest();
-            Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
-            var httpreq = this.HttpContext.Request.Form;
-            if (httpreq.Files.Count > 0)
-            {
+		//for ebblueprint (save bg img,svg)
+		public object SaveBluePrint(string svgtxtdata,string bpmeta, int bluprntid, string savBPobj)
+		{
+			SaveBluePrintRequest Svgreq = new SaveBluePrintRequest();
+			//Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
+			var httpreq = this.HttpContext.Request.Form;
+			if (httpreq.Files.Count > 0)
+			{
 
-                var BgFile = httpreq.Files[0];
-                byte[] fileData = null;
-                using (var memoryStream = new MemoryStream())
-                {
-                    BgFile.CopyTo(memoryStream);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-                    fileData = new byte[memoryStream.Length];
-                    memoryStream.ReadAsync(fileData, 0, fileData.Length);
-                    Svgreq.BgFile = fileData;
-                    Svgreq.BgFileName = BgFile.FileName;
-                }
-            }
-            Svgreq.Txtsvg = svgtxtdata;
-            Svgreq.MetaBluePrint = bpmeta;
-            Svgreq.BluePrintID = bluprntid;
-            Svgreq.BP_FormData = objBP;
+				var BgFile = httpreq.Files[0];
+				byte[] fileData = null;
+				using (var memoryStream = new MemoryStream())
+				{
+					BgFile.CopyTo(memoryStream);
+					memoryStream.Seek(0, SeekOrigin.Begin);
+					fileData = new byte[memoryStream.Length];
+					memoryStream.ReadAsync(fileData, 0, fileData.Length);
+					Svgreq.BgFile = fileData;
+					Svgreq.BgFileName = BgFile.FileName;
+				}
+			}
+			Svgreq.Txtsvg = svgtxtdata;
+			Svgreq.MetaBluePrint = bpmeta;
+			Svgreq.BluePrintID = bluprntid;
+			//Svgreq.BP_FormData = objBP;
 
 
             SaveBluePrintResponse BPres = this.ServiceClient.Post<SaveBluePrintResponse>(Svgreq);

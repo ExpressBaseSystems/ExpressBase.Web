@@ -1524,7 +1524,7 @@
 
     this.Arr2dict = function (Arr) {
         let dict = {};
-        for (let i = 0; i < length; i++) {
+        for (let i = 0; i < Arr.length; i++) {
             let obj = Arr[i];
             dict[obj.Name] = obj;
         }

@@ -690,5 +690,23 @@ namespace ExpressBase.Web.Controllers
             }
             return View();
         }
+
+        [HttpGet("api/get_actions")]
+        public GetMyActionsResponse GetMyActions()
+        {
+            try
+            {
+                if (ViewBag.IsValid)
+                {
+                    return this.ServiceClient.Get(new GetMyActionsRequest());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return new GetMyActionsResponse();
+        }
     }
 }

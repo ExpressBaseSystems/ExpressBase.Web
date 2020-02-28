@@ -578,7 +578,6 @@ namespace ExpressBase.Web.Controllers
         public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;
-
             if (ViewBag.IsValid)
             {
                 try

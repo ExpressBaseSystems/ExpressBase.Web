@@ -102,6 +102,13 @@ const WebFormRender = function (option) {
             this.formObject.__mode = "edit";
     };
 
+    this.initReviewCtrl = function () {
+        if (this.ReviewCtrl) {
+            let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRenderer: this };
+            this.initControls.init(this.ReviewCtrl, opt);
+        }
+    };
+
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {//dginit
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
@@ -125,10 +132,6 @@ const WebFormRender = function (option) {
                 opt.flatControls = this.flatControls;
             this.initControls.init(Obj, opt);
         }.bind(this));
-        if (this.ApprovalCtrl) {
-            opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj };
-            this.initControls.init(this.ApprovalCtrl, opt);
-        }
     };
 
     this.SetWatchers = function () {
@@ -144,7 +147,6 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
-
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
         let opts = {
             allTabCtrls: this.TabControls,
@@ -170,7 +172,8 @@ const WebFormRender = function (option) {
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
-        //this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
+        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
+        //this.addApprovalMockDATAMODEL();
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();
@@ -178,6 +181,7 @@ const WebFormRender = function (option) {
         this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
+        this.initReviewCtrl();
 
 
         //if (this.Mode.isNew)
@@ -191,6 +195,57 @@ const WebFormRender = function (option) {
                 _DG.OnChangeFn.Code = "";
             this.FRC.bindOnChange(_DG);
         }.bind(this));
+    };
+
+    this.addApprovalMockDATAMODEL = function () {
+        if (!this.ReviewCtrl)
+            return;
+        this.DataMODEL[this.ReviewCtrl.TableName] = [
+            {
+                RowId: 1,
+                LocId: 0,
+                pId: null,
+                IsUpdate: false,
+                IsDelete: false,
+                Columns: [
+                    { Name: "stage_unique_id", Value: "Review1_approvalstage1", Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
+                    { Name: "action_unique_id", Value: 1, Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
+                    { Name: "eb_my_actions_id", Value: 1, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "comments", Value: "comments_111111", Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "eb_created_at", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "eb_created_by", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" }
+                ]
+            },
+            {
+                RowId: 2,
+                LocId: 0,
+                pId: null,
+                IsUpdate: false,
+                IsDelete: false,
+                Columns: [
+                    { Name: "stage_unique_id", Value: "Review1_approvalstage2", Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
+                    { Name: "action_unique_id", Value: 1, Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
+                    { Name: "eb_my_actions_id", Value: 1, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "comments", Value: "comments_222222", Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "eb_created_at", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "eb_created_by", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" }
+                ]
+            },
+            {
+                RowId: 0,
+                LocId: 0,
+                pId: null,
+                IsUpdate: false,
+                IsDelete: false,
+                Columns: [
+                    { Name: "stage_unique_id", Value: "Review1_approvalstage3", Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
+                    { Name: "action_unique_id", Value: 1, Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
+                    { Name: "eb_my_actions_id", Value: 1, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "comments", Value: "comments_33333", Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "eb_created_at", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
+                    { Name: "eb_created_by", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" }
+                ]
+            }]
     };
 
     DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};
@@ -397,13 +452,10 @@ const WebFormRender = function (option) {
             DGB.setEditModeRows(DataMODEL);
         }
 
-        if (this.ApprovalCtrl) {
-            if (EditModeFormData.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-                let DataMODEL = this.DataMODEL[this.ApprovalCtrl.TableName];
-                //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
-                this.ApprovalCtrl.setEditModeRows(DataMODEL);
-            }
-        }
+        //if (this.ApprovalCtrl.__ready) {
+            //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+            //this.ApprovalCtrl.setEditModeRows(DataMODEL);
+        //}
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
@@ -434,10 +486,10 @@ const WebFormRender = function (option) {
 
     this.getApprovalRow = function () {
         let FVWTObjColl = {};
-        if (this.ApprovalCtrl) {
-            let tOb = this.ApprovalCtrl.ChangedRowObject();
+        if (this.ReviewCtrl) {
+            let tOb = this.ReviewCtrl.ChangedRowObject();
             if (tOb)
-                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+                FVWTObjColl[this.ReviewCtrl.TableName] = tOb;
         }
         return FVWTObjColl;
     };
@@ -512,7 +564,7 @@ const WebFormRender = function (option) {
         let WebformData = {};
         let approvalTable = {};
 
-        if (this.ApprovalCtrl)
+        if (this.ReviewCtrl.__ready)
             approvalTable = this.getApprovalRow();
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
@@ -626,8 +678,6 @@ const WebFormRender = function (option) {
             this.FormDataExtended = respObj.FormData.ExtendedTables;
             this.DynamicTabObject.disposeDynamicTab();
             this.RefreshFormControlValues(this.EditModeFormData);
-            this.SwitchToViewMode();
-
             this.afterSaveAction();
             //window.parent.closeModal();
         }
@@ -784,8 +834,15 @@ const WebFormRender = function (option) {
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
-        if (this.ApprovalCtrl)
-            this.ApprovalCtrl.disableAllCtrls();
+
+        if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
+            let DataMODEL = this.DataMODEL[this.ReviewCtrl.TableName];
+            this.ReviewCtrl._Builder.switch2viewMode(DataMODEL);
+            //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+            //this.ApprovalCtrl.setEditModeRows(DataMODEL);
+        }
+
+        //    this.ApprovalCtrl.disableAllCtrls();
         $.each(this.flatControls, function (k, ctrl) {
             ctrl.disable();
         }.bind(this));
@@ -802,8 +859,9 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isNew = false;
         this.setEditModeCtrls();
-        if (this.ApprovalCtrl)
-            this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
+        if (this.ReviewCtrl)
+            this.ReviewCtrl._Builder.switch2editMode();
+        //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
@@ -1471,6 +1529,7 @@ const WebFormRender = function (option) {
 
         else if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
+            $(`#cont_${this.ReviewCtrl.EbSid_CtxId}`).hide();
             if (this.cloneRowId)
                 this.fillCloneData(this.cloneRowId);
         }

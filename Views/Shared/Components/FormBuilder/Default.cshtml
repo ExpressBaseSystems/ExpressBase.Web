@@ -67,6 +67,9 @@
 
     if (!ebcontext.Roles)
         ebcontext.Roles = @Html.Raw(ViewBag.RolesList);
+    if (!ebcontext.UserGroups)
+        ebcontext.UserGroups = @Html.Raw(ViewBag.UserGroupsList);
+
     let BuilderType = '@builderType_S';
     let formBuilderObj = null;
     let objid =$("#objid").val();

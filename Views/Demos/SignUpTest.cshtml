@@ -69,14 +69,28 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/get_data",
+                url: "/api/objects_by_app",
                 type: "GET",
                 cache: false,
                 data: {
-                    "refid": "ebdbllz23nkqd620180220120030-ebdbllz23nkqd620180220120030-2-2662-3569-2662-3569",
-                    "limit": 10,
-                    "offset": 10
+                    "appid": 170,
+                    "locid": 1,
+                    "pull_data": true
                 },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("bToken", getTok());
+                    xhr.setRequestHeader("rToken", getrToken());
+                }
+            }).done(function (data) {
+
+            });
+        }
+
+        function testAjax1() {
+            $.ajax({
+                url: "/api/get_actions",
+                type: "GET",
+                cache: false,
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());

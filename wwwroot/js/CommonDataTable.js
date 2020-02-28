@@ -2569,6 +2569,7 @@
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTableFromColumn.bind(this));
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -3836,6 +3837,18 @@
                 this.OpeninNewTab(idx, cData);
         }
         //this.filterValues = [];
+    };
+
+    this.link2NewTableFromColumn = function (e) {
+        this.linkDV = $(e.target).closest("a").attr("data-link");
+        let Paramvalue = $(e.target).closest("a").attr("data-id");
+        this.filterValuesforForm = [];
+        this.filterValuesforForm.push(new fltr_obj(11, "id", Paramvalue));
+        this.dvformMode = 1;
+        if (this.login === "uc")
+            dvcontainerObj.drawdvFromTable( btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+        else
+            this.OpeninNewTab(this.Api.row($(e.target).parents().closest("td")).index(), $(e.target).text());
     };
 
     this.drawInlinedv = function (rows, e, idx, colindex) {

@@ -102,10 +102,10 @@ const WebFormRender = function (option) {
             this.formObject.__mode = "edit";
     };
 
-    this.initApprovalCtrl = function () {
-        if (this.ApprovalCtrl) {
+    this.initReviewCtrl = function () {
+        if (this.ReviewCtrl) {
             let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRenderer: this };
-            this.initControls.init(this.ApprovalCtrl, opt);
+            this.initControls.init(this.ReviewCtrl, opt);
         }
     };
 
@@ -172,15 +172,16 @@ const WebFormRender = function (option) {
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
-        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
+        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
         //this.addApprovalMockDATAMODEL();
-        //this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
+        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.initDGs();
+        this.initReviewCtrl();
 
 
         //if (this.Mode.isNew)
@@ -197,9 +198,9 @@ const WebFormRender = function (option) {
     };
 
     this.addApprovalMockDATAMODEL = function () {
-        if (!this.ApprovalCtrl)
+        if (!this.ReviewCtrl)
             return;
-        this.DataMODEL[this.ApprovalCtrl.TableName] = [
+        this.DataMODEL[this.ReviewCtrl.TableName] = [
             {
                 RowId: 1,
                 LocId: 0,
@@ -452,12 +453,8 @@ const WebFormRender = function (option) {
         }
 
         //if (this.ApprovalCtrl.__ready) {
-        if (this.DataMODEL.hasOwnProperty(this.ApprovalCtrl.TableName)) {
-                let DataMODEL = this.DataMODEL[this.ApprovalCtrl.TableName];
-                //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
-                this.initApprovalCtrl();
-                //this.ApprovalCtrl.setEditModeRows(DataMODEL);
-            }
+            //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+            //this.ApprovalCtrl.setEditModeRows(DataMODEL);
         //}
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
@@ -489,10 +486,10 @@ const WebFormRender = function (option) {
 
     this.getApprovalRow = function () {
         let FVWTObjColl = {};
-        if (this.ApprovalCtrl) {
-            let tOb = this.ApprovalCtrl.ChangedRowObject();
+        if (this.ReviewCtrl) {
+            let tOb = this.ReviewCtrl.ChangedRowObject();
             if (tOb)
-                FVWTObjColl[this.ApprovalCtrl.TableName] = tOb;
+                FVWTObjColl[this.ReviewCtrl.TableName] = tOb;
         }
         return FVWTObjColl;
     };
@@ -567,7 +564,7 @@ const WebFormRender = function (option) {
         let WebformData = {};
         let approvalTable = {};
 
-        if (this.ApprovalCtrl.__ready)
+        if (this.ReviewCtrl.__ready)
             approvalTable = this.getApprovalRow();
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
@@ -681,8 +678,6 @@ const WebFormRender = function (option) {
             this.FormDataExtended = respObj.FormData.ExtendedTables;
             this.DynamicTabObject.disposeDynamicTab();
             this.RefreshFormControlValues(this.EditModeFormData);
-            this.SwitchToViewMode();
-
             this.afterSaveAction();
             //window.parent.closeModal();
         }
@@ -839,7 +834,14 @@ const WebFormRender = function (option) {
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.setEditModeCtrls();
-        //if (this.ApprovalCtrl)
+
+        if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
+            let DataMODEL = this.DataMODEL[this.ReviewCtrl.TableName];
+            this.ReviewCtrl._Builder.switch2viewMode(DataMODEL);
+            //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+            //this.ApprovalCtrl.setEditModeRows(DataMODEL);
+        }
+
         //    this.ApprovalCtrl.disableAllCtrls();
         $.each(this.flatControls, function (k, ctrl) {
             ctrl.disable();
@@ -857,8 +859,8 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isNew = false;
         this.setEditModeCtrls();
-        if (this.ApprovalCtrl)
-            this.ApprovalCtrl._Builder.switch2editMode();
+        if (this.ReviewCtrl)
+            this.ReviewCtrl._Builder.switch2editMode();
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
@@ -1527,6 +1529,7 @@ const WebFormRender = function (option) {
 
         else if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
+            $(`#cont_${this.ReviewCtrl.EbSid_CtxId}`).hide();
             if (this.cloneRowId)
                 this.fillCloneData(this.cloneRowId);
         }

@@ -13,7 +13,7 @@
     this.stages = this.ctrl.FormStages.$values;
     this.FirstStage = this.stages[0];
     this.nextRole = this.stages[0].ApproverRole + "";
-    this.$currentTr = null;
+    this.$curActiveRow = null;
         
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         return this.setEditModeRows(SingleTable);
@@ -22,6 +22,14 @@
     ctrl.disableAllCtrls = function () {
         this.disableAllCtrls();
     }.bind(this);
+
+    this.hide = function () {
+        this.$container.hide();
+    };
+
+    this.show = function () {
+        this.$container.show();
+    };
 
     this.setRowData = function ($row, latestRowData) {
         $.each(latestRowData, function (i, cell) {
@@ -43,10 +51,7 @@
     };
 
     this.ctrl.ChangedRowObject = function () {
-        if (this.isEditable())
             return this.changedRowWT();
-        else
-            return null;
     }.bind(this);
 
     this.changedRowWT = function () {
@@ -57,31 +62,19 @@
     };
 
     this.getCurRowValues = function () {
-        let SingleRow = {};
-        if (this.$currentTr === null)
-            return SingleRow;
+        let action_unique_id = this.$curActiveRow.find("[col='status'] .selectpicker").selectpicker('val');
+        let comments = this.$curActiveRow.find("[col='remarks'] .fs-textarea").val();
 
-        SingleRow.RowId = -1;
-        SingleRow.IsUpdate = false;
-        SingleRow.Columns = [{
-            Name: "stage",
-            Value: this.$currentTr.attr("name"),
-            Type: 16
-        }, {
-            Name: "approver_role",
-            Value: this.$currentTr.attr("role"),
-            Type: 16
-        }, {
-            Name: "status",
-            Value: this.$currentTr.find("[col='status'] .selectpicker").selectpicker('val'),
-            Type: 7
-        }, {
-            Name: "remarks",
-            Value: this.$currentTr.find("[col='remarks'] .fs-textarea").val(),
-            Type: 16
-        }];
-
-        return SingleRow;
+        for (let j = 0; j < this.stageDATA.Columns.length; j++) {
+            let column = this.stageDATA.Columns[j];
+            if (column.Name === "action_unique_id") {
+                column.Value = action_unique_id;
+            }
+            else if (column.Name === "comments") {
+                column.Value = comments;
+            }
+        }
+        return this.stageDATA;
     };
 
     this.confirmBoxCallBack = function (btnTxt) {
@@ -91,6 +84,12 @@
 
     this.switch2editMode = function () {
         this.disableAllCtrls();
+    };
+
+    this.switch2viewMode = function (DataMODEL) {
+        this.show();
+        this.DataMODEL = DataMODEL;
+        this.init();
     };
 
     this.submit = function () {
@@ -122,13 +121,13 @@
 
     this.enableRow = function () {
         let $row = this.$tableBody.find("tr[rowid=0]");
-        this.$lastRow = $row;
+        this.$curActiveRow = $row;
         if (!$row)
             return;
 
-        let stageDATA = getObjByval(this.DataMODEL, "RowId", 0);
+        this.stageDATA = getObjByval(this.DataMODEL, "RowId", 0);
 
-        if (!stageDATA)
+        if (!this.stageDATA)
             return;
 
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
@@ -163,6 +162,7 @@
                     html = html.replace("@time@", column.Value);
                 }
             }
+            this.$tableBody.empty();
             this.$tableBody.append(html);
         }
     };
@@ -177,5 +177,5 @@
         this.enableRow();
     };
 
-    this.init();
+    //this.init();
 };

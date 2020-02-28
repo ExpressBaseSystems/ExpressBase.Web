@@ -26,9 +26,13 @@
     };
 
 
+
     this.Redrawfn = function (items, element) {
         var newHeight = $(element).attr('data-gs-height');
         var id = $(element).context.children[0].id;
+        this.RedrwFnHelper(id);
+    };
+    this.RedrwFnHelper = function (id) {
         let currentobj = this.TileCollection[id];
         var height = $(`[data-id=${id}`).height();
         $.each(currentobj.ControlsColl.$values, function (i, obj) {
@@ -55,7 +59,9 @@
                 this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "ProgressGauge");
             }
         }.bind(this));
+       
     };
+
     this.GridStackInit();
 
 
@@ -278,6 +284,7 @@
                     if (currentobj.Transparent) {
                         this.labelstyleApply(this.CurrentTile);
                     }
+                    this.RedrwFnHelper(this.CurrentTile);
                 }
                
             }
@@ -630,7 +637,7 @@ function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
     }
     //Tile Text Font 
     $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
-    $(`#${TileId} th`).css("color", `${Tile.FontColor}`);
+    //$(`#${TileId} th`).css("color", `${Tile.FontColor}`);
     $(`#${TileId} td`).css("color", Tile.FontColor);
     $(`#${TileId} a`).css("color", `${Tile.FontColor}`);
     $(`#${TileId} .db-title`).css("color", Tile.FontColor);

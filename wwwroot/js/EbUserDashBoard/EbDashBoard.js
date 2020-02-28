@@ -50,6 +50,7 @@ var DashBoardWrapper = function (options) {
         //this.grid.cellWidth(20);
         grid = this.grid;
         $('.grid-stack').on('gsresizestop', this.Redrawfn.bind(this));
+        $('.grid-stack').gridstack();
     }
 
     //$('.grid-stack').on('gsresizestop', function (event, elem) {
@@ -90,6 +91,8 @@ var DashBoardWrapper = function (options) {
                 this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "ProgressGauge");
             }
         }.bind(this));
+        $('.gaugeChart').bind("contextmenu", this.setCurrentObj.bind(this));
+        $('.grid-stack').gridstack();
     };
 
     this.GridStackInit();
@@ -680,6 +683,7 @@ var DashBoardWrapper = function (options) {
                 else {
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
+                    $(`#${t_id}`).attr("eb-type", "gauge");
 
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
@@ -755,6 +759,8 @@ var DashBoardWrapper = function (options) {
             }
             //this.addTilecontext()
             this.Tilecontext();
+            this.DuplicateGaugeContext();
+            //this.DuplicateTileContext();
         }
         else {
             $('.grid-stack').gridstack();
@@ -866,7 +872,7 @@ var DashBoardWrapper = function (options) {
     };
 
     this.GetComponentColumns = function (obj) {
-        let Refid = obj["DataSource"];     
+        let Refid = obj["DataSource"];
         $.LoadingOverlay('show');
         $.ajax({
             type: "POST",
@@ -918,6 +924,7 @@ var DashBoardWrapper = function (options) {
     };
 
     this.TileRefidChangesuccess = function (id, data) {
+        $(`#${id}`).attr("eb-type", "view");
         if (this.filtervalues.length === 0) {
             this.GetFilterValues();
         }
@@ -1099,6 +1106,101 @@ var DashBoardWrapper = function (options) {
     //        obj.__oldValues = null;
     //    }.bind(this));
     //}
+
+    this.DuplicateGaugeContext = function () {
+        $.contextMenu({
+            selector: '.gaugeChart',
+            trigger: 'right',
+            items: {
+                "Duplicate Gauge": {
+                    name: "Duplicate Gauge", icon: "copy", callback: this.DuplicateGauge.bind(this)
+                },
+                "Delete Gauge": {
+                    name: "Delete Gauge", icon: "delete", callback: this.DeleteGauge.bind(this)
+                },
+                "Duplicate Tile": {
+                    name: "Duplicate Tile", icon: "copy", callback: this.DuplicateTile.bind(this)
+                },
+            }
+        });
+        $('.gaugeChart').bind("contextmenu", this.setCurrentObj.bind(this));
+        //$(document).bind("contextmenu", function (e) {
+        //    // code to get the id of current li
+        //});
+    };
+
+    //this.DuplicateTileContext = function () {
+    //    $.contextMenu({
+    //        selector: '.db-title-parent',
+    //        trigger: 'right',
+    //        items: {
+    //            "Duplicate Tile": {
+    //                name: "Duplicate Tile", icon: "edit", callback: this.DuplicateTile.bind(this)
+    //            },
+    //        }
+    //    });
+    //};
+
+    this.setCurrentObj = function (e) {
+        this.CurrentGaugeId = e.target.id.split("_")[0] == "" ? e.target.closest(".gaugeChart").id : e.target.id.split("_")[0];
+        this.currentgauge = this.Procs[this.CurrentGaugeId];
+        this.CurrentTile = $(`#${this.CurrentGaugeId}`).closest(".grid-stack-item-content").attr("id");
+
+    };
+
+    this.DuplicateTile = function (tile) {
+        var tiles = this.TileCollection[this.CurrentTile];
+        this.AddNewTile(this.TileCollection[this.CurrentTile].TileDiv.Data_width, this.TileCollection[this.CurrentTile].TileDiv.Data_height);
+        this.TileCollection[this.CurrentTile].ComponentsColl.$values = tiles.ComponentsColl.$values;
+        for (let i = 0; i < tiles.ControlsColl.$values.length; i++) {
+            this.CurrentGaugeId = tiles.ControlsColl.$values[i].EbSid;
+            this.currentgauge = this.Procs[this.CurrentGaugeId];
+            this.DuplicateGauge();
+        }
+    };
+
+    this.DuplicateGauge = function () {
+        this.makeElement("Gauge");
+        let obj = this.Procs[this.currentId];
+        let EbSid = obj.EbSid;
+        $(`#drop_${this.CurrentTile}`).append(obj.$Control[0]);
+        var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+        this.drake.containers.push(document.getElementById(obj.EbSid));
+        obj = $.extend(obj, this.currentgauge);
+        obj.EbSid = EbSid;
+        obj.EbSid_CtxId = EbSid;
+        obj.Name = EbSid;
+        this.TileCollection[this.CurrentTile].ControlsColl.$values.push(obj);
+
+        if (eb_type === "Gauge") {
+            let xx = EbGaugeWrapper(obj, { isEdit: true });
+        }
+        if (eb_type === "ProgressGauge") {
+            let xx = ProgressGaugeWrapper(obj, { isEdit: true });
+        }
+        this.RedrwFnHelper(this.CurrentTile);
+    };
+    this.DeleteGauge = function () {
+        var obj = this.Procs[this.currentgauge.EbSid];
+        this.drake.containers;      
+        var arr = this.TileCollection[this.CurrentTile].ControlsColl.$values;
+        for (var i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] === obj) { arr.splice(i, 1); }
+        }
+        this.TileCollection[this.CurrentTile].ControlsColl.$values = [];
+        this.TileCollection[this.CurrentTile].ControlsColl.$values = arr;
+        arr = this.drake.containers;
+        for (var i = arr.length - 1; i >= 0; i--) {
+            if (arr[i] === $(`#${obj.EbSid}`)[0]) { arr.splice(i, 1); }
+        }
+        this.drake.containers = [] = arr;
+        //this.TileCollection[this.CurrentTile].ControlsColl.$values = $.each(arr, function (index, item) {
+        //    return item.EbSid != obj.EbSid;
+        //});
+        delete this.Procs[`${obj.EbSid}`];
+        $(`#${obj.EbSid}`).remove();
+        this.RedrwFnHelper(this.CurrentTile);
+    };
 
     this.init();
     $('.component_cont').on('hide.bs.collapse', function (e) {

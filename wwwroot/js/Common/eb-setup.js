@@ -123,7 +123,7 @@
         $('#notification-count').attr("count", data.notifications.length);
         html = ``;
         for (var i = 0; i < data.notifications.length; i++) {
-            if (data.notifications[i].title != null && data.notifications[i].link != null) {
+            if (data.notifications[i].title !== null && data.notifications[i].link !== null) {
                 html = html + `
                             <li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
                                 <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>

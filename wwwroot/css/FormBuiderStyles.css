@@ -464,6 +464,7 @@ eb-disable {
 
 .fs-tbl > tbody > tr > td.fs-ctrl-td {
     padding: 0;
+    height: inherit;
 }
 
 .fs-tbl .fs-textarea {
@@ -493,6 +494,11 @@ eb-disable {
     font-size: 13px;
 }
 
+.fs-tbl tbody tr {
+    height: 60px;
+}
+
+
 .fs-tbl tr[active='true'], .fs-tbl tr[active='true'] .filter-option, .fs-tbl tr[active='true'] .fs-uname, .fs-tbl tr[active='true'] .fs-textarea {
     font-weight: bold;
 }
@@ -505,6 +511,7 @@ eb-disable {
 .fs-grid-cont .fs-submit-cont {
     display: flex;
     justify-content: center;
+    margin-top: auto;
 }
 
 .fs-grid-cont .fs-submit {
@@ -685,6 +692,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*transition: all 0.8s ease-in-out;*/
     box-shadow: 0 0 0px 1px rgb(0, 0, 0) inset;
 }
+
     .Dg_body > .dgtbl > tbody > tr[is-editing=true] > td {
         border: none !important
     }
@@ -878,6 +886,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ctrl-cover > .btn-group.bootstrap-select {
     width: 100% !important;
 }
+
 .ctrl-cover .bootstrap-select {
     width: 100% !important;
 }

@@ -78,13 +78,13 @@ namespace ExpressBase.Web.Controllers
             ListSqlJobsResponse resp = new ListSqlJobsResponse();
             string _roles = string.Join(",", this.LoggedInUser.Roles
                                             .Select(ro => string.Format("'{0}'", ro)));
-            var query = string.Format(@"SELECT form_ref_id,description, id
+            var query = string.Format(@"SELECT id, form_ref_id,form_data_id,description
                     FROM eb_my_actions
                     WHERE '{0}' = any(string_to_array(user_ids, ',')) OR
                      role_id IN(select id from eb_roles where role_name IN({1}));", this.LoggedInUser.UserId, _roles);
 
             List<Param> _params = new List<Param>();
-            string[] arrayy = new string[] { "form_ref_id", "description", "id"};
+            string[] arrayy = new string[] { "id", "form_ref_id", "form_data_id", "description" };
             DVColumnCollection _DVColumnCollection = GetColumnsForActions(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query,Columns = _DVColumnCollection, AutoGen = false, IsPaging = true };
             resp.Visualization = EbSerializers.Json_Serialize(Visualization);
@@ -110,13 +110,15 @@ namespace ExpressBase.Web.Controllers
                 {
                     DVBaseColumn _col = null;
                     if (str == "form_ref_id")
-                    {
-                        _col = new DVStringColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true, RenderAs = StringRenderType.Link };
-                    }
-                    if (str == "description")
-                        _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true };
-                    if (str == "id")
+                        _col = new DVStringColumn { Data = 1, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = false };
+                    if (str == "form_data_id")
                         _col = new DVNumericColumn { Data = 2, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+                    if (str == "description")
+                        _col = new DVStringColumn { Data = 3, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = true,
+                            RenderAs = StringRenderType.LinkFromColumn,RefidColumn = Columns.Get("form_ref_id"),IdColumn = Columns.Get("form_data_id")
+                        };
+                    if (str == "id")
+                        _col = new DVNumericColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
                     _col.Name = str;
                     _col.RenderType = _col.Type;
                     _col.ClassName = "tdheight";

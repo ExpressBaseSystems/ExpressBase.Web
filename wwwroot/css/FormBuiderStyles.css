@@ -166,6 +166,10 @@ body {
     margin-left: -6px;
 }
 
+.pgRow .pg-inp[readonly] {
+    background-color: #f5f5f5;
+}
+
 
 .form-buider-form {
     position: relative;

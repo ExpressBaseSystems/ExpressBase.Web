@@ -477,6 +477,23 @@
         }
     };
 
+    this.check4ReservedVals = function () {
+        let $e = $(event.target);
+        if (this.CurMeta.Dprop) {
+            let reservedValues = this.CurMeta.Dprop.split(", ");
+            let curVal = $e.val();
+            if (reservedValues.includes(curVal)) {
+                this.EbAlert.alert({
+                    //id: alerId,
+                    head: "This property value should be diffrent .",
+                    body: "'" + curVal +"' is a reserved name.",
+                    type: "warning",
+                    delay: 5000
+                });
+            }
+        }
+    };
+
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) { ////////// need optimization
         let oldVal = "";
@@ -501,6 +518,8 @@
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
 
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
+        this.check4ReservedVals();       
+
         if (subTypeOf) {
             this.CurMeta = getObjByval(this.Metas, "name", subTypeOf);
         }
@@ -636,6 +655,7 @@
         this.CXVE = new Eb_pgCXVE(this);
         this.PGHelper = new PGHelper(this);
         $("#" + this.wraperId + " .pgHead").on("click", "[name=sort]", this.SortFn.bind(this));
+
         $("#" + this.wraperId + " [name=sort]:eq(1)").hide();
         this.EbAlert = new EbAlert({
             id: this.wraperId + "PGalertCont",
@@ -705,6 +725,8 @@
 
         $("#" + this.wraperId + " .propgrid-table-cont .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
+        $('#' + this.wraperId + "_propGrid" + ' table td').find("input").focus(this.OnInpfocus.bind(this));
+        //$('#' + this.wraperId + "_propGrid" + ' table td').find("input").focus(this.OnInpBlur.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table tr').find(".fa-caret-right").click(this.toggleSubPropRows.bind(this));
         this.addToDD(this.PropsObj);
         //if (this.PropsObj.RenderMe)
@@ -975,6 +997,15 @@
         $('#' + this.wraperId + " .sub-controls-DD-cont").css("cursor", "inherit");// CE DD, + cont
         $('#' + this.wraperId + ' .CEctrlsCont button').css("cursor", "inherit").prop('disabled', false);//coltile X
     };
+
+    this.OnInpfocus = function () {
+        let $e = $(event.target);
+        $e.select();
+    };
+
+    //this.OnInpBlur = function () {
+    //    let $e = $(event.target);       
+    //};
 
     this.init();
 };

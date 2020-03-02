@@ -1510,7 +1510,7 @@ const WebFormRender = function (option) {
 
     this.init = function () {
         this.CheckSubmitButton();
-        this.TableNames = this.getNCCTblNames
+        this.TableNames = this.getNCCTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip

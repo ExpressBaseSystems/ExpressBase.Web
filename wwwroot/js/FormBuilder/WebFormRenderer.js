@@ -105,7 +105,7 @@ const WebFormRender = function (option) {
     this.initReviewCtrl = function () {
         if (this.ReviewCtrl) {
             let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRenderer: this };
-            this.initControls.init(this.ReviewCtrl, opt);
+            this.ApprovalCtrlBuilder =this.initControls.init(this.ReviewCtrl, opt);
         }
     };
 
@@ -172,7 +172,6 @@ const WebFormRender = function (option) {
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
-        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
         //this.addApprovalMockDATAMODEL();
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();
@@ -1511,7 +1510,8 @@ const WebFormRender = function (option) {
 
     this.init = function () {
         this.CheckSubmitButton();
-        this.TableNames = this.getNCCTblNames();
+        this.TableNames = this.getNCCTblNames
+        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
@@ -1529,7 +1529,8 @@ const WebFormRender = function (option) {
 
         else if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
-            $(`#cont_${this.ReviewCtrl.EbSid_CtxId}`).hide();
+            if (this.ReviewCtrl)
+                this.ApprovalCtrlBuilder.hide();
             if (this.cloneRowId)
                 this.fillCloneData(this.cloneRowId);
         }

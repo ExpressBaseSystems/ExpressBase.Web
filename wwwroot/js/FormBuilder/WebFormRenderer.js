@@ -453,8 +453,8 @@ const WebFormRender = function (option) {
         }
 
         //if (this.ApprovalCtrl.__ready) {
-            //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
-            //this.ApprovalCtrl.setEditModeRows(DataMODEL);
+        //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+        //this.ApprovalCtrl.setEditModeRows(DataMODEL);
         //}
 
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
@@ -564,7 +564,7 @@ const WebFormRender = function (option) {
         let WebformData = {};
         let approvalTable = {};
 
-        if (this.ReviewCtrl.__ready)
+        if (this.ReviewCtrl && this.ReviewCtrl.__ready)
             approvalTable = this.getApprovalRow();
 
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);

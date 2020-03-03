@@ -151,6 +151,12 @@
             valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '"  for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
+        else if (type === 37) {    // If icon selector Editor
+            valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" style=" width: calc(100% - 26px); direction: rtl;" />'
+                + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '"  for="' + name + '" editor= "' + type + '" class= "font-selector-btn" >... </button> ';
+
+            this.getValueFuncs[name] = function () { return $('#' + elemId).val(); };
+        }
         else if (type === 17) {  //  If imageUploader
             valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (value || "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
                 + '<button id="pgCXbtn_' + elemId + '" name="pgCXbtn_' + elemId + '" for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
@@ -520,6 +526,10 @@
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
         this.check4ReservedVals();       
 
+        if (this.CurMeta.editor === 37) {
+            this.PropsObj[this.CurProp] = e.icon;
+        }
+
         if (subTypeOf) {
             this.CurMeta = getObjByval(this.Metas, "name", subTypeOf);
         }
@@ -724,6 +734,7 @@
         this.getvaluesFromPG();//no need
 
         $("#" + this.wraperId + " .propgrid-table-cont .selectpicker").on('changed.bs.select', this.OnInputchangedFn.bind(this));
+        $("#" + this.wraperId + " .propgrid-table-cont .font-selector-btn").on('change', this.OnInputchangedFn.bind(this));// icon selector
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").change(this.OnInputchangedFn.bind(this));
         $('#' + this.wraperId + "_propGrid" + ' table td').find("input").focus(this.OnInpfocus.bind(this));
         //$('#' + this.wraperId + "_propGrid" + ' table td').find("input").focus(this.OnInpBlur.bind(this));
@@ -777,6 +788,18 @@
                     regex: meta.MaskPattern
                 });
             }
+
+            if (meta.editor === 37) {
+                $(".font-selector-btn").iconpicker({
+                    placement: 'bottom',
+                    iconset: 'fontawesome',
+                    icon: ''
+
+                }).on('change', function (e) {
+                    $(e.target).siblings("input").val(e.icon);
+                });
+            }
+
         }.bind(this));
     };
     // to check in order

@@ -810,7 +810,7 @@
             this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
 
         let value = this.PGobj.PropsObj[this.PGobj.CurProp];
-         
+
         let OSEbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
         $("#icon_picker").iconpicker({
@@ -820,7 +820,8 @@
         }).on('change', function (e) {
             let str = e.icon;
         });
-        $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");
+        if (value)
+            $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");
     };
 
     this.initOSCE = function () {

@@ -44,13 +44,18 @@
             PropsObj[_CurProp] = value;
             $curRowInp.val(JSON.stringify(value));
         }
+        else if (this.editor === 37) {
+            let icon = $("#icon_picker .form-control.search-control").val();
+            PropsObj[_CurProp] = icon;
+            $(`#${this.PGobj.wraperId}IconTestProp`).val(icon);
+        }
         else if (this.editor === 21)
             PropsObj[_CurProp] = this.MLEObj.get();
 
         this.OnCXE_OK(PropsObj[_CurProp]);
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15) || this.editor < 36) {
-            let func = this.PGobj.OnChangeExec[_CurProp]
+            let func = this.PGobj.OnChangeExec[_CurProp];
             if (func) {
                 func.bind(PropsObj, this.PGobj)();// call Onchange exec for non inp field CXVEs
             }
@@ -164,6 +169,8 @@
             this.initMLE(e);
         else if (this.editor === 36)
             this.initOSCE();
+        else if (this.editor === 37)
+            this.initIconSelector();
         else if (this.editor > 63) {
             this.initScrE(e);
         }
@@ -795,6 +802,25 @@
         let ObjType = $selectedOpt.attr("obj-type");
         this.OSEList = null;
         this.getOSElist("refresh");
+    };
+
+    this.initIconSelector = function () {
+        this.curEditorLabel = "Object Selector Collection";
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
+            this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
+
+        let value = this.PGobj.PropsObj[this.PGobj.CurProp];
+         
+        let OSEbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
+        $("#icon_picker").iconpicker({
+            placement: 'bottom',
+            iconset: 'fontawesome',
+            icon: ''
+        }).on('change', function (e) {
+            let str = e.icon;
+        });
+        $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");
     };
 
     this.initOSCE = function () {

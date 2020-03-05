@@ -26,7 +26,8 @@ function EbMobStudio(config) {
     this.droparea = `#eb_mobpage_pane${this.Conf.TabNum}`;
     this.Controls = {};
     this.Menu = {};
-    this.Mode = (this.EditObj === null) ? "new" : "edit";
+    this.Mode = this.EditObj === null ? "new" : "edit";
+    this.ContainerType = null;
 
     this.GenerateButtons = function () { };
 
@@ -91,6 +92,8 @@ function EbMobStudio(config) {
             this.makeDropable(o.EbSid, ebtype);
             this.makeSortable(o.EbSid);
             this.setCtrls(o.EbSid);
+            this.Controls.setColumnTree();
+            this.Controls.refreshColumnTree();
         }
         else if (ebtype === "EbMobileVisualization") {
             this.getCol(o.DataSourceRefId);
@@ -132,9 +135,11 @@ function EbMobStudio(config) {
     };
 
     this.makeDropable = function (ebsid, ebtype) {
-        $(`#${ebsid} .eb_mob_container_inner`).droppable({
+        $(`#${ebsid} .eb_mob_container_inner,#${ebsid} .ctrl_as_container .control_container`).droppable({
             accept: this.getDropAcceptClass(ebtype),
             hoverClass: "drop-hover-layout",
+            tolerance: "fit",
+            greedy: true,
             drop: this.onDropFn.bind(this)
         });
     };
@@ -155,7 +160,7 @@ function EbMobStudio(config) {
     };
 
     this.makeSortable = function (ebsid) {
-        $(`#${ebsid} .eb_mob_container_inner`).sortable({
+        $(`#${ebsid} .eb_mob_container_inner, #${ebsid} .ctrl_as_container .control_container`).sortable({
             axis: "y",
             appendTo: document.body
         });
@@ -170,6 +175,13 @@ function EbMobStudio(config) {
         if (ebtype === "EbMobileTableLayout") {
             this.Controls.InitTableLayout(o);
         }
+        else if (ebtype === "EbMobileDataGrid") {
+            this.Controls.initDataGrid(o);
+        }
+
+        //set tree col if form
+        if (this.ContainerType === "EbMobileForm")
+            this.Controls.refreshColumnTree();
     };
 
     this.OnContainerDrop = function (event, ui) {
@@ -177,11 +189,13 @@ function EbMobStudio(config) {
         if (dropLoc.find(".mob_container").length <= 0) {
             let draged = $(ui.draggable);
             let ebtype = draged.attr("eb-type");
+            this.ContainerType = ebtype;
             let o = this.makeElement(draged);
             dropLoc.append(o.$Control.outerHTML());
             if (ebtype === "EbMobileForm") {
                 this.makeDropable(o.EbSid, ebtype);
                 this.makeSortable(o.EbSid);
+                this.Controls.setColumnTree(o);
             }
             else if (ebtype === "EbMobileVisualization") {
                 this.Controls.InitVis(o);
@@ -263,7 +277,7 @@ function EbMobStudio(config) {
 
         this.EbObject.Container.Filters.$values.length = 0;
 
-        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j,obj) {
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j, obj) {
             let o = this.Procs[obj.id];
             this.EbObject.Container.Filters.$values.push(o);
         }.bind(this));
@@ -315,6 +329,10 @@ function EbMobStudio(config) {
         else {
             console.log("pg changed");
         }
+
+        //set tree col if form
+        if (this.ContainerType === "EbMobileForm" && (pname === "Name" || pname === "TableName"))
+            this.Controls.refreshColumnTree();
     }.bind(this);
 
     this.exe = function () {

@@ -731,7 +731,7 @@
         this.RefreshControl($control);
         this.pg.setObject(this.objCollection[Objid], AllMetas["Eb" + eb_type]);
         return $control;
-    }
+    };
 
     this.pg.PropertyChanged = function (obj, pname) {
         if (pname === 'RowCount' || pname === 'ColoumCount') {

@@ -88,7 +88,7 @@
     };
 
     this.makeResizable = function (o) {
-        $(`#${o.EbSid} .eb_tablelayout_tr .eb_tablelayout_td:not(:last-child)`).resizable({
+        $(`#${o.EbSid} .eb_tablelayout_tr:first-child .eb_tablelayout_td:not(:last-child)`).resizable({
             handles: "e",
             stop: function () { this.refreshList(); }.bind(this)
         });
@@ -260,10 +260,14 @@
         var obj = new EbObjects.EbMobileTableLayout(id);
         this.Root.Procs[id] = obj;
         $(`#${o.EbSid} .ctrl_as_container .data_layout`).append(obj.$Control.outerHTML());
+        if (this.Root.Mode === "edit") {
+            $.extend(obj, o.DataLayout || {});
+        }
 
         $(`#${obj.EbSid} .eb_mob_tablelayout_inner`).append(this.getTableHtml(obj));
         this.makeTdDropable(obj);
         this.makeResizable(obj);
+        return obj;
     };
 }
 
@@ -301,12 +305,23 @@ function MobileMenu(option) {
             $table.find("tbody").append(html.join(""));
             this.Root.Controls.makeTdDropable(obj);
         }
+        else if (eType === "add_column") {
+            $table.find("tr").each(function (i, o) {
+                $(o).append(`<td class="eb_tablelayout_td"></td>`);
+            });
+            this.Root.Controls.makeTdDropable(obj);
+        }
         else if (eType === "delete_row") {
             let $row = selector.$trigger.find(".eb_tablelayout_tr:last-child");
             let rowcount = $table.find(".eb_tablelayout_tr").length;
             if (rowcount > 2) {
                 $row.remove();
             }
+        }
+        else if (eType === "delete_column") {
+            let $cols = selector.$trigger.find(".eb_tablelayout_td:last-child");
+            if ($cols.length > 1)
+                $cols.remove();
         }
     };
 
@@ -337,7 +352,9 @@ function MobileMenu(option) {
     this.ContextLinks = {
         "TableLayout": {
             "add_row": { name: "Add Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
-            "delete_row": { name: "Delete Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) }
+            "add_column": { name: "Add Column", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
+            "delete_row": { name: "Delete Row", icon: "plus", callback: this.tableLayoutLinks.bind(this) },
+            "delete_column": { name: "Delete Column", icon: "plus", callback: this.tableLayoutLinks.bind(this) }
         }
     };
 

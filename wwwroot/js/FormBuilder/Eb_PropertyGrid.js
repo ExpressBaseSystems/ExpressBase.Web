@@ -64,49 +64,53 @@
             }
             if (typeof value === "string")
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
+            else if (typeof value === "object")// for multi select
+                value = value.$values.join();
             else
                 value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
             valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, IsCElimitEditor, meta._isMultiSelect);
-            if (name === "ApproverRoles")
-                if (IsCElimitEditor) {
+
+            if (IsCElimitEditor) {
+                this.getValueFuncs[name] = function () {
+                    let idx = parseInt($('#' + elemId).val());
+                    return (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null;
+                }.bind(this);
+            }
+            else {
+                if (meta._isMultiSelect) {// for multi select
                     this.getValueFuncs[name] = function () {
-                        let idx = parseInt($('#' + elemId).val());
-                        return (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null;
+                        let csv = $('#' + elemId).val();
+                        let ar = csv.split(",");
+                        this.PropsObj[meta.name].$values = ar;
+                        return this.PropsObj[meta.name];
                     }.bind(this);
                 }
-                else {
-                    if (meta._isMultiSelect) {
-                        this.getValueFuncs[name] = function () {
-                            let csv = $('#' + elemId).val();
-                            let ar = csv.split(",");
-                            let valObj = { "$type": "System.Collections.Generic.List`1[[System.Int32,  System.Private.CoreLib]], System.Private.CoreLib", "$values": [] };
-                            valObj.$values = ar;
-                            return valObj;
-                        };
-                    }
-                    else
-                        this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
-                }
+                else
+                    this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
+            }
             this.postCreateInitFuncs[name] = function () {
                 let $select = $('#' + elemId).parent().find(".selectpicker");
                 $select.on('change', function (e) {
                     let $e = $(event.target);
                     let valuesAr = [];
-                    debugger;
                     let $lis = $e.find("option:selected");
                     for (let i = 0; i < $lis.length; i++) {
                         let $li = $($lis[i]);
                         valuesAr.push($li.attr("data-token"));
                     }
                     $e.parent().siblings("input").val(valuesAr);
-                    //this.PropsObj[meta.name] = { "$type": "System.Collections.Generic.List`1[[System.Int32,  System.Private.CoreLib]], System.Private.CoreLib", "$values": [] }; // hard coding 
-                    debugger;
-                    if (meta.Dprop === "True")
-                        debugger;
-                    else
-                        this.PropsObj[meta.name].$values = [...valuesAr];
+                    //this.PropsObj[meta.name].$values = [...valuesAr];/// ??
                 }.bind(this));
-                $select.selectpicker('val', meta.enumoptions[value]);
+                if (meta.Dprop === "True") {// for multi select
+                    let vals = [];
+                    let ar = this.PropsObj[meta.name].$values;
+                    for (let i = 0; i < ar.length; i++) {
+                        vals.push(meta.enumoptions[ar[i]]);
+                    }
+                    $select.selectpicker('val', vals);
+                }
+                else
+                    $select.selectpicker('val', meta.enumoptions[value]);
             }.bind(this);
 
         }

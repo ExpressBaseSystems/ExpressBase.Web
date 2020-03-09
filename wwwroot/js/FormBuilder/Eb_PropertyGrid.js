@@ -60,21 +60,58 @@
         else if (type === 1) {    // If options create drop-down list
             if (meta.PropDataSourceJsFn) {
                 meta.enumoptions = meta.PropDataSourceJsFn();
+                meta._isMultiSelect = meta.Dprop === "True";
             }
             if (typeof value === "string")
                 value = parseInt(getKeyByVal(meta.enumoptions, value));
+            else if (typeof value === "object")// for multi select
+                value = value.$values.join();
             else
                 value = (!meta.enumoptions[value]) ? Object.keys(meta.enumoptions)[0] : value;
-            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, IsCElimitEditor);
-            if (!IsCElimitEditor)
-                this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
-            else
+            valueHTML = this.getBootstrapSelectHtml(elemId, value, meta.enumoptions, IsCElimitEditor, meta._isMultiSelect);
+
+            if (IsCElimitEditor) {
                 this.getValueFuncs[name] = function () {
-                    let idx = parseInt($('#' + elemId).val()),
-                        value = (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null;
-                    return value;
+                    let idx = parseInt($('#' + elemId).val());
+                    return (idx !== 0) ? this.PropsObj[meta.source].$values[idx - 1] : null;
                 }.bind(this);
-            this.postCreateInitFuncs[name] = function () { $('#' + elemId).parent().find(".selectpicker").on('change', function (e) { $(this).parent().siblings("input").val($(this).find("option:selected").attr("data-token")) }); $('#' + elemId).parent().find(".selectpicker").selectpicker('val', meta.enumoptions[value]); };
+            }
+            else {
+                if (meta._isMultiSelect) {// for multi select
+                    this.getValueFuncs[name] = function () {
+                        let csv = $('#' + elemId).val();
+                        let ar = csv.split(",");
+                        this.PropsObj[meta.name].$values = ar;
+                        return this.PropsObj[meta.name];
+                    }.bind(this);
+                }
+                else
+                    this.getValueFuncs[name] = function () { return parseInt($('#' + elemId).val()); };
+            }
+            this.postCreateInitFuncs[name] = function () {
+                let $select = $('#' + elemId).parent().find(".selectpicker");
+                $select.on('change', function (e) {
+                    let $e = $(event.target);
+                    let valuesAr = [];
+                    let $lis = $e.find("option:selected");
+                    for (let i = 0; i < $lis.length; i++) {
+                        let $li = $($lis[i]);
+                        valuesAr.push($li.attr("data-token"));
+                    }
+                    $e.parent().siblings("input").val(valuesAr);
+                    //this.PropsObj[meta.name].$values = [...valuesAr];/// ??
+                }.bind(this));
+                if (meta.Dprop === "True") {// for multi select
+                    let vals = [];
+                    let ar = this.PropsObj[meta.name].$values;
+                    for (let i = 0; i < ar.length; i++) {
+                        vals.push(meta.enumoptions[ar[i]]);
+                    }
+                    $select.selectpicker('val', vals);
+                }
+                else
+                    $select.selectpicker('val', meta.enumoptions[value]);
+            }.bind(this);
 
         }
         else if (type === 2) {    // If number 
@@ -300,9 +337,9 @@
     };
 
     // BootstrapSelect Html builder
-    this.getBootstrapSelectHtml = function (id, selectedValue, options, IsCElimitEditor) {
+    this.getBootstrapSelectHtml = function (id, selectedValue, options, IsCElimitEditor, isMultiSelect) {
         selectedValue = selectedValue || 0; // default value....optimize
-        let html = "<select class='selectpicker' >";
+        let html = `<select class='selectpicker' ${isMultiSelect ? "multiple " : ""}>`;
         $.each(options, function (i, val) {
             html += `<option style='@color;' data-token='${i}'>${val}</option>`.replace("@color", (IsCElimitEditor && i === 0) ? "color:#777" : "");
         });
@@ -484,15 +521,15 @@
     };
 
     this.check4ReservedVals = function () {
-        let $e = $(event.target);
-        if (this.CurMeta.Dprop) {
+        if (this.CurMeta && this.CurMeta.Dprop) {
+            let $e = $(event.target);
             let reservedValues = this.CurMeta.Dprop.split(", ");
             let curVal = $e.val();
             if (reservedValues.includes(curVal)) {
                 this.EbAlert.alert({
                     //id: alerId,
                     head: "This property value should be diffrent .",
-                    body: "'" + curVal +"' is a reserved name.",
+                    body: "'" + curVal + "' is a reserved name.",
                     type: "warning",
                     delay: 5000
                 });
@@ -524,7 +561,7 @@
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
 
         this.CurMeta = getObjByval(this.Metas, "name", this.CurProp);
-        this.check4ReservedVals();   
+        this.check4ReservedVals();
 
         if (subTypeOf) {
             this.CurMeta = getObjByval(this.Metas, "name", subTypeOf);

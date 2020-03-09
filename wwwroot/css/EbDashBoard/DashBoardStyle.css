@@ -967,6 +967,7 @@ body .stickBtn {
     max-width: 360px;
     max-height: 360px;
     position: relative;
+    outline: none;
 }
 
     .gaugeChart .gauge_canvas {
@@ -1255,6 +1256,14 @@ body {
         padding: 1px;
     }
 
+    /*canvas Style*/
+canvas:focus {
+    outline: none;
+}canvas:active {
+    outline: none;
+}canvas:visited {
+    outline: none;
+}
 
 /*table Style Dashboard*/
 #dashbord-view .dataTables_wrapper, #dashbord-view .dataTables_scroll {
@@ -1272,8 +1281,8 @@ body {
 
 
 .grid-stack .dataTables_scrollBody::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+    width: .9vh;
+    height: .9vh;
 }
 
 /* Track */
@@ -1300,15 +1309,19 @@ body {
     .grid-stack table:first-child {
         background-color: transparent !important;
         border: 0px !important;
-        border-bottom:solid 1px;
+        border-bottom: solid 1px;
     }
+
         .grid-stack table:first-child th {
-            background-color: transparent !important;
+            background-color: #0000008c !important;
             border-bottom-width: 0px !important;
+            color: #ffff !important;
         }
+
         .grid-stack table:first-child thead {
             background: #00000029;
         }
+
     .grid-stack table:last-child {
         background-color: transparent !important;
         border-bottom: 0px !important;
@@ -1324,43 +1337,65 @@ body {
     text-overflow: ellipsis !important;
     overflow: hidden !important;
     white-space: nowrap !important;
-    font-size: 15px;
-    font-weight:400;
+    font-size: 14px;
+    font-weight: 400;
     border-left: 0px !important;
     border-right: 0px !important;
 }
+
 .grid-stack .group td b {
-    font-weight:500;
+    font-weight: 400;
 }
+
 .grid-stack td {
     background-color: transparent !important;
     font-size: 16px;
     text-overflow: ellipsis !important;
     overflow: hidden !important;
     white-space: nowrap !important;
-    font-size: 15px;
-    height: 3vh !important;
+    font-size: 14px;
+    height: 5vh !important;
     border-bottom: solid 1px rgb(204, 204, 204) !important;
 }
 
 .grid-stack tr:hover {
-    background-color: transparent !important;
+    background-color: #00000040 !important;
 }
-.grid-stack .group td {
+
+.grid-stack .group {
+    border-top: solid 1px #f1f1f1 !important;
     background-color: #00000029 !important;
 }
+.grid-stack .group:hover{
+    border-top: solid 1px #f1f1f1 !important;
+    /*//background-color: #00000029 !important;*/
+}
+
+    .grid-stack .group tr td {
+        background-color: #00000029 !important;
+    } 
 .grid-stack .group-sum td {
     background-color: #00000029 !important;
-    border-bottom: solid 1px #ffffff14 !important;
+    border-bottom: solid 3px #ffffff14 !important;
 }
+
 .grid-stack tr {
     background-color: transparent !important;
     border-bottom: 1px !important;
     border-bottom: solid #dcdcdc !important;
     border-bottom-width: 1px !important;
+    height: 4vh !important;
 }
+
 .grid-stack table.dataTable thead .sorting:after {
     opacity: 0.2;
     content: "\e150";
     font-size: 12px;
+}
+
+.grid-stack .dataTables_scrollBody thead:first-child tr {
+    height: 0vh !important;
+}
+.grid-stack .odd {
+    background: rgba(0, 0, 0, 0.09) !important;
 }

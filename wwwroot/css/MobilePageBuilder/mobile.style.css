@@ -133,6 +133,16 @@
 
 .eb_ctrlhtml {
 }
+
+.drag_el_style {
+    background-color: white;
+    border: 1px dotted black;
+    width: auto;
+    padding: 15px;
+    border-radius: 4px;
+    display:flex;
+    flex-flow:row;
+}
 /*container*/
 .eb_mob_form_container, .eb_mob_vis_container {
     width: 100%;
@@ -186,7 +196,7 @@
 }
 
 .drop-hover-layout {
-    border-color: #6969d4;
+    border-color: #6969d4 !important;
 }
 
 .drop-hover-td {
@@ -238,6 +248,7 @@
         .eb_mob_tablelayout .eb_mob_tablelayout_inner td {
             height: 30px;
             border: 1px dashed #a5a4a4;
+            position: relative;
         }
 
         .eb_mob_tablelayout .eb_mob_tablelayout_inner table {
@@ -271,21 +282,24 @@
 .data_column {
     display: flex;
     width: 100%;
-    display: flex;
-    width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    left: 0;
 }
 
     .data_column .data_column_inner {
         display: flex;
         justify-content: center;
+        align-items: center;
     }
 /*visualization*/
 .eb_mob_vis_container .eb_mob_container_inner {
     display: flex;
-    flex-flow: column;
+    justify-content: center;
 }
 
     .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container {
@@ -378,3 +392,31 @@
         .eb_mob_pdf_container:focus .eb_mob_container_inner {
             border-color: #316396;
         }
+/*datagrid*/
+.eb_stacklayout .ctrl_as_container {
+    padding: 10px;
+    background: white;
+    border-radius: 4px;
+}
+
+    .eb_stacklayout .ctrl_as_container .data_layout {
+        margin: 0px 0px 10px 0px;
+    }
+
+    .eb_stacklayout .ctrl_as_container .control_container {
+        min-height: 200px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        padding: 0px 5px;
+    }
+/*coloum tree style*/
+.column_tree_typeicon {
+    background: #eee;
+    padding: 3px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 13px;
+    margin-right: 3px;
+    width: 20px;
+    text-align: center;
+}

@@ -26,7 +26,8 @@ function EbMobStudio(config) {
     this.droparea = `#eb_mobpage_pane${this.Conf.TabNum}`;
     this.Controls = {};
     this.Menu = {};
-    this.Mode = (this.EditObj === null) ? "new" : "edit";
+    this.Mode = this.EditObj === null ? "new" : "edit";
+    this.ContainerType = null;
 
     this.GenerateButtons = function () { };
 
@@ -90,7 +91,9 @@ function EbMobStudio(config) {
         if (ebtype === "EbMobileForm") {
             this.makeDropable(o.EbSid, ebtype);
             this.makeSortable(o.EbSid);
-            this.setCtrls(o.EbSid);
+            this.setCtrls($(`#${o.EbSid} .eb_mob_container_inner`), this.EditObj.Container.ChildControls.$values);
+            this.Controls.setColumnTree();
+            this.Controls.refreshColumnTree();
         }
         else if (ebtype === "EbMobileVisualization") {
             this.getCol(o.DataSourceRefId);
@@ -104,18 +107,31 @@ function EbMobStudio(config) {
         this.EditObj = null;
     };
 
-    this.setCtrls = function (_containerid) {
-        for (let i = 0; i < this.EditObj.Container.ChiledControls.$values.length; i++) {
-            let _obj = this.EditObj.Container.ChiledControls.$values[i];
+    this.setCtrls = function ($container, controllCollection) {
+        for (let i = 0; i < controllCollection.length; i++) {
+            let _obj = controllCollection[i];
             let ebtype = this.getType(_obj.$type);
             let id = "Tab" + this.Conf.TabNum + "_" + ebtype + CtrlCounters[ebtype.replace("Eb", "") + "Counter"]++;
             let o = new EbObjects[ebtype](id);
             $.extend(o, _obj);
             this.Procs[id] = o;
             SetControlFunctions(this.Procs[id]);
-            $(`#${_containerid} .eb_mob_container_inner`).append(o.$Control.outerHTML());
+            $container.append(o.$Control.outerHTML());
             this.RefreshControl(this.Procs[id]);
+            if (ebtype === "EbMobileDataGrid") {
+                this.setGridOnEdit(o);
+            }
         }
+    };
+
+    this.setGridOnEdit = function (grid) {
+        let tobj = this.Controls.initDataGrid(grid);
+        let cellcollection = tobj.CellCollection.$values;
+
+        for (let i = 0; i < cellcollection.length; i++) {
+            this.Controls.renderCellControl(tobj, cellcollection[i]);
+        }
+        this.setCtrls($(`#${grid.EbSid} .ctrl_as_container .control_container`), grid.ChildControls.$values);
     };
 
     this.makeDragable = function () {
@@ -126,15 +142,23 @@ function EbMobStudio(config) {
             cursor: "move",
             appendTo: "body",
             drag: function (event, ui) {
-                $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "auto", "padding": "15px", "border-radius": "4" });
+                $(ui.helper).css({
+                    "background": "white",
+                    "border": "1px dotted black",
+                    "width": "auto",
+                    "padding": "15px",
+                    "border-radius": "4"
+                });
             }
         });
     };
 
     this.makeDropable = function (ebsid, ebtype) {
-        $(`#${ebsid} .eb_mob_container_inner`).droppable({
+        $(`#${ebsid} .eb_mob_container_inner,#${ebsid} .ctrl_as_container .control_container`).droppable({
             accept: this.getDropAcceptClass(ebtype),
             hoverClass: "drop-hover-layout",
+            tolerance: "fit",
+            greedy: true,
             drop: this.onDropFn.bind(this)
         });
     };
@@ -155,7 +179,7 @@ function EbMobStudio(config) {
     };
 
     this.makeSortable = function (ebsid) {
-        $(`#${ebsid} .eb_mob_container_inner`).sortable({
+        $(`#${ebsid} .eb_mob_container_inner, #${ebsid} .ctrl_as_container .control_container`).sortable({
             axis: "y",
             appendTo: document.body
         });
@@ -170,6 +194,13 @@ function EbMobStudio(config) {
         if (ebtype === "EbMobileTableLayout") {
             this.Controls.InitTableLayout(o);
         }
+        else if (ebtype === "EbMobileDataGrid") {
+            this.Controls.initDataGrid(o);
+        }
+
+        //set tree col if form
+        if (this.ContainerType === "EbMobileForm")
+            this.Controls.refreshColumnTree();
     };
 
     this.OnContainerDrop = function (event, ui) {
@@ -177,11 +208,13 @@ function EbMobStudio(config) {
         if (dropLoc.find(".mob_container").length <= 0) {
             let draged = $(ui.draggable);
             let ebtype = draged.attr("eb-type");
+            this.ContainerType = ebtype;
             let o = this.makeElement(draged);
             dropLoc.append(o.$Control.outerHTML());
             if (ebtype === "EbMobileForm") {
                 this.makeDropable(o.EbSid, ebtype);
                 this.makeSortable(o.EbSid);
+                this.Controls.setColumnTree(o);
             }
             else if (ebtype === "EbMobileVisualization") {
                 this.Controls.InitVis(o);
@@ -207,65 +240,99 @@ function EbMobStudio(config) {
     //save
     this.BeforeSave = function () {
         let container = $(this.droparea).find(".mob_container");
-        if (container.length <= 1 || container.length >= 0) {
-            let div = $(this.droparea).find(".mob_container")[0];
+        if (this.isReadyToSave(container)) {
+            let div = container[0];
             this.EbObject.Container = this.Procs[div.id];
 
             if ($(div).hasClass("eb_mob_form_container")) {
-                this.EbObject.Container.ChiledControls.$values.length = 0;
-                $(div).find(".mob_control").each(this.findFormContainerItems.bind(this));
+                this.EbObject.Container.ChildControls.$values.length = 0;
+                $(div).find(".eb_mob_container_inner").children(".mob_control").each(function (i, o) {
+                    this.findFormContainerItems(i, o, this.EbObject.Container.ChildControls);
+                }.bind(this));
             }
             else if ($(div).hasClass("eb_mob_vis_container")) {
                 let table = $(div).find(".eb_mob_tablelayout")[0];
                 this.findVisContainerItems(table);
             }
             else if ($(div).hasClass("eb_mob_dashboard_container")) {
-                this.EbObject.Container.ChiledControls.$values.length = 0;
+                this.EbObject.Container.ChildControls.$values.length = 0;
                 $(div).find(".mob_dash_control").each(this.findDashContainerItems.bind(this));
             }
+            //set root object to objdash current object
+            commonO.Current_obj = this.EbObject;
+            return true;
         }
-        commonO.Current_obj = this.EbObject;
+        else
+            return false;
+    };
+
+    this.isReadyToSave = function ($container) {
+        if ($container.length <= 0) {
+            EbPopBox("show", { Message: "A page must have a container :(" });
+            return false;
+        }
+        if (!this.EbObject.DisplayName) {
+            EbPopBox("show", { Message: "DisplayName not specified :(" });
+            return false;
+        }
         return true;
     };
 
     //form save
-    this.findFormContainerItems = function (i, o) {
+    this.findFormContainerItems = function (i, o, ebContainer) {
         let jsobj = this.Procs[o.id];
-        this.EbObject.Container.ChiledControls.$values.push(jsobj);
+        let ebtype = this.getType(jsobj.$type);
+
+        if (ebtype === "EbMobileDataGrid") {
+            jsobj.ChildControls.$values.length = 0;
+            let tableLayout = $(`#${jsobj.EbSid} .data_layout div[eb-type="EbMobileTableLayout"]`)[0];
+            let tobj = this.Procs[tableLayout.id];
+            this.getTableLayoutControls(tobj);//data layout save
+            jsobj.DataLayout = tobj;
+            $(`#${jsobj.EbSid} .control_container`).find(".mob_control").each(function (k, obj) {
+                this.findFormContainerItems(k, obj, jsobj.ChildControls);
+            }.bind(this));
+            ebContainer.$values.push(jsobj);//grid controls save
+        }
+        else
+            ebContainer.$values.push(jsobj);
     };
 
     //dash save
     this.findDashContainerItems = function (i, o) {
         let jsobj = this.Procs[o.id];
-        this.EbObject.Container.ChiledControls.$values.push(jsobj);
+        this.EbObject.Container.ChildControls.$values.push(jsobj);
     };
 
     //vis save
     this.findVisContainerItems = function (table) {
         let o = this.Procs[table.id];
-        o.RowCount = $(`#${o.EbSid} .eb_tablelayout_tr`).length;
-        o.ColumCount = $(`#${o.EbSid} .eb_tablelayout_tr:first-child .eb_tablelayout_td`).length;
+        this.getTableLayoutControls(o);
         this.EbObject.Container.DataLayout = o;
 
-        this.EbObject.Container.DataLayout.CellCollection.$values.length = 0;
+        this.EbObject.Container.Filters.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j, obj) {
+            let data_col = this.Procs[obj.id];
+            this.EbObject.Container.Filters.$values.push(data_col);
+        }.bind(this));
+    };
 
-        $(`#${o.EbSid} .eb_tablelayout_td`).each(function (i, obj) {
+    this.getTableLayoutControls = function (tobj) {
+
+        tobj.CellCollection.$values.length = 0;
+        tobj.RowCount = $(`#${tobj.EbSid} .eb_tablelayout_tr`).length;
+        tobj.ColumCount = $(`#${tobj.EbSid} .eb_tablelayout_tr:first-child .eb_tablelayout_td`).length;
+
+        $(`#${tobj.EbSid} .eb_tablelayout_td`).each(function (i, obj) {
             let rowindex = $(obj).closest(".eb_tablelayout_tr").index();
             let colindex = $(obj).index();
 
             let cell = new EbObjects.EbMobileTableCell(`TableCell_${rowindex}_${colindex}`);
             cell.RowIndex = rowindex;
             cell.ColIndex = colindex;
-            cell.Width = parseFloat($(obj).width() / $(table).width() * 100);
+            cell.Width = parseFloat($(obj).width() / $(`#${tobj.EbSid}`).width() * 100);
 
-            this.EbObject.Container.DataLayout.CellCollection.$values.push(this.getCellControls(cell, $(obj)));
-        }.bind(this));
-
-        this.EbObject.Container.Filters.$values.length = 0;
-
-        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j,obj) {
-            let o = this.Procs[obj.id];
-            this.EbObject.Container.Filters.$values.push(o);
+            tobj.CellCollection.$values.push(this.getCellControls(cell, $(obj)));
         }.bind(this));
     };
 
@@ -298,8 +365,11 @@ function EbMobStudio(config) {
 
     //pg onchange
     this.pg.PropertyChanged = function (obj, pname) {
-        if (pname === "Label") {
+        if (pname === "Label" && obj.constructor.name !== "EbMobileDataGrid") {
             this.RefreshControl(obj);
+        }
+        else if (pname === "Label" && obj.constructor.name === "EbMobileDataGrid") {
+            $(`#${obj.EbSid}`).children(".ctrl_label").text(obj.Label);
         }
         else if (obj.constructor.name === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
             obj._getColumns(obj.DataSourceRefId, function () {
@@ -315,6 +385,10 @@ function EbMobStudio(config) {
         else {
             console.log("pg changed");
         }
+
+        //set tree col if form
+        if (this.ContainerType === "EbMobileForm" && (pname === "Name" || pname === "TableName"))
+            this.Controls.refreshColumnTree();
     }.bind(this);
 
     this.exe = function () {

@@ -467,7 +467,7 @@ var DashBoardWrapper = function (options) {
         <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
         <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
         <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
-        <div class="label-footer" id="${obj.EbSid}_footer"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
         </div></div>`;
         return a;
     };

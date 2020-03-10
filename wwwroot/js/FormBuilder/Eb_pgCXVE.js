@@ -45,9 +45,10 @@
             $curRowInp.val(JSON.stringify(value));
         }
         else if (this.editor === 37) {
+            console.log("haii")
             let icon = $("#icon_picker .form-control.search-control").val();
             PropsObj[_CurProp] = icon;
-            $(`#${this.PGobj.wraperId}IconTestProp`).val(icon);
+            $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
         }
         else if (this.editor === 21)
             PropsObj[_CurProp] = this.MLEObj.get();
@@ -816,6 +817,7 @@
     };
 
     this.initIconSelector = function () {
+        console.log("hgqdbgh");
         this.curEditorLabel = "Object Selector Collection";
         if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
             this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
@@ -831,8 +833,8 @@
         }).on('change', function (e) {
             let str = e.icon;
         });
-        if (value)
-            $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");
+        if (value) { $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");}
+            
     };
 
     this.initOSCE = function () {

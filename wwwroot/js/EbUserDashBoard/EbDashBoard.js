@@ -339,7 +339,7 @@ var DashBoardWrapper = function (options) {
             }
             //Add Labels 
             else if ($(target).hasClass("grid-stack") && $(source).hasClass("inner_tree_structure")) {
-                let drop_id = this.AddNewTile(8, 3);
+                let drop_id = this.AddNewTile(8, 4);
                 this.makeElement(el);
                 let o = this.Procs[this.currentId];
                 let component = $(el).attr("data-ctrl");
@@ -348,8 +348,8 @@ var DashBoardWrapper = function (options) {
                 let tileId = drop_id.split("_")[1];
                 this.LabelDrop(component, column, controlname, drop_id.split("_")[1]);
                 $(`#${drop_id}`).append(this.MakeDashboardLabel(o));
-                this.labelstyleApply(tileId);
                 Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], tileId, this.TabNum);
+                this.labelstyleApply(tileId);
                 EbDataLabelFn(this.Procs[controlname]);
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 this.drake.containers.push(document.getElementById(drop_id));
@@ -407,10 +407,12 @@ var DashBoardWrapper = function (options) {
         //$(`[data-id="${tileId}"]`).parent().css("background", "transparent");
         $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
         $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
+        $(`#${tileId}`).css("background", "transparent");
         $(`#${tileId} .db-title`).empty();
         $(`#${tileId}`).addClass("user-control-tile-opt");
         $(`#${tileId} .i-opt-obj`).hide();
-        $(`#${tileId} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+        $(`#${tileId} .i-opt-restart`).hide();
+        $(`#${tileId} .tile-header`).removeClass("tile-header");
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
@@ -460,11 +462,16 @@ var DashBoardWrapper = function (options) {
     };
     this.MakeDashboardLabel = function (obj) {
         let a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
-        <div class="db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
-        <div class="db-label-desc"  id="${obj.EbSid}_description"></div>
-        <div class="db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div></div>`;
+        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div>
+        </div></div>`;
         return a;
     };
+
 
     this.ComponentDrop = function (target, o) {
         $(target).append(o.$Control[0]);
@@ -655,7 +662,7 @@ var DashBoardWrapper = function (options) {
                 this.drop_id = "drop_" + t_id;
                 $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
-                    <div style="display:flex" class="db-title-parent">
+                    <div style="display:flex" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
@@ -684,6 +691,7 @@ var DashBoardWrapper = function (options) {
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
                     $(`#${t_id}`).attr("eb-type", "gauge");
+                    $(`#${t_id} .tile-header`).removeClass("tile-header");
 
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
@@ -729,7 +737,7 @@ var DashBoardWrapper = function (options) {
                         //this.drake.containers.push(document.getElementById(this.drop_id));
                         this.propGrid.setObject(object, AllMetas["Eb" + eb_type]);
                     }.bind(this));
-
+                    Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                     $.each(currentobj.LabelColl.$values, function (i, obj) {
                         var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
                         this.makeElement(eb_type, obj);
@@ -743,7 +751,7 @@ var DashBoardWrapper = function (options) {
                         //this.drake.containers.push(document.getElementById(this.drop_id));
                         this.propGrid.setObject(object, AllMetas["Eb" + eb_type]);
                     }.bind(this));
-                    Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
+
                     if (currentobj.Transparent) {
                         $(`[data-id="${this.CurrentTile}"]`).parent().css("background", "transparent");
                         $(`[data-id="${this.CurrentTile}"]`).parent().css("border", "0px solid");
@@ -781,7 +789,7 @@ var DashBoardWrapper = function (options) {
         let t_id = "tile" + j;
         let drop_id = "drop_" + t_id;
         $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
-                    <div style="display:flex;" class="db-title-parent">
+                    <div style="display:flex;" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
@@ -789,12 +797,19 @@ var DashBoardWrapper = function (options) {
                     <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
                     </div></div>
                  <div id="${this.TabNum}_Label_${t_id}" class=""></div>
-                 <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${drop_id}" ></div></div></div>`), null, null, this.data_width, this.data_height, true);
+                 <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${drop_id}" ></div></div>
+                     <div class="tile-footer"></div>
+                </div>`), null, null, this.data_width, this.data_height, true);
         this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
         this.CurrentTile = t_id;
         Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
         return drop_id;
     };
+
+    this.LabelTile = function () {
+
+    };
+
 
     //focus Ebobjects
     this.TileSelectorJs = function (e) {
@@ -1026,55 +1041,78 @@ var DashBoardWrapper = function (options) {
         return true;
     };
 
+    //this.DashBoardSearch = function (e) {
+    //    $(`#DashB-Searched-Obj`).empty();
+    //    let val = $("#DashB-Search").val().trim();
+    //    if (val === "" || val === null) {
+    //        $(`#DashB-Searched-Obj`).hide().empty();
+    //        $("#Eb-obj-sidebar-cont").show();
+    //    }
+    //    else {
+    //        $(`#DashB-Searched-Obj`).show();
+    //        $("#Eb-obj-sidebar-cont").hide();
+    //        val = val.toLowerCase();
+    //        let myarr = [];
+    //        let count = 0;
+    //        let containers = [];
+    //        $.each(this.ebObjList, function (key, Val) {
+    //            $.each(Val, function (i, Obj) {
+    //                if (Obj.DisplayName.toLowerCase().indexOf(val) != -1) {
+    //                    if (myarr.indexOf(Obj.EbObjectType) === -1) {
+    //                        $("#DashB-Searched-Obj").append(`<div> 
+    //                    <div class="sidebar-head" hs-id="${Obj.EbObjectType}" style="display:flex;"> <div class="${this.ObjIcons[Obj.EbObjectType]} db-sidebar-icon"></div>
+    //                   ${this.ObjTypeName[Obj.EbObjectType]}</div>
+    //                   <div id="${Obj.EbObjectType}" class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
+    //                    </div>`);
+    //                        myarr.push(Obj.EbObjectType);
+    //                        containers.push(document.getElementById(`${Obj.EbObjectType}`));
+    //                    }
+    //                    else {
+    //                        $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
+    //                    }
+    //                }
+    //            }.bind(this));
+
+
+    //        }.bind(this));
+    //        //containers.push(document.getElementById('grid-cont'));
+    //        this.drake = dragula(containers, {
+    //            copy: true,
+    //            accepts: function (el, target, source, sibling) {
+    //                if (source == target) {
+    //                    return false;
+    //                }
+    //                else
+    //                    return true; // elements can be dropped in any of the `containers` by default
+    //            },
+    //        });
+    //        this.drake.off("drag").on("drag", this.columnsdrag.bind(this));
+    //        this.drake.off("shadow").on("shadow", this.columnsshadow.bind(this));
+    //        this.drake.off("drop").on("drop", this.columnsdrop.bind(this));
+    //    }
+    //};
     this.DashBoardSearch = function (e) {
-        $(`#DashB-Searched-Obj`).empty();
-        let val = $("#DashB-Search").val().trim();
-        if (val === "" || val === null) {
-            $(`#DashB-Searched-Obj`).hide().empty();
-            $("#Eb-obj-sidebar-cont").show();
-        }
-        else {
-            $(`#DashB-Searched-Obj`).show();
-            $("#Eb-obj-sidebar-cont").hide();
-            val = val.toLowerCase();
-            let myarr = [];
-            let count = 0;
-            let containers = [];
-            $.each(this.ebObjList, function (key, Val) {
-                $.each(Val, function (i, Obj) {
-                    if (Obj.DisplayName.toLowerCase().indexOf(val) != -1) {
-                        if (myarr.indexOf(Obj.EbObjectType) === -1) {
-                            $("#DashB-Searched-Obj").append(`<div> 
-                        <div class="sidebar-head" hs-id="${Obj.EbObjectType}" style="display:flex;"> <div class="${this.ObjIcons[Obj.EbObjectType]} db-sidebar-icon"></div>
-                       ${this.ObjTypeName[Obj.EbObjectType]}</div>
-                       <div id="${Obj.EbObjectType}" class="sidebar-content"><div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div></div> 
-                        </div>`);
-                            myarr.push(Obj.EbObjectType);
-                            containers.push(document.getElementById(`${Obj.EbObjectType}`));
-                        }
-                        else {
-                            $(`#${Obj.EbObjectType}`).append(`<div refid="${Obj.RefId}" class="db-draggable-obj">${Obj.DisplayName}</div>`);
-                        }
-                    }
-                }.bind(this));
+        $("#DashB-Search").keyup(function () {
 
+            // Retrieve the input field text and reset the count to zero
+            var filter = $(this).val(), count = 0;
 
-            }.bind(this));
-            //containers.push(document.getElementById('grid-cont'));
-            this.drake = dragula(containers, {
-                copy: true,
-                accepts: function (el, target, source, sibling) {
-                    if (source == target) {
-                        return false;
-                    }
-                    else
-                        return true; // elements can be dropped in any of the `containers` by default
-                },
+            // Loop through the comment list
+            $(".db-draggable-obj").each(function () {
+
+                // If the list item does not contain the text phrase fade it out
+                if ($(this).text().search(new RegExp(filter, "i")) < 0) {
+                    $(this).fadeOut();
+
+                    // Show the list item if the phrase matches and increase the count by 1
+                } else {
+                    $(this).show();
+                    count++;
+                }
             });
-            this.drake.off("drag").on("drag", this.columnsdrag.bind(this));
-            this.drake.off("shadow").on("shadow", this.columnsshadow.bind(this));
-            this.drake.off("drop").on("drop", this.columnsdrop.bind(this));
-        }
+
+            // Update the count
+        });
     };
 
     this.GetFilterValues = function () {
@@ -1182,7 +1220,7 @@ var DashBoardWrapper = function (options) {
     };
     this.DeleteGauge = function () {
         var obj = this.Procs[this.currentgauge.EbSid];
-        this.drake.containers;      
+        this.drake.containers;
         var arr = this.TileCollection[this.CurrentTile].ControlsColl.$values;
         for (var i = arr.length - 1; i >= 0; i--) {
             if (arr[i] === obj) { arr.splice(i, 1); }
@@ -1211,129 +1249,3 @@ var DashBoardWrapper = function (options) {
         $("#dashbord-view").css("height", 72.2 + "vh");
     })
 }
-
-//DataLabel Style Function
-
-function EbDataLabelFn(Label) {
-
-    if (Label.ChangeTextPositon) {
-        if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
-            $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
-        }
-
-        if (Label.DescriptionPosition.Left !== 0 && Label.DescriptionPosition.Top !== 0) {
-            $(`#${Label.EbSid}_description`).css({ "left": `${Label.DescriptionPosition.Left}%`, "top": `${Label.DescriptionPosition.Top}%`, "position": "absolute" });
-        }
-
-        if (Label.DynamicLabelPositon.Left !== 0 && Label.DynamicLabelPositon.Top !== 0) {
-            $(`#${Label.EbSid}_dynamic`).css({ "left": `${Label.DynamicLabelPositon.Left}%`, "top": `${Label.DynamicLabelPositon.Top}%`, "position": "absolute" });
-        }
-
-    }
-    else {
-        $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
-        $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
-        $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
-    }
-    if (Label.TextPosition == 0) { this.TextPosition = "left" }
-    if (Label.TextPosition == 1) { this.TextPosition = "center" }
-    if (Label.TextPosition == 2) { this.TextPosition = "right" }
-    $(`#${Label.EbSid}`).css("text-align", this.TextPosition);
-    //Static label style
-    $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
-    if (Label.StaticLabelFont !== null) {
-        GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
-    }
-
-    //description style
-    $(`#${Label.EbSid}_description`).empty().append(Label.Description);
-    if (Label.DescriptionFont !== null) {
-        GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
-    }
-
-
-    //Dynamic label style
-    if (Label.DynamicLabelFont !== null) {
-        GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
-    }
-
-
-    $(`#${Label.EbSid}`).css("border-radius", Label.LabelBorderRadius);
-    $(`#${Label.EbSid}`).css("border-color", Label.LabelBorderColor);
-    if (!Label.IsGradient) {
-        $(`#${Label.EbSid}`).css("background", Label.LabelBackColor);
-    }
-    if (Label.IsGradient) {
-        $(`#${Label.EbSid}`).css("background", "");
-        let direction = GradientDirection(Label.Direction);
-        let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
-        $(`#${Label.EbSid}`).css('background-image', bg);
-    }
-    $(`#${Label.EbSid}`).css("border", `solid 1px ${Label.LabelBorderColor}`);
-}
-
-//Tile style function
-
-function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
-    //Tile Back Color
-    if (Tile.IsGradient) {
-        let direction = GradientDirection(Tile.Direction);
-        let bg = "linear-gradient(" + direction + "," + Tile.GradientColor1 + "," + Tile.GradientColor2 + ")";
-        $(`#${TileId}`).css("background-image", bg);
-    }
-    else {
-        $(`#${TileId}`).css("background", Tile.TileBackColor);
-    }
-
-    //Tile border
-    $(`#${TileId}`).css("border-radius", Tile.BorderRadius == 0 ? 4 + "px" : Tile.BorderRadius + "px");
-    $(`#${TileId}`).css("border", `solid 1px ${Tile.BorderColor}`);
-
-    //Tile Label
-    $(`#${TabNum}_Label_${TileId}`).empty().append(Tile.Label);
-    $(`#${TabNum}_Label_${TileId}`).css("left", Tile.Left + "%").css("top", Tile.Top + "%").css("position", "absolute");
-    if (Tile.LabelFont !== null) {
-        GetFontCss(Tile.LabelFont, $(`#${TabNum}_Label_${TileId}`));
-    }
-    //Tile Text Font 
-    $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
-    $(`#${TileId} th`).css({ "color": `${Tile.FontColor} !important;` });
-    $(`#${TileId} td`).css({ "color": `${Tile.FontColor} !important;` });
-    $(`#${TileId} a`).css("color", `${Tile.LinkColor} !important;`).css("font-size: 14px;");
-    $(`#${TileId} .db-title`).css("color", Tile.FontColor);
-    $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
-
-    $(`#${TileId} td`).css("border-bottom", "1px solid #2b2b2b;!important")
-}
-
-function Eb_Dashboard_Bg(EbObject) {
-    if (EbObject.IsGradient) {
-        let direction = GradientDirection(EbObject.Direction);
-        let bg = "linear-gradient(" + direction + "," + EbObject.GradientColor1 + "," + EbObject.GradientColor2 + ")";
-        $("#layout_div").css("background-color", "").css("background-image", bg);
-        $(".component_cont .nav").css("background-color", "").css("background-image", bg);
-    }
-    else {
-        $("#layout_div").css("background-image", "").css("background", EbObject.BackgroundColor);
-        $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
-    }
-
-}
-
-function GradientDirection(val) {
-    gradient = [];
-    gradient[0] = "to right";
-    gradient[1] = "to left";
-    gradient[2] = "to bottom";
-    gradient[3] = "to bottom right";
-    gradient[4] = "to bottom left";
-    gradient[5] = "to top right";
-    gradient[6] = "to top left";
-
-    return gradient[val];
-}
-
-$(document).ready(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-});
-

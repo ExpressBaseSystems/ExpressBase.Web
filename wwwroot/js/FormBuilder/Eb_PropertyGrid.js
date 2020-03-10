@@ -485,7 +485,7 @@
 
     this.check4ReservedVals = function () {
         let $e = $(event.target);
-        if (this.CurMeta.Dprop) {
+        if (this.CurMeta && this.CurMeta.Dprop) {
             let reservedValues = this.CurMeta.Dprop.split(", ");
             let curVal = $e.val();
             if (reservedValues.includes(curVal)) {

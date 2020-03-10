@@ -297,21 +297,34 @@
         margin-top: 0px !important;
     }
 
-.tile-opt {
+/*Tile Styles*/
+
+.grid-stack-item .db-title-parent .tile-opt {
     color: transparent;
     width: 25px;
-    font-size: 15px;
+    font-size: 12px;
     padding: 6px;
     cursor: pointer;
 }
 
-.grid-stack-item:hover .tile-opt {
-    color: #717171;
+.tile-header {
+    background: #000000a6;
+}
+
+.db-title-parent .db-title {
+    color: #fff !important;
+}
+
+.grid-stack-item .db-title-parent:hover .tile-opt {
+    color: #fff;
     width: 25px;
-    font-size: 15px;
+    height: 23px;
+    font-size: 12px;
     font-weight: 100;
     padding: 6px;
     cursor: pointer;
+    background-color: #555555;
+    transition: width 2s, height 2s;
 }
 
 #dashbord-user-view .CanvasDiv {
@@ -958,7 +971,7 @@ body .stickBtn {
 .tile_dt_cont {
     display: flex;
     flex-direction: row;
-    padding: 3px 3px;
+    padding: 3px 0px;
 }
 
 .gaugeChart {
@@ -1203,65 +1216,110 @@ body {
     width: 100% !important;
     height: 100% !important;
 }
+
 /*Dashboard label*/
+
 .label-cont {
-    margin-left: 2.6vh;
-    border: solid 1px;
-    width: 100%;
+    text-align: center;
     height: 100%;
-    border-radius: 4px;
-    background-image: linear-gradient(to left, rgb(123, 206, 255), rgb(112, 147, 255));
-    border: 0px;
-    color: white;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    width: 100%;
     position: relative;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-top: 2vh;
 }
 
-    .label-cont .db-static-label {
+.Label_Data_pane {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding-left: 14vh;
+    padding-right: 3vh;
+    -webkit-box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
+}
+
+    .Label_Data_pane .db-static-label {
         padding-top: 1vh;
-        font-size: 20px;
+        font-size: 16px;
         position: relative;
         line-height: 20px;
+        color: #a0a0a0;
+        font-weight: 100;
     }
 
-    .label-cont .db-label-desc {
+    .Label_Data_pane .db-label-desc {
         font-size: 16px;
         position: relative;
         line-height: 26px;
     }
 
-    .label-cont .db-dynamic-label {
-        font-size: 30px;
+    .Label_Data_pane .db-dynamic-label {
+        font-size: 28px;
         position: relative;
-        line-height: 25px;
+        line-height: 32px;
+        font-weight: 100;
     }
 
-    .label-cont:first-child {
-        margin-left: 0px;
-    }
 
-    .label-cont:last-child {
-        margin-right: 0px;
-    }
-
-    .label-cont .dash-static-label {
+    .Label_Data_pane .dash-static-label {
         padding: 1px;
     }
 
-    .label-cont .dash-dynamic-label {
+    .Label_Data_pane .dash-dynamic-label {
         padding: 1px;
     }
 
-    /*canvas Style*/
+.grid-stack .card-icon {
+    background-color: #999;
+    padding: 2vh;
+    position: absolute;
+    margin-top: -2vh;
+    margin-left: 2vh;
+    border-radius: 4px;
+    background: linear-gradient(60deg,#ec407a,#d81b60);
+    height: 10vh;
+    width: 10vh;
+    z-index: 22;
+    -webkit-box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
+    box-shadow: 0px 0px 7px 1px rgba(0,0,0,0.2);
+}
+
+
+.grid-stack .card-icon i {
+    font-size: 6vh;
+}
+
+    .label-footer {
+        width: 100%;
+        position: absolute;
+        border-top: solid 1px #e3e3e3;
+        top: 74%;
+        left: 0px;
+    }
+
+    .label-footer i {
+        font-size: 18px;
+        font-weight: 200;
+        padding: 2%;
+        padding-left: 2vh;
+    }
+
+    .label-footer label {
+        font-size: 18px;
+        font-weight: 200;
+    }
+
+/*canvas Style*/
 canvas:focus {
     outline: none;
-}canvas:active {
+}
+
+canvas:active {
     outline: none;
-}canvas:visited {
+}
+
+canvas:visited {
     outline: none;
 }
 
@@ -1283,6 +1341,10 @@ canvas:focus {
 .grid-stack .dataTables_scrollBody::-webkit-scrollbar {
     width: .9vh;
     height: .9vh;
+}
+.grid-stack .dataTables_scrollBody::-webkit-scrollbar:hover {
+    width: 1.3vh;
+    height: 1.3vh;
 }
 
 /* Track */
@@ -1366,14 +1428,16 @@ canvas:focus {
     border-top: solid 1px #f1f1f1 !important;
     background-color: #00000029 !important;
 }
-.grid-stack .group:hover{
-    border-top: solid 1px #f1f1f1 !important;
-    /*//background-color: #00000029 !important;*/
-}
+
+    .grid-stack .group:hover {
+        border-top: solid 1px #f1f1f1 !important;
+        /*//background-color: #00000029 !important;*/
+    }
 
     .grid-stack .group tr td {
         background-color: #00000029 !important;
-    } 
+    }
+
 .grid-stack .group-sum td {
     background-color: #00000029 !important;
     border-bottom: solid 3px #ffffff14 !important;
@@ -1396,6 +1460,7 @@ canvas:focus {
 .grid-stack .dataTables_scrollBody thead:first-child tr {
     height: 0vh !important;
 }
+
 .grid-stack .odd {
     background: rgba(0, 0, 0, 0.09) !important;
 }

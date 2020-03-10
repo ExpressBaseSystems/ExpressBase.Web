@@ -88,9 +88,14 @@
 
         function testAjax1() {
             $.ajax({
-                url: "/api/get_actions",
+                url: "/api/get_action_info",
                 type: "GET",
                 cache: false,
+                data: {
+                    stageid: 16,
+                    refid: "hairocraft_stagging-hairocraft_stagging-0-1292-1465-1292-1465",
+                    dataid: 7
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());

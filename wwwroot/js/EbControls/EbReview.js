@@ -127,7 +127,10 @@
 
         this.stageDATA = getObjByval(this.DataMODEL, "RowId", 0);
 
-        if (!this.stageDATA)
+        this.hasPermission = getObjByval(this.stageDATA.Columns, "Name", "has_permission").Value === "F";
+        this.isFormDataEditable = getObjByval(this.stageDATA.Columns, "Name", "is_form_data_editable").Value === "F";
+
+        if (!this.stageDATA || this.hasPermission)
             return;
 
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');

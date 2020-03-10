@@ -857,9 +857,12 @@ const WebFormRender = function (option) {
         this.Mode.isEdit = true;
         this.Mode.isView = false;
         this.Mode.isNew = false;
-        this.setEditModeCtrls();
-        if (this.ReviewCtrl)
+        if (this.ReviewCtrl) {
             this.ReviewCtrl._Builder.switch2editMode();
+            if (!this.ReviewCtrl._Builder.isFormDataEditable)
+                return;
+        }
+        this.setEditModeCtrls();
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");

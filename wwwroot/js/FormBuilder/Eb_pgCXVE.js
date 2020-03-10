@@ -252,6 +252,7 @@
         }
         else if ((this.editor > 7 && this.editor < 11) || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             let sourceProp = this.CurMeta.source;
+
             this.CEHelper(sourceProp);
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
@@ -280,6 +281,11 @@
         this.CE_PGObj.parentId = this.PGobj.wraperId;
         this.setColTiles();
         this.setObjTypeDD();
+    };
+
+    this.getCElistFromFn = function (sourceProp) {
+        let _CElistFromFn = new Function("form", "user", `event`, sourceProp).bind(this)();
+        return _CElistFromFn;
     };
 
     this.getCElistFromSrc = function (sourceProp) {
@@ -332,7 +338,12 @@
         this.Dprop = this.CurMeta.Dprop;
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
-        this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
+
+        if (this.CurMeta.source.trimStart().startsWith("return "))
+            this.CElistFromSrc = this.getCElistFromFn(sourceProp);
+        else
+            this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
+
         if (this.editor === 8 || this.editor === 27 || this.editor === 35) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();

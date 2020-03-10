@@ -708,5 +708,28 @@ namespace ExpressBase.Web.Controllers
             }
             return new GetMyActionsResponse();
         }
+
+        [HttpGet("api/get_action_info")]
+        public GetMyActionInfoResponse GetMyActionInfo(int stageid, string refid, int dataid)
+        {
+            try
+            {
+                if (ViewBag.IsValid)
+                {
+                    return this.ServiceClient.Get(new GetMyActionInfoRequest
+                    {
+                        StageId = stageid,
+                        WebFormDataId = dataid,
+                        WebFormRefId = refid
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return new GetMyActionInfoResponse();
+        }
     }
 }

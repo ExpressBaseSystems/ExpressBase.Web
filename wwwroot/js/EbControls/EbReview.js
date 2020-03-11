@@ -14,7 +14,7 @@
     this.FirstStage = this.stages[0];
     this.nextRole = this.stages[0].ApproverRole + "";
     this.$curActiveRow = null;
-        
+
     ctrl.setEditModeRows = function (SingleTable) {/////////// need change
         return this.setEditModeRows(SingleTable);
     }.bind(this);
@@ -51,7 +51,7 @@
     };
 
     this.ctrl.ChangedRowObject = function () {
-            return this.changedRowWT();
+        return this.changedRowWT();
     }.bind(this);
 
     this.changedRowWT = function () {
@@ -127,17 +127,21 @@
 
         this.stageDATA = getObjByval(this.DataMODEL, "RowId", 0);
 
-        if (!this.stageDATA)
+        this.hasPermission = getObjByval(this.stageDATA.Columns, "Name", "has_permission").Value === "F";
+        this.isFormDataEditable = getObjByval(this.stageDATA.Columns, "Name", "is_form_data_editable").Value === "F";
+
+        if (!this.stageDATA || this.hasPermission)
             return;
 
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
         $row.find("td[col='status'] .dropdown-toggle").prop('disabled', false).css('pointer-events', 'inherit').find(".bs-caret").show();
         this.$submit.show(300);
-        $row.attr("active", "true");                
+        $row.attr("active", "true");
     };
-   
+
 
     this.drawTable = function () {
+        this.$tableBody.empty();
         for (let i = 0; i < this.DataMODEL.length; i++) {
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
@@ -161,8 +165,10 @@
                 else if (column.Name === "eb_created_at") {
                     html = html.replace("@time@", column.Value);
                 }
+                else if (column.Name === "comments") {
+                    html = html.replace("@comment@", column.Value);
+                }
             }
-            this.$tableBody.empty();
             this.$tableBody.append(html);
         }
     };

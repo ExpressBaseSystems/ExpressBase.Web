@@ -44,13 +44,19 @@
             PropsObj[_CurProp] = value;
             $curRowInp.val(JSON.stringify(value));
         }
+        else if (this.editor === 37) {
+            console.log("haii")
+            let icon = $("#icon_picker .form-control.search-control").val();
+            PropsObj[_CurProp] = icon;
+            $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+        }
         else if (this.editor === 21)
             PropsObj[_CurProp] = this.MLEObj.get();
 
         this.OnCXE_OK(PropsObj[_CurProp]);
         this.PGobj.OnInputchangedFn.bind(this.PGobj)();
         if ((this.editor > 6 && this.editor < 15) || (this.editor > 15 && this.editor < 15) || this.editor < 36) {
-            let func = this.PGobj.OnChangeExec[_CurProp]
+            let func = this.PGobj.OnChangeExec[_CurProp];
             if (func) {
                 func.bind(PropsObj, this.PGobj)();// call Onchange exec for non inp field CXVEs
             }
@@ -164,6 +170,8 @@
             this.initMLE(e);
         else if (this.editor === 36)
             this.initOSCE();
+        else if (this.editor === 37)
+            this.initIconSelector();
         else if (this.editor > 63) {
             this.initScrE(e);
         }
@@ -244,6 +252,7 @@
         }
         else if ((this.editor > 7 && this.editor < 11) || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             let sourceProp = this.CurMeta.source;
+
             this.CEHelper(sourceProp);
         }
         this.drake = new dragula([document.getElementById(this.CEctrlsContId), document.getElementById(this.CE_all_ctrlsContId)], { accepts: this.acceptFn.bind(this), moves: function (el, container, handle) { return !this.PGobj.IsReadonly }.bind(this) });
@@ -272,6 +281,11 @@
         this.CE_PGObj.parentId = this.PGobj.wraperId;
         this.setColTiles();
         this.setObjTypeDD();
+    };
+
+    this.getCElistFromFn = function (sourceProp) {
+        let _CElistFromFn = new Function("form", "user", `event`, sourceProp).bind(this)();
+        return _CElistFromFn;
     };
 
     this.getCElistFromSrc = function (sourceProp) {
@@ -324,7 +338,12 @@
         this.Dprop = this.CurMeta.Dprop;
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
-        this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
+
+        if (this.CurMeta.source.trimStart().startsWith("return "))
+            this.CElistFromSrc = this.getCElistFromFn(sourceProp);
+        else
+            this.CElistFromSrc = this.getCElistFromSrc(sourceProp);
+
         if (this.editor === 8 || this.editor === 27 || this.editor === 35) {
             this.selectedCols = this.PGobj.PropsObj[this.PGobj.CurProp].$values;
             this.changeCopyToRef();
@@ -795,6 +814,27 @@
         let ObjType = $selectedOpt.attr("obj-type");
         this.OSEList = null;
         this.getOSElist("refresh");
+    };
+
+    this.initIconSelector = function () {
+        console.log("hgqdbgh");
+        this.curEditorLabel = "Object Selector Collection";
+        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
+            this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
+
+        let value = this.PGobj.PropsObj[this.PGobj.CurProp];
+
+        let OSEbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
+        $("#icon_picker").iconpicker({
+            placement: 'bottom',
+            iconset: 'fontawesome',
+            icon: ''
+        }).on('change', function (e) {
+            let str = e.icon;
+        });
+        if (value) { $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");}
+            
     };
 
     this.initOSCE = function () {

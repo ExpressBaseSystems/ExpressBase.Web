@@ -857,9 +857,12 @@ const WebFormRender = function (option) {
         this.Mode.isEdit = true;
         this.Mode.isView = false;
         this.Mode.isNew = false;
-        this.setEditModeCtrls();
-        if (this.ReviewCtrl)
+        if (this.ReviewCtrl) {
             this.ReviewCtrl._Builder.switch2editMode();
+            if (!this.ReviewCtrl._Builder.isFormDataEditable)
+                return;
+        }
+        this.setEditModeCtrls();
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
@@ -1218,8 +1221,9 @@ const WebFormRender = function (option) {
         }
         catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
-        this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
-        $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);
+        let rMode = reqstMode === 'Prefill Mode' ? 'New Mode' : reqstMode;
+        this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${rMode}</span>`);
+        $('title').text(this.FormObj.DisplayName + title_val + `(${rMode})`);
 
         if (this.isPartial === "True") {
             this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);

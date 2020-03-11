@@ -973,6 +973,11 @@ body .stickBtn {
     flex-direction: row;
     padding: 3px 0px;
 }
+.tile_dt_cont_view {
+    display: flex;
+    flex-direction: row;
+    padding: 2px 0px 0px 0px;
+}
 
 .gaugeChart {
     width: 100%;
@@ -1217,7 +1222,7 @@ body {
     height: 100% !important;
 }
 
-/*Dashboard label*/
+/*Dashboard label style*/
 
 .label-cont {
     text-align: center;
@@ -1286,26 +1291,30 @@ body {
 }
 
 
-.grid-stack .card-icon i {
-    font-size: 6vh;
-}
-
-    .label-footer {
-        width: 100%;
-        position: absolute;
-        border-top: solid 1px #e3e3e3;
-        top: 74%;
-        left: 0px;
+    .grid-stack .card-icon i {
+        font-size: 6vh;
     }
 
-    .label-footer i {
+.label-footer {
+    width: 100%;
+    position: absolute;
+    border-top: solid 1px #e3e3e3;
+    top: 74%;
+    left: 0px;
+}
+
+.footer-inner {
+    display:flex;
+}
+
+    .footer-inner i {
         font-size: 18px;
         font-weight: 200;
         padding: 2%;
         padding-left: 2vh;
     }
 
-    .label-footer label {
+    .footer-inner label {
         font-size: 18px;
         font-weight: 200;
     }
@@ -1342,10 +1351,11 @@ canvas:visited {
     width: .9vh;
     height: .9vh;
 }
-.grid-stack .dataTables_scrollBody::-webkit-scrollbar:hover {
-    width: 1.3vh;
-    height: 1.3vh;
-}
+
+    .grid-stack .dataTables_scrollBody::-webkit-scrollbar:hover {
+        width: 1.3vh;
+        height: 1.3vh;
+    }
 
 /* Track */
 .grid-stack .dataTables_scrollBody::-webkit-scrollbar-track {

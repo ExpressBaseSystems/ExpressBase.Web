@@ -47,6 +47,7 @@ function EbDataLabelFn(Label) {
 
     $(`#${Label.EbSid}_Data_pane`).css("border-radius", Label.LabelBorderRadius);
     $(`#${Label.EbSid}_Data_pane`).css("border-color", Label.LabelBorderColor);
+    $(`#${Label.EbSid}_footer`).css("border-color", Label.LabelBorderColor);
     if (!Label.IsGradient) {
         $(`#${Label.EbSid}_Data_pane`).css("background", Label.LabelBackColor);
     }

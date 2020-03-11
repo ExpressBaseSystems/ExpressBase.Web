@@ -2,7 +2,8 @@
     constructor(options) {
         //super();
         this.Options = $.extend({
-            DisableUpload: false
+            DisableUpload: false,
+            HideEmptyCategory: false
         }, options);
 
         this.MaxSize = this.Options.MaxSize || 5;
@@ -65,7 +66,7 @@
             $("#ebfileviewdiv").remove();
             $("body").append("<div id='ebfileviewdiv'></div>");
             this.ebFilezview = $("#ebfileviewdiv").ebFileViewer(this.Options.Files);
-             //ebfileviewer end
+            //ebfileviewer end
             this.pullFile();
             $(".prevImgrout,.nextImgrout").off("click").on("click", this.fscreenN_P.bind(this));
         }
@@ -183,6 +184,27 @@
         $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
         $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
         this.contextMenu();
+        this.hideEmptyCategoryFn();
+    }
+
+    hideEmptyCategoryFn() {
+        
+        if (this.Options.HideEmptyCategory) {
+            $(this.Gallery).find(".ClpsGalItem_Sgl").each(function (indx, value) {
+                if ($(value).attr('catogory') != "DEFAULT") {
+                    let childLength = $(value).find(".Col_apndBody").find(".Col_apndBody_apndPort").children().length
+                    if (childLength == 0) {
+                        $(value).hide();
+                    }
+                    else {
+                        $(value).show();
+                    }
+                }
+               
+            });
+            
+        }
+        
     }
 
     rmChecked(evt) {
@@ -811,6 +833,6 @@
         if (name === "Delete") {
             this.ebFilezview.deleteimage(refids);
         }
-       
+
     }
 }

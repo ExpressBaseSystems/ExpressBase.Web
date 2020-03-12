@@ -208,9 +208,8 @@
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
-                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
                     </div></div>
-                    <div data-id="${t_id}" class="db-tbl-wraper">
+                    <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont_view">
                     </div></div></div>`), x, y, dw, dh, false);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
@@ -363,10 +362,10 @@
         let a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
         <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
         <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
-        <div class="db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
-        <div class="db-label-desc"  id="${obj.EbSid}_description"></div>
-        <div class="db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
-        <div class="label-footer" id="${obj.EbSid}_footer"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div>
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
         </div></div>`;
         return a;
     };

@@ -46,7 +46,8 @@ var InitControls = function (option) {
             EnableCrop: ctrl.EnableCrop,
             MaxSize: ctrl.MaxFileSize,
             CustomMenu: customMenu,
-            DisableUpload: ctrl.DisableUpload
+            DisableUpload: ctrl.DisableUpload,
+            HideEmptyCategory: ctrl.HideEmptyCategory
         });
 
         uploadedFileRefList[ctrl.Name] = this.getInitFileIds(files);

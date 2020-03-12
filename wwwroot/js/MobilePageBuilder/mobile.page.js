@@ -294,8 +294,20 @@ function EbMobStudio(config) {
         }.bind(this));
     };
 
-    this.getCol = function (ds_refid) {
-        if (ds_refid !== "") {
+    this.getColums4ListView = function (ds_refid) {
+        this.dataSourceColumn(ds_refid, function (result) {
+            this.Controls.drawDsColTree(result.columns);
+            $(".branch").click();
+            if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
+                $(`#eb_mobtree_body_${this.Conf.TabNum}`).animate({ width: ["toggle", "swing"] });
+        }.bind(this));
+    };
+
+    this.dataSourceColumn = function (ds_refid, callback) {
+        if (!callback)
+            console.error("dataSourceColumn must have callback function");
+
+        if (ds_refid) {
             $.ajax({
                 url: "../RB/GetColumns",
                 type: "POST",
@@ -304,12 +316,11 @@ function EbMobStudio(config) {
                 beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
                 success: function (result) {
                     $("#eb_common_loader").EbLoader("hide");
-                    this.Controls.drawDsColTree(result.columns);
-                    $(".branch").click();
-                    if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
-                        $(`#eb_mobtree_body_${this.Conf.TabNum}`).animate({ width: ["toggle", "swing"] });
+                    callback(result);
                 }.bind(this),
-                error: function () { $("#eb_common_loader").EbLoader("hide"); }
+                error: function () {
+                    $("#eb_common_loader").EbLoader("hide");
+                }
             });
         }
     };
@@ -323,12 +334,10 @@ function EbMobStudio(config) {
             $(`#${obj.EbSid}`).children(".ctrl_label").text(obj.Label);
         }
         else if (obj.constructor.name === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
-            obj._getColumns(obj.DataSourceRefId, function () {
-                this.pg.refresh();
-            }.bind(this));
+            obj.getColumns(obj.DataSourceRefId, this);
         }
         else if (pname === "DataSourceRefId") {
-            this.getCol(obj.DataSourceRefId);
+            this.getColums4ListView(obj.DataSourceRefId);
         }
         else if (obj.constructor.name === "EbMobileGeoLocation" && pname === "HideSearchBox") {
             obj._toggleSearchBar();

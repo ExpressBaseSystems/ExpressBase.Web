@@ -16,37 +16,29 @@
 
     window.expandable = {
         "EbMobileSimpleSelect": {
-            _getColumns: function (ds_refid, callback) {
-                if (ds_refid !== "") {
-                    $.ajax({
-                        url: "../RB/GetColumns",
-                        type: "POST",
-                        cache: false,
-                        data: { refID: ds_refid },
-                        beforeSend: function () { },
-                        success: function (data) {
-                            let keys = Object.keys(data.columns).length;
-                            let c = 1;
-                            this.Columns.$values.length = 0;
-                            this.Parameters.$values = data.paramsList;
-                            $.each(data.columns, function (i, columnCollection) {
-                                for (let i = 0; i < columnCollection.length; i++) {
+            getColumns: function (ds_refid, root) {
+                //root is the main object
+                root.dataSourceColumn(ds_refid, function (data) {
+                    let keys = Object.keys(data.columns).length;
+                    let c = 1;
+                    this.Columns.$values.length = 0;
+                    this.Parameters.$values = data.paramsList;
+                    $.each(data.columns, function (i, columnCollection) {
+                        for (let i = 0; i < columnCollection.length; i++) {
 
-                                    let o = new EbObjects.EbMobileDataColumn(columnCollection[i].columnName);
-                                    o.ColumnIndex = columnCollection[i].columnIndex;
-                                    o.ColumnName = columnCollection[i].columnName;
-                                    o.Type = columnCollection[i].type;
+                            let o = new EbObjects.EbMobileDataColumn(columnCollection[i].columnName);
+                            o.ColumnIndex = columnCollection[i].columnIndex;
+                            o.ColumnName = columnCollection[i].columnName;
+                            o.Type = columnCollection[i].type;
 
-                                    this.Columns.$values.push(o);
-                                }
-                                if (c === keys) {
-                                    callback();
-                                }
-                                c++;
-                            }.bind(this));
-                        }.bind(this)
-                    });
-                }
+                            this.Columns.$values.push(o);
+                        }
+                        if (c === keys) {
+                            root.pg.refresh();
+                        }
+                        c++;
+                    }.bind(this));
+                }.bind(this));
             }
         },
         "EbMobileGeoLocation": {
@@ -157,10 +149,10 @@
 
                 let tobj = root.makeElement("EbMobileTableLayout", "TableLayout");
                 $(`#${this.EbSid} .ctrl_as_container .data_layout`).append(tobj.$Control.outerHTML());
-                tobj.trigger(root);
                 if (root.Mode === "edit") {
                     $.extend(tobj, this.DataLayout || {});
                 }
+                tobj.trigger(root);
                 return tobj;
             },
             setObject: function (root) {

@@ -2882,7 +2882,7 @@
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../webform/index?refid=${obj.Refid}&_params=""&_mode=2&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${obj.Refid}&_mode=2&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };

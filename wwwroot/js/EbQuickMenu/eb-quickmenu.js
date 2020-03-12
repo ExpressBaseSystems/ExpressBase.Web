@@ -60,7 +60,7 @@
         if (!$("#ebquickmsideoverlay").is(":visible")) {
             $("#ebm-overlayfade").show();
             $("#ebquickmsideoverlay").show('slide', { direction: 'left' }, function () {
-                if (this.attempt <= 0 && this.login == "dc") {
+                if (this.attempt <= 0 && this.login === "dc") {
                     this.LoadApps();
                     this.attempt = 1;
                 }
@@ -96,7 +96,7 @@
                 type: "GET",
                 data: {
                     LocId: locId
-                },
+                }
             }).done(function (result) {
                 store.set("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml", result);
                 $("#quick_menu_load").EbLoader("hide");
@@ -165,7 +165,7 @@
 
     this.appendObjects = function (_obj, isfav) {
         let set_fav = "";
-        if (this.login == "uc" && !isfav) {
+        if (this.login === "uc" && !isfav) {
             let isfav = "";
             let tooltip = "";
             if (_obj.Favourite) {
@@ -222,7 +222,7 @@
     };
 
     this.showSecurity = function (e) {
-        this.active($(e.target))
+        this.active($(e.target));
         {
             $("#ebm-objtcontainer").hide();
             $("#ebm-newobject").hide();
@@ -274,7 +274,7 @@
         else {
             $("#ebm-objectcontainer").show();
         }
-    }
+    };
 
     this.closeSingle = function (e) {
         $(e.target).closest("[slider='true']").next().hide();
@@ -284,7 +284,7 @@
     this.active = function ($el) {
         $el.closest(`[slider='true']`).find(".active_link").removeClass("active_link");
         $el.addClass("active_link");
-    }
+    };
 
     this.setAsFavourite = function (e) {
         let objid = parseInt($(e.target).closest("button").attr("objid"));
@@ -353,14 +353,14 @@
         else {
             $("#ebm-objectcontainer .ebm-objlist").append(`<div class='not_found text-center'>
                                                                 Favorites empty.
-                                                            </div>`)
+                                                            </div>`);
         }
     };
 
     this.appendObjByCategory = function (_obj, isfav) {
         let set_fav = "";
         let fav = "";
-        if (this.login == "uc" && !isfav) {
+        if (this.login === "uc" && !isfav) {
             let isfav = "";
             let tooltip = "";
             if (_obj.Favourite) {
@@ -373,7 +373,7 @@
             }
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
-        else if (this.login == "uc" && isfav) {
+        else if (this.login === "uc" && isfav) {
             fav = "fav";
             isfav = "favourited";
             tooltip = "Remove from Favourites.";
@@ -426,7 +426,7 @@
                     $(domArray[filter[0] - 1]).attr("tabindex", "1").focus();
                 }
             }
-            else if (e.which == 13) {
+            else if (e.which === 13) {
                 if ($current.find("a").length > 0) {
                     $current.find("a")[0].click();
                 }
@@ -441,7 +441,7 @@
                 $current.closest("[slider='true']").prevAll("[slider='true']:visible").eq(0).find('[klink="true"]').eq(0).attr("tabindex", "1").focus();
             }
         }
-    }
+    };
 
     this.refresh = function () {
         store.remove("EbMenuObjects_" + this.Tid + this.Uid + this.login + "mhtml");

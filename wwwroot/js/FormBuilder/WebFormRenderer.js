@@ -1231,7 +1231,7 @@ const WebFormRender = function (option) {
         // ["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
         // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
         for (let i = 0; i < btns.length; i++) {
-            if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
+            if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
                 r.push(btns[i]);
             else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
                 r.push(btns[i]);

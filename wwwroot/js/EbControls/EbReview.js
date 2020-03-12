@@ -129,10 +129,13 @@
     this.saveSuccess = function (_respObj) {
         this.formRenderer.hideLoader();
         let respObj = JSON.parse(_respObj);
+        respObj.FormData = JSON.parse(respObj.FormData);
+        this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName]
         ebcontext._formSaveResponse = respObj;
 
-        if (respObj.Status === 200) {            
-            EbMessage("show", { Message: "Review submited successfully", AutoHide: false, Background: '#00aa00' });
+        if (respObj.Status === 200) {
+            EbMessage("show", { Message: "Review submited successfully", AutoHide: true, Background: '#00aa00', Delay: 5000 });
+            this.switch2viewMode(this.DataMODEL);
         }
         //else if (respObj.Status === 403) {
         //    EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
@@ -157,7 +160,7 @@
     this.switch2viewMode = function (DataMODEL) {
         this.show();
         this.DataMODEL = DataMODEL;
-        this.init();
+        this.set();
     };
 
     this.submit = function () {
@@ -245,11 +248,13 @@
         this.ctrl.__ready = true;
         this.$submit = this.$container.find(".fs-submit");
         this.$container.on("click", ".fs-submit", this.submit);
+    };
 
+    this.set = function () {
         this.drawTable();
         this.disableAllCtrls();
         this.enableRow();
     };
 
-    //this.init();
+    this.init();
 };

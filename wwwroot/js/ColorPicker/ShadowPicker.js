@@ -3,13 +3,15 @@
     $(`#${current_id}`).append(`
         <div class="shadow-picker-outer">
         <div class="ctrl-side">
-        <div class="color-selector"><label> Shadow Color : </label><input id="${current_id}_shadow-color" type="text" class="color color_input_id" value="rgba(51,51,51,0.6)" /></div>
+        <div class="color-selector"><label> Shadow Color : </label><input id="${current_id}_shadow-color" type="color" class="color_input_id"  /></div>
         <div class="slider-outer"> <div class="slider-text">Horizontal</div><div id="${current_id}_horizontal-slider" class='slider'>
         <div id="${current_id}_horizontal-handle" class="ui-slider-handle custom-handle"></div></div></div>
         <div class="slider-outer"> <div class="slider-text">vertical</div> <div id="${current_id}_vertical-slider" class='slider'>
         <div id="${current_id}_vertical-handle" class="ui-slider-handle"></div></div></div>
         <div class="slider-outer"><div class="slider-text">Blur Radius</div> <div id="${current_id}_blur-slider" class='slider'>
         <div id="${current_id}_blur-handle" class="ui-slider-handle"></div></div></div>
+        <div class="slider-outer"><div class="slider-text">Opacity</div> <div id="${current_id}_opacity-slider" class='slider'>
+        <div id="${current_id}_opacity-handle" class="ui-slider-handle"></div></div></div>
         <div class="slider-outer"> <div class="slider-text">Spread Radius</div> <div id="${current_id}_spread-slider" class='slider'>
         <div id="${current_id}_spread-handle" class="ui-slider-handle"></div></div></div>
         </div>
@@ -23,7 +25,8 @@
     this.Vertical = 0;
     this.Blur = 0;
     this.Spread = 0;
-    this.opacity = 0;
+    this.opacity = 20;
+    this.Color = "#000000";
     var Obj = {};
     var Color;
     $(`#${current_id}_horizontal-slider`).slider({
@@ -35,9 +38,9 @@
         slide: function (event, ui) {
             $(`#${current_id}_horizontal-handle`).text(ui.value);
             this.Horizontal = ui.value;
-            this.ShadowGenerate()
+            this.ShadowGenerate();
         }.bind(this),
-        change: function (event, ui) { this.Horizontal = ui.value; this.ShadowGenerate() }.bind(this)
+        change: function (event, ui) { this.Horizontal = ui.value; this.ShadowGenerate(); }.bind(this)
     });
 
     $(`#${current_id}_vertical-slider`).slider({
@@ -53,7 +56,7 @@
             this.Vertical = ui.value;
             this.ShadowGenerate()
         }.bind(this),
-        change: function (event, ui) { this.vertical = ui.value; this.ShadowGenerate() }.bind(this)
+        change: function (event, ui) { this.vertical = ui.value; this.ShadowGenerate(); }.bind(this)
     });
 
     $(`#${current_id}_blur-slider`).slider({
@@ -69,7 +72,7 @@
             this.Blur = ui.value;
             this.ShadowGenerate()
         }.bind(this),
-        change: function (event, ui) { this.Blur = ui.value; this.ShadowGenerate() }.bind(this)
+        change: function (event, ui) { this.Blur = ui.value; this.ShadowGenerate(); }.bind(this)
     });
 
     $(`#${current_id}_spread-slider`).slider({
@@ -83,24 +86,43 @@
         slide: function (event, ui) {
             $(`#${current_id}_spread-handle`).text(ui.value);
             this.Spread = ui.value;
-            this.ShadowGenerate()
+            this.ShadowGenerate();
         }.bind(this),
-        change: function (event, ui) { this.Spread = ui.value; this.ShadowGenerate() }.bind(this)
+        change: function (event, ui) { this.Spread = ui.value; this.ShadowGenerate(); }.bind(this)
+    });
+
+    $(`#${current_id}_opacity-slider`).slider({
+        range: "max",
+        min: 0,
+        max: 100,
+        value: 20,
+        create: function () {
+            $(`#${current_id}_opacity-handle`).text($(this).slider("value"));
+        },
+        slide: function (event, ui) {
+            $(`#${current_id}_opacity-handle`).text(ui.value);
+            this.opacity = ui.value;
+            this.ShadowGenerate();
+        }.bind(this),
+        change: function (event, ui) { this.opacity = ui.value; this.ShadowGenerate(); }.bind(this)
     });
 
     this.ShadowGenerate = function () {
-        Obj.boxshadow = `${this.Horizontal}px ${this.Vertical}px ${this.Blur}px ${this.Spread}px ${this.Color}`;
         this.Color = $(`#${current_id}_shadow-color`).val();
+        var opacity = this.opacity / 100;
+        var rgbaCol = 'rgba(' + parseInt(this.Color.slice(-6, -4), 16) + ',' + parseInt(this.Color.slice(-4, -2), 16) + ',' + parseInt(this.Color.slice(-2), 16) + ',' + opacity + ')';
+        $(`#${current_id}_shadow-color`).css("background", rgbaCol);
+        Obj.boxshadow = `${this.Horizontal}px ${this.Vertical}px ${this.Blur}px ${this.Spread}px ${rgbaCol}`;
         $(`#${current_id}_val`).val(Obj.boxshadow);
         $(`#${current_id}_shadow_div`).css("-webkit-box-shadow", `${Obj.boxshadow}`);
         $(`#${current_id}_shadow_div`).css("-moz-box-shadow", `${Obj.boxshadow}`);
         $(`#${current_id}_shadow_div`).css("box-shadow", `${Obj.boxshadow}`);
-    }
+    };
 
 
     this.init = function () {
         $(`#${current_id}_shadow-color`).off("change").on("change", this.ShadowGenerate.bind(this));
-    }
+    };
     this.init();
 }
 

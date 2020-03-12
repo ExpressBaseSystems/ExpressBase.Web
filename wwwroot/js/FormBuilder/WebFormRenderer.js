@@ -561,24 +561,20 @@ const WebFormRender = function (option) {
 
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
-        let approvalTable = {};
-
-        if (this.ReviewCtrl && this.ReviewCtrl.__ready)
-            approvalTable = this.getApprovalRow();
-
-        //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
-        this.DynamicTabObject.updateDataModel();
-        WebformData.MultipleTables = this.formateDS(this.DataMODEL);
-        WebformData.MultipleTables = $.extend(WebformData.MultipleTables, approvalTable);// attach approvalTable 
-        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
-        WebformData.ExtendedTables = this.getExtendedTables();
-        console.log("form data --");
 
 
-        //console.log("old data --");
-        //console.log(JSON.stringify(WebformData.MultipleTables));
+            //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
+            this.DynamicTabObject.updateDataModel();
+            WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+            //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
+            WebformData.ExtendedTables = this.getExtendedTables();
+            console.log("form data --");
 
-        console.log("new data --");
+
+            //console.log("old data --");
+            //console.log(JSON.stringify(WebformData.MultipleTables));
+
+            console.log("new data --");
         console.log(JSON.stringify(this.formateDS(this.DataMODEL)));
         return JSON.stringify(WebformData);
     };

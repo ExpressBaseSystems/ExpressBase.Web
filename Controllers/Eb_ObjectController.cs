@@ -325,6 +325,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     ViewBag.roles = JsonConvert.SerializeObject(result.Roles);
                     ViewBag.userGroups = JsonConvert.SerializeObject(result.UserGroups);
+                    ViewBag.userTypes = JsonConvert.SerializeObject(result.UserTypes);
                 }
 
                 if (dsobj is EbWebForm)

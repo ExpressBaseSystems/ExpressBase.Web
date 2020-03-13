@@ -1,5 +1,49 @@
 ﻿function ShadowPickerJs(option) {
     var current_id = option.Id;
+    var current_value = option.Value;
+    this.Horizontal =  0;
+    this.Vertical = 0;
+    this.Blur = 0;
+    this.Spread = 0;
+    var colorcode = "#000000";
+    this.opacity = 20;
+    var Obj = {};
+    if (current_value) {
+        var extracted_val = current_value.split("px");
+        this.Horizontal = extracted_val[0];
+        this.Vertical = extracted_val[1];
+        this.Blur = extracted_val[2];
+        this.Spread = extracted_val[3];
+        var extract_Color = extracted_val[4].split(",");
+        this.Red = extract_Color[0].split("(")[1];
+        this.Green = extract_Color[1];
+        this.Blue = extract_Color[2];
+        this.opacity = extract_Color[3].split(")")[0] * 100;
+        colorcode = "rgba(" + this.Red + "," + this.Green + "," + this.Blue + ",0)";
+        let hexTemp = rgba2hex(colorcode);
+        this.Color = "#" + hexTemp.substring(0, hexTemp.length - 2);
+        function rgba2hex(orig) {
+            var a, isPercent,
+                rgb = orig.replace(/\s/g, '').match(/^rgba?\((\d+),(\d+),(\d+),?([^,\s)]+)?/i),
+                alpha = (rgb && rgb[4] || "").trim(),
+                hex = rgb ?
+                    (rgb[1] | 1 << 8).toString(16).slice(1) +
+                    (rgb[2] | 1 << 8).toString(16).slice(1) +
+                    (rgb[3] | 1 << 8).toString(16).slice(1) : orig;
+            if (alpha !== "") {
+                a = alpha;
+            } else {
+                a = 01;
+            }
+
+            a = Math.round(a * 100) / 100;
+            var alpha = Math.round(a * 255);
+            var hexAlpha = (alpha + 0x10000).toString(16).substr(-2).toUpperCase();
+            hex = hex + hexAlpha;
+            return hex;
+        }
+    }
+
     $(`#${current_id}`).append(`
         <div class="shadow-picker-outer">
         <div class="ctrl-side">
@@ -16,24 +60,18 @@
         <div id="${current_id}_spread-handle" class="ui-slider-handle"></div></div></div>
         </div>
         <div class="shadow-bg"> 
-        <div class="shadow-div"  id="${current_id}_shadow_div" >  <input id="${current_id}_val" class="shadowVal" value="" placeholder="box-shadow"></div>
+        <div class="shadow-div"  id="${current_id}_shadow_div" >  <input id="${current_id}_val" class="shadowVal" value="${this.Color}" placeholder="box-shadow"></div>
         </div> 
     </div>
     `);
 
-    this.Horizontal = 0;
-    this.Vertical = 0;
-    this.Blur = 0;
-    this.Spread = 0;
-    this.opacity = 20;
-    this.Color = "#000000";
-    var Obj = {};
-    var Color;
+    this.Color = $(`#${current_id}_shadow-color`).val(this.Color);
+
     $(`#${current_id}_horizontal-slider`).slider({
         range: "max",
         min: -50,
         max: 50,
-        value: 0,
+        value: this.Horizontal,
         create: function () { $(`#${current_id}_horizontal-handle`).text($(this).slider("value")); },
         slide: function (event, ui) {
             $(`#${current_id}_horizontal-handle`).text(ui.value);
@@ -47,7 +85,7 @@
         range: "max",
         min: -50,
         max: 50,
-        value: 0,
+        value: this.Vertical,
         create: function () {
             $(`#${current_id}_vertical-handle`).text($(this).slider("value"));
         },
@@ -63,7 +101,7 @@
         range: "max",
         min: -50,
         max: 50,
-        value: 0,
+        value: this.Blur,
         create: function () {
             $(`#${current_id}_blur-handle`).text($(this).slider("value"));
         },
@@ -79,7 +117,7 @@
         range: "max",
         min: -50,
         max: 50,
-        value: 0,
+        value: this.Spread,
         create: function () {
             $(`#${current_id}_spread-handle`).text($(this).slider("value"));
         },
@@ -95,7 +133,7 @@
         range: "max",
         min: 0,
         max: 100,
-        value: 20,
+        value: this.opacity,
         create: function () {
             $(`#${current_id}_opacity-handle`).text($(this).slider("value"));
         },
@@ -122,6 +160,7 @@
 
     this.init = function () {
         $(`#${current_id}_shadow-color`).off("change").on("change", this.ShadowGenerate.bind(this));
+        this.ShadowGenerate();
     };
     this.init();
 }

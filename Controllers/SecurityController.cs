@@ -204,6 +204,7 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.Roles = JsonConvert.SerializeObject(fr.Roles);
 			ViewBag.EBUserGroups = JsonConvert.SerializeObject(fr.EbUserGroups);
 			ViewBag.Role2RoleList = JsonConvert.SerializeObject(fr.Role2RoleList);
+			ViewBag.UserTypes = fr.UserTypes;
 			List<string> UserStatus = new List<string>();
 			foreach (var status in Enum.GetValues(typeof(EbUserStatus)))
 			{
@@ -308,6 +309,7 @@ namespace ExpressBase.Web.Controllers
 				Hide = Dict["hide"],
 				AnonymousUserId = Convert.ToInt32(Dict["anonymoususerid"]),
 				Preference = Dict["preference"],
+				UserType = Convert.ToInt32(Dict["eb_user_types_id"]),
 				LocationAdd = Dict["loc_add"],
 				LocationDelete = Dict["loc_delete"]
 			});

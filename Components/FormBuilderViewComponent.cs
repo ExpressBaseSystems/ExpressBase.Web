@@ -35,6 +35,7 @@ namespace ExpressBase.Web.Components
             }
             ViewBag.RolesList = ViewBag.roles ?? "{}";
             ViewBag.UserGroupsList = ViewBag.userGroups ?? "{}";
+            ViewBag.UserTypesList = ViewBag.userTypes ?? "{}";
             ViewBag.dsObj = EbSerializers.Json_Serialize(webForm);
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;

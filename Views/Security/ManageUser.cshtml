@@ -167,6 +167,15 @@
                         </ul>
                         <div class="tab-content" style="background-color:transparent;">
                             <div id="settings" class="tab-pane fade">
+                                <div class="form-group" style="width: 40%;">
+                                    <label class="label-custom-style">User Type:</label>
+                                    <select class="form-control input-custom-style" id="selusertype" name="usertype" disabled>
+                                        @foreach (var type in ViewBag.UserTypes)
+                                        {
+                                            <option value="@type.Key">@type.Value</option>
+                                        }
+                                    </select>
+                                </div>
                                 <div class="form-group user-status-div" id="divStatus" style="display: none;">
                                     <div class="form-group">
                                         <label class="label-custom-style">User Status</label>

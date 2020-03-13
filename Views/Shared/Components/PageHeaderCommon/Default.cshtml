@@ -54,8 +54,8 @@
 
                 <div class="brd_cr_t EbHeadTitle hidden-xs">
                     <div class="brd_row">
-                         
-                          @{  if (ViewBag.wc == "tc")
+
+                        @{ if (ViewBag.wc == "tc")
                             {
                                 <span class="eb_context"><a href="/MySolutions"><i class="fa fa-home"></i></a></span>
                             }
@@ -98,11 +98,11 @@
 
                                             User u = JsonConvert.DeserializeObject<ExpressBase.Security.User>(ViewBag.UserObject);
                                             EbProfileUserType p = Solution.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == u.UserType);
-                                            if (!string.IsNullOrEmpty(p.RefId))
+                                            if (p != null && !string.IsNullOrEmpty(p.RefId))
                                             {
                                                 <li class="drp_item"><a href="../WebForm/GetProfile?r=@p.RefId&l=@u.Preference.DefaultLocation"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
                                             }
-                                        }                                                                          }
+                                        } }
                                     <li class="drp_item"><a href="../Security/MyProfile"><i class="fa fa-cog" aria-hidden="true"></i>Account Settings</a></li>
                                     <li class="drp_item"><a onclick="return Leave();" href="@Url.Action("Logout", "Tenantuser")"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                                 </ul>

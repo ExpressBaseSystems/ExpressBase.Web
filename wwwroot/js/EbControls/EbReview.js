@@ -213,6 +213,7 @@
 
     this.drawTable = function () {
         this.$tableBody.empty();
+        
         for (let i = 0; i < this.DataMODEL.length; i++) {
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
@@ -243,6 +244,9 @@
                 }
             }
             this.$tableBody.append(html);
+            //let $html = $(html);
+            //this.$tableBody.find("tr[rowid='0'][col='status']").attr("colspan", "3").html("Stage in Processing");
+            //this.$tableBody.append($html);
         }
     };
 

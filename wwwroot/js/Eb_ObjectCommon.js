@@ -36,6 +36,9 @@
         $('#singlesave').off('click').on('click', this.SingleSave.bind(this));
         $('#offline').off('click').on('click', this.MakeOffline.bind(this));
         $('#live').off('click').on('click', this.MakeLive.bind(this));
+        $('#make_public').off('click').on('click', this.MakePublic.bind(this));
+        $('#make_private').off('click').on('click', this.MakePrivate.bind(this));
+        $('#copy_url').off('click').on('click', this.OpenUrlContainer.bind(this));
 
         if (this.Current_obj !== null)
             if (this.Current_obj.VersionNumber !== "")
@@ -202,7 +205,7 @@
     };
 
     this.UpdateBuilder = function () {
-        $.post("../Eb_Object/UpdateBuilder", { _refid: this.ver_Refid, _tabnum: this.tabNum, _ObjType: this.ObjectType,  _ssurl: this.ssurl }).done(this.UpdateBuilder_Success.bind(this));
+        $.post("../Eb_Object/UpdateBuilder", { _refid: this.ver_Refid, _tabnum: this.tabNum, _ObjType: this.ObjectType, _ssurl: this.ssurl }).done(this.UpdateBuilder_Success.bind(this));
     };
 
     this.UpdateBuilder_Success = function (data) {
@@ -707,15 +710,15 @@
             }, function (result) {
                 if (result === true) {
                     this.Current_obj.Status = "Offline";
-                    EbMessage("show", { Message: "The object is Offline now. It will not be available for users", Background: this.GreenColor, AutoHide: true});
+                    EbMessage("show", { Message: "The object is Offline now. It will not be available for users", Background: this.GreenColor, AutoHide: true });
+                    $('#live').show();
+                    $('#offline').hide();
                 }
                 else {
-                    EbMessage("show", { Message: "Something Went Wrong", Background: this.RedColor, AutoHide: true});
+                    EbMessage("show", { Message: "Something Went Wrong", Background: this.RedColor, AutoHide: true });
                 }
 
                 $("#eb_common_loader").EbLoader("hide");
-                $('#live').show();
-                $('#offline').hide();
             }.bind(this));
     };
 
@@ -730,14 +733,64 @@
                 if (result === true) {
                     this.Current_obj.Status = "Live";
                     EbMessage("show", { Message: "The object is Live now. It will be available for users", Background: this.GreenColor, AutoHide: true });
+
+                    $('#live').hide();
+                    $('#offline').show();
                 }
                 else {
                     EbMessage("show", { Message: "Something Went Wrong", Background: this.RedColor, AutoHide: true });
                 }
                 $("#eb_common_loader").EbLoader("hide");
-                $('#live').hide();
-                $('#offline').show();
             }.bind(this));
     };
+
+    this.MakePublic = function () {
+        $("#eb_common_loader").EbLoader("show");
+        $.post("../Eb_Object/ChangeAccess",
+            {
+                objid: this.ver_Refid.split("-")[3],
+                status: 1 //public
+
+            }, function (result) {
+                if (result === true) {
+                    EbMessage("show", { Message: "The object is Public now. It will be available outside the platform", Background: this.GreenColor, AutoHide: true });
+
+                    $('#make_public').hide();
+                    $('#make_private').show();
+                    $('#copy_url').show();
+                }
+                else {
+                    EbMessage("show", { Message: "Something Went Wrong", Background: this.RedColor, AutoHide: true });
+                }
+                $("#eb_common_loader").EbLoader("hide");
+            }.bind(this));
+    };
+
+    this.MakePrivate = function () {
+        $("#eb_common_loader").EbLoader("show");
+        $.post("../Eb_Object/ChangeAccess",
+            {
+                objid: this.ver_Refid.split("-")[3],
+                status: 2 //private
+
+            }, function (result) {
+                if (result === true) {
+                    EbMessage("show", { Message: "The object is Private now. It will not be available outside the platform", Background: this.GreenColor, AutoHide: true });
+
+                    $('#make_public').show();
+                    $('#make_private').hide();
+                    $('#copy_url').hide();
+                }
+                else {
+                    EbMessage("show", { Message: "Something Went Wrong", Background: this.RedColor, AutoHide: true });
+                }
+                $("#eb_common_loader").EbLoader("hide");
+            }.bind(this));
+    };
+
+    this.OpenUrlContainer = function () {
+        $('#url-container').show();
+    };
+
     this.init();
 };

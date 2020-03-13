@@ -147,35 +147,41 @@
 <body>
     <div class="html-root">
         @{
-            if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
+            if (ViewBag.UId > 1 || ViewBag.cide == "demo")
             {
-                <div id="eb-common-menu">
-                    @{ Html.RenderPartial("EbQuickMenu");}
-                </div>
+                if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
+                {
+                    <div id="eb-common-menu">
+                        @{ Html.RenderPartial("EbQuickMenu");}
+                    </div>
+                }
             }
             if (ViewBag.wc == "uc")
             {
-                <div id="eb-locswitch_wraper">
-                    <div class="loc_switchModal_fade"></div>
-                    <div class="loc_switchModal" id="loc_switchModal">
-                        <div class="loc_switchModal_outer">
-                            <div class="loc_switchModal_box">
-                                <div class="locs_head">
-                                    <h4>Switch Location</h4>
-                                    <div class="loc_searchInput w-100">
-                                        <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+                if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+                {
+                    <div id="eb-locswitch_wraper">
+                        <div class="loc_switchModal_fade"></div>
+                        <div class="loc_switchModal" id="loc_switchModal">
+                            <div class="loc_switchModal_outer">
+                                <div class="loc_switchModal_box">
+                                    <div class="locs_head">
+                                        <h4>Switch Location</h4>
+                                        <div class="loc_searchInput w-100">
+                                            <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+                                        </div>
+                                        <span class="cls_locmdl" onclick="$('.loc_switchModal_fade,#loc_switchModal').hide();">&times;</span>
                                     </div>
-                                    <span class="cls_locmdl" onclick="$('.loc_switchModal_fade,#loc_switchModal').hide();">&times;</span>
+                                    <div class="locs_bdy"></div>
+                                    <div class="locs_foot">
+                                        <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
+                                    </div>
+                                    <div class="no_loc_config">No Locations.</div>
                                 </div>
-                                <div class="locs_bdy"></div>
-                                <div class="locs_foot">
-                                    <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
-                                </div>
-                                <div class="no_loc_config">No Locations.</div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             }
         }
         <div id="layout_div" class="container-fluid html-root-layout">

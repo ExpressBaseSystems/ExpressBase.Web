@@ -137,7 +137,7 @@
     }
 
     .objectDashB-toolbar .toolbar-buttons-Container {
-        margin-left:auto;
+        margin-left: auto;
     }
 
 .app_div {
@@ -737,4 +737,32 @@ input:checked + .proslider:before {
     font-size: 13px;
     font-family: roboto;
     font-weight: 300;
+}
+
+.url-container {
+    display: none;
+    width: 90%;
+    height: 12%;
+    position: fixed;
+    left: 5%;
+    top: 5%;
+    background: #FFF;
+    z-index: 20;
+    -webkit-box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 0px 9999px rgba(0, 0, 0, 0.5);
+    padding: 15px;
+}
+
+.url_area {
+    word-wrap: break-word;
+    word-break: break-all;
+    display: inline-block;
+    background-color: #f4f2ff;
+    padding: 0 10px;
+    position: relative;
+    margin: 0px;
+    width: 90%;
+    height: 30px;
+    border: none;
+    resize: none;
 }

@@ -685,6 +685,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*transition: all 0.8s ease-in-out;*/
     box-shadow: 0 0 0px 1px rgb(0, 0, 0) inset;
 }
+
     .Dg_body > .dgtbl > tbody > tr[is-editing=true] > td {
         border: none !important
     }
@@ -878,6 +879,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ctrl-cover > .btn-group.bootstrap-select {
     width: 100% !important;
 }
+
 .ctrl-cover .bootstrap-select {
     width: 100% !important;
 }
@@ -1785,4 +1787,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px solid #ccc;
     margin: 5px;
     border-radius: 3px;
+}
+
+[ctype=Image] > .ctrl-cover {
+    border: none;
 }

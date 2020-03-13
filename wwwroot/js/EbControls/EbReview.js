@@ -225,8 +225,10 @@
                 let column = row.Columns[j];
                 if (column.Name === "eb_created_by") {
                     let userId = column.Value.split("$$")[0];
-                    let userName = column.Value.split("$$")[1];
+                    let userName = column.Value.split("$$")[1]|| "-------";
                     let url = `url(../images/dp/${userId}.png)`;
+                    if (!userId)
+                        url = `url(../images/proimg.jpg)`;
                     html = html.replace("@dpstyle@", `style='background-image:${url}'`)
                         .replace("@uname@", userName);
                 }
@@ -234,7 +236,7 @@
                 //    html = html.replace("@uname@", column.Value);
                 //}
                 else if (column.Name === "eb_created_at") {
-                    html = html.replace("@time@", column.Value);
+                    html = html.replace("@time@", column.Value || "--/--/----");
                 }
                 else if (column.Name === "comments") {
                     html = html.replace("@comment@", column.Value);

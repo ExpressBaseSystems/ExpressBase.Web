@@ -2451,6 +2451,7 @@
             this.searchAndHighlight(text, ".dataTables_scrollBody");
         else
             $(".dataTables_scrollBody").find("tr").show();
+        this.Api.columns.adjust();
 
         //}
     };

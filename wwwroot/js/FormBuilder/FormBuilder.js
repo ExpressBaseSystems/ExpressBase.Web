@@ -65,6 +65,8 @@
         let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
         if (ctrl.ObjType === "Approval")
             this.ApprovalCtrl = null;
+        if (ctrl.ObjType === "Review")
+            this.ReviewCtrl = null;
         else if (ctrl.ObjType === "ProvisionLocation")
             this.ProvisionLocationCtrl = null;
         ControlTile.parent().focus();
@@ -351,8 +353,12 @@
                     this.AsyncLoadHtml(ctrlObj["RefId"], "cont_" + ctrlObj["EbSid"]);
                 }
                 else if (type === "Approval") {
-                    ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
+                    ctrlObj.TableName = this.rootContainerObj.TableName + "_approval";
                     this.ApprovalCtrl = ctrlObj;
+                }
+                else if (type === "Review") {
+                    ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
+                    this.ReviewCtrl = ctrlObj;
                 }
                 else if (type === "ProvisionLocation") {
                     this.ProvisionLocationCtrl = ctrlObj;
@@ -415,6 +421,10 @@
                 else if (type === "Approval") {
                     ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
                     this.ApprovalCtrl = ctrlObj;
+                }
+                else if (type === "Review") {
+                    ctrlObj.TableName = this.rootContainerObj.TableName + "_reviews";
+                    this.ReviewCtrl = ctrlObj;
                 }
                 else if (type === "ProvisionLocation") {
                     this.ProvisionLocationCtrl = ctrlObj;
@@ -546,7 +556,11 @@
         if (el.contains(target))
             return;
 
-        if ($(source).hasClass(this.toolContClass) && el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl) {
+        if ($(source).hasClass(this.toolContClass) && (
+            el.getAttribute("eb-type") === "Approval" && this.ApprovalCtrl ||
+            el.getAttribute("eb-type") === "Review" && this.ReviewCtrl
+        )
+        ) {
             this.EbAlert.clearAlert("reviewCtrl");
             this.EbAlert.alert({
                 id: "reviewCtrl",
@@ -832,6 +846,8 @@
                 let ctrl = this.rootContainerObj.Controls.PopByName(ebsid);
                 if (ctrl.ObjType === "Approval")
                     this.ApprovalCtrl = null;
+                if (ctrl.ObjType === "Review")
+                    this.ReviewCtrl = null;
                 else if (ctrl.ObjType === "ProvisionLocation")
                     this.ProvisionLocationCtrl = null;
                 ControlTile.parent().focus();
@@ -887,6 +903,7 @@
             this.makeDataObjectDropable();
         }
         this.ApprovalCtrl = getFlatContObjsOfType(this.rootContainerObj, "Approval")[0];
+        this.ReviewCtrl = getFlatContObjsOfType(this.rootContainerObj, "Review")[0];
         this.ProvisionLocationCtrl = getFlatObjOfType(this.rootContainerObj, "ProvisionLocation")[0];
 
 

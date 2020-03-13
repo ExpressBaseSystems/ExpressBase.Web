@@ -26,15 +26,19 @@
     };
 
 
+
     this.Redrawfn = function (items, element) {
         var newHeight = $(element).attr('data-gs-height');
         var id = $(element).context.children[0].id;
+        this.RedrwFnHelper(id);
+    };
+    this.RedrwFnHelper = function (id) {
         let currentobj = this.TileCollection[id];
         var height = $(`[data-id=${id}`).height();
         $.each(currentobj.ControlsColl.$values, function (i, obj) {
             $(`[data-id=${id}] #${obj.EbSid}`).css("max-height", `${height} !important`);
             var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
-            //this.labelstyleApply(this.CurrentTile);
+            //this.labelstyleApplylabelstyleApply(this.CurrentTile);
             if (eb_type === "Gauge") {
                 if (obj.DataObjCtrlName === "" || obj.DataObjColName === "") {
                     let xx = EbGaugeWrapper(obj, { isEdit: false });
@@ -55,7 +59,9 @@
                 this.GaugeDrop(obj.DataObjCtrlName, obj.DataObjColName, obj.EbSid, "ProgressGauge");
             }
         }.bind(this));
+       
     };
+
     this.GridStackInit();
 
 
@@ -197,14 +203,13 @@
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
-                    <div style="display:flex" class="db-title-parent">
+                    <div style="display:flex" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
-                    <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
                     </div></div>
-                    <div data-id="${t_id}" class="db-tbl-wraper">
+                    <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont_view">
                     </div></div></div>`), x, y, dw, dh, false);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
@@ -224,6 +229,9 @@
                 else {
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
+                    $(`#${t_id}`).attr("eb-type", "gauge");
+                    $(`#${t_id} .tile-header`).removeClass("tile-header");
+
                     $.each(currentobj.ComponentsColl.$values, function (i, Cobj) {
                         if (!this.Procs.hasOwnProperty(Cobj.EbSid)) {
                             this.Procs[Cobj.EbSid] = Cobj;
@@ -278,6 +286,7 @@
                     if (currentobj.Transparent) {
                         this.labelstyleApply(this.CurrentTile);
                     }
+                    this.RedrwFnHelper(this.CurrentTile);
                 }
                
             }
@@ -299,8 +308,8 @@
         $(`[data-id="${tileId}"]`).parent().css("border", "0px solid");
         $(`#${tileId} .db-title`).empty();
         $(`#${tileId}`).addClass("user-control-tile-opt");
-        $(`#${tileId} .i-opt-obj`).hide();
-        $(`#${tileId} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+        $(`#${tileId} .i-opt-obj`).hide(); $(`#${tileId} .i-opt-restart`).hide();
+        $(`#${tileId} .tile-header`).removeClass("tile-header");
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
@@ -351,9 +360,13 @@
     };
     this.MakeDashboardLabel = function (obj) {
         let a = `<div class="label-cont" id="${obj.EbSid}" eb-type="DataLabel"> 
-        <div class="db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
-        <div class="db-label-desc"  id="${obj.EbSid}_description"></div>
-        <div class="db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div></div>`;
+        <div class="card-icon" id="${obj.EbSid}_icon"><i class=""></i></div>
+        <div id="${obj.EbSid}_Data_pane" class="Label_Data_pane" >
+        <div class="lbl db-static-label" id="${obj.EbSid}_static"> ${obj.StaticLabel}</div>  
+        <div class=" lbl db-label-desc"  id="${obj.EbSid}_description"></div>
+        <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
+        <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
+        </div></div>`;
         return a;
     };
 
@@ -543,128 +556,3 @@
     };
     this.init();
 }
-
-
-
-//DataLabel Style Function
-
-function EbDataLabelFn(Label) {
-
-    if (Label.ChangeTextPositon) {
-        if (Label.StaticLabelPosition.Left !== 0 && Label.StaticLabelPosition.Top !== 0) {
-            $(`#${Label.EbSid}_static`).css({ "left": `${Label.StaticLabelPosition.Left}%`, "top": `${Label.StaticLabelPosition.Top}%`, "position": "absolute" });
-        }
-
-        if (Label.DescriptionPosition.Left !== 0 && Label.DescriptionPosition.Top !== 0) {
-            $(`#${Label.EbSid}_description`).css({ "left": `${Label.DescriptionPosition.Left}%`, "top": `${Label.DescriptionPosition.Top}%`, "position": "absolute" });
-        }
-
-        if (Label.DynamicLabelPositon.Left !== 0 && Label.DynamicLabelPositon.Top !== 0) {
-            $(`#${Label.EbSid}_dynamic`).css({ "left": `${Label.DynamicLabelPositon.Left}%`, "top": `${Label.DynamicLabelPositon.Top}%`, "position": "absolute" });
-        }
-
-    }
-    else {
-        $(`#${Label.EbSid}_static`).css("position", "").css("left", "").css("top", "");
-        $(`#${Label.EbSid}_description`).css("position", "").css("left", "").css("top", "");
-        $(`#${Label.EbSid}_dynamic`).css("position", "").css("left", "").css("top", "");
-    }
-    if (Label.TextPosition == 0) { this.TextPosition = "left" }
-    if (Label.TextPosition == 1) { this.TextPosition = "center" }
-    if (Label.TextPosition == 2) { this.TextPosition = "right" }
-    $(`#${Label.EbSid}`).css("text-align", this.TextPosition);
-    //Static label style
-    $(`#${Label.EbSid}_static`).empty().append(Label.StaticLabel);
-    if (Label.StaticLabelFont !== null) {
-        GetFontCss(Label.StaticLabelFont, $(`#${Label.EbSid}_static`));
-    }
-
-    //description style
-    $(`#${Label.EbSid}_description`).empty().append(Label.Description);
-    if (Label.DescriptionFont !== null) {
-        GetFontCss(Label.DescriptionFont, $(`#${Label.EbSid}_description`));
-    }
-
-
-    //Dynamic label style
-    if (Label.DynamicLabelFont !== null) {
-        GetFontCss(Label.DynamicLabelFont, $(`#${Label.EbSid}_dynamic`));
-    }
-
-
-    $(`#${Label.EbSid}`).css("border-radius", Label.LabelBorderRadius);
-    $(`#${Label.EbSid}`).css("border-color", Label.LabelBorderColor);
-    if (!Label.IsGradient) {
-        $(`#${Label.EbSid}`).css("background", Label.LabelBackColor);
-    }
-    if (Label.IsGradient) {
-        $(`#${Label.EbSid}`).css("background", "");
-        let direction = GradientDirection(Label.Direction);
-        let bg = "linear-gradient(" + direction + "," + Label.GradientColor1 + "," + Label.GradientColor2 + ")";
-        $(`#${Label.EbSid}`).css('background-image', bg);
-    }
-    $(`#${Label.EbSid}`).css("border", `solid 1px ${Label.LabelBorderColor}`);
-
-}
-
-function Eb_Tiles_StyleFn(Tile, TileId, TabNum) {
-    //Tile Back Color
-    if (Tile.IsGradient) {
-        let direction = GradientDirection(Tile.Direction);
-        let bg = "linear-gradient(" + direction + "," + Tile.GradientColor1 + "," + Tile.GradientColor2 + ")";
-        $(`#${TileId}`).css("background-image", bg);
-    }
-    else {
-        $(`#${TileId}`).css("background", Tile.TileBackColor);
-    }
-
-    //Tile border
-    $(`#${TileId}`).css("border-radius", Tile.BorderRadius == 0 ? 4 + "px" : Tile.BorderRadius + "px");
-    $(`#${TileId}`).css("border", `solid 1px ${Tile.BorderColor}`);
-
-    //Tile Label
-    $(`#${TabNum}_Label_${TileId}`).empty().append(Tile.Label);
-    $(`#${TabNum}_Label_${TileId}`).css("left", Tile.Left + "%").css("top", Tile.Top + "%").css("position", "absolute");
-    if (Tile.LabelFont !== null) {
-        GetFontCss(Tile.LabelFont, $(`#${TabNum}_Label_${TileId}`));
-    }
-    //Tile Text Font 
-    $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
-    $(`#${TileId} th`).css("color", `${Tile.FontColor}`);
-    $(`#${TileId} td`).css("color", Tile.FontColor);
-    $(`#${TileId} a`).css("color", `${Tile.FontColor}`);
-    $(`#${TileId} .db-title`).css("color", Tile.FontColor);
-    $(`#${TileId} .tile-opt`).css("color", Tile.FontColor);
-
-}
-
-function Eb_Dashboard_Bg(EbObject) {
-    if (EbObject.IsGradient) {
-        let direction = GradientDirection(EbObject.Direction);
-        let bg = "linear-gradient(" + direction + "," + EbObject.GradientColor1 + "," + EbObject.GradientColor2 + ")";
-        $("#layout_div").css("background-color", "").css("background-image", bg);
-        $(".component_cont .nav").css("background-color", "").css("background-image", bg);
-    }
-    else {
-        $("#layout_div").css("background-image", "").css("background", EbObject.BackgroundColor);
-        $(".component_cont .nav").css("background-image", "").css("background", EbObject.BackgroundColor);
-    }
-
-}
-
-function GradientDirection(val) {
-    gradient = [];
-    gradient[0] = "to right";
-    gradient[1] = "to left";
-    gradient[2] = "to bottom";
-    gradient[3] = "to bottom right";
-    gradient[4] = "to bottom left";
-    gradient[5] = "to top right";
-    gradient[6] = "to top left";
-
-    return gradient[val];
-}
-
-$(document).ready(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-});

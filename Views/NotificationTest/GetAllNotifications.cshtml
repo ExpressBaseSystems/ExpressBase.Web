@@ -1,0 +1,36 @@
+﻿@using ExpressBase.Common;
+@{
+    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
+
+    var dvobj = ViewBag.data.Visualization;
+}
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<script src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+@await Component.InvokeAsync("PageHeaderCommon")
+
+<div style="margin-top: 50px;">
+    <div id="content_tb1" class="wrapper-cont">
+        <table id="tbl" class="table display table-bordered compact"></table>
+    </div>
+</div>
+<script>
+    @Html.Raw(ViewBag.EbObjectType)
+        @Html.Raw(ViewBag.Meta)
+        @Html.Raw(ViewBag.JsObjects);
+        @Html.Raw(ViewBag.TypeRegister);
+    var o = new Object();
+    o.tableId = "tbl";
+    o.showCheckboxColumn = false;
+    o.showFilterRow = true;
+    o.IsPaging = true;
+    o.dvObject = @Html.Raw(dvobj);
+    o.Source = "myactions";
+    var data = new EbCommonDataTable(o);
+</script>

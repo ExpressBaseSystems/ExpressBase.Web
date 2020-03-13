@@ -5,7 +5,7 @@
         $.extend(this.option, option);
 
         this.userNotification();
-        this.GetNotificationFromDBForPageLoad()
+        this.GetNotificationFromDBForPageLoad();
     }
 
     RMW() {
@@ -99,34 +99,65 @@
     }
 
     CompleteNotificationDisplayFunc = function (data) {
-        var html = ``;
+        this.AppendTabs(data);
+        this.AppendNotification(data);
+        this.AppendPendingAction(data);
+        let count = data.notifications.length + data.pendingActions.length;
+
+        if (count === 0)
+            $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
+        else {
+            $('#notification-count').attr("style", "");
+            $('#notification-count').html(count);
+        }
+        $('#notification-count').attr("count", count);
+        $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
+        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
+        $('#notificationTabs').on('click', '.nav-tabs a', function () {
+            $(this).closest('.dropdown').addClass('dontClose');
+        });
+        $('#notificationDropDown').on('hide.bs.dropdown', function (e) {
+            if ($(this).hasClass('dontClose')) {
+                e.preventDefault();
+            }
+            $(this).removeClass('dontClose');
+        });
+    }
+
+    AppendTabs = function (data) {
+        let html = ``;
         html = html + `
                     <ul class="nav nav-tabs eb-styledTab" >
                           <li class="nav-item devdshtab active"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#notification" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Notifications</a></li>
-                          <li class="nav-item devdshtab"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#pendingAction" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Pending Actions</a></li>
+                          <li class="nav-item devdshtab"><a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#pendingAction" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Pending Actions</a></li>
                     </ul>
                     
                     <div class="tab-content">
-                        <div id="notification" class="tab-pane active" role="tabpanel">
-                            <ul class="drp_ul new_notifications" style="overflow: scroll;height: 100vh;padding: 2px;width: 350px;">
-                             </ul>
+                        <div id="notification" class="tab-pane active" role="tabpanel" style='height:calc(100vh - 74px)'>
+                            <div class='action_cont'>
+                                <ul class="drp_ul new_notifications Action_ul"></ul>
+                            </div>
+                            <div class='see_all_action see_all_notification'><a href="/NotificationTest/GetAllNotifications" target="_blank">See All Notifications</a></div>
                         </div>
-                        <div id="pendingAction" class="tab-pane" role="tabpanel">
-                            <ul class="drp_ul pending_Actions" style="overflow: scroll;height: 100vh;padding: 2px;width: 350px;">
-                             </ul>
+                        <div id="pendingAction" class="tab-pane" role="tabpanel" style='height:calc(100vh - 74px)'>
+                            <div class='action_cont'>
+                                <ul class="drp_ul pendingactions Action_ul"></ul>
+                             </div>
+                            <div class='see_all_action see_all_pendingaction'><a href="/NotificationTest/GetAllActions" target="_blank">See All Actions</a></div>
                         </div>
                    </div>
                     `;
         $('.notifications').empty();
         $('.notifications').append(html);
+    }
 
-        $('#notification-count').attr("count", data.notifications.length);
-        html = ``;
-        for (var i = 0; i < data.notifications.length; i++) {
-            if (data.notifications[i].title != null && data.notifications[i].link != null) {
+    AppendNotification = function (data) {
+        let html = ``;
+        for (let i = 0; i < data.notifications.length; i++) {
+            if (data.notifications[i].title !== null && data.notifications[i].link !== null) {
                 html = html + `
-                            <li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
-                                <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>
+                            <li class="drp_item"> 
+                                <i class="fa fa-times notification-close"></i>
                                 <div notification-id = "${data.notifications[i].notificationId}" link-url="${data.notifications[i].link}" class="notification-update" >
                                     <p>${data.notifications[i].title}</p>
                                     <h6 class="notification-duration" style="margin-top: 0px;">${data.notifications[i].duration}</h6>
@@ -142,42 +173,47 @@
                         </div>
                     `;
         $("#notification").after(html);
-        if (data.notifications.length == 0) {
-            $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
-            var html1 = `<p class="no_notification">No Notifications</p>`;
+
+        if (data.notifications.length === 0) {
+            let html1 = `<p class="no_notification no_action">No Notifications</p>`;
             $('.new_notifications').append(html1);
+            $("#notification .see_all_notification").hide();
         }
         else {
-            $('#notification-count').attr("style", "");
-            $('#notification-count').html(data.notifications.length);
             $('.no_notification').detach();
+            $("[href='#notification']").append(`(${data.notifications.length})`);
         }
-        html = ``;
-        for (i = 0; i < data.pendingActions.length; i++) {
+    }
+
+    AppendPendingAction = function (data) {
+        let html = ``;
+        for (let i = 0; i < data.pendingActions.length; i++) {
             let filters = [];
-            filters.push( new fltr_obj(11, "id", data.pendingActions[i].dataId));
+            filters.push(new fltr_obj(11, "id", data.pendingActions[i].dataId));
             let url = `../webform/index?refid=${data.pendingActions[i].link}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filters))))}&_mode=1&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
-                                <a href="${url}" target="_blank">${data.pendingActions[i].description}</a>
+                                <div class='pendingaction'>
+                                    <a href="${url}" target="_blank">
+                                        <div class='pending_action_inner'>
+                                            <span>${data.pendingActions[i].description}</span>
+                                            <span class='pending_date'>${data.pendingActions[i].createdDate}</span>
+                                        </div>
+                                    </a>
+                                </div>
                             </li>`;
         }
-        html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
-                                <a href="/NotificationTest/GetAllActions" target="_blank">See All Actions</a>
-                            </li>`;
-        $("#pendingAction .pending_Actions").append(html);
 
-        $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
-        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
-        $('#notificationTabs').on('click', '.nav-tabs a', function () {
-            $(this).closest('.dropdown').addClass('dontClose');
-        })
+        $("#pendingAction .Action_ul").append(html);
 
-        $('#notificationDropDown').on('hide.bs.dropdown', function (e) {
-            if ($(this).hasClass('dontClose')) {
-                e.preventDefault();
-            }
-            $(this).removeClass('dontClose');
-        });
+        if (data.pendingActions.length === 0) {
+            let html1 = `<p class="no_pendingaction no_action">No Pending Action</p>`;
+            $('.pendingactions').append(html1);
+            $("#pendingAction .see_all_pendingaction").hide();
+        }
+        else {
+            $('.no_pendingaction').detach();
+            $("[href='#pendingAction']").append(`(${data.pendingActions.length})`);
+        }
     }
 
     CloseNotification = function (e) {

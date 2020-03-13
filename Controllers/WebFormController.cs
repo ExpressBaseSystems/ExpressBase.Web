@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     try
                     {
-                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob });
+                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;
                         ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
                     }
@@ -115,7 +115,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     try
                     {
-                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob });
+                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = (WebFormRenderModes)renderMode });
                         ViewBag.formData = Resp.FormDataWrap;
                         ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
                     }

@@ -578,7 +578,6 @@ namespace ExpressBase.Web.Controllers
         public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;
-
             if (ViewBag.IsValid)
             {
                 try
@@ -690,6 +689,47 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(ex.Message);
             }
             return View();
+        }
+
+        [HttpGet("api/get_actions")]
+        public GetMyActionsResponse GetMyActions()
+        {
+            try
+            {
+                if (ViewBag.IsValid)
+                {
+                    return this.ServiceClient.Get(new GetMyActionsRequest());
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return new GetMyActionsResponse();
+        }
+
+        [HttpGet("api/get_action_info")]
+        public GetMyActionInfoResponse GetMyActionInfo(int stageid, string refid, int dataid)
+        {
+            try
+            {
+                if (ViewBag.IsValid)
+                {
+                    return this.ServiceClient.Get(new GetMyActionInfoRequest
+                    {
+                        StageId = stageid,
+                        WebFormDataId = dataid,
+                        WebFormRefId = refid
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_actions API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return new GetMyActionInfoResponse();
         }
     }
 }

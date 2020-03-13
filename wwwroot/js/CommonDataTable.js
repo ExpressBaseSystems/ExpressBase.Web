@@ -1284,6 +1284,8 @@
             }
             else if (this.IsTree || this.Source === "Calendar")
                 this.createFilterforTree();
+            //if (this.EbObject.AllowLocalSearch)
+            //    this.createFilterforTree();
             this.filterDisplay();
             this.createFooter();
             if (this.Source === "EbDataTable")
@@ -2431,21 +2433,26 @@
               </button>
             </div>
           </div>
-        <button class="btn previous_h"><i class="fa fa-angle-up" aria-hidden="true"></i></button>
-        <button class="btn next_h"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
+       
         </div>`);
         $(`#${this.tableId}_filter input`).off("keyup").on("keyup", this.LocalSearch.bind(this));
-        
+        //<button class="btn previous_h"><i class="fa fa-angle-up" aria-hidden="true"></i></button>
+        //<button class="btn next_h"><i class="fa fa-angle-down" aria-hidden="true"></i></button>
     };
 
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
         //if (e.keyCode === 13 && text.length > 2) {
-            $(".match").each(function (i, span) {
-                $(span).parent().text($(span).parent().text());
-                $(span).remove();
-            });
+            //$(".match").each(function (i, span) {
+            //    $(span).parent().text($(span).parent().text());
+            //    $(span).remove();
+            //});
+        if(text !== "")
             this.searchAndHighlight(text, ".dataTables_scrollBody");
+        else
+            $(".dataTables_scrollBody").find("tr").show();
+        this.Api.columns.adjust();
+
         //}
     };
 
@@ -2501,56 +2508,58 @@
                     searchTermRegEx = new RegExp(searchTerm, "ig");
                 }
                 var arr = $(selector).find("td").toArray().filter(obj => $(obj).text().toLowerCase().includes(searchTerm.toLowerCase()));
-                arr.forEach(function (obj, i) {
-                    let $target = $(obj);
-                    let $next = $target.children();
-                    while ($next.length) {
-                        $target = $next;
-                        $next = $next.children();
-                    }
-                    let x = $($target).text().match(searchTermRegEx);
-                    $($target).html($($target).html().replace(searchTermRegEx, "<span class='match'>" + x[0] + "</span>"));
-                }); 
+                //arr.forEach(function (obj, i) {
+                //    let $target = $(obj);
+                //    let $next = $target.children();
+                //    while ($next.length) {
+                //        $target = $next;
+                //        $next = $next.children();
+                //    }
+                //    let x = $($target).text().match(searchTermRegEx);
+                //    $($target).html($($target).html().replace(searchTermRegEx, "<span class='match'>" + x[0] + "</span>"));
+                //}); 
                 //$(selector).html($(selector).html().replace(searchTermRegEx, "<span class='match'>" + matches[0] + "</span>"));
-                $('.match:first').addClass('highlighted');
+                //$('.match:first').addClass('highlighted');
 
-                var i = 0;
+                //var i = 0;
 
-                $('.next_h').off('click').on('click', function () {
+                //$('.next_h').off('click').on('click', function () {
 
-                    i++;
+                //    i++;
 
-                    if (i >= $('.match').length) i = 0;
+                //    if (i >= $('.match').length) i = 0;
 
-                    $('.match').removeClass('highlighted');
-                    $('.match').eq(i).addClass('highlighted');
-                    if ($('.match').length) {
-                        $(selector).animate({
-                            scrollTop: $('.match').eq(i).position().top
-                        }, 300);
-                    }
+                //    $('.match').removeClass('highlighted');
+                //    $('.match').eq(i).addClass('highlighted');
+                //    if ($('.match').length) {
+                //        $(selector).animate({
+                //            scrollTop: $('.match').eq(i).position().top
+                //        }, 300);
+                //    }
+                //});
+
+                //$('.previous_h').off('click').on('click', function () {
+
+                //    i--;
+
+                //    if (i < 0) i = $('.match').length - 1;
+
+                //    $('.match').removeClass('highlighted');
+                //    $('.match').eq(i).addClass('highlighted');
+                //    if ($('.match').length) {
+                //        $(selector).animate({
+                //            scrollTop: $('.match').eq(i).position().top
+                //        }, 300);
+                //    }
+                //});
+
+                //if ($('.highlighted:first').length) { //if match found, scroll to where the first one appears
+                //    $(selector).scrollTop($('.highlighted:first').position().top);
+                //}
+                $(selector).find("tr").hide();
+                arr.forEach(function (obj, i) {
+                    $(obj).closest("tr").show();
                 });
-                $('.previous_h').off('click').on('click', function () {
-
-                    i--;
-
-                    if (i < 0) i = $('.match').length - 1;
-
-                    $('.match').removeClass('highlighted');
-                    $('.match').eq(i).addClass('highlighted');
-                    if ($('.match').length) {
-                        $(selector).animate({
-                            scrollTop: $('.match').eq(i).position().top
-                        }, 300);
-                    }
-                });
-
-
-
-
-                if ($('.highlighted:first').length) { //if match found, scroll to where the first one appears
-                    $(selector).scrollTop($('.highlighted:first').position().top);
-                }
                 return true;
             }
         }
@@ -2569,6 +2578,7 @@
         $("." + this.tableId + "_select").off("change").on("change", this.updateAlSlct.bind(this));
         $(".eb_canvas" + this.tableId).off("click").on("click", this.renderMainGraph);
         $(".tablelink" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
+        $(".tablelinkfromcolumn" + this.tableId).off("click").on("click", this.link2NewTableFromColumn.bind(this));
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
@@ -2873,7 +2883,7 @@
                     </div>
                     </div>`);
         $.each(this.EbObject.FormLinks.$values, function (i, obj) {
-            let url = `../webform/index?refid=${obj.Refid}&_params=""&_mode=2&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
+            let url = `../webform/index?refid=${obj.Refid}&_mode=2&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
             $(`#NewFormdd${this.tableId} .drp_ul`).append(`<li class="drp_item"><a class="dropdown-item" href="${url}" target="_blank">${obj.DisplayName}</a></li>`);
         }.bind(this));
     };
@@ -3836,6 +3846,18 @@
                 this.OpeninNewTab(idx, cData);
         }
         //this.filterValues = [];
+    };
+
+    this.link2NewTableFromColumn = function (e) {
+        this.linkDV = $(e.target).closest("a").attr("data-link");
+        let Paramvalue = $(e.target).closest("a").attr("data-id");
+        this.filterValuesforForm = [];
+        this.filterValuesforForm.push(new fltr_obj(11, "id", Paramvalue));
+        this.dvformMode = 1;
+        if (this.login === "uc")
+            dvcontainerObj.drawdvFromTable( btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+        else
+            this.OpeninNewTab(this.Api.row($(e.target).parents().closest("td")).index(), $(e.target).text());
     };
 
     this.drawInlinedv = function (rows, e, idx, colindex) {

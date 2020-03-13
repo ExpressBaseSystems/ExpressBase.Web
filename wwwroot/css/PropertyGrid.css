@@ -79,6 +79,25 @@
     color: rgba(0, 0, 0, 0.65);
 }
 
+.font-selector-btn {
+    width: 30px;
+    padding: 3px;
+    margin-top: 2px;
+    border-radius: 1px;
+    box-shadow: 0px 0px 0px 1px #ddd;
+    border: var(--sild1pxddd);
+    float: right;
+    -webkit-tap-highlight-color: rgba(255,255,255,0);
+    background: #FFF;
+    font-size: 8px;
+    text-align: center;
+}
+
+.cxv-inp[for="IconTestProp"] {
+    width: calc(100% - 35px) !important;
+    direction: rtl;
+}
+
 .pg-wraper .pg-inp-color {
     width: 17px;
     height: 21px;

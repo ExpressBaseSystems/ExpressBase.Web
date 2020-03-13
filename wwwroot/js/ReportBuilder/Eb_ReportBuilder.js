@@ -113,7 +113,7 @@
     this.ruler = function () {
         var width = this.width.slice(0, -2) > 794 ? ($('#PageContainer').width() - 79) + 'px' : this.width;
         var k = 0, j = 0;
-        var pxlabel = this.rulertype == "px" ? 5 : 1;
+        var pxlabel = this.rulertype === "px" ? 5 : 1;
         $('.ruler,.rulerleft').show();
         var $ruler = $('.ruler').css({ "width": width });
         for (var i = 0, step = 0; i < $ruler.innerWidth() / this.rulerTypesObj[this.rulertype].len; i++ , step++) {
@@ -731,7 +731,7 @@
         this.RefreshControl($control);
         this.pg.setObject(this.objCollection[Objid], AllMetas["Eb" + eb_type]);
         return $control;
-    }
+    };
 
     this.pg.PropertyChanged = function (obj, pname) {
         if (pname === 'RowCount' || pname === 'ColoumCount') {

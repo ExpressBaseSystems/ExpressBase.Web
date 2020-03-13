@@ -25,9 +25,9 @@
             return store.get("Eb_Loc-" + this.Tid + this.Uid);
         }
         else {
-            return (["0", "-1", 0, -1].indexOf(options.Current) > 0) ? 1 : options.Current;
+            return ["0", "-1", 0, -1].indexOf(options.Current) > 0 ? 1 : options.Current;
         }
-    }
+    };
 
     this.trigger = function () {
         //$(document).bind('keypress', function (event) {
@@ -73,7 +73,7 @@
 
     this.setDefault = function () {
         $(".loc_switchModal_box").find(`div[LocId='${this.CurrentLoc}']`).addClass("active-loc");
-        store.clearAll();
+        //store.clearAll();
         store.set("Eb_Loc-" + this.Tid + this.Uid, this.CurrentLoc);
     };
 
@@ -142,7 +142,7 @@
 
     this.clearSwitchedLoc = function () {
         store.remove("Eb_Loc-" + this.Tid + this.Uid);
-    }
+    };
 
     this.searchLoc = function (e) {
         let val = $(e.target).val().toLowerCase();

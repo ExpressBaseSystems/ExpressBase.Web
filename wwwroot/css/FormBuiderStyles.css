@@ -166,6 +166,10 @@ body {
     margin-left: -6px;
 }
 
+.pgRow .pg-inp[readonly] {
+    background-color: #f5f5f5;
+}
+
 
 .form-buider-form {
     position: relative;
@@ -464,6 +468,7 @@ eb-disable {
 
 .fs-tbl > tbody > tr > td.fs-ctrl-td {
     padding: 0;
+    height: inherit;
 }
 
 .fs-tbl .fs-textarea {
@@ -493,6 +498,15 @@ eb-disable {
     font-size: 13px;
 }
 
+.fs-tbl {
+    margin: 0;
+}
+
+.fs-tbl tbody tr {
+    height: 60px;
+}
+
+
 .fs-tbl tr[active='true'], .fs-tbl tr[active='true'] .filter-option, .fs-tbl tr[active='true'] .fs-uname, .fs-tbl tr[active='true'] .fs-textarea {
     font-weight: bold;
 }
@@ -501,14 +515,41 @@ eb-disable {
     font-size: 11px;
     color: #6d6d6d;
 }
+.rc-slno {
+    width: 50px;
+}
+
+.rc-stage {
+    width: 180px;
+}
+
+.rc-status {
+    width: 250px;
+}
+
+.rc-by {
+    width: 270px;
+}
 
 .fs-grid-cont .fs-submit-cont {
     display: flex;
     justify-content: center;
+    box-shadow: 0 -2px 6px -4px #b8b8b9;
+    padding: 10px 0 0px 0;
+    z-index: 1;
 }
 
 .fs-grid-cont .fs-submit {
     width: 175px;
+}
+
+.rc-tbl-thead-cont {
+    height: 35px;
+}
+
+.rc-tbl-tbody-cont {
+    height: 175px;
+    overflow-y: auto;
 }
 
 .fs-grid-cont {

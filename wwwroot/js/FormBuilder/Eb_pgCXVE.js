@@ -45,10 +45,14 @@
             $curRowInp.val(JSON.stringify(value));
         }
         else if (this.editor === 37) {
-            console.log("haii")
             let icon = $("#icon_picker .form-control.search-control").val();
             PropsObj[_CurProp] = icon;
             $(`#${this.PGobj.wraperId}${_CurProp}`).val(icon);
+        }
+        else if (this.editor === 38) {
+            let shadowVal = $("#shadow_editor_val").val();
+            PropsObj[_CurProp] = shadowVal;
+            $(`#${this.PGobj.wraperId}${_CurProp}`).val(shadowVal);
         }
         else if (this.editor === 21)
             PropsObj[_CurProp] = this.MLEObj.get();
@@ -172,6 +176,8 @@
             this.initOSCE();
         else if (this.editor === 37)
             this.initIconSelector();
+        else if (this.editor === 38)
+            this.initShadowEditor();
         else if (this.editor > 63) {
             this.initScrE(e);
         }
@@ -817,15 +823,14 @@
     };
 
     this.initIconSelector = function () {
-        console.log("hgqdbgh");
-        this.curEditorLabel = "Object Selector Collection";
-        if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
-            this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
+        this.curEditorLabel = "Icon Selector";
+        //if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
+        //    this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
 
         let value = this.PGobj.PropsObj[this.PGobj.CurProp];
 
-        let OSEbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
-        $(this.pgCXE_Cont_Slctr + " .modal-body").html(OSEbody);
+        let IPbody = `<div role="iconpicker" id="icon_picker" data-rows="10" data-cols="19"  data-icon ="${value}"> </div>`;
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(IPbody);
         $("#icon_picker").iconpicker({
             placement: 'bottom',
             iconset: 'fontawesome',
@@ -835,6 +840,18 @@
         });
         if (value) { $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");}
             
+    };
+
+    this.initShadowEditor = function () {
+        this.curEditorLabel = "Shadow Editor";
+        //if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
+        //    this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
+
+        let value = this.PGobj.PropsObj[this.PGobj.CurProp];
+
+        let ShadowPickerbody = `<div id="shadow_editor"> </div>`;
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(ShadowPickerbody);
+        ShadowPickerJs({ Id: "shadow_editor", Value: value});           
     };
 
     this.initOSCE = function () {

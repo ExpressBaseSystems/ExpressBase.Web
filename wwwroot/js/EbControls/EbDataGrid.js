@@ -1095,10 +1095,10 @@
         $td.find(".del-row").show();
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
-        if ($activeTr.attr("is-checked") === "true") {
+        //if ($activeTr.attr("is-checked") === "true") {
             this.setcurRowDataMODELWithNewVals(rowId);
             this.changeEditFlagInRowCtrls(false, rowId);
-        }
+        //}
 
         this.ctrlToSpan_row(rowId);
         $activeTr.attr("is-checked", "true").attr("is-editing", "false");

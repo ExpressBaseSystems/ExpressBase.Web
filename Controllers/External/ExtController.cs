@@ -27,7 +27,8 @@ using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
+using ExpressBase.Security;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -180,8 +181,6 @@ namespace ExpressBase.Web.Controllers
             }
             return 0;
         }
-
-
 
         [HttpGet("ForgotPassword")]
         public IActionResult ForgotPassword()
@@ -414,7 +413,6 @@ namespace ExpressBase.Web.Controllers
             return Redirect("/Platform/OnBoarding");
         }
 
-
         public IActionResult GoogleLogin(string name, string goglid, string email)
         {
             Console.WriteLine("reached contoller / GoogleLogin");
@@ -445,7 +443,6 @@ namespace ExpressBase.Web.Controllers
             }
             return Redirect("/Platform/OnBoarding");
         }
-
 
 
         [HttpGet("social_oauth")]
@@ -1136,12 +1133,81 @@ namespace ExpressBase.Web.Controllers
                 if (solutionObj.SolutionSettings != null && solutionObj.SolutionSettings.SignupFormRefid != string.Empty)
                 {
 
-                    return RedirectToAction("WebFormRender", "WebForm", new { refId = solutionObj.SolutionSettings.SignupFormRefid, _locId = 0 , renderMode = 3});
-                } 
+                    return RedirectToAction("WebFormRender", "WebForm", new { refId = solutionObj.SolutionSettings.SignupFormRefid, _locId = authResponse.User.Preference.DefaultLocation, renderMode = 3 });
+                }
             }
             return Redirect("/StatusCode/404");
         }
 
+        [Route("PublicForm")]
+        public IActionResult PublicForm(string id)
+        {
+            MyAuthenticateResponse authResponse = null;
+            User usr = null;
+            string[] hostParts = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Split(CharConstants.DOT); 
+            if (isAvailSolution())
+            {
+                string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
+                string sRToken = base.HttpContext.Request.Cookies[RoutingConstants.REFRESH_TOKEN];
+                bool Isloggedin = false;
+                if (!String.IsNullOrEmpty(sBToken) || !String.IsNullOrEmpty(sRToken))
+                {
+                    if (IsTokensValid(sRToken, sBToken, hostParts[0]))
+                    {
+                        Isloggedin = true;
+                        JwtSecurityToken jwtToken = new JwtSecurityToken(sBToken);
+                        string uid = jwtToken.Payload[TokenConstants.SUB].ToString();
+                        usr = usr = this.Redis.Get<User>(uid); ;
+                    }
+                }
+                if (!Isloggedin)
+                {
+                    try
+                    {
+                        string tenantid = ViewBag.SolutionId;
+                        authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+                        {
+                            provider = CredentialsAuthProvider.Name,
+                            UserName = "NIL",
+                            Password = "NIL",
+                            Meta = new Dictionary<string, string> {
+                        { RoutingConstants.WC, "uc" },
+                        { "anonymous", "true"},
+                        { "emailId", "user@signup.com" },
+                        { TokenConstants.CID, tenantid },
+                        { TokenConstants.IP, this.RequestSourceIp},
+                        { RoutingConstants.USER_AGENT, this.UserAgent}
+                    },
+                            RememberMe = true
+                        });
+                    }
+                    catch (Exception wse)
+                    {
+                        Console.WriteLine("Exception:" + wse.ToString());
+                    }
+                    if (authResponse != null)
+                    {
+                        CookieOptions options = new CookieOptions();
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                        Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+                        Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
 
+                        usr = authResponse.User;
+                    }
+                }
+                if (usr != null && usr.Permissions != null && usr.Permissions.Count > 0)
+                {
+                    foreach (string s in usr.Permissions)
+                    {
+                        if (s.Contains("000-00-0" + id.Split("-")[3]))
+                        {
+                            return RedirectToAction("WebFormRender", "WebForm", new { refId = id, _locId = usr.Preference.DefaultLocation, renderMode = 3 });
+                        }
+                    }
+                }
+            }           
+            return Redirect("/StatusCode/401");
+        }
     }
 }

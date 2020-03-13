@@ -660,7 +660,7 @@ var DashBoardWrapper = function (options) {
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 this.drop_id = "drop_" + t_id;
-                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
+                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}" data-gs-min-width="7" data-gs-min-height="3"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
@@ -788,7 +788,8 @@ var DashBoardWrapper = function (options) {
         let tile_id = "t" + j;
         let t_id = "tile" + j;
         let drop_id = "drop_" + t_id;
-        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
+        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}" data-gs-min-width="7" data-gs-min-height="3" >
+                    <div class="grid-stack-item-content" id="${t_id}">
                     <div style="display:flex;" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
@@ -888,6 +889,7 @@ var DashBoardWrapper = function (options) {
 
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
+        this.GetFilterValuesForDataSource();
         $.LoadingOverlay('show');
         $.ajax({
             type: "POST",
@@ -1114,6 +1116,22 @@ var DashBoardWrapper = function (options) {
             // Update the count
         });
     };
+
+
+    this.GetFilterValuesForDataSource = function () {
+        this.filtervalues = [];
+        if (this.filterDialog)
+            this.filtervalues = getValsForViz(this.filterDialog.FormObj);
+
+        let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (this.stickBtn) { this.stickBtn.minimise(); }
+    };
+
 
     this.GetFilterValues = function () {
         this.filtervalues = [];

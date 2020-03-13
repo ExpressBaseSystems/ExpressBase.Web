@@ -77,9 +77,80 @@
         return this.stageDATA;
     };
 
+    this.submitReview = function () {
+        this.saveForm_call();
+    };
+
+    this.getApprovalTable = function () {
+        let FVWTObjColl = {};
+        let tOb = this.changedRowWT();
+        if (tOb)
+            FVWTObjColl[this.ctrl.TableName] = tOb;
+        return FVWTObjColl;
+    };
+
+    this.getDATAMODEL = function () {
+        let WebformData = {};
+        let reviewTable = {};
+        WebformData.MultipleTables = {};
+
+        reviewTable = this.getApprovalTable();
+
+        WebformData.MultipleTables = $.extend(WebformData.MultipleTables, reviewTable);// attach approvalTable 
+        console.log(WebformData);
+        return JSON.stringify(WebformData);
+    };
+
+    this.saveForm_call = function () {
+        this.formRenderer.showLoader();
+        let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
+        $.ajax({
+            type: "POST",
+            //url: this.ssurl + "/bots",
+            url: "/WebForm/InsertWebformData",
+            data: {
+                TableName: this.formRenderer.FormObj.TableName,
+                ValObj: this.getDATAMODEL(),
+                RefId: this.formRenderer.formRefId,
+                RowId: this.formRenderer.rowId,
+                CurrentLoc: currentLoc
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                this.formRenderer.hideLoader();
+                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+            }.bind(this),
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.saveSuccess.bind(this)
+        });
+    };
+
+    this.saveSuccess = function (_respObj) {
+        this.formRenderer.hideLoader();
+        let respObj = JSON.parse(_respObj);
+        respObj.FormData = JSON.parse(respObj.FormData);
+        this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName]
+        ebcontext._formSaveResponse = respObj;
+
+        if (respObj.Status === 200) {
+            EbMessage("show", { Message: "Review submited successfully", AutoHide: true, Background: '#00aa00', Delay: 5000 });
+            this.switch2viewMode(this.DataMODEL);
+        }
+        //else if (respObj.Status === 403) {
+        //    EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+        //}
+        else {
+            EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000' });
+            console.error(respObj.MessageInt);
+        }
+    };
+
     this.confirmBoxCallBack = function (btnTxt) {
+        //if (btnTxt === "Yes")
+        //    this.FormSaveFn(true);
         if (btnTxt === "Yes")
-            this.FormSaveFn();
+            this.submitReview(true);
     };
 
     this.switch2editMode = function () {
@@ -89,7 +160,7 @@
     this.switch2viewMode = function (DataMODEL) {
         this.show();
         this.DataMODEL = DataMODEL;
-        this.init();
+        this.set();
     };
 
     this.submit = function () {
@@ -122,7 +193,7 @@
     this.enableRow = function () {
         let $row = this.$tableBody.find("tr[rowid=0]");
         this.$curActiveRow = $row;
-        if (!$row)
+        if ($row.length === 0)
             return;
 
         this.stageDATA = getObjByval(this.DataMODEL, "RowId", 0);
@@ -177,11 +248,13 @@
         this.ctrl.__ready = true;
         this.$submit = this.$container.find(".fs-submit");
         this.$container.on("click", ".fs-submit", this.submit);
+    };
 
+    this.set = function () {
         this.drawTable();
         this.disableAllCtrls();
         this.enableRow();
     };
 
-    //this.init();
+    this.init();
 };

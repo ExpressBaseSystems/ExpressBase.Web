@@ -70,6 +70,10 @@ function EbDataLabelFn(Label) {
         $(`#${Label.EbSid}`).css("padding-top", "0vh");
         $(`#${Label.EbSid}_icon`).css('display', 'none');
     }
+
+    if (Label.HideFooter) { $(`#${Label.EbSid}_footer`).css("display", "none"); }
+    else { $(`#${Label.EbSid}_footer`).css("display", "block");}
+
     let Icondirection = GradientDirection(Label.IconDirection);
     let bg = "linear-gradient(" + Icondirection + "," + Label.IconGradientColor1 + "," + Label.IconGradientColor2 + ")";
     $(`#${Label.EbSid}_icon`).css('background-image', bg);
@@ -80,6 +84,11 @@ function EbDataLabelFn(Label) {
     $(`#${Label.EbSid}_footer i`).removeAttr("class").addClass(`fa ${Label.FooterIcon}`);
     $(`#${Label.EbSid}_footer i`).css("color", Label.FooterIconColor);
     $(`#${Label.EbSid}_footer label`).text(Label.FooterText);
+
+    //shadow Editor 
+    if (Label.Shadow) {
+        $(`#${Label.EbSid}_Data_pane`).css("box-shadow", Label.Shadow);
+    }
 }
 
 //Tile style function

@@ -35,6 +35,7 @@
     this.txtPhSecondary = $("#txtPhSecondary");
     this.txtLandPhone = $("#txtLandPhone");
     this.txtExtension = $("#txtExtension");
+    this.selUserType = $("#selusertype");
 
     this.chkboxHide = $("#chkboxHide");
     //CHANGE PWD
@@ -294,6 +295,7 @@
         this.txtPhSecondary.attr("disabled", "true");
         this.txtLandPhone.attr("disabled", "true");
         this.txtExtension.attr("disabled", "true");
+        this.selUserType.attr("disabled", "true");
         this.chkboxHide.bootstrapToggle('disable');
         $("#divStatus input:radio[name='status']").prop("disabled", "true");
         $("#divGender input:radio[name='gender']").prop("disabled", "true");
@@ -338,6 +340,7 @@
         this.txtPhSecondary.val(this.userinfo["phnosecondary"]);
         this.txtLandPhone.val(this.userinfo["landline"]);
         this.txtExtension.val(this.userinfo["phextension"]);
+        this.selUserType.val(this.userinfo["eb_user_types_id"]);
         var st = "#divGender input:radio[value='" + this.userinfo["sex"] + "']";
         $(st).attr("checked", "checked");
         $("#lblFbId").attr("data-id", this.userinfo["fbid"]);
@@ -700,6 +703,7 @@
         dict["phonesecondary"] = this.txtPhSecondary.val();
         dict["landline"] = this.txtLandPhone.val();
         dict["extension"] = this.txtExtension.val();
+        dict["eb_user_types_id"] = this.selUserType.val();
         dict["fbid"] = $("#lblFbId").attr("data-id");
         dict["fbname"] = $("#userFbLink").text();
         dict["roles"] = this.rolesTile.getItemIds();
@@ -738,6 +742,8 @@
                 }
                 else if (result === -1)
                     EbMessage("show", { Message: 'Unable to create new user. Reached maximum user limit.', AutoHide: true, Background: '#1e1ebf' });
+                else if (result === -2)
+                    EbMessage("show", { Message: 'Unable to create new user. Email already exists.', AutoHide: true, Background: '#1e1ebf' });
                 else
                     EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
                 $("#btnCreateUser").removeAttr("disabled");

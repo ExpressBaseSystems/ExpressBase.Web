@@ -1,39 +1,82 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common.LocationNSolution;
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
-    Dictionary<string, List<EbObjectWrapper>> ObjList = ViewBag.objlist;
+    Dictionary<string, List<EbObjectWrapper>> Public_ObjList = ViewBag.objlist;
+    Dictionary<string, List<EbObjectWrapper>> All_ObjList = ViewBag.all_objlist;
     string signupFormRefid = ViewBag.signupFormRefid;
 }
-
-    <div class="form-group objlist col-md-4" style="margin-top:100px;">
-        <h3 style="margin-bottom:50px;">Solution Console</h3>
-        <label> Select Signup Form</label>
-        <select class="form-control" id="signup_object">
-            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in ObjList)
-            {
-                @foreach (EbObjectWrapper ver in obj.Value)
+<div class="container-fluid center" style="background-color:white;height:100%;">
+    <div class="row">
+        <div class="col-md-12" style="margin-top:50px; margin-bottom: 15px;">
+            <h4 class="col-md-10" style="margin-bottom:15px;"><i class="fa fa-cog"></i> Solution Console  </h4>
+            <div class="col-md-2">
+                <button id="save" class="btn btn-success pull-right form-inline ">Save</button>
+            </div>
+        </div>
+        <hr />
+        <div class="form-group col-md-4">
+            <label> Select Profile Forms For Each User Types</label>
+            @{
+                int i = 1;
+                @foreach (EbProfileUserType type in ViewBag.userTypes)
                 {
-                    <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                    <div class="usr_typ" id="@type.Id">
+                        <label style="padding-top:10px">@i.  @type.Name </label>
+                        <select class="form-control col-md-3 pull-right user_type_forms" value="@type.Id">
+                            <option> </option>
+                            @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in All_ObjList)
+                            {
+                                @foreach (EbObjectWrapper ver in obj.Value)
+                                {
+                                    if (ver.RefId == type.RefId)
+                                    {
+                                        <option value="@ver.RefId" selected> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    i++;
                 }
             }
-        </select>
-        <div class="pull-right" style="margin-top :10px;">
-            <button id="save" class="btn-primary">Save</button>
+        </div>
+        <div class="form-group objlist col-md-4">
+            <label> Select External Forms</label>
+            <div><label style="padding-top:10px">1.  Signup Form</label></div>
+            <select class="form-control" id="signup_object">
+                <option> </option>
+                @foreach (KeyValuePair<string, List<EbObjectWrapper>> obj in Public_ObjList)
+                {
+                    @foreach (EbObjectWrapper ver in obj.Value)
+                    {
+                        <option value="@ver.RefId"> @ver.DisplayName  (@ver.VersionNumber)</option>
+                    }
+                }
+            </select>
         </div>
     </div>
-
-
+</div>
 <script>
-    $(document).ready(function () { 
+    $(document).ready(function () {
         if("@signupFormRefid"!="")
             $("#signup_object").val("@signupFormRefid");
-        else
-             $("#signup_object").val("");
+
     });
 
+
     $("#save").on("click", function () {
+         let arr = [];
+        $(".usr_typ").each(function (index) {
+            arr.push({Id : this.id, RefId :$('#'+this.id +' .user_type_forms').val()});
+        });
         let obj = {
-            SignupFormRefid: $("#signup_object").val()
+            SignupFormRefid: $("#signup_object").val(),
+            UserTypeForms : arr
         };
         $.post("../Dev/SaveSolutionSettings",
             { obj: JSON.stringify(obj) },

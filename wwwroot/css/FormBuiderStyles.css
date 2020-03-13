@@ -1829,3 +1829,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     margin: 5px;
     border-radius: 3px;
 }
+
+[ctype=Image] > .ctrl-cover {
+    border: none;
+}

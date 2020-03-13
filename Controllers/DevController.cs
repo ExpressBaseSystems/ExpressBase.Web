@@ -755,11 +755,29 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SolutionConsole()
         {
-            EbObjectObjListAllVerResponse res = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
+            EbObjectObjListAllVerResponse public_res = this.ServiceClient.Get(new PublicObjListAllVerRequest { EbObjectType = 0 });
+            EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
+            GetUserTypesResponse _userTypesResp = this.ServiceClient.Post(new GetUserTypesRequest());
+
             Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
             if (solutionObj != null && solutionObj.SolutionSettings != null)
+            {
                 ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
-            ViewBag.objlist = res.Data;
+                if (solutionObj.SolutionSettings.UserTypeForms.Count > 0)
+                {
+                    foreach (var item in _userTypesResp.UserTypes)
+                    {
+                        var itemInB = solutionObj.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == item.Id);
+
+                        if (itemInB != null)
+                            item.RefId = itemInB.RefId;
+                    }
+                }
+            }
+
+            ViewBag.userTypes = _userTypesResp.UserTypes;
+            ViewBag.objlist = public_res.Data;
+            ViewBag.all_objlist = all_resp.Data;
             return View();
         }
 

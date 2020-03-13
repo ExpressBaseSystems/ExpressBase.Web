@@ -1026,25 +1026,20 @@ var InitControls = function (option) {
         //ctrl.bindOnChange = asgd;
 
     }
+
+    this.Rating = function (ctrl) {
+        if (ebcontext.user.wc == 'uc') {
+            $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid + '_ratingDiv label').addClass('ratingLbl');
+        }
+        if (ctrl.RemoveBorder == true) {
+            $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').css({ 'border': 'none' });
+        }
+
+       
+    }
 };
 
-this.Rating = function (ctrl) {
 
-
-    ctrl.getValueFromDOM = function () {
-        alert("ctrl.getValueFromDOM");
- ks = $('[name=' + ctrl.EbSid_CtxId + ']:checked').val();
-    };
-
-    ctrl.setValue = function (p1) {
-       alert("ctrl.setValue"); let k = 0;
-    };
-
-    //ctrl.bindOnChange = function () {
-    //    console.log('bindjs');
-    //    return $('input[name = ' + ctrl.EbSid_CtxId + ']').on('change', p1);
-    //};
-}
 
 function createValidator(element) {
     return function () {

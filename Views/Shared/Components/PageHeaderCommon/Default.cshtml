@@ -93,7 +93,7 @@
                                     </li>
                                     @{
                                         Eb_Solution Solution = ViewBag.SolutionObject;
-                                         
+
                                         if (ViewBag.UserObject != string.Empty)
                                         {
                                             User u = JsonConvert.DeserializeObject<ExpressBase.Security.User>(ViewBag.UserObject);
@@ -101,14 +101,15 @@
                                             {
                                                 if (Solution.SolutionSettings != null)
                                                 {
-                                                    if (Solution.SolutionSettings.UserTypeForms.Count > 0)
+                                                    if (Solution.SolutionSettings.UserTypeForms != null)
                                                     {
-
-                                                       
-                                                        EbProfileUserType p = Solution.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == u.UserType);
-                                                        if (p != null && !string.IsNullOrEmpty(p.RefId))
+                                                        if (Solution.SolutionSettings.UserTypeForms.Count > 0)
                                                         {
-                                                            <li class="drp_item"><a href="../WebForm/GetProfile?r=@p.RefId&l=@u.Preference.DefaultLocation"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                                            EbProfileUserType p = Solution.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == u.UserType);
+                                                            if (p != null && !string.IsNullOrEmpty(p.RefId))
+                                                            {
+                                                                <li class="drp_item"><a href="../WebForm/GetProfile?r=@p.RefId&l=@u.Preference.DefaultLocation"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                                            }
                                                         }
                                                     }
                                                 }

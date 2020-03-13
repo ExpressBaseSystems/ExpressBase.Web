@@ -1848,14 +1848,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     .rating-container input {
         display: none;
     }
-        /*.rating-container input:checked ~ label {
-            color: #fc0;
-        }
 
-    .rating-container label:hover, label:hover ~ label {
-        color: #fce37b;
-    }*/
-label:hover, label:hover ~ label, input:checked ~ label {
+.ratingLbl:hover, .ratingLbl:hover ~ .ratingLbl, input:checked ~ .ratingLbl {
     color: gold;
 }
 

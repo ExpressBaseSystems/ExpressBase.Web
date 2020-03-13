@@ -105,7 +105,7 @@ const WebFormRender = function (option) {
     this.initReviewCtrl = function () {
         if (this.ReviewCtrl) {
             let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRenderer: this };
-            this.ApprovalCtrlBuilder =this.initControls.init(this.ReviewCtrl, opt);
+            this.ApprovalCtrlBuilder = this.initControls.init(this.ReviewCtrl, opt);
         }
     };
 
@@ -563,18 +563,18 @@ const WebFormRender = function (option) {
         let WebformData = {};
 
 
-            //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
-            this.DynamicTabObject.updateDataModel();
-            WebformData.MultipleTables = this.formateDS(this.DataMODEL);
-            //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
-            WebformData.ExtendedTables = this.getExtendedTables();
-            console.log("form data --");
+        //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
+        this.DynamicTabObject.updateDataModel();
+        WebformData.MultipleTables = this.formateDS(this.DataMODEL);
+        //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
+        WebformData.ExtendedTables = this.getExtendedTables();
+        console.log("form data --");
 
 
-            //console.log("old data --");
-            //console.log(JSON.stringify(WebformData.MultipleTables));
+        //console.log("old data --");
+        //console.log(JSON.stringify(WebformData.MultipleTables));
 
-            console.log("new data --");
+        console.log("new data --");
         console.log(JSON.stringify(this.formateDS(this.DataMODEL)));
         return JSON.stringify(WebformData);
     };
@@ -1509,6 +1509,16 @@ const WebFormRender = function (option) {
     };
 
     this.init = function () {
+        if (this.formDataWrapper.Status !== 200) {
+            $("body").empty().html(this.formDataWrapper.Message);
+
+            if (this.formDataWrapper.Status === 401)
+                window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
+
+            return;
+        }
+
+
         this.CheckSubmitButton();
         this.TableNames = this.getNCCTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject

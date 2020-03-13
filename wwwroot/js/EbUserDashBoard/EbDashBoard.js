@@ -660,7 +660,7 @@ var DashBoardWrapper = function (options) {
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 this.drop_id = "drop_" + t_id;
-                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
+                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}" data-gs-min-width="7" data-gs-min-height="3"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
@@ -788,7 +788,8 @@ var DashBoardWrapper = function (options) {
         let tile_id = "t" + j;
         let t_id = "tile" + j;
         let drop_id = "drop_" + t_id;
-        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}"><div class="grid-stack-item-content" id="${t_id}">
+        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}" data-gs-min-width="7" data-gs-min-height="3" >
+                    <div class="grid-stack-item-content" id="${t_id}">
                     <div style="display:flex;" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">

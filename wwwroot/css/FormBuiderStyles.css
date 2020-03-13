@@ -1830,6 +1830,32 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 3px;
 }
 
-[ctype=Image] > .ctrl-cover {
-    border: none;
+/*Ebrating css style*/
+.rating-container {
+    direction: rtl !important;
+    display: inline-block;
 }
+
+    .rating-container label {
+        display: inline-block;
+        color: #d4d4d4;
+        margin:0;
+        cursor: pointer;
+        transition: color 0.2s;
+        /*font-size: 30px;*/
+    }
+
+    .rating-container input {
+        display: none;
+    }
+        /*.rating-container input:checked ~ label {
+            color: #fc0;
+        }
+
+    .rating-container label:hover, label:hover ~ label {
+        color: #fce37b;
+    }*/
+label:hover, label:hover ~ label, input:checked ~ label {
+    color: gold;
+}
+

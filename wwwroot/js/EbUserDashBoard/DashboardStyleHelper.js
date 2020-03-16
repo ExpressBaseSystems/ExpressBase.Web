@@ -169,7 +169,7 @@ function GetUrl4Link(refid) {
     var objtype = parseInt(refid.split("-")[2]);
     let objTypeName = enumFn(objtype);
     let objid = parseInt(refid.split("-")[3]);
-    this.login = "uc";
+    this.login = ebcontext.user.wc;
     var _url = `../Eb_Object/Index?objid=${objid}&objtype=${objtype}`;
     if (this.login === "uc") {
         if (objTypeName === "TableVisualization" || objTypeName === "ChartVisualization" || objTypeName === "GoogleMap") {

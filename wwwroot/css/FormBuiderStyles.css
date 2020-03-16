@@ -578,6 +578,12 @@ eb-disable {
     background-image: url(../images/nulldp.png);
 }
 
+.fs-tbl .processing-td {
+    text-align: center;
+    color: #3424b9;
+    background: #adc1e678;
+}
+
 .fs-tbl .dropdown-toggle[data-toggle="dropdown"]:focus {
     outline: none !important;
 }

@@ -65,8 +65,8 @@
         let action_unique_id = this.$curActiveRow.find("[col='status'] .selectpicker").selectpicker('val');
         let comments = this.$curActiveRow.find("[col='remarks'] .fs-textarea").val();
 
-        for (let j = 0; j < this.stageDATA.Columns.length; j++) {
-            let column = this.stageDATA.Columns[j];
+        for (let j = 0; j < this.CurStageDATA.Columns.length; j++) {
+            let column = this.CurStageDATA.Columns[j];
             if (column.Name === "action_unique_id") {
                 column.Value = action_unique_id;
             }
@@ -74,7 +74,7 @@
                 column.Value = comments;
             }
         }
-        return this.stageDATA;
+        return this.CurStageDATA;
     };
 
     this.submitReview = function () {
@@ -196,12 +196,7 @@
         if ($row.length === 0)
             return;
 
-        this.stageDATA = getObjByval(this.DataMODEL, "RowId", 0);
-
-        this.hasPermission = getObjByval(this.stageDATA.Columns, "Name", "has_permission").Value === "F";
-        this.isFormDataEditable = getObjByval(this.stageDATA.Columns, "Name", "is_form_data_editable").Value === "F";
-
-        if (!this.stageDATA || this.hasPermission)
+        if (!this.CurStageDATA || !this.hasPermission)
             return;
 
         $row.find(".fstd-div .fs-textarea").prop('disabled', false).css('pointer-events', 'inherit');
@@ -213,7 +208,7 @@
 
     this.drawTable = function () {
         this.$tableBody.empty();
-        
+
         for (let i = 0; i < this.DataMODEL.length; i++) {
             let row = this.DataMODEL[i];
             let ebsid = getObjByval(row.Columns, "Name", "stage_unique_id").Value;
@@ -226,7 +221,7 @@
                 let column = row.Columns[j];
                 if (column.Name === "eb_created_by") {
                     let userId = column.Value.split("$$")[0];
-                    let userName = column.Value.split("$$")[1]|| "-------";
+                    let userName = column.Value.split("$$")[1] || "-------";
                     let url = `url(../images/dp/${userId}.png)`;
                     if (!userId)
                         url = `url(../images/proimg.jpg)`;
@@ -245,9 +240,15 @@
             }
             this.$tableBody.append(html);
             //let $html = $(html);
-            //this.$tableBody.find("tr[rowid='0'][col='status']").attr("colspan", "3").html("Stage in Processing");
             //this.$tableBody.append($html);
         }
+        if (!this.hasPermission) {
+            this.$tableBody.find("tr[rowid='0'] [col='review-dtls']").remove();
+            this.$tableBody.find("tr[rowid='0'] [col='remarks']").remove();
+            this.$tableBody.find("tr[rowid='0'] [col='status']").attr("colspan", "3").addClass("processing-td").html("Stage in Processing");
+            this.$submit.hide();
+        }
+
     };
 
     this.init = function () {
@@ -257,6 +258,10 @@
     };
 
     this.set = function () {
+
+        this.CurStageDATA = getObjByval(this.DataMODEL, "RowId", 0);
+        this.hasPermission = getObjByval(this.CurStageDATA.Columns, "Name", "has_permission").Value === "T";
+        this.isFormDataEditable = getObjByval(this.CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
         this.drawTable();
         this.disableAllCtrls();
         this.enableRow();

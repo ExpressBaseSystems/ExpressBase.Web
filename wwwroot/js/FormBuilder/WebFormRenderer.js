@@ -654,15 +654,20 @@ const WebFormRender = function (option) {
                     ebcontext.setup.ss.onLogOutMsg();
                 }, 3000);
                 return;
-            }
+            }            
 
             respObj.FormData = JSON.parse(respObj.FormData);
             let locName = ebcontext.locations.CurrentLocObj.LongName;
             let formName = this.FormObj.DisplayName;
-            if (this.rowId > 0)
-                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
-            else
-                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
+            if (_renderMode === 4) {
+                EbMessage("show", { Message: "My profile updated successfully", AutoHide: true, Background: '#00aa00' });
+            }
+            else {
+                if (this.rowId > 0)
+                    EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
+                else
+                    EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
+            }
             this.rowId = respObj.RowId;
             this.EditModeFormData = respObj.FormData.MultipleTables;
             this.DataMODEL = this.EditModeFormData;
@@ -1176,7 +1181,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
@@ -1230,24 +1235,32 @@ const WebFormRender = function (option) {
         let r = [];
         // ["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail"];
         // ["New", "View", "Edit", "Delete", "Cancel", "AuditTrail"]
-        for (let i = 0; i < btns.length; i++) {
-            if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
-                r.push(btns[i]);
-            else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
-                r.push(btns[i]);
-            else if (btns[i] === "webformedit" && this.formPermissions[loc].indexOf('Edit') > -1)
-                r.push(btns[i]);
-            else if (btns[i] === "webformdelete" && this.formPermissions[loc].indexOf('Delete') > -1)
-                r.push(btns[i]);
-            else if (btns[i] === "webformcancel" && this.formPermissions[loc].indexOf('Cancel') > -1)
-                r.push(btns[i]);
-            else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].indexOf('AuditTrail') > -1)
-                r.push(btns[i]);
-            else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
-                r.push(btns[i]);
-            else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
-                r.push(btns[i]);
+        if (_renderMode === 4) {
+            if (mode === 'View Mode')
+                r.push('webformedit');
         }
+        else {
+            for (let i = 0; i < btns.length; i++) {
+                if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
+                    r.push(btns[i]);
+                else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
+                    r.push(btns[i]);
+                else if (btns[i] === "webformedit" && this.formPermissions[loc].indexOf('Edit') > -1)
+                    r.push(btns[i]);
+                else if (btns[i] === "webformdelete" && this.formPermissions[loc].indexOf('Delete') > -1)
+                    r.push(btns[i]);
+                else if (btns[i] === "webformcancel" && this.formPermissions[loc].indexOf('Cancel') > -1)
+                    r.push(btns[i]);
+                else if (btns[i] === "webformaudittrail" && this.formPermissions[loc].indexOf('AuditTrail') > -1)
+                    r.push(btns[i]);
+                else if (btns[i] === "webformnew" && this.formPermissions[loc].indexOf('New') > -1)
+                    r.push(btns[i]);
+                else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
+                    r.push(btns[i]);
+                if (mode === 'View Mode')
+                    r.push('webformclone');
+            }
+        }        
         return r;
     };
 
@@ -1341,7 +1354,7 @@ const WebFormRender = function (option) {
     this.LocationInit = function () {
         if (ebcontext.locations.Listener) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
-                if (this.rowId > 0) {
+                if (this.rowId > 0 && _renderMode !== 4) {
                     EbDialog("show", {
                         Message: "This data is no longer available in " + o.LongName + ". Redirecting to new mode...",
                         Buttons: {
@@ -1505,6 +1518,9 @@ const WebFormRender = function (option) {
         if (btn && btn.length > 0) {
             $('#webformsave-selbtn').remove();
             this.$saveBtn = $('#webformsave');
+        }
+        else if (_renderMode === 4) {//my profile
+
         }
     };
 

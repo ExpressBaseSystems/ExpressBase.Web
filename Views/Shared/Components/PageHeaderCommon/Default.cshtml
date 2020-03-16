@@ -94,7 +94,7 @@
                                     @{
                                         Eb_Solution Solution = ViewBag.SolutionObject;
 
-                                        if (ViewBag.UserObject != string.Empty)
+                                        if (ViewBag.wc == "uc" && ViewBag.UserObject != string.Empty)
                                         {
                                             User u = JsonConvert.DeserializeObject<ExpressBase.Security.User>(ViewBag.UserObject);
                                             if (Solution != null)

@@ -296,7 +296,7 @@ var InitControls = function (option) {
         else {
             val = moment(ebcontext.user.Preference.ShortDate + " " + ebcontext.user.Preference.ShortTime, ebcontext.user.Preference.ShortDatePattern + " " + ebcontext.user.Preference.ShortTimePattern).format('YYYY-MM-DD HH:mm:ss');
         }
-        if (ctrl.DataVals.Value !== null &&ctrl.DataVals.Value !== "" && ctrl.DataVals.Value !== undefined)
+        if (ctrl.DataVals.Value !== null && ctrl.DataVals.Value !== "" && ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
         else
             ctrl.setValue(val);
@@ -660,7 +660,7 @@ var InitControls = function (option) {
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
-     this.SubmitButton = function (ctrl) {
+    this.SubmitButton = function (ctrl) {
         $('#webformsave').removeAttr("disabled");
     }.bind(this);
 
@@ -971,7 +971,7 @@ var InitControls = function (option) {
                                         <label for="bg_image">
                                            <i class='fa fa-picture-o'></i>
                                         </label>
-                                        <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
+                                         <input type='file' id='bg_image' accept='image/jpeg,image/png,image/jpg,svg' style=' display: none;' />
                                     </div> 
 
                                     <div id='removecircle_BP' class='bp_toolbarproperties 'title="Remove circles">
@@ -1007,9 +1007,9 @@ var InitControls = function (option) {
 
 
         var drawBP = new drawBluePrintfn(ctrl);
-       
+
         drawBP.redrawSVGelements_usr();
-       
+
         ctrl.getValueFromDOM = drawBP.getvalueSelected;
         ctrl.setValue = drawBP.setvalueSelected;
         ctrl._onChangeFunctions = [];
@@ -1026,7 +1026,50 @@ var InitControls = function (option) {
         //ctrl.bindOnChange = asgd;
 
     }
+
+    this.Rating = function (ctrl) {
+        if (ebcontext.user.wc == 'uc') {
+            $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid + '_ratingDiv label').addClass('ratingLbl');
+        }
+        if (ctrl.RemoveBorder == true) {
+            $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').css({ 'border': 'none' });
+        }
+
+       
+    }
+
+    this.TagInput = function (ctrl) {
+
+
+        //ctrl.getValueFromDOM = function (p1) {
+        //    var tagValues = $('input[name = ' + ctrl.EbSid_CtxId + ']').val();
+        //    return tagValues;
+        //}
+        //ctrl.setValue = function (p1) {
+        //    $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').tagsinput('refresh');
+        //    $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').tagsinput('add', p1);
+        //    //var arr = p1.split(',');
+        //    //$('input[name = ' + ctrl.EbSid_CtxId + ']').tagsinput('refresh');
+        //    //arr.forEach(function (item) {
+        //    //    $('input[name = ' + ctrl.EbSid_CtxId + ']').tagsinput('add', item);
+        //    //});
+        //}
+        //ctrl.bindOnChange = function (p1) {
+        //    return $('input[name = ' + ctrl.EbSid_CtxId + ']').on('change', p1);
+        //};
+
+        //ctrl.clear = function (p1) {
+        //    return $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').va("");
+        //}
+
+
+    }
+
+
+
 };
+
+
 
 function createValidator(element) {
     return function () {

@@ -93,16 +93,29 @@
                                     </li>
                                     @{
                                         Eb_Solution Solution = ViewBag.SolutionObject;
-                                        if (ViewBag.UserObject != string.Empty && Solution != null && Solution.SolutionSettings != null && Solution.SolutionSettings.UserTypeForms.Count > 0)
-                                        {
 
+                                        if (ViewBag.wc == "uc" && ViewBag.UserObject != string.Empty)
+                                        {
                                             User u = JsonConvert.DeserializeObject<ExpressBase.Security.User>(ViewBag.UserObject);
-                                            EbProfileUserType p = Solution.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == u.UserType);
-                                            if (p != null && !string.IsNullOrEmpty(p.RefId))
+                                            if (Solution != null)
                                             {
-                                                <li class="drp_item"><a href="../WebForm/GetProfile?r=@p.RefId&l=@u.Preference.DefaultLocation"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                                if (Solution.SolutionSettings != null)
+                                                {
+                                                    if (Solution.SolutionSettings.UserTypeForms != null)
+                                                    {
+                                                        if (Solution.SolutionSettings.UserTypeForms.Count > 0)
+                                                        {
+                                                            EbProfileUserType p = Solution.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == u.UserType);
+                                                            if (p != null && !string.IsNullOrEmpty(p.RefId))
+                                                            {
+                                                                <li class="drp_item"><a href="../WebForm/GetProfile?r=@p.RefId&l=@u.Preference.DefaultLocation"><i class="fa fa-user" aria-hidden="true"></i>My Profile</a></li>
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
-                                        } }
+                                        }
+                                    }
                                     <li class="drp_item"><a href="../Security/MyProfile"><i class="fa fa-cog" aria-hidden="true"></i>Account Settings</a></li>
                                     <li class="drp_item"><a onclick="return Leave();" href="@Url.Action("Logout", "Tenantuser")"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                                 </ul>

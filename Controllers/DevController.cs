@@ -763,7 +763,7 @@ namespace ExpressBase.Web.Controllers
             if (solutionObj != null && solutionObj.SolutionSettings != null)
             {
                 ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
-                if (solutionObj.SolutionSettings.UserTypeForms.Count > 0)
+                if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
                 {
                     foreach (var item in _userTypesResp.UserTypes)
                     {
@@ -783,9 +783,24 @@ namespace ExpressBase.Web.Controllers
 
         public string SaveSolutionSettings(string obj)
         {
-            //SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
-            SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
-            return resp.Message;
+            try
+            {
+                SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
+                if (solutionsettings != null && solutionsettings.UserTypeForms != null)
+                {
+                    CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
+                    {
+                        UserTypeForms = solutionsettings.UserTypeForms
+                    });
+                    SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
+                    return resp.Message;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+            }
+            return "Something went wrong..";
         }
 
         public IActionResult ApiConsole()

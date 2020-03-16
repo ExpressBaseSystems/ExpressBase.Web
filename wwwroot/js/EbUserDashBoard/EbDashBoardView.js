@@ -282,7 +282,18 @@
                         EbDataLabelFn(obj);
                         this.TileCollection[t_id].LabelColl.$values[i] = object;
                     }.bind(this));
-                   
+                    if (currentobj.LinksColl) {
+                        $.each(currentobj.LinksColl.$values, function (i, obj) {
+                            var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+                            this.makeElement(eb_type, obj);
+                            let object = this.Procs[this.currentId];
+                            let designHtml = this.MakeLinks(object);
+                            $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+                            this.labelstyleApply(this.CurrentTile);
+                            LinkStyle(obj, this.CurrentTile, this.TabNum);
+                            this.TileCollection[t_id].LinksColl.$values[i] = object;
+                        }.bind(this));
+                    }
                     if (currentobj.Transparent) {
                         this.labelstyleApply(this.CurrentTile);
                     }
@@ -369,6 +380,15 @@
         </div></div>`;
         return a;
     };
+
+    this.MakeLinks = function (obj) {
+        let a = `<div id="${obj.EbSid}" class="link-dashboard-pane"  eb-type="Links"> 
+          <i class="fa fa-external-link-square"> </i>
+          <a id="${obj.EbSid}_link"></a>
+        </div>`;
+        return a;
+    };
+
 
     this.dropedCtrlInit = function ($ctrl, type, id) {
         $ctrl.attr("tabindex", "1");
@@ -555,4 +575,9 @@
         if (this.stickBtn) { this.stickBtn.minimise(); }
     };
     this.init();
+}
+
+
+function LinkStyle(Obj, tile, TabNum) {
+    $(`#${Obj.EbSid}_link`).text(Obj.LinkName);
 }

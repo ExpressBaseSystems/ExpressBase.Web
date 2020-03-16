@@ -562,9 +562,38 @@ namespace ExpressBase.Web.Controllers
         }
         public IActionResult GetProfile(string r, int l)
         {
+            int _mode = 0;
+            string p = string.Empty;
             EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = r });
-
-            return RedirectToAction("WebFormRender", new { refId = r, _locId = l, _mode = (int)WebFormModes.View_Mode, _params = "" });
+            if (verResp != null)
+            {
+                EbWebForm form = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
+                if (form != null)
+                {
+                    GetMyProfileEntryResponse resp = this.ServiceClient.Get(new GetMyProfileEntryRequest { TableName = form.TableName });
+                    if (resp != null)
+                    {
+                        if (resp.RowId > 0)
+                        {
+                            p = JsonConvert.SerializeObject(new List<Param> { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = resp.RowId.ToString() } }).ToBase64();
+                            _mode = (int)WebFormModes.View_Mode;
+                        }
+                        else
+                        {
+                            _mode = (int)WebFormModes.New_Mode;
+                        }
+                        return RedirectToAction("WebFormRender", new
+                        {
+                            refId = r,
+                            _locId = l,
+                            _mode = _mode,
+                            _params = p,
+                            renderMode = 4
+                        });
+                    }
+                }
+            }
+            return Redirect("/StatusCode/404");
         }
     }
 }

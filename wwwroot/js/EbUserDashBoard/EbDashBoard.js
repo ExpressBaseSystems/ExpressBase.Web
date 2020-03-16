@@ -50,8 +50,19 @@ var DashBoardWrapper = function (options) {
         //this.grid.cellWidth(20);
         grid = this.grid;
         $('.grid-stack').on('gsresizestop', this.Redrawfn.bind(this));
+        $('.grid-stack').on('dragstart', this.DragStartFn.bind(this));
+        $('.grid-stack').on('dragstop', this.DragStopFn.bind(this));
         $('.grid-stack').gridstack();
     }
+    this.DragStartFn = function (event, ui) {
+        let id = event.target.getAttribute("id");
+        $(`#${id} .grid-stack-item-content .tile_dt_cont`).hide();
+    };
+
+    this.DragStopFn = function (event, ui) {
+        let id = event.target.getAttribute("id");
+        $(`#${id} .grid-stack-item-content .tile_dt_cont`).show();
+    };
 
     //$('.grid-stack').on('gsresizestop', function (event, elem) {
     //    var newHeight = $(elem).attr('data-gs-height');

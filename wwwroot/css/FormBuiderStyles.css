@@ -408,7 +408,7 @@ body {
 }
 
 [isrendermode="true"] [ctype="Review"] {
-    display: none block;
+    display: none;
 }
 
 .dgtbl[is-disabled='true'] {

@@ -1,4 +1,5 @@
 ﻿using ExpressBase.Common;
+using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -27,6 +28,7 @@ namespace ExpressBase.Web.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
+            ViewBag.SolutionObject = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
             return View();
         }
     }

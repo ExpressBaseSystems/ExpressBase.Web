@@ -755,19 +755,52 @@ namespace ExpressBase.Web.Controllers
 
         public IActionResult SolutionConsole()
         {
-            EbObjectObjListAllVerResponse res = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
+            EbObjectObjListAllVerResponse public_res = this.ServiceClient.Get(new PublicObjListAllVerRequest { EbObjectType = 0 });
+            EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
+            GetUserTypesResponse _userTypesResp = this.ServiceClient.Post(new GetUserTypesRequest());
+
             Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
             if (solutionObj != null && solutionObj.SolutionSettings != null)
+            {
                 ViewBag.signupFormRefid = solutionObj.SolutionSettings.SignupFormRefid;
-            ViewBag.objlist = res.Data;
+                if (solutionObj.SolutionSettings.UserTypeForms != null && solutionObj.SolutionSettings.UserTypeForms.Count > 0)
+                {
+                    foreach (var item in _userTypesResp.UserTypes)
+                    {
+                        var itemInB = solutionObj.SolutionSettings.UserTypeForms.FirstOrDefault(x => x.Id == item.Id);
+
+                        if (itemInB != null)
+                            item.RefId = itemInB.RefId;
+                    }
+                }
+            }
+
+            ViewBag.userTypes = _userTypesResp.UserTypes;
+            ViewBag.objlist = public_res.Data;
+            ViewBag.all_objlist = all_resp.Data;
             return View();
         }
 
         public string SaveSolutionSettings(string obj)
         {
-            //SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
-            SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
-            return resp.Message;
+            try
+            {
+                SolutionSettings solutionsettings = JsonConvert.DeserializeObject<SolutionSettings>(obj);
+                if (solutionsettings != null && solutionsettings.UserTypeForms != null)
+                {
+                    CreateMyProfileTableResponse profResp = this.ServiceClient.Post(new CreateMyProfileTableRequest
+                    {
+                        UserTypeForms = solutionsettings.UserTypeForms
+                    });
+                    SaveSolutionSettingsResponse resp = this.ServiceClient.Post(new SaveSolutionSettingsRequest { SolutionSettings = obj });
+                    return resp.Message;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+            }
+            return "Something went wrong..";
         }
 
         public IActionResult ApiConsole()

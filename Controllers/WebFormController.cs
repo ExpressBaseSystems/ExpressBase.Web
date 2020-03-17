@@ -30,7 +30,7 @@ namespace ExpressBase.Web.Controllers
         public IActionResult Index(string refId, string _params, int _mode, int _locId)
         {
             Console.WriteLine(string.Format("Webform Render - refid : {0}, prams : {1}, mode : {2}, locid : {3}", refId, _params, _mode, _locId));
-            ViewBag.renderMode = 1; 
+            ViewBag.renderMode = 1;
             ViewBag.rowId = 0;
             ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
             ViewBag.IsPartial = _mode > 10;
@@ -496,31 +496,31 @@ namespace ExpressBase.Web.Controllers
 
 
 
-		//for ebblueprint (save bg img,svg)
-		public object SaveBluePrint(string svgtxtdata,string bpmeta, int bluprntid, string savBPobj)
-		{
-			SaveBluePrintRequest Svgreq = new SaveBluePrintRequest();
-			//Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
-			var httpreq = this.HttpContext.Request.Form;
-			if (httpreq.Files.Count > 0)
-			{
+        //for ebblueprint (save bg img,svg)
+        public object SaveBluePrint(string svgtxtdata, string bpmeta, int bluprntid, string savBPobj)
+        {
+            SaveBluePrintRequest Svgreq = new SaveBluePrintRequest();
+            //Dictionary<string, string> objBP = JsonConvert.DeserializeObject<Dictionary<string, string>>(savBPobj);
+            var httpreq = this.HttpContext.Request.Form;
+            if (httpreq.Files.Count > 0)
+            {
 
-				var BgFile = httpreq.Files[0];
-				byte[] fileData = null;
-				using (var memoryStream = new MemoryStream())
-				{
-					BgFile.CopyTo(memoryStream);
-					memoryStream.Seek(0, SeekOrigin.Begin);
-					fileData = new byte[memoryStream.Length];
-					memoryStream.ReadAsync(fileData, 0, fileData.Length);
-					Svgreq.BgFile = fileData;
-					Svgreq.BgFileName = BgFile.FileName;
-				}
-			}
-			Svgreq.Txtsvg = svgtxtdata;
-			Svgreq.MetaBluePrint = bpmeta;
-			Svgreq.BluePrintID = bluprntid;
-			//Svgreq.BP_FormData = objBP;
+                var BgFile = httpreq.Files[0];
+                byte[] fileData = null;
+                using (var memoryStream = new MemoryStream())
+                {
+                    BgFile.CopyTo(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+                    fileData = new byte[memoryStream.Length];
+                    memoryStream.ReadAsync(fileData, 0, fileData.Length);
+                    Svgreq.BgFile = fileData;
+                    Svgreq.BgFileName = BgFile.FileName;
+                }
+            }
+            Svgreq.Txtsvg = svgtxtdata;
+            Svgreq.MetaBluePrint = bpmeta;
+            Svgreq.BluePrintID = bluprntid;
+            //Svgreq.BP_FormData = objBP;
 
 
             SaveBluePrintResponse BPres = this.ServiceClient.Post<SaveBluePrintResponse>(Svgreq);
@@ -559,6 +559,41 @@ namespace ExpressBase.Web.Controllers
 
             UpdateBluePrint_DevResponse UpResp = this.ServiceClient.Post<UpdateBluePrint_DevResponse>(UpReq);
             return UpResp;
+        }
+        public IActionResult GetProfile(string r, int l)
+        {
+            int _mode = 0;
+            string p = string.Empty;
+            EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = r });
+            if (verResp != null)
+            {
+                EbWebForm form = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);
+                if (form != null)
+                {
+                    GetMyProfileEntryResponse resp = this.ServiceClient.Get(new GetMyProfileEntryRequest { TableName = form.TableName });
+                    if (resp != null)
+                    {
+                        if (resp.RowId > 0)
+                        {
+                            p = JsonConvert.SerializeObject(new List<Param> { new Param { Name = "id", Type = ((int)EbDbTypes.Int32).ToString(), Value = resp.RowId.ToString() } }).ToBase64();
+                            _mode = (int)WebFormModes.View_Mode;
+                        }
+                        else
+                        {
+                            _mode = (int)WebFormModes.New_Mode;
+                        }
+                        return RedirectToAction("WebFormRender", new
+                        {
+                            refId = r,
+                            _locId = l,
+                            _mode = _mode,
+                            _params = p,
+                            renderMode = 4
+                        });
+                    }
+                }
+            }
+            return Redirect("/StatusCode/404");
         }
     }
 }

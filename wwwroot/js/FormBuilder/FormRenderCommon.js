@@ -348,6 +348,7 @@
 
         if ($notOk1stCtrl)
             $notOk1stCtrl.select();
+        required_valid_flag = required_valid_flag && this.runFormValidations();
         return required_valid_flag;
     }.bind(this);
 
@@ -369,6 +370,36 @@
     //};
 
     // check all validations in a control
+
+    this.runFormValidations = function () {
+        let ctrl = this.FO.FormObj;
+        if (!ctrl.Validators)
+            return true;
+        let formValidationflag = true;
+        ctrl.Validators.$values = sortByProp(ctrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
+        $.each(ctrl.Validators.$values, function (i, Validator) {
+            EbMessage("hide", "");// reset EbMakeValid
+            if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
+                return true;
+            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
+            this.updateFormValues();
+            let valRes = func(this.FO.formValues, this.FO.userObject);
+            if (valRes === false) {
+                if (!Validator.IsWarningOnly) {
+                    color = "#aa0000";
+                    EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
+                    formValidationflag = false;
+                    return false;// break; from loop if one validation failed
+                }
+                //this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
+                EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: 'rgb(245, 144, 58)' });
+            } else if (valRes !== true && valRes !== undefined) {
+                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
+            }
+        }.bind(this));
+        return formValidationflag;
+    };
+
     this.isValidationsOK = function (ctrl) {
         if (!ctrl.Validators)
             return true;

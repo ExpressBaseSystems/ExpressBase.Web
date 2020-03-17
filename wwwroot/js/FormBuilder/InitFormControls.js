@@ -798,6 +798,8 @@ var InitControls = function (option) {
                 initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
             $input.val(initValue);
         }
+        if (ctrl.HideInputIcon)
+            $input.siblings(".input-group-addon").hide();
 
         $input.inputmask("currency", {
             radixPoint: ".",

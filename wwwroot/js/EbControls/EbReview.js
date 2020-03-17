@@ -130,7 +130,7 @@
         this.formRenderer.hideLoader();
         let respObj = JSON.parse(_respObj);
         respObj.FormData = JSON.parse(respObj.FormData);
-        this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName]
+        this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName];
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {

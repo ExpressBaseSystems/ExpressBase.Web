@@ -403,9 +403,11 @@ body {
         background-color: #00D036;
     }
 
-
-
 [eb-form="true"][mode="view"] .addrow-btn {
+    display: none;
+}
+
+[isrendermode="true"] [ctype="Review"] {
     display: none;
 }
 

@@ -50,8 +50,19 @@ var DashBoardWrapper = function (options) {
         //this.grid.cellWidth(20);
         grid = this.grid;
         $('.grid-stack').on('gsresizestop', this.Redrawfn.bind(this));
+        $('.grid-stack').on('dragstart', this.DragStartFn.bind(this));
+        $('.grid-stack').on('dragstop', this.DragStopFn.bind(this));
         $('.grid-stack').gridstack();
     }
+    this.DragStartFn = function (event, ui) {
+        let id = event.target.getAttribute("id");
+        $(`#${id} .grid-stack-item-content .tile_dt_cont`).hide();
+    };
+
+    this.DragStopFn = function (event, ui) {
+        let id = event.target.getAttribute("id");
+        $(`#${id} .grid-stack-item-content .tile_dt_cont`).show();
+    };
 
     //$('.grid-stack').on('gsresizestop', function (event, elem) {
     //    var newHeight = $(elem).attr('data-gs-height');
@@ -264,6 +275,7 @@ var DashBoardWrapper = function (options) {
     };
 
     this.columnsdrop = function (el, target, source, sibling) {
+        this.eb_type = $(this.currentGaugeSrc).attr("eb-type");
         this.drake.containers = this.drake.containers.filter(function (value) {
             return value != document.getElementById('grid-cont');
         });
@@ -280,9 +292,20 @@ var DashBoardWrapper = function (options) {
                         data: { refid: this.VisRefid },
                         success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                     });
+            }      
+            //add links
+            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls" && this.eb_type  === "Links") {
+                let drop_id = this.AddNewTile(6, 3);
+                let tileId = drop_id.split("_")[1];
+                this.makeElement(el);
+                let obj = this.Procs[this.currentId];
+                $(`#${drop_id}`).append(this.MakeLinks(obj));
+                this.labelstyleApply(tileId);
+                LinkStyle(obj, this.CurrentTile, this.TabNum);
+                this.TileCollection[tileId].LinksColl.$values.push(this.Procs[this.currentId]);
             }
             //Add new Gauge
-            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls") {
+            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls" && this.eb_type  !== "Links") {
                 let eb_type = $(this.currentGaugeSrc).attr("eb-type");
                 let drop_id = this.AddNewTile(10, 5);
                 this.makeElement(el);
@@ -397,8 +420,7 @@ var DashBoardWrapper = function (options) {
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 this.GaugeDrop(component, column, controlname, "speedometer");
             }
-
-            $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
+             $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
 
     };
@@ -469,6 +491,13 @@ var DashBoardWrapper = function (options) {
         <div class="lbl db-dynamic-label" id="${obj.EbSid}_dynamic"> ${obj.DynamicLabel}</div>
         <div class="label-footer" id="${obj.EbSid}_footer"><div class="footer-inner"><i class="fa fa-address-book" aria-hidden="true"></i><label></label></div></div>
         </div></div>`;
+        return a;
+    };
+    this.MakeLinks = function (obj) {
+        let a = `<div id="${obj.EbSid}" class="link-dashboard-pane"  eb-type="Links"> 
+          <i class="fa fa-external-link-square"> </i>
+          <a id="${obj.EbSid}_link"></a>
+        </div>`;
         return a;
     };
 
@@ -751,7 +780,18 @@ var DashBoardWrapper = function (options) {
                         //this.drake.containers.push(document.getElementById(this.drop_id));
                         this.propGrid.setObject(object, AllMetas["Eb" + eb_type]);
                     }.bind(this));
-
+                    if (currentobj.LinksColl) {
+                        $.each(currentobj.LinksColl.$values, function (i, obj) {
+                            var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
+                            this.makeElement(eb_type, obj);
+                            let object = this.Procs[this.currentId];
+                            let designHtml = this.MakeLinks(object);
+                            $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+                            this.labelstyleApply(this.CurrentTile);
+                            LinkStyle(obj, this.CurrentTile, this.TabNum);
+                            this.TileCollection[t_id].LinksColl.$values[i] = object;
+                        }.bind(this));
+                    }
                     if (currentobj.Transparent) {
                         $(`[data-id="${this.CurrentTile}"]`).parent().css("background", "transparent");
                         $(`[data-id="${this.CurrentTile}"]`).parent().css("border", "0px solid");
@@ -815,8 +855,15 @@ var DashBoardWrapper = function (options) {
     //focus Ebobjects
     this.TileSelectorJs = function (e) {
         let procId;
-        this.JqObj = $(event.target).closest(".guage");
+      
         if ($(event.target).closest(".guage").attr("id")) {
+            this.JqObj = $(event.target).closest(".guage");
+            procId = this.JqObj.attr("id");
+            metaId = this.JqObj.attr("eb-type");
+            if (metaId && procId) { this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]); }
+        }
+        if ($(event.target).closest(".link-dashboard-pane").attr("id")) {
+            this.JqObj = $(event.target).closest(".link-dashboard-pane");
             procId = this.JqObj.attr("id");
             metaId = this.JqObj.attr("eb-type");
             if (metaId && procId) { this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]); }
@@ -881,6 +928,9 @@ var DashBoardWrapper = function (options) {
         }
         if (obj.$type.split(".")[2].split(",")[0] === "EbDashBoard") {
             Eb_Dashboard_Bg(this.EbObject);
+        }
+        if (obj.$type.split(".")[2].split(",")[0] === "EbLinks") {
+            LinkStyle(obj, this.CurrentTile, this.TabNum);
         }
         if (obj.$type.indexOf("ProgressGauge") > 0) {
             let xx = ProgressGaugeWrapper(this.Procs[obj.EbSid], { isEdit: true });
@@ -1267,3 +1317,4 @@ var DashBoardWrapper = function (options) {
         $("#dashbord-view").css("height", 72.2 + "vh");
     })
 }
+

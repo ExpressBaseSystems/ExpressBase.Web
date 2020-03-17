@@ -72,7 +72,7 @@ function EbDataLabelFn(Label) {
     }
 
     if (Label.HideFooter) { $(`#${Label.EbSid}_footer`).css("display", "none"); }
-    else { $(`#${Label.EbSid}_footer`).css("display", "block");}
+    else { $(`#${Label.EbSid}_footer`).css("display", "block"); }
 
     let Icondirection = GradientDirection(Label.IconDirection);
     let bg = "linear-gradient(" + Icondirection + "," + Label.IconGradientColor1 + "," + Label.IconGradientColor2 + ")";
@@ -156,3 +156,60 @@ $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
 });
 
+
+function LinkStyle(Obj, tile, TabNum) {
+    this.link = GetUrl4Link(Obj.Object_Selector);
+    $(`#${Obj.EbSid}_link`).text(Obj.LinkName);
+    $(`#${Obj.EbSid}_link`).attr("href", this.link);
+    $(`#${Obj.EbSid}_link`).attr("target", Obj.LinkName);
+}
+
+
+function GetUrl4Link(refid) {
+    var objtype = parseInt(refid.split("-")[2]);
+    let objTypeName = enumFn(objtype);
+    let objid = parseInt(refid.split("-")[3]);
+    this.login = ebcontext.user.wc;
+    var _url = `../Eb_Object/Index?objid=${objid}&objtype=${objtype}`;
+    if (this.login === "uc") {
+        if (objTypeName === "TableVisualization" || objTypeName === "ChartVisualization" || objTypeName === "GoogleMap") {
+            _url = "../DV/dv?refid=" + refid;
+        }
+        else if (objTypeName === "Report") {
+            _url = "../ReportRender/Index?refid=" + refid;
+        }
+        else if (objTypeName === "WebForm") {
+            _url = "../WebForm/Index?refid=" + refid;
+        }
+        else if (objTypeName === "DashBoard") {
+            _url = "../DashBoard/DashBoardView?refid=" + refid;
+        }
+        else if (objTypeName === "CalendarView") {
+            _url = "../Calendar/CalendarView?refid=" + refid;
+        }
+    }
+    return _url;
+};
+
+function enumFn(id) {
+    this.obj = {};
+    this.obj[1] = "DisplayBlock";
+    this.obj[2] = "DataReader";
+    this.obj[4] = "DataWriter";
+    this.obj[5] = "SqlFunctions";
+    this.obj[12] = "FilterDialog";
+    this.obj[0] = "WebForm";
+    this.obj[13] = "MobilePage";
+    this.obj[14] = "UserControl";
+    this.obj[3] = "Report";
+    this.obj[11] = "DVBuilder";
+    this.obj[15] = "EmailBuilder";
+    this.obj[18] = "BotForm";
+    this.obj[19] = "SmsBuilder";
+    this.obj[20] = "ApiBuilder"
+    this.obj[22] = "DashBoard"
+    this.obj[24] = "Calendar";
+    this.obj[26] = "SqlJob";
+    this.obj[100] = "All";
+    return this.obj[id];
+}

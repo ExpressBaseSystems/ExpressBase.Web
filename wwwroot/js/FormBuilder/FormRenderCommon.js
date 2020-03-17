@@ -197,7 +197,7 @@
                 return ctrl;
             }
             catch (e) {
-                console.warn("could not find:"+ path);
+                console.warn("could not find:" + path);
                 return "not found";
             }
         }.bind(this);
@@ -380,13 +380,16 @@
                 return true;
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
             this.updateFormValues();
-            if (!func(this.FO.formValues, this.FO.userObject)) {
+            let valRes = func(this.FO.formValues, this.FO.userObject);
+            if (valRes === false) {
                 //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
                 this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
                 if (!Validator.IsWarningOnly) {
                     formValidationflag = false;
                     return false;// break; from loop if one validation failed
                 }
+            } else if (valRes !== true && valRes !== undefined) {
+                console.warn(`validator '${Validator.Name}' of '${ctrl.Name}' returns ${valRes}`);
             }
         }.bind(this));
         return formValidationflag;

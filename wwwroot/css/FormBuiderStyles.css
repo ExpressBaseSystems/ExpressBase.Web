@@ -403,10 +403,12 @@ body {
         background-color: #00D036;
     }
 
-
-
 [eb-form="true"][mode="view"] .addrow-btn {
     display: none;
+}
+
+[isrendermode="true"] [ctype="Review"] {
+    display: none block;
 }
 
 .dgtbl[is-disabled='true'] {
@@ -576,6 +578,12 @@ eb-disable {
     border: solid 1px #eee;
     border-radius: 50%;
     background-image: url(../images/nulldp.png);
+}
+
+.fs-tbl .processing-td {
+    text-align: center;
+    color: #3424b9;
+    background: #adc1e678;
 }
 
 .fs-tbl .dropdown-toggle[data-toggle="dropdown"]:focus {

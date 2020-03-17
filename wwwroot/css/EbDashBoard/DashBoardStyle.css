@@ -973,6 +973,7 @@ body .stickBtn {
     flex-direction: row;
     padding: 3px 0px;
 }
+
 .tile_dt_cont_view {
     display: flex;
     flex-direction: row;
@@ -1304,7 +1305,7 @@ body {
 }
 
 .footer-inner {
-    display:flex;
+    display: flex;
 }
 
     .footer-inner i {
@@ -1318,6 +1319,31 @@ body {
         font-size: 18px;
         font-weight: 200;
     }
+
+/*Dashboard Link STyle*/
+.link-dashboard-pane {
+    height: 100%;
+    border: solid 1px #b5b5b5;
+    width: 100%;
+    font-size: 30px;
+    padding: 20px 0px 0px 20px;
+    border-radius: 4px;
+    background-image: linear-gradient(to right, rgb(61, 61, 90), rgb(59, 114, 115));
+    color: white;
+    display:flex
+}
+
+    .link-dashboard-pane a {
+        padding: 0px 10px;
+        color: white;
+        text-decoration: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .link-dashboard-pane i {
+        padding: 7px 1px;
+    } 
 
 /*canvas Style*/
 canvas:focus {

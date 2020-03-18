@@ -1049,7 +1049,7 @@ var InitControls = function (option) {
 
     this.RichText = function (ctrl) {
         $(`#${ctrl.EbSid}_RichText`).summernote({
-            height:ctrl.Height,
+            height: ctrl.TextBoxHeight,
             toolbar: [
                 ['font', ['bold', 'underline', 'italic', 'strikethrough', 'subscript', 'superscript', 'clear']],
                 ['fontname', ['fontname']],

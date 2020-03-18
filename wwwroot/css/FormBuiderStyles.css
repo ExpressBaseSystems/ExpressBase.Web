@@ -1866,12 +1866,16 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 
+/*EbTagInput*/
+[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput {
+    width: 100%;
+    border: none;
+}
 /*EbRitchText*/
-
-.note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
+[ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
     width: auto !important;
 }
 
-    .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group > .btn-group {
+    [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group > .btn-group {
         width: auto !important;
     }

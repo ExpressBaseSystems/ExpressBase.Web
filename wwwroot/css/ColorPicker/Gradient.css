@@ -1,0 +1,103 @@
+﻿.gradient-picker-outer {
+    padding: 10px 20px;
+}
+
+    .gradient-picker-outer .gd-display {
+        height: 100px;
+        border: solid 1px #808080;
+    }
+
+    .gradient-picker-outer .colors-gradient {
+        display: flex;
+        flex-flow: row;
+        height: 100%;
+        width: 100%;
+    }
+
+        .gradient-picker-outer .colors-gradient .gd-clr-inner {
+            height: 100%;
+            width: 100%;
+            padding: 10px 0px;
+        }
+
+            .gradient-picker-outer .colors-gradient .gd-clr-inner:first-child {
+                height: 100%;
+                width: 100%;
+                padding-right: 25px;
+                border: solid 1px #d8d8d8;
+                padding-left: 25px;
+                margin-top: 10px;
+                margin-right: 20px;
+                padding-bottom: 20px;
+                margin-bottom: 10px;
+            }
+
+            .gradient-picker-outer .colors-gradient .gd-clr-inner:last-child {
+                height: 100%;
+                width: 100%;
+                padding-left: 25px;
+                border: solid 1px #d8d8d8;
+                padding-right: 25px;
+                margin-left: 20px;
+                margin-top: 10px;
+                padding-bottom: 20px;
+                margin-bottom: 10px;
+            }
+
+        .gradient-picker-outer .colors-gradient .display-clr-txt {
+            width: 100%;
+            padding: 2px;
+            margin-left: 25px;
+            height: 25px;
+            border: solid 1px #d8d8d8;
+        }
+
+        .gradient-picker-outer .colors-gradient .clr-outer {
+            display: flex;
+            padding: 10px 0px;
+        }
+
+        .gradient-picker-outer .colors-gradient .slider {
+            height: 30px;
+        }
+
+        .gradient-picker-outer .colors-gradient .ui-slider-handle {
+            top: -0.8em !important;
+            width: 5vh !important;
+            height: 6.5vh !important;
+            text-align: center;
+            font-size: 14px;
+            padding: 15px 0px;
+            font-weight: 100 !important;
+        }
+
+    .gradient-picker-outer .gd-degree .slider {
+        height: 20px;
+    }
+
+    .gradient-picker-outer .gd-degree .ui-slider-handle {
+        top: -0.7em !important;
+        width: 5vh !important;
+        height: 5vh !important;
+        text-align: center;
+        font-size: 14px;
+        padding: 4px;
+        font-weight: 100 !important;
+    }
+
+    .gradient-picker-outer .gd_val_dis {
+        padding: 5px 0px;
+        display: flex;
+    }
+
+        .gradient-picker-outer .gd_val_dis input {
+            padding: 2px;
+            width: 100%;
+            border: solid 1px #d8d8d8;
+            height: 30px;
+        }
+
+        .gradient-picker-outer .gd_val_dis div {
+            padding: 2px;
+            width: 90px;
+        }

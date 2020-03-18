@@ -158,10 +158,19 @@ $(document).ready(function () {
 
 
 function LinkStyle(Obj, tile, TabNum) {
-    this.link = GetUrl4Link(Obj.Object_Selector);
+    $(`[eb-id=${tile}]`).addClass("eb-links")
+    this.link = Obj.Object_Selector ? GetUrl4Link(Obj.Object_Selector) : "#";
     $(`#${Obj.EbSid}_link`).text(Obj.LinkName);
-    $(`#${Obj.EbSid}_link`).attr("href", this.link);
-    $(`#${Obj.EbSid}_link`).attr("target", Obj.LinkName);
+    if (Obj.Object_Selector) {
+        $(`#${Obj.EbSid}_link`).attr("href", this.link);
+        $(`#${Obj.EbSid}_link`).attr("target", Obj.LinkName);
+    }
+    if (Obj.HoverText) {
+        $(`#${Obj.EbSid}_link`).attr("data-toggle", `Link-hover_${Obj.EbSid}`);
+        $(`#${Obj.EbSid}_link`).attr("title", Obj.HoverText);
+        $(`[data-toggle="Link-hover_${Obj.EbSid}"]`).tooltip();
+    }
+    $(`#${Obj.EbSid} i`).removeAttr("class").addClass(`fa ${Obj.Icon}`);
 }
 
 

@@ -383,8 +383,8 @@
 
     this.MakeLinks = function (obj) {
         let a = `<div id="${obj.EbSid}" class="link-dashboard-pane"  eb-type="Links"> 
-          <i class="fa fa-external-link-square"> </i>
-          <a id="${obj.EbSid}_link"></a>
+            <div id="${obj.EbSid}_icon" class="link-icon" >  <i class="fa fa-external-link-square"> </i> </div>
+            <div id="${obj.EbSid}_text" class="link-text">  <a id="${obj.EbSid}_link" href="#" target="_blanc"></a> </div>
         </div>`;
         return a;
     };

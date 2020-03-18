@@ -1264,6 +1264,7 @@
         this.Run = false;
         if (this.Source === "EbDataTable")
             this.GenerateButtons();
+
         else if (this.Source === "Calendar") {
             this.CreateContextmenu4ObjectSelector();
         }
@@ -2617,6 +2618,10 @@
             content: function (e, i) {
                 return atob($(this).attr("data-contents"));
             },
+        });
+
+        $(".rating").rateYo({
+            readOnly: true
         });
 
         $("[data-coltyp=date]").datepicker({

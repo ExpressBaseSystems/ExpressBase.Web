@@ -1048,7 +1048,22 @@ var InitControls = function (option) {
     }
 
     this.RichText = function (ctrl) {
-        $(`#${ctrl.EbSid}_RichText`).summernote({  });
+        $(`#${ctrl.EbSid}_RichText`).summernote({
+            height:ctrl.Height,
+            toolbar: [
+                ['font', ['bold', 'underline', 'italic', 'strikethrough', 'subscript', 'superscript', 'clear']],
+                ['fontname', ['fontname']],
+                ['fontsize', ['fontsize', 'height']],
+                ['color', ['color']],
+                ['style', ['style']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link']],
+                ['view', ['undo', 'redo', 'help']],
+            ],
+            disableResizeEditor: true,
+            disableDragAndDrop: true
+        });
  
 
         ctrl.clear = function (p1) {

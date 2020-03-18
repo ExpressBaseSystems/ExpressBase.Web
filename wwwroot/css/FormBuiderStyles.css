@@ -1864,3 +1864,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [ctype="Image"] > .ctrl-cover {
     border: none;
 }
+
+
+/*EbRitchText*/
+
+.note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
+    width: auto !important;
+}
+
+    .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group > .btn-group {
+        width: auto !important;
+    }

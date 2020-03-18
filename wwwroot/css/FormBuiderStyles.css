@@ -403,9 +403,11 @@ body {
         background-color: #00D036;
     }
 
-
-
 [eb-form="true"][mode="view"] .addrow-btn {
+    display: none;
+}
+
+[isrendermode="true"] [ctype="Review"] {
     display: none;
 }
 
@@ -1862,3 +1864,18 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [ctype="Image"] > .ctrl-cover {
     border: none;
 }
+
+
+/*EbTagInput*/
+[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput {
+    width: 100%;
+    border: none;
+}
+/*EbRitchText*/
+[ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
+    width: auto !important;
+}
+
+    [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group > .btn-group {
+        width: auto !important;
+    }

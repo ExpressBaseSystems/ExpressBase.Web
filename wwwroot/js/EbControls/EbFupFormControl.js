@@ -144,8 +144,13 @@
 
     pullFile() {
         this.FileList = this.Options.Files;
-        if ('Files' in this.Options && this.Options.Files.length > 0)
+        if ('Files' in this.Options && this.Options.Files.length > 0) {
+
             this.renderFiles();
+        }
+        else {
+            this.hideEmptyCategoryFn();
+        }
     }
 
     renderFiles() {

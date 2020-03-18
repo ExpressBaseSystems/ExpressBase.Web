@@ -714,3 +714,29 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     -webkit-line-clamp: 1; /* number of lines to show */
     -webkit-box-orient: vertical;
 }
+.tdheight .dvtaginput {
+    border: 0 !important;
+    box-shadow: none !important;
+    display: inline-block;
+    padding: 4px 6px;
+    color: #555;
+    vertical-align: middle;
+    border-radius: 4px;
+    max-width: 100%;
+    line-height: 22px;
+    cursor: text;
+}
+
+.tdheight .dvtagspan {
+    background-color: #5bc0de;
+    display: inline;
+    padding: .2em .6em .3em;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+}

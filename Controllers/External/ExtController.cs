@@ -1200,7 +1200,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     foreach (string s in usr.Permissions)
                     {
-                        if (s.Contains("000-00-0" + id.Split("-")[3]))
+                        if (s.Contains("000-00-" + id.Split("-")[3].PadLeft(5, '0')))
                         {
                             return RedirectToAction("WebFormRender", "WebForm", new { refId = id, _locId = usr.Preference.DefaultLocation, renderMode = 3 });
                         }

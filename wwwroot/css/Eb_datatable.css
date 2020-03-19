@@ -740,3 +740,15 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     vertical-align: baseline;
     border-radius: .25em;
 }
+
+.popover-content .headspan {
+    font-weight: 500;
+}
+
+.popover-content .bodyspan {
+    margin-left: 10px;
+}
+
+.popover-content td{
+   padding:5px;
+}

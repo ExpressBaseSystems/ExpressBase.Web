@@ -1528,7 +1528,7 @@ const WebFormRender = function (option) {
         if (this.formDataWrapper.Status !== 200) {
             $("body").empty().html(this.formDataWrapper.Message);
 
-            if (this.formDataWrapper.Status === 401)
+            //if (this.formDataWrapper.Status === 401)
                 window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
 
             return;

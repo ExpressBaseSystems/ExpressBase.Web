@@ -557,8 +557,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-        border: 2px solid white;
+        /*box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        border: 2px solid white;*/
     }
 
         .appcontainer_inner .appcontainer-icon-container .appcontainer-icon {

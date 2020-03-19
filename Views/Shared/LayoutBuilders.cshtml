@@ -68,7 +68,11 @@
         <link href="~/css/EbControls/EbDialogBox.css" asp-append-version=@bApnd rel="stylesheet" />
         @*amal*@
         <link href="~/css/EbControls/EbFupFormControl.css" asp-append-version=@bApnd rel="stylesheet" />
+
+        @*nithin*@
         <link href="~/css/ColorPicker/ShadowPicker.css" asp-append-version=@bApnd rel="stylesheet" />
+        <link href="~/css/ColorPicker/Gradient.css" asp-append-version=@bApnd rel="stylesheet" />
+        @*nithin*@
         @*amal*@
         <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd />
         @*amal*@
@@ -89,12 +93,16 @@
         <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
         <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
         <script type="text/javascript" src="~/js/jquery.fontselect.min.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/ColorPicker/ShadowPicker.js" asp-append-version=@bApnd></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
 
         @*roby*@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+
+        @*nithin*@
+        <script type="text/javascript" src="~/js/ColorPicker/ShadowPicker.js" asp-append-version=@bApnd></script>
+        <script type="text/javascript" src="~/js/ColorPicker/GradientColorPicker.js" asp-append-version=@bApnd></script>
+        @*nithin*@
 
         @* BOOTSTRAP JS *@
         <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
@@ -251,56 +259,56 @@
         };
         </script>
     </head>
-<body>
-    <div class="html-root">
-        @{
-            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-            {
-                <div id="eb-common-menu">
-                    @{ Html.RenderPartial("EbQuickMenu");}
-                </div>
-            }
-            if (ViewBag.wc == "uc")
-            {
-                <div id="eb-locswitch_wraper">
-                    <div class="loc_switchModal_fade"></div>
-                    <div class="loc_switchModal" id="loc_switchModal">
-                        <div class="loc_switchModal_outer">
-                            <div class="loc_switchModal_box">
-                                <div class="locs_head">
-                                    <h4>Switch Location</h4>
-                                    <div class="loc_searchInput w-100">
-                                        <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+    <body>
+        <div class="html-root">
+            @{
+                if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+                {
+                    <div id="eb-common-menu">
+                        @{ Html.RenderPartial("EbQuickMenu");}
+                    </div>
+                }
+                if (ViewBag.wc == "uc")
+                {
+                    <div id="eb-locswitch_wraper">
+                        <div class="loc_switchModal_fade"></div>
+                        <div class="loc_switchModal" id="loc_switchModal">
+                            <div class="loc_switchModal_outer">
+                                <div class="loc_switchModal_box">
+                                    <div class="locs_head">
+                                        <h4>Switch Location</h4>
+                                        <div class="loc_searchInput w-100">
+                                            <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+                                        </div>
                                     </div>
+                                    <div class="locs_bdy"></div>
+                                    <div class="locs_foot">
+                                        <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
+                                    </div>
+                                    <div class="no_loc_config">No Locations.</div>
                                 </div>
-                                <div class="locs_bdy"></div>
-                                <div class="locs_foot">
-                                    <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
-                                </div>
-                                <div class="no_loc_config">No Locations.</div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
-        <div id="layout_div" class="container-fluid html-root-layout">
-            @RenderBody()
+            <div id="layout_div" class="container-fluid html-root-layout">
+                @RenderBody()
+            </div>
         </div>
-    </div>
-    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
-    {
-        <script>
+        @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+        {
+            <script>
             window.ebcontext.menu = new EbMenu({
                 Console: '@ViewBag.wc',
                 Sid: '@ViewBag.cid',
                 Uid: '@ViewBag.UId'
             });
-        </script>
-    }
-    @if (ViewBag.wc == "uc")
-    {
-        <script>
+            </script>
+        }
+        @if (ViewBag.wc == "uc")
+        {
+            <script>
             let loc__ = new LocSwitch({
                 Location: '@Html.Raw(ViewBag.Locations)',
                 Tid: '@ViewBag.cid',
@@ -311,15 +319,15 @@
             //loc__.Listener.ChangeLocation = function (o) {
             //    console.error(o);
             //}
+            </script>
+        }
+        <script>
+            $('.Eb_Image').Lazy();
         </script>
-    }
-    <script>
-        $('.Eb_Image').Lazy();
-    </script>
-    @if (IsSectionDefined("JsCode"))
-    {
-        @RenderSection("JsCode")
-    }
-    @Html.RenderJsCode()
-</body>
+        @if (IsSectionDefined("JsCode"))
+        {
+            @RenderSection("JsCode")
+        }
+        @Html.RenderJsCode()
+    </body>
 </html>

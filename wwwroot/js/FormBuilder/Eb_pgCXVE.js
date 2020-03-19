@@ -54,6 +54,11 @@
             PropsObj[_CurProp] = shadowVal;
             $(`#${this.PGobj.wraperId}${_CurProp}`).val(shadowVal);
         }
+        else if (this.editor === 40) {
+            let GcpVal = $("#gradient_editor_val").val();
+            PropsObj[_CurProp] = GcpVal;
+            $(`#${this.PGobj.wraperId}${_CurProp}`).val(GcpVal);
+        }
         else if (this.editor === 21)
             PropsObj[_CurProp] = this.MLEObj.get();
 
@@ -178,6 +183,8 @@
             this.initIconSelector();
         else if (this.editor === 38)
             this.initShadowEditor();
+        else if (this.editor === 40)
+            this.initGradientColorPicker();
         else if (this.editor > 63) {
             this.initScrE(e);
         }
@@ -852,6 +859,18 @@
         let ShadowPickerbody = `<div id="shadow_editor"> </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(ShadowPickerbody);
         ShadowPickerJs({ Id: "shadow_editor", Value: value});           
+    };
+
+      this.initGradientColorPicker = function () {
+        this.curEditorLabel = "Gradient Color Picker";
+        //if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
+        //    this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
+
+        let value = this.PGobj.PropsObj[this.PGobj.CurProp];
+
+        let gcpBody = `<div id="gradient_editor"> </div>`;
+          $(this.pgCXE_Cont_Slctr + " .modal-body").html(gcpBody);
+          GradientColorPicker({ Id: "gradient_editor", Value: value});           
     };
 
     this.initOSCE = function () {

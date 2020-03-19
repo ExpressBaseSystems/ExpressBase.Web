@@ -706,7 +706,12 @@ namespace ExpressBase.Web.Controllers
             {
                 p = this.GetReq_respJson(EbSerializers.Json_Serialize((o as EbApi).Resources));
             }
-            return new ApiComponent { Name = o.Name, Version = o.VersionNumber, Parameters = (p == null) ? "[]" : p };
+            else if (o is EbFormResource)
+            {
+                // set p as string List<Param>
+            }
+
+            return new ApiComponent { Name = o.Name, Version = o.VersionNumber, Parameters = p ?? "[]" };
         }
 
         [HttpGet]

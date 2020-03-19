@@ -170,6 +170,9 @@ function LinkStyle(Obj, tile, TabNum) {
         $(`#${Obj.EbSid}_link`).attr("title", Obj.HoverText);
         $(`[data-toggle="Link-hover_${Obj.EbSid}"]`).tooltip();
     }
+    if (Obj.BackgroundColor) {
+        $(`#${Obj.EbSid}`).css("background-image", Obj.BackgroundColor);
+    }
     $(`#${Obj.EbSid} i`).removeAttr("class").addClass(`fa ${Obj.Icon}`);
 }
 

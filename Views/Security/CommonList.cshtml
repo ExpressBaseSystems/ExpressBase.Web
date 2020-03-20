@@ -18,51 +18,51 @@
 
 <div class="row s-dash-container h-100">
     @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group eb-dashbord-sidebar">
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Security/CommonList?type=Users">
-                        <span class="material-icons t__sidebar_icon">person</span>
-                        <span class="t__sidebar_text">Users</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Security/CommonList?type=UserGroups">
-                        <span class="material-icons t__sidebar_icon">group</span>
-                        <span class="t__sidebar_text">UserGroups</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Security/CommonList?type=Roles">
-                        <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
-                        <span class="t__sidebar_text">Roles</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a" href="/Wiki">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>*@
+            <div class="t-container">
+                <ul class="list-group eb-dashbord-sidebar">
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Security/CommonList?type=Users">
+                            <span class="material-icons t__sidebar_icon">person</span>
+                            <span class="t__sidebar_text">Users</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Security/CommonList?type=UserGroups">
+                            <span class="material-icons t__sidebar_icon">group</span>
+                            <span class="t__sidebar_text">UserGroups</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Security/CommonList?type=Roles">
+                            <span class="material-icons t__sidebar_icon">supervised_user_circle</span>
+                            <span class="t__sidebar_text">Roles</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a" href="/Wiki">
+                            <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
+                            <span class="t__sidebar_text">Wiki</span>
+                        </a>
+                    </li>
+                    <li class="list-group-item outer_li text-center">
+                        <a class="t_a">
+                            <span class="material-icons t__sidebar_icon">contact_support</span>
+                            <span class="t__sidebar_text">Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>*@
     <div class="s-dash-workplace tenant_workpane h-100">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc">
             <div class="col-md-7 col-lg-7 col-sm-7 col-xs-12 pd-0">
-                @{ 
+                @{
                     string name = string.Empty;
-                    if(ViewBag.ListType== "users")
+                    if (ViewBag.ListType == "users")
                     {
                         name = "Users";
                     }
-                    else if(ViewBag.ListType == "anonymoususers")
+                    else if (ViewBag.ListType == "anonymoususers")
                     {
                         name = "Anonymous Users";
                     }
@@ -70,8 +70,13 @@
                     {
                         name = "User Groups";
                     }
-                    else if(ViewBag.ListType == "roles") {
+                    else if (ViewBag.ListType == "roles")
+                    {
                         name = "Roles";
+                    }
+                    else if (ViewBag.ListType == "usertypes")
+                    {
+                        name = "User Types";
                     }
                 }
                 <h4 class="mr-t-0 mr-b-0">@name<span class="apps_count"></span></h4>
@@ -182,6 +187,34 @@
     </div>
 </div>
 
+
+<div id="ManageUserTypesModal" class="modal fade" role="dialog" style="margin-top:110px">
+    <div class="modal-dialog" style="width:500px">
+        <div class="modal-content">
+            <div class="modal-header" style="">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div>
+                    <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Manage UserTypes</h4> </div>
+                </div>
+            </div>
+            <div class="modal-body" style="height:150px">
+                <input type="hidden" id="_itemid" class="form-control" title="Name" />
+                <div id="loader1" style=" margin-left:46%;"> <i class="fa fa-spinner fa-pulse fa-4x" aria-hidden="true" ></i></div>
+                <div class="usertype_body" id="usertype_body" style="display:none">
+                    <div class="form-group" style="">
+                        <label style="font-family: open sans; font-weight: 300;">Name</label>
+                        <input type="text" id="type-name" class="form-control" />
+                        <div class="modal-footer" style="">
+                            <button id="update-type" type="button" class="btn btn-default" style="">Update</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
 <script>
         $(document).ready(function () {
             var mnuBarObj = new EbHeader();
@@ -198,7 +231,7 @@
             else if ("@ViewBag.ListType" === "anonymoususers") {
                 mnuBarObj.setName("Anonymous Users");
                 document.title = "Anonymous Users";
-                var _metadata = ["8", "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic" ];
+                var _metadata = ["8", "Id", "Full_Name", "Email_Id", "Phone_No", "First_Visit", "Last_Visit", "Total_Visits", "App_Name", "Social_Id", "_anonymousUser", "_fbProfPic"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
             }
             else if ("@ViewBag.ListType" === "usergroups") {
@@ -215,6 +248,12 @@
                 var _metadata = ["7", "Id", "Name", "Description", "Application_Name", "SubRole_Count", "User_Count", "Permission_Count", "_roles"];
                 var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
                 $($(".eb-dashbord-sidebar").children()[2]).hide();
+            }
+            else if ("@ViewBag.ListType" === "usertypes") {
+                mnuBarObj.setName("User Types");
+                document.title = "User Types";
+                var _metadata = ["2", "Id", "Name","_userTypes"];
+                var cmnList = new CommonListJs(@Html.Raw(ViewBag.dict), _metadata, mnuBarObj);
             }
     });
 </script>

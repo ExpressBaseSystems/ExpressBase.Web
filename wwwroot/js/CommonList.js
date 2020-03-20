@@ -5,6 +5,7 @@
 
     //MODAL FIELDS-------------------
     this.AnonymUserModal = $("#ManageAnonymUserModal");
+    this.UserTypesModal = $("#ManageUserTypesModal");
     this.itemid = $("#itemid");
     this.loader = $("#loader");
     this.modalBodyDiv = $("#modalBodyDiv");
@@ -26,13 +27,17 @@
     this.table = null;
 
     this.btnUpdate = $("#btnupdate");
-
+    this.UpdateUserTypeBtn = $('#update-type');
     this.init = function () {
         this.setTable();
 
         this.AnonymUserModal.on('shown.bs.modal', this.initModal.bind(this));
         this.AnonymUserModal.on('hidden.bs.modal', this.finalizeModal.bind(this));
         this.btnUpdate.on('click', this.OnclickBtnUpdate.bind(this));
+        this.UpdateUserTypeBtn.on('click', this.OnclickUpdateUserTypeBtn.bind(this));
+
+        this.UserTypesModal.on('shown.bs.modal', this.initUserTypeModal.bind(this));
+        this.UserTypesModal.on('hidden.bs.modal', this.finalizeUserTypeModal.bind(this));
     };
 
     this.setTable = function () {
@@ -74,6 +79,10 @@
             for (i = 0; i < this.itemList.length; i++)
                 tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]], 3: this.itemList[i][this.metadata[3]], 4: this.itemList[i][this.metadata[4]], 5: this.itemList[i][this.metadata[5]], 6: this.itemList[i][this.metadata[6]], 7: this.itemList[i][this.metadata[7]], 8: this.itemList[i][this.metadata[8]], 9: this.itemList[i][this.metadata[9]] });
         }
+        else if (this.metadata.indexOf("_userTypes") !== -1) {
+            for (i = 0; i < this.itemList.length; i++)
+                tbldata.push({ 1: this.itemList[i][this.metadata[1]], 2: this.itemList[i][this.metadata[2]] });
+        }
 
         var tbl = "#tblCommonList";
         this.table = $(tbl).DataTable({
@@ -83,7 +92,7 @@
             autoWidth: false,
             //dom: 'frt',
             dom: 't',
-            ordering: true,
+            ordering: false,
             columns: tblcols,
             data: tbldata,
             order: [[2, 'asc']]
@@ -129,11 +138,18 @@
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
             $("#btnNewCmnList").hide();
         }
+        else if (this.metadata.indexOf("_userTypes") !== -1) {
+            $("#btnNewCmnList").text("Create User Type");
+            $("#btnNewCmnList").on("click", function () {
+                $("#ManageUserTypesModal").modal('show');
+                this.itemid = 0; 
+            });
+        }
 
         $('#txtSrchCmnList').on('keyup', function (e) {
             this.table.search($(e.target).val()).draw();
         }.bind(this));
-    };
+    }.bind(this);
 
     this.onClickEdit = function (e) {
         var id = $(e.target).attr("data-id");
@@ -168,6 +184,10 @@
         else if (this.metadata.indexOf("_anonymousUser") !== -1) {
             this.itemid = id;
             this.AnonymUserModal.modal('show');
+        }
+        else if (this.metadata.indexOf("_userTypes") !== -1) {
+            this.itemid = id;
+            this.UserTypesModal.modal('show');
         }
     };
 
@@ -223,7 +243,7 @@
     };
     this.tblFbProfPicRender = function (data, type, row, meta) {
         var id = data[9];
-        if (id == "")//if fbid is not available then
+        if (id === "")//if fbid is not available then
             return `<img class='img-thumbnail' src='../images/businessman.png' />`//id = '12345678';//assinging a sample value to get a default user profpic from graph.fb
         return `<img class='img-thumbnail' src='http://graph.facebook.com/${id}/picture?type=square' />`;
     };
@@ -248,7 +268,7 @@
     this.getAnonymousUserInfoSuccess = function (data) {
         this.loader.hide();
         this.modalBodyDiv.show();
-        this.userData = JSON.parse(data)
+        this.userData = JSON.parse(data);
 
         this.txtFullName.val(this.userData.FullName);
         this.txtEmailId.val(this.userData.Email);
@@ -283,7 +303,7 @@
             success: this.updateAnonymousUserInfoSuccess.bind(this)
         });
     };
-
+       
     this.updateAnonymousUserInfoSuccess = function (r) {
         if (r > 0)
             alert("Updated Successfully");
@@ -292,6 +312,57 @@
         this.AnonymUserModal.modal("hide");
         this.btnUpdate.prop("disabled", "false");
     };
-    
+
+    this.initUserTypeModal = function () {
+        $('#usertype_body').hide();
+        $("#loader1").show();
+        if (this.itemid > 0) {
+            $.post("../Security/GetUserTypes",
+                { typeid: this.itemid },
+                this.getUserTypeSuccess.bind(this)
+            );
+        }
+        else {
+            $("#loader1").hide();
+            $('#usertype_body').show();
+            $('#type-name').val("");
+            this.itemid = 0;
+        }
+    };
+
+    this.finalizeUserTypeModal = function () {
+        $('#usertype_body').hide();
+    };
+
+    this.getUserTypeSuccess = function (data) {
+        $("#loader1").hide();
+        $('#usertype_body').show();
+        this.userData = JSON.parse(data);
+        $('#type-name').val(this.userData[0].Name);
+    }.bind(this);
+
+    this.OnclickUpdateUserTypeBtn = function () {
+        this.btnUpdate.attr("disabled", "true");
+        $.ajax({
+            type: "POST",
+            url: "../Security/UpdateUserType",
+            data: {
+                itemid: this.itemid,
+                name: $('#type-name').val()
+            },
+            success: function (data) {
+                if (data)
+                {
+                    alert("Updated Successfully");
+                    location.reload();
+                }
+                else
+                    alert("Somthing went wrong!");
+                this.UserTypesModal.modal("hide");
+            }.bind(this)
+        });
+    }.bind(this);
+
+
     this.init();
-}
+};

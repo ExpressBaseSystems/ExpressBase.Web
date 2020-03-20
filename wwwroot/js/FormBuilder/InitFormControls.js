@@ -1074,6 +1074,11 @@ var InitControls = function (option) {
 
     }
 
+    this.ScriptButton = function (ctrl) {
+
+
+    }
+
 
 
 };

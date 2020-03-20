@@ -88,13 +88,15 @@
 
         function testAjax1() {
             $.ajax({
-                url: "/api/get_action_info",
+                url: "/api/get_data",
                 type: "GET",
                 cache: false,
                 data: {
-                    stageid: 16,
-                    refid: "hairocraft_stagging-hairocraft_stagging-0-1292-1465-1292-1465",
-                    dataid: 7
+                    refid: "ebdbxc2y6ha4zm20200130105031-ebdbxc2y6ha4zm20200130105031-2-409-784-409-784",
+                    param: "[{'Name':'name','Type':'16','Value':'Raj'}]",
+                    limit: 1000,
+                    offset: 0,
+                    is_powerselect :false
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());

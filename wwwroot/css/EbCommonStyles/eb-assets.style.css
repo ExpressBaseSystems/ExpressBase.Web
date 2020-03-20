@@ -505,6 +505,36 @@
     font-weight: 400;
     padding-left: 10px;
 }
+/*random colors for app tile icon*/
+
+.icon-random-1 {
+    background: #eaf7f9;
+    color:#3bb1cd;
+}
+.icon-random-2 {
+    background: #fef0f2;
+    color: #ef7c93;
+}
+.icon-random-3 {
+    background: #fcf4ec;
+    color: #e0a14e;
+}
+.icon-random-4 {
+    background: #fdf0fb;
+    color: #e364d0;
+}
+.icon-random-5 {
+    background: #f2f4f6;
+    color: #8da2b2;
+}
+.icon-random-6 {
+    background: #eef2fe;
+    color: #5a8ff4;
+}
+
+/*random colors for app tile icon*/
+
+
 
 .appcontainer_inner {
     display: flex;
@@ -519,7 +549,16 @@
 }
 
     .appcontainer_inner .appcontainer-icon-container {
-        padding-right: 10px;
+        /*padding-right: 10px;*/
+        margin-right: 15px;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /*box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        border: 2px solid white;*/
     }
 
         .appcontainer_inner .appcontainer-icon-container .appcontainer-icon {

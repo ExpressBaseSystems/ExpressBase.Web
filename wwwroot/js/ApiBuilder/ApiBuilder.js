@@ -20,7 +20,7 @@
         console.log("initialization error");
         return null;
     }
-};
+}
 
 function EbApiBuild(config) {
     this.Conf = config;
@@ -79,11 +79,11 @@ function EbApiBuild(config) {
         this.Lines[name] = new LeaderLine(
             document.getElementById(startid),
             document.getElementById(endid), {
-                color: "#316396"
-            }
+            color: "#316396"
+        }
         );
         this.Lines[name].position();
-    }
+    };
 
     this.resetLinks = function () {
         this.rmLines();
@@ -141,7 +141,7 @@ function EbApiBuild(config) {
 
     this.prepareApiobject = function () {
         $(`#${this.dropArea}`).find(".apiPrcItem").each(this.loopProcess.bind(this));
-    }
+    };
 
     this.loopProcess = function (i, o) {
         if (["tb" + this.Conf.TabNum + "_start_item", "tb" + this.Conf.TabNum + "_end_item", "tb" + this.Conf.TabNum + "_api_request"].indexOf(o.id) < 0) {
@@ -204,7 +204,7 @@ function EbApiBuild(config) {
     this.setRequestW = function (o, type) {
         let html = [];
         for (let i = 0, n = o.length; i < n; i++) {
-            edit = (type == "custom") ? "<td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>" : "";
+            edit = type === "custom" ? "<td style='text-align: right;'><span class='fa fa-trash-o deleteCustom_p'></span><span class='fa fa-pencil editCustom_p'></span></td>" : "";
             html.push(`<tr p-name='${o[i].Name}'>
                         <td>${o[i].Name}</td>
                         <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o[i].Type)}</td>
@@ -267,7 +267,7 @@ function EbApiBuild(config) {
 
     commonO.saveOrCommitSuccess = function (ref) {
         this.setBtns();
-    }.bind(this)
+    }.bind(this);
 
     this.GenerateButtons = function () {
         this.setBtns();
@@ -292,7 +292,7 @@ function EbApiBuild(config) {
             _data = { "name": this.EbObject.Name, "vers": commonO.getVersion(), "param": param };
         }
         else {
-            _data = { "param": param, "component": JSON.stringify(this.Component) }
+            _data = { "param": param, "component": JSON.stringify(this.Component) };
         }
         $.ajax({
             url: "../Dev/GetApiResponse",
@@ -303,7 +303,7 @@ function EbApiBuild(config) {
             }.bind(this),
             data: _data,
             success: function (result) {
-                (this.ComponentRun) ? this.toggleRespWindow(JSON.parse(result).Result, this.Component) : this.toggleRespWindow(JSON.parse(result), this.EbObject);
+                this.ComponentRun ? this.toggleRespWindow(JSON.parse(result).Result, this.Component) : this.toggleRespWindow(JSON.parse(result), this.EbObject);
                 $("#eb_common_loader").EbLoader("hide");
             }.bind(this)
         });
@@ -356,7 +356,7 @@ function EbApiBuild(config) {
             }
             else {
                 this.EbObject.Request.Custom.$values.push(o);
-                var formated_val = (o.Type === "13") ? o.Value : o.Value;
+                var formated_val = o.Type === "13" ? o.Value : o.Value;
                 $(`#tb${this.Conf.TabNum}_Json_reqOrRespWrp #tb${this.Conf.TabNum}_JsonReq_CMW .table tbody`).append(`<tr p-name='${o.Name}'>
                         <td>${o.Name}</td>
                         <td>${Object.keys(EbEnums.EbDbTypes).find(key => EbEnums.EbDbTypes[key] === o.Type)}</td>
@@ -386,7 +386,7 @@ function EbApiBuild(config) {
 
     this.start = function () {
         this.setBtns();
-        if (this.EditObj === null || this.EditObj === "undefined")
+        if (this.EditObj === null || this.EditObj === undefined)
             this.newApi();
         else
             this.editApi();

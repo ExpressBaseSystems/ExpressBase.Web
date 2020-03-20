@@ -613,7 +613,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_data")] //refid = datasourcerefid
-        public GetMobileVisDataResponse GetMobileVisData(string refid, string param, int limit, int offset)
+        public GetMobileVisDataResponse GetMobileVisData(string refid, string param, int limit, int offset, bool is_powerselect)
         {
             GetMobileVisDataResponse resp = null;
             try
@@ -624,7 +624,8 @@ namespace ExpressBase.Web.Controllers
                     {
                         DataSourceRefId = refid,
                         Limit = limit,
-                        Offset = offset
+                        Offset = offset,
+                        IsPowerSelect = is_powerselect
                     };
 
                     if (param != null)

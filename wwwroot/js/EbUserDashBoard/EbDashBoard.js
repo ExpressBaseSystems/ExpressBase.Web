@@ -56,11 +56,13 @@ var DashBoardWrapper = function (options) {
     }
     this.DragStartFn = function (event, ui) {
         let id = event.target.getAttribute("id");
+        $(`#${id} .transparent-back`).css("background", "white");
         $(`#${id} .grid-stack-item-content .tile_dt_cont`).hide();
     };
 
     this.DragStopFn = function (event, ui) {
         let id = event.target.getAttribute("id");
+        $(`#${id} .transparent-back`).css("background", "transparent");
         $(`#${id} .grid-stack-item-content .tile_dt_cont`).show();
     };
 
@@ -435,6 +437,7 @@ var DashBoardWrapper = function (options) {
         $(`#${tileId} .i-opt-obj`).hide();
         $(`#${tileId} .i-opt-restart`).hide();
         $(`#${tileId} .tile-header`).removeClass("tile-header");
+        $(`#${tileId}`).addClass("transparent-back");
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
@@ -495,12 +498,13 @@ var DashBoardWrapper = function (options) {
     };
     this.MakeLinks = function (obj) {
         let a = `<div id="${obj.EbSid}" class="link-dashboard-pane"  eb-type="Links"> 
-          <i class="fa fa-external-link-square"> </i>
-          <a id="${obj.EbSid}_link"></a>
+            <div id="${obj.EbSid}_icon" class="link-icon" >  <i class="fa fa-external-link-square"> </i> </div>
+            <div id="${obj.EbSid}_text" class="link-text">  <a id="${obj.EbSid}_link" href="#" target="_blanc"></a> </div>
         </div>`;
         return a;
     };
 
+  
 
     this.ComponentDrop = function (target, o) {
         $(target).append(o.$Control[0]);
@@ -689,10 +693,10 @@ var DashBoardWrapper = function (options) {
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 this.drop_id = "drop_" + t_id;
-                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}" data-gs-min-width="7" data-gs-min-height="3"> 
+                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
-                    <div class="db-title" name-id="${t_id}" style="display:float"></div>
+                    <div class="db-title" data-toggle="move" title="move tile"  data-placement="bottom"  name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
@@ -819,8 +823,10 @@ var DashBoardWrapper = function (options) {
 
     }
 
-    this.AddNewTile = function (data_width, data_height) {
+    this.AddNewTile = function (data_width, data_height, data_min_height, data_min_width) {
         this.data_width = data_width ? data_width : 12;
+        this.data_min_width = data_min_width ? data_width : 7;
+        this.data_min_height = data_min_height ? data_height : 3;
         this.data_height = data_height ? data_height : 5;
         $('.grid-stack').gridstack();
         this.NewTileCount++;
@@ -828,10 +834,10 @@ var DashBoardWrapper = function (options) {
         let tile_id = "t" + j;
         let t_id = "tile" + j;
         let drop_id = "drop_" + t_id;
-        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}" data-gs-min-width="7" data-gs-min-height="3" >
+        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="${data_min_width}" data-gs-min-height="${data_min_height}" >
                     <div class="grid-stack-item-content" id="${t_id}">
                     <div style="display:flex;" class="db-title-parent tile-header">
-                    <div class="db-title" name-id="${t_id}" style="display:float"></div>
+                    <div class="db-title" data-toggle="move" title="move tile" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
                     <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
@@ -845,10 +851,6 @@ var DashBoardWrapper = function (options) {
         this.CurrentTile = t_id;
         Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
         return drop_id;
-    };
-
-    this.LabelTile = function () {
-
     };
 
 
@@ -1318,3 +1320,6 @@ var DashBoardWrapper = function (options) {
     })
 }
 
+$(document).ready(function () {
+    $('[data-toggle="move"]').tooltip();
+});

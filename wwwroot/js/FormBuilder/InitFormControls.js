@@ -798,6 +798,8 @@ var InitControls = function (option) {
                 initValue = initValue + "." + "0".repeat(ctrl.DecimalPlaces);
             $input.val(initValue);
         }
+        if (ctrl.HideInputIcon)
+            $input.siblings(".input-group-addon").hide();
 
         $input.inputmask("currency", {
             radixPoint: ".",
@@ -1040,28 +1042,35 @@ var InitControls = function (option) {
 
     this.TagInput = function (ctrl) {
 
-
-        //ctrl.getValueFromDOM = function (p1) {
-        //    var tagValues = $('input[name = ' + ctrl.EbSid_CtxId + ']').val();
-        //    return tagValues;
-        //}
-        //ctrl.setValue = function (p1) {
-        //    $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').tagsinput('refresh');
-        //    $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').tagsinput('add', p1);
-        //    //var arr = p1.split(',');
-        //    //$('input[name = ' + ctrl.EbSid_CtxId + ']').tagsinput('refresh');
-        //    //arr.forEach(function (item) {
-        //    //    $('input[name = ' + ctrl.EbSid_CtxId + ']').tagsinput('add', item);
-        //    //});
-        //}
-        //ctrl.bindOnChange = function (p1) {
-        //    return $('input[name = ' + ctrl.EbSid_CtxId + ']').on('change', p1);
-        //};
-
         //ctrl.clear = function (p1) {
         //    return $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').va("");
         //}
+    }
 
+    this.RichText = function (ctrl) {
+        $(`#${ctrl.EbSid}_RichText`).summernote({
+            height: ctrl.TextBoxHeight,
+            toolbar: [
+                ['font', ['bold', 'underline', 'italic', 'strikethrough', 'subscript', 'superscript', 'clear']],
+                ['fontname', ['fontname']],
+                ['fontsize', ['fontsize', 'height']],
+                ['color', ['color']],
+                ['style', ['style']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link']],
+                ['view', ['undo', 'redo', 'help']],
+            ],
+            disableResizeEditor: true,
+            disableDragAndDrop: true
+        });
+ 
+
+        ctrl.clear = function (p1) {
+            console.log("clear"); 
+            
+            return $(`#${ctrl.EbSid}_RichText`).summernote('reset');
+        }
 
     }
 

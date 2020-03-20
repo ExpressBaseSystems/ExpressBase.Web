@@ -247,7 +247,9 @@
     padding: 2px 2px 2px 15px;
     height: 26px;
     line-height: 3.5vh;
+    cursor: move;
 }
+
 
 .db-tbl-wraper {
     height: calc(100% - 30px);
@@ -1251,12 +1253,18 @@ body {
         line-height: 20px;
         color: #a0a0a0;
         font-weight: 100;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .Label_Data_pane .db-label-desc {
         font-size: 16px;
         position: relative;
         line-height: 26px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .Label_Data_pane .db-dynamic-label {
@@ -1264,6 +1272,9 @@ body {
         position: relative;
         line-height: 32px;
         font-weight: 100;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
 
@@ -1326,24 +1337,36 @@ body {
     border: solid 1px #b5b5b5;
     width: 100%;
     font-size: 30px;
-    padding: 20px 0px 0px 20px;
     border-radius: 4px;
     background-image: linear-gradient(to right, rgb(61, 61, 90), rgb(59, 114, 115));
     color: white;
-    display:flex
+    display: flex
 }
 
-    .link-dashboard-pane a {
-        padding: 0px 10px;
-        color: white;
-        text-decoration: none;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+    .link-dashboard-pane .link-icon {
+        width: 50px;
+        height: 100%;
+        background: #00000026;
     }
-    .link-dashboard-pane i {
-        padding: 7px 1px;
-    } 
+
+    .link-dashboard-pane .link-text {
+        width: 100%;
+        height: 100%;
+    }
+
+        .link-dashboard-pane .link-text a {
+            padding: 0px 10px;
+            color: white;
+            text-decoration: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 20px;
+        }
+
+    .link-dashboard-pane .link-icon i {
+        padding: 10px 10px;
+    }
 
 /*canvas Style*/
 canvas:focus {
@@ -1499,4 +1522,12 @@ canvas:visited {
 
 .grid-stack .odd {
     background: rgba(0, 0, 0, 0.09) !important;
+}
+
+.red-tooltip + .tooltip > .tooltip-inner {
+    background-color: #f00;
+}
+
+.red-tooltip + .tooltip > .tooltip-arrow {
+    border-bottom-color: #f00;
 }

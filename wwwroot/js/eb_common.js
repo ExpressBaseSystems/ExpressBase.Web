@@ -693,8 +693,10 @@ function Test() {
 }
 
 function EbConvertValue(val, type) {
-    if (type === 11)
+    if (type === 11) {
+        val = val.replace(/,/g, "");
         return parseInt(val);
+    }
     return val;
 }
 

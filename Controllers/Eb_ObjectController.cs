@@ -39,315 +39,320 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public IActionResult Index(string objid, int objtype, bool buildermode = true)
         {
-            ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
-            dynamic _object = null;
-            Context2Js _c2js = new Context2Js();
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.currentUser = LoggedInUser;
-            EbObjectType type = (EbObjectType)(objtype);
-            HttpContext.Items["ObjectType"] = type;
-            ViewBag.mode = buildermode;
+            if (ViewBag.wc == "dc")
+            {
+                ViewBag.al_arz_map_key = Environment.GetEnvironmentVariable(EnvironmentConstants.AL_GOOGLE_MAP_KEY);
+                dynamic _object = null;
+                Context2Js _c2js = new Context2Js();
+                ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+                ViewBag.currentUser = LoggedInUser;
+                EbObjectType type = (EbObjectType)(objtype);
+                HttpContext.Items["ObjectType"] = type;
+                ViewBag.mode = buildermode;
 
-            Eb_Solution soln = GetSolutionObject(ViewBag.cid);
-            ViewBag.versioning = soln.IsVersioningEnabled;
+                Eb_Solution soln = GetSolutionObject(ViewBag.cid);
+                ViewBag.versioning = soln.IsVersioningEnabled;
 
-            if (objid != "null")
-            {
-                ViewBag.Obj_id = objid;
-                EbObjectExploreObjectResponse resultlist = ServiceClient.Get(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
-                List<EbObjectWrapper> objectlist = resultlist.Data;
-                if (objectlist.Count > 0)
-                    foreach (EbObjectWrapper element in objectlist)
-                    {
-                        ViewBag.IsNew = "false";
-                        ViewBag.ObjectName = element.DisplayName;
-                        ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = element.DisplayName });//regional languages not support in ViewBag
-                        ViewBag.ObjectDesc = element.Description;
-                        ViewBag.Status = element.Status;
-                        ViewBag.VersionNumber = element.VersionNumber;
-                        ViewBag.ObjType = objtype;
-                        ViewBag.Refid = element.RefId;
-                        ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
-                        ViewBag.Tags = element.Tags;
-                        ViewBag.AppId = element.Apps;
-                        ViewBag.DashboardTiles = element.Dashboard_Tiles;
-                        ViewBag.IsLogEnabled = element.IsLogEnabled;
-                        ViewBag.IsPublic = element.IsPublic;
-                        ViewBag.workingMode = element.WorkingMode;
+                if (objid != "null")
+                {
+                    ViewBag.Obj_id = objid;
+                    EbObjectExploreObjectResponse resultlist = ServiceClient.Get(new EbObjectExploreObjectRequest { Id = Convert.ToInt32(objid) });
+                    List<EbObjectWrapper> objectlist = resultlist.Data;
+                    if (objectlist.Count > 0)
+                        foreach (EbObjectWrapper element in objectlist)
+                        {
+                            ViewBag.IsNew = "false";
+                            ViewBag.ObjectName = element.DisplayName;
+                            ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = element.DisplayName });//regional languages not support in ViewBag
+                            ViewBag.ObjectDesc = element.Description;
+                            ViewBag.Status = element.Status;
+                            ViewBag.VersionNumber = element.VersionNumber;
+                            ViewBag.ObjType = objtype;
+                            ViewBag.Refid = element.RefId;
+                            ViewBag.Majorv = element.Dashboard_Tiles.MajorVersionNumber;
+                            ViewBag.Tags = element.Tags;
+                            ViewBag.AppId = element.Apps;
+                            ViewBag.DashboardTiles = element.Dashboard_Tiles;
+                            ViewBag.IsLogEnabled = element.IsLogEnabled;
+                            ViewBag.IsPublic = element.IsPublic;
+                            ViewBag.workingMode = element.WorkingMode;
 
-                        if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
-                        {
-                            ViewBag.ReadOnly = true;
-                            _object = EbSerializers.Json_Deserialize(element.Json_lc);
-                            ViewBag.dsObj = _object;
-                            _object.Status = element.Status;
-                            _object.RefId = element.RefId;
-                            _object.VersionNumber = element.VersionNumber;
-                            _object.DisplayName = element.DisplayName;
-                            ViewBag.Workingcopy = element.Wc_All;
-                        }
-                        else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
-                        {
-                            ViewBag.ReadOnly = false;
-                            _object = EbSerializers.Json_Deserialize(element.Json_wc);
-                            ViewBag.dsObj = _object;
-                            _object.Status = element.Status;
-                            _object.RefId = element.RefId;
-                            _object.VersionNumber = element.VersionNumber;
-                            _object.DisplayName = element.DisplayName;
-                            ViewBag.Workingcopy = element.Wc_All;
-                        }
-                    }
-            }
-            else
-            {
-                ViewBag.IsNew = "true";
-                ViewBag.Refid = string.Empty;
-                ViewBag.ObjectName = "*Untitled";
-                ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = "*Untitled" });//regional languages not support in ViewBag
-                ViewBag.Status = string.Empty;
-                ViewBag.ObjectDesc = string.Empty;
-                ViewBag.ReadOnly = false;
-                ViewBag.ObjType = objtype;
-                ViewBag.Majorv = 0;
-                ViewBag.Workingcopy = new string[0];
-                ViewBag.Tags = string.Empty;
-                ViewBag.AppId = "";
-                ViewBag.DashboardTiles = null;
-                ViewBag.VersionNumber = "1.0.0.w";
-                ViewBag.IsPublic = false;
-                ViewBag.workingMode = true;
-            }
-            if (type.Equals(EbObjectTypes.DataReader))
-            {
-                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.DataReader, typeof(EbDataSourceMain));
-                //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis, ServiceClient);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.DataWriter))
-            {
-                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.DataWriter, typeof(EbDataSourceMain));
-                //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis, ServiceClient);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.SqlFunction))
-            {
-                Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.SqlFunctions, typeof(EbDataSourceMain));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis, ServiceClient);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization) || type.Equals(EbObjectTypes.GoogleMap))
-            {
-                Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
-                if (_object != null)
-                {
-                    //---------------------temp fix to copy old prop value (string) to new prop value (EbScript)-------------------------------
-                    foreach (DVBaseColumn c in (_object as EbDataVisualization).Columns)
-                    {
-                        if (c._Formula == null)
-                        {
-                            if (!string.IsNullOrEmpty(c.Formula))
-                                c._Formula = new EbScript { Code = c.Formula, Lang = ScriptingLanguage.CSharp };
-                            else
-                                c._Formula = new EbScript();
-                        }
-                    }
-                    //-----------------------------------------------------------------------------------------------------------------------
-
-                    _object.AfterRedisGet(Redis, ServiceClient);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.Report))
-            {
-                Type[] typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
-                if (_object != null)
-                {
-                    //-------------------------temp fix to copy old prop value (string) to new prop value (EbScript)----------------------------
-                    foreach (EbReportDetail dt in (_object as EbReport).Detail)
-                    {
-                        foreach (EbReportField field in dt.Fields)
-                        {
-                            if (field is EbDataField)
+                            if (String.IsNullOrEmpty(element.Json_wc) && !String.IsNullOrEmpty(element.Json_lc))
                             {
-                                var _new = (field as EbDataField).AppearExpression;
-                                var old = (field as EbDataField).AppearanceExpression;
-                                if (_new == null)
+                                ViewBag.ReadOnly = true;
+                                _object = EbSerializers.Json_Deserialize(element.Json_lc);
+                                ViewBag.dsObj = _object;
+                                _object.Status = element.Status;
+                                _object.RefId = element.RefId;
+                                _object.VersionNumber = element.VersionNumber;
+                                _object.DisplayName = element.DisplayName;
+                                ViewBag.Workingcopy = element.Wc_All;
+                            }
+                            else if (String.IsNullOrEmpty(element.Json_lc) && !String.IsNullOrEmpty(element.Json_wc))
+                            {
+                                ViewBag.ReadOnly = false;
+                                _object = EbSerializers.Json_Deserialize(element.Json_wc);
+                                ViewBag.dsObj = _object;
+                                _object.Status = element.Status;
+                                _object.RefId = element.RefId;
+                                _object.VersionNumber = element.VersionNumber;
+                                _object.DisplayName = element.DisplayName;
+                                ViewBag.Workingcopy = element.Wc_All;
+                            }
+                        }
+                }
+                else
+                {
+                    ViewBag.IsNew = "true";
+                    ViewBag.Refid = string.Empty;
+                    ViewBag.ObjectName = "*Untitled";
+                    ViewBag.NameObj4Title = EbSerializers.Json_Serialize(new NameObj() { Value = "*Untitled" });//regional languages not support in ViewBag
+                    ViewBag.Status = string.Empty;
+                    ViewBag.ObjectDesc = string.Empty;
+                    ViewBag.ReadOnly = false;
+                    ViewBag.ObjType = objtype;
+                    ViewBag.Majorv = 0;
+                    ViewBag.Workingcopy = new string[0];
+                    ViewBag.Tags = string.Empty;
+                    ViewBag.AppId = "";
+                    ViewBag.DashboardTiles = null;
+                    ViewBag.VersionNumber = "1.0.0.w";
+                    ViewBag.IsPublic = false;
+                    ViewBag.workingMode = true;
+                }
+                if (type.Equals(EbObjectTypes.DataReader))
+                {
+                    Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.DataReader, typeof(EbDataSourceMain));
+                    //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis, ServiceClient);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.DataWriter))
+                {
+                    Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.DataWriter, typeof(EbDataSourceMain));
+                    //_jsResult = CSharpToJs.GenerateJs<EbDatasourceMain>(BuilderType.DataSource, typeArray);
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis, ServiceClient);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.SqlFunction))
+                {
+                    Type[] typeArray = typeof(EbDataSourceMain).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.SqlFunctions, typeof(EbDataSourceMain));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis, ServiceClient);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization) || type.Equals(EbObjectTypes.GoogleMap))
+                {
+                    Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
+                    if (_object != null)
+                    {
+                        //---------------------temp fix to copy old prop value (string) to new prop value (EbScript)-------------------------------
+                        foreach (DVBaseColumn c in (_object as EbDataVisualization).Columns)
+                        {
+                            if (c._Formula == null)
+                            {
+                                if (!string.IsNullOrEmpty(c.Formula))
+                                    c._Formula = new EbScript { Code = c.Formula, Lang = ScriptingLanguage.CSharp };
+                                else
+                                    c._Formula = new EbScript();
+                            }
+                        }
+                        //-----------------------------------------------------------------------------------------------------------------------
+
+                        _object.AfterRedisGet(Redis, ServiceClient);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.Report))
+                {
+                    Type[] typeArray = typeof(EbReportObject).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.Report, typeof(EbReportObject));
+                    if (_object != null)
+                    {
+                        //-------------------------temp fix to copy old prop value (string) to new prop value (EbScript)----------------------------
+                        foreach (EbReportDetail dt in (_object as EbReport).Detail)
+                        {
+                            foreach (EbReportField field in dt.Fields)
+                            {
+                                if (field is EbDataField)
                                 {
-                                    if (!string.IsNullOrEmpty(old))
-                                        _new = new EbScript { Code = old, Lang = ScriptingLanguage.CSharp };
-                                    else
-                                        _new = new EbScript();
-                                    (field as EbDataField).AppearExpression = _new;
-                                }
-                                if (field is EbCalcField)
-                                {
-                                    var __new = (field as EbCalcField).ValExpression;
-                                    var _old = (field as EbCalcField).ValueExpression;
-                                    if (__new == null)
+                                    var _new = (field as EbDataField).AppearExpression;
+                                    var old = (field as EbDataField).AppearanceExpression;
+                                    if (_new == null)
                                     {
-                                        if (!string.IsNullOrEmpty(_old))
-                                            __new = new EbScript { Code = _old, Lang = ScriptingLanguage.CSharp };
+                                        if (!string.IsNullOrEmpty(old))
+                                            _new = new EbScript { Code = old, Lang = ScriptingLanguage.CSharp };
                                         else
-                                            __new = new EbScript();
-                                        (field as EbCalcField).ValExpression = __new;
+                                            _new = new EbScript();
+                                        (field as EbDataField).AppearExpression = _new;
+                                    }
+                                    if (field is EbCalcField)
+                                    {
+                                        var __new = (field as EbCalcField).ValExpression;
+                                        var _old = (field as EbCalcField).ValueExpression;
+                                        if (__new == null)
+                                        {
+                                            if (!string.IsNullOrEmpty(_old))
+                                                __new = new EbScript { Code = _old, Lang = ScriptingLanguage.CSharp };
+                                            else
+                                                __new = new EbScript();
+                                            (field as EbCalcField).ValExpression = __new;
+                                        }
                                     }
                                 }
                             }
                         }
+                        //----------------------------------------------------------------------------------------------------------------------------
+
+                        _object.AfterRedisGet(Redis, ServiceClient);
+                        ViewBag.dsObj = _object;
                     }
-                    //----------------------------------------------------------------------------------------------------------------------------
-
-                    _object.AfterRedisGet(Redis, ServiceClient);
-                    ViewBag.dsObj = _object;
                 }
-            }
-            else if (type.Equals(EbObjectTypes.EmailBuilder))
-            {
-                Type[] typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
-                if (_object != null)
+                else if (type.Equals(EbObjectTypes.EmailBuilder))
                 {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.FilterDialog))
-            {
-                Type[] typeArray = typeof(EbFilterDialog).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.FilterDialog, typeof(EbFilterDialog));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.SmsBuilder))
-            {
-                Type[] typeArray = typeof(EbSmsTemplateBase).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.SmsBuilder, typeof(EbSmsTemplateBase));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.Api))
-            {
-                Type[] typeArray = typeof(EbApiWrapper).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.ApiBuilder, typeof(EbApiWrapper));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.MobilePage))
-            {
-                Type[] typeArray = typeof(EbMobilePageBase).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.MobilePage, typeof(EbMobilePageBase));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.DashBoard))
-            {
-                Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-                List<int> types = new List<int>() { 14, 16, 17, 21 };
-                GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
-                ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.WebForm);
-                ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
-            }
-            else if (type.Equals(EbObjectTypes.CalendarView))
-            {
-                Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.Calendar, typeof(EbCalendarWrapper), typeof(EbObject));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-            }
-            else if (type.Equals(EbObjectTypes.SqlJob))
-            {
-                Type[] typeArray = typeof(EbSqlJobWrapper).GetTypeInfo().Assembly.GetTypes();
-                _c2js = new Context2Js(typeArray, BuilderType.SqlJob, typeof(EbSqlJobWrapper), typeof(EbObject));
-                if (_object != null)
-                {
-                    _object.AfterRedisGet(Redis);
-                    ViewBag.dsObj = _object;
-                }
-            }
-
-            if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
-            {
-                EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode });
-                string UserControlsHtml = string.Empty;
-
-                foreach (KeyValuePair<string, List<EbObjectWrapper>> _obj in result.Data)
-                {
-                    EbObjectWrapper _objverL = null;
-                    string versionHtml = "<select style = 'float: right; border: none;'>";
-                    foreach (EbObjectWrapper _objver in _obj.Value)
+                    Type[] typeArray = typeof(EbEmailTemplateBase).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.EmailBuilder, typeof(EbEmailTemplateBase));
+                    if (_object != null)
                     {
-                        versionHtml += "<option refid='" + _objver.RefId + "'>" + _objver.VersionNumber + "</option>";
-                        _objverL = _objver;
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
                     }
-                    versionHtml += "</select>";
-                    UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName, versionHtml, "</div>");
+                }
+                else if (type.Equals(EbObjectTypes.FilterDialog))
+                {
+                    Type[] typeArray = typeof(EbFilterDialog).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.FilterDialog, typeof(EbFilterDialog));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.SmsBuilder))
+                {
+                    Type[] typeArray = typeof(EbSmsTemplateBase).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.SmsBuilder, typeof(EbSmsTemplateBase));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.Api))
+                {
+                    Type[] typeArray = typeof(EbApiWrapper).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.ApiBuilder, typeof(EbApiWrapper));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.MobilePage))
+                {
+                    Type[] typeArray = typeof(EbMobilePageBase).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.MobilePage, typeof(EbMobilePageBase));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.DashBoard))
+                {
+                    Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
+                    }
+                    List<int> types = new List<int>() { 14, 16, 17, 21 };
+                    GetAllLiveObjectsResp result = this.ServiceClient.Get<GetAllLiveObjectsResp>(new GetAllLiveObjectsRqst { Typelist = types });
+                    ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS((new EbWebForm()) as EbControlContainer, BuilderType.WebForm);
+                    ViewBag.SideBarMenu = JsonConvert.SerializeObject(result.Data);
+                }
+                else if (type.Equals(EbObjectTypes.CalendarView))
+                {
+                    Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.Calendar, typeof(EbCalendarWrapper), typeof(EbObject));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
+                    }
+                }
+                else if (type.Equals(EbObjectTypes.SqlJob))
+                {
+                    Type[] typeArray = typeof(EbSqlJobWrapper).GetTypeInfo().Assembly.GetTypes();
+                    _c2js = new Context2Js(typeArray, BuilderType.SqlJob, typeof(EbSqlJobWrapper), typeof(EbObject));
+                    if (_object != null)
+                    {
+                        _object.AfterRedisGet(Redis);
+                        ViewBag.dsObj = _object;
+                    }
                 }
 
-                ViewBag.UserControlHtml = string.Concat(HtmlConstants.TOOL_HTML.Replace("@id@", "toolb_user_ctrls").Replace("@label@", "User Controls"), UserControlsHtml, "</div>");
+                if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
+                {
+                    EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode });
+                    string UserControlsHtml = string.Empty;
 
-                if (type.Equals(EbObjectTypes.WebForm))
-                {
-                    ViewBag.roles = JsonConvert.SerializeObject(result.Roles);
-                    ViewBag.userGroups = JsonConvert.SerializeObject(result.UserGroups);
-                    ViewBag.userTypes = JsonConvert.SerializeObject(result.UserTypes);
-                }
+                    foreach (KeyValuePair<string, List<EbObjectWrapper>> _obj in result.Data)
+                    {
+                        EbObjectWrapper _objverL = null;
+                        string versionHtml = "<select style = 'float: right; border: none;'>";
+                        foreach (EbObjectWrapper _objver in _obj.Value)
+                        {
+                            versionHtml += "<option refid='" + _objver.RefId + "'>" + _objver.VersionNumber + "</option>";
+                            _objverL = _objver;
+                        }
+                        versionHtml += "</select>";
+                        UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName, versionHtml, "</div>");
+                    }
 
-                if (_object is EbWebForm)
-                {
-                    EbWebForm _dsobj = _object as EbWebForm;
-                    _dsobj.AfterRedisGet(Redis, this.ServiceClient);
-                    ViewBag.dsObj = _dsobj;
+                    ViewBag.UserControlHtml = string.Concat(HtmlConstants.TOOL_HTML.Replace("@id@", "toolb_user_ctrls").Replace("@label@", "User Controls"), UserControlsHtml, "</div>");
+
+                    if (type.Equals(EbObjectTypes.WebForm))
+                    {
+                        ViewBag.roles = JsonConvert.SerializeObject(result.Roles);
+                        ViewBag.userGroups = JsonConvert.SerializeObject(result.UserGroups);
+                        ViewBag.userTypes = JsonConvert.SerializeObject(result.UserTypes);
+                    }
+
+                    if (_object is EbWebForm)
+                    {
+                        EbWebForm _dsobj = _object as EbWebForm;
+                        _dsobj.AfterRedisGet(Redis, this.ServiceClient);
+                        ViewBag.dsObj = _dsobj;
+                    }
+                    else if (_object is EbUserControl)
+                    {
+                        EbUserControl _dsobj = _object as EbUserControl;
+                        _dsobj.AfterRedisGet(Redis, this.ServiceClient);
+                        ViewBag.dsObj = _dsobj;
+                    }
                 }
-                else if (_object is EbUserControl)
-                {
-                    EbUserControl _dsobj = _object as EbUserControl;
-                    _dsobj.AfterRedisGet(Redis, this.ServiceClient);
-                    ViewBag.dsObj = _dsobj;
-                }
+                ViewBag.Meta = _c2js.AllMetas;
+                ViewBag.JsObjects = _c2js.JsObjects;
+                ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
+                ViewBag.TypeRegister = _c2js.TypeRegister;
+                return View();
             }
-            ViewBag.Meta = _c2js.AllMetas;
-            ViewBag.JsObjects = _c2js.JsObjects;
-            ViewBag.EbObjectTypes = _c2js.EbObjectTypes;
-            ViewBag.TypeRegister = _c2js.TypeRegister;
-            return View();
+            else
+                return Redirect("/StatusCode/401");
         }
 
         public EbRootObjectResponse CommitEbObject(string _refid, string _json, string _changeLog, string _rel_obj, string _tags, string _apps)
@@ -880,7 +885,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         public bool ChangeAccess(int objid, int status)
-        { 
+        {
             ChangeObjectAccessResponse response = this.ServiceClient.Post(new ChangeObjectAccessRequest { ObjId = objid, Status = status });
             return response.Status;
         }

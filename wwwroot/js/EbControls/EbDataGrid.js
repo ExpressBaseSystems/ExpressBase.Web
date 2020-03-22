@@ -7,6 +7,7 @@
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
     this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
+    //this.ctrl.__DGB = this;
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
     this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
@@ -53,23 +54,23 @@
     this.constructObjectModel = function (dataRows) {
         this.objectMODEL = {};
         this.objectMODELdict = {};
+        let visibleCtrlIdx = 0;
         for (let i = 0; i < dataRows.length; i++) {
             let dataRow = dataRows[i];
             let rowId = dataRow.RowId;
             this.objectMODEL[rowId] = [];
-            let visibleCtrlIdx = 0;
 
             for (let colIndex = 0; colIndex < this.ctrl.Controls.$values.length; colIndex++) {
                 let col = this.ctrl.Controls.$values[colIndex];
                 let inpCtrlType = col.InputControlType;
-                let ctrlEbSid = "ctrl_" + Date.now().toString(36) + visibleCtrlIdx;// creates a unique id
+                let ctrlEbSid = "ctrl_" + Date.now().toString(36) + visibleCtrlIdx++;// creates a unique id
                 let inpCtrl = new EbObjects[inpCtrlType](ctrlEbSid, col);// creates object
+                inpCtrl.__isEditing = false;
                 inpCtrl.DataVals = getObjByval(dataRow.Columns, "Name", col.Name);
                 inpCtrl.curRowDataVals = getObjByval(this.curRowDataMODEL.Columns, "Name", col.Name);
                 this.addPropsToInpCtrl(inpCtrl, col, ctrlEbSid, rowId);
                 inpCtrl = this.attachFns(inpCtrl, col.ObjType);// attach getValue(), ... methods
                 this.objectMODEL[rowId].push(inpCtrl);
-                visibleCtrlIdx++;
             }
         }
     };
@@ -944,10 +945,11 @@
         return this.objectMODEL[rowid][ctrlTdIdx];
     };
 
-    this.ctrlToSpan_td = function ($td) {
+    this.ctrlToSpan_td = function ($td, flag) {
         let t0 = performance.now();
         let ctrl = this.getCtrlByTd($td);
-        $td.find(".ctrl-cover").hide();
+        if (!flag)
+            $td.find(".ctrl-cover").hide();
         if (ctrl.ObjType === "PowerSelect") {
             if (!ctrl.DataVals.Value)
                 return;
@@ -978,8 +980,13 @@
             $td.find(".tdtxt span").text(val);
             //console.dev_log("ctrlToSpan_td else: took " + (performance.now() - t0) + " milliseconds.");
         }
-        $td.find(".tdtxt").show();
+        if (!flag)
+            $td.find(".tdtxt").show();
         console.dev_log("ctrlToSpan_td " + (performance.now() - t0) + " milliseconds.");
+    }.bind(this);
+
+    ebUpdateDGTD = function ($td) {
+        this.ctrlToSpan_td($td, true);
     }.bind(this);
 
     this.RowRequired_valid_Check = function (rowid = this.curRowId) {//////
@@ -1096,8 +1103,8 @@
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
         //if ($activeTr.attr("is-checked") === "true") {
-            this.setcurRowDataMODELWithNewVals(rowId);
-            this.changeEditFlagInRowCtrls(false, rowId);
+        this.setcurRowDataMODELWithNewVals(rowId);
+        this.changeEditFlagInRowCtrls(false, rowId);
         //}
 
         this.ctrlToSpan_row(rowId);
@@ -1565,8 +1572,8 @@
             }
         }.bind(this));
 
-        if ($tr.attr("is-editing") === "false")
-            this.ctrlToSpan_row(rowId);
+        //if ($tr.attr("is-editing") === "false")
+        //    this.ctrlToSpan_row(rowId);
         this.updateAggCols();
     };
 
@@ -1797,9 +1804,37 @@
         this.setEditModeRows(dataModel);
     };
 
+    this.getDGIterable = function () {
+        let DGrows = [];
+        let rowIds = Object.keys(this.objectMODEL);
+        for (let i = 0; i < rowIds.length; i++) {
+            let rowId = rowIds[i];
+            if (getObjByval(this.DataMODEL, "RowId", rowId) && getObjByval(this.DataMODEL, "RowId", rowId).IsDelete === false) {
+                let row = this.getRowBySlno(false, rowId);
+                if (row)
+                    DGrows.push(row);
+                else
+                    console.error("could not find row for rowId :" + rowId);
+            }
+        }
+        return DGrows;
+    };
+
     this.init = function () {
         this.curRowObjectMODEL = {};
         this.ctrl.currentRow = this.curRowObjectMODEL;
+        this.ctrl.Rows = [];
+
+
+        Object.defineProperty(this.ctrl, "Rows", {
+            set: function (value) {
+                ;
+            }.bind(this),
+            get: function () {
+                return this.getDGIterable();
+            }.bind(this)
+        });
+
         this.colNames = this.ctrl.Controls.$values.map(function (obj) { return obj["Name"]; }.bind(this));
         //this.lastEditedRowDMvalues = {};
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;

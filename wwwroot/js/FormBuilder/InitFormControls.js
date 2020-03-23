@@ -567,6 +567,16 @@ var InitControls = function (option) {
         return new EbDataGrid(ctrl, ctrlOpts);
     };
 
+    this.ExportButton = function (ctrl, ctrlOpts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        $ctrl[0].onclick = function () {
+            let destRefId = ctrl.FormRefId;
+            let url = "../WebForm/Index?refid=" + ctrl.destRefId + "&srcRefId=17"+ "&srcRowId=17"+ "&_mode=17"+ "&_mode=17";
+            window.open(url, '_blank');
+        }.bind(this);
+
+    };
+
     this.Approval = function (ctrl, ctrlOpts) {
         return new EbApproval(ctrl, ctrlOpts);
     };

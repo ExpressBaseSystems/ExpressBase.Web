@@ -1031,13 +1031,21 @@ var InitControls = function (option) {
 
     this.Rating = function (ctrl) {
         if (ebcontext.user.wc == 'uc') {
-            $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').find('#' + ctrl.EbSid + '_ratingDiv label').addClass('ratingLbl');
-        }
-        if (ctrl.RemoveBorder == true) {
-            $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').css({ 'border': 'none' });
+            $("#" + ctrl.EbSid + "_ratingDiv").empty();
+            $("#" + ctrl.EbSid + "_ratingDiv").rateYo({
+
+                numStars: ctrl.MaxVal,
+                fullStar: ctrl.FullStar,
+                halfStar: ctrl.HalfStar,
+                spacing: `${ctrl.Spacing}px`,
+                starWidth: `${ctrl.StarWidth}px`,
+                ratedFill: ctrl.RatingColor
+            });
+            if (ctrl.RemoveBorder == true) {
+                $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').css({ 'border': 'none' });
+            }
         }
 
-       
     }
 
     this.TagInput = function (ctrl) {
@@ -1064,11 +1072,9 @@ var InitControls = function (option) {
             disableResizeEditor: true,
             disableDragAndDrop: true
         });
- 
+
 
         ctrl.clear = function (p1) {
-            console.log("clear"); 
-            
             return $(`#${ctrl.EbSid}_RichText`).summernote('reset');
         }
 

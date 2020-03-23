@@ -1838,34 +1838,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 3px;
 }
 
-/*Ebrating css style*/
-.rating-container {
-    direction: rtl !important;
-    display: inline-block;
-}
-
-    .rating-container label {
-        display: inline-block;
-        color: #d4d4d4;
-        margin: 0;
-        cursor: pointer;
-        transition: color 0.2s;
-        /*font-size: 30px;*/
-    }
-
-    .rating-container input {
-        display: none;
-    }
-
-.ratingLbl:hover, .ratingLbl:hover ~ .ratingLbl, input:checked ~ .ratingLbl {
-    color: gold;
-}
 
 [ctype="Image"] > .ctrl-cover {
     border: none;
 }
 
-
+/*Ebrating css style*/
+.ratingDiv_dc .wrd_spacing{
+    padding-right:3px;
+}
 /*EbTagInput*/
 [ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput {
     width: 100%;
@@ -1879,3 +1860,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group > .btn-group {
         width: auto !important;
     }
+
+[ctype=RichText] > .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
+    height: inherit;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px
+}

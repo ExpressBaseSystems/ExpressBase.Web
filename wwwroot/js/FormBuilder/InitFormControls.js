@@ -571,12 +571,11 @@ var InitControls = function (option) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
             let params = [];
-            params.push(new fltr_obj(16, "srcRefId", ctrl.FormRefId));
-            params.push(new fltr_obj(11, "srcRowId", a___MT.expsrc[0].RowId));
+            params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
+            params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
             let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7`;
             window.open(url, '_blank');
         }.bind(this);
-
     };
 
     this.Approval = function (ctrl, ctrlOpts) {

@@ -517,6 +517,7 @@ eb-disable {
     font-size: 11px;
     color: #6d6d6d;
 }
+
 .rc-slno {
     width: 50px;
 }
@@ -1035,7 +1036,25 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
+[isrendermode=true][eb-form="true"][mode="edit"] [ctype="ExportButton"] {
+    display: none;
+}
+
+[eb-form="true"] [ctype="ExportButton"] .ctrl-cover {
+    border: none;
+}
+
+    [eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
+        border: none;
+        padding: 7px;
+        font-size: 17px;
+    }
+
 [ctype="RadioButton"] > .eb-ctrl-label {
+    display: none;
+}
+
+[ctype="ExportButton"] > .eb-ctrl-label {
     display: none;
 }
 
@@ -1844,8 +1863,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 /*Ebrating css style*/
-.ratingDiv_dc .wrd_spacing{
-    padding-right:3px;
+.ratingDiv_dc .wrd_spacing {
+    padding-right: 3px;
 }
 /*EbTagInput*/
 [ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput {

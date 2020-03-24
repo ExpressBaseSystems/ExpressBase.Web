@@ -8,50 +8,16 @@
 }
 
 <link href="~/css/EbOnBoarding/eb-assets.style.css" rel="stylesheet" />
-<script type="text/javascript" src="~/js/location-config.js"></script>@*dona*@
+<script type="text/javascript" src="~/js/location-config.js"></script>
+@*dona*@
 <script>
     var cm = new EbHeader().setName("Configure Locations");
 </script>
-@{ 
+@{
     var locations = ViewBag.LocList;
+    List<EbLocationType> location_types = ViewBag.LocType;
 }
 <div class="row s-dash-container h-100">
-    @*<div class="pd-0 tdasboard-sidebar tenant_sidebar">
-        <div class="t-container">
-            <ul class="list-group eb-dashbord-sidebar">
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">highlight</span>
-                        <span class="t__sidebar_text">Solutions</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">attach_money</span>
-                        <span class="t__sidebar_text">Billing</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">store</span>
-                        <span class="t__sidebar_text">App Store</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">chrome_reader_mode</span>
-                        <span class="t__sidebar_text">Wiki</span>
-                    </a>
-                </li>
-                <li class="list-group-item outer_li text-center">
-                    <a class="t_a">
-                        <span class="material-icons t__sidebar_icon">contact_support</span>
-                        <span class="t__sidebar_text">Support</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>*@
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-10 pd-0">
@@ -62,6 +28,7 @@
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
+
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
                     <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
@@ -69,9 +36,13 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#location_types" role="tab"><i class="fa fa-object-group" aria-hidden="true"></i> Location Types</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#location_conf" role="tab"><i class="fa fa-cogs" aria-hidden="true"></i> Customize</a>
                 </li>
             </ul>
+
             <div class="tab-content">
                 <div class="tab-pane active" id="locations_tab" role="tabpanel">
                     @foreach (KeyValuePair<int, EbLocation> loc in locations)
@@ -79,7 +50,7 @@
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
                             <a class="appcontainer_inner loc_tile" locid=@locations[loc.Key].LocId>
                                 <div class="col-md-4 pd-l-0 flex-center locsImage">
-                                    <img src="~/images/your_company_logo.png"/>
+                                    <img src="~/images/your_company_logo.png" />
                                 </div>
                                 <div class="col-md-10 pd-0">
                                     <h5 class="txtdecor_none ellipsis-text">@locations[loc.Key].LongName</h5>
@@ -124,6 +95,42 @@
                                     <td class="text-center">Image</td>
                                     <td class="text-center"></td>
                                 </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <div class="tab-pane location_conf" id="location_types" role="tabpanel">
+                    <div class="form-inline btn_container">
+                        <button class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#location_type_modal" id="add_location_type">
+                            <i class="fa fa-plus"></i> Add New Type
+                        </button>
+                    </div>
+                    <form class="form-horizontal conf_container" id="textspace" method="post">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Sl.No</th>
+                                    <th scope="col" class="text-center">Id</th>
+                                    <th scope="col" class="text-center">Location Type</th>
+                                    <th scope="col" class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{ int i = 1; 
+                                    foreach (EbLocationType t in location_types)
+                                    {
+                                        <tr key="@t.Id">
+                                            <td class="text-center">@i</td>
+                                            <td class="text-center">@t.Id</td>
+                                            <td class="text-center _type" key="@t.Type">@t.Type</td>
+                                            <td class="text-center" id="@t.Id">
+                                                <i id="del_@t.Id" class="fa fa-trash delete-loc-type"></i>
+                                                <i id="edit_@t.Id" class="fa fa-pencil edit-loc-type"></i>
+                                            </td>
+                                        </tr>
+                                        i++;
+                                    }
+                                }
                             </tbody>
                         </table>
                     </form>
@@ -211,12 +218,40 @@
                 <button class="ebbtn eb_btnblue pull-right" id="add_key_btn">Add</button>
             </div>
         </div>
-
     </div>
 </div>
+
+<div class="modal fade create_loc_mod" id="location_type_modal" role="dialog">
+    <div class="modal-dialog" style="background-color: white;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Location type</h4>
+            </div>
+            <div class="modal-body new_location_bdy">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3">Name</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" name="TypeName" value="">
+                            <input type="hidden"  value="0" id="type_id"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="ebbtn eb_btnblue pull-right" id="add_type_btn">Add</button>
+        </div>
+    </div>
+
+</div>
+</div>
+
+
 <script>
    @{
        var locs = JsonConvert.SerializeObject(ViewBag.LocList);
    }
-      var Loc_ = new Eb_locationMeta(@Html.Raw(ViewBag.Config),@Html.Raw(locs),'@ViewBag.cid');
+      var Loc_ = new Eb_locationMeta(@Html.Raw(ViewBag.Config),@Html.Raw(locs),'@ViewBag.cid',@location_types.Count);
 </script>

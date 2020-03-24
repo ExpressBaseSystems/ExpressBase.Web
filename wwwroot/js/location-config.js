@@ -1,4 +1,4 @@
-﻿var Eb_locationMeta = function (Config, locations, tid) {
+﻿var Eb_locationMeta = function (Config, locations, tid, types_count) {
     this.Locations = locations;
     this.data = Config;
     this.LocationObj = {};
@@ -12,8 +12,15 @@
         $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key
         $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
 
+        $('#add_type_btn').off('click').on('click', this.AddNewLocationType.bind(this));
+        $('.delete-loc-type').off('click').on('click', this.DeleteLocationType.bind(this));
+        $('.edit-loc-type').off('click').on('click', this.EditLocationType.bind(this));
+        $('#add_location_type').off('click').on('click', function () {
+            $("#add_type_btn").text("Add");
+        });
+
         $(".loc_tile").off("click").on("click", this.locationEdit.bind(this));
-        this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo",FileName:"" },false);
+        this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo", FileName: "" }, false);
         $(`body`).off("click").on("click", ".delete_field", this.deleteConfig.bind(this));
         $("#locspace input[name='longname']").on("change", this.setLocNameToImg.bind(this));
     };
@@ -28,14 +35,14 @@
         }.bind(this));
     };
 
-    this.AddKey = function (item,ispush) {
-            let icon = ""; let btn = `<i class="fa fa-trash delete_field"></i>`;
-            item = item || { Name: "", IsRequired: false, Id: "" };
-            if (item.IsRequired)
-                icon = `<i class="fa fa-check fa-green"></i>`;
-            if (item.Name === "Name" || item.Name === "ShortName" || item.Name === "Logo")
-                btn = "";
-            $('#textspace tbody').append(`<tr key="${item.Name}">
+    this.AddKey = function (item, ispush) {
+        let icon = ""; let btn = `<i class="fa fa-trash delete_field"></i>`;
+        item = item || { Name: "", IsRequired: false, Id: "" };
+        if (item.IsRequired)
+            icon = `<i class="fa fa-check fa-green"></i>`;
+        if (item.Name === "Name" || item.Name === "ShortName" || item.Name === "Logo")
+            btn = "";
+        $('#textspace tbody').append(`<tr key="${item.Name}">
                                     <td>${item.Name}</td>
                                     <td class="text-center">${icon}</td>
                                     <td class="text-center">${item.Type}</td>
@@ -90,13 +97,13 @@
                         </div>
                     </div>
 					`);
-                this.imageUploader(l_item.Name + "container", "#" + l_item.Name + "_toggle", "#" + l_item.Name + "_prev", { Name: l_item.Name, FileName: "" },true);
+                this.imageUploader(l_item.Name + "container", "#" + l_item.Name + "_toggle", "#" + l_item.Name + "_prev", { Name: l_item.Name, FileName: "" }, true);
             }
         }.bind(this));
     };
 
     this.imageUploader = function (container, toggle, prev, extra, viwportresize) {
-        let resize = viwportresize ? true : false;      
+        let resize = viwportresize ? true : false;
 
         this.Cropies[extra.Name] = new EbFileUpload({
             Type: "image",
@@ -116,10 +123,10 @@
         this.Cropies[extra.Name].uploadSuccess = function (fileid) {
             EbMessage("show", { Message: "Uploaded Successfully" });
             $(`input[name='${extra.Name}']`).val(o.objectId);
-        }
+        };
         this.Cropies[extra.Name].windowClose = function () {
             //EbMessage("show", { Message: "window closed", Background: "red" });
-        }
+        };
     };
 
     this._CreateLocation = function (e) {
@@ -191,11 +198,11 @@
         $(this.data).each(function (k, item) {
             if (item.IsRequired) {
                 if ($(`input[name='${item.Name}']`).val() === "")
-                    f=false;
+                    f = false;
             }
         }.bind(this));
         return f;
-    }
+    };
 
     this.addLocationTile = function (o) {
         $(`#locations_tab`).append(`<div class="solution_container" locid="${o.LocId}">
@@ -232,15 +239,73 @@
     };
 
     this.DeleteKey = function (name) {
-        $(this.data).each(function (i,o) {
+        $(this.data).each(function (i, o) {
             if (o.Name === name)
                 this.data.splice(i, 1);
-        }.bind(this))
+        }.bind(this));
     };
 
     this.clearInputs = function ($jq) {
         $jq.find("input").val("");
     };
+
+
+    this.AddNewLocationType = function () {
+        var o = new Object();
+        o.Type = $("input[name='TypeName']").val();
+        o.Id = $("#type_id").val();
+        $.post("../TenantUser/CreateLocationType", { loctype: o }, function (result) {
+            if (result.id > 1) {
+                $("#location_type_modal").modal("hide");
+                alert("Success");
+                if (o.Id > 0) {
+                    $("tr[key = '" + o.Id + "']").children("._type").text(o.Type);
+                    $("tr[key = '" + o.Id + "']").children("._type").attr("key", o.Type);
+                }
+                else {
+                    o.Id = result.id;
+                    this.AddTypeInUiTable(o, true);
+                }
+                $("input[name='TypeName']").val("");
+            }
+        }.bind(this));
+    };
+
+    this.AddTypeInUiTable = function (item) {
+        item = item || { Name: "", Id: 0 };
+        let del_btn = `<i id="del_${item.Id}" class="fa fa-trash delete-loc-type"></i>`;
+        let edit_btn = `<i id="edit_${item.Id}" class="fa fa-pencil edit-loc-type" ></i>`;
+
+        $('#textspace tbody').append(`<tr key="${item.Id}">
+                                    <td class="text-center">${++types_count}</td> 
+                                    <td class="text-center">${item.Id}</td> 
+                                    <td class="text-center _type" key="${item.Type}">${item.Type}</td> 
+                                    <td class="text-center" id = "${item.Id}">${del_btn} ${edit_btn}</td>
+                                </tr>`);
+        $('.delete-loc-type').off('click').on('click', this.DeleteLocationType.bind(this));
+        $('.edit-loc-type').off('click').on('click', this.EditLocationType.bind(this));
+    };
+
+    this.EditLocationType = function (e) {
+        let _type = $(e.target).parent().siblings("td._type").attr("key");
+        let _id = e.target.parentElement.id;
+        $("#location_type_modal").modal("show");
+        $("input[name='TypeName']").val(_type);
+        $("#type_id").val(_id);
+        $("#add_type_btn").text("Edit");
+    };
+
+
+    this.DeleteLocationType = function (e) {
+        let name = $(e.target);
+        let id = e.target.parentElement.id;
+        $.post("../TenantUser/DeleteLocationType", { id: id }, function (result) {
+            if (result.status) {
+                $(e.target).closest("tr").remove();
+            }
+        }.bind(this));
+    };
+
 
     this.init();
 };

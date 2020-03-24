@@ -570,8 +570,10 @@ var InitControls = function (option) {
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
-            let destRefId = ctrl.FormRefId;
-            let url = "../WebForm/Index?refid=" + ctrl.destRefId + "&srcRefId=17"+ "&srcRowId=17"+ "&_mode=17"+ "&_mode=17";
+            let params = [];
+            params.push(new fltr_obj(16, "srcRefId", ctrl.FormRefId));
+            params.push(new fltr_obj(11, "srcRowId", a___MT.expsrc[0].RowId));
+            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7`;
             window.open(url, '_blank');
         }.bind(this);
 

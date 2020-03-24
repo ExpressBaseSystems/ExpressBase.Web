@@ -17,6 +17,7 @@
         $('.edit-loc-type').off('click').on('click', this.EditLocationType.bind(this));
         $('#add_location_type').off('click').on('click', function () {
             $("#add_type_btn").text("Add");
+            $("#type_id").val("");
         });
 
         $(".loc_tile").off("click").on("click", this.locationEdit.bind(this));
@@ -255,7 +256,7 @@
         o.Type = $("input[name='TypeName']").val();
         o.Id = $("#type_id").val();
         $.post("../TenantUser/CreateLocationType", { loctype: o }, function (result) {
-            if (result.id > 1) {
+            if (result.id > 0) {
                 $("#location_type_modal").modal("hide");
                 alert("Success");
                 if (o.Id > 0) {

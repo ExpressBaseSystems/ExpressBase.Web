@@ -402,13 +402,10 @@
             // dspMmbr = cellObj.Value.split('$$')[1];
             dspMmbr = spn;
         }
-        else if (col.ObjType === "EbDGUserSelectColumn") {
-            alert();
-            //let spn = `<div class="ulstc-disp-img-c" style="background-image: url(/images/dp/${cellObj.Value.split('$$')[0]}.png;), url(/images/nulldp.png;);></div>`
-
-            //spn += `<div class="ulstc-disp-txt">${cellObj.Value.split('$$')[1]}</div>`;
-            //// dspMmbr = cellObj.Value.split('$$')[1];
-            //dspMmbr = spn;
+        else if (col.ObjType === "DGUserSelectColumn") {
+            let ulObj = inpCtrl.UserList.$values.find(e => e.vm === cellObj.Value);
+            if (ulObj) 
+                dspMmbr = `<img class='sysctrl_usrimg' src='/images/dp/${ulObj.vm}.png' alt='' onerror="this.src='/images/nulldp.png'"> <span class='sysctrl_usrname'>${ulObj.dm1}</span>`;
         }
         else
             dspMmbr = cellObj.Value || "";

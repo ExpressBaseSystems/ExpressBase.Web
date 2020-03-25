@@ -1137,9 +1137,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     font-size: 11.5px;
     font-weight: 500;
     font-family: Roboto;
-    letter-spacing: 0.3PX;
+    letter-spacing: 0.4PX;
     padding: 1px;
     padding: 2px 0px;
+    color: #6b6a6a;
     border: none;
     display: inline-block;
     margin: 1px 0;

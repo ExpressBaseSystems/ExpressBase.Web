@@ -1116,6 +1116,27 @@ function GetFontCss(obj, jqueryObj) {
     }
 }
 
+
+function setFontCss(obj, jqueryObj) {
+    if (obj) {
+        debugger;
+        if (jqueryObj !== undefined) {
+            jqueryObj.css(`font-size`, `${obj.Size}px`);
+            jqueryObj.css(`color`, `${obj.color}`);
+            jqueryObj.css(`font-family`, `${obj.FontName}`);
+
+            if (obj.Underline) { jqueryObj.css(`text-decoration`, `underline`); }
+            if (obj.Strikethrough) { jqueryObj.css(`text-decoration`, `line-through`); }
+            if (obj.Caps) { jqueryObj.css(`text-transform`, `uppercase`); }
+
+            if (obj.Style === 0) { jqueryObj.css(`font-weight`, `normal`); jqueryObj.css(`font-style`, `normal`); }
+            if (obj.Style === 1) { jqueryObj.css(`font-weight`, `bold`); jqueryObj.css(`font-style`, `normal`); }
+            if (obj.Style === 2) { jqueryObj.css(`font-style`, `italic`); jqueryObj.css(`font-weight`, `normal`); }
+            if (obj.Style === 3) { jqueryObj.css(`font-weight`, `bold`); jqueryObj.css(`font-style`, `italic`); }
+        }
+    }
+}
+
 function blink(el, delay = 1000) {
     if (el.jquery) {
 

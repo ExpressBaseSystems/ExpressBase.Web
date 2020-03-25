@@ -128,6 +128,10 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
+            else if (Obj.ObjType === "ExportButton") {
+                opt.formObj = this.FormObj;
+                opt.dataRowId = this.DataMODEL[this.FormObj.TableName][0].RowId;
+            }
             else if (Obj.ObjType === "ProvisionUser" || Obj.ObjType === "ProvisionLocation")
                 opt.flatControls = this.flatControls;
             this.initControls.init(Obj, opt);
@@ -844,6 +848,8 @@ const WebFormRender = function (option) {
 
         //    this.ApprovalCtrl.disableAllCtrls();
         $.each(this.flatControls, function (k, ctrl) {
+            if (ctrl.ObjType === "ExportButton")
+                return true;
             ctrl.disable();
         }.bind(this));
         $.each(this.DGs, function (k, DG) {

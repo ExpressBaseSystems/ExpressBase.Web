@@ -851,10 +851,11 @@ function dgEBOnChangeBind() {
                 else {
                     __this.DataVals.Value = v;
                     __this.DataVals.D = d;
+
+                    if ($(event.target).data('ctrl_ref'))// when trigger change from setValue(if the setValue called from inactive row control) update DG table td
+                        ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
                 }
             }
-            if ($(event.target).data('ctrl_ref'))// when trigger change from setValue(if the setValue called from inactive row control) update DG table td
-                ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
         }.bind(col, this.formObject, this.__userObject);
 
         //let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
@@ -1111,6 +1112,27 @@ function GetFontCss(obj, jqueryObj) {
         }
         else {
             return (font.join().replace(/\,/g, ''));
+        }
+    }
+}
+
+
+function setFontCss(obj, jqueryObj) {
+    if (obj) {
+        debugger;
+        if (jqueryObj !== undefined) {
+            jqueryObj.css(`font-size`, `${obj.Size}px`);
+            jqueryObj.css(`color`, `${obj.color}`);
+            jqueryObj.css(`font-family`, `${obj.FontName}`);
+
+            if (obj.Underline) { jqueryObj.css(`text-decoration`, `underline`); }
+            if (obj.Strikethrough) { jqueryObj.css(`text-decoration`, `line-through`); }
+            if (obj.Caps) { jqueryObj.css(`text-transform`, `uppercase`); }
+
+            if (obj.Style === 0) { jqueryObj.css(`font-weight`, `normal`); jqueryObj.css(`font-style`, `normal`); }
+            if (obj.Style === 1) { jqueryObj.css(`font-weight`, `bold`); jqueryObj.css(`font-style`, `normal`); }
+            if (obj.Style === 2) { jqueryObj.css(`font-style`, `italic`); jqueryObj.css(`font-weight`, `normal`); }
+            if (obj.Style === 3) { jqueryObj.css(`font-weight`, `bold`); jqueryObj.css(`font-style`, `italic`); }
         }
     }
 }

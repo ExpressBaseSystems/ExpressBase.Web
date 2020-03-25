@@ -649,7 +649,7 @@ const WebFormRender = function (option) {
 
         if (respObj.Status === 200) {
             if (_renderMode === 3) {
-                EbMessage("show", { Message: "Sign up success. Plaese check mail to login ", AutoHide: false, Background: '#00aa00' });
+                EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: false, Background: '#00aa00' });
                 setTimeout(function () {
                     ebcontext.setup.ss.onLogOutMsg();
                 }, 3000);

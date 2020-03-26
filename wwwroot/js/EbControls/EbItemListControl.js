@@ -23,6 +23,7 @@
                                     <div class="ulstc-disp-img-c" style="background-image: url(${this.options.imageAlternate});"></div>
                                     <div class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>
                                     <i class="fa fa-sort-desc" aria-hidden="true" style="margin-left: auto;padding: 3px 10px;min-height: 26px;"></i>
+                                    <input type='hidden'/>
                                 </div>
                                 <div class="ulstc-list-c">
                                     <div class="ulstc-list-srch">
@@ -94,8 +95,8 @@
         this.$dispCont.children('div').remove();
         this.$dispCont.prepend($disp);
         this.$dispCont.next().toggle();
-        for (let j = 0; j < this.ctrl._onChangeFunctions.length; j++)
-            this.ctrl._onChangeFunctions[j]();
+
+        this.$dispCont.find('input[type=hidden]').trigger('change');
     };
 
     this.onTxtSrchKeydown = function (e) {
@@ -158,39 +159,42 @@
         }
     };
 
-    this.setValue = function (p1, p2) {
-        let $dispC = $(`#${this.EbSid_CtxId}`);
+    this.setValue = function (p1, p2, isJustSet) {
+        let $dispC = $(`#${this.ctrl.EbSid_CtxId}`);
         let itemO = $dispC.data('data-obj');
 
         if (!p1 || p1.toString() === '') {
             if (itemO) {
                 $dispC.children('div').remove();
                 $dispC.prepend(`<div class="ulstc-disp-img-c" style="background-image: url(/images/nulldp.png);"></div>
-                            <div id="${this.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>`);
+                            <div id="${this.ctrl.EbSid_CtxId}" class="ulstc-disp-txt" style='color: #aaa;'> - Select - </div>`);
                 $dispC.removeData('data-obj');
-                for (let j = 0; j < this._onChangeFunctions.length; j++)
-                    this._onChangeFunctions[j]();
+                if (!isJustSet) {
+                    $dispC.find('input[type=hidden]').trigger('change');
+                }
             }
             return;
         }
         
-        for (let i = 0; i < this.UserList.$values.length; i++) {
-            if (this.UserList.$values[i]['vm'].toString() === p1.toString()) {
-                $dispC.data('data-obj', this.UserList.$values[i]);
+        for (let i = 0; i < this.options.itemList.length; i++) {
+            if (this.options.itemList[i]['vm'].toString() === p1.toString()) {
+                $dispC.data('data-obj', this.options.itemList[i]);
                 $dispC.children('div').remove();
                 $dispC.prepend(`<div style="display: inherit;">
-                                    <div class="ulstc-disp-img-c" style="background-image:url(/images/dp/${this.UserList.$values[i]['img']}.png), url(/images/nulldp.png);"></div>
-                                    <div class="ulstc-disp-txt">${this.UserList.$values[i]['dm1']}</div>
+                                    <div class="ulstc-disp-img-c" style="background-image:url(/images/dp/${this.options.itemList[i]['img']}.png), url(/images/nulldp.png);"></div>
+                                    <div class="ulstc-disp-txt">${this.options.itemList[i]['dm1']}</div>
                                 </div>`);
-                for (let j = 0; j < this._onChangeFunctions.length; j++)
-                    this._onChangeFunctions[j]();
+                if (!isJustSet) {
+                    $dispC.find('input[type=hidden]').trigger('change');
+                }
+                
                 break;
             }
         }
     };
 
     this.getDisplayMember = function (p1, p2) {
-        let itemO = $(`#${this.EbSid_CtxId}`).data('data-obj');
+        let itemO = $(`#${this.ctrl.EbSid_CtxId}`).data('data-obj');
         if (itemO)
             return itemO;
         else

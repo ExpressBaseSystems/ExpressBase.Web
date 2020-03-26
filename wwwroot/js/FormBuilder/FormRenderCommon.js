@@ -79,6 +79,8 @@
 
     this.fireInitOnchangeNC = function (flatControls) {
         $.each(flatControls, function (k, Obj) {
+            if (Obj.ObjType === "ScriptButton")
+                return true;
             this.fireInitOnchange(Obj);
         }.bind(this));
     };

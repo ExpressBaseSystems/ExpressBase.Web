@@ -567,6 +567,17 @@ var InitControls = function (option) {
         return new EbDataGrid(ctrl, ctrlOpts);
     };
 
+    this.ExportButton = function (ctrl, ctrlOpts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        $ctrl[0].onclick = function () {
+            let params = [];
+            params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
+            params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
+            let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7`;
+            window.open(url, '_blank');
+        }.bind(this);
+    };
+
     this.Approval = function (ctrl, ctrlOpts) {
         return new EbApproval(ctrl, ctrlOpts);
     };
@@ -764,21 +775,7 @@ var InitControls = function (option) {
             EbSid_CtxId: ctrl.EbSid_CtxId
         });
         itemList.ctrl = ctrl;
-        ctrl.setValue = itemList.setValue;
-        ctrl.getDisplayMember = itemList.getDisplayMember;
-        ctrl.refresh = itemList.refresh;
-        ctrl.clear = itemList.clear;
-        ctrl._onChangeFunctions = [];
-        ctrl.bindOnChange = function (p1) {
-            if (!this._onChangeFunctions.includes(p1))
-                this._onChangeFunctions.push(p1);
-        };
-        if (ctrl.LoadCurrentUser) {
-            if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
-                ctrl.setValue(ctrl.DataVals.Value);
-            else
-                ctrl.setValue(ebcontext.user.UserId.toString());
-        }
+        ctrl._JsCtrlMng = itemList;// to refer ControlOperation fns from code in cs file - moving ctrlOps is critical
     };
 
     this.TextBox = function (ctrl, ctrlopts) {

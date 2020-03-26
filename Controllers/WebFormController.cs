@@ -62,6 +62,22 @@ namespace ExpressBase.Web.Controllers
                         Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
                     }
                 }
+                else if ((int)WebFormModes.Export_mode == _mode)
+                {
+                    try
+                    {
+                        string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? string.Empty;
+                        int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
+                        GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
+                        ViewBag.formData = Resp.FormDataWrap;
+                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
+                    }
+                    catch (Exception ex)
+                    {
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                        Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
+                    }
+                }
             }
             else
             {

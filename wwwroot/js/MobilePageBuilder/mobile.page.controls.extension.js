@@ -8,7 +8,8 @@
             trigger: function (root) {
                 this.tab = root.Conf.TabNum || "";
             },
-            setObject: function () { return null; }
+            setObject: function () { return null; },
+            propertyChanged: function (propname) { }
         };
 
         $.extend(o, common, window.expandable[constructor] || {});
@@ -165,6 +166,23 @@
                 $(`#${this.EbSid} .control_container`).find(".mob_control").each(function (k, obj) {
                     root.findFormContainerItems(k, obj, this.ChildControls);
                 }.bind(this));
+            }
+        },
+        "EbMobileNumericBox": {
+            trigger: function (root) {
+                this.propertyChanged("RenderType");
+            },
+            propertyChanged: function (propname) {
+                if (propname === "RenderType") {
+                    if (this.RenderType === 1) {
+                        $(`#${this.EbSid} .eb_mob_numericbox`).hide();
+                        $(`#${this.EbSid} .eb_mob_numericbox-btntype`).show();
+                    }
+                    else {
+                        $(`#${this.EbSid} .eb_mob_numericbox`).show();
+                        $(`#${this.EbSid} .eb_mob_numericbox-btntype`).hide();
+                    }
+                }
             }
         }
     };

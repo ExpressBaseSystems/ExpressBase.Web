@@ -346,6 +346,9 @@ function EbMobStudio(config) {
             console.log("pg changed");
         }
 
+        if ("propertyChanged" in obj)
+            obj.propertyChanged(pname);
+
         //set tree col if form
         if (this.ContainerType === "EbMobileForm" && (pname === "Name" || pname === "TableName"))
             this.Controls.refreshColumnTree();

@@ -209,12 +209,17 @@
                                 <a href="/ForgotPassword">Forgot password?</a>
                             </div>
                         </div>
-                        <input type="hidden" name="continue_with" value="@ViewBag.ContinueWith"/>
-                        <div class="g-recaptcha"
-                             data-sitekey="@ViewBag.ReCaptchaKey"
-                             data-callback="validator_recaptcha"
-                             data-size="invisible">
-                        </div>
+                        <input type="hidden" name="continue_with" value="@ViewBag.ContinueWith" />
+                        @if ((ViewBag.Env == "Production")||(ViewBag.Env == "Development"))
+                        {
+                            <div class="g-recaptcha"
+                                 data-sitekey="@ViewBag.ReCaptchaKey"
+                                 data-callback="validator_recaptcha"
+                                 data-size="invisible">
+                            </div>
+                        }
+
+
                         <div class="form-group">
                             <button validator="submit" id="logNow" env="@ViewBag.Env" class="btn signin-btn eb_blue">
                                 Sign In

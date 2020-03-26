@@ -1070,7 +1070,8 @@ var InitControls = function (option) {
                 ['view', ['undo', 'redo', 'help']],
             ],
             disableResizeEditor: true,
-            disableDragAndDrop: true
+            disableDragAndDrop: true, 
+            dialogsInBody: true
         });
 
 

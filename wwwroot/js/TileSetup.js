@@ -512,6 +512,8 @@
 
     this.clickbtnModalOkAction = function () {
         if (this.title === 'New IP') {
+            let descri = this.txtIpDescription.val().replace(/[^a-zA-Z0-9 ]/g, "");
+            this.txtIpDescription.val(descri);
             if (this.txtIpAddress.val().trim() === "" || this.txtIpDescription.val().trim() === "") {
                 EbMessage("show", { Message: 'Please Enter IP address/Description', AutoHide: true, Background: '#bf1e1e' });
                 return;

@@ -19,10 +19,11 @@
     this.Rowdata = {};
 
     this.GridStackInit = function () {
-        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
-        this.grid = $('.grid-stack').data("gridstack");
-        this.grid.cellHeight(20);
-        $('.grid-stack').on('gsresizestop', this.Redrawfn.bind(this));
+        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
+        grid.on('gsresizestop', this.Redrawfn.bind(this));
+        //grid.on('dragstart', this.DragStartFn.bind(this));
+        //grid.on('dragstop', this.DragStopFn.bind(this));
+        grid.cellHeight(20);
     };
 
 
@@ -32,6 +33,7 @@
         var id = $(element).context.children[0].id;
         this.RedrwFnHelper(id);
     };
+
     this.RedrwFnHelper = function (id) {
         let currentobj = this.TileCollection[id];
         var height = $(`[data-id=${id}`).height();
@@ -154,7 +156,7 @@
         $('.Btn4SwitchDB').removeAttr("disabled");
         let refid = e.target.getAttribute("value");
         $(`[Value=${refid}]`).attr("disabled", true);
-        this.grid.removeAll();
+        grid.removeAll();
         this.Version = this.DashBoardList[refid].VersionNumber;
         this.EbObject = this.DashBoardList[refid];
         this.Statu = this.DashBoardList[refid].Status;
@@ -178,7 +180,7 @@
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "") {
             $('.db-user-filter').remove();
             if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
-            this.grid.removeAll();
+            grid.removeAll();
             this.DrawTiles();
         }
         else {
@@ -201,7 +203,7 @@
                 let y = this.EbObject.Tiles.$values[i].TileDiv.Data_y;
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
-                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}"> 
+                grid.addWidget(`<div id="${tile_id}"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
@@ -210,7 +212,7 @@
                     <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
                     </div></div>
                     <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont_view">
-                    </div></div></div>`), x, y, dw, dh, false);
+                    </div></div></div>`, x, y, dw, dh, false);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                 let refid = this.EbObject.Tiles.$values[i].RefId;
@@ -305,11 +307,11 @@
             this.Tilecontext();
         }
         else {
-            $('.grid-stack').gridstack();
+            this.GridStackInit
         }
-        var grid = $('.grid-stack').data('gridstack');
-        grid.enableMove(false, true);
-        grid.enableResize(false, true);
+
+        grid.movable('.grid-stack-item', false);
+        grid.resizable('.grid-stack-item', false);
     }
 
 
@@ -569,7 +571,7 @@
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         if (this.filterDialogRefid !== "") {
-            this.grid.removeAll();
+            grid.removeAll();
             this.DrawTiles();
         }
         if (this.stickBtn) { this.stickBtn.minimise(); }

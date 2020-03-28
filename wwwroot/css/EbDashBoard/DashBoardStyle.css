@@ -1340,7 +1340,7 @@ body {
     border-radius: 4px;
     background-image: linear-gradient(to right, rgb(61, 61, 90), rgb(59, 114, 115));
     color: white;
-    display: flex
+    display: flex;
 }
 
     .link-dashboard-pane .link-icon {

@@ -1119,7 +1119,6 @@ function GetFontCss(obj, jqueryObj) {
 
 function setFontCss(obj, jqueryObj) {
     if (obj) {
-        debugger;
         if (jqueryObj !== undefined) {
             jqueryObj.css(`font-size`, `${obj.Size}px`);
             jqueryObj.css(`color`, `${obj.color}`);

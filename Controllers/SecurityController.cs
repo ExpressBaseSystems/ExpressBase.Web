@@ -491,15 +491,8 @@ namespace ExpressBase.Web.Controllers
         {
             if (!HasPemissionToSecurity())
                 return "Failed";
-            try
-            {
-                Enum.Parse(typeof(SystemRoles), _roleName.Trim().ToLower(), true);
+            if (Enum.TryParse(typeof(SystemRoles), _roleName.Trim().ToLower(), true, out object r))
                 return "Failed";
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("RoleSave rolename check : " + ex.Message);
-            }
 
             Dictionary<string, object> Dict = new Dictionary<string, object>();
             string return_msg;
@@ -515,15 +508,13 @@ namespace ExpressBase.Web.Controllers
 
             SaveRoleResponse res = this.ServiceClient.Post<SaveRoleResponse>(new SaveRoleRequest { Colvalues = Dict });
             if (res.id == 0)
-            {
                 return_msg = "Success";
-            }
+            else if (res.id == -1)
+                return_msg = "Duplicate";
             else
-            {
                 return_msg = "Failed";
-            }
-            return return_msg;
 
+            return return_msg;
         }
 
         public bool isValidRoleName(string reqRoleName)
@@ -532,13 +523,15 @@ namespace ExpressBase.Web.Controllers
             {
                 if (!HasPemissionToSecurity())
                     return false;
-                Enum.Parse(typeof(SystemRoles), reqRoleName.ToLower(), true);
-                return true;//role name is already exists
+                if (Enum.TryParse(typeof(SystemRoles), reqRoleName.ToLower(), true, out object r))
+                    return true;//role name is already exists
+                UniqueCheckResponse result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { roleName = reqRoleName });
+                return result.unrespose;
             }
             catch (Exception ex)
             {
-                UniqueCheckResponse result = this.ServiceClient.Post<UniqueCheckResponse>(new UniqueCheckRequest { roleName = reqRoleName });
-                return result.unrespose;
+                Console.WriteLine("Exception in isValidRoleName : " + ex.Message);
+                return false;
             }
         }
 

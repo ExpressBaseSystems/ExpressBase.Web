@@ -752,3 +752,11 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .popover-content td{
    padding:5px;
 }
+.tdheight .stage_actions button{
+    padding: 1px 25px 0px 5px;
+    font-size: 12px;
+    width: auto;
+}
+.tdheight .stage_actions  {
+    width: auto!important;
+}

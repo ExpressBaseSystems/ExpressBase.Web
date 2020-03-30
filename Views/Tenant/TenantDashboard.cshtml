@@ -78,7 +78,10 @@
             if ('@ViewBag.Msg')
                 EbMessage("show", { Message: "@ViewBag.Msg", AutoHide: true });
 
-            window.tour = new Tour(
+            let env = '@ViewBag.Env';
+
+            if (env === "Production") {
+                window.tour = new Tour(
                 {
                     WelcomeMessage: "<small>Welcome to </small> <br/> <b>EXPRESSbase</b>",
                     Description: `A low-code, Rapid application development <br/> & delivery platform
@@ -151,6 +154,7 @@
                         }
                     ]
                 });
+            }
         });
     </script>
 }

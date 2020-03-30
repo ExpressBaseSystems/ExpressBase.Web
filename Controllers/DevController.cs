@@ -762,7 +762,7 @@ namespace ExpressBase.Web.Controllers
         {
             EbObjectObjListAllVerResponse public_res = this.ServiceClient.Get(new PublicObjListAllVerRequest { EbObjectType = 0 });
             EbObjectObjListAllVerResponse all_resp = this.ServiceClient.Get(new EbObjectObjLisAllVerRequest { EbObjectType = 0 });
-            GetUserTypesResponse _userTypesResp = this.ServiceClient.Post(new GetUserTypesRequest());
+            GetUserTypesResponse _userTypesResp = this.ServiceClient.Get(new GetUserTypesRequest());
 
             Eb_Solution solutionObj = GetSolutionObject(ViewBag.cid);
             if (solutionObj != null && solutionObj.SolutionSettings != null)

@@ -1,0 +1,28 @@
+﻿
+.map-view-outer {
+    padding: 1rem 5rem 1rem 2rem;
+}
+    .map-view-outer .map-cols {
+        height: 4rem;
+        border: solid 1px #c0c0c0;
+        margin-bottom: 2rem;
+    }
+
+.pg-grid {
+    top: 0px;
+    right: 0px;
+    width: 350px;
+    position: fixed;
+    display: block;
+    margin-top: 37px;
+    height: 100%;
+    z-index: 1000;
+    border: 1px solid rgb(204, 204, 204);
+}
+.map-view {
+    /*height: 60rem;
+    border: solid 1px #838383;
+    z-index: 0;
+    margin-left: 35rem;
+    margin-right: 20rem;*/
+}

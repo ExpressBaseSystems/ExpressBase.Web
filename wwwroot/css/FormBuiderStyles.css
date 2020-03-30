@@ -517,6 +517,7 @@ eb-disable {
     font-size: 11px;
     color: #6d6d6d;
 }
+
 .rc-slno {
     width: 50px;
 }
@@ -1015,6 +1016,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     outline: none;
     border: dashed 1px rgb(150, 153, 165);
     box-shadow: 4px 2px 10px 0px rgba(0, 0, 0, 0.109);
+    border: dashed 1px rgb(64, 138, 249);
 }
 
 /*rendering*/
@@ -1035,7 +1037,25 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-top: 5px;
 }
 
+[isrendermode=true][eb-form="true"][mode="edit"] [ctype="ExportButton"] {
+    display: none;
+}
+
+[eb-form="true"] [ctype="ExportButton"] .ctrl-cover {
+    border: none;
+}
+
+    [eb-form="true"] [ctype="ExportButton"] .ctrl-cover .btn {
+        border: none;
+        padding: 7px;
+        font-size: 17px;
+    }
+
 [ctype="RadioButton"] > .eb-ctrl-label {
+    display: none;
+}
+
+[ctype="ExportButton"] > .eb-ctrl-label {
     display: none;
 }
 
@@ -1116,11 +1136,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .eb-ctrl-label {
     position: relative;
     font-size: 11.5px;
+    font-size: 12px;
     font-weight: 500;
     font-family: Roboto;
-    letter-spacing: 0.3PX;
+    letter-spacing: 0.4PX;
     padding: 1px;
     padding: 2px 0px;
+    color: #6b6a6a;
     border: none;
     display: inline-block;
     margin: 1px 0;
@@ -1838,34 +1860,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 3px;
 }
 
-/*Ebrating css style*/
-.rating-container {
-    direction: rtl !important;
-    display: inline-block;
-}
-
-    .rating-container label {
-        display: inline-block;
-        color: #d4d4d4;
-        margin: 0;
-        cursor: pointer;
-        transition: color 0.2s;
-        /*font-size: 30px;*/
-    }
-
-    .rating-container input {
-        display: none;
-    }
-
-.ratingLbl:hover, .ratingLbl:hover ~ .ratingLbl, input:checked ~ .ratingLbl {
-    color: gold;
-}
 
 [ctype="Image"] > .ctrl-cover {
     border: none;
 }
 
-
+/*Ebrating css style*/
+.ratingDiv_dc .wrd_spacing {
+    padding-right: 3px;
+}
 /*EbTagInput*/
 [ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput {
     width: 100%;
@@ -1879,3 +1882,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group > .btn-group {
         width: auto !important;
     }
+
+[ctype=RichText] > .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
+    height: inherit;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px
+}

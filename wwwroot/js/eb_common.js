@@ -693,8 +693,10 @@ function Test() {
 }
 
 function EbConvertValue(val, type) {
-    if (type === 11)
+    if (type === 11) {
+        val = val.replace(/,/g, "");//  temporary fix
         return parseInt(val);
+    }
     return val;
 }
 
@@ -814,25 +816,29 @@ function dgOnChangeBind() {
 
 function dgEBOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {// need change
-//        let FnString = `
-//let __this = form.__getCtrlByPath(this.__path);
-//if (__this.DataVals !== undefined) {
-//    let v = __this.getValueFromDOM();
-//    let d = __this.getDisplayMemberFromDOM();
-//    if (__this.ObjType === 'Numeric')
-//        v = parseFloat(v);
-//debugger;
-//    if (__this.__isEditing) {
-//        __this.curRowDataVals.Value = v;
-//        __this.curRowDataVals.D = d;
-//    }
-//    else {
-//        __this.DataVals.Value = v;
-//        __this.DataVals.D = d;
-//    }
-//}`;
+        //        let FnString = `
+        //let __this = form.__getCtrlByPath(this.__path);
+        //if (__this.DataVals !== undefined) {
+        //    let v = __this.getValueFromDOM();
+        //    let d = __this.getDisplayMemberFromDOM();
+        //    if (__this.ObjType === 'Numeric')
+        //        v = parseFloat(v);
+        //debugger;
+        //    if (__this.__isEditing) {
+        //        __this.curRowDataVals.Value = v;
+        //        __this.curRowDataVals.D = d;
+        //    }
+        //    else {
+        //        __this.DataVals.Value = v;
+        //        __this.DataVals.D = d;
+        //    }
+        //}`;
         let OnChangeFn = function (form, user, event) {
-            let __this = form.__getCtrlByPath(this.__path);
+            //let __this = form.__getCtrlByPath(this.__path);
+            let __this = $(event.target).data('ctrl_ref');// when trigger change from setValue(if the setValue called from inactive row control)
+            if (__this === undefined)
+                __this = form.__getCtrlByPath(this.__path);
+
             if (__this.DataVals !== undefined) {
                 let v = __this.getValueFromDOM();
                 let d = __this.getDisplayMemberFromDOM();
@@ -845,6 +851,9 @@ function dgEBOnChangeBind() {
                 else {
                     __this.DataVals.Value = v;
                     __this.DataVals.D = d;
+
+                    if ($(event.target).data('ctrl_ref'))// when trigger change from setValue(if the setValue called from inactive row control) update DG table td
+                        ebUpdateDGTD($('#td_' + __this.EbSid_CtxId));
                 }
             }
         }.bind(col, this.formObject, this.__userObject);
@@ -1103,6 +1112,26 @@ function GetFontCss(obj, jqueryObj) {
         }
         else {
             return (font.join().replace(/\,/g, ''));
+        }
+    }
+}
+
+
+function setFontCss(obj, jqueryObj) {
+    if (obj) {
+        if (jqueryObj !== undefined) {
+            jqueryObj.css(`font-size`, `${obj.Size}px`);
+            jqueryObj.css(`color`, `${obj.color}`);
+            jqueryObj.css(`font-family`, `${obj.FontName}`);
+
+            if (obj.Underline) { jqueryObj.css(`text-decoration`, `underline`); }
+            if (obj.Strikethrough) { jqueryObj.css(`text-decoration`, `line-through`); }
+            if (obj.Caps) { jqueryObj.css(`text-transform`, `uppercase`); }
+
+            if (obj.Style === 0) { jqueryObj.css(`font-weight`, `normal`); jqueryObj.css(`font-style`, `normal`); }
+            if (obj.Style === 1) { jqueryObj.css(`font-weight`, `bold`); jqueryObj.css(`font-style`, `normal`); }
+            if (obj.Style === 2) { jqueryObj.css(`font-style`, `italic`); jqueryObj.css(`font-weight`, `normal`); }
+            if (obj.Style === 3) { jqueryObj.css(`font-weight`, `bold`); jqueryObj.css(`font-style`, `italic`); }
         }
     }
 }

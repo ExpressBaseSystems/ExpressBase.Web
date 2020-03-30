@@ -539,6 +539,20 @@
         var roleName = $(this.txtRoleName).val().trim();
         var strSelectedLocs = "";
 
+        if (!this.isInfoValid) {
+            EbMessage("show", { Message: 'Role name already exists. Enter a unique name.', AutoHide: true, Background: '#bf1e1e' });
+            return false;
+        }
+        if (roleName === "") {
+            EbMessage("show", { Message: 'Role name cannot be empty.', AutoHide: true, Background: '#bf1e1e' });
+            return false;
+        }
+        if (roleDescription === "") {
+            EbMessage("show", { Message: 'Role description cannot be empty.', AutoHide: true, Background: '#bf1e1e' });
+            return false;
+        }
+
+
         //$.each(this.opDict, function (i, value) {
         //    $("#spanRemv" + value.Op_Name).trigger("click");
         //});
@@ -554,11 +568,7 @@
             strSelectedLocs += this.selectedLocations[i] + ",";
         strSelectedLocs = strSelectedLocs.substring(0, strSelectedLocs.length - 1);
         strSelectedLocs = this.selectedLocations.indexOf('-1') === -1 ? strSelectedLocs : "-1";
-
-        if (roleName === "" || roleDescription === "") {
-            EbMessage("show", { Message: 'Fill Role Name/Description', AutoHide: true, Background: '#bf1e1e' });
-            return false;
-        }
+                
         $(this.btnSaveAll).attr("disabled", "true");
         $("#eb_common_loader").EbLoader("show");
         $.ajax({
@@ -591,6 +601,8 @@
                     }
                 });
         }
+        else if (msg === "Duplicate")
+            EbMessage("show", { Message: 'Role name already exists. Enter a unique name.', AutoHide: true, Background: '#bf1e1e' });
         else
             EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
         $(this.btnSaveAll).removeAttr("disabled");

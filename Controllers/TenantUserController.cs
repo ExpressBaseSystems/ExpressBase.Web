@@ -29,7 +29,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet("UserDashBoard")]
         public IActionResult UserDashboard()
         {
-            if (ViewBag.UId > 1  || ViewBag.cide =="demo")
+            if (ViewBag.UId > 1 || ViewBag.cide == "demo")
             {
                 Type[] typeArray = typeof(EbDashBoardWraper).GetTypeInfo().Assembly.GetTypes();
                 Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DashBoard, typeof(EbDashBoardWraper), typeof(EbObject));
@@ -140,6 +140,7 @@ namespace ExpressBase.Web2.Controllers
             var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
             ViewBag.Config = JsonConvert.SerializeObject(resp.Config);
             ViewBag.LocList = resp.Locations;
+            ViewBag.LocType = resp.LocationTypes;
             return View();
         }
 
@@ -154,8 +155,20 @@ namespace ExpressBase.Web2.Controllers
 
         public int DeletelocConf(int id)
         {
-            var resp = ServiceClient.Post<DeleteLocResponse>(new DeleteLocRequest { Id = id });
+            DeleteLocResponse resp = ServiceClient.Post<DeleteLocResponse>(new DeleteLocRequest { Id = id });
             return resp.id;
+        }
+
+        public CreateLocationTypeResponse CreateLocationType(EbLocationType loctype)
+        {
+            CreateLocationTypeResponse resp = this.ServiceClient.Post(new CreateLocationTypeRequest { LocationType = loctype});
+            return resp;
+        }
+
+        public DeleteLocationTypeResponse DeleteLocationType(int id)
+        {
+            DeleteLocationTypeResponse resp = this.ServiceClient.Post(new DeleteLocationTypeRequest { Id = id });
+            return resp;
         }
     }
 }

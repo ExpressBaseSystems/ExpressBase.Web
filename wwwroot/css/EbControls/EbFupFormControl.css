@@ -11,3 +11,31 @@
 .FUP_Bdy_WZ {
     width: 100%;
 }
+
+.FileUploadGallery .FUP_Head_W .FUP_TagUl{
+    padding:0px;
+}
+.FileUploadGallery .FUP_Head_W .FUP_TagUl:before {
+    content: "Filter by tags:";
+}
+    .FileUploadGallery .FUP_Head_W .FUP_TagUl .FUP_TagLi {
+        display: inline-block;
+        margin-right: 10px;
+        list-style: none;
+        font-size: 12px;
+        margin-top: 0px;
+        margin-bottom: 12px;
+        border-radius: 3px;
+        padding: 2px 8px;
+        background-color: white;
+        color: black;
+        box-shadow: inset 0px 0px 4px 1px #aab5c8;
+    }
+    .FileUploadGallery .FUP_Head_W .FUP_TagUl .FUP_TagLi:hover {
+        /*box-shadow: inset 0px 0px 4px 1px #c2c9d7;*/
+        box-shadow: inset 0px 0px 4px 1px #6283c0;
+    }
+        .FileUploadGallery .FUP_Head_W .FUP_TagUl .FUP_TagLi.current {
+            background-color: #f6f6f6d9 !important;
+            box-shadow: inset 0px 0px 3px 1px #1a57dfb3;
+        }

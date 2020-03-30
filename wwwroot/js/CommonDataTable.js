@@ -2633,6 +2633,7 @@
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
+        $(".stage_actions").selectpicker();
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         //this.Api.columns.adjust();
     };
@@ -4078,55 +4079,57 @@
     this.updateRenderFunc_Inner = function (i, col) {
         //this.EbObject.Columns.$values[i].sClass = "";
         //this.EbObject.Columns.$values[i].className = "";
+        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1) {
+            if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
 
-        if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
-
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight dt-right";
-        }
-        if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
-            if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "sys_cancelled") {
-                this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
-                this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight dt-right";
             }
-            else {
-                if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
-                    this.EbObject.Columns.$values[i].render = this.renderEditableCol.bind(this);
-                    this.EbObject.Columns.$values[i].mRender = this.renderEditableCol.bind(this);
+            else if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
+                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "sys_cancelled") {
+                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 }
-                else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.Icon) {
+                else {
+                    if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
+                        this.EbObject.Columns.$values[i].render = this.renderEditableCol.bind(this);
+                        this.EbObject.Columns.$values[i].mRender = this.renderEditableCol.bind(this);
+                    }
+                    else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.Icon) {
+                        this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
+                        this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
+                    }
+                    else {
+                        this.EbObject.Columns.$values[i].render = function (data, type, row, meta) { return data; };
+                        this.EbObject.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
+                    }
+                }
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight text-center";
+            }
+            else if (col.RenderType === parseInt(gettypefromString("String")) || col.RenderType == parseInt(gettypefromString("Double"))) {
+                if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
+                    this.EbObject.Columns.$values[i].render = this.lineGraphDiv.bind(this);
+                    this.EbObject.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
+                }
+                //else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
+                //    this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+                //    this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+                //}
+                else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
                     this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
                     this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
                 }
-                else {
-                    this.EbObject.Columns.$values[i].render = function (data, type, row, meta) { return data; };
-                    this.EbObject.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
-                }
-            }
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight text-center";
-        }
-        if (col.RenderType === parseInt(gettypefromString("String")) || col.RenderType == parseInt(gettypefromString("Double"))) {
-            if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
-                this.EbObject.Columns.$values[i].render = this.lineGraphDiv.bind(this);
-                this.EbObject.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
-            }
-            //else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
-            //    this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-            //    this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-            //}
-            else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
-                this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
-                this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
-            } 
 
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight dt-left";
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight dt-left";
+            }
+            else if (col.RenderType === parseInt(gettypefromString("Date")) || col.RenderType == parseInt(gettypefromString("DateTime"))) {
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight dt-left";
+            }
         }
-        if (col.RenderType === parseInt(gettypefromString("Date")) || col.RenderType == parseInt(gettypefromString("DateTime"))) {
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight dt-left";
-        }
+
         if (col.name === "eb_created_by" || col.name === "eb_lastmodified_by")
             col.className += " dt-left";
         if (col.Font !== null && col.Font !== undefined) {

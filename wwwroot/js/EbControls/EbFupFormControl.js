@@ -11,7 +11,10 @@
         this.RefIds = [];
         this.SingleRefid = null;
         this.FileList = [];
+        this.FileFlag = {};
+        this.FileFlag.tagflag = true;
         this.CurrentFimg = null;
+        this.TagList = {};
         this.Multiple = this.Options.Multiple ? "multiple" : "";
         if (this.validateOpt())
             this.init();
@@ -99,7 +102,7 @@
     appendGallery() {
         $(`#${this.Options.Container}_FUP_GW .FUP_Bdy_W`).append(`<div id="${this.Options.Container}_GalleryUnq" class="ebFupGalleryOt">
                         <div class="ClpsGalItem_Sgl" Catogory="DEFAULT" alt="Default">
-                            <div class="Col_head" data-toggle="collapse" data-target="#DEFAULT_ColBdy">DEFAULT <span class="FcnT"></span></div>
+                            <div class="Col_head collapsed" data-toggle="collapse" data-target="#DEFAULT_ColBdy">DEFAULT <span class="FcnT"></span></div>
                             <div class="Col_apndBody collapse" id="DEFAULT_ColBdy">
                             <div class="Col_apndBody_apndPort"></div>
                             </div>
@@ -132,7 +135,7 @@
         if ('Categories' in this.Options) {
             for (let i = 0; i < this.Options.Categories.length; i++) {
                 html.push(`<div class="ClpsGalItem_Sgl" Catogory="${this.Options.Categories[i]}" alt="${this.Options.Categories[i]}">
-                            <div class="Col_head" data-toggle="collapse" data-target="#${this.Options.Container}_G_${this.Options.Categories[i].replace(/\s/g, "")}">${this.Options.Categories[i].toUpperCase()}
+                            <div class="Col_head collapsed" data-toggle="collapse" data-target="#${this.Options.Container}_G_${this.Options.Categories[i].replace(/\s/g, "")}">${this.Options.Categories[i].toUpperCase()}
                             <span class="FcnT">(0)</span></div>
                             <div class="Col_apndBody collapse" id="${this.Options.Container}_G_${this.Options.Categories[i].replace(/\s/g, "")}">
                             <div class="Col_apndBody_apndPort"></div></div>
@@ -146,72 +149,118 @@
         this.FileList = this.Options.Files;
         if ('Files' in this.Options && this.Options.Files.length > 0) {
 
-            this.renderFiles();
+            this.renderFiles(this.FileList);
         }
         else {
             this.hideEmptyCategoryFn();
         }
     }
 
-    renderFiles() {
-        for (let i = 0; i < this.FileList.length; i++) {
+    renderFiles(renderFiles) {
+        for (let i = 0; i < renderFiles.length; i++) {
             let $portdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_apndBody_apndPort`);
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
-            if ($.isEmptyObject(this.FileList[i].Meta)) {
-                $portdef.append(this.thumbNprevHtml(this.FileList[i]));
+            //for creating tag buttons
+            if (this.FileFlag.tagflag == true) {
+                let taghtml = "";
+                if (renderFiles[i].Meta.hasOwnProperty('Tags')) {
+                    let filetags = renderFiles[i].Meta.Tags[0].split(',');
+                    $.each(filetags, function (j, tagval) {
+
+
+                        if (!this.TagList[tagval]) {
+                            this.TagList[tagval] = [renderFiles[i]];
+                            $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
+                        }
+                        else {
+                            this.TagList[tagval].push(renderFiles[i]);
+                        }
+
+                    }.bind(this));
+                }
+            }
+
+            if ($.isEmptyObject(renderFiles[i].Meta)) {
+                $portdef.append(this.thumbNprevHtml(renderFiles[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
-            else if (!this.FileList[i].Meta.hasOwnProperty("Category")) {
-                $portdef.append(this.thumbNprevHtml(this.FileList[i]));
+            else if (!renderFiles[i].Meta.hasOwnProperty("Category")) {
+                $portdef.append(this.thumbNprevHtml(renderFiles[i]));
                 $countdef.text("(" + $portdef.children().length + ")");
             }
             else {
-                if (this.FileList[i].Meta.Category[0] === "Category") {
-                    $portdef.append(this.thumbNprevHtml(this.FileList[i]));
+                if (renderFiles[i].Meta.Category[0] === "Category") {
+                    $portdef.append(this.thumbNprevHtml(renderFiles[i]));
                     $countdef.text("(" + $portdef.children().length + ")");
                 }
                 else {
-                    for (let k = 0; k < this.FileList[i].Meta.Category.length; k++) {
-                        let $portcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_apndBody_apndPort`);
-                        let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${this.FileList[i].Meta.Category[k]}"] .Col_head .FcnT`);
-                        $portcat.append(this.thumbNprevHtml(this.FileList[i]));
+                    for (let k = 0; k < renderFiles[i].Meta.Category.length; k++) {
+                        let $portcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${renderFiles[i].Meta.Category[k]}"] .Col_apndBody_apndPort`);
+                        let $countcat = $(`#${this.Options.Container}_GalleryUnq div[Catogory="${renderFiles[i].Meta.Category[k]}"] .Col_head .FcnT`);
+                        $portcat.append(this.thumbNprevHtml(renderFiles[i]));
                         $countcat.text("(" + $portcat.children().length + ")");
                     }
                 }
             }
-            $(`#prev-thumb${this.FileList[i].FileRefId}`).data("meta", JSON.stringify(this.FileList[i]));
+            $(`#prev-thumb${renderFiles[i].FileRefId}`).data("meta", JSON.stringify(renderFiles[i]));
         }
 
         $('.EbFupThumbLzy').Lazy({ scrollDirection: 'vertical' });
         $(".trggrFprev").off("click").on("click", this.galleryFullScreen.bind(this));// full screen click event
         $(".mark-thumb").off("click").on("click", function (evt) { evt.stopPropagation(); });
         $("body").off("click").on("click", ".Col_apndBody_apndPort", this.rmChecked.bind(this));
+        $(".FUP_TagLi").off("click").on("click", this.sortByTagFn.bind(this));
         $(".eb_uplGal_thumbO").on("change", ".mark-thumb", this.setBGOnSelect.bind(this));
         this.contextMenu();
         this.hideEmptyCategoryFn();
     }
 
     hideEmptyCategoryFn() {
-        
+
         if (this.Options.HideEmptyCategory) {
             $(this.Gallery).find(".ClpsGalItem_Sgl").each(function (indx, value) {
-                if ($(value).attr('catogory') != "DEFAULT") {
-                    let childLength = $(value).find(".Col_apndBody").find(".Col_apndBody_apndPort").children().length
-                    if (childLength == 0) {
-                        $(value).hide();
-                    }
-                    else {
-                        $(value).show();
-                    }
+                //if ($(value).attr('catogory') != "DEFAULT") {
+                let childLength = $(value).find(".Col_apndBody").find(".Col_apndBody_apndPort").children().length
+                if (childLength == 0) {
+                    $(value).hide();
                 }
-               
+                else {
+                    $(value).show();
+                }
+                //}
             });
-            
         }
-        
     }
 
+
+    sortByTagFn(e) {
+
+        this.FileFlag.tagflag = false;
+        let tagsArr = [];
+        let flLst = $(`#${this.Options.Container}`).find('.eb_uplGal_thumbO');
+        $(`#${this.Options.Container}`).find('.FUP_TagUl .current').removeClass('current');
+        $.each(flLst, function (k, imgdiv) {
+            $(imgdiv).remove();
+        }.bind(this))
+        if ($(e.target).closest('li').hasClass('showAllFile')) {
+            this.renderFiles(this.FileList);
+            $(e.target).addClass('current');
+        }
+        else {
+            $(e.target).addClass('current');
+            let tag = $(e.target).closest('li')[0].innerHTML;
+            for (let i = 0; i < this.FileList.length; i++) {
+                let filetags = this.FileList[i].Meta.Tags[0].split(',');
+                if ($.inArray(tag, filetags) >= 0) {
+                    tagsArr.push(this.FileList[i]);
+                }
+            }
+            this.renderFiles(tagsArr);
+        }
+
+
+    }
     rmChecked(evt) {
         if ($(evt.target).closest(".eb_uplGal_thumbO").length <= 0) {
             this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
@@ -250,13 +299,13 @@
             var arr = o.FileName.split('.');
             var exten = arr[arr.length - 1];
             if (exten !== 'pdf') {
-                return `<img src="${this.SpinImage}" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;">`;
+                return `<img src="${this.SpinImage}" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
             }
             else
                 return `<iframe src="${src}.${exten}" class="gallerythumbfile"></iframe>`;
         }
         else {
-            return `<img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;">`;
+            return `<img src="${this.SpinImage}" data-src="${src}" class="EbFupThumbLzy" style="display: block;"  alt='' onerror=this.onerror=null;this.src='/images/imageplaceholder.png' >`;
         }
     }
 
@@ -618,6 +667,11 @@
         $(`#${this.Options.Container}`).append(`<div class="FileUploadGallery" id="${this.Options.Container}_FUP_GW">
                                                      <div class="FUP_Head_W" style="display:${isVisible}">
                                                          <div tabindex = "0" id = "${this.Options.Container}_Upl_btn" class="ebbtn eb_btn-sm eb_btnblue pull-right" > <i class="fa fa-upload"></i> Upload</div>
+                                                            <div class='FUP_TagDiv' >
+                                                                <ul class='FUP_TagUl' style=''>
+                                                                    <li class='FUP_TagLi showAllFile current' >All</li>
+                                                                </ul>
+                                                            </div>
                                                      </div>
                                                      <div class="FUP_Bdy_W">
                                                      </div>

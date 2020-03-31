@@ -136,8 +136,8 @@ var DvContainerObj = function (settings) {
             );
         }
 
-        else if (this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
-            this.dvcol[focusedId] = new EbGoogleMap({
+        else if (this.currentObj.$type.indexOf("EbOpenStreetMap") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
+            this.dvcol[focusedId] = new mapView({
                 googlekey : this.googlekey,
                 refid : this.dvRefid,
                 ver_num : this.ver_num,

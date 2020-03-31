@@ -160,7 +160,7 @@ var mapView = function (option) {
     this.googlekey = option.googlekey;
     this.Source = option.Source || "Visualization";
     this.ObjCollection = {};
-    this.CurrentMapType = this.EbObject.Maptype ? this.EbObject.Maptype : 0 ;
+    this.CurrentMapType = this.EbObject.Maptype ? this.EbObject.Maptype : 0;
     this.TempEbObject;
     this.Temp2EbObject;
     this.MapEnum = {};
@@ -185,7 +185,7 @@ var mapView = function (option) {
                 this.EbObject = new EbObjects.EbOpenStreetMap(`EbMapView${Date.now()}`);
                 this.Mode = BuilderMode.NEW;
             }
-            else {     
+            else {
                 this.CurrentMapType = this.EbObject.Maptype;
                 this.Mode = BuilderMode.EDIT;
             }
@@ -208,9 +208,9 @@ var mapView = function (option) {
                 this.TempEbObject = $.extend(new EbObjects.EbOpenStreetMap(`EbMapView${Date.now()}`), this.EbObject);
                 this.Temp2EbObject.Maptype = 1;
             }
-            else {                
+            else {
                 this.TempEbObject = $.extend(new EbObjects.EbOpenStreetMap(`EbMapView${Date.now()}`), this.EbObject);
-                this.Temp2EbObject = $.extend(new EbObjects.EbGoogleMap(`EbMapView${Date.now()}`), this.EbObject );
+                this.Temp2EbObject = $.extend(new EbObjects.EbGoogleMap(`EbMapView${Date.now()}`), this.EbObject);
                 this.TempEbObject.Maptype = 0;
             }
         };
@@ -267,12 +267,12 @@ var mapView = function (option) {
             }
         };
 
-        this.tmpPropertyChanged = function (obj, Pname ,  newval, oldval) {
+        this.tmpPropertyChanged = function (obj, Pname, newval, oldval) {
             if (Pname === "DataSourceRefId") {
                 if (obj[Pname] !== null) {
                     this.Temp2EbObject.DataSourceRefId = newval;
                     this.TempEbObject.DataSourceRefId = newval;
-                    this.MapSwitch(obj , obj.Maptype);
+                    this.MapSwitch(obj, obj.Maptype);
                     this.PcFlag = true;
                     this.EbObject.Columns.$values = [];
                     this.EbObject.DSColumns.$values = [];
@@ -492,8 +492,113 @@ var mapView = function (option) {
         this.MainData = result;
         this.data = result.data;
         this.formatedData = result.formattedData;
-        this.drawMapHelper();
+        if (this.EbObject.Maptype === 1) {
+            this.drawMapHelper();
+        }
+        else { this.drawOSMapHelper(); }
     };
+
+    //this.drawOSMapHelper = function () {
+
+    //};
+
+    this.drawOSMapHelper = function (datain) {
+        if (datain)
+            this.data = datain;
+        if (this.EbObject.LatLong !== null)
+            this.drawOSMap();
+    };
+
+    this.drawOSMap = function () {
+        $("#canvasDiv" + this.tableId).children("iframe").remove();
+        $("#myChart" + this.tableId).remove();
+        if ($("#map" + this.tableId).children().length === 0)
+            $("#canvasDiv" + this.tableId).append("<div id='map" + this.tableId + "' style='height:100%;width:100%;'></div>");
+        Xlabel = this.XLabel;
+        Ylabel = this.YLabel;
+        showRoute = this.EbObject.ShowRoute;
+        //if (!this.isMyScriptLoaded("https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js")) {
+        //    $("#layout_div").prepend(`
+        //    <script data-hai="aa" src= 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js' ></script>
+        //    <script data-hai="aa" async defer
+        //        src='https://maps.googleapis.com/maps/api/js?key=${this.googlekey}&callback=initMap2'>
+        //    </script>`);
+        //}
+        //else {
+        //    $("#map" + this.tableId).empty();
+        //    initMap2();
+        //}
+        //if (this.login === "uc")
+        //    $(".canvasParentDiv").css("padding", " 10px 0px");
+        //$("#eb_common_loader").EbLoader("hide");
+        this.initOSM(this.EbObject, `map${this.tableId}`);
+    };
+
+
+    this.initOSM = function (Ebobject, id) {
+        this.getData4GoogleMap();
+        this.Ebobject = Ebobject;
+        let selector = id;
+        //var mymap = L.map(selector).setView([51.505, -0.09], 13);
+        //L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        //    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        //    maxZoom: 18,
+        //    id: 'mapbox/streets-v11',
+        //    tileSize: 512,
+        //    zoomOffset: -1,
+        //    accessToken: 'pk.eyJ1Ijoibml0aGludmFzdWRldmFuIiwiYSI6ImNrODZ4cmJ5MDAyam4zaXFzNzI1cXp6N2UifQ.qvc5HjqC79yEAR2nhgbYJA'
+        //}).addTo(mymap);
+        //var marker = L.marker([51.5, -0.09]).addTo(mymap);
+
+
+        let google = window.google;
+        if (this.Lat.length > 0) {
+            var mid = Math.floor(this.Lat.length / 2);
+            var mymap = L.map(selector).setView([this.Lat[mid], this.Long[mid]], 13);
+            L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+                attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                maxZoom: 18,
+                id: 'mapbox/streets-v11',
+                tileSize: 512,
+                zoomOffset: -1,
+                accessToken: 'pk.eyJ1Ijoibml0aGludmFzdWRldmFuIiwiYSI6ImNrODZ4cmJ5MDAyam4zaXFzNzI1cXp6N2UifQ.qvc5HjqC79yEAR2nhgbYJA'
+            }).addTo(mymap);
+            //var marker, i;
+            //for (i = 0; i < this.Lat.length; i++) {
+            //    var marker = L.marker([this.Lat[i], this.Long[i]]).addTo(mymap);
+            //}
+
+            var markerArray = [];
+            var marker, i;
+            for (i = 0; i < this.Lat.length; i++) {
+                var marker = L.marker([this.Lat[i], this.Long[i]]).addTo(mymap);
+                var content = "", url = "";
+                $.each(this.Inform, function (k, obj) {
+                    content += obj.value[i] + "</br>";
+                });
+                if (this.MarkerLink) {
+                    url = `../webform/index?refid=${this.MarkerLink}&_params=${btoa(JSON.stringify([this.markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                    content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
+                }
+                if (content === "")
+                    content = "no details";
+
+                marker.bindPopup(`<div>${content}</div>`).openPopup();
+                markerArray.push(marker);
+
+                if (this.AutoZoom)
+                    if (i == this.Lat.length - 1) {//this is the case when all the markers would be added to array
+                        var group = L.featureGroup(markerArray); //add markers array to featureGroup
+                        mymap.fitBounds(group.getBounds());
+                    }
+            }
+
+        }
+        else {
+            $(`#map${this.tableId}`).append("<div class='map_inner'>No Data Available</div>");
+        }
+    }
+
 
     this.GenerateButtons = function () {
         $("#objname").text(this.EbObject.DisplayName);
@@ -761,7 +866,7 @@ var mapView = function (option) {
                     content += obj.value[i] + "</br>";
                 });
                 if (this.MarkerLink) {
-                    url = `../webform/index?refid=${MarkerLink}&_params=${btoa(JSON.stringify([this.markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
+                    url = `../webform/index?refid=${this.MarkerLink}&_params=${btoa(JSON.stringify([this.markerParams[i]]))}&_mode=1&_locId=${store.get("Eb_Loc-" + Te_id + Usr_id)}`;
                     content += `<a href="#" onclick='window.open("${url}","_blank");'>Details</a>`;
                 }
                 if (content === "")
@@ -891,3 +996,5 @@ $.fn.extend({
         });
     }
 });
+
+

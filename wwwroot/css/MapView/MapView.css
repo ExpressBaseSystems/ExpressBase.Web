@@ -26,3 +26,6 @@
     margin-left: 35rem;
     margin-right: 20rem;*/
 }
+.leaflet-container {
+    z-index : 0;
+}

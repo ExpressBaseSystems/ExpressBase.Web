@@ -130,12 +130,12 @@
     this.saveSuccess = function (_respObj) {
         this.formRenderer.hideLoader();
         let respObj = JSON.parse(_respObj);
-        respObj.FormData = JSON.parse(respObj.FormData);
-        this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName];
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {
             EbMessage("show", { Message: "Review submited successfully", AutoHide: true, Background: '#00aa00', Delay: 5000 });
+            respObj.FormData = JSON.parse(respObj.FormData);
+            this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName];
             this.switch2viewMode(this.DataMODEL);
         }
         //else if (respObj.Status === 403) {

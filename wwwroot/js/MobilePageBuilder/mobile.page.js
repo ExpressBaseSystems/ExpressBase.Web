@@ -294,13 +294,14 @@ function EbMobStudio(config) {
         }.bind(this));
     };
 
-    this.getColums4ListView = function (ds_refid) {
-        this.dataSourceColumn(ds_refid, function (result) {
+    this.getColums4ListView = function (obj) {
+        this.dataSourceColumn(obj.DataSourceRefId, function (vis, result) {
+            vis.DataSourceParams.$values = result.paramsList || [];
             this.Controls.drawDsColTree(result.columns);
             $(".branch").click();
             if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
                 $(`#eb_mobtree_body_${this.Conf.TabNum}`).animate({ width: ["toggle", "swing"] });
-        }.bind(this));
+        }.bind(this, obj));
     };
 
     this.dataSourceColumn = function (ds_refid, callback) {
@@ -336,8 +337,8 @@ function EbMobStudio(config) {
         else if (obj.constructor.name === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
             obj.getColumns(obj.DataSourceRefId, this);
         }
-        else if (pname === "DataSourceRefId") {
-            this.getColums4ListView(obj.DataSourceRefId);
+        else if (obj.constructor.name === "EbMobileVisualization" && pname === "DataSourceRefId") {
+            this.getColums4ListView(obj);
         }
         else if (obj.constructor.name === "EbMobileGeoLocation" && pname === "HideSearchBox") {
             obj._toggleSearchBar();

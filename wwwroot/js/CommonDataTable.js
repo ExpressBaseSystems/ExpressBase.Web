@@ -1,4 +1,7 @@
 ﻿var EbCommonDataTable = function (Option) {
+
+    //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.propGrid = Option.PGobj;
     this.Api = null;
     this.order_info = new Object();

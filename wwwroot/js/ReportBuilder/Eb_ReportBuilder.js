@@ -1,4 +1,7 @@
 ﻿var RptBuilder = function (option) {
+
+    //let AllMetas = AllMetasRoot["EbReportObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     var ver_num = option.Version || null;
     var type = option.ObjType || null;
     var dsobj = option.DsObj || null;

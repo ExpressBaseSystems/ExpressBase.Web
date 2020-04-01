@@ -1,4 +1,7 @@
 ﻿const formBuilder = function (options) {
+
+    //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.wc = options.wc;
     this.cid = options.cid;
     this.formId = options.formId;

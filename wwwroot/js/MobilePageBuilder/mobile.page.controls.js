@@ -30,7 +30,7 @@
                 this.renderFilter(filters[i]);
             }
             this.refreshList();
-            this.Root.getColums4ListView(o.DataSourceRefId);
+            this.Root.getColums4ListView(o);
         }
     };
 

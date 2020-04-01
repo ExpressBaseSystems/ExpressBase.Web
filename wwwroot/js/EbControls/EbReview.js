@@ -271,9 +271,8 @@
     };
 
     this.set = function () {
-
-        this.CurStageDATA = getObjByval(this.DataMODEL, "RowId", 0);
         this.CurStageDATA = false;
+        this.CurStageDATA = getObjByval(this.DataMODEL, "RowId", 0);
         this.isFormDataEditable = false;
         if (this.CurStageDATA) {
             this.hasPermission = getObjByval(this.CurStageDATA.Columns, "Name", "has_permission").Value === "T";

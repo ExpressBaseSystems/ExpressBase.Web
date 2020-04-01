@@ -397,8 +397,15 @@
             //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
         }
         else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
-            let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
-            spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
+            let spn = '';
+            if (cellObj.Value == null) {
+                spn = `<img class='sysctrl_usrimg' src='/images/nulldp.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
+            }
+            else {
+                spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
+                spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
+            }
+            
             // dspMmbr = cellObj.Value.split('$$')[1];
             dspMmbr = spn;
         }

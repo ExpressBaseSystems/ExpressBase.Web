@@ -1163,3 +1163,25 @@ const getUrlParameter = function getUrlParameter(sParam) {
         }
     }
 };
+
+const formatData4webform = function (_multipleTables) {
+    let multipleTables = $.extend(true, {}, _multipleTables);
+    let tableNames = Object.keys(multipleTables);
+    for (let i = 0; i < tableNames.length; i++) {
+        let tableName = tableNames[i];
+        let table = multipleTables[tableName];
+        for (let j = 0; j < table.length; j++) {
+            let row = table[j];
+            let columns = row.Columns;
+            for (let k = 0; k < columns.length; k++) {
+                let singleColumn = columns[k];
+                delete singleColumn["D"];
+                delete singleColumn["F"];
+                delete singleColumn["R"];
+                delete singleColumn["ValueExpr_val"];
+                delete singleColumn["DisplayMember"];
+            }
+        }
+    }
+    return multipleTables;
+};

@@ -201,45 +201,65 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.getForm(this.curRefid);///////////////////
     }.bind(this);
 
-    this.setDataModel = function (form) {
-        for (let i = 0; i < form.Controls.$values.length; i++) {
-            getSingleColumn(form.Controls.$values[i]);
-        }
-    };
-    
+    //this.setDataModel = function (form) {
+    //    for (let i = 0; i < form.Controls.$values.length; i++) {
+    //        getSingleColumn(form.Controls.$values[i]);
+    //    }
+    //};
+
 
     this.getForm = function (RefId) {
         this.showTypingAnim();
         if (!this.formsList[RefId]) {
             $.ajax({
                 type: "POST",
-                url: "../Boti/GetCurForm",
+                //url: "../Boti/GetCurForm",
+                url: "../Boti/GetCurForm_New",
                 data: { refid: RefId },
 
-                success: function (data) {
-                    this.hideTypingAnim();
-                    data = JSON.parse(data);
-                    this.setDataModel(data);
-                    JsonToEbControls(data);
+                success: function (res) {
+                    let result = JSON.parse(res);
+                    let form = JSON.parse(result.object);
+                    this.curFormObj = form;
+                    let DataRes = JSON.parse(result.data);
+                    if (DataRes.Status === 200) {
+                        this.CurDataMODEL = DataRes.FormData.MultipleTables;
+                        this.CurRowId = this.CurDataMODEL[form.TableName][0].RowId;
+                        this.hideTypingAnim();
+                        //data = JSON.parse(data);
 
-                    //if (typeof data === "string") {
-                    //    data = JSON.parse(data);
-                    //    data.ObjType = data.ObjType;
-                    //}
-                    this.formsList[RefId] = data;
-                    if (data.ObjType === "BotForm") {
-                        this.curForm = data;
-                        this.setFormControls();
+                        attachModalCellRef_form(form, this.CurDataMODEL);
+
+                        //this.setDataModel(form);
+                        JsonToEbControls(form);
+
+                        //if (typeof data === "string") {
+                        //    data = JSON.parse(data);
+                        //    data.ObjType = data.ObjType;
+                        //}
+                        this.formsList[RefId] = form;
+                        if (form.ObjType === "BotForm") {
+                            this.curForm = form;
+                            this.setFormControls();
+                        }
+                        else if (form.ObjType === "TableVisualization") {
+                            //form.BotCols = JSON.parse(form.BotCols);
+                            //form.BotData = JSON.parse(form.BotData);
+                            this.curTblViz = form;
+                            this.showTblViz();
+                        }
+                        else if (form.ObjType === "ChartVisualization") {
+                            this.curChartViz = form;
+                            this.showChartViz();
+                        }
                     }
-                    else if (data.ObjType === "TableVisualization") {
-                        //data.BotCols = JSON.parse(data.BotCols);
-                        //data.BotData = JSON.parse(data.BotData);
-                        this.curTblViz = data;
-                        this.showTblViz();
+                    else if (DataRes.Status === 403) {
+                        EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+                        console.error(DataRes.MessageInt);
                     }
-                    else if (data.ObjType === "ChartVisualization") {
-                        this.curChartViz = data;
-                        this.showChartViz();
+                    else {
+                        EbMessage("show", { Message: DataRes.Message, AutoHide: true, Background: '#aa0000' });
+                        console.error(DataRes.MessageInt);
                     }
                 }.bind(this)
 
@@ -277,12 +297,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.hideTypingAnim();
             this.curForm = this.formsList[RefId];
 
-            var data = this.formsList[RefId];
-            if (data.ObjType === "BotForm")
-                this.curForm = data;
-            else if (data.ObjType === "TableVisualization")
-                this.curTblViz = data;
-            else if (data.ObjType === "ChartVisualization")
+            var form = this.formsList[RefId];
+            if (form.ObjType === "BotForm")
+                this.curForm = form;
+            else if (form.ObjType === "TableVisualization")
+                this.curTblViz = form;
+            else if (form.ObjType === "ChartVisualization")
                 this.showChartViz();//////////////////////////////////////////////////////////////////////////////////
 
             this.setFormControls();
@@ -702,19 +722,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var next_idx = this.sendBtnIdx + 1;
         this.nxtCtrlIdx = (next_idx > this.nxtCtrlIdx) ? next_idx : this.nxtCtrlIdx;
         var $input = $('#' + this.curCtrl.EbSid);
-//varghese
+        //varghese
         //for cards  this.curDispValue  is used
-       // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        this.curVal = this.curCtrl.getValueFromDOM();
+        // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
+        this.curVal = this.curCtrl.getValue();
         this.displayValue = this.curCtrl.getDisplayMemberFromDOM();
         this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-this.formValues[id] = this.curVal;
-this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
-this.callGetControl(this.nxtCtrlIdx);
+        this.formValues[id] = this.curVal;
+        this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        this.callGetControl(this.nxtCtrlIdx);
 
 
 
-//old code
+        //old code
 
 
         ////$input.off("blur").on("blur", function () { $btn.click() });//when press Tab key send
@@ -1166,15 +1187,43 @@ this.callGetControl(this.nxtCtrlIdx);
         this.nxtCtrlIdx = 0;
         $(`[form=${this.curForm.Name}]`).remove();
     };
+
+    this.getFormValuesObjWithTypeColl = function () {
+        let WebformData = {};
+
+        WebformData.MultipleTables = formatData4webform(this.CurDataMODEL);
+        WebformData.ExtendedTables = {};
+        console.log("form data --");
+
+
+        //console.log("old data --");
+        console.log(JSON.stringify(WebformData.MultipleTables));
+
+        console.log("new data --");
+        console.log(JSON.stringify(formatData4webform(this.DataMODEL)));
+        return JSON.stringify(WebformData);
+    };
+
+
+    //this.getFormValuesWithTypeColl = function () {
+    //    var FVWTcoll = [];
+    //    this.CurDataMODEL;
+    //    $.each(this.formValuesWithType, function (key, val) {
+    //        FVWTcoll.push({ Name: key, Value: val[0], Type: val[1], AutoIncrement: val[2] });
+    //    });
+    //    this.formValuesWithType = {};
+    //    this.formValues = {};
+    //    return FVWTcoll;
+    //};
     //save botform
     this.DataCollection = function () {
         this.showTypingAnim();
         $.ajax({
             type: "POST",
             //url: this.ssurl + "/bots",
-            url: "../Boti/InsertBotDetails",
+            url: "../Boti/UpdateFormData",
             data: {
-                RefId: this.curRefid, Fields: this.getFormValuesWithTypeColl()
+                RefId: this.curRefid, rowid: this.CurRowId, data: this.getFormValuesObjWithTypeColl()
             },
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
@@ -1182,16 +1231,6 @@ this.callGetControl(this.nxtCtrlIdx);
             success: this.ajaxsuccess.bind(this),
         });
         this.formValues = {};
-    };
-
-    this.getFormValuesWithTypeColl = function () {
-        var FVWTcoll = [];
-        $.each(this.formValuesWithType, function (key, val) {
-            FVWTcoll.push({ Name: key, Value: val[0], Type: val[1], AutoIncrement: val[2] });
-        });
-        this.formValuesWithType = {};
-        this.formValues = {};
-        return FVWTcoll;
     };
 
     this.ajaxsuccess = function (rowAffected) {

@@ -8,6 +8,9 @@
     });
 })(jQuery);
 
+
+//let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
 class DvBuilder {
     constructor(option) {
         this.type = option.ObjType || null;
@@ -447,6 +450,7 @@ class DvBuilder {
         }.bind(this));
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsCustomColumn) {
+                this.calcfieldCounter++;
                 if (obj.$type.indexOf("DVApprovalColumn") > -1)
                     $("#ApprovalColumns ul[id='ApprovalColumns-childul']").append(`<li eb-type='DVApprovalColumn'  eb-name="${obj.name}" 
                     class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
@@ -1145,9 +1149,10 @@ class DvBuilder {
         obj.ColumnsRef = this.EbObject.Columns.$values[0].ColumnsRef;
         this.objCollection[name] = obj;
         obj.name = name;
-        obj.Title = "Action" + this.calcfieldCounter++;
+        obj.Title = name;
         obj.bVisible = true;
         obj.IsCustomColumn = true;
+        obj.Align = EbEnums.Align.Center;
         obj.data = this.EbObject.Columns.$values.length;
         $("#ActionColumns ul[id='ActionColumns-childul']").append(`<li eb-type='${type}'  eb-name="${obj.name}" 
             class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
@@ -1233,7 +1238,7 @@ class DvBuilder {
 
     addActionFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
-        obj.sTitle = "Action1";
+        obj.sTitle = obj.name;
         let element = $(`<li eb-type='DVActionColumn' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
             <div id="${obj.name}_elemsCont" class="columnelemsCont">
                 <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>

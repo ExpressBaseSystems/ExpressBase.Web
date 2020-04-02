@@ -1,4 +1,7 @@
 ﻿const Eb_pgCXVE = function (pgObj) {
+
+    //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.PGobj = pgObj;
     this.CE_PGObj = {};
     this.pgCXE_Cont_Slctr = "#" + this.PGobj.wraperId + " .pgCXEditor-Cont";

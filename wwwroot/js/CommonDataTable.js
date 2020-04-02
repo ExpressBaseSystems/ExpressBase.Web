@@ -1,4 +1,7 @@
 ﻿var EbCommonDataTable = function (Option) {
+
+    //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.propGrid = Option.PGobj;
     this.Api = null;
     this.order_info = new Object();
@@ -2583,7 +2586,8 @@
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
-        $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
+        $(".closeTab").off("click").on("click", this.deleteTab.bind(this)); 
+        $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this)); 
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -3872,6 +3876,7 @@
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
     };
+
     this.OpenInlineDv = function (rows, e, idx, colindex) {
         if ($(e.target).closest("I").hasClass("fa-caret-up")) {
             $(e.target).closest("I").removeClass("fa-caret-up").addClass("fa-caret-down");
@@ -3882,6 +3887,36 @@
             $(rows).eq(idx).next().show();
         }
         this.Api.columns.adjust();
+    };
+
+    this.ExecuteApproval = function (e) {
+        $("#eb_common_loader").EbLoader("show");
+        let val = $(e.target).parents(".stage_actions_cont").find(".selectpicker").val();
+        let $td = $(e.target).parents().closest("td");
+        val = JSON.parse(atob(val));
+        let Columns = [];
+        Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
+        Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
+        Columns.push(new fltr_obj(7, "eb_my_actions_id", val.My_action_id.toString()));
+        Columns.push(new fltr_obj(16, "comments", ""));
+        let webdata = {};
+        webdata["eb_approval_lines"] =[{ "Columns": Columns }];
+        let WebformData = {
+            "MultipleTables": [webdata]
+        };
+        $.ajax({
+            type: "POST",
+            url: "../dv/PostWebformData",
+            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)},
+            success: this.cccccc.bind(this, $td)
+        });
+    };
+
+    this.cccccc = function ($td, resp) {
+        $td.html(resp._data);
+        var cell = this.Api.cell($td);
+        cell.data($td.html()).draw();
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.getRowGroupFilter = function ($elem) {

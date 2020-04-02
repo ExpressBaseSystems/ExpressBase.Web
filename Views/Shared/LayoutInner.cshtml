@@ -131,6 +131,7 @@
 
     @Html.RenderScripts()
     <script>
+        AllMetasRoot = {};
         var _uo = @Html.Raw(@ViewBag.UserObject);
         window.ebcontext = {
             sid: "@ViewBag.cid",

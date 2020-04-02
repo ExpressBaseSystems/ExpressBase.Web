@@ -1,6 +1,9 @@
 ﻿var grid;
 var icon = { 16: "fa-table", 21: "fa-map-marker", 17: "fa-bar-chart", 14: "fa-tags" }
 var DashBoardWrapper = function (options) {
+
+    //let AllMetas = AllMetasRoot["EbDashBoardWraper"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.RefId = options.RefId;
     this.Version = options.Version;
     this.ObjType = options.ObjType;

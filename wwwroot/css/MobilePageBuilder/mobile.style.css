@@ -256,6 +256,13 @@
         border: 1px solid #ccc;
         border-radius: 4px;
     }
+.eb_stacklayout .eb_mob_autoid {
+    background: #dedddd;
+    border: 1px solid #ccc;
+    width: 100%;
+    height: 25px;
+    border-radius: 4px;
+}
 /*table layout*/
 .eb_mob_tablelayout {
     display: flex;

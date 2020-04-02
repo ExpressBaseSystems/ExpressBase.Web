@@ -752,11 +752,37 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .popover-content td{
    padding:5px;
 }
-.tdheight .stage_actions button{
-    padding: 1px 25px 0px 5px;
+.tdheight .stage_actions button {
+    padding: 3px 30px 3px 10px;
     font-size: 12px;
-    width: auto;
+    /*width: auto;*/
 }
 .tdheight .stage_actions  {
     width: auto!important;
+    margin-right:10px;
+}
+
+.tdheight .stage_actions a{
+    color:black !important;
+}
+
+.tdheight .stage_actions_cont {
+    display: flex;
+    flex-direction: column;
+}
+
+.tdheight .stage_actions_inner {
+    display: flex;
+    /*justify-content: space-between;*/
+}
+.tdheight .btn-action_execute {
+    padding: 1px 12px;
+    /*width: 25px;*/
+}
+.tdheight .btn-action_execute i{
+    color:black!important;
+}
+
+.tdheight .selectpicker {
+    display:none!important;
 }

@@ -159,7 +159,7 @@
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
         let isSameRow = $(event.target).closest("tr") === $addRow;
-        if ($addRow.length !== 0 && !this.checkRow_click({ target: td }, false, false, isSameRow))
+        if ($addRow.length !== 0 && !this.confirmRow())
             return;
 
         let $td = $(e.target).closest("td");
@@ -405,13 +405,13 @@
                 spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
                 spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
             }
-            
+
             // dspMmbr = cellObj.Value.split('$$')[1];
             dspMmbr = spn;
         }
         else if (col.ObjType === "DGUserSelectColumn") {
             let ulObj = inpCtrl.UserList.$values.find(e => e.vm === cellObj.Value);
-            if (ulObj) 
+            if (ulObj)
                 dspMmbr = `<img class='sysctrl_usrimg' src='/images/dp/${ulObj.vm}.png' alt='' onerror="this.src='/images/nulldp.png'"> <span class='sysctrl_usrname'>${ulObj.dm1}</span>`;
         }
         else
@@ -1097,6 +1097,10 @@
     }.bind(this);
 
     this.confirmRow = function (rowId) {
+        if (!rowId) {
+            let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
+            rowId = $activeTr.attr("rowid");
+        }
         if (!this.RowRequired_valid_Check(rowId))
             return false;
 

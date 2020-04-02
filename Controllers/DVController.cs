@@ -289,6 +289,51 @@ namespace ExpressBase.Web.Controllers
             return null;
         }
 
+        public ParticularApprovalColumnResponse PostWebformData(List<Param> Params, string RefId, int RowId, int CurrentLoc)
+        {
+            ParticularApprovalColumnResponse res = null;
+            try
+            {
+                WebformData obj = new WebformData();
+                List<SingleColumn> singleColumns = new List<SingleColumn>();
+                foreach (Param param in Params)
+                {
+                    singleColumns.Add(new SingleColumn
+                    {
+                        Name = param.Name,
+                        Type = Convert.ToInt32(param.Type),
+                        Value = param.Value
+                    });
+                }
+                SingleTable ss = new SingleTable();
+                ss.Add(new SingleRow { Columns = singleColumns });
+                obj.MultipleTables.Add("eb_approval_lines", ss);
+                InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                         new InsertDataFromWebformRequest
+                         {
+                             RefId = RefId,
+                             FormData = obj,
+                             RowId = RowId,
+                             CurrentLoc = CurrentLoc,
+                             UserObj = this.LoggedInUser
+                         });
+                res = ServiceClient.Post<ParticularApprovalColumnResponse>(
+                         new ParticularApprovalColumnRequest
+                         {
+                             RefId = RefId,
+                             RowId = RowId,
+                             CurrentLoc = CurrentLoc,
+                             UserObj = this.LoggedInUser
+                         });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return res;
+        }
+
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)
         {
             InlineTableDataRequest request = new InlineTableDataRequest();

@@ -1217,7 +1217,7 @@ var DashBoardWrapper = function (options) {
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         if (this.filterDialogRefid !== "") {
-            this.grid.removeAll();
+            grid.removeAll();
             this.DrawTiles();
         }
         if (this.stickBtn) { this.stickBtn.minimise(); }

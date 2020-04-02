@@ -160,7 +160,7 @@ var mapView = function (option) {
     this.googlekey = option.googlekey;
     this.Source = option.Source || "Visualization";
     this.ObjCollection = {};
-    this.CurrentMapType = this.EbObject.Maptype ? this.EbObject.Maptype : 0;
+    this.CurrentMapType = this.EbObject ? this.EbObject.Maptype : 0;
     this.TempEbObject;
     this.Temp2EbObject;
     this.MapEnum = {};
@@ -528,9 +528,9 @@ var mapView = function (option) {
         //    $("#map" + this.tableId).empty();
         //    initMap2();
         //}
-        //if (this.login === "uc")
-        //    $(".canvasParentDiv").css("padding", " 10px 0px");
-        //$("#eb_common_loader").EbLoader("hide");
+        if (this.login === "uc")
+            $(".canvasParentDiv").css("padding", " 10px 0px");
+        $("#eb_common_loader").EbLoader("hide");
         this.initOSM(this.EbObject, `map${this.tableId}`);
     };
 

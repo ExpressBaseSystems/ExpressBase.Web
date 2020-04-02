@@ -148,6 +148,106 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
+
+        //==================================================== NEW CODE START - 02/04/2020 =========================================================
+        
+        //refid => refid of botform - required param
+        //rowid => data id of the record - required only for edit mode
+        public string GetCurForm_New(string refid, int rowid)
+        {
+            EbBotForm BotForm = this.GetBotForm(refid);
+            foreach (EbControl control in BotForm.Controls)
+            {
+                if (control is EbSimpleSelect)
+                {
+                    (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+                    (control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
+
+                }
+                else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
+                {
+                    (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);
+                }
+                else if (control is EbDynamicCardSet)
+                {
+                    EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
+                    EbDynamicCards.InitFromDataBase(this.ServiceClient);
+                    EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
+                }
+                else if (control is EbSurvey)
+                {
+                    (control as EbSurvey).InitFromDataBase(this.ServiceClient);
+                    (control as EbSurvey).BareControlHtml = (control as EbSurvey).GetBareHtml();
+                }
+            }            
+            Dictionary<string, string> Dict = new Dictionary<string, string>();
+            Dict.Add("object", EbSerializers.Json_Serialize(BotForm));
+            Dict.Add("data", this.GetFormData(refid, rowid));
+
+            return JsonConvert.SerializeObject(Dict);
+        }
+
+        //refid => refid of botform
+        //rowid => 0 for EmptyModel and greater than 0 for Edit mode data
+        public string GetFormData(string refid, int rowid)
+        {
+            EbBotForm BotForm = this.GetBotForm(refid);
+            try
+            {
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = BotForm.WebFormRefId, RowId = rowid, UserObj = this.LoggedInUser, CurrentLoc = this.LoggedInUser?.Preference?.DefaultLocation ?? 1, RenderMode = WebFormRenderModes.Normal });
+                return DataSet.FormDataWrap;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception in getRowdata. Message: " + ex.Message);
+                return JsonConvert.SerializeObject(new WebformDataWrapper()
+                {
+                    Message = "Error in loading data...",
+                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+                    MessageInt = ex.Message,
+                    StackTraceInt = ex.StackTrace
+                });
+            }
+        }
+
+        //insert or update formdata
+        public string UpdateFormData(string refid, int rowid, string data)
+        {
+            try
+            {
+                EbBotForm BotForm = this.GetBotForm(refid);
+                WebformData Values = JsonConvert.DeserializeObject<WebformData>(data);
+                InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                    new InsertDataFromWebformRequest
+                    {
+                        RefId = BotForm.WebFormRefId,
+                        FormData = Values,
+                        RowId = rowid,
+                        CurrentLoc = this.LoggedInUser?.Preference?.DefaultLocation ?? 1,
+                        UserObj = this.LoggedInUser
+                    });
+                return JsonConvert.SerializeObject(Resp);
+            }
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+            }
+        }
+
+        private EbBotForm GetBotForm(string refid)
+        {
+            EbBotForm BotForm = this.Redis.Get<EbBotForm>(refid);
+            if (BotForm == null)
+            {
+                EbObjectParticularVersionResponse resp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+                BotForm = EbSerializers.Json_Deserialize(resp.Data[0].Json);
+                this.Redis.Set<EbBotForm>(refid, BotForm);
+            }
+            return BotForm;
+        }
+
+        //======================================================= NEW CODE END ================================================================
+
         public dynamic GetCurForm(string refid)
         {
             var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });

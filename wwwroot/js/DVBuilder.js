@@ -8,6 +8,9 @@
     });
 })(jQuery);
 
+
+//let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
 class DvBuilder {
     constructor(option) {
         this.type = option.ObjType || null;

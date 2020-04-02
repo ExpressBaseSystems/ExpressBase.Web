@@ -3,6 +3,9 @@ var prevfocusedId;
 var filterChanged = false;
 var dvcounter = 0;
 var DvContainerObj = function (settings) {
+
+    //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.ssurl = settings.ss_url;
     this.wc = settings.wc;
     this.dvRefid = settings.refid;

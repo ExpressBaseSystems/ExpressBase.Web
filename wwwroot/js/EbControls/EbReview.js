@@ -1,5 +1,6 @@
 ﻿const EbReview = function (ctrl, options) {
     this.formRenderer = options.formRenderer;
+    this.afterRenderFuncs = [];
     this.ctrl = ctrl;
     ctrl._Builder = this;
     this.DataMODEL = this.formRenderer.DataMODEL[this.ctrl.TableName];
@@ -129,12 +130,12 @@
     this.saveSuccess = function (_respObj) {
         this.formRenderer.hideLoader();
         let respObj = JSON.parse(_respObj);
-        respObj.FormData = JSON.parse(respObj.FormData);
-        this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName];
         ebcontext._formSaveResponse = respObj;
 
         if (respObj.Status === 200) {
             EbMessage("show", { Message: "Review submited successfully", AutoHide: true, Background: '#00aa00', Delay: 5000 });
+            respObj.FormData = JSON.parse(respObj.FormData);
+            this.DataMODEL = respObj.FormData.MultipleTables[this.ctrl.TableName];
             this.switch2viewMode(this.DataMODEL);
         }
         //else if (respObj.Status === 403) {
@@ -228,6 +229,11 @@
                     html = html.replace("@dpstyle@", `style='background-image:${url}'`)
                         .replace("@uname@", userName);
                 }
+                if (column.Name === "action_unique_id") {
+                    this.afterRenderFuncs.push(function (val) {
+                        this.$tableBody.find(`tr[rowid='${row.RowId}'] [col='status'] .selectpicker`).selectpicker('val', column.Value);
+                    }.bind(this));
+                }
                 //else if (column.Name === "eb_created_by") {
                 //    html = html.replace("@uname@", column.Value);
                 //}
@@ -239,6 +245,7 @@
                 }
             }
             this.$tableBody.append(html);
+            this.runAfterRenderFuncs();
             //let $html = $(html);
             //this.$tableBody.append($html);
         }
@@ -257,14 +264,24 @@
         this.$container.on("click", ".fs-submit", this.submit);
     };
 
-    this.set = function () {
+    this.runAfterRenderFuncs = function () {
+        for (let i = 0; i < this.afterRenderFuncs.length; i++) {
+            this.afterRenderFuncs[i]();
+        }
+    };
 
+    this.set = function () {
+        this.CurStageDATA = false;
         this.CurStageDATA = getObjByval(this.DataMODEL, "RowId", 0);
-        this.hasPermission = getObjByval(this.CurStageDATA.Columns, "Name", "has_permission").Value === "T";
-        this.isFormDataEditable = getObjByval(this.CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
+        this.isFormDataEditable = false;
+        if (this.CurStageDATA) {
+            this.hasPermission = getObjByval(this.CurStageDATA.Columns, "Name", "has_permission").Value === "T";
+            this.isFormDataEditable = getObjByval(this.CurStageDATA.Columns, "Name", "is_form_data_editable").Value === "T";
+        }
         this.drawTable();
         this.disableAllCtrls();
-        this.enableRow();
+        if (this.CurStageDATA)
+            this.enableRow();
     };
 
     this.init();

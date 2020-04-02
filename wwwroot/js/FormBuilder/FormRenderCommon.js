@@ -430,7 +430,8 @@
 
     this.updateFormValues = function () {
         $.each(this.FO.flatControls, function (i, ctrl) {
-            this.FO.formValues[ctrl.Name] = ctrl.getValue();
+            if (ctrl.ObjType !== "FileUploader")
+                this.FO.formValues[ctrl.Name] = ctrl.getValue();
         }.bind(this));
     };
 

@@ -77,6 +77,7 @@
                     $('#divLocationList input:checkbox[name=cboxGrpLoc][value=' + id + ']').prop('checked', true);
                 }.bind(this));
             }
+            this.isInfoValid = true;
         }
         else {
             this.menuBarObj.setName("New Role");
@@ -84,7 +85,7 @@
             //this.btnSaveAll.text("Create");
             this.selectApp.on("change", this.selectAppChangeAction.bind(this));
             this.loadAppToSelect.bind(this)();
-
+            this.isInfoValid = false;
         }
 
         this.selectAppChangeAction();

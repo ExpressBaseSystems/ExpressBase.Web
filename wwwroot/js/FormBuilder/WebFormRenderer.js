@@ -7,9 +7,12 @@ var a___builder = 0;
 var a___MT = 0;
 
 const WebFormRender = function (option) {
+
+    //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     ebcontext.renderContext = "WebForm";
     this.FormObj = option.formObj;
-    this.$form = $(`#${this.FormObj.EbSid}`);
+    this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);

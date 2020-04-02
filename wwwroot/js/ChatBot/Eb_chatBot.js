@@ -201,7 +201,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.getForm(this.curRefid);///////////////////
     }.bind(this);
 
-
+    this.setDataModel = function (form) {
+        for (let i = 0; i < form.Controls.$values.length; i++) {
+            getSingleColumn(form.Controls.$values[i]);
+        }
+    };
+    
 
     this.getForm = function (RefId) {
         this.showTypingAnim();
@@ -214,6 +219,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 success: function (data) {
                     this.hideTypingAnim();
                     data = JSON.parse(data);
+                    this.setDataModel(data);
                     JsonToEbControls(data);
 
                     //if (typeof data === "string") {
@@ -699,8 +705,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 //varghese
         //for cards  this.curDispValue  is used
        // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        this.curVal = this.curCtrl.getValue();
-        this.displayValue = this.curCtrl.getDisplayMember();
+        this.curVal = this.curCtrl.getValueFromDOM();
+        this.displayValue = this.curCtrl.getDisplayMemberFromDOM();
         this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
 this.formValues[id] = this.curVal;
 this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
@@ -1304,12 +1310,12 @@ this.callGetControl(this.nxtCtrlIdx);
     };
 
     this.initConnectionCheck = function () {
-        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://eb-test.cloud/images/EB_Logo.png?' + Date.now() }, active: 'image' } };
+        Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
         setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////
     };
 
     this.connectionPing = function () {
-        Offline.options.checks.image.url = 'https://eb-test.cloud/images/EB_Logo.png?' + Date.now();
+        Offline.options.checks.image.url = 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now();
         if (Offline.state === 'up')
             Offline.check();
         console.log(Offline.state);

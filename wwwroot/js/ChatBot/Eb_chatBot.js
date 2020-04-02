@@ -1233,16 +1233,18 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.formValues = {};
     };
 
-    this.ajaxsuccess = function (rowAffected) {
+    this.ajaxsuccess = function (resp) {
         this.hideTypingAnim();
         let msg = '';
-        if (rowAffected > 0) {
+        let respObj = JSON.parse(resp);
+        if (respObj.Status === 200) {
             EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
-            msg = `Your ${this.curForm.Name} form submitted successfully`;
+            msg = `Your ${this.curForm.DisplayName} form submitted successfully`;
         }
         else {
             EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
-            msg = `Your ${this.curForm.Name} form submission failed`;
+            msg = `Your ${this.curForm.DisplayName} form submission failed`;
+            console.log(respObj.MessageInt);
         }
         this.msgFromBot(msg);
         this.AskWhatU();

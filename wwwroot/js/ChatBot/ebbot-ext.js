@@ -114,7 +114,7 @@
         document.getElementById("eb_iframecont" + AppId).style.display = "none";
         if (!d.appIdColl)
             document.getElementById("chatbtn" + AppId).style.display = "block";
-    }
+    };
     //to minimize chatbot
     maximizeDiv.onclick = function () {
         console.log(AppId);
@@ -126,7 +126,7 @@
             document.getElementById("eb_iframecont" + AppId).style.width = "";
             maximizeDiv.innerHTML = '&#128470;';
         }
-    }
+    };
 
     //??????
     chatbtn.onclick = function () {

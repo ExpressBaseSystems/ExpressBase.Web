@@ -63,8 +63,8 @@ namespace ExpressBase.Web.Controllers
             string[] args = id.Split("-");
             string PushContent = "";
             string solid = args[0];
-
-            if (mode.Equals("s"))//if single bot
+			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+			if (mode.Equals("s"))//if single bot
             {
                 int appid = Convert.ToInt32(args[1]);
                 EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}_app_settings", id));
@@ -76,13 +76,15 @@ namespace ExpressBase.Web.Controllers
                         DpUrl = "../images/demobotdp4.png",
                         WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
                     };
+
                 PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
                     window.EXPRESSbase_APP_ID = {1};
                     d.ebbotName = '{2}' || '< EBbot >';
                     d.ebbotThemeColor = '{3}' || '#055c9b';
                     d.botdpURL = '{4}';
-                    d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage);
+                    d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';
+					d.ebmod='{6}'", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage,env);
             }
             else
             {

@@ -3,14 +3,15 @@
 
 (function () {
     var d = document;
-
+console.log("ext_js loaded");
     //PUSHED_JS_STATEMENTS
 
     this.eb_get_path = function (ebmod) {
+        console.log("mode : "+ebmod);
         if (ebmod === 'Production')
             return "https://" + window.EXPRESSbase_SOLUTION_ID + ".expressbase.com/";
         else if (ebmod === 'Staging')
-            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.xyz/";
+            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.cloud/";
         else
             return "https://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41502/";
     };

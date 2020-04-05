@@ -1259,7 +1259,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let msg = '';
         let respObj = JSON.parse(resp);
         if (respObj.Status === 200) {
-            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
+            //EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
             msg = `Your ${this.curForm.DisplayName} form submitted successfully`;
         }
         else {

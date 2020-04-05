@@ -87,7 +87,7 @@ console.log("ext_js loaded");
     var chatIcon = d.createElement("img");
     chatIcon.className = "boticon";
     chatIcon.id = "boticon" + AppId;
-    chatIcon.src = (d.botdpURL || d.botdpURLColl[d.appIdCount]);
+    chatIcon.src = this.eb_get_path(d.ebmod)+(d.botdpURL || d.botdpURLColl[d.appIdCount]);
 
 
     //place near chat head

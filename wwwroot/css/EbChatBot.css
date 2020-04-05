@@ -94,7 +94,7 @@
     border-radius: 13px 13px 13px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #f1f1f1;
-    padding-right: 41px;
+    padding-right: 47px;
 }
 
 .msg-cont {
@@ -190,7 +190,7 @@
     font-size: 9px;
     text-align: right;
     margin-top: -12px;
-    margin-right: -36px;
+    margin-right: -44px;
 }
 
 .chat-date {
@@ -285,6 +285,11 @@
     font-size: 13px;
     transition-duration: 0.1s;
     box-shadow: 1px 1px 4px 2px #dedfe1;
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
     .formname-btn_botformlist:hover {
         filter: hue-rotate(180deg);

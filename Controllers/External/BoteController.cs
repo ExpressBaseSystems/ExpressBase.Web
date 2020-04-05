@@ -207,6 +207,7 @@ namespace ExpressBase.Web.Controllers
                 //GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
                 GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
                 List<object> returnlist = new List<object>();
+                List<object> objpro = new List<object>();
 
                 returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
                 returnlist.Add(authResponse.RefreshToken);
@@ -215,7 +216,14 @@ namespace ExpressBase.Web.Controllers
                     user.Preference.Locale = "en-IN";
                 returnlist.Add(JsonConvert.SerializeObject(user));
                 returnlist.Add(formlist.BotFormsDisp);
-                return returnlist;
+				foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
+				{
+					string rfid = rfidlst.Key;
+					EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
+					objpro.Add(BtFrm.IconPicker);
+				}
+				returnlist.Add(objpro);
+				return returnlist;
 
                 //CookieOptions options = new CookieOptions();
                 //Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);

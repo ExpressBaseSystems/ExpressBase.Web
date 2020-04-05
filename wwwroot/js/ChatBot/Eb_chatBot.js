@@ -755,11 +755,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         }
         else {
-            //var $msg = this.$userMsgBox.clone();
-            //let msgg = this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
-            //$msg.find('.msg-wraper-user').html(msgg).append(this.getTime());
+            var $msg = this.$userMsgBox.clone();
+            //let msgg = $btn.parent().parent().html() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
+            
             $btn.hide();
-            //$msg.insertAfter($msgDiv);
+            $btn.parent().prev().children('button').hide();
+            $btn.parent().parent().remove();
+            $msg.find('.msg-wraper-user').html($btn.parent().parent().html()).append(this.getTime());
+            $msg.insertAfter($msgDiv);
+            $msgDiv.remove();
         }
         this.formValues[id] = this.curVal;
         this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];

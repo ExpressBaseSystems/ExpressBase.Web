@@ -505,19 +505,19 @@ var InitControls = function (option) {
 
     };
 
-    this.Locations = function (ctrls) {
-        var name = ctrls.ebSid;
-        if (ctrls.showTabed) {
-            $(`#${name} .loc-opt-btn`).off("click").on("click", function (e) {
-                var $optBtn = $(e.target);
-                var loc = $optBtn.attr("for");
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.name === loc; });
-                var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.Name}`);
-                $(`#${name} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
+    this.Locations = function (ctrl) {
+        let EbSid = ctrl.EbSid;
+        if (ctrl.ShowTabed) {
+            $(`#${EbSid} .loc-opt-btn`).off("click").on("click", function (e) {
+                let $optBtn = $(e.target);
+                let loc = $optBtn.attr("for");
+                let ctrlArr = $.grep(ctrl.LocationCollection, function (ctrl, i) { return ctrl.name === loc; });
+                let ctrl = ctrlArr[0];
+                let $locDiv = $(`#${ctrl.Name}`);
+                $(`#${EbSid} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
                 $optBtn.css("border-bottom", "solid 2px #31d031").css("font-weight", "bold").css("color", "#333");
                 if ($locDiv.closest(".location-box").css("display") === "none") {
-                    $(`#${name} .location-box`).hide(10);
+                    $(`#${EbSid} .location-box`).hide(10);
                     $locDiv.closest(".location-box").show(10,
                         function () {
                             if ($locDiv.children().length === 0)
@@ -526,40 +526,45 @@ var InitControls = function (option) {
                 }
 
             }.bind(this));
-            $(`#${name} .loc-opt-btn`)[0].click();
+            $(`#${EbSid} .loc-opt-btn`)[0].click();
         }
         else {
-            $(`#${name} .loc-opt-DD`).off("change").on("change", function (e) {
-                var loc = $(e.target).children().filter(":selected").val();
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.Name === loc; });
-                var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.Name}`);
+            $(`#${EbSid} .loc-opt-DD`).off("change").on("change", function (e) {
+                let loc = $(e.target).children().filter(":selected").val();
+                let ctrlArr = $.grep(ctrl.LocationCollection.$values, function (ctrl, i) { return ctrl.Name === loc; });
+                let LocCtrl = ctrlArr[0];
+                let $locDiv = $(`#${LocCtrl.Name}`);
                 if ($locDiv.closest(".location-box").css("display") === "none") {
-                    $(`#${name} .location-box`).hide(10);
+                    $(`#${EbSid} .location-box`).hide(10);
                     $locDiv.closest(".location-box").show(10,
                         function () {
                             if ($locDiv.children().length === 0)
-                                this.initMap(ctrl);
+                                this.initMap(LocCtrl);
                         }.bind(this));
                 }
             }.bind(this));
 
-            $(`#${name} .location-box:eq(0)`).show();
-            this.initMap(ctrls.locationCollection[0]);
+            $(`#${EbSid} .location-box:eq(0)`).show();
+            this.initMap(ctrl.LocationCollection.$values[0]);
         }
+
         this.Bot.nxtCtrlIdx++;
         this.Bot.callGetControl();
     };
 
     this.initMap = function (ctrl) {
-        var uluru = { lat: ctrl.Position.latitude, lng: ctrl.Position.longitude };
-        var map = new google.maps.Map(document.getElementById(ctrl.Name), {
+        let uluru = { lat: ctrl.Position.Latitude, lng: ctrl.Position.Longitude };
+        let map = new google.maps.Map(document.getElementById(ctrl.Name), {
             zoom: 15,
             center: uluru
         });
-        var marker = new google.maps.Marker({
+        let marker = new google.maps.Marker({
             position: uluru,
             map: map
+        });
+
+        $(window).resize(function () {
+            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 65)) + "px");
         });
     };
 

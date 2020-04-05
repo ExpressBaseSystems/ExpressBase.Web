@@ -29,6 +29,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.formsList = {};
     this.formsDict = {};
     this.formNames = [];
+    this.formIcons = [];
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
@@ -139,6 +140,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 window.ebcontext.user = JSON.parse(result[3]);
                 //this.formNames = Object.values(this.formsDict);
                 this.formNames = Object.values(result[4]);
+                this.formIcons = result[5];
                 this.AskWhatU();
                 this.ajaxSetup4Future();
                 /////////////////////////////////////////////////
@@ -575,16 +577,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         return Html;
     };
 
-    this.Query_botformlist = function (msg, OptArr, For, ids) {
+    this.Query_botformlist = function (msg, OptArr, For, ids,icns) {
         this.msgFromBot(msg);
-        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids);
+        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, icns);
         this.msgFromBot($('<div class="btn-box_botformlist" >' + Options + '</div>'));
     };
 
-    this.getButtons_botformlist = function (OptArr, For, ids) {
+    this.getButtons_botformlist = function (OptArr, For, ids, icns) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
-            Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
+            Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px;" class="${icns}"></i>${opt} </button>`;
         });
         return Html;
     };
@@ -1274,7 +1276,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.AskWhatU = function () {
         //this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
-        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
+        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict),this.formIcons);
     };
 
     this.showDate = function () {

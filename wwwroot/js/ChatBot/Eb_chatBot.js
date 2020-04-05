@@ -711,6 +711,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
     };
 
+    this.getDisplayText = function (ctrl) {
+        let text = ctrl.getDisplayMemberFromDOM();
+        if (ctrl.ObjType === "PowerSelect")
+            text = JSON.stringify(text);
+        return text;
+    };
+
     this.ctrlSend = function (e) {
         this.curVal = null;
         this.displayValue = null;
@@ -727,7 +734,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
         this.curVal = this.curCtrl.getValue();
-        this.displayValue = this.curCtrl.getDisplayMemberFromDOM();
+        this.displayValue = this.getDisplayText(this.curCtrl);
         this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         this.formValues[id] = this.curVal;
         this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];

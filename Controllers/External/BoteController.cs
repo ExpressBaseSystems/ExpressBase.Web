@@ -63,12 +63,13 @@ namespace ExpressBase.Web.Controllers
             string[] args = id.Split("-");
             string PushContent = "";
             string solid = args[0];
+			string cid = this.GetIsolutionId(solid);
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			if (mode.Equals("s"))//if single bot
             {
                 int appid = Convert.ToInt32(args[1]);
-                EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}_app_settings", id));
-                if (settings == null)
+                EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+				if (settings == null)
                     settings = new EbBotSettings() 
                     { 
                         Name = "- Application Name -",

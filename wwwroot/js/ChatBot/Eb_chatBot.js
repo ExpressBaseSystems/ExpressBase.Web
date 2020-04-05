@@ -749,7 +749,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
         this.curVal = this.curCtrl.getValue();
         this.displayValue = this.getDisplayText(this.curCtrl);
-        this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        if (this.curCtrl.ObjType !== 'StaticCardSet') {
+            this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        }
+        else {
+            //var $msg = this.$userMsgBox.clone();
+            //let msgg = this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
+            //$msg.find('.msg-wraper-user').html(msgg).append(this.getTime());
+            $btn.hide();
+            //$msg.insertAfter($msgDiv);
+        }
         this.formValues[id] = this.curVal;
         this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
         this.callGetControl(this.nxtCtrlIdx);

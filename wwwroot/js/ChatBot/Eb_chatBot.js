@@ -77,7 +77,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", ".eb-chatBox [name=formcancel_fm]", this.formCancel_fm);
         $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
-        $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
+        $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
@@ -177,7 +177,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.collectContacts = function () {
         this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that I can understand you better.");
-        this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" class="plain-inp"><i class="fa fa-envelope-o" aria-hidden="true"></i></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" class="plain-inp"><i class="fa fa-phone" aria-hidden="true"></i></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
+        this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
     };
 
     this.continueAsFBUser = function (e) {
@@ -571,6 +571,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
             Html += `<button for="${For}" class="btn formname-btn" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
+        });
+        return Html;
+    };
+
+    this.Query_botformlist = function (msg, OptArr, For, ids) {
+        this.msgFromBot(msg);
+        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids);
+        this.msgFromBot($('<div class="btn-box_botformlist" >' + Options + '</div>'));
+    };
+
+    this.getButtons_botformlist = function (OptArr, For, ids) {
+        var Html = '';
+        $.each(OptArr, function (i, opt) {
+            Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
         });
         return Html;
     };
@@ -1259,7 +1273,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.AskWhatU = function () {
-        this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
+        //this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
+        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
     };
 
     this.showDate = function () {

@@ -94,7 +94,7 @@
     border-radius: 13px 13px 13px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #f1f1f1;
-    padding-right: 41px;
+    padding-right: 47px;
 }
 
 .msg-cont {
@@ -190,7 +190,7 @@
     font-size: 9px;
     text-align: right;
     margin-top: -12px;
-    margin-right: -36px;
+    margin-right: -44px;
 }
 
 .chat-date {
@@ -217,6 +217,12 @@
     text-align: center;
     max-width: 80%;
     margin-left: calc(15% - 7px);
+}
+
+.btn-box_botformlist {
+    width: 100%;
+    text-align: center;
+    margin-left: calc(10% - 7px);
 }
 
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {
@@ -262,6 +268,35 @@
         filter: hue-rotate(180deg);
         color: var(--botThemeColor);
     }
+.formname-btn_botformlist {
+    height: 100px;
+    border-radius: 4px;
+    color: var(--botThemeColor);
+    margin: 1px 1px;
+    width: 40%;
+    margin-bottom: 8px;
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 15px;
+    background-color: white;
+    outline: none;
+    border: solid 1px;
+    padding: 5px;
+    font-size: 13px;
+    transition-duration: 0.1s;
+    box-shadow: 1px 1px 4px 2px #dedfe1;
+    white-space: normal !important;
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+    .formname-btn_botformlist:hover {
+        filter: hue-rotate(180deg);
+        color: var(--botThemeColor);
+        box-shadow: 0px 0px 5px 1px #dedfe1;
+    }
+
 
 .msg-cont .btn:focus {
     outline: none;
@@ -679,24 +714,26 @@
 }
 
 .contct-cont {
-	padding: .5em;
-	text-align: center;
-	border-radius: 0.4em;
-	background-color: #1e6c7d;
+    /*border: solid 1px #cecece;*/
+    box-shadow: 1px 1px 5px 1px #e8e8e8;
+    padding: .5em;
+    text-align: center;
+    border-radius: 4px;
 }
 
 .contact-inp-wrap {
-    border-radius: 3em;
+    border: solid 1px #cecece;
+    border-radius: 4px;
     background-color: white;
-    padding: 2px;
+    padding: 4px 2px;
     WIDTH: 100%;
-    margin-bottom: 0.4em;
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
 }
 
 .plain-inp {
     width: calc(100% - 2.5em);
     border: none;
-    padding: 0;
     background-color: transparent;
 }
 
@@ -705,13 +742,15 @@
     }
 
 .contactSubmit {
-    color: #fff;
     background-color: transparent;
-    border-radius: 3em;
+    border-radius: 4px;
     text-align: center;
     cursor: pointer;
     padding: 2PX 3PX 2PX 6PX;
-    border: solid 1px white;
+    border: solid 1px #dddddd;
+}
+.contactSubmit {
+    border: solid 3px #dddddd;
 }
 
     .contactSubmit:focus {

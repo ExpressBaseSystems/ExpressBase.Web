@@ -631,16 +631,18 @@ var InitControls = function (option) {
 
     this.StaticCardSet = function (ctrl) {
         new EbCardRender({
-            $Ctrl: $('#' + ctrl.Name),
-            Bot: this.Bot
+            $Ctrl: $('#' + ctrl.EbSid),
+            Bot: this.Bot,
+            CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
     };
 
     this.DynamicCardSet = function (ctrl) {
         new EbCardRender({
-            $Ctrl: $('#' + ctrl.Name),
-            Bot: this.Bot
+            $Ctrl: $('#' + ctrl.EbSid),
+            Bot: this.Bot,
+            CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
     };

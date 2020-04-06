@@ -1,9 +1,10 @@
 ﻿var EbCardRender = function (options) {
     this.Bot = options.Bot;
-    this.$Ctrl = options.Ctrl;
+    this.$Ctrl = options.$Ctrl;
+    this.CtrlObj = options.CtrlObj;
 
     this.initCards = function ($Ctrl) {
-        $Ctrl.find(".cards-btn-cont .btn").attr("idx", this.Bot.curForm.controls.indexOf(this.Bot.curCtrl));
+        $Ctrl.find(".cards-btn-cont .btn").attr("idx", this.Bot.curForm.Controls.$values.indexOf(this.Bot.curCtrl));
         this.SelectedCards = [];
         this.sumFieldsName = [];
         this.slickObjOfCards = null;
@@ -29,7 +30,7 @@
 
             if (!this.Bot.curCtrl.MultiSelect) {
                 this.SelectedCards = [];
-                this.resetSelectedCardDisplay($('#' + this.Bot.curCtrl.Name));
+                this.resetSelectedCardDisplay($('#' + this.Bot.curCtrl.EbSid));
             }
 
             var itempresent = $.grep(this.SelectedCards, function (a) {
@@ -283,6 +284,19 @@
         });
         this.drawSummaryTable($Ctrl.find(".table tbody"));
     };
+
+    this.CtrlObj.getValueFromDOM = function () {
+        //let Obj = this.Bot.getCardsetValue(this.CtrlObj);
+        //let r = Object.keys(Obj).join(',');
+        //return r;
+        return 0;
+    }.bind(this);
+
+    this.CtrlObj.getDisplayMemberFromDOM = function () {
+        //let Obj = this.Bot.getCardsetValue(this.CtrlObj);
+        //return this.Bot.curDispValue;
+        return '';
+    }.bind(this);
 
     this.initCards(this.$Ctrl);
 

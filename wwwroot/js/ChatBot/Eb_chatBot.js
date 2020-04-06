@@ -29,6 +29,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.formsList = {};
     this.formsDict = {};
     this.formNames = [];
+    this.formIcons = [];
     this.curForm = {};
     this.formControls = [];
     this.formValues = {};
@@ -77,7 +78,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", ".eb-chatBox [name=formcancel_fm]", this.formCancel_fm);
         $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
-        $("body").on("click", ".btn-box [for=form-opt]", this.startFormInteraction);
+        $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
@@ -139,6 +140,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 window.ebcontext.user = JSON.parse(result[3]);
                 //this.formNames = Object.values(this.formsDict);
                 this.formNames = Object.values(result[4]);
+                this.formIcons = result[5];
                 this.AskWhatU();
                 this.ajaxSetup4Future();
                 /////////////////////////////////////////////////
@@ -177,7 +179,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.collectContacts = function () {
         this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that I can understand you better.");
-        this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" class="plain-inp"><i class="fa fa-envelope-o" aria-hidden="true"></i></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" class="plain-inp"><i class="fa fa-phone" aria-hidden="true"></i></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
+        this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
     };
 
     this.continueAsFBUser = function (e) {
@@ -575,6 +577,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         return Html;
     };
 
+    this.Query_botformlist = function (msg, OptArr, For, ids,icns) {
+        this.msgFromBot(msg);
+        var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, icns);
+        this.msgFromBot($('<div class="btn-box_botformlist" >' + Options + '</div>'));
+    };
+
+    this.getButtons_botformlist = function (OptArr, For, ids, icns) {
+        var Html = '';
+        $.each(OptArr, function (i, opt) {
+            Html += `<button for="${For}" class="btn formname-btn_botformlist" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}"><i style="display:block;font-size: 28px; margin-bottom: 5px;" class="fa ${icns[i]}"></i>${opt} </button>`;
+        });
+        return Html;
+    };
+
     this.initFormCtrls_fm = function () {
         $.each(this.curForm.Controls.$values, function (i, control) {//////////////////////////////////////
             this.initControls.init(control);
@@ -735,7 +751,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
         this.curVal = this.curCtrl.getValue();
         this.displayValue = this.getDisplayText(this.curCtrl);
-        this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        if (this.curCtrl.ObjType !== 'StaticCardSet') {
+            this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+        }
+        else {
+            var $msg = this.$userMsgBox.clone();
+            //let msgg = $btn.parent().parent().html() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
+            
+            $btn.hide();
+            $btn.parent().prev().children('button').hide();
+            $btn.parent().parent().remove();
+            $msg.find('.msg-wraper-user').html($btn.parent().parent().html()).append(this.getTime());
+            $msg.insertAfter($msgDiv);
+            $msgDiv.remove();
+        }
         this.formValues[id] = this.curVal;
         this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
         this.callGetControl(this.nxtCtrlIdx);
@@ -1245,7 +1274,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let msg = '';
         let respObj = JSON.parse(resp);
         if (respObj.Status === 200) {
-            EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
+            //EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
             msg = `Your ${this.curForm.DisplayName} form submitted successfully`;
         }
         else {
@@ -1259,7 +1288,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.AskWhatU = function () {
-        this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
+        //this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
+        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict),this.formIcons);
     };
 
     this.showDate = function () {

@@ -636,6 +636,34 @@ namespace ExpressBase.Web.Controllers
 
                     resp = this.ServiceClient.Get(request);
                 }
+                else
+                    resp = new GetMobileVisDataResponse { Message = ViewBag.Message };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return resp;
+        }
+
+        [HttpGet("api/get_formdata")] //refid = mobileform
+        public GetMobileFormDataResponse GetMobileFormData(string refid, int row_id, int loc_id)
+        {
+            GetMobileFormDataResponse resp = null;
+            try
+            {
+                if (ViewBag.IsValid)
+                {
+                    resp = this.ServiceClient.Get(new GetMobileFormDataRequest
+                    {
+                        MobilePageRefId = refid,
+                        RowId = row_id,
+                        LocId = loc_id
+                    });
+                }
+                else
+                    resp = new GetMobileFormDataResponse { Message = ViewBag.Message };
             }
             catch (Exception ex)
             {

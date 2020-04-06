@@ -83,6 +83,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
         $("body").on("click", ".survey-final-btn .btn", this.ctrlSend);
+        $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.initConnectionCheck();
         this.showDate();
@@ -226,6 +227,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     let DataRes = JSON.parse(result.data);
                     if (DataRes.Status === 200) {
                         this.CurDataMODEL = DataRes.FormData.MultipleTables;
+                        a___MT = DataRes.FormData.MultipleTables;
                         this.CurRowId = this.CurDataMODEL[form.TableName][0].RowId;
                         this.hideTypingAnim();
                         //data = JSON.parse(data);
@@ -452,7 +454,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
             tooltips: {
                 enabled: this.curChartViz.ShowTooltip
-            },
+            },-
             animation: this.animateOPtions
 
         };
@@ -577,7 +579,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         return Html;
     };
 
-    this.Query_botformlist = function (msg, OptArr, For, ids,icns) {
+    this.Query_botformlist = function (msg, OptArr, For, ids, icns) {
         this.msgFromBot(msg);
         var Options = this.getButtons_botformlist(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, icns);
         this.msgFromBot($('<div class="btn-box_botformlist" >' + Options + '</div>'));
@@ -624,7 +626,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.VisibleExpr.Code));
             if (control.ValueExpression && control.ValueExpression.trim())//if valueExpression is Not empty
                 this.formFunctions.valueExpressions[control.Name] = new Function("form", "user", atob(control.ValueExpression));
-            this.formControls.push($(`<div class='ctrl-wraper'>${control.BareControlHtml4Bot}</div>`));
+            let $ctrl = $(`<div class='ctrl-wraper'>${control.BareControlHtml4Bot}</div>`);
+            if (control.ObjType === "InputGeoLocation")
+                $ctrl.find(".ctrl-submit-btn").attr("idx", i);
+            this.formControls.push($ctrl);
         }.bind(this));
 
         if (this.curForm.RenderAsForm)
@@ -757,7 +762,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         else {
             var $msg = this.$userMsgBox.clone();
             //let msgg = $btn.parent().parent().html() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
-            
+
             //$btn.hide();
             //$btn.parent().prev().children('button').hide();
             $btn.parent().parent().remove();
@@ -1098,6 +1103,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 if (msg instanceof jQuery) {
                     if (ctrlname || typeof ctrlname === typeof "")
                         $msg.attr("for", ctrlname);
+                    if (this.curCtrl)
+                        $msg.attr("ctrl-type", this.curCtrl.ObjType);
                     $msg.find('.bot-icon').remove();
                     $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                     $msg.find(".msg-wraper-bot").css("padding-right", "3px");
@@ -1290,7 +1297,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.AskWhatU = function () {
         //this.Query("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict));
-        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict),this.formIcons);
+        this.Query_botformlist("Click to explore", this.formNames, "form-opt", Object.keys(this.formsDict), this.formIcons);
     };
 
     this.showDate = function () {

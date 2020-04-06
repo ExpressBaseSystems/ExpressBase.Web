@@ -1,8 +1,11 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
+using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Objects;
+using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
+using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Security.Core;
 using ExpressBase.Web.BaseControllers;
@@ -129,7 +132,7 @@ namespace ExpressBase.Web2.Controllers
         [HttpPost]
         public int CreateConfig(EbLocationCustomField conf)
         {
-            var resp = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { Conf = conf });
+            CreateLocationConfigResponse resp = ServiceClient.Post<CreateLocationConfigResponse>(new CreateLocationConfigRequest { Conf = conf });
             return resp.Id;
         }
 
@@ -137,6 +140,12 @@ namespace ExpressBase.Web2.Controllers
         [HttpGet]
         public IActionResult EbLocations(int id)
         {
+            Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
+            Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
+            ViewBag.Meta = _jsResult.AllMetas;
+            ViewBag.JsObjects = _jsResult.JsObjects;
+            ViewBag.EbObjectTypes = _jsResult.EbObjectTypes;
+
             var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
             ViewBag.Config = JsonConvert.SerializeObject(resp.Config);
             ViewBag.LocList = resp.Locations;
@@ -153,6 +162,15 @@ namespace ExpressBase.Web2.Controllers
             return resp.Id;
         }
 
+
+        public int CreateLocationH(EbLocation loc)
+        {
+            if (loc.Logo == null)
+                loc.Logo = "../img";
+            SaveLocationResponse resp = ServiceClient.Post<SaveLocationResponse>(new SaveLocationRequest { Location = loc });
+            return resp.Id;
+        }
+
         public int DeletelocConf(int id)
         {
             DeleteLocResponse resp = ServiceClient.Post<DeleteLocResponse>(new DeleteLocRequest { Id = id });
@@ -161,7 +179,7 @@ namespace ExpressBase.Web2.Controllers
 
         public CreateLocationTypeResponse CreateLocationType(EbLocationType loctype)
         {
-            CreateLocationTypeResponse resp = this.ServiceClient.Post(new CreateLocationTypeRequest { LocationType = loctype});
+            CreateLocationTypeResponse resp = this.ServiceClient.Post(new CreateLocationTypeRequest { LocationType = loctype });
             return resp;
         }
 
@@ -169,6 +187,73 @@ namespace ExpressBase.Web2.Controllers
         {
             DeleteLocationTypeResponse resp = this.ServiceClient.Post(new DeleteLocationTypeRequest { Id = id });
             return resp;
+        }
+
+        public string GetLocationTree()
+        {
+            ListSqlJobsResponse resp = new ListSqlJobsResponse();
+            string query = @"SELECT id, longname, shortname, image, parent_id, (CASE WHEN is_group = 'F' THEN false ELSE true END) as is_group,
+            eb_location_types_id, meta_json  FROM eb_locations WHERE COALESCE(eb_del,'F') = 'F';";
+            string[] arrayy = new string[] { "id", "longname", "shortname", "image", "parent_id", "is_group", "eb_location_types_id", "meta_json" };
+            DVColumnCollection DVColumnCollection = GetColumnsForLocationTree(arrayy);
+            EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = DVColumnCollection, AutoGen = false, IsPaging = false };
+            return EbSerializers.Json_Serialize(Visualization);
+        }
+
+        public DVColumnCollection GetColumnsForLocationTree(string[] strArray)
+        {
+            var Columns = new DVColumnCollection();
+            try
+            {
+                foreach (string str in strArray)
+                {
+                    DVBaseColumn _col = null;
+                    if (str == "id")
+                        _col = new DVNumericColumn { Data = 0, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+                    if (str == "longname")
+                        _col = new DVStringColumn
+                        {
+                            Data = 1,
+                            Name = str,
+                            sTitle = "Long Name",
+                            Type = EbDbTypes.String,
+                            bVisible = true,
+                            RenderAs = StringRenderType.Tree,
+                            ParentColumn = new List<DVBaseColumn>(),
+                            GroupingColumn = new List<DVBaseColumn>(),
+                            GroupFormId = new List<DVBaseColumn>(),
+                            IsTree = true
+                        };
+                    if (str == "shortname")
+                        _col = new DVStringColumn { Data = 2, Name = str, sTitle = "Short Name", Type = EbDbTypes.String, bVisible = true };
+                    if (str == "image")
+                        _col = new DVStringColumn { Data = 3, Name = str, sTitle = "Logo", Type = EbDbTypes.String, bVisible = true };
+                    if (str == "parent_id")
+                        _col = new DVNumericColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
+                    if (str == "is_group")
+                        _col = new DVBooleanColumn { Data = 5, Name = str, sTitle = str, Type = EbDbTypes.Boolean, bVisible = false };
+                    if (str == "eb_location_types_id")
+                        _col = new DVNumericColumn { Data = 6, Name = str, sTitle = str, Type = EbDbTypes.Boolean, bVisible = false };
+                    if (str == "meta_json")
+                        _col = new DVStringColumn { Data = 7, Name = str, sTitle = str, Type = EbDbTypes.String, bVisible = false };
+
+                    _col.Name = str;
+                    _col.RenderType = _col.Type;
+                    _col.ClassName = "tdheight";
+                    _col.Font = null;
+                    _col.Align = Align.Left;
+                    Columns.Add(_col);
+                }
+                Columns.Get("longname").ParentColumn.Add(Columns.Get("parent_id"));
+                Columns.Get("longname").GroupingColumn.Add(Columns.Get("is_group"));
+                Columns.Get("longname").GroupFormId.Add(Columns.Get("id"));
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("no coloms" + e.StackTrace);
+            }
+
+            return Columns;
         }
     }
 }

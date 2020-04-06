@@ -2810,17 +2810,19 @@
 
     this.OpenLocationModal = function (key, opt, event) {
         let id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "id")[0].data;
-        let longname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "longname")[0].data;
-        let shortname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "shortname")[0].data;
-        let parent_id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "parent_id")[0].data;
-        let image_index = this.EbObject.Columns.$values.filter(obj => obj.name === "image")[0].data;
-        let types_index = this.EbObject.Columns.$values.filter(obj => obj.name === "eb_location_types_id")[0].data;
-        let meta_index = this.EbObject.Columns.$values.filter(obj => obj.name === "meta_json")[0].data;
+      
         let index = opt.$trigger.parent().closest("tr").index();
         let rowData = this.unformatedData[index];
 
         $('#add_location_modal').modal("show");
         if (key === "EditGroup") {
+            let longname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "longname")[0].data;
+            let shortname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "shortname")[0].data;
+            let parent_id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "parent_id")[0].data;
+            let image_index = this.EbObject.Columns.$values.filter(obj => obj.name === "image")[0].data;
+            let types_index = this.EbObject.Columns.$values.filter(obj => obj.name === "eb_location_types_id")[0].data;
+            let meta_index = this.EbObject.Columns.$values.filter(obj => obj.name === "meta_json")[0].data;
+
             $("#add_location_modal").find("input[type='text']").val("");
             $("#add_location").text("Update");
             $("input[name='_LocId']").val(rowData[id_index]);

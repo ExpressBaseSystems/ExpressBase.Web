@@ -76,6 +76,7 @@
                 </div>
 
                 <div class="tab-pane active" id="locations_hierarchial_tab" role="tabpanel">
+                    <button id="add_root_loc" class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#add_location_modal" > Add New Root Location </button>
                     <div id="loc_tree_container"></div>
                 </div>
 
@@ -286,10 +287,11 @@
                 <div class="form-group">
                     <label class="col-sm-3">Type</label>
                     <div class="col-sm-9">
-                        <select class="form-control" id="loc_type" value="" placeholder="Select type" name="loc_type">
+                        <select class="form-control" id="loc_type" name="loc_type">
+                            <option value="0" selected>--Select--</option>
                             @foreach (EbLocationType t in location_types)
                             {
-                                <option value="@t.Id" selected> @t.Type</option>
+                                <option value="@t.Id"> @t.Type</option>
                             }
                         </select>
                     </div>

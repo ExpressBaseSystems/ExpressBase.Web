@@ -159,7 +159,7 @@
         let $addRow = $(`[ebsid='${this.ctrl.EbSid}'] [is-checked='false']`);
         let td = $addRow.find(".ctrlstd")[0];
         let isSameRow = $(event.target).closest("tr") === $addRow;
-        if ($addRow.length !== 0 && !this.checkRow_click({ target: td }, false, false, isSameRow))
+        if ($addRow.length !== 0 && !this.confirmRow())
             return;
 
         let $td = $(e.target).closest("td");
@@ -397,18 +397,22 @@
             //    dspMmbr = moment(cellObj.Value).format(ebcontext.user.Preference.ShortTimePattern);
         }
         else if (col.ObjType === "DGCreatedByColumn" || col.ObjType === "DGModifiedByColumn") {
-            let spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
-            spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
+            let spn = '';
+            if (cellObj.Value == null) {
+                spn = `<img class='sysctrl_usrimg' src='/images/nulldp.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
+            }
+            else {
+                spn = `<img class='sysctrl_usrimg' src='/images/dp/${cellObj.Value.split('$$')[0]}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
+                spn += `<span class='sysctrl_usrname'>${cellObj.Value.split('$$')[1]}</span>`;
+            }
+
             // dspMmbr = cellObj.Value.split('$$')[1];
             dspMmbr = spn;
         }
-        else if (col.ObjType === "EbDGUserSelectColumn") {
-            alert();
-            //let spn = `<div class="ulstc-disp-img-c" style="background-image: url(/images/dp/${cellObj.Value.split('$$')[0]}.png;), url(/images/nulldp.png;);></div>`
-
-            //spn += `<div class="ulstc-disp-txt">${cellObj.Value.split('$$')[1]}</div>`;
-            //// dspMmbr = cellObj.Value.split('$$')[1];
-            //dspMmbr = spn;
+        else if (col.ObjType === "DGUserSelectColumn") {
+            let ulObj = inpCtrl.UserList.$values.find(e => e.vm === cellObj.Value);
+            if (ulObj)
+                dspMmbr = `<img class='sysctrl_usrimg' src='/images/dp/${ulObj.vm}.png' alt='' onerror="this.src='/images/nulldp.png'"> <span class='sysctrl_usrname'>${ulObj.dm1}</span>`;
         }
         else
             dspMmbr = cellObj.Value || "";
@@ -1093,6 +1097,10 @@
     }.bind(this);
 
     this.confirmRow = function (rowId) {
+        if (!rowId) {
+            let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
+            rowId = $activeTr.attr("rowid");
+        }
         if (!this.RowRequired_valid_Check(rowId))
             return false;
 

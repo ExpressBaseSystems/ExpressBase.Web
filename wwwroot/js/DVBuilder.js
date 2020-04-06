@@ -8,6 +8,9 @@
     });
 })(jQuery);
 
+
+//let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
 class DvBuilder {
     constructor(option) {
         this.type = option.ObjType || null;
@@ -110,7 +113,9 @@ class DvBuilder {
         $("#NewTableHeader").off("click").on("click", this.AddNewTableHeader.bind(this));
         $("#NewRowGroup").off("click").on("click", this.AddNewRowGroup.bind(this));
         $("#columns-list").off("click").on("click", this.ColumnDivFocused.bind(this));
-        $(".add_calcfield").on("click", this.newCalcFieldSum.bind(this));
+        $("#add_calcfield").on("click", this.newCalcFieldSum.bind(this));
+        $("#add_approvalColumn").on("click", this.DropApprovalColumn.bind(this));
+        $("#add_actionColumn").on("click", this.DropActionColumn.bind(this));
         document.onkeydown = this.ColumnKeyMove.bind(this);
         $("#Rowgroup_submit").off("click").on("click", this.ShowRowgroupDiv.bind(this));
         $(".resized").resizable({
@@ -242,13 +247,13 @@ class DvBuilder {
         }
         if (this.NewlyAddedColumns.length > 0) {
             if (_message !== "")
-                _message += "And "; 
+                _message += "And ";
             _message += "The Columns " + AddedTemparray.join(", ");
             _message += " present in new data reader. It will be Added..  Do u want to Continue ? ";
         }
         else {
             _message += "Do u want to Continue ? ";
-        }            
+        }
         EbDialog("show", {
             Message: _message,
             Buttons: {
@@ -437,20 +442,35 @@ class DvBuilder {
         $.each(this.EbObject.ColumnsCollection.$values, function (i, columnCollection) {
             $("#data-table-list ul[id='dataSource']").append(" <li><a>Table " + i + "</a><ul id='t" + i + "' class='tablecolumns'></ul></li>");
             $.each(columnCollection.$values, function (j, obj) {
-                type = this.getType(obj.RenderType); icon = this.getIcon(obj.RenderType);
-                $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
+                if (!obj.IsCustomColumn) {
+                    type = this.getType(obj.RenderType); icon = this.getIcon(obj.RenderType);
+                    $("#data-table-list ul[id='t" + i + "']").append(`<li eb-type='${type}' DbType='${obj.Type}' eb-name="${obj.name}" class='' style='font-size: 13px;'><span><i class='fa ${icon}'></i> ${obj.name}</span></li>`);
+                }
             }.bind(this));
         }.bind(this));
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.IsCustomColumn) {
-                $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
+                this.calcfieldCounter++;
+                if (obj.$type.indexOf("DVApprovalColumn") > -1)
+                    $("#ApprovalColumns ul[id='ApprovalColumns-childul']").append(`<li eb-type='DVApprovalColumn'  eb-name="${obj.name}" 
                     class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
+                else if (obj.$type.indexOf("DVActionColumn") > -1)
+                    $("#ActionColumns ul[id='ActionColumns-childul']").append(`<li eb-type='DVActionColumn'  eb-name="${obj.name}" 
+                        class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
+                else
+                    $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
+                        class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
+
             }
         }.bind(this));
         $('#data-table-list').killTree();
         $('#data-table-list').treed();
         $('#calcFields').killTree();
         $('#calcFields').treed();
+        $('#ApprovalColumns').killTree();
+        $('#ApprovalColumns').treed();
+        $('#ActionColumns').killTree();
+        $('#ActionColumns').treed();
         this.SetContextmenu4CalcField();
         this.SetColumnRef();
         this.initializeDragula();
@@ -669,7 +689,12 @@ class DvBuilder {
         $("#columns-list-body").empty();
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             if (obj.bVisible) {
-                let element = $(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='column' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
+                let type = this.getType(obj.RenderType);
+                if (obj.$type.indexOf("DVApprovalColumn") > -1)
+                    type = "DVApprovalColumn";
+                else if (obj.$type.indexOf("DVActionColumn") > -1)
+                    type = "DVActionColumn";
+                let element = $(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='column' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
                 this.ColumnDropRelated(element);
                 $("#columns-list-body").append(element);
                 $(element).off("click").on("click", this.elementOnFocus.bind(this));
@@ -1094,6 +1119,49 @@ class DvBuilder {
         this.CurrentRowgroup.DisplayName = $(e.target).val();
     }
 
+    DropApprovalColumn = function () {
+        let name = "approval"+this.calcfieldCounter++;
+        let type = "DVApprovalColumn";
+        let obj = new EbObjects[type](name);
+        obj.Type = 16;
+        obj.RenderType = 16;
+        obj.ColumnsRef = this.EbObject.Columns.$values[0].ColumnsRef;
+        this.objCollection[name] = obj;
+        obj.name = name;
+        obj.Title = obj.name;
+        obj.bVisible = true;
+        obj.IsCustomColumn = true;
+        obj.data = this.EbObject.Columns.$values.length;
+        $("#ApprovalColumns ul[id='ApprovalColumns-childul']").append(`<li eb-type='${type}'  eb-name="${obj.name}" 
+            class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+        this.addApprovalFieldToColumnlist(obj);
+        $('#ApprovalColumns').killTree();
+        $('#ApprovalColumns').treed();
+        //this.SetContextmenu4CalcField();
+    }
+
+    DropActionColumn = function () {
+        let name = "eb_action" + this.calcfieldCounter++;
+        let type = "DVActionColumn";
+        let obj = new EbObjects[type](name);
+        obj.Type = 16;
+        obj.RenderType = 16;
+        obj.ColumnsRef = this.EbObject.Columns.$values[0].ColumnsRef;
+        this.objCollection[name] = obj;
+        obj.name = name;
+        obj.Title = name;
+        obj.bVisible = true;
+        obj.IsCustomColumn = true;
+        obj.Align = EbEnums.Align.Center;
+        obj.data = this.EbObject.Columns.$values.length;
+        $("#ActionColumns ul[id='ActionColumns-childul']").append(`<li eb-type='${type}'  eb-name="${obj.name}" 
+            class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+        this.addActionFieldToColumnlist(obj);
+        $('#ActionColumns').killTree();
+        $('#ActionColumns').treed();
+        //this.SetContextmenu4CalcField();
+    }
+
     newCalcFieldSum = function () {
         $("#eb_calcF_summarry").modal("toggle");
         $("#calcF_submit").off("click").on("click", this.addCalcField.bind(this));
@@ -1146,13 +1214,41 @@ class DvBuilder {
 
     addCalcFieldToColumnlist(obj) {
         this.EbObject.Columns.$values.push(obj);
-        obj.sTitle = obj.name;        
+        obj.sTitle = obj.name;
         let element = $(`<li eb-type='${this.getType(obj.Type)}' DbType='${obj.Type}' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
             <div id="${obj.name}_elemsCont" class="columnelemsCont">
                 <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>
                 <input class="columntitle" type="text" id="${obj.name}_columntitle"/>
             </div></li>`);
         this.ColumnDropRelated(element);
+        this.DropeventHandlers(element, obj);
+    }
+
+    addApprovalFieldToColumnlist(obj) {
+        this.EbObject.Columns.$values.push(obj);
+        obj.sTitle = obj.name;
+        let element = $(`<li eb-type='DVApprovalColumn' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
+            <div id="${obj.name}_elemsCont" class="columnelemsCont">
+                <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>
+                <input class="columntitle" type="text" id="${obj.name}_columntitle"/>
+            </div></li>`);
+        this.ColumnDropRelated(element);
+        this.DropeventHandlers(element, obj);
+    }
+
+    addActionFieldToColumnlist(obj) {
+        this.EbObject.Columns.$values.push(obj);
+        obj.sTitle = obj.name;
+        let element = $(`<li eb-type='DVActionColumn' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
+            <div id="${obj.name}_elemsCont" class="columnelemsCont">
+                <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>
+                <input class="columntitle" type="text" id="${obj.name}_columntitle"/>
+            </div></li>`);
+        this.ColumnDropRelated(element);
+        this.DropeventHandlers(element, obj);
+    }
+
+    DropeventHandlers = function (element, obj) {
         $("#columns-list-body").append(element);
         $(element).off("click").on("click", this.elementOnFocus.bind(this));
         $(element).find(".close").off("click").on("click", this.RemoveColumn.bind(this));
@@ -1173,7 +1269,7 @@ class DvBuilder {
         let visibleobjects = [];
         $.each(elemnts, function (i, item) {
             let name = $(item).attr("eb-name");
-            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name;});
+            let obj = this.EbObject.Columns.$values.filter(function (obj) { return obj.name === name; });
             visibleobjects.push(obj[0]);
         }.bind(this));
 

@@ -1,6 +1,9 @@
 ﻿var grid;
 var icon = { 16: "fa-table", 21: "fa-map-marker", 17: "fa-bar-chart", 14: "fa-tags" }
 var DashBoardWrapper = function (options) {
+
+    //let AllMetas = AllMetasRoot["EbDashBoardWraper"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.RefId = options.RefId;
     this.Version = options.Version;
     this.ObjType = options.ObjType;
@@ -44,15 +47,20 @@ var DashBoardWrapper = function (options) {
     }
 
     this.GridStackInit = function () {
-        this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
-        this.grid = $('.grid-stack').data("gridstack");
-        this.grid.cellHeight(20);
-        //this.grid.cellWidth(20);
-        grid = this.grid;
-        $('.grid-stack').on('gsresizestop', this.Redrawfn.bind(this));
-        $('.grid-stack').on('dragstart', this.DragStartFn.bind(this));
-        $('.grid-stack').on('dragstop', this.DragStopFn.bind(this));
-        $('.grid-stack').gridstack();
+        //this.objGrid1 = $('.grid-stack').gridstack({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
+        //this.grid = $('.grid-stack').data("gridstack");
+        //this.grid.cellHeight(20);
+        ////this.grid.cellWidth(20);
+        //grid = this.grid;
+        //$('.grid-stack').on('gsresizestop', this.Redrawfn.bind(this));
+        //$('.grid-stack').on('dragstart', this.DragStartFn.bind(this));
+        //$('.grid-stack').on('dragstop', this.DragStopFn.bind(this));
+        //$('.grid-stack').gridstack();
+        grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
+        grid.on('gsresizestop', this.Redrawfn.bind(this));
+        grid.on('dragstart', this.DragStartFn.bind(this));
+        grid.on('dragstop', this.DragStopFn.bind(this));
+        grid.cellHeight(20);
     }
     this.DragStartFn = function (event, ui) {
         let id = event.target.getAttribute("id");
@@ -105,7 +113,6 @@ var DashBoardWrapper = function (options) {
             }
         }.bind(this));
         $('.gaugeChart').bind("contextmenu", this.setCurrentObj.bind(this));
-        $('.grid-stack').gridstack();
     };
 
     this.GridStackInit();
@@ -656,7 +663,6 @@ var DashBoardWrapper = function (options) {
         }
         else if (id === "close") {
             var abc = $(`#${tileid}`).closest(".grid-stack-item");
-            var grid = $('.grid-stack').data('gridstack');
             grid.removeWidget(abc);
         }
         else if (id === "restart-tile") {
@@ -693,7 +699,7 @@ var DashBoardWrapper = function (options) {
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 this.drop_id = "drop_" + t_id;
-                $('.grid-stack').data('gridstack').addWidget($(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2"> 
+                grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="7" data-gs-min-height="2"> 
                     <div class="grid-stack-item-content" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
                     <div class="db-title" data-toggle="move" title="move tile"  data-placement="bottom"  name-id="${t_id}" style="display:float"></div>
@@ -704,7 +710,7 @@ var DashBoardWrapper = function (options) {
                     </div></div>
                     <div id="${this.TabNum}_Label_${t_id}"></div>
                     <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${this.drop_id}">
-                    </div></div></div>`), x, y, dw, dh, false);
+                    </div></div></div>`, x, y, dw, dh, false);
                 this.CurrentTile = t_id;
                 this.TileCollection[t_id] = this.EbObject.Tiles.$values[i];
                 let refid = this.EbObject.Tiles.$values[i].RefId;
@@ -815,7 +821,7 @@ var DashBoardWrapper = function (options) {
             //this.DuplicateTileContext();
         }
         else {
-            $('.grid-stack').gridstack();
+            this.GridStackInit();
         }
         $(".grid-stack , .Eb-ctrlContainer").on("click", this.TileSelectorJs.bind(this));
         //this.addTilecontext()
@@ -828,14 +834,28 @@ var DashBoardWrapper = function (options) {
         this.data_min_width = data_min_width ? data_width : 7;
         this.data_min_height = data_min_height ? data_height : 3;
         this.data_height = data_height ? data_height : 5;
-        $('.grid-stack').gridstack();
+        //$('.grid-stack').gridstack();
         this.NewTileCount++;
         let j = this.NewTileCount;
         let tile_id = "t" + j;
         let t_id = "tile" + j;
         let drop_id = "drop_" + t_id;
-        $(`.grid-stack`).data(`gridstack`).addWidget($(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="${data_min_width}" data-gs-min-height="${data_min_height}" >
-                    <div class="grid-stack-item-content" id="${t_id}">
+        //grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" data-gs-min-width="${data_min_width}" data-gs-min-height="${data_min_height}" >
+        //            <div class="grid-stack-item-content" id="${t_id}">
+        //            <div style="display:flex;" class="db-title-parent tile-header">
+        //            <div class="db-title" data-toggle="move" title="move tile" name-id="${t_id}" style="display:float"></div>
+        //            <div style="float:right;display:flex" u-id="${t_id}">
+        //            <i class="fa fa-retweet tile-opt i-opt-restart" aria-hidden="true" link="restart-tile" id="${this.TabNum}_restart_${t_id}"></i>
+        //            <i class="fa fa-external-link tile-opt i-opt-obj" aria-hidden="true" link="ext-link" id="${this.TabNum}_link_${t_id}"></i>
+        //            <i class="fa fa-times tile-opt i-opt-close" aria-hidden="true" link="close" id="${this.TabNum}_close_${t_id}"></i>
+        //            </div></div>
+        //         <div id="${this.TabNum}_Label_${t_id}" class=""></div>
+        //         <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${drop_id}" ></div></div>
+        //             <div class="tile-footer"></div>
+        //        </div>`, 0 , 0, this.data_width, this.data_height, true);
+
+        grid.addWidget(`<div id="${tile_id}" eb-id="${t_id}" >                      
+                        <div class="grid-stack-item-content" id="${t_id}">
                     <div style="display:flex;" class="db-title-parent tile-header">
                     <div class="db-title" data-toggle="move" title="move tile" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
@@ -846,7 +866,7 @@ var DashBoardWrapper = function (options) {
                  <div id="${this.TabNum}_Label_${t_id}" class=""></div>
                  <div data-id="${t_id}" class="db-tbl-wraper tile_dt_cont" id="${drop_id}" ></div></div>
                      <div class="tile-footer"></div>
-                </div>`), null, null, this.data_width, this.data_height, true);
+                        </div></div>`, 0, 0, this.data_width, this.data_height, true);
         this.TileCollection[t_id] = new EbObjects.Tiles("Tile" + Date.now());
         this.CurrentTile = t_id;
         Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
@@ -864,7 +884,7 @@ var DashBoardWrapper = function (options) {
             metaId = this.JqObj.attr("eb-type");
             if (metaId && procId) { this.propGrid.setObject(this.Procs[procId], AllMetas["Eb" + metaId]); }
         }
-        if ($(event.target).closest(".link-dashboard-pane").attr("id")) {
+        else if ($(event.target).closest(".link-dashboard-pane").attr("id")) {
             this.JqObj = $(event.target).closest(".link-dashboard-pane");
             procId = this.JqObj.attr("id");
             metaId = this.JqObj.attr("eb-type");
@@ -879,9 +899,9 @@ var DashBoardWrapper = function (options) {
             this.CurrentTile = $(event.target).closest(".grid-stack-item-content").attr("id");
             this.propGrid.setObject(this.TileCollection[`${this.CurrentTile}`], AllMetas["Tiles"]);
         }
-        else {
-            this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
-        }
+        //else {
+        //    this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
+        //}
         //metaId = $(event.target).closest(".gaugeChart").attr("eb-type");
         //let a = $(event.target).closest(".grid-stack-item-content").attr("id");
         //if (procId != null) {
@@ -1197,7 +1217,7 @@ var DashBoardWrapper = function (options) {
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         if (this.filterDialogRefid !== "") {
-            this.grid.removeAll();
+            grid.removeAll();
             this.DrawTiles();
         }
         if (this.stickBtn) { this.stickBtn.minimise(); }

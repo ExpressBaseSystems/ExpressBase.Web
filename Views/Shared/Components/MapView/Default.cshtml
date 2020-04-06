@@ -1,0 +1,91 @@
+﻿
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" asp-append-version=@bApnd>
+<link rel="stylesheet" type="text/css" href="~/css/ChartStyle.css" asp-append-version=@bApnd />
+<script src="~/js/splitWindow.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/dvContainer.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/GoogleMap/Googlemap.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
+<link rel="stylesheet" type="text/css" href="~/css/MapView/MapView.css" asp-append-version=@bApnd />
+<script type="text/javascript" src="~/js/EbMapView/MapView.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" crossorigin=""></script>
+
+@*<div class="container-fluid map-view-outer">
+        <div class="row">
+            <div class="col-sm-2">
+                <div class="row"> Columns </div>
+                <div class="row"> <div class="map-side-bar" id="column-cont-@(ViewBag.tabnum)"> </div> </div>
+            </div>
+            <div class="col-sm-10">
+                <div class="row"> <div class="map-cols" id="map=cols-@(ViewBag.tabnum)"> </div> </div>
+                <div class="row">  <div class="map-view" id="map-view-@(ViewBag.tabnum)" style=""></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pgt-cont-@(ViewBag.tabnum)" class="pg-grid"> <div id="propGrid-@(ViewBag.tabnum)"> </div></div>*@
+<div class="dv map-view" id="parent-div@(ViewBag.tabnum)" style="padding-top:4rem;"></div>
+<div class="ppcont"><div id="pp_inner"></div></div>
+
+<script>
+    @*var mymap = L.map('parent-div@(ViewBag.tabnum)').setView([51.505, -0.09], 13);
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    maxZoom: 18,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    accessToken: 'pk.eyJ1Ijoibml0aGludmFzdWRldmFuIiwiYSI6ImNrODZ4cmJ5MDAyam4zaXFzNzI1cXp6N2UifQ.qvc5HjqC79yEAR2nhgbYJA'
+}).addTo(mymap);*@
+    @*console.log("googlemap");
+    if (@ViewBag.tabnum === 0) {
+        var commonO = $("#layout_div").data("commonObj");
+    }
+    let tempobj = {
+        googlekey : '@ViewBag.al_arz_map_key',
+        refid: '@ViewBag.Refid',
+        ver_num: '@ViewBag.VersionNumber',
+        type : @ViewBag.ObjType,
+        dsobj: @Html.Raw(ViewBag.dsObj),
+        cur_status: '@ViewBag.Status',
+        tabNum: @ViewBag.tabnum,
+        ssurl: '@ViewBag.ServiceUrl',
+        login: '@ViewBag.wc',
+        counter: @ViewBag.counter,
+        TenantId: '@ViewBag.cid',
+        UserId : '@ViewBag.uid'
+    }
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new EbGoogleMap(tempobj);*@
+
+
+    @*if (@ViewBag.tabnum === 0) {
+        var mapView = $("#layout_div").data("commonObj");
+    }*@
+
+     let tempobj = {
+        googlekey : '@ViewBag.al_arz_map_key',
+        refid: '@ViewBag.Refid',
+        ver_num: '@ViewBag.VersionNumber',
+        type : @ViewBag.ObjType,
+        dsobj: @Html.Raw(ViewBag.dsObj),
+        cur_status: '@ViewBag.Status',
+        tabNum: @ViewBag.tabnum,
+        ssurl: '@ViewBag.ServiceUrl',
+        login: '@ViewBag.wc',
+        counter: @ViewBag.counter,
+        TenantId: '@ViewBag.cid',
+         UserId: '@ViewBag.uid',
+         Wc: '@ViewBag.wc',
+         Cid: '@ViewBag.cid',
+    }
+    //var mapView = new mapView(tempobj);
+    commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = new mapView(tempobj);
+</script>

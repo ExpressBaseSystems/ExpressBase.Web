@@ -1,4 +1,7 @@
 ﻿var EbCommonDataTable = function (Option) {
+
+    //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.propGrid = Option.PGobj;
     this.Api = null;
     this.order_info = new Object();
@@ -2583,7 +2586,8 @@
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
-        $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
+        $(".closeTab").off("click").on("click", this.deleteTab.bind(this)); 
+        $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this)); 
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -2633,6 +2637,7 @@
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
+        $(".stage_actions").selectpicker();
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         //this.Api.columns.adjust();
     };
@@ -3921,6 +3926,7 @@
         this.call2newDv(rows, idx, colindex);
         $(e.target).closest("I").removeClass("fa-caret-down").addClass("fa-caret-up");
     };
+
     this.OpenInlineDv = function (rows, e, idx, colindex) {
         if ($(e.target).closest("I").hasClass("fa-caret-up")) {
             $(e.target).closest("I").removeClass("fa-caret-up").addClass("fa-caret-down");
@@ -3931,6 +3937,36 @@
             $(rows).eq(idx).next().show();
         }
         this.Api.columns.adjust();
+    };
+
+    this.ExecuteApproval = function (e) {
+        $("#eb_common_loader").EbLoader("show");
+        let val = $(e.target).parents(".stage_actions_cont").find(".selectpicker").val();
+        let $td = $(e.target).parents().closest("td");
+        val = JSON.parse(atob(val));
+        let Columns = [];
+        Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
+        Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
+        Columns.push(new fltr_obj(7, "eb_my_actions_id", val.My_action_id.toString()));
+        Columns.push(new fltr_obj(16, "comments", ""));
+        let webdata = {};
+        webdata["eb_approval_lines"] =[{ "Columns": Columns }];
+        let WebformData = {
+            "MultipleTables": [webdata]
+        };
+        $.ajax({
+            type: "POST",
+            url: "../dv/PostWebformData",
+            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)},
+            success: this.cccccc.bind(this, $td)
+        });
+    };
+
+    this.cccccc = function ($td, resp) {
+        $td.html(resp._data);
+        var cell = this.Api.cell($td);
+        cell.data($td.html()).draw();
+        $("#eb_common_loader").EbLoader("hide");
     };
 
     this.getRowGroupFilter = function ($elem) {
@@ -4128,55 +4164,57 @@
     this.updateRenderFunc_Inner = function (i, col) {
         //this.EbObject.Columns.$values[i].sClass = "";
         //this.EbObject.Columns.$values[i].className = "";
+        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1) {
+            if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
 
-        if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType == parseInt(gettypefromString("Decimal")) || col.RenderType == parseInt(gettypefromString("Int64")) || col.RenderType == parseInt(gettypefromString("Numeric"))) {
-
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight dt-right";
-        }
-        if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
-            if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "sys_cancelled") {
-                this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
-                this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight dt-right";
             }
-            else {
-                if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
-                    this.EbObject.Columns.$values[i].render = this.renderEditableCol.bind(this);
-                    this.EbObject.Columns.$values[i].mRender = this.renderEditableCol.bind(this);
+            else if (col.RenderType === parseInt(gettypefromString("Boolean"))) {
+                if (this.EbObject.Columns.$values[i].name === "eb_void" || this.EbObject.Columns.$values[i].name === "sys_cancelled") {
+                    this.EbObject.Columns.$values[i].render = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
+                    this.EbObject.Columns.$values[i].mRender = (this.EbObject.Columns.$values[i].name === "sys_locked") ? this.renderLockCol.bind(this) : this.renderEbVoidCol.bind(this);
                 }
-                else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.Icon) {
+                else {
+                    if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.IsEditable) {
+                        this.EbObject.Columns.$values[i].render = this.renderEditableCol.bind(this);
+                        this.EbObject.Columns.$values[i].mRender = this.renderEditableCol.bind(this);
+                    }
+                    else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.BooleanRenderType.Icon) {
+                        this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
+                        this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
+                    }
+                    else {
+                        this.EbObject.Columns.$values[i].render = function (data, type, row, meta) { return data; };
+                        this.EbObject.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
+                    }
+                }
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight text-center";
+            }
+            else if (col.RenderType === parseInt(gettypefromString("String")) || col.RenderType == parseInt(gettypefromString("Double"))) {
+                if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
+                    this.EbObject.Columns.$values[i].render = this.lineGraphDiv.bind(this);
+                    this.EbObject.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
+                }
+                //else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
+                //    this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+                //    this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
+                //}
+                else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
                     this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
                     this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
                 }
-                else {
-                    this.EbObject.Columns.$values[i].render = function (data, type, row, meta) { return data; };
-                    this.EbObject.Columns.$values[i].mRender = function (data, type, row, meta) { return data; };
-                }
-            }
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight text-center";
-        }
-        if (col.RenderType === parseInt(gettypefromString("String")) || col.RenderType == parseInt(gettypefromString("Double"))) {
-            if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Chart) {
-                this.EbObject.Columns.$values[i].render = this.lineGraphDiv.bind(this);
-                this.EbObject.Columns.$values[i].mRender = this.lineGraphDiv.bind(this);
-            }
-            //else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Image) {
-            //    this.EbObject.Columns.$values[i].render = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-            //    this.EbObject.Columns.$values[i].mRender = this.renderFBImage.bind(this, this.EbObject.Columns.$values[i]);
-            //}
-            else if (this.EbObject.Columns.$values[i].RenderAs.toString() === EbEnums.StringRenderType.Icon) {
-                this.EbObject.Columns.$values[i].render = this.renderIconCol.bind(this);
-                this.EbObject.Columns.$values[i].mRender = this.renderIconCol.bind(this);
-            }
 
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight dt-left";
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight dt-left";
+            }
+            else if (col.RenderType === parseInt(gettypefromString("Date")) || col.RenderType == parseInt(gettypefromString("DateTime"))) {
+                if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
+                    this.EbObject.Columns.$values[i].className += " tdheight dt-left";
+            }
         }
-        if (col.RenderType === parseInt(gettypefromString("Date")) || col.RenderType == parseInt(gettypefromString("DateTime"))) {
-            if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
-                this.EbObject.Columns.$values[i].className += " tdheight dt-left";
-        }
+
         if (col.name === "eb_created_by" || col.name === "eb_lastmodified_by")
             col.className += " dt-left";
         if (col.Font !== null && col.Font !== undefined) {

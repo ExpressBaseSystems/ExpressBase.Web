@@ -5,7 +5,7 @@
         "color": "#f5222d",
         "font-weight": 400,
         "transition": " color .3s cubic-bezier(.215,.61,.355,1);",
-        "font-size":"13px"
+        "font-size": "13px"
     });
 
     $("[validator='email'] input").on("keyup", function (e) {
@@ -63,9 +63,9 @@
         var stat = true;
         var e = $("[validator='email']");
         var p = $("[validator='password']");
-        var eval = $("[validator='email'] input")[0].value.trim();
+        var emval = $("[validator='email'] input")[0].value.trim();
         var pval = $("[validator='password'] input")[0].value.trim();
-        if (eval === "") {
+        if (emval === "") {
             $("[validator='email']").find(".validator-error").text("Email address is required.");
             $("[validator='email'] input").addClass("validator_error");
             stat = false;
@@ -76,19 +76,21 @@
             $("[validator='password'] input").addClass("validator_error");
             stat = false;
         }
-        else if(pval.length < 8) {
+        else if (pval.length < 8) {
             $("[validator='password']").find(".validator-error").text("Password must be at least 8 characters");
             $("[validator='password'] input").addClass("validator_error");
             stat = false;
         }
 
-        if (eval !== "" && !ve(eval)) {
+        if (emval !== "" && !ve(emval)) {
             $("[validator='email']").find(".validator-error").text("Email address is invalid.");
             $("[validator='email'] input").addClass("validator_error");
             stat = false;
         }
         return stat;
     }
+
+    window.eb_env = null;
 
     window.validator_recaptcha = function (token) {
         if (token) {
@@ -111,7 +113,10 @@
                     else {
                         $(`[validator="submit"]`).prop("disabled", false);
                         $("#loader_profile").EbLoader("hide");
-                        grecaptcha.reset();
+
+                        if (window.eb_env === "Production") {
+                            grecaptcha.reset();
+                        }
                         EbMessage("show", { Background: "red", Message: auth.errorMessage });
                     }
                 }
@@ -126,6 +131,7 @@
         $(`[validator="submit"]`).prop("disabled", true);
 
         let env = $(e.target).closest(`[validator="submit"]`).attr("env");
+        window.eb_env = env;
 
         if (env === "Production") {
             grecaptcha.execute();

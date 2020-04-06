@@ -63,12 +63,13 @@ namespace ExpressBase.Web.Controllers
             string[] args = id.Split("-");
             string PushContent = "";
             string solid = args[0];
-
-            if (mode.Equals("s"))//if single bot
+			string cid = this.GetIsolutionId(solid);
+			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+			if (mode.Equals("s"))//if single bot
             {
                 int appid = Convert.ToInt32(args[1]);
-                EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}_app_settings", id));
-                if (settings == null)
+                EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+				if (settings == null)
                     settings = new EbBotSettings() 
                     { 
                         Name = "- Application Name -",
@@ -76,13 +77,15 @@ namespace ExpressBase.Web.Controllers
                         DpUrl = "../images/demobotdp4.png",
                         WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
                     };
+
                 PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
                     window.EXPRESSbase_APP_ID = {1};
                     d.ebbotName = '{2}' || '< EBbot >';
                     d.ebbotThemeColor = '{3}' || '#055c9b';
                     d.botdpURL = '{4}';
-                    d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage);
+                    d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';
+					d.ebmod='{6}'", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage,env);
             }
             else
             {
@@ -204,6 +207,7 @@ namespace ExpressBase.Web.Controllers
                 //GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
                 GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
                 List<object> returnlist = new List<object>();
+                List<object> objpro = new List<object>();
 
                 returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
                 returnlist.Add(authResponse.RefreshToken);
@@ -212,7 +216,14 @@ namespace ExpressBase.Web.Controllers
                     user.Preference.Locale = "en-IN";
                 returnlist.Add(JsonConvert.SerializeObject(user));
                 returnlist.Add(formlist.BotFormsDisp);
-                return returnlist;
+				foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
+				{
+					string rfid = rfidlst.Key;
+					EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
+					objpro.Add(BtFrm.IconPicker);
+				}
+				returnlist.Add(objpro);
+				return returnlist;
 
                 //CookieOptions options = new CookieOptions();
                 //Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);

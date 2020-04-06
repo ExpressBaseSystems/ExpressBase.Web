@@ -1,4 +1,4 @@
-﻿ 
+﻿
 var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNum, ssurl) {
     this.Code;
     this.ObjectType = type;
@@ -9,7 +9,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     this.rel_arr = [];
     this.Filter_Params;
     this.Parameter_Count;
-    this.Object_String_WithVal; 
+    this.Object_String_WithVal;
     this.Ssurl = ssurl;
     this.delay = 300;
     this.isPw = false;
@@ -27,7 +27,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
 
     this.EbObject = dsobj;
     commonO.Current_obj = this.EbObject;
-    this.Sql = null; 
+    this.Sql = null;
 
     this.propGrid = new Eb_PropertyGrid({
         id: "dspropgrid" + tabNum,
@@ -188,7 +188,8 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             if (this.InputParams.length > 0) {
                 $(`#paramsModal-toggle`).modal("show");
                 this.configParamWindo();
-                if (this.isEqual(this.InputParams, this.EbObject.InputParams.$values)) {
+                let inputP = this.EbObject.InputParams === null ? [] : this.EbObject.InputParams.$values;
+                if (this.isEqual(this.InputParams, inputP)) {
                     this.AppendInpuParams();
                     this.setValues();
                 }
@@ -285,13 +286,13 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             alert(err.message);
             $('#save').addClass('disabled');
             $('#commit_outer').addClass('disabled');
-        } 
+        }
     };
 
     this.propGrid.PropertyChanged = function (obj, pname) {
-        this.EbObject = obj; 
+        this.EbObject = obj;
         if (pname === "FilterDialogRefId") {
-            if (obj[pname] !== null) { 
+            if (obj[pname] !== null) {
                 this.GetFD();
                 this.GenerateButtons();
             }
@@ -302,7 +303,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
     }.bind(this);
 
     this.GetFD = function (callback) {
-        this.FilterDialogRefId = this.EbObject.FilterDialogRefId; 
+        this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
         if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
             $.post("../CE/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + tabNum }, this.AppendFD.bind(this, callback));
     };
@@ -318,11 +319,11 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
                     </div>
                     </div>
                     </div>
-                `); 
+                `);
 
         $('#paramdiv' + tabNum).append(result);
         $('#close_paramdiv' + tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
-        $("#btnGo").off("click").on("click", this.RunDs.bind(this)); 
+        $("#btnGo").off("click").on("click", this.RunDs.bind(this));
         this.stickBtn = new EbStickButton({
             $wraper: $(".param-div"),
             $extCont: $(".param-div"),
@@ -546,7 +547,7 @@ var DataSourceWrapper = function (refid, ver_num, type, dsobj, cur_status, tabNu
             this.DrawTable();
         }
         alert("Success");
-        $("#close_popup").click(); 
+        $("#close_popup").click();
         $("#eb_common_loader").EbLoader("hide");
     };
 

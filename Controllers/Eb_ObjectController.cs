@@ -152,7 +152,7 @@ namespace ExpressBase.Web.Controllers
                         ViewBag.dsObj = _object;
                     }
                 }
-                else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization) || type.Equals(EbObjectTypes.GoogleMap))
+                else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization) || type.Equals(EbObjectTypes.MapView))
                 {
                     Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
                     _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
@@ -597,8 +597,8 @@ namespace ExpressBase.Web.Controllers
             else if (Objtype == (int)EbObjectTypes.ChartVisualization)
                 VCName = "DVChart";
 
-            else if (Objtype == (int)EbObjectTypes.GoogleMap)
-                VCName = "GoogleMap";
+            else if (Objtype == (int)EbObjectTypes.MapView)
+                VCName = "MapView";
 
             else if (Objtype == (int)EbObjectTypes.BotForm)
                 VCName = "BotFormBuilder";
@@ -827,10 +827,10 @@ namespace ExpressBase.Web.Controllers
                 versionObj = Redis.Get<EbChartVisualization>(_refid);
                 return ViewComponent("DVChart", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
-            else if (_ObjType == (int)EbObjectTypes.GoogleMap)
+            else if (_ObjType == (int)EbObjectTypes.MapView)
             {
                 versionObj = Redis.Get<EbGoogleMap>(_refid);
-                return ViewComponent("GoogleMap", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
+                return ViewComponent("MapView", new { googlekey = ViewBag.al_arz_map_key, dsobj = EbSerializers.Json_Serialize(versionObj), tabnum = _tabnum, type = _ObjType, refid = _refid, ssurl = _ssurl });
             }
             else if (_ObjType == (int)EbObjectTypes.BotForm)
             {

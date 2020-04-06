@@ -3,6 +3,9 @@ var prevfocusedId;
 var filterChanged = false;
 var dvcounter = 0;
 var DvContainerObj = function (settings) {
+
+    //let AllMetas = AllMetasRoot["EbDataVisualizationObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     this.ssurl = settings.ss_url;
     this.wc = settings.wc;
     this.dvRefid = settings.refid;
@@ -136,8 +139,8 @@ var DvContainerObj = function (settings) {
             );
         }
 
-        else if (this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
-            this.dvcol[focusedId] = new EbGoogleMap({
+        else if (this.currentObj.$type.indexOf("EbOpenStreetMap") !== -1 || this.currentObj.$type.indexOf("EbGoogleMap") !== -1) {
+            this.dvcol[focusedId] = new mapView({
                 googlekey : this.googlekey,
                 refid : this.dvRefid,
                 ver_num : this.ver_num,

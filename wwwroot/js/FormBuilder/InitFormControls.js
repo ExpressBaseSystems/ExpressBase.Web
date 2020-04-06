@@ -478,6 +478,8 @@ var InitControls = function (option) {
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
+        this.Bot.nxtCtrlIdx++;
+        this.Bot.callGetControl();
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -503,21 +505,25 @@ var InitControls = function (option) {
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
+        $(window).resize(function () {
+            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
+        });
+
     };
 
-    this.Locations = function (ctrls) {
-        var name = ctrls.ebSid;
-        if (ctrls.showTabed) {
-            $(`#${name} .loc-opt-btn`).off("click").on("click", function (e) {
-                var $optBtn = $(e.target);
-                var loc = $optBtn.attr("for");
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.name === loc; });
-                var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.Name}`);
-                $(`#${name} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
+    this.Locations = function (ctrl) {
+        let EbSid = ctrl.EbSid;
+        if (ctrl.ShowTabed) {
+            $(`#${EbSid} .loc-opt-btn`).off("click").on("click", function (e) {
+                let $optBtn = $(e.target);
+                let loc = $optBtn.attr("for");
+                let ctrlArr = $.grep(ctrl.LocationCollection, function (ctrl, i) { return ctrl.name === loc; });
+                let ctrl = ctrlArr[0];
+                let $locDiv = $(`#${ctrl.Name}`);
+                $(`#${EbSid} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
                 $optBtn.css("border-bottom", "solid 2px #31d031").css("font-weight", "bold").css("color", "#333");
                 if ($locDiv.closest(".location-box").css("display") === "none") {
-                    $(`#${name} .location-box`).hide(10);
+                    $(`#${EbSid} .location-box`).hide(10);
                     $locDiv.closest(".location-box").show(10,
                         function () {
                             if ($locDiv.children().length === 0)
@@ -526,40 +532,45 @@ var InitControls = function (option) {
                 }
 
             }.bind(this));
-            $(`#${name} .loc-opt-btn`)[0].click();
+            $(`#${EbSid} .loc-opt-btn`)[0].click();
         }
         else {
-            $(`#${name} .loc-opt-DD`).off("change").on("change", function (e) {
-                var loc = $(e.target).children().filter(":selected").val();
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.Name === loc; });
-                var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.Name}`);
+            $(`#${EbSid} .loc-opt-DD`).off("change").on("change", function (e) {
+                let loc = $(e.target).children().filter(":selected").val();
+                let ctrlArr = $.grep(ctrl.LocationCollection.$values, function (ctrl, i) { return ctrl.Name === loc; });
+                let LocCtrl = ctrlArr[0];
+                let $locDiv = $(`#${LocCtrl.Name}`);
                 if ($locDiv.closest(".location-box").css("display") === "none") {
-                    $(`#${name} .location-box`).hide(10);
+                    $(`#${EbSid} .location-box`).hide(10);
                     $locDiv.closest(".location-box").show(10,
                         function () {
                             if ($locDiv.children().length === 0)
-                                this.initMap(ctrl);
+                                this.initMap(LocCtrl);
                         }.bind(this));
                 }
             }.bind(this));
 
-            $(`#${name} .location-box:eq(0)`).show();
-            this.initMap(ctrls.locationCollection[0]);
+            $(`#${EbSid} .location-box:eq(0)`).show();
+            this.initMap(ctrl.LocationCollection.$values[0]);
         }
+
         this.Bot.nxtCtrlIdx++;
         this.Bot.callGetControl();
     };
 
     this.initMap = function (ctrl) {
-        var uluru = { lat: ctrl.Position.latitude, lng: ctrl.Position.longitude };
-        var map = new google.maps.Map(document.getElementById(ctrl.Name), {
+        let uluru = { lat: ctrl.Position.Latitude, lng: ctrl.Position.Longitude };
+        let map = new google.maps.Map(document.getElementById(ctrl.Name), {
             zoom: 15,
             center: uluru
         });
-        var marker = new google.maps.Marker({
+        let marker = new google.maps.Marker({
             position: uluru,
             map: map
+        });
+
+        $(window).resize(function () {
+            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
         });
     };
 
@@ -571,12 +582,11 @@ var InitControls = function (option) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
             let params = [];
-            params.push(new fltr_obj(16, "srcRefId", ctrl.FormRefId));
-            params.push(new fltr_obj(11, "srcRowId", a___MT.expsrc[0].RowId));
+            params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
+            params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));
             let url = `../WebForm/Index?refid=${ctrl.FormRefId}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(params))))}&_mode=7`;
             window.open(url, '_blank');
         }.bind(this);
-
     };
 
     this.Approval = function (ctrl, ctrlOpts) {
@@ -621,16 +631,18 @@ var InitControls = function (option) {
 
     this.StaticCardSet = function (ctrl) {
         new EbCardRender({
-            $Ctrl: $('#' + ctrl.Name),
-            Bot: this.Bot
+            $Ctrl: $('#' + ctrl.EbSid),
+            Bot: this.Bot,
+            CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
     };
 
     this.DynamicCardSet = function (ctrl) {
         new EbCardRender({
-            $Ctrl: $('#' + ctrl.Name),
-            Bot: this.Bot
+            $Ctrl: $('#' + ctrl.EbSid),
+            Bot: this.Bot,
+            CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
     };
@@ -776,21 +788,7 @@ var InitControls = function (option) {
             EbSid_CtxId: ctrl.EbSid_CtxId
         });
         itemList.ctrl = ctrl;
-        ctrl.setValue = itemList.setValue;
-        ctrl.getDisplayMember = itemList.getDisplayMember;
-        ctrl.refresh = itemList.refresh;
-        ctrl.clear = itemList.clear;
-        ctrl._onChangeFunctions = [];
-        ctrl.bindOnChange = function (p1) {
-            if (!this._onChangeFunctions.includes(p1))
-                this._onChangeFunctions.push(p1);
-        };
-        if (ctrl.LoadCurrentUser) {
-            if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
-                ctrl.setValue(ctrl.DataVals.Value);
-            else
-                ctrl.setValue(ebcontext.user.UserId.toString());
-        }
+        ctrl._JsCtrlMng = itemList;// to refer ControlOperation fns from code in cs file - moving ctrlOps is critical
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
@@ -1082,7 +1080,8 @@ var InitControls = function (option) {
                 ['view', ['undo', 'redo', 'help']],
             ],
             disableResizeEditor: true,
-            disableDragAndDrop: true
+            disableDragAndDrop: true, 
+            dialogsInBody: true
         });
 
 

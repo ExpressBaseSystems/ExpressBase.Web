@@ -934,6 +934,8 @@ var UserGroupJs = function (infoDict, usersList, ipconsList, dtconsList) {
                     }
                 });
         }
+        else if (result === -1)
+            EbMessage("show", { Message: 'UserGroup name already exists. Enter a unique name.', AutoHide: true, Background: '#bf1e1e' });
         else
             EbMessage("show", { Message: 'Something went wrong', AutoHide: true, Background: '#bf1e1e' });
         this.btnSaveAll.removeAttr("disabled");

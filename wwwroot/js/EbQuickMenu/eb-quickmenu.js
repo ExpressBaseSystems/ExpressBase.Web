@@ -192,7 +192,7 @@
     this.decideUrl = function (_obj) {
         var _url = `../Eb_Object/Index?objid=${_obj.Id}&objtype=${_obj.EbObjectType}`;
         if (this.login === "uc") {
-            if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "GoogleMap") {
+            if (_obj.EbType === "TableVisualization" || _obj.EbType === "ChartVisualization" || _obj.EbType === "MapView" || _obj.EbType ==="OpenStreetMap") {
                 _url = "../DV/dv?refid=" + _obj.Refid;
             }
             else if (_obj.EbType === "Report") {

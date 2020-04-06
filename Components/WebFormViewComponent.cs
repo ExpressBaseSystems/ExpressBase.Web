@@ -33,6 +33,11 @@ namespace ExpressBase.Web.Components
             string Locale = arr[1];
 
             EbWebForm WebForm = this.Redis.Get<EbWebForm>(refid);
+            //String timeStamp = DateTime.Now.ToString();
+            //int timeStampInt = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
+
+            //WebForm.SetContextId("ctx_" + timeStampInt);
+
             if(WebForm == null)
             {
                 EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });

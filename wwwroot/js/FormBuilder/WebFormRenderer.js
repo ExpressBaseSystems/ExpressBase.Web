@@ -7,9 +7,12 @@ var a___builder = 0;
 var a___MT = 0;
 
 const WebFormRender = function (option) {
+
+    //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
+
     ebcontext.renderContext = "WebForm";
     this.FormObj = option.formObj;
-    this.$form = $(`#${this.FormObj.EbSid}`);
+    this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
     this.$saveBtn = $('#' + option.headerBtns['Save']);
     this.$deleteBtn = $('#' + option.headerBtns['Delete']);
     this.$editBtn = $('#' + option.headerBtns['Edit']);
@@ -127,6 +130,10 @@ const WebFormRender = function (option) {
             }
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
+            }
+            else if (Obj.ObjType === "ExportButton") {
+                opt.formObj = this.FormObj;
+                opt.dataRowId = this.DataMODEL[this.FormObj.TableName][0].RowId;
             }
             else if (Obj.ObjType === "ProvisionUser" || Obj.ObjType === "ProvisionLocation")
                 opt.flatControls = this.flatControls;
@@ -580,25 +587,7 @@ const WebFormRender = function (option) {
     };
 
     this.formateDS = function (_multipleTables) {
-        let multipleTables = $.extend(true, {}, _multipleTables);
-        let tableNames = Object.keys(multipleTables);
-        for (let i = 0; i < tableNames.length; i++) {
-            let tableName = tableNames[i];
-            let table = multipleTables[tableName];
-            for (let j = 0; j < table.length; j++) {
-                let row = table[j];
-                let columns = row.Columns;
-                for (let k = 0; k < columns.length; k++) {
-                    let singleColumn = columns[k];
-                    delete singleColumn["D"];
-                    delete singleColumn["F"];
-                    delete singleColumn["R"];
-                    delete singleColumn["ValueExpr_val"];
-                    delete singleColumn["DisplayMember"];
-                }
-            }
-        }
-        return multipleTables;
+        return formatData4webform(_multipleTables);
     };
 
     this.getCellObjFromEditModeObj = function (ctrl, formData) {
@@ -649,7 +638,7 @@ const WebFormRender = function (option) {
 
         if (respObj.Status === 200) {
             if (_renderMode === 3) {
-                EbMessage("show", { Message: "Sign up success. Plaese check mail to login ", AutoHide: false, Background: '#00aa00' });
+                EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: false, Background: '#00aa00' });
                 setTimeout(function () {
                     ebcontext.setup.ss.onLogOutMsg();
                 }, 3000);
@@ -844,6 +833,8 @@ const WebFormRender = function (option) {
 
         //    this.ApprovalCtrl.disableAllCtrls();
         $.each(this.flatControls, function (k, ctrl) {
+            if (ctrl.ObjType === "ExportButton")
+                return true;
             ctrl.disable();
         }.bind(this));
         $.each(this.DGs, function (k, DG) {

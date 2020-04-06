@@ -758,10 +758,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             var $msg = this.$userMsgBox.clone();
             //let msgg = $btn.parent().parent().html() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
             
-            $btn.hide();
-            $btn.parent().prev().children('button').hide();
+            //$btn.hide();
+            //$btn.parent().prev().children('button').hide();
             $btn.parent().parent().remove();
-            $msg.find('.msg-wraper-user').html($btn.parent().parent().html()).append(this.getTime());
+            $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
         }

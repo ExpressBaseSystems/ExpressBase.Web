@@ -284,6 +284,8 @@
             </div>
             <div class="modal-body new_location_bdy" id="add_location_bdy">
                 <input type="hidden" name="_LocId" />
+                @if(location_types!=null&&location_types.Count>0)
+                {
                 <div class="form-group">
                     <label class="col-sm-3">Type</label>
                     <div class="col-sm-9">
@@ -296,6 +298,7 @@
                         </select>
                     </div>
                 </div>
+                }
                 <input type="hidden" class="form-control keyname" placeholder="Enter Parent ID" id="_parentId" name="_parentId" value="">
                 <div class="form-group">
                     <label class="col-sm-3">Name </label>

@@ -505,6 +505,10 @@ var InitControls = function (option) {
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
+        $(window).resize(function () {
+            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 65)) + "px");
+        });
+
     };
 
     this.Locations = function (ctrl) {

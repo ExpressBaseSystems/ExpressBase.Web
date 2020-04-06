@@ -195,7 +195,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.startFormInteraction = function (e) {
-        this.curRefid = $(e.target).attr("refid");
+        this.curRefid = $(e.target).closest(".btn").attr("refid");
         this.curObjType = $(e.target).attr("obj-type");
         this.postmenuClick(e);
         this.getForm(this.curRefid);///////////////////

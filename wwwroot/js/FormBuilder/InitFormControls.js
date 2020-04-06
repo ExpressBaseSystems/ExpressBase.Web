@@ -478,8 +478,8 @@ var InitControls = function (option) {
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
-        this.Bot.nxtCtrlIdx++;
-        this.Bot.callGetControl();
+        //this.Bot.nxtCtrlIdx++;
+        //this.Bot.callGetControl();
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -1080,7 +1080,7 @@ var InitControls = function (option) {
                 ['view', ['undo', 'redo', 'help']],
             ],
             disableResizeEditor: true,
-            disableDragAndDrop: true, 
+            disableDragAndDrop: true,
             dialogsInBody: true
         });
 

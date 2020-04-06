@@ -7,17 +7,18 @@
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
-@*<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" />*@
 <link href="~/css/EbOnBoarding/eb-assets.style.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+<link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" />
 
 <script type="text/javascript" src="~/js/location-config.js"></script>
 <script type="text/javascript" src="~/js/CommonDataTable.js"></script>
 <script type="text/javascript" src="~/js/datatables.min.js"></script>
 <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
-@*dona*@
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+
 <script>
     var cm = new EbHeader().setName("Configure Locations");
 </script>
@@ -280,7 +281,7 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Add/Edit Location</h4>
             </div>
-            <div class="modal-body new_location_bdy"  id="add_location_bdy">
+            <div class="modal-body new_location_bdy" id="add_location_bdy">
                 <input type="hidden" name="_LocId" />
                 <div class="form-group">
                     <label class="col-sm-3">Type</label>
@@ -339,69 +340,78 @@
 
 <style>
     div.dataTables_wrapper .info-search-cont {
-    display: flex;
-    margin-bottom: 2px;
-    justify-content: space-between;
-}
+        display: flex;
+        margin-bottom: 2px;
+        justify-content: space-between;
+    }
 
     .display-none {
-    display: none;
-}
-    
-#treemodal .modal-dialog {
-    width: max-content;
-}
-#treemodal .treemodalul {
-    display: inline;
-    margin-left: 30px;
-}
-#treemodal .treemodalul span {
-    margin-left: 8px;
-}
+        display: none;
+    }
 
-#treemodal .treemodal-container {
-    padding: 10px;
-    min-width: 500px;
-    width: 100% !important;
-    background-color: white;
-    margin: 0 auto;
-    border-radius: 2px;
-    overflow: hidden;
-    font-weight: 300;
-    position: relative;
-    font-family: open sans;
-    height: 225px;
-}
-#treemodal .tree_close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-}
-#treemodal .tree_item_cont {
-    margin-bottom: 15px;
-    margin-left: 20px;
-}
-#treemodal #movefrom {
-    margin-left: 15px;
-    font-weight: 500;
-}
-.treemodal-header {
-    margin-bottom: 20px;
-    text-align: center;
-}
-#treemodal_submit {
-    color: white;
-    background-color: #aa0000;
-    margin-right: 20px;
-    min-width: 75px;
-}
-#treemodal_cancel {
-    color: #aa0000;
-    background-color: white;
-    border: 1px solid #aa0000;
-    min-width: 75px;
-}
-#treemodal .pull-right {
-    margin-right: 20px;
-}
+    #treemodal .modal-dialog {
+        width: max-content;
+    }
+
+    #treemodal .treemodalul {
+        display: inline;
+        margin-left: 30px;
+    }
+
+        #treemodal .treemodalul span {
+            margin-left: 8px;
+        }
+
+    #treemodal .treemodal-container {
+        padding: 10px;
+        min-width: 500px;
+        width: 100% !important;
+        background-color: white;
+        margin: 0 auto;
+        border-radius: 2px;
+        overflow: hidden;
+        font-weight: 300;
+        position: relative;
+        font-family: open sans;
+        height: 225px;
+    }
+
+    #treemodal .tree_close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    #treemodal .tree_item_cont {
+        margin-bottom: 15px;
+        margin-left: 20px;
+    }
+
+    #treemodal #movefrom {
+        margin-left: 15px;
+        font-weight: 500;
+    }
+
+    .treemodal-header {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    #treemodal_submit {
+        color: white;
+        background-color: #aa0000;
+        margin-right: 20px;
+        min-width: 75px;
+    }
+
+    #treemodal_cancel {
+        color: #aa0000;
+        background-color: white;
+        border: 1px solid #aa0000;
+        min-width: 75px;
+    }
+
+    #treemodal .pull-right {
+        margin-right: 20px;
+    }
 </style>

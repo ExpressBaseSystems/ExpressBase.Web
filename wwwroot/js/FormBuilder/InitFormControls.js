@@ -506,7 +506,7 @@ var InitControls = function (option) {
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
         $(window).resize(function () {
-            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 65)) + "px");
+            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
         });
 
     };
@@ -570,7 +570,7 @@ var InitControls = function (option) {
         });
 
         $(window).resize(function () {
-            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 65)) + "px");
+            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
         });
     };
 

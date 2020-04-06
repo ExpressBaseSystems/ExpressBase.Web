@@ -6,15 +6,23 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
-
+<link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" />
+@*<link rel="stylesheet" type="text/css" href="~/css/Eb_datatable.css" />*@
 <link href="~/css/EbOnBoarding/eb-assets.style.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+
 <script type="text/javascript" src="~/js/location-config.js"></script>
+<script type="text/javascript" src="~/js/CommonDataTable.js"></script>
+<script type="text/javascript" src="~/js/datatables.min.js"></script>
+<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
 @*dona*@
 <script>
     var cm = new EbHeader().setName("Configure Locations");
 </script>
 @{
-    var locations = ViewBag.LocList;
+    Dictionary<int, EbLocation> locations = ViewBag.LocList;
     List<EbLocationType> location_types = ViewBag.LocType;
 }
 <div class="row s-dash-container h-100">
@@ -31,6 +39,11 @@
 
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
+                    <a class="nav-link" data-toggle="tab" href="#locations_hierarchial_tab" role="tab">
+                        <i class="fa fa-indent" aria-hidden="true"></i> Locations Tree View
+                    </a>
+                </li>
+                <li class="nav-item ">
                     <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
                         <i class="fa fa-list" aria-hidden="true"></i> Locations
                     </a>
@@ -44,7 +57,7 @@
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane active" id="locations_tab" role="tabpanel">
+                <div class="tab-pane" id="locations_tab" role="tabpanel">
                     @foreach (KeyValuePair<int, EbLocation> loc in locations)
                     {
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
@@ -60,6 +73,11 @@
                         </div>
                     }
                 </div>
+
+                <div class="tab-pane active" id="locations_hierarchial_tab" role="tabpanel">
+                    <div id="loc_tree_container"></div>
+                </div>
+
                 <div class="tab-pane location_conf" id="location_conf" role="tabpanel">
                     <div class="form-inline btn_container">
                         <button class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#add_new_key" id="addkey">
@@ -99,13 +117,14 @@
                         </table>
                     </form>
                 </div>
+
                 <div class="tab-pane location_conf" id="location_types" role="tabpanel">
                     <div class="form-inline btn_container">
                         <button class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#location_type_modal" id="add_location_type">
                             <i class="fa fa-plus"></i> Add New Type
                         </button>
                     </div>
-                    <form class="form-horizontal conf_container" id="textspace" method="post">
+                    <form class="form-horizontal conf_container" id="types-space" method="post">
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -116,7 +135,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @{ int i = 1; 
+                                @{ int i = 1;
                                     foreach (EbLocationType t in location_types)
                                     {
                                         <tr key="@t.Id">
@@ -139,6 +158,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade create_loc_mod" id="create_loc_mod" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -221,37 +241,167 @@
     </div>
 </div>
 
-<div class="modal fade create_loc_mod" id="location_type_modal" role="dialog">
-    <div class="modal-dialog" style="background-color: white;">
+<div class="modal" tabindex="-1" role="dialog" id="location_type_modal">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Location type</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="modal-title">Location type</h3>
+
             </div>
-            <div class="modal-body new_location_bdy">
+            <div class="modal-body">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <label class="col-sm-3">Name</label>
+                        <label class="col-sm-2">Name</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" name="TypeName" value="">
-                            <input type="hidden"  value="0" id="type_id"/>
+                            <input type="hidden" value="0" id="type_id" />
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="modal-footer">
-            <button class="ebbtn eb_btnblue pull-right" id="add_type_btn">Add</button>
+            <div class="modal-footer">
+                <button class="ebbtn eb_btnblue pull-right" id="add_type_btn">Add</button>
+            </div>
         </div>
     </div>
-
-</div>
 </div>
 
+
+<!-- Modal -->
+<div id="add_location_modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add/Edit Location</h4>
+            </div>
+            <div class="modal-body new_location_bdy"  id="add_location_bdy">
+                <input type="hidden" name="_LocId" />
+                <div class="form-group">
+                    <label class="col-sm-3">Type</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="loc_type" value="" placeholder="Select type" name="loc_type">
+                            @foreach (EbLocationType t in location_types)
+                            {
+                                <option value="@t.Id" selected> @t.Type</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" class="form-control keyname" placeholder="Enter Parent ID" id="_parentId" name="_parentId" value="">
+                <div class="form-group">
+                    <label class="col-sm-3">Name </label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control keyname" placeholder="Enter Name" id="_shortname" name="_longname" value="">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-3">ShortName </label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control keyname" placeholder="Enter Short Name " id="_shortname" name="_shortname" value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3">Logo</label>
+                    <div class="col-sm-3">
+                        <input type="hidden" value="" name="_Logo" />
+                        <button key="_Logo" id="_Logo_toggle_btn" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="col-md-6 logo_img_cont">
+                        <img src="" class="img-responsive pull-right" id="_Logo_prev" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="add_location" class="btn btn-default">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
    @{
        var locs = JsonConvert.SerializeObject(ViewBag.LocList);
    }
       var Loc_ = new Eb_locationMeta(@Html.Raw(ViewBag.Config),@Html.Raw(locs),'@ViewBag.cid',@location_types.Count);
 </script>
+
+<style>
+    div.dataTables_wrapper .info-search-cont {
+    display: flex;
+    margin-bottom: 2px;
+    justify-content: space-between;
+}
+
+    .display-none {
+    display: none;
+}
+    
+#treemodal .modal-dialog {
+    width: max-content;
+}
+#treemodal .treemodalul {
+    display: inline;
+    margin-left: 30px;
+}
+#treemodal .treemodalul span {
+    margin-left: 8px;
+}
+
+#treemodal .treemodal-container {
+    padding: 10px;
+    min-width: 500px;
+    width: 100% !important;
+    background-color: white;
+    margin: 0 auto;
+    border-radius: 2px;
+    overflow: hidden;
+    font-weight: 300;
+    position: relative;
+    font-family: open sans;
+    height: 225px;
+}
+#treemodal .tree_close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+#treemodal .tree_item_cont {
+    margin-bottom: 15px;
+    margin-left: 20px;
+}
+#treemodal #movefrom {
+    margin-left: 15px;
+    font-weight: 500;
+}
+.treemodal-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+#treemodal_submit {
+    color: white;
+    background-color: #aa0000;
+    margin-right: 20px;
+    min-width: 75px;
+}
+#treemodal_cancel {
+    color: #aa0000;
+    background-color: white;
+    border: 1px solid #aa0000;
+    min-width: 75px;
+}
+#treemodal .pull-right {
+    margin-right: 20px;
+}
+</style>

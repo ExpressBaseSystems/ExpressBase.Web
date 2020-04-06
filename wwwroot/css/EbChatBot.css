@@ -671,17 +671,17 @@
         color: rgba(0, 0, 0, 0.24);
     }
 
-.card-btn-cont {
+.card-btn-cont, .cards-btn-cont {
     padding: 0 12px 8px 12px;
     width: 100%;
 }
 
-    .card-btn-cont .btn {
+    .card-btn-cont .btn, .cards-btn-cont .ctrl-submit-btn {
         margin-top: 5px;
         padding: 3px 12px;
     }
 
-    .card-btn-cont .ctrl-submit-btn {
+    .card-btn-cont .ctrl-submit-btn, .cards-btn-cont .ctrl-submit-btn {
         width: 70%;
         margin-left: 15%;
         font-weight: 600;

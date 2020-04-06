@@ -322,6 +322,8 @@
             m[item.Name] = $(`input[name='n${item.Name}']`).val();
         }.bind(this));
 
+        $('#add_location_modal').modal("hide");
+        $("#eb_common_loader").EbLoader("show");
         let o = new Object();
         o.LocId = $("input[name='_LocId']").val();
         o.LongName = $("input[name='_longname']").val();
@@ -334,15 +336,16 @@
         $.post("../TenantUser/CreateLocationH", {
             loc: o
         }, function (result) {
-            if (result >= 1) {
-                $('#add_location_modal').modal("hide");
-                $('#btnGotbl').trigger('click');
+                if (result >= 1) {
+                    {
+                        $("#eb_common_loader").EbLoader("hide");
+                        $('#btnGotbl').trigger('click');
+                    }
             }
         }.bind(this));
     };
 
     this.AppendLocTree = function () {
-        $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
         $.post("../TenantUser/GetLocationTree", function (result) {
             $("#loc_tree_container").empty();
             $("#loc_tree_container").append(`<div id="content_tbl" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
@@ -354,7 +357,6 @@
             o.dvObject = JSON.parse(result);
             o.Source = "locationTree";
             var data = new EbCommonDataTable(o);
-            $("#layout_div .loader-fb").empty().removeClass("loader-fb");
         });
 
     };

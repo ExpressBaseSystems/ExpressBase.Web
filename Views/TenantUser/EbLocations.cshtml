@@ -32,9 +32,6 @@
             <div class="col-md-10 pd-0">
                 <h4 class="mr-t-0 mr-b-0">Locations <span class="apps_count">(@locations.Count)</span></h4>
             </div>
-            <div class="col-md-2 pd-0">
-                <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue pull-right eb_btn-sm new_sol_lk"> <i class="fa fa-plus"></i> New Location</a>
-            </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
 
@@ -59,6 +56,11 @@
 
             <div class="tab-content">
                 <div class="tab-pane" id="locations_tab" role="tabpanel">
+                    <div class="row col-md-12">
+                        <div class="col-md-2 pd-0 pull-right ">
+                            <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue eb_btn-sm new_sol_lk pull-right "> <i class="fa fa-plus"></i> New Location</a>
+                        </div>
+                    </div>
                     @foreach (KeyValuePair<int, EbLocation> loc in locations)
                     {
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
@@ -344,6 +346,12 @@
 </script>
 
 <style>
+
+    #types-space table thead, #loc_tree_container table thead  {
+    background-color: #055d9c;
+    color: white;
+} 
+
     div.dataTables_wrapper .info-search-cont {
         display: flex;
         margin-bottom: 2px;

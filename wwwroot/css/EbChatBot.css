@@ -844,15 +844,19 @@
     padding: 0px 0px 3px 0px;
 }
 
-.loc-opt-DD {
-    width: 100%;
-    padding: 3px 10px;
-    color: rgba(0, 0, 0, 0.7);
-    max-width: inherit;
-    border-radius: 8px;
-    border: none;
-    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
-}
+    .loc-opt-cont[loc-count='1'] {
+        display :none;
+    }
+
+    .loc-opt-DD {
+        width: 100%;
+        padding: 3px 10px;
+        color: rgba(0, 0, 0, 0.7);
+        max-width: inherit;
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
+    }
 
 .locinp {  /*overriding in formstyles.css*/
     height: 1.2em !important;

@@ -454,7 +454,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
             tooltips: {
                 enabled: this.curChartViz.ShowTooltip
-            },-
+            },
             animation: this.animateOPtions
 
         };

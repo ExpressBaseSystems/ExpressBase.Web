@@ -1123,6 +1123,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     callbackFn();
             }.bind(this), this.typeDelay);
             this.ready = false;
+            $(".eb-chatBox").scrollTop($(".eb-chatBox")[0].scrollHeight);
         }
         else {
             $msg.remove();

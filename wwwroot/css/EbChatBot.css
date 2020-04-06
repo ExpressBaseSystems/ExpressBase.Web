@@ -221,9 +221,16 @@
 }
 
 .btn-box_botformlist {
-    width: 100%;
+    /*width: 100%;
     text-align: center;
-    margin-left: calc(10% - 7px);
+    margin-left: calc(10% - 7px);*/
+    width: 100%;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    display: flex;
+    margin-left: 8px;
+    padding: 8px 17px;
+    /* background: red;*/
 }
 
 .chat-ctrl-cont select, .chat-ctrl-cont textarea {
@@ -247,8 +254,7 @@
     font-size: 12px;
     border: solid 1px #e0e0e0;
 }*/
-
-.formname-btn {
+    .formname-btn {
     border-radius: 4px;
     color: var(--botThemeColor);
     margin: 1px 1px;
@@ -273,12 +279,13 @@
     height: 100px;
     border-radius: 4px;
     color: var(--botThemeColor);
-    margin: 1px 1px;
+    /*margin: 1px 1px;*/
+    margin: 7px 0;
     width: 40%;
-    margin-bottom: 8px;
+    /*margin-bottom: 8px;*/
     display: inline-block;
     font-weight: bold;
-    margin-right: 15px;
+    /*margin-right: 15px;*/
     background-color: white;
     outline: none;
     border: solid 1px;

@@ -586,7 +586,7 @@
             if ($colTile.length)
                 $colTile.attr("id", this.PropsObj[this.CurProp]).find("span").text(this.PropsObj[this.CurProp]);
         }
-        if (typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
+        if (this.CurMeta && typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
             this.execUiChangeFn(this.CurMeta.UIChangefn, this.PropsObj);
         }
         if (this.CurProp === 'DataSourceId') {

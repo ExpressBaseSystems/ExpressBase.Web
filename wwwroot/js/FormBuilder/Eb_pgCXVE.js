@@ -1245,7 +1245,7 @@
     }.bind(this);
 
     this.colTileRightArrow = function (e) {// not tested for editors other than 26
-        let $tile = $(e.target).closest(".colTile")
+        let $tile = $(e.target).closest(".colTile");
         if (this.checkLimit($tile))
             return false;
         e.stopPropagation();
@@ -1279,6 +1279,10 @@
                     });
                 });
             }
+        }
+        else if (this.editor === 22) {
+            let DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("ebsid"))), 1)[0];
+            this.onRemoveFromCE(this.PGobj.CurProp, this.PGobj.PropsObj[this.PGobj.CurProp].$values, DelObj);
         }
         else if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             if (this.editor === 26 || this.editor === 24)

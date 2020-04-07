@@ -175,6 +175,10 @@
             valueHTML = '<span class="cxv-inp" style="vertical-align: sub;">(String)</span>'
                 + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
         }
+        else if (type === 41) {  //  If string base64 editor
+            valueHTML = '<span class="cxv-inp" style="vertical-align: sub;">(String)</span>'
+                + '<button for="' + name + '" editor= "' + type + '" class= "pgCX-Editor-Btn" >... </button> ';
+        }
         else if (type === 14) {  //  If FontSlctrs
             let _val = (value === "") ? "" : JSON.stringify(value).replace(/"/g, "'");
             valueHTML = '<input class="cxv-inp" type="text" id="' + elemId + '" for="' + name + '" value="' + (_val || "") + '" title="' + _val.replace(/{|}|'/g, "") + '" readonly style=" width: calc(100% - 26px); direction: rtl;" />'
@@ -586,7 +590,7 @@
             if ($colTile.length)
                 $colTile.attr("id", this.PropsObj[this.CurProp]).find("span").text(this.PropsObj[this.CurProp]);
         }
-        if (typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
+        if (this.CurMeta && typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
             this.execUiChangeFn(this.CurMeta.UIChangefn, this.PropsObj);
         }
         if (this.CurProp === 'DataSourceId') {

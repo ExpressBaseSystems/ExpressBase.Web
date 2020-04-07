@@ -3,14 +3,15 @@
 
 (function () {
     var d = document;
-
+console.log("ext_js loaded");
     //PUSHED_JS_STATEMENTS
 
     this.eb_get_path = function (ebmod) {
+        console.log("mode : "+ebmod);
         if (ebmod === 'Production')
             return "https://" + window.EXPRESSbase_SOLUTION_ID + ".expressbase.com/";
         else if (ebmod === 'Staging')
-            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.xyz/";
+            return "https://" + window.EXPRESSbase_SOLUTION_ID + ".eb-test.cloud/";
         else
             return "https://" + window.EXPRESSbase_SOLUTION_ID + ".localhost:41502/";
     };
@@ -86,7 +87,7 @@
     var chatIcon = d.createElement("img");
     chatIcon.className = "boticon";
     chatIcon.id = "boticon" + AppId;
-    chatIcon.src = (d.botdpURL || d.botdpURLColl[d.appIdCount]);
+    chatIcon.src = this.eb_get_path(d.ebmod)+(d.botdpURL || d.botdpURLColl[d.appIdCount]);
 
 
     //place near chat head
@@ -114,7 +115,7 @@
         document.getElementById("eb_iframecont" + AppId).style.display = "none";
         if (!d.appIdColl)
             document.getElementById("chatbtn" + AppId).style.display = "block";
-    }
+    };
     //to minimize chatbot
     maximizeDiv.onclick = function () {
         console.log(AppId);
@@ -126,7 +127,7 @@
             document.getElementById("eb_iframecont" + AppId).style.width = "";
             maximizeDiv.innerHTML = '&#128470;';
         }
-    }
+    };
 
     //??????
     chatbtn.onclick = function () {

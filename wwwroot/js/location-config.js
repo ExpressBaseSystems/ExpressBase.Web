@@ -8,10 +8,15 @@
         $(this.data).each(function (i, item) {
             this.AddKey(item);
         }.bind(this));
+
         this.Addmeta(this.data);
         $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key
         $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
+        $('#add_location').off("click").on('click', this.AddLocation.bind(this));//createloc
+        $('#add_root_loc').off("click").on('click', this.AddLocationRoot.bind(this));//createloc
 
+
+        this.AddmetaHierarchial(this.data);
         $('#add_type_btn').off('click').on('click', this.AddNewLocationType.bind(this));
         $('.delete-loc-type').off('click').on('click', this.DeleteLocationType.bind(this));
         $('.edit-loc-type').off('click').on('click', this.EditLocationType.bind(this));
@@ -24,6 +29,8 @@
         this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo", FileName: "" }, false);
         $(`body`).off("click").on("click", ".delete_field", this.deleteConfig.bind(this));
         $("#locspace input[name='longname']").on("change", this.setLocNameToImg.bind(this));
+
+        this.AppendLocTree();
     };
 
     this.setLocNameToImg = function (e) {
@@ -44,7 +51,7 @@
         if (item.Name === "Name" || item.Name === "ShortName" || item.Name === "Logo")
             btn = "";
         $('#textspace tbody').append(`<tr key="${item.Name}">
-                                    <td>${item.Name}</td>
+                                    <td>${item.DisplayName || item.Name}</td>
                                     <td class="text-center">${icon}</td>
                                     <td class="text-center">${item.Type}</td>
                                     <td class="text-center">${btn}</td>
@@ -55,7 +62,8 @@
 
     this.AddNewKey = function () {
         var o = new Object();
-        o.Name = $("input[name='KeyName']").val();
+        o.DisplayName = $("input[name='KeyName']").val();
+        o.Name = o.DisplayName.replace(/\s+/g, '');
         o.IsRequired = $("input[name='IsRequired']").is(":checked") ? true : false;
         o.Type = $("select[name='KeyType']").val();
         if (this.uniqCheckCF(o)) {
@@ -79,7 +87,7 @@
             if (l_item.Type === "Text") {
                 $('#locspace').append(`
 					<div class="form-group" locKey="${l_item.Name}">
-                        <label class="col-sm-3">${l_item.Name} </label>
+                        <label class="col-sm-3">${l_item.DisplayName || l_item.Name} </label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control keyname" placeholder="Enter ${l_item.Name} " id=l_key${i} name="${l_item.Name}" value="">
                         </div>
@@ -88,7 +96,7 @@
             }
             else if (l_item.Type === "Image") {
                 $('#locspace').append(`<div class="form-group" locKey="${l_item.Name}">
-                        <label class="col-sm-3">${l_item.Name}</label>
+                        <label class="col-sm-3">${l_item.DisplayName || l_item.Name}</label>
                         <div class="col-sm-3">
                             <input type="hidden" value="" name="${l_item.Name}"/>
                             <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
@@ -250,6 +258,7 @@
         $jq.find("input").val("");
     };
 
+    //Location Type --------------------------
 
     this.AddNewLocationType = function () {
         var o = new Object();
@@ -277,7 +286,7 @@
         let del_btn = `<i id="del_${item.Id}" class="fa fa-trash delete-loc-type"></i>`;
         let edit_btn = `<i id="edit_${item.Id}" class="fa fa-pencil edit-loc-type" ></i>`;
 
-        $('#textspace tbody').append(`<tr key="${item.Id}">
+        $('#types-space tbody').append(`<tr key="${item.Id}">
                                     <td class="text-center">${++types_count}</td> 
                                     <td class="text-center">${item.Id}</td> 
                                     <td class="text-center _type" key="${item.Type}">${item.Type}</td> 
@@ -296,7 +305,6 @@
         $("#add_type_btn").text("Edit");
     };
 
-
     this.DeleteLocationType = function (e) {
         let name = $(e.target);
         let id = e.target.parentElement.id;
@@ -307,6 +315,92 @@
         }.bind(this));
     };
 
+    //-----------------------------------------
+    this.AddLocation = function (e) {
+        e.preventDefault();
+        let m = {};
+        $(this.data).each(function (i, item) {
+            m[item.Name] = $(`input[name='n${item.Name}']`).val();
+        }.bind(this));
+
+        $('#add_location_modal').modal("hide");
+        $("#eb_common_loader").EbLoader("show");
+        let o = new Object();
+        o.LocId = $("input[name='_LocId']").val();
+        o.LongName = $("input[name='_longname']").val();
+        o.ShortName = $("input[name='_shortname']").val();
+        o.Logo = $(`input[name='_Logo']`).val();
+        o.TypeId = $("#loc_type").val();
+        o.IsGroup = true;
+        o.ParentId = $("#_parentId").val();
+        o.Meta = m;
+        $.post("../TenantUser/CreateLocationH", {
+            loc: o
+        }, function (result) {
+                if (result >= 1) {
+                    {
+                        $("#eb_common_loader").EbLoader("hide");
+                        $('#btnGotbl').trigger('click');
+                    }
+            }
+        }.bind(this));
+    };
+
+    this.AddLocationRoot = function () {
+        $("#_parentId").val("");
+        $("#add_location").text("Add"); 
+        $("input[name='_LocId']").val("");
+        $(`input[name='_Logo']`).val("");
+        $("#loc_type").val("");
+        $("#add_location_modal").find("input[type='text']").val("");
+    };
+
+    this.AppendLocTree = function () {
+        $.post("../TenantUser/GetLocationTree", function (result) {
+            $("#loc_tree_container").empty();
+            $("#loc_tree_container").append(`<div id="content_tbl" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+            var o = new Object();
+            o.tableId = "tbl";
+            o.showCheckboxColumn = false;
+            o.showFilterRow = false;
+            o.IsPaging = false;
+            o.dvObject = JSON.parse(result);
+            o.Source = "locationTree";
+            var data = new EbCommonDataTable(o);
+        });
+
+    };
+
+    //---------------------------------------------------
+
+    this.AddmetaHierarchial = function (objectColl) {
+        $(objectColl).each(function (i, l_item) {
+            if (l_item.Type === "Text") {
+                $('#add_location_bdy').append(`
+					<div class="form-group" locKey="${l_item.Name}">
+                        <label class="col-sm-3">${l_item.DisplayName || l_item.Name} </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control keyname" placeholder="Enter ${l_item.DisplayName} " id=l_key${i} name="n${l_item.Name}" value="">
+                        </div>
+                    </div>
+					`);
+            }
+            else if (l_item.Type === "Image") {
+                $('#add_location_bdy').append(`<div class="form-group" locKey="${l_item.Name}">
+                        <label class="col-sm-3">${l_item.DisplayName || l_item.Name}</label>
+                        <div class="col-sm-3">
+                            <input type="hidden" value="" name="n${l_item.Name}"/>
+                            <button key="${l_item.Name}" id="${l_item.Name}_toggle" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                        </div>
+                        <div class="col-md-6 logo_img_cont">
+                            <img src="" class="img-responsive pull-right" id="${l_item.Name}_prev" />
+                        </div>
+                    </div>
+					`);
+                this.imageUploader(l_item.Name + "container", "#" + l_item.Name + "_toggle", "#" + l_item.Name + "_prev", { Name: l_item.Name, FileName: "" }, true);
+            }
+        }.bind(this));
+    };
 
     this.init();
 };

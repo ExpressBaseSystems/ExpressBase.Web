@@ -952,7 +952,7 @@
     background-color: rgba(0, 0, 0, 0.1098);
 }
 
-.strE-texarea {
+.strE-texarea, .str64E-texarea {
     width: 100%;
     height: 100%;
     border: 1px solid #e5e5e5;
@@ -961,7 +961,7 @@
     /*font-family: Tahoma, sans-serif;*/
 }
 
-    .strE-texarea:focus {
+    .strE-texarea:focus, .str64E-texarea:focus {
         outline: none;
     }
 

@@ -603,6 +603,7 @@
 
         this.PGobj.PropertyChanged = function (PropsObj, CurProp) {
             if (CurProp === 'DataSourceId') {
+                this.DSchangeCallBack(PropsObj);
                 //Eb_dataSourceInit(this.DSchangeCallBack);
             }
             if (PropsObj && PropsObj.$type.split(",")[0].split(".")[2] !== "EbBotForm") {
@@ -670,6 +671,7 @@
     };
 
     this.RefreshCardControl = function (obj) {
+        return; //////
         var wrapHtml = obj.$WrapedCtrl4Bot.outerHTML();
         var $cards = $("#" + obj.EbSid);
         $cards.html($(wrapHtml).html());

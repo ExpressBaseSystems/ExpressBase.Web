@@ -2614,16 +2614,43 @@
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        
         $('.columntooltip').popover({
             container: 'body',
             trigger: 'hover',
             placement: this.PopoverPlacement,
             html: true,
             content: function (e, i) {
+                $(".popover").remove();
                 return atob($(this).attr("data-contents"));
             },
         });
-
+        $('.btn-action_comment').popover({
+            container: 'body',
+            trigger: 'click',
+            placement: this.PopoverPlacement,
+            html: true,
+            content: function (e, i) {
+                return "<input id='pop-text' type='text' placeholder='Comments here...'/>";
+            },
+        });
+        $('.btn-action_comment').on('show.bs.popover', function () {
+            $('.btn-action_comment').not(this).popover("hide");
+        });
+        $('.btn-action_comment').on('hide.bs.popover', function () {
+            $("#temp-text").remove();
+            $("body").append("<input type='text' id='temp-text' value='" + $("#pop-text").val() + "'/> ");
+        });
+        $('.btn-action_history').popover({
+            container: 'body',
+            trigger: 'click',
+            placement: this.PopoverPlacement,
+            html: true,
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
+            },
+        });
+        $(".popover").remove();
         $(".rating").rateYo({
             readOnly: true
         });
@@ -3891,6 +3918,7 @@
 
     this.ExecuteApproval = function (e) {
         $("#eb_common_loader").EbLoader("show");
+        $('.btn-action_comment').popover('hide');
         let val = $(e.target).parents(".stage_actions_cont").find(".selectpicker").val();
         let $td = $(e.target).parents().closest("td");
         val = JSON.parse(atob(val));
@@ -3898,7 +3926,8 @@
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
         Columns.push(new fltr_obj(7, "eb_my_actions_id", val.My_action_id.toString()));
-        Columns.push(new fltr_obj(16, "comments", ""));
+        Columns.push(new fltr_obj(16, "comments", $("#temp-text").val()));
+        $("#temp-text").remove();
         let webdata = {};
         webdata["eb_approval_lines"] =[{ "Columns": Columns }];
         let WebformData = {

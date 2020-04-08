@@ -1041,7 +1041,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
-[eb-form="true"] [ctype="ExportButton"] .ctrl-cover, [eb-form="true"] [ctype="Rating"] .ctrl-cover {
+[eb-form="true"] [ctype="ExportButton"] .ctrl-cover {
     border: none;
 }
 

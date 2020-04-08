@@ -32,9 +32,6 @@
             <div class="col-md-10 pd-0">
                 <h4 class="mr-t-0 mr-b-0">Locations <span class="apps_count">(@locations.Count)</span></h4>
             </div>
-            <div class="col-md-2 pd-0">
-                <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue pull-right eb_btn-sm new_sol_lk"> <i class="fa fa-plus"></i> New Location</a>
-            </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
 
@@ -59,6 +56,11 @@
 
             <div class="tab-content">
                 <div class="tab-pane" id="locations_tab" role="tabpanel">
+                    <div class="row col-md-12">
+                        <div class="col-md-2 pd-0 pull-right ">
+                            <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue eb_btn-sm new_sol_lk pull-right "> <i class="fa fa-plus"></i> New Location</a>
+                        </div>
+                    </div>
                     @foreach (KeyValuePair<int, EbLocation> loc in locations)
                     {
                         <div class="col-md-4 col-lg-4 col-sm-4 appcontainer">
@@ -76,6 +78,7 @@
                 </div>
 
                 <div class="tab-pane active" id="locations_hierarchial_tab" role="tabpanel">
+                    <button id="add_root_loc" class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#add_location_modal" > Add New Root Location </button>
                     <div id="loc_tree_container"></div>
                 </div>
 
@@ -283,17 +286,21 @@
             </div>
             <div class="modal-body new_location_bdy" id="add_location_bdy">
                 <input type="hidden" name="_LocId" />
+                @if(location_types!=null&&location_types.Count>0)
+                {
                 <div class="form-group">
                     <label class="col-sm-3">Type</label>
                     <div class="col-sm-9">
-                        <select class="form-control" id="loc_type" value="" placeholder="Select type" name="loc_type">
+                        <select class="form-control" id="loc_type" name="loc_type">
+                            <option value="0" selected>--Select--</option>
                             @foreach (EbLocationType t in location_types)
                             {
-                                <option value="@t.Id" selected> @t.Type</option>
+                                <option value="@t.Id"> @t.Type</option>
                             }
                         </select>
                     </div>
                 </div>
+                }
                 <input type="hidden" class="form-control keyname" placeholder="Enter Parent ID" id="_parentId" name="_parentId" value="">
                 <div class="form-group">
                     <label class="col-sm-3">Name </label>
@@ -339,6 +346,12 @@
 </script>
 
 <style>
+
+    #types-space table thead, #loc_tree_container table thead  {
+    background-color: #055d9c;
+    color: white;
+} 
+
     div.dataTables_wrapper .info-search-cont {
         display: flex;
         margin-bottom: 2px;

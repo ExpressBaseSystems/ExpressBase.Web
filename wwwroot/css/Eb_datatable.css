@@ -596,8 +596,9 @@ table.dataTable tr.group td {
 .columntooltip:hover{
     text-decoration:underline;
 }
-.popover-content{
-    color:black !important;
+.popover-content {
+    color: black !important;
+    overflow: auto;
 }
 
 .footerli, .filterli {
@@ -749,8 +750,13 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     margin-left: 10px;
 }
 
-.popover-content td{
-   padding:5px;
+.popover-content td {
+    padding: 5px;
+    border: 1px solid #ddd;
+}
+.popover-content th {
+    border: 1px solid #ddd;
+    border-top: 1px solid #ddd !important;
 }
 .tdheight .stage_actions button {
     padding: 3px 30px 3px 10px;
@@ -758,12 +764,12 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     /*width: auto;*/
 }
 .tdheight .stage_actions  {
-    width: auto!important;
-    margin-right:10px;
+    width: auto !important;
+    margin-right: 10px;
 }
 
-.tdheight .stage_actions a{
-    color:black !important;
+.tdheight .stage_actions a {
+    color: black !important;
 }
 
 .tdheight .stage_actions_cont {
@@ -771,16 +777,16 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     flex-direction: column;
 }
 
-.tdheight .stage_actions_inner {
+.tdheight .stage-div {
     display: flex;
-    /*justify-content: space-between;*/
+    justify-content: space-between;
+    margin: 2px;
 }
-.tdheight .btn-action_execute {
+.tdheight .stage-btn {
     padding: 1px 12px;
-    /*width: 25px;*/
 }
-.tdheight .btn-action_execute i{
-    color:black!important;
+.tdheight .stage-btn i {
+    color: black !important;
 }
 
 .tdheight .selectpicker {

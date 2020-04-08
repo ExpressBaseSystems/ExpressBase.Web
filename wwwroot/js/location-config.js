@@ -13,6 +13,7 @@
         $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key
         $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
         $('#add_location').off("click").on('click', this.AddLocation.bind(this));//createloc
+        $('#add_root_loc').off("click").on('click', this.AddLocationRoot.bind(this));//createloc
 
 
         this.AddmetaHierarchial(this.data);
@@ -343,6 +344,15 @@
                     }
             }
         }.bind(this));
+    };
+
+    this.AddLocationRoot = function () {
+        $("#_parentId").val("");
+        $("#add_location").text("Add"); 
+        $("input[name='_LocId']").val("");
+        $(`input[name='_Logo']`).val("");
+        $("#loc_type").val("");
+        $("#add_location_modal").find("input[type='text']").val("");
     };
 
     this.AppendLocTree = function () {

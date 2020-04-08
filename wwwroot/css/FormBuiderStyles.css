@@ -1534,11 +1534,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .filter-box .input-group-addon, .form-buider-form .input-group-addon, [eb-type="BotForm"] .input-group-addon {
     padding: 0px !important;
+    padding: 0px 2.5px !important;
+    background-color: white;
 }
 
     .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa, [eb-type="BotForm"] .input-group-addon > .fa {
         padding: 3px 7px !important;
     }
+
+
 
 [eb-form="true"][mode="view"] .v-select .selected-tag > .close {
     display: none;

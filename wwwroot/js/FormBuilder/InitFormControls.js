@@ -1,5 +1,4 @@
-﻿
-var InitControls = function (option) {
+﻿var InitControls = function (option) {
     if (option) {
         this.Bot = option.botBuilder;
         this.Wc = option.wc;

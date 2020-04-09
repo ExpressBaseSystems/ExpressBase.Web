@@ -2587,7 +2587,6 @@
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this)); 
-        $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this)); 
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -2625,31 +2624,26 @@
                 return atob($(this).attr("data-contents"));
             },
         });
-        $('.btn-action_comment').popover({
+        $('.btn-approval_popover').popover({
             container: 'body',
             trigger: 'click',
             placement: this.PopoverPlacement,
             html: true,
-            content: function (e, i) {
-                return "<input id='pop-text' type='text' placeholder='Comments here...'/>";
-            },
-        });
-        $('.btn-action_comment').on('show.bs.popover', function () {
-            $('.btn-action_comment').not(this).popover("hide");
-        });
-        $('.btn-action_comment').on('hide.bs.popover', function () {
-            $("#temp-text").remove();
-            $("body").append("<input type='text' id='temp-text' value='" + $("#pop-text").val() + "'/> ");
-        });
-        $('.btn-action_history').popover({
-            container: 'body',
-            trigger: 'click',
-            placement: this.PopoverPlacement,
-            html: true,
+            template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
             content: function (e, i) {
                 return atob($(this).attr("data-contents"));
             },
         });
+        $('.btn-approval_popover').on('click', function (e) {
+            $('.btn-approval_popover').not(this).popover("hide");
+        });
+
+        $('.btn-approval_popover').on('shown.bs.popover', function (e) {
+            $(".stage_actions").selectpicker();
+            let $td = $(e.target).parents().closest("td");
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+        }.bind(this)); 
+        
         $(".popover").remove();
         $(".rating").rateYo({
             readOnly: true
@@ -2664,7 +2658,6 @@
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
-        $(".stage_actions").selectpicker();
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         //this.Api.columns.adjust();
     };
@@ -3968,23 +3961,17 @@
         this.Api.columns.adjust();
     };
 
-    this.ExecuteApproval = function (e) {
+    this.ExecuteApproval = function ($td, e) {
         $("#eb_common_loader").EbLoader("show");
-        $('.btn-action_comment').popover('hide');
-        let val = $(e.target).parents(".stage_actions_cont").find(".selectpicker").val();
-        let $td = $(e.target).parents().closest("td");
+        $('.btn-approval_popover').popover('hide');
+        let val = $(e.target).closest("#action").find(".selectpicker").val();
         val = JSON.parse(atob(val));
+        let comments = $(e.target).closest("#action").find(".comment-text").val();
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
         Columns.push(new fltr_obj(7, "eb_my_actions_id", val.My_action_id.toString()));
-        Columns.push(new fltr_obj(16, "comments", $("#temp-text").val()));
-        $("#temp-text").remove();
-        let webdata = {};
-        webdata["eb_approval_lines"] =[{ "Columns": Columns }];
-        let WebformData = {
-            "MultipleTables": [webdata]
-        };
+        Columns.push(new fltr_obj(16, "comments", comments));
         $.ajax({
             type: "POST",
             url: "../dv/PostWebformData",

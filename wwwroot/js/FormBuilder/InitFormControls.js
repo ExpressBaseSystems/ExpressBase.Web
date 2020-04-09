@@ -1,5 +1,4 @@
-﻿
-var InitControls = function (option) {
+﻿var InitControls = function (option) {
     if (option) {
         this.Bot = option.botBuilder;
         this.Wc = option.wc;
@@ -314,30 +313,32 @@ var InitControls = function (option) {
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            let $el = $(e.target);
-            if ($el[0].isOutside !== true) {
-                let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                let initDDwidth = $drpdwn.width();
-                let ofsetval = $drpdwn.offset();
-                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
-                let $div_detached = $drpdwn.detach();
-                let $form_div = $(e.target).closest("[eb-root-obj-container]");
-                $div_detached.appendTo($form_div).wrap($divclone);
-                $div_detached.width(initDDwidth);
-                $el[0].isOutside = true;
-                $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
-                $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+            if (!this.Bot) {
+                let $el = $(e.target);
+                if ($el[0].isOutside !== true) {
+                    let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                    let initDDwidth = $drpdwn.width();
+                    let ofsetval = $drpdwn.offset();
+                    let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
+                    let $div_detached = $drpdwn.detach();
+                    let $form_div = $(e.target).closest("[eb-root-obj-container]");
+                    $div_detached.appendTo($form_div).wrap($divclone);
+                    $div_detached.width(initDDwidth);
+                    $el[0].isOutside = true;
+                    $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+                    $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
 
+                }
+                //to set position of dropdrown just below selectpicker btn
+                else {
+                    let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                    let ddOfset = ($(e.target)).offsetParent().offset();
+                    let tgHght = ($(e.target)).offsetParent().height();
+                    $outdrpdwn.parent().addClass('open');
+                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
+                }
             }
-            //to set position of dropdrown just below selectpicker btn
-            else {
-                let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                let ddOfset = ($(e.target)).offsetParent().offset();
-                let tgHght = ($(e.target)).offsetParent().height();
-                $outdrpdwn.parent().addClass('open');
-                $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
-            }
-        });
+        }.bind(this));
         if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
     };
@@ -1040,12 +1041,13 @@ var InitControls = function (option) {
     }
 
     this.Rating = function (ctrl) {
-        if (ebcontext.user.wc == 'uc') {
-            $("#" + ctrl.EbSid + "_ratingDiv").empty();
-            $("#" + ctrl.EbSid + "_ratingDiv").rateYo({
+        if ((ebcontext.user.wc == 'uc') ||this.Bot) {
+            $("#" + ctrl.EbSid).empty();
+            $("#" + ctrl.EbSid).rateYo({
 
                 numStars: ctrl.MaxVal,
-                fullStar: ctrl.FullStar,
+                maxValue: ctrl.MaxVal,
+                fullStar: !(ctrl.HalfStar),
                 halfStar: ctrl.HalfStar,
                 spacing: `${ctrl.Spacing}px`,
                 starWidth: `${ctrl.StarWidth}px`,

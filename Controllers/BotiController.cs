@@ -170,6 +170,10 @@ namespace ExpressBase.Web.Controllers
                         (control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
 
                     }
+                    else if (control is EbImage)
+                    {
+                        (control as EbImage).BareControlHtml4Bot = (control as EbImage).GetBareHtml();
+                    }
                     else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
                     {
                         (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);

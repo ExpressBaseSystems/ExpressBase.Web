@@ -734,8 +734,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.getDisplayText = function (ctrl) {
         let text = ctrl.getDisplayMemberFromDOM();
-        if (ctrl.ObjType === "PowerSelect")
-            text = JSON.stringify(text);
+        if (ctrl.ObjType === "PowerSelect") {
+            let res = "";
+            let keys = Object.keys(text);
+            for (let i = 0; i < keys.length; i++) {
+                let itemVals = JSON.stringify(text[keys[i]]).slice(0, -2).slice(2).replace(/":"/g, " : ").replace(/","/g, ", ");
+                res += itemVals + "</br>";
+            }
+            text = res.slice(0, -5);
+        }
         return text;
     };
 
@@ -873,7 +880,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
         }
         else {  //if last control
-            if (!this.curForm.IsReadOnly)
+            if (this.curForm.HaveInputControls && !this.curForm.IsReadOnly)
                 this.showSubmit();
             else {
                 //var $btn = $(event.target).closest(".btn");
@@ -931,7 +938,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
-        return '<div class="chat-ctrl-cont">' + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
+        return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
     };
 
     this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {
@@ -1150,6 +1157,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             return;
         if (this.initControls[this.curCtrl.ObjType] !== undefined)
             this.initControls[this.curCtrl.ObjType](this.curCtrl, {});
+        if (this.curCtrl.IsReadOnly || this.curCtrl.IsDisable) {
+            this.nxtCtrlIdx++;
+            this.callGetControl();
+        }
     };
 
     this.submitReqCheck = function () {

@@ -479,8 +479,6 @@
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
-        //this.Bot.nxtCtrlIdx++;
-        //this.Bot.callGetControl();
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -555,8 +553,8 @@
             this.initMap(ctrl.LocationCollection.$values[0]);
         }
 
-        this.Bot.nxtCtrlIdx++;
-        this.Bot.callGetControl();
+        //this.Bot.nxtCtrlIdx++;
+        //this.Bot.callGetControl();
     };
 
     this.initMap = function (ctrl) {

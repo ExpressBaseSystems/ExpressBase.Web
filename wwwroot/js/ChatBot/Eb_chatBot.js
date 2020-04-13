@@ -873,7 +873,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
         }
         else {  //if last control
-            if (!this.curForm.IsReadOnly)
+            if (this.curForm.HaveInputControls && !this.curForm.IsReadOnly)
                 this.showSubmit();
             else {
                 //var $btn = $(event.target).closest(".btn");

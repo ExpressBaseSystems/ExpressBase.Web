@@ -734,8 +734,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.getDisplayText = function (ctrl) {
         let text = ctrl.getDisplayMemberFromDOM();
-        if (ctrl.ObjType === "PowerSelect")
-            text = JSON.stringify(text);
+        if (ctrl.ObjType === "PowerSelect") {
+            let res = "";
+            let keys = Object.keys(text);
+            for (let i = 0; i < keys.length; i++) {
+                let itemVals = JSON.stringify(text[keys[i]]).slice(0, -2).slice(2).replace(/":"/g, " : " ).replace(/","/g, ", " );
+                res += itemVals + "</br>";
+            }
+            text = res.slice(0, -5);
+        }
         return text;
     };
 

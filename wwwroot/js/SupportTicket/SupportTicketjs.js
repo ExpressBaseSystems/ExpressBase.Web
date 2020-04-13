@@ -449,7 +449,7 @@ var EditTicket = function () {
             //    data.append("imageUploadForm" + i, file);
             //}
             // data.append("filedelet", JSON.stringify(window.filedel));
-            var solu = $("#soluid").val();
+            var solu = $("#soluid").attr("sol_id");
             var tktid = $("#tktid").val();
             var typ = $('input[name=optradio]:checked').val();
             var sts = $("#stsid option:selected").text().trim();

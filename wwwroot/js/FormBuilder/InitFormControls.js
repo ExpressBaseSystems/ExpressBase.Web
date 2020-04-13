@@ -684,9 +684,64 @@ var InitControls = function (option) {
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
-    this.SubmitButton = function (ctrl) {
-        $('#webformsave').removeAttr("disabled");
+    this.SubmitButton = function (ctrl, ctrlOpts) { 
+        $('#webform_submit').removeAttr("disabled");
+
+        //checksubmitbutton
+        
+            $('#webformsave-selbtn').hide();
+            if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+                $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
+                    <input type='text' class = "text-center" placeholder='Enter the captcha' id='cpatchaTextBox' />`);
+
+                ctrlOpts.code = "";
+                this.CreateCaptcha(ctrlOpts); 
+            } 
+            $('#webform_submit').off('click').on('click', function () { 
+                event.preventDefault(); 
+                if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+                    if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
+                        $('#webformsave').trigger('click');
+                    } else {
+                        EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
+                        this.CreateCaptcha(ctrlOpts);
+                    }
+                } else {
+                    $('#webformsave').trigger('click');
+                }
+            }.bind(this)); 
     }.bind(this);
+
+    this.CreateCaptcha = function (ctrlOpts) { 
+        //CAPTCHA
+        //clear the contents of captcha div first 
+        document.getElementById('captcha').innerHTML = "";
+        var charsArray =
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@!#$%&*";
+        var lengthOtp = 6;
+        var captcha = [];
+        for (var i = 0; i < lengthOtp; i++) {
+            //below code will not allow Repetition of Characters
+            var index = Math.floor(Math.random() * charsArray.length + 1); //get the next character from the array
+            if (captcha.indexOf(charsArray[index]) === -1)
+                captcha.push(charsArray[index]);
+            else i--;
+        }
+        var canv = document.createElement("canvas");
+        canv.id = "captcha";
+        canv.width = 100;
+        canv.height = 50;
+        var ctx = canv.getContext("2d");
+        ctx.font = "25px Verdana";
+        ctx.strokeText(captcha.join(""), 0, 30);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(300, 150);
+        ctx.stroke();
+        //storing captcha so that can validate you can save it somewhere else according to your specific requirements
+        ctrlOpts.code = captcha.join("");
+        document.getElementById("captcha").appendChild(canv); // adds the canvas to the body element
+    };
+
 
     this.iFrameOpen = function (ctrl) {
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";

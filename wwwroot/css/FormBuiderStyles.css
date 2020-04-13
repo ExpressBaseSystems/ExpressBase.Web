@@ -1890,3 +1890,17 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     line-height: 1.5;
     border-radius: 3px
 }
+#cpatchaTextBox {
+    margin-bottom: 10px;
+    width: 70%;
+    margin-left: 15%;
+    background-color: aliceblue;
+    padding: 7px;
+}
+[ctype=SubmitButton] > .ctrl-cover
+{
+    border:none;
+}
+[ctype=SubmitButton] > #captcha { 
+    pointer-events: none;
+}

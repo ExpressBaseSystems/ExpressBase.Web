@@ -344,6 +344,10 @@
     align-items: center;
 }
 
+.filter-box .input-group-addon.ps-srch > i, .form-buider-form .input-group-addon.ps-srch > i, [eb-type="BotForm"] .input-group-addon.ps-srch > i {
+    padding-left: 4.5px !important;
+}
+
 .v-select {
     flex-grow: 1;
     display: flex;

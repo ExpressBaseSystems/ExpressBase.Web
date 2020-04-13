@@ -110,6 +110,10 @@
 .msg-cont-bot {
     text-align: -webkit-left;
 }
+    .msg-cont-bot img {
+        max-width: 100% !important;
+        max-height: 100% !important;
+    }
 
 .eb-chatBox::-webkit-scrollbar-track, .eb-chatBox-dev::-webkit-scrollbar-track {
     background-color: #F5F5F5;
@@ -341,6 +345,10 @@
     box-shadow: none;
     height: 100%;
     position: absolute;
+}
+
+.chat-ctrl-cont[ebreadonly="true"] [name=ctrlsend] {
+    display:none;
 }
 
 .choose-btn {

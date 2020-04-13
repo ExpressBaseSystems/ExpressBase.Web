@@ -599,6 +599,7 @@ table.dataTable tr.group td {
 .popover-content {
     color: black !important;
     overflow: auto;
+    width: 100%;
 }
 
 .footerli, .filterli {
@@ -758,37 +759,64 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     border: 1px solid #ddd;
     border-top: 1px solid #ddd !important;
 }
-.tdheight .stage_actions button {
+.popover-content .nav-tabs {
+    margin-bottom: 1rem;
+}
+.popover-content .nav-tabs .nav-link.active {
+    /*border: 1px solid #ddd;
+    padding: 3px 1px;
+    border-bottom-color: #fff;
+    background-color: #fff;*/
+}
+.approval-popover {
+    max-width: 100%;
+    width:350px;
+}
+
+ .stage_actions button {
     padding: 3px 30px 3px 10px;
     font-size: 12px;
     /*width: auto;*/
 }
-.tdheight .stage_actions  {
-    width: auto !important;
+ .stage_actions  {
+    width: 100% !important;
     margin-right: 10px;
 }
 
-.tdheight .stage_actions a {
+ .stage_actions a {
     color: black !important;
 }
 
-.tdheight .stage_actions_cont {
+ .stage_actions_cont {
     display: flex;
     flex-direction: column;
 }
 
-.tdheight .stage-div {
+ .stage-div {
     display: flex;
     justify-content: space-between;
     margin: 2px;
 }
-.tdheight .stage-btn {
+.stage-btn {
     padding: 1px 12px;
+    background-color: #fff;
+    border: 1px solid #ddd;
 }
-.tdheight .stage-btn i {
+.stage-btn i {
     color: black !important;
 }
 
+.action-td{
+    border:0 !important;
+}
+
+.stage-label{
+    text-decoration:underline;
+}
+
 .tdheight .selectpicker {
-    display:none!important;
+    display: none !important;
+}
+.action-table, .comment-text{
+    width:100%
 }

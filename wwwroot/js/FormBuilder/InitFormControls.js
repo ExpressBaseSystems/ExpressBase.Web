@@ -1092,11 +1092,15 @@
         }
 
     }
-
-    this.ScriptButton = function (ctrl) {
+    this.SimplaeFileUploader = function (ctrl) {
+    
 
 
     }
+    this.ScriptButton = function (ctrl) {
+
+    }
+
 
 
 

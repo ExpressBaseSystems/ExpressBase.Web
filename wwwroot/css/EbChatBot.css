@@ -347,6 +347,10 @@
     position: absolute;
 }
 
+.chat-ctrl-cont[ebreadonly="true"] [name=ctrlsend] {
+    display:none;
+}
+
 .choose-btn {
     display: inline-block;
     margin-bottom: 0;

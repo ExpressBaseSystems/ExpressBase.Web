@@ -683,35 +683,35 @@
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
-    this.SubmitButton = function (ctrl, ctrlOpts) { 
+    this.SubmitButton = function (ctrl, ctrlOpts) {
         $('#webform_submit').removeAttr("disabled");
 
         //checksubmitbutton
-        
-            $('#webformsave-selbtn').hide();
-            if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
-                $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
+
+        $('#webformsave-selbtn').hide();
+        if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+            $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
                     <input type='text' class = "text-center" placeholder='Enter the captcha' id='cpatchaTextBox' />`);
 
-                ctrlOpts.code = "";
-                this.CreateCaptcha(ctrlOpts); 
-            } 
-            $('#webform_submit').off('click').on('click', function () { 
-                event.preventDefault(); 
-                if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
-                    if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
-                        $('#webformsave').trigger('click');
-                    } else {
-                        EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
-                        this.CreateCaptcha(ctrlOpts);
-                    }
-                } else {
+            ctrlOpts.code = "";
+            this.CreateCaptcha(ctrlOpts);
+        }
+        $('#webform_submit').off('click').on('click', function () {
+            event.preventDefault();
+            if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+                if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
                     $('#webformsave').trigger('click');
+                } else {
+                    EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
+                    this.CreateCaptcha(ctrlOpts);
                 }
-            }.bind(this)); 
+            } else {
+                $('#webformsave').trigger('click');
+            }
+        }.bind(this));
     }.bind(this);
 
-    this.CreateCaptcha = function (ctrlOpts) { 
+    this.CreateCaptcha = function (ctrlOpts) {
         //CAPTCHA
         //clear the contents of captcha div first 
         document.getElementById('captcha').innerHTML = "";
@@ -832,6 +832,26 @@
 
     this.DisplayPicture = function (ctrl, ctrlopts) {
         new DisplayPictureControl(ctrl, {});
+    };
+
+    this.ButtonSelect = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        let $buttons = $ctrl.find(".bs-btn");
+        $buttons.on("click", this.bs_btn_onclick);
+    };
+
+    this.bs_btn_onclick = function (e) {
+        let $btn = $(e.target).closest(".bs-btn");
+        let $checkBox = $btn.find("input");
+        if ($btn.attr("active") === "false") {
+            $btn.attr("active", "true");
+            $checkBox.prop("checked", true);
+
+        }
+        else if ($btn.attr("active") === "true") {
+            $btn.attr("active", "false");
+            $checkBox.prop("checked", false);
+        }
     };
 
     this.UserSelect = function (ctrl, ctrlopts) {
@@ -1103,7 +1123,7 @@
     }
 
     this.Rating = function (ctrl) {
-        if ((ebcontext.user.wc == 'uc') ||this.Bot) {
+        if ((ebcontext.user.wc == 'uc') || this.Bot) {
             $("#" + ctrl.EbSid).empty();
             $("#" + ctrl.EbSid).rateYo({
 
@@ -1155,7 +1175,7 @@
 
     }
     this.SimplaeFileUploader = function (ctrl) {
-    
+
 
 
     }

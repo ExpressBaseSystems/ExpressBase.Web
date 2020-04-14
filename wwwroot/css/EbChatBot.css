@@ -110,6 +110,7 @@
 .msg-cont-bot {
     text-align: -webkit-left;
 }
+
     .msg-cont-bot img {
         max-width: 100% !important;
         max-height: 100% !important;
@@ -258,7 +259,7 @@
     font-size: 12px;
     border: solid 1px #e0e0e0;
 }*/
-    .formname-btn {
+.formname-btn {
     border-radius: 4px;
     color: var(--botThemeColor);
     margin: 1px 1px;
@@ -279,6 +280,7 @@
         filter: hue-rotate(180deg);
         color: var(--botThemeColor);
     }
+
 .formname-btn_botformlist {
     height: 100px;
     border-radius: 4px;
@@ -303,6 +305,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
     .formname-btn_botformlist:hover {
         filter: hue-rotate(180deg);
         color: var(--botThemeColor);
@@ -347,9 +350,115 @@
     position: absolute;
 }
 
+
+/*.chat-ctrl-cont [name=ctrlsend] {
+    position: fixed;
+    bottom: 32px;
+    right: 22px;
+    font-size: 17px;
+    height: 35px;
+    border-radius: 10em;
+    width: 35px;
+    padding: 11px 14px;
+}*/
+
 .chat-ctrl-cont[ebreadonly="true"] [name=ctrlsend] {
-    display:none;
+    display: none;
 }
+
+
+.msg-cont .bs-cont {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+/*.msg-cont .bs-txt-wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    height: 70%;
+    padding-top: 18%;
+}*/
+
+.msg-cont .bs-txt-wrap {
+    padding: 6px 10px;
+}
+
+/*.msg-cont .bs-ckbx-wrap {
+    display: flex;
+    height: 30%;
+    padding: initial;
+    flex-direction: column;
+    text-align: center;
+    justify-content: space-around;
+}*/
+
+    .msg-cont .bs-ckbx-wrap input {
+        display:none;
+        height: 13px;
+        margin: auto;
+        transition-duration: 0.2s;
+    }
+
+/*.msg-cont .bs-btn {
+    background-color: #696a69;
+    color: white;
+    display: inline-flex;
+    font-size: 12px;
+    justify-content: space-around;
+    width: 85px;
+    flex-direction: column;
+    height: 95px;
+    letter-spacing: 0.5px;
+    text-align: center;
+    border-radius: 3.5px;
+    margin: 4px;
+    outline: none;
+}*/
+
+.msg-cont .bs-btn {
+    background-color: #ffffff;
+    color: var(--botThemeColor);
+    border: solid 1px var(--botThemeColor);
+    display: inline-flex;
+    font-weight: bold;
+    font-size: 12px;
+    justify-content: space-around;
+    width: 85px;
+    flex-direction: column;
+    letter-spacing: 0.5px;
+    text-align: center;
+    border-radius: 3.5px;
+    margin: 4px;
+    outline: none;
+}
+
+    .msg-cont .bs-btn[active="true"] {
+        background-color: #2bbdb9;
+    }
+
+.msg-cont .bs-btn-send .bs-txt-wrap {
+    background: #ff2a2a;
+    /*padding-top: 10%;*/
+    border-radius: 2.5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.msg-cont .bs-btn-send {
+    box-shadow: -2px 2px 3px 0px #808080bd;
+}
+
+.msg-cont[ctrl-type="ButtonSelect"] .ctrl-wraper {
+    border: none;
+}
+
+.msg-cont[ctrl-type="ButtonSelect"] [name=ctrlsend] {
+    display: none;
+}
+
 
 .choose-btn {
     display: inline-block;
@@ -417,6 +526,7 @@
     display: inline-block;
     padding: 0 5px
 }
+
 .ctrl-wraper {
     display: inline-block;
     width: calc(100% - 36px);
@@ -729,16 +839,17 @@
     /*text-align: center;*/
 }
 
-.survey-qry-cont{
+.survey-qry-cont {
+}
 
-}
 .survey-opt-cont {
-	padding-left: 10%;
-	padding-bottom: 15px;
-	font-size: 13px;
+    padding-left: 10%;
+    padding-bottom: 15px;
+    font-size: 13px;
 }
+
 .survey-btn-cont {
-	text-align: right;
+    text-align: right;
 }
 
 .contct-cont {
@@ -777,6 +888,7 @@
     padding: 2PX 3PX 2PX 6PX;
     border: solid 1px #dddddd;
 }
+
 .contactSubmit {
     border: solid 3px #dddddd;
 }
@@ -873,20 +985,20 @@
 }
 
     .loc-opt-cont[loc-count='1'] {
-        display :none;
+        display: none;
     }
 
-    .loc-opt-DD {
-        width: 100%;
-        padding: 3px 10px;
-        color: rgba(0, 0, 0, 0.7);
-        max-width: inherit;
-        border-radius: 8px;
-        border: none;
-        box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
-    }
+.loc-opt-DD {
+    width: 100%;
+    padding: 3px 10px;
+    color: rgba(0, 0, 0, 0.7);
+    max-width: inherit;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
+}
 
-.locinp {  /*overriding in formstyles.css*/
+.locinp { /*overriding in formstyles.css*/
     height: 1.2em !important;
     min-height: 0 !important;
     margin-left: 5px;

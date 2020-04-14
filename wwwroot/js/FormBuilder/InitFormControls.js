@@ -313,30 +313,32 @@
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            let $el = $(e.target);
-            if ($el[0].isOutside !== true) {
-                let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                let initDDwidth = $drpdwn.width();
-                let ofsetval = $drpdwn.offset();
-                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
-                let $div_detached = $drpdwn.detach();
-                let $form_div = $(e.target).closest("[eb-root-obj-container]");
-                $div_detached.appendTo($form_div).wrap($divclone);
-                $div_detached.width(initDDwidth);
-                $el[0].isOutside = true;
-                $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
-                $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+            if (!this.Bot) {
+                let $el = $(e.target);
+                if ($el[0].isOutside !== true) {
+                    let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                    let initDDwidth = $drpdwn.width();
+                    let ofsetval = $drpdwn.offset();
+                    let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
+                    let $div_detached = $drpdwn.detach();
+                    let $form_div = $(e.target).closest("[eb-root-obj-container]");
+                    $div_detached.appendTo($form_div).wrap($divclone);
+                    $div_detached.width(initDDwidth);
+                    $el[0].isOutside = true;
+                    $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+                    $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
 
+                }
+                //to set position of dropdrown just below selectpicker btn
+                else {
+                    let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                    let ddOfset = ($(e.target)).offsetParent().offset();
+                    let tgHght = ($(e.target)).offsetParent().height();
+                    $outdrpdwn.parent().addClass('open');
+                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
+                }
             }
-            //to set position of dropdrown just below selectpicker btn
-            else {
-                let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                let ddOfset = ($(e.target)).offsetParent().offset();
-                let tgHght = ($(e.target)).offsetParent().height();
-                $outdrpdwn.parent().addClass('open');
-                $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
-            }
-        });
+        }.bind(this));
         if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
     };
@@ -477,8 +479,6 @@
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
-        //this.Bot.nxtCtrlIdx++;
-        //this.Bot.callGetControl();
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -553,8 +553,8 @@
             this.initMap(ctrl.LocationCollection.$values[0]);
         }
 
-        this.Bot.nxtCtrlIdx++;
-        this.Bot.callGetControl();
+        //this.Bot.nxtCtrlIdx++;
+        //this.Bot.callGetControl();
     };
 
     this.initMap = function (ctrl) {
@@ -683,9 +683,64 @@
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
-    this.SubmitButton = function (ctrl) {
-        $('#webformsave').removeAttr("disabled");
+    this.SubmitButton = function (ctrl, ctrlOpts) {
+        $('#webform_submit').removeAttr("disabled");
+
+        //checksubmitbutton
+
+        $('#webformsave-selbtn').hide();
+        if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+            $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
+                    <input type='text' class = "text-center" placeholder='Enter the captcha' id='cpatchaTextBox' />`);
+
+            ctrlOpts.code = "";
+            this.CreateCaptcha(ctrlOpts);
+        }
+        $('#webform_submit').off('click').on('click', function () {
+            event.preventDefault();
+            if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+                if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
+                    $('#webformsave').trigger('click');
+                } else {
+                    EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
+                    this.CreateCaptcha(ctrlOpts);
+                }
+            } else {
+                $('#webformsave').trigger('click');
+            }
+        }.bind(this));
     }.bind(this);
+
+    this.CreateCaptcha = function (ctrlOpts) {
+        //CAPTCHA
+        //clear the contents of captcha div first 
+        document.getElementById('captcha').innerHTML = "";
+        var charsArray =
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@!#$%&*";
+        var lengthOtp = 6;
+        var captcha = [];
+        for (var i = 0; i < lengthOtp; i++) {
+            //below code will not allow Repetition of Characters
+            var index = Math.floor(Math.random() * charsArray.length + 1); //get the next character from the array
+            if (captcha.indexOf(charsArray[index]) === -1)
+                captcha.push(charsArray[index]);
+            else i--;
+        }
+        var canv = document.createElement("canvas");
+        canv.id = "captcha";
+        canv.width = 100;
+        canv.height = 50;
+        var ctx = canv.getContext("2d");
+        ctx.font = "25px Verdana";
+        ctx.strokeText(captcha.join(""), 0, 30);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(300, 150);
+        ctx.stroke();
+        //storing captcha so that can validate you can save it somewhere else according to your specific requirements
+        ctrlOpts.code = captcha.join("");
+        document.getElementById("captcha").appendChild(canv); // adds the canvas to the body element
+    };
+
 
     this.iFrameOpen = function (ctrl) {
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
@@ -779,6 +834,26 @@
         new DisplayPictureControl(ctrl, {});
     };
 
+    this.ButtonSelect = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        let $buttons = $ctrl.find(".bs-btn");
+        $buttons.on("click", this.bs_btn_onclick);
+    };
+
+    this.bs_btn_onclick = function (e) {
+        let $btn = $(e.target).closest(".bs-btn");
+        let $checkBox = $btn.find("input");
+        if ($btn.attr("active") === "false") {
+            $btn.attr("active", "true");
+            $checkBox.prop("checked", true);
+
+        }
+        else if ($btn.attr("active") === "true") {
+            $btn.attr("active", "false");
+            $checkBox.prop("checked", false);
+        }
+    };
+
     this.UserSelect = function (ctrl, ctrlopts) {
 
         let itemList = new EbItemListControl({
@@ -791,13 +866,22 @@
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.AutoSuggestion === true) {
-            $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
+            $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
         }
-        if (ctrl.TextTransform === 1)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
-        else if (ctrl.TextTransform === 2)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+        //if (ctrl.TextTransform === 1)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+        //else if (ctrl.TextTransform === 2)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+
+        $ctrl.keydown(function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
+
+        $ctrl.on('paste', function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
     };
 
     this.initNumeric = function (ctrl, $input) {
@@ -1039,12 +1123,13 @@
     }
 
     this.Rating = function (ctrl) {
-        if (ebcontext.user.wc == 'uc') {
-            $("#" + ctrl.EbSid + "_ratingDiv").empty();
-            $("#" + ctrl.EbSid + "_ratingDiv").rateYo({
+        if ((ebcontext.user.wc == 'uc') || this.Bot) {
+            $("#" + ctrl.EbSid).empty();
+            $("#" + ctrl.EbSid).rateYo({
 
                 numStars: ctrl.MaxVal,
-                fullStar: ctrl.FullStar,
+                maxValue: ctrl.MaxVal,
+                fullStar: !(ctrl.HalfStar),
                 halfStar: ctrl.HalfStar,
                 spacing: `${ctrl.Spacing}px`,
                 starWidth: `${ctrl.StarWidth}px`,
@@ -1089,11 +1174,15 @@
         }
 
     }
+    this.SimplaeFileUploader = function (ctrl) {
 
-    this.ScriptButton = function (ctrl) {
 
 
     }
+    this.ScriptButton = function (ctrl) {
+
+    }
+
 
 
 

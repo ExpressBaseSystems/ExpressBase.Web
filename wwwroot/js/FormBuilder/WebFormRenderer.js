@@ -137,6 +137,9 @@ const WebFormRender = function (option) {
             }
             else if (Obj.ObjType === "ProvisionUser" || Obj.ObjType === "ProvisionLocation")
                 opt.flatControls = this.flatControls;
+            else if (Obj.ObjType === "SubmitButton") { 
+                opt.renderMode = _renderMode;
+            }
             this.initControls.init(Obj, opt);
         }.bind(this));
     };
@@ -643,7 +646,11 @@ const WebFormRender = function (option) {
                     ebcontext.setup.ss.onLogOutMsg();
                 }, 3000);
                 return;
-            }            
+            }
+            if (_renderMode === 5) {
+                EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' }); 
+                return;
+            }
 
             respObj.FormData = JSON.parse(respObj.FormData);
             let locName = ebcontext.locations.CurrentLocObj.LongName;
@@ -1251,7 +1258,7 @@ const WebFormRender = function (option) {
                 if (mode === 'View Mode')
                     r.push('webformclone');
             }
-        }        
+        }
         return r;
     };
 
@@ -1504,29 +1511,16 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.CheckSubmitButton = function () {
-        let btn = getFlatObjOfType(this.FormObj, "SubmitButton");
-        if (btn && btn.length > 0) {
-            $('#webformsave-selbtn').remove();
-            this.$saveBtn = $('#webformsave');
-        }
-        else if (_renderMode === 4) {//my profile
-
-        }
-    };
-
     this.init = function () {
         if (this.formDataWrapper.Status !== 200) {
             $("body").empty().html(this.formDataWrapper.Message);
 
             //if (this.formDataWrapper.Status === 401)
-                window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
+            window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
 
             return;
         }
 
-
-        this.CheckSubmitButton();
         this.TableNames = this.getNCCTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
         this.setHeader(this.mode);

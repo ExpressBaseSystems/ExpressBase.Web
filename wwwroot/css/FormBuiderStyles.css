@@ -1283,7 +1283,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
-.card-cont, .loc-cont {
+.loc-cont {
     border: solid 1px #e5e5e5;
     border-radius: 1.3em;
     min-height: 300px;
@@ -1318,7 +1318,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     height: 30.83em;
 }
 
-.card-label, .loc-label {
+.loc-label {
     font-size: 12pt;
     line-height: 15pt;
     float: left;
@@ -1330,28 +1330,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: calc(100% - 67px);
 }
 
-.card-content, .loc-content {
+.loc-content {
     color: rgba(0, 0, 0, .40);
-}
-
-.cards-cont {
-    padding-right: 3px;
-}
-
-.card-bottom, .loc-bottom {
-    padding: 8px 12px 0 12px;
-}
-
-.card-bottom {
-    border: solid 1px #ddd;
-    border-top: none;
-    border-radius: 0 0 1.3em 1.3em;
-}
-
-.card-img {
-    /*border-radius: 1.3em 1.3em 0 0;*/
-    height: 100%;
-    width: auto;
 }
 
 /*copied from css, for card img fieldset temp*/

@@ -178,7 +178,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
                         EbDynamicCards.InitFromDataBase(this.ServiceClient);
-                        EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
+                        EbDynamicCards.BareControlHtml4Bot = EbDynamicCards.GetBareHtml();
                     }
                     else if (control is EbSurvey)
                     {

@@ -791,13 +791,22 @@
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.AutoSuggestion === true) {
-            $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
+            $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
         }
-        if (ctrl.TextTransform === 1)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
-        else if (ctrl.TextTransform === 2)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+        //if (ctrl.TextTransform === 1)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+        //else if (ctrl.TextTransform === 2)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+
+        $ctrl.keydown(function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
+
+        $ctrl.on('paste', function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
     };
 
     this.initNumeric = function (ctrl, $input) {

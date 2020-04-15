@@ -732,7 +732,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
     };
 
-    this.getDisplayText = function (ctrl) {
+    this.getDisplayHTML= function (ctrl) {
         let text = ctrl.getDisplayMemberFromDOM();
         if (ctrl.ObjType === "PowerSelect") {
             let res = "";
@@ -762,7 +762,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
         this.curVal = this.curCtrl.getValue();
-        this.displayValue = this.getDisplayText(this.curCtrl);
+        this.displayValue = this.getDisplayHTML(this.curCtrl);
         if (this.curCtrl.ObjType !== 'StaticCardSet') {
             this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         }

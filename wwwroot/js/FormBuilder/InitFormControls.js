@@ -1,6 +1,6 @@
 ﻿var InitControls = function (option) {
     if (option) {
-        this.Bot = option.botBuilder;
+        this.Bot = option.renderer;
         this.Wc = option.wc;
         this.Cid = option.Cid;
         this.Env = option.Env;
@@ -842,17 +842,24 @@
 
     this.bs_btn_onclick = function (e) {
         let $btn = $(e.target).closest(".bs-btn");
-        let $checkBox = $btn.find("input");
-        if ($btn.attr("active") === "false") {
-            $btn.attr("active", "true");
-            $checkBox.prop("checked", true);
+        $btn.siblings(".bs-btn").attr("active", "false");
+        $btn.attr("active", "true");
+        $btn.closest(".chat-ctrl-cont").find("[name='ctrlsend']").trigger("click");
+    }.bind(this);
 
-        }
-        else if ($btn.attr("active") === "true") {
-            $btn.attr("active", "false");
-            $checkBox.prop("checked", false);
-        }
-    };
+    //this.bs_btn_onclick = function (e) {
+    //    let $btn = $(e.target).closest(".bs-btn");
+    //    let $checkBox = $btn.find("input");
+    //    if ($btn.attr("active") === "false") {
+    //        $btn.attr("active", "true");
+    //        $checkBox.prop("checked", true);
+
+    //    }
+    //    else if ($btn.attr("active") === "true") {
+    //        $btn.attr("active", "false");
+    //        $checkBox.prop("checked", false);
+    //    }
+    //};
 
     this.UserSelect = function (ctrl, ctrlopts) {
 

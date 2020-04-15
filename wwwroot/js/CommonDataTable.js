@@ -3976,7 +3976,12 @@
             type: "POST",
             url: "../dv/PostWebformData",
             data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)},
-            success: this.cccccc.bind(this, $td)
+            success: this.cccccc.bind(this, $td),
+            error: function (xhr, error) {
+                console.log(xhr); console.log(error);
+                console.debug(xhr); console.debug(error);
+
+            },
         });
     };
 

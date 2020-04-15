@@ -373,6 +373,40 @@
     flex-wrap: wrap;
 }
 
+.msg-cont .bs-btn {
+    background-color: #ffffff;
+    color: var(--botThemeColor);
+    border: solid 1px var(--botThemeColor);
+    display: inline-flex;
+    height: 30px;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 5px 8px;
+    justify-content: space-around;
+    /* width: 109px; */
+    flex-direction: column;
+    letter-spacing: 0.5px;
+    text-align: center;
+    border-radius: 3.5px;
+    margin: 4px;
+    outline: none;
+    transition-duration: 0.2s;
+}
+    .msg-cont .bs-btn:focus {
+        background-color: green;
+        color: #ffffff;
+        border: green;
+    }
+
+    .msg-cont .bs-btn:hover {
+        background-color: var(--botThemeColor);
+        color: #ffffff;
+    }
+
+.msg-cont[ctrl-type="ButtonSelect"] [name=ctrlsend] {
+    display: none;
+}
+
 /*.msg-cont .bs-txt-wrap {
     display: flex;
     flex-direction: column;
@@ -382,11 +416,11 @@
     padding-top: 18%;
 }*/
 
-.msg-cont .bs-txt-wrap {
+/*.msg-cont .bs-txt-wrap { //card design
     padding: 6px 10px;
-}
+}*/
 
-/*.msg-cont .bs-ckbx-wrap {
+/*.msg-cont .bs-ckbx-wrap { //card design
     display: flex;
     height: 30%;
     padding: initial;
@@ -395,14 +429,14 @@
     justify-content: space-around;
 }*/
 
-    .msg-cont .bs-ckbx-wrap input {
+/*.msg-cont .bs-ckbx-wrap input { //card design
         display:none;
         height: 13px;
         margin: auto;
         transition-duration: 0.2s;
-    }
+    }*/
 
-/*.msg-cont .bs-btn {
+/*.msg-cont .bs-btn { //card design
     background-color: #696a69;
     color: white;
     display: inline-flex;
@@ -418,45 +452,24 @@
     outline: none;
 }*/
 
-.msg-cont .bs-btn {
-    background-color: #ffffff;
-    color: var(--botThemeColor);
-    border: solid 1px var(--botThemeColor);
-    display: inline-flex;
-    font-weight: bold;
-    font-size: 12px;
-    justify-content: space-around;
-    width: 85px;
-    flex-direction: column;
-    letter-spacing: 0.5px;
-    text-align: center;
-    border-radius: 3.5px;
-    margin: 4px;
-    outline: none;
-}
-
-    .msg-cont .bs-btn[active="true"] {
+/*.msg-cont .bs-btn[active="true"] { //card design
         background-color: #2bbdb9;
-    }
+    }*/
 
-.msg-cont .bs-btn-send .bs-txt-wrap {
+/*.msg-cont .bs-btn-send .bs-txt-wrap { //card design
     background: #ff2a2a;
-    /*padding-top: 10%;*/
+    //padding-top: 10%;
     border-radius: 2.5px;
     font-size: 14px;
     font-weight: bold;
-}
+}*/
 
-.msg-cont .bs-btn-send {
+/*.msg-cont .bs-btn-send { //card design
     box-shadow: -2px 2px 3px 0px #808080bd;
-}
+}*/
 
 .msg-cont[ctrl-type="ButtonSelect"] .ctrl-wraper {
     border: none;
-}
-
-.msg-cont[ctrl-type="ButtonSelect"] [name=ctrlsend] {
-    display: none;
 }
 
 

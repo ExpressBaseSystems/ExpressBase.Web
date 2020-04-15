@@ -1004,6 +1004,17 @@ document.addEventListener("click", function (e) {
 });
 
 
+function textTransform(element, transform_type) {
+    setTimeout(function () {
+        let value = $(element).val().trim();
+        if (transform_type === 1)
+            $(element).val(value.toLowerCase());
+        else if (transform_type === 2)
+            $(element).val(value.toUpperCase());
+    }, 100);
+}
+
+
 function EBPSSetDisplayMember(p1, p2) {
     p1 = p1 + "";
     if (p1 === '')

@@ -97,15 +97,6 @@ function isUnique(element) {
     }
 }
 
-function textTransform(element, transform_type) {
-    setTimeout(function () {
-        if (transform_type === 1)
-            $(element).val($(element).val().trim().toLowerCase());
-        else if (transform_type === 2)
-            $(element).val($(element).val().trim().toUpperCase());
-    }, 100);
-}
-
 function ZmaxLen(el, len, noDec, evt) {
     var pval = $(el).val();
     var result;

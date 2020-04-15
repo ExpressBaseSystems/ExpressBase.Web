@@ -649,7 +649,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var resObj = {};
         var isPersistAnyField = false;
         this.curDispValue = '';
-        $.each(cardCtrl.CardFields, function (h, fObj) {
+        $.each(cardCtrl.CardFields.$values, function (h, fObj) {
             if (!fObj.DoNotPersist) {
                 isPersistAnyField = true;
             }
@@ -659,10 +659,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             $(event.target).parents().find('.slick-current .card-btn-cont .btn').click();
         }
         if (isPersistAnyField) {
-            $.each(cardCtrl.CardCollection, function (k, cObj) {
+            $.each(cardCtrl.CardCollection.$values, function (k, cObj) {
                 if (cardCtrl.SelectedCards.indexOf(cObj.CardId) !== -1) {
                     var tempArray = new Array();
-                    $.each(cardCtrl.CardFields, function (h, fObj) {
+                    $.each(cardCtrl.CardFields.$values, function (h, fObj) {
                         if (!fObj.DoNotPersist) {
                             tempArray.push(new Object({ Value: cObj.customFields[fObj.Name], Type: fObj.EbDbType, Name: fObj.Name }));
                         }
@@ -734,8 +734,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.getDisplayText = function (ctrl) {
         let text = ctrl.getDisplayMemberFromDOM();
-        if (ctrl.ObjType === "PowerSelect")
-            text = JSON.stringify(text);
+        if (ctrl.ObjType === "PowerSelect") {
+            let res = "";
+            let keys = Object.keys(text);
+            for (let i = 0; i < keys.length; i++) {
+                let itemVals = JSON.stringify(text[keys[i]]).slice(0, -2).slice(2).replace(/":"/g, " : ").replace(/","/g, ", ");
+                res += itemVals + "</br>";
+            }
+            text = res.slice(0, -5);
+        }
         return text;
     };
 
@@ -756,17 +763,24 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
         this.curVal = this.curCtrl.getValue();
         this.displayValue = this.getDisplayText(this.curCtrl);
-        if (this.curCtrl.ObjType !== 'StaticCardSet') {
+        if (this.curCtrl.ObjType !== 'StaticCardSet' && this.curCtrl.ObjType !== 'DynamicCardSet') {
             this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         }
         else {
             var $msg = this.$userMsgBox.clone();
-            //let msgg = $btn.parent().parent().html() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
-
-            //$btn.hide();
-            //$btn.parent().prev().children('button').hide();
             $btn.parent().parent().remove();
-            $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
+            if ($btn.parent().prev().find('.table tbody').length === 1) {// if summary is present
+                let $cartSummary = $btn.parent().prev();
+                $cartSummary.find('table th').last().remove();
+                $cartSummary.find('table td .remove-cart-item').parent().remove();
+                let $sumTd = $cartSummary.find('table td[colspan]');
+                if ($sumTd.length > 0) {// if sum is present
+                    $sumTd.attr('colspan', parseInt($sumTd.attr('colspan')) - 1);
+                }
+                $msg.find('.msg-wraper-user').html($cartSummary.html()).append(this.getTime());
+            }
+            else
+                $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
         }
@@ -873,7 +887,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
         }
         else {  //if last control
-            if (!this.curForm.IsReadOnly)
+            if (this.curForm.HaveInputControls && !this.curForm.IsReadOnly)
                 this.showSubmit();
             else {
                 //var $btn = $(event.target).closest(".btn");
@@ -931,7 +945,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
-        return '<div class="chat-ctrl-cont">' + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
+        return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
     };
 
     this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {
@@ -1150,6 +1164,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             return;
         if (this.initControls[this.curCtrl.ObjType] !== undefined)
             this.initControls[this.curCtrl.ObjType](this.curCtrl, {});
+        if (this.curCtrl.IsReadOnly || this.curCtrl.IsDisable) {
+            this.nxtCtrlIdx++;
+            this.callGetControl();
+        }
     };
 
     this.submitReqCheck = function () {

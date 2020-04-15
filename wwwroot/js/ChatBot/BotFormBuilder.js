@@ -620,20 +620,33 @@
         }.bind(this);
 
         this.setAllChildObjColumns = function (PropsObj) {
-            $.each(PropsObj.CardFields.$values, function (i, item) { item.Columns = PropsObj.Columns; });
-
-            var _this = this;
-            Object.defineProperty(PropsObj.CardFields.$values, "push", {
-                configurable: false,
-                enumerable: false, // hide from for...in
-                writable: false,
-                value: function () {
-                    for (var i = 0, n = this.length, l = arguments.length; i < l; i++ , n++) {
-                        _this.updateColumn(this, n, this[n] = arguments[i], PropsObj); // assign  ||raise your event
-                    }
-                    return n;
+            let tempVar = JSON.parse(JSON.stringify(PropsObj.Columns));
+            Object.defineProperty(PropsObj, "Columns", {
+                get: function () { return tempVar; },
+                set: function (val) {
+                    $.each(PropsObj.CardFields.$values, function (i, item) { item.Columns = val; });
+                    tempVar = val;
                 }
             });
+
+
+            //$.each(PropsObj.CardFields.$values, function (i, item) { item.Columns = PropsObj.Columns; });
+
+            //if (!PropsObj.CardFields.$values.hasOwnProperty("push")) {
+            //    var _this = this;
+            //    Object.defineProperty(PropsObj.CardFields.$values, "push", {
+            //        configurable: false,
+            //        enumerable: false, // hide from for...in
+            //        writable: false,
+            //        value: function () {
+            //            for (var i = 0, n = this.length, l = arguments.length; i < l; i++ , n++) {
+            //                _this.updateColumn(this, n, this[n] = arguments[i], PropsObj); // assign  ||raise your event
+            //            }
+            //            return n;
+            //        }
+            //    });
+            //}
+            
         }.bind(this);
 
         this.updateColumn = function (arr, a, p, PropsObj) {
@@ -649,10 +662,11 @@
     this.RefreshControl = function (obj) {
         //Cards are exceptional, So separate chk required
         if (obj.EbSid.substring(0, 13) === 'StaticCardSet' || obj.EbSid.substring(0, 14) === 'DynamicCardSet') {
-            this.RefreshCardControl(obj);
+            //this.RefreshCardControl(obj);
             return;
         }
-        else if (obj.EbSid.substring(0, 6) === 'Survey') {
+        else
+        if (obj.EbSid.substring(0, 6) === 'Survey') {
             this.InitSurveyControl(obj);//////////////////////fbnc
         }
         var NewHtml = obj.$WrapedCtrl4Bot.outerHTML();
@@ -670,41 +684,41 @@
         //}
     };
 
-    this.RefreshCardControl = function (obj) {
-        return; //////
-        var wrapHtml = obj.$WrapedCtrl4Bot.outerHTML();
-        var $cards = $("#" + obj.EbSid);
-        $cards.html($(wrapHtml).html());
-        $cards.find('.ctrl-wraper').html(obj.DesignHtml4Bot);
-        var $carddiv = $cards.find('.card-cont');
-        var cardbtn = $cards.find('.card-cont').html();
-        $carddiv.empty();
-        $.each(obj.CardFields.$values, function (k, fobj) {
-            $carddiv.append($(fobj.$WrapedCtrl4Bot["0"]).find('.ctrl-wraper').html());
-        });
-        if (obj.CardFields.$values.length === 0)
-            $carddiv.append("<div style='height: 57px;'></div>");
-        $carddiv.append(cardbtn);
-        if (!obj.MultiSelect) {
-            $carddiv.siblings('.card-summary-cont').empty();
-        }
-    };
+    //this.RefreshCardControl = function (obj) {
+    //    return; //////
+        //var wrapHtml = obj.$WrapedCtrl4Bot.outerHTML();
+        //var $cards = $("#" + obj.EbSid);
+        //$cards.html($(wrapHtml).html());
+        //$cards.find('.ctrl-wraper').html(obj.DesignHtml4Bot);
+        //var $carddiv = $cards.find('.card-cont');
+        //var cardbtn = $cards.find('.card-cont').html();
+        //$carddiv.empty();
+        //$.each(obj.CardFields.$values, function (k, fobj) {
+        //    $carddiv.append($(fobj.$WrapedCtrl4Bot["0"]).find('.ctrl-wraper').html());
+        //});
+        //if (obj.CardFields.$values.length === 0)
+        //    $carddiv.append("<div style='height: 57px;'></div>");
+        //$carddiv.append(cardbtn);
+        //if (!obj.MultiSelect) {
+        //    $carddiv.siblings('.card-summary-cont').empty();
+        //}
+   // };
 
-    this.RedrawCardInEbCards = function (obj) {
-        var crd = PropsObj.CardCollection.$values;
-        $("#" + obj.EbSid).children().remove();
-        var WholeHtml = "";
-        for (i = 0; i < crd.length; i++) {
-            var NewHtml = crd[i].$Control.outerHTML();
-            var metas = AllMetas[$("#" + crd[i].EbSid).attr("eb-type")];
-            $.each(metas, function (i, meta) {
-                var name = meta.name;
-                if (meta.IsUIproperty) {
-                    WholeHtml += NewHtml.replace('@' + name + '@', crd[i][name]);
-                }
-            });
-        }
-    }
+    //this.RedrawCardInEbCards = function (obj) {
+    //    var crd = PropsObj.CardCollection.$values;
+    //    $("#" + obj.EbSid).children().remove();
+    //    var WholeHtml = "";
+    //    for (i = 0; i < crd.length; i++) {
+    //        var NewHtml = crd[i].$Control.outerHTML();
+    //        var metas = AllMetas[$("#" + crd[i].EbSid).attr("eb-type")];
+    //        $.each(metas, function (i, meta) {
+    //            var name = meta.name;
+    //            if (meta.IsUIproperty) {
+    //                WholeHtml += NewHtml.replace('@' + name + '@', crd[i][name]);
+    //            }
+    //        });
+    //    }
+    //}
 
 
     //this.RefreshCardColl = function (PropsObj) {

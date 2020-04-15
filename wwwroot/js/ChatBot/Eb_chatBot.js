@@ -950,7 +950,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
-        return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
+        return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<div class="ctrl-send-wraper"><button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>';
     };
 
     this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {

@@ -7,11 +7,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using ExpressBase.Common;
+using ExpressBase.Common.Excel;
 using ExpressBase.Common.Structures;
 using ExpressBase.Objects;
 using ExpressBase.Objects.Objects;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -37,59 +39,73 @@ namespace ExpressBase.Web.Controllers
         [HttpPost]
         public async void UploadExcelAsync()
         {
-            var files = Request.Form.Files;
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "Exceluploaded", files[0].FileName);
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                await files[0].CopyToAsync(stream);
+            IFormFileCollection files = Request.Form.Files;
+            Stream stream = (files[0].OpenReadStream());
+            //var y = x as FileStream;
+            //FileStream stream;
+            //var path = Path.Combine(Directory.GetCurrentDirectory(), "Exceluploaded", files[0].FileName);
+            //using (var stream = new FileStream(path, FileMode.Create))
+            //{
+            //    await files[0].CopyToAsync(stream);
 
-            }
+            //}
 
             using (ExcelEngine excelEngine = new ExcelEngine())
             {
                 IApplication application = excelEngine.Excel;
                 application.DefaultVersion = ExcelVersion.Excel2016;
-                FileStream stream = new FileStream(path, FileMode.Open);
+                //FileStream stream = new FileStream(path, FileMode.Open);
                 IWorkbook workbook = application.Workbooks.Open(stream, ExcelOpenType.Automatic);
-                foreach (var worksheet in workbook.Worksheets)
-                {
-                    DataTable tbl = new DataTable();
+                foreach (IWorksheet worksheet in workbook.Worksheets)
+                { 
                     EbDataTable _ebtbl = new EbDataTable();
-                    tbl = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames);
-                    int cnt = tbl.Columns.Count;
+                    DataTable tbl = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames);
+                    //int cnt = tbl.Columns.Count;
 
                     string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
 
                     //....set ebdatacolumns....
                     char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-                    int colcnt = tbl.Columns.Count;
+                   // int colcnt = tbl.Columns.Count;
 
-                    for (int i = 1; i <= colcnt; i++)
+                    for (int i = 1; i <= tbl.Columns.Count; i++)
                     {
                         string s = worksheet.Range[1, i].Comment.Text;
                         ExcelColumns colInfo = (ExcelColumns)JsonConvert.DeserializeObject(s, typeof(ExcelColumns));
-                        EbDataColumn dc = new EbDataColumn { ColumnName = colInfo.Name, Type = colInfo.DbType, ColumnIndex = (i - 1) };
+                        EbDataColumn dc = new EbDataColumn { ColumnName = colInfo.Name, Type = colInfo.DbType, ColumnIndex = (i - 1), TableName = colInfo.TableName };
                         _ebtbl.Columns.Add(dc);
                     }
 
                     foreach (DataRow row in tbl.Rows)
                     {
-                        _ebtbl.Rows.Add(new EbDataRow());
-                        EbDataRow rr = new EbDataRow();
+                        EbDataRow rr = _ebtbl.NewDataRow2();
+                        for (int i = 0; i < tbl.Columns.Count; i++)
+                        {
+                            rr[i] = row[i];
+                        }
+                        _ebtbl.Rows.Add(rr);
+
                     }
 
                     EbObjectParticularVersionResponse formObj = this.ServiceClient.Get(new EbObjectParticularVersionRequest() { RefId = _refid });
                     EbWebForm _form = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-
-                    Dictionary<string, SingleTable> _multiTable = new Dictionary<string, SingleTable>();
-                   // _multiTable.Add(tablename, new SingleTable { });
-                    WebformData formdata = new WebformData { MultipleTables = _multiTable };
-                    InsertDataFromWebformResponse resp = this.ServiceClient.Post(new InsertDataFromWebformRequest
-                    {
-                        RefId = _refid,
-                        CurrentLoc = this.LoggedInUser.Preference.DefaultLocation,
-                        FormData = formdata
-                    });
+                    _form.AfterRedisGet(this.Redis, this.ServiceClient);
+                    //Dictionary<string, SingleTable> _multiTable = new Dictionary<string, SingleTable>();
+                    //foreach (TableSchema _schema in _form.FormSchema.Tables)
+                    //{
+                    //    SingleTable _stbl = new SingleTable();
+                    //    _form.GetFormattedData(_ebtbl, _stbl, _schema);
+                    //    _multiTable.Add(_form.TableName, _stbl);
+                    //}
+                    //WebformData formdata = new WebformData { MultipleTables = _multiTable };
+                    //InsertDataFromWebformResponse resp = this.ServiceClient.Post(new InsertDataFromWebformRequest
+                    //{
+                    //    RefId = _refid,
+                    //    CurrentLoc = this.LoggedInUser.Preference.DefaultLocation,
+                    //    FormData = formdata,
+                    //    TableName = _form.TableName,
+                    //    UserObj = this.LoggedInUser,
+                    //});
 
                     //string PushJson = GetDataPusherJson(_form);
                     //InsertOrUpdateFormDataResp resp = this.ServiceClient.Any(new InsertOrUpdateFormDataRqst
@@ -107,28 +123,30 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public string GetDataPusherJson(EbWebForm _form)
-        {
-            JObject Obj = new JObject();
+        //public string GetDataPusherJson(EbWebForm _form)
+        //{
+        //    JObject Obj = new JObject();
 
-            foreach (TableSchema _table in _form.FormSchema.Tables)
-            {
-                JObject o = new JObject();
-                foreach (ColumnSchema _column in _table.Columns)
-                {
-                    o[_column.ColumnName] = "value";
-                }
-                JArray array = new JArray();
-                array.Add(o);
-                Obj[_table.TableName] = array;
-            }
-            return Obj.ToString();
-        }
+        //    foreach (TableSchema _table in _form.FormSchema.Tables)
+        //    {
+        //        JObject o = new JObject();
+        //        foreach (ColumnSchema _column in _table.Columns)
+        //        {
+        //            o[_column.ColumnName] = "value";
+        //        }
+        //        JArray array = new JArray();
+        //        array.Add(o);
+        //        Obj[_table.TableName] = array;
+        //    }
+        //    return Obj.ToString();
+        //}
+
+
         public FileStreamResult download()
         {
             char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
             string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
-            var response = this.ServiceClient.Get<ExcelDownloadResponse>(new ExcelDownloadRequest { _refid = _refid });
+            ExcelDownloadResponse response = this.ServiceClient.Get<ExcelDownloadResponse>(new ExcelDownloadRequest { _refid = _refid });
 
             string _excelName = response.formName + ".xlsx";
 
@@ -140,7 +158,7 @@ namespace ExpressBase.Web.Controllers
                 IWorksheet worksheet = workbook.Worksheets[0];
 
                 int colIndex = 1;
-                foreach (var _col in response.colsInfo)
+                foreach (ColumnsInfo _col in response.colsInfo)
                 {
                     string colId = excel[colIndex - 1].ToString() + 1;
                     worksheet.Range[1, colIndex].Text = _col.Label;

@@ -743,7 +743,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
             text = res.slice(0, -5);
         }
-        if (ctrl.ObjType === "SimplaeFileUploader") {
+        if (ctrl.ObjType === "SimpleFileUploader") {
             text = $("#" + ctrl.EbSid)[0].outerHTML;
 
         }

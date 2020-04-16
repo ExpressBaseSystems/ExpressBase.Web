@@ -1181,7 +1181,7 @@
         }
 
     }
-    this.SimplaeFileUploader = function (ctrl) {
+    this.SimpleFileUploader = function (ctrl) {
 
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
@@ -1206,17 +1206,20 @@
 
         ctrl.setValue = function (p1) {
             console.log("setvalue " + " p1 " + p1);
-            let preloaded = [];
-            let refidArr = p1.split(',');
-            for (var j = 0; j < refidArr.length; j++) {
+            if ((p1 != null) && (p1 != "")) {
+                let preloaded = [];
+                let refidArr = p1.split(',');
+                for (var j = 0; j < refidArr.length; j++) {
 
-                var src = `/images/small/${refidArr[j]}.jpg`;
-                var fileno = j;
-                var fltype = "png";
-                preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype ,refid:refidArr[j]});
+                    var src = `/images/small/${refidArr[j]}.jpg`;
+                    var fileno = j;
+                    var fltype = "png";
+                    preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
+                }
+
+                filePlugin.createPreloaded(preloaded);
             }
             
-            filePlugin.createPreloaded(preloaded);
         };
         ctrl.clear = function () {
 

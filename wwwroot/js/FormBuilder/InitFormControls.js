@@ -186,9 +186,10 @@
             //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else if (ctrl.ShowDateAs_ === 2) {
-            $input.datetimepickers({
-                format: "YYYY",
-                viewMode: "years"
+            $input.yearpicker({
+                year: parseInt(ctrl.DataVals.Value),
+                startYear: 1800,
+                endYear: 2200
             });
         }
         else {
@@ -256,7 +257,7 @@
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
-        else
+        else if (ctrl.ShowDateAs_ !== 2)
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();

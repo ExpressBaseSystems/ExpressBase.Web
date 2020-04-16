@@ -1,6 +1,6 @@
 ﻿var InitControls = function (option) {
     if (option) {
-        this.Bot = option.botBuilder;
+        this.Bot = option.renderer;
         this.Wc = option.wc;
         this.Cid = option.Cid;
         this.Env = option.Env;
@@ -186,9 +186,10 @@
             //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else if (ctrl.ShowDateAs_ === 2) {
-            $input.datetimepickers({
-                format: "YYYY",
-                viewMode: "years"
+            $input.yearpicker({
+                year: parseInt(ctrl.DataVals.Value),
+                startYear: 1800,
+                endYear: 2200
             });
         }
         else {
@@ -256,7 +257,7 @@
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
-        else
+        else if (ctrl.ShowDateAs_ !== 2)
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
@@ -842,17 +843,24 @@
 
     this.bs_btn_onclick = function (e) {
         let $btn = $(e.target).closest(".bs-btn");
-        let $checkBox = $btn.find("input");
-        if ($btn.attr("active") === "false") {
-            $btn.attr("active", "true");
-            $checkBox.prop("checked", true);
+        $btn.siblings(".bs-btn").attr("active", "false");
+        $btn.attr("active", "true");
+        $btn.closest(".chat-ctrl-cont").find("[name='ctrlsend']").trigger("click");
+    }.bind(this);
 
-        }
-        else if ($btn.attr("active") === "true") {
-            $btn.attr("active", "false");
-            $checkBox.prop("checked", false);
-        }
-    };
+    //this.bs_btn_onclick = function (e) {
+    //    let $btn = $(e.target).closest(".bs-btn");
+    //    let $checkBox = $btn.find("input");
+    //    if ($btn.attr("active") === "false") {
+    //        $btn.attr("active", "true");
+    //        $checkBox.prop("checked", true);
+
+    //    }
+    //    else if ($btn.attr("active") === "true") {
+    //        $btn.attr("active", "false");
+    //        $checkBox.prop("checked", false);
+    //    }
+    //};
 
     this.UserSelect = function (ctrl, ctrlopts) {
 
@@ -1174,10 +1182,51 @@
         }
 
     }
-    this.SimplaeFileUploader = function (ctrl) {
+    this.SimpleFileUploader = function (ctrl) {
+
+        let filePlugin = $("#" + ctrl.EbSid).fileUploader({
+            fileCtrl: ctrl,
+            botCtrl: this.Bot,
+            maxSize: ctrl.MaxSize,
+            fileTypes: ctrl.FileTypes,
+            maxFiles: ctrl.MaxFiles
+
+        });
+       
+
+        ctrl.getValueFromDOM = function (p1) {
+            let lk = filePlugin.refidListfn();
+            console.log("getValueFromDOM " + " p1 "+p1+"  refid:"+lk );
+            return lk;
+        };
+        ctrl.bindOnChange = function (p1) {
+            console.log("bindOnChange " + " p1 " +p1);
+            $("#" + ctrl.EbSid + "_bindfn").on("change", p1);
+        };
 
 
+        ctrl.setValue = function (p1) {
+            console.log("setvalue " + " p1 " + p1);
+            if ((p1 != null) && (p1 != "")) {
+                let preloaded = [];
+                let refidArr = p1.split(',');
+                for (var j = 0; j < refidArr.length; j++) {
 
+                    var src = `/images/small/${refidArr[j]}.jpg`;
+                    var fileno = j;
+                    var fltype = "png";
+                    preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
+                }
+
+                filePlugin.createPreloaded(preloaded);
+            }
+            
+        };
+        ctrl.clear = function () {
+
+            console.log("clear " );
+            return filePlugin.clearFiles();
+        }
     }
     this.ScriptButton = function (ctrl) {
 

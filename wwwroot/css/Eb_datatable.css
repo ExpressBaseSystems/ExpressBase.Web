@@ -770,7 +770,7 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 }
 .approval-popover {
     max-width: 100%;
-    width:350px;
+    /*width:350px;*/
 }
 
  .stage_actions button {
@@ -820,3 +820,17 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .action-table, .comment-text{
     width:100%
 }
+.comment-td {
+    width: 100px;
+    overflow: hidden;
+    /*display: inline-block;
+    white-space:nowrap;
+    text-overflow:ellipsis;*/
+    word-break: break-all;
+}
+/*.comment-td:hover {
+    text-overflow: clip;
+    white-space: normal;
+    word-break: break-all;
+}*/
+

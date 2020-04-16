@@ -21,7 +21,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.bearerToken = null;
     this.refreshToken = null;
     this.initControls = new InitControls({
-        botBuilder: this,
+        renderer: this,
         wc: "bc"
     });
     this.typeDelay = 200;
@@ -649,7 +649,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var resObj = {};
         var isPersistAnyField = false;
         this.curDispValue = '';
-        $.each(cardCtrl.CardFields, function (h, fObj) {
+        $.each(cardCtrl.CardFields.$values, function (h, fObj) {
             if (!fObj.DoNotPersist) {
                 isPersistAnyField = true;
             }
@@ -659,10 +659,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             $(event.target).parents().find('.slick-current .card-btn-cont .btn').click();
         }
         if (isPersistAnyField) {
-            $.each(cardCtrl.CardCollection, function (k, cObj) {
+            $.each(cardCtrl.CardCollection.$values, function (k, cObj) {
                 if (cardCtrl.SelectedCards.indexOf(cObj.CardId) !== -1) {
                     var tempArray = new Array();
-                    $.each(cardCtrl.CardFields, function (h, fObj) {
+                    $.each(cardCtrl.CardFields.$values, function (h, fObj) {
                         if (!fObj.DoNotPersist) {
                             tempArray.push(new Object({ Value: cObj.customFields[fObj.Name], Type: fObj.EbDbType, Name: fObj.Name }));
                         }
@@ -732,7 +732,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
     };
 
-    this.getDisplayText = function (ctrl) {
+    this.getDisplayHTML = function (ctrl) {
         let text = ctrl.getDisplayMemberFromDOM();
         if (ctrl.ObjType === "PowerSelect") {
             let res = "";
@@ -752,7 +752,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.ctrlSend = function (e) {
         this.curVal = null;
-        this.displayValue = null;
+        //this.displayValue = null;
         var $btn = $(e.target).closest("button");
         var $msgDiv = $btn.closest('.msg-cont');
         this.sendBtnIdx = parseInt($btn.attr('idx'));
@@ -765,25 +765,37 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //for cards  this.curDispValue  is used
         // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
+        this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
         this.curVal = this.curCtrl.getValue();
-        this.displayValue = this.getDisplayText(this.curCtrl);
+        //this.displayValue = this.getDisplayHTML(this.curCtrl);
         if (this.curCtrl.ObjType !== 'StaticCardSet') {
-            this.sendCtrlAfter($msgDiv.hide(), this.displayValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
         }
         else {
             var $msg = this.$userMsgBox.clone();
-            //let msgg = $btn.parent().parent().html() + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>';
-
-            //$btn.hide();
-            //$btn.parent().prev().children('button').hide();
             $btn.parent().parent().remove();
-            $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
+            if ($btn.parent().prev().find('.table tbody').length === 1) {// if summary is present
+                let $cartSummary = $btn.parent().prev();
+                $cartSummary.find('table th').last().remove();
+                $cartSummary.find('table td .remove-cart-item').parent().remove();
+                let $sumTd = $cartSummary.find('table td[colspan]');
+                if ($sumTd.length > 0) {// if sum is present
+                    $sumTd.attr('colspan', parseInt($sumTd.attr('colspan')) - 1);
+                }
+                $msg.find('.msg-wraper-user').html($cartSummary.html()).append(this.getTime());
+            }
+            else
+                $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
         }
         this.formValues[id] = this.curVal;
         this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
         this.callGetControl(this.nxtCtrlIdx);
+
+        if ($('[saveprompt]').length === 1) {
+            this.showConfirm();            
+        }
 
 
 
@@ -900,7 +912,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.showSubmit = function () {
         if ($("[name=formsubmit]").length === 0) {
             this.msgFromBot('Are you sure? Can I submit?');
-            this.msgFromBot($('<div class="btn-box"><button name="formsubmit" class="btn formname-btn">Sure</button><button name="formcancel" class="btn formname-btn">Cancel</button></div>'));
+            this.msgFromBot($('<div class="btn-box" saveprompt><button name="formsubmit" class="btn formname-btn">Sure</button><button name="formcancel" class="btn formname-btn">Cancel</button></div>'));
         }
     };
 
@@ -942,7 +954,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
-        return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button></div>';
+        return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<div class="ctrl-send-wraper"><button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>';
     };
 
     this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {
@@ -995,7 +1007,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             //this.callGetControl(this.nxtCtrlIdx);
             //this.curVal = result;
         }.bind(this));
-    }.bind(this);
+    }.bind(this);   
 
     this.ctrlEdit = function (e) {
         var $btn = $(e.target).closest("span");
@@ -1008,6 +1020,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
         else
             this.ctrlEHelper(idx, $btn);
+        if ($('[saveprompt]').length === 1) {
+            $('[saveprompt]').closest(".msg-cont").prev().remove();
+            $('[saveprompt]').closest(".msg-cont").remove();
+        }
     }.bind(this);
 
     this.initEDCP = function () {

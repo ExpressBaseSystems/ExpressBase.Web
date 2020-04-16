@@ -1,6 +1,6 @@
 ﻿var InitControls = function (option) {
     if (option) {
-        this.Bot = option.botBuilder;
+        this.Bot = option.renderer;
         this.Wc = option.wc;
         this.Cid = option.Cid;
         this.Env = option.Env;
@@ -834,6 +834,33 @@
         new DisplayPictureControl(ctrl, {});
     };
 
+    this.ButtonSelect = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        let $buttons = $ctrl.find(".bs-btn");
+        $buttons.on("click", this.bs_btn_onclick);
+    };
+
+    this.bs_btn_onclick = function (e) {
+        let $btn = $(e.target).closest(".bs-btn");
+        $btn.siblings(".bs-btn").attr("active", "false");
+        $btn.attr("active", "true");
+        $btn.closest(".chat-ctrl-cont").find("[name='ctrlsend']").trigger("click");
+    }.bind(this);
+
+    //this.bs_btn_onclick = function (e) {
+    //    let $btn = $(e.target).closest(".bs-btn");
+    //    let $checkBox = $btn.find("input");
+    //    if ($btn.attr("active") === "false") {
+    //        $btn.attr("active", "true");
+    //        $checkBox.prop("checked", true);
+
+    //    }
+    //    else if ($btn.attr("active") === "true") {
+    //        $btn.attr("active", "false");
+    //        $checkBox.prop("checked", false);
+    //    }
+    //};
+
     this.UserSelect = function (ctrl, ctrlopts) {
 
         let itemList = new EbItemListControl({
@@ -846,13 +873,22 @@
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.AutoSuggestion === true) {
-            $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
+            $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
         }
-        if (ctrl.TextTransform === 1)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
-        else if (ctrl.TextTransform === 2)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+        //if (ctrl.TextTransform === 1)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+        //else if (ctrl.TextTransform === 2)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+
+        $ctrl.keydown(function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
+
+        $ctrl.on('paste', function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
     };
 
     this.initNumeric = function (ctrl, $input) {

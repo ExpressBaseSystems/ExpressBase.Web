@@ -15,9 +15,9 @@
         $Ctrl.find(".card-head-cardno").text((noOfCard === 0 ? "0" : "1") + " of " + noOfCard);
 
         //getting the sum fields to display total
-        $.each(this.Bot.curCtrl.CardFields, function (k, obj) {
-            if (obj.summarize && obj.hasOwnProperty('sum') && obj.sum) {
-                this.sumFieldsName.push(obj.name);
+        $.each(this.Bot.curCtrl.CardFields.$values, function (k, obj) {
+            if (obj.Summarize && obj.Sum) {
+                this.sumFieldsName.push(obj.Name);
             }
         }.bind(this));
 
@@ -150,33 +150,33 @@
     this.processSelectedCard = function ($card, evt) {
         var sObj = {};
         sObj["cardid"] = $card.attr('card-id');
-        $.each(this.Bot.curCtrl.CardFields, function (k, obj) {
-            if (obj.summarize) {
+        $.each(this.Bot.curCtrl.CardFields.$values, function (k, obj) {
+            if (obj.Summarize) {
                 var propval = "";
-                if (obj.hasOwnProperty('valueExpression') && obj.valueExpression !== "") {
-                    var strFunc = window.atob(obj.valueExpression);
-                    $.each(this.Bot.curCtrl.CardFields, function (l, obj1) {
-                        var str2 = "parseFloat(" + this.getValueInDiv($card.find('.data-' + obj1.name)) + ")";
-                        if (!(obj1.objType === 'CardNumericField'))
+                if (obj.ValueExpr && obj.ValueExpr.Code) {
+                    var strFunc = window.atob(obj.ValueExpr.Code);
+                    $.each(this.Bot.curCtrl.CardFields.$values, function (l, obj1) {
+                        var str2 = "parseFloat(" + this.getValueInDiv($card.find('.data-' + obj1.Name)) + ")";
+                        if (!(obj1.ObjType === 'CardNumericField'))
                             str2.replace("parseFloat", "");
-                        strFunc = strFunc.replace(new RegExp('card.' + obj1.name, 'g'), str2);
+                        strFunc = strFunc.replace(new RegExp('card.' + obj1.Name, 'g'), str2);
                     }.bind(this));
                     var newFunc = Function("$card", strFunc);
                     propval = newFunc($card).toString();
-                    this.setValueInDiv($card.find('.data-' + obj.name), propval);
+                    this.setValueInDiv($card.find('.data-' + obj.Name), propval);
                 }
                 else {
-                    propval = this.getValueInDiv($card.find('.data-' + obj.name));
+                    propval = this.getValueInDiv($card.find('.data-' + obj.Name));
                 }
-                if (obj.objType === 'CardNumericField')
-                    sObj[obj.name] = parseFloat(propval);
+                if (obj.ObjType === 'CardNumericField')
+                    sObj[obj.Name] = parseFloat(propval);
                 else
-                    sObj[obj.name] = propval;
+                    sObj[obj.Name] = propval;
             }
         }.bind(this));
         this.SelectedCards.push(sObj);
         this.Bot.curCtrl.SelectedCards.push(parseInt($card.attr('card-id')));
-        this.drawSummaryTable($(evt.target).closest('.cards-cont').next().find('.table tbody'));
+        this.drawSummaryTable($card.closest('.cards-cont').next().find('.table tbody'));
         this.setCardFieldValues($card);
     };
     this.drawSummaryTable = function ($tbody) {
@@ -216,8 +216,8 @@
         $('.remove-cart-item').off('click').on('click', function (evt) {
             var cardid = $(evt.target).closest('tr').attr('card-id');
             this.spliceCardArray(cardid);
-            $('#' + this.Bot.curCtrl.Name).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
-            $($('#' + this.Bot.curCtrl.Name).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
+            $('#' + this.Bot.curCtrl.EbSid).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
+            $($('#' + this.Bot.curCtrl.EbSid).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
             this.drawSummaryTable($(evt.target).closest('tbody'));
         }.bind(this));
     };
@@ -254,21 +254,21 @@
         var card = this.getCardReference(cardId);
         if (card === null)
             return;
-        $.each(this.Bot.curCtrl.CardFields, function (k, fObj) {
-            if (!fObj.doNotPersist) {
-                var fVal = this.getValueInDiv($card.find('.data-' + fObj.name));
+        $.each(this.Bot.curCtrl.CardFields.$values, function (k, fObj) {
+            if (!fObj.DoNotPersist) {
+                var fVal = this.getValueInDiv($card.find('.data-' + fObj.Name));
                 //fObj.ebDbType always returns 16 <string>!!! if ebDbType return correct value then this checking can be avoided
-                if (fObj.objType === 'CardNumericField')
-                    card.customFields[fObj.name] = parseFloat(fVal);
+                if (fObj.ObjType === 'CardNumericField')
+                    card.CustomFields.$values[fObj.Name] = parseFloat(fVal);
                 else
-                    card.customFields[fObj.name] = fVal;
+                    card.CustomFields.$values[fObj.Name] = fVal;
             }
         }.bind(this));
     };
     this.getCardReference = function (cardid) {
         var card = null;
-        $.each(this.Bot.curCtrl.CardCollection, function (k, cardObj) {
-            if (cardObj.cardId === cardid) {
+        $.each(this.Bot.curCtrl.CardCollection.$values, function (k, cardObj) {
+            if (cardObj.CardId === cardid) {
                 card = cardObj;
                 return;
             }
@@ -286,10 +286,32 @@
     };
 
     this.CtrlObj.getValueFromDOM = function () {
-        //let Obj = this.Bot.getCardsetValue(this.CtrlObj);
-        //let r = Object.keys(Obj).join(',');
-        //return r;
-        return 0;
+        var resObj = {};
+        var isPersistAnyField = false;
+        $.each(this.CtrlObj.CardFields.$values, function (h, fObj) {
+            if (!fObj.DoNotPersist) {
+                isPersistAnyField = true;
+            }
+        }.bind(this));
+
+        if (!this.CtrlObj.MultiSelect && isPersistAnyField) {
+            this.$Ctrl.find('.slick-current .card-btn-cont .btn').click();
+        }
+        if (isPersistAnyField) {
+            $.each(this.CtrlObj.CardCollection.$values, function (k, cObj) {
+                if (this.CtrlObj.SelectedCards.indexOf(cObj.CardId) !== -1) {
+                    var tempArray = new Array();
+                    $.each(this.CtrlObj.CardFields.$values, function (h, fObj) {
+                        if (!fObj.DoNotPersist) {
+                            tempArray.push(new Object({ Value: cObj.CustomFields.$values[fObj.Name], Type: fObj.EbDbType, Name: fObj.Name }));
+                        }
+                    }.bind(this));
+                    resObj[cObj.CardId] = tempArray;
+                }
+            }.bind(this));
+        }
+        return JSON.stringify(resObj);
+
     }.bind(this);
 
     this.CtrlObj.getDisplayMemberFromDOM = function () {

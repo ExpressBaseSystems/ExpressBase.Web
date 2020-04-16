@@ -220,7 +220,7 @@ namespace ExpressBase.Web.Controllers
 				{
 					string rfid = rfidlst.Key;
 					EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
-					objpro.Add(BtFrm.IconPicker);
+					objpro.Add(BtFrm?.IconPicker);
 				}
 				returnlist.Add(objpro);
 				return returnlist;

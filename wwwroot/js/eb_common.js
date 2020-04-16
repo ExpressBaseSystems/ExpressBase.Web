@@ -870,7 +870,7 @@ function justSetDate_EB(p1, p2) {
     if (this.IsNullable && p1 !== null)
         $('#' + this.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').prop('checked', true);
     if (p1 !== null && p1 !== undefined) {
-        if (this.ShowDateAs_ === 1) //month picker
+        if (this.ShowDateAs_ === 1 || this.ShowDateAs_ === 2) //month picker or year picker
             $('#' + this.EbSid_CtxId).val(p1);
         else if (this.EbDateType === 5) //Date
             $('#' + this.EbSid_CtxId).val(moment(p1, 'YYYY-MM-DD').format(ebcontext.user.Preference.ShortDatePattern));
@@ -1002,6 +1002,17 @@ document.addEventListener("click", function (e) {
         }
     }
 });
+
+
+function textTransform(element, transform_type) {
+    setTimeout(function () {
+        let value = $(element).val().trim();
+        if (transform_type === 1)
+            $(element).val(value.toLowerCase());
+        else if (transform_type === 2)
+            $(element).val(value.toUpperCase());
+    }, 100);
+}
 
 
 function EBPSSetDisplayMember(p1, p2) {

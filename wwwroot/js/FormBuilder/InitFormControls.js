@@ -683,35 +683,35 @@
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
-    this.SubmitButton = function (ctrl, ctrlOpts) { 
+    this.SubmitButton = function (ctrl, ctrlOpts) {
         $('#webform_submit').removeAttr("disabled");
 
         //checksubmitbutton
-        
-            $('#webformsave-selbtn').hide();
-            if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
-                $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
+
+        $('#webformsave-selbtn').hide();
+        if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+            $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
                     <input type='text' class = "text-center" placeholder='Enter the captcha' id='cpatchaTextBox' />`);
 
-                ctrlOpts.code = "";
-                this.CreateCaptcha(ctrlOpts); 
-            } 
-            $('#webform_submit').off('click').on('click', function () { 
-                event.preventDefault(); 
-                if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
-                    if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
-                        $('#webformsave').trigger('click');
-                    } else {
-                        EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
-                        this.CreateCaptcha(ctrlOpts);
-                    }
-                } else {
+            ctrlOpts.code = "";
+            this.CreateCaptcha(ctrlOpts);
+        }
+        $('#webform_submit').off('click').on('click', function () {
+            event.preventDefault();
+            if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+                if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
                     $('#webformsave').trigger('click');
+                } else {
+                    EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
+                    this.CreateCaptcha(ctrlOpts);
                 }
-            }.bind(this)); 
+            } else {
+                $('#webformsave').trigger('click');
+            }
+        }.bind(this));
     }.bind(this);
 
-    this.CreateCaptcha = function (ctrlOpts) { 
+    this.CreateCaptcha = function (ctrlOpts) {
         //CAPTCHA
         //clear the contents of captcha div first 
         document.getElementById('captcha').innerHTML = "";
@@ -1094,7 +1094,7 @@
     }
 
     this.Rating = function (ctrl) {
-        if ((ebcontext.user.wc == 'uc') ||this.Bot) {
+        if ((ebcontext.user.wc == 'uc') || this.Bot) {
             $("#" + ctrl.EbSid).empty();
             $("#" + ctrl.EbSid).rateYo({
 
@@ -1146,9 +1146,47 @@
 
     }
     this.SimplaeFileUploader = function (ctrl) {
-    
+
+        let filePlugin = $("#" + ctrl.EbSid).fileUploader({
+            fileCtrl: ctrl,
+            botCtrl: this.Bot,
+            maxSize: ctrl.MaxSize,
+            fileTypes: ctrl.FileTypes,
+            maxFiles: ctrl.MaxFiles
+
+        });
+       
+
+        ctrl.getValueFromDOM = function (p1) {
+            let lk = filePlugin.refidListfn();
+            console.log("getValueFromDOM " + " p1 "+p1+"  refid:"+lk );
+            return lk;
+        };
+        ctrl.bindOnChange = function (p1) {
+            console.log("bindOnChange " + " p1 " +p1);
+            $("#" + ctrl.EbSid + "_bindfn").on("change", p1);
+        };
 
 
+        ctrl.setValue = function (p1) {
+            console.log("setvalue " + " p1 " + p1);
+            let preloaded = [];
+            let refidArr = p1.split(',');
+            for (var j = 0; j < refidArr.length; j++) {
+
+                var src = `/images/small/${refidArr[j]}.jpg`;
+                var fileno = j;
+                var fltype = "png";
+                preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype ,refid:refidArr[j]});
+            }
+            
+            filePlugin.createPreloaded(preloaded);
+        };
+        ctrl.clear = function () {
+
+            console.log("clear " );
+            return filePlugin.clearFiles();
+        }
     }
     this.ScriptButton = function (ctrl) {
 

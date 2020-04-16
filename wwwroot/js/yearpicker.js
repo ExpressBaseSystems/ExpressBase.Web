@@ -361,6 +361,12 @@ var Yearpicker = (function() {
       $(document.body).append(
         $template.addClass(yearPickerAppName + "-dropdown")
       );
+
+        this.$element.on("keyup paste", function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            this.value = this.value.substring(0, 4);
+        });
+
       this.renderYear();
     },
     unbuild: function() {

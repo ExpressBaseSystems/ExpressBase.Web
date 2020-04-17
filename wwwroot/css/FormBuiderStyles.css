@@ -1408,13 +1408,13 @@ input.locinp {
     width: 9.4em;
     padding: 3px;
     height: auto !important;
+    max-width: 287px;
 }
 
 .pdf-frame {
     border: none;
     border-radius: 3px;
     height: 30.83em;
-    max-width: 287px;
 }
 
 .loc-label {

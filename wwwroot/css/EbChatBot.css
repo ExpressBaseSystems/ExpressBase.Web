@@ -122,9 +122,14 @@
 }
 
 .eb-chatBox::-webkit-scrollbar, .eb-chatBox-dev::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
     background-color: #F5F5F5;
+    transition-duration:0.2s;
 }
+
+    /*.eb-chatBox::-webkit-scrollbar:hover, .eb-chatBox-dev::-webkit-scrollbar:hover {
+        width: 10px;
+    }*/
 
 .eb-chatBox::-webkit-scrollbar-thumb, .eb-chatBox-dev::-webkit-scrollbar-thumb {
     border-radius: 10px;

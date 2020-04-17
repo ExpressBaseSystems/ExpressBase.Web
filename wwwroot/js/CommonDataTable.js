@@ -507,7 +507,7 @@
             this.GroupFormLink = temp[0].GroupFormLink;
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
-            this.treeColumnIndex = this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
+            this.treeColumnIndex = (this.Source === "locationTree") ? 0 :  this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
         }
         if (this.IsTree)
             this.EbObject.IsPaging = false;
@@ -3287,7 +3287,10 @@
         if (this.clickCounter === 0) {
             if (options === undefined)
                 key = $(key.currentTarget).children("span").text();
-            $("#treemodal .treemodalul").text(key).append('<span class="caret"></span></button>');
+            let path = $(".contextmenu-custom__highlight .context-menu-visible").children().closest("span").map(function () {
+                return $(this).text();
+            }).get().join(' > ');
+            $("#treemodal .treemodalul").text(path).append('<span class="caret"></span></button>');
             this.getClickedItem(key);
             $(".contextmenu-custom__highlight").hide();
             $(".treemodalul").removeClass("context-menu-active");

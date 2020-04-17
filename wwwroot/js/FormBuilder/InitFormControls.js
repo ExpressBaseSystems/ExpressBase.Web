@@ -1179,9 +1179,10 @@
 
         ctrl.clear = function (p1) {
             return $(`#${ctrl.EbSid}_RichText`).summernote('reset');
-        }
+        };
 
-    }
+    };
+
     this.SimpleFileUploader = function (ctrl) {
 
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
@@ -1192,22 +1193,22 @@
             maxFiles: ctrl.MaxFiles
 
         });
-       
+
 
         ctrl.getValueFromDOM = function (p1) {
             let lk = filePlugin.refidListfn();
-            console.log("getValueFromDOM " + " p1 "+p1+"  refid:"+lk );
+            console.log("getValueFromDOM " + " p1 " + p1 + "  refid:" + lk);
             return lk;
         };
         ctrl.bindOnChange = function (p1) {
-            console.log("bindOnChange " + " p1 " +p1);
+            console.log("bindOnChange " + " p1 " + p1);
             $("#" + ctrl.EbSid + "_bindfn").on("change", p1);
         };
 
 
         ctrl.setValue = function (p1) {
             console.log("setvalue " + " p1 " + p1);
-            if ((p1 != null) && (p1 != "")) {
+            if (p1 !== null && p1 !== "") {
                 let preloaded = [];
                 let refidArr = p1.split(',');
                 for (var j = 0; j < refidArr.length; j++) {
@@ -1220,17 +1221,18 @@
 
                 filePlugin.createPreloaded(preloaded);
             }
-            
+
         };
         ctrl.clear = function () {
 
-            console.log("clear " );
+            console.log("clear ");
             return filePlugin.clearFiles();
-        }
-    }
+        };
+    };
+
     this.ScriptButton = function (ctrl) {
 
-    }
+    };
 
 
 

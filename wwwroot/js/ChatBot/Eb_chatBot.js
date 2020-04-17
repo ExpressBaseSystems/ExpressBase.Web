@@ -744,6 +744,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             text = res.slice(0, -5);
         }
         if (ctrl.ObjType === "SimpleFileUploader") {
+            $("#" + ctrl.EbSid + "_SFUP").addClass("botfileSend");
             text = $("#" + ctrl.EbSid)[0].outerHTML;
 
         }
@@ -794,7 +795,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.callGetControl(this.nxtCtrlIdx);
 
         if ($('[saveprompt]').length === 1) {
-            this.showConfirm();            
+            this.showConfirm();
         }
 
 
@@ -1007,7 +1008,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             //this.callGetControl(this.nxtCtrlIdx);
             //this.curVal = result;
         }.bind(this));
-    }.bind(this);   
+    }.bind(this);
 
     this.ctrlEdit = function (e) {
         var $btn = $(e.target).closest("span");

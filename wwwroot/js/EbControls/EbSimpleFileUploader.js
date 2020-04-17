@@ -52,21 +52,27 @@
             let $container = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`);
             $container.addClass('has-files');
             let $uploadedContainer = $container.find('.uploaded');
+
+            this.clearFiles(); // jith
+
             for (let i = 0; i < plugin.settings.preloaded.length; i++) {
                 $uploadedContainer.append(createImg(plugin.settings.preloaded[i], plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].cntype, true, plugin.settings.preloaded[i].fileno, plugin.settings.preloaded[i].refid));
                 setRefid(plugin.settings.preloaded[i].refid, $inrContainer);
                 preloadedfile++;
             }
-        }
+        };
 
         this.clearFiles = function () {
+
+            preloadedfile = 0; // jith
+
             refidArr = [];
             $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`).val("");
             let $container = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`).find('.uploaded').empty();
             $container.removeClass('has-files');
             return;
 
-        }
+        };
 
 
 
@@ -123,7 +129,7 @@
         };
 
 
-        let createImg = function (file, id, cntype, prelod, fileno,refid) {
+        let createImg = function (file, id, cntype, prelod, fileno, refid) {
             var filelurl;
             if (prelod) {
                 filelurl = file.src;//for pdf
@@ -293,7 +299,7 @@
                 fileArr.push(n);
             });
             if (fileArr.length > plugin.settings.maxFiles) {
-                fileArr=fileArr.slice(0, plugin.settings.maxFiles);
+                fileArr = fileArr.slice(0, plugin.settings.maxFiles);
             }
             // Makes the upload
             setPreview($container, fileArr);
@@ -369,7 +375,7 @@
                 return "image";
             else
                 return "file";
-        }
+        };
 
 
         let uploadItem = function (_url, file) {
@@ -392,7 +398,7 @@
             }).done(function (refid) {
                 successOper(thumb, refid, file);
             }.bind(this));
-        }
+        };
 
         let successOper = function (thumb, refid, file) {
             // thumb.find(".eb-upl-loader").hide();
@@ -402,21 +408,24 @@
                 setRefid(refid, thumb);
             }
             else {
-                thumb.find(".error").show()
+                thumb.find(".error").show();
                 thumb.find(".success").hide();
             }
-        }
+        };
+
         let setRefid = function (refid, thumb) {
             refidArr.push(refid);
             thumb.find(".success").show();
             thumb.find(".error").hide();
-            thumb.attr("fRefid", refid)
-            $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`).val(refidArr.join(","));
-            $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`).trigger('change');
-        }
+            thumb.attr("fRefid", refid);
+            let $hiddenInput = $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`);
+            $hiddenInput.val(refidArr.join(","));
+            $hiddenInput.trigger('change');
+        };
+
         this.refidListfn = function () {
             return refidArr.join(",");
-        }
+        };
 
         this.init();
 

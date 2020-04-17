@@ -362,7 +362,7 @@ var Yearpicker = (function() {
         $template.addClass(yearPickerAppName + "-dropdown")
       );
 
-        this.$element.on("keyup paste", function () {
+        this.$element.on("keyup paste", function () { /*added code - jith*/
             this.value = this.value.replace(/[^0-9]/g, '');
             this.value = this.value.substring(0, 4);
         });
@@ -406,7 +406,8 @@ var Yearpicker = (function() {
       var $this = this.$element;
       var value = this.year;
       if (this.isInput) {
-        $this.val(value);
+          $this.val(value);
+          $this.trigger("change");// added by jith
       } else {
         $this.html(value);
       }

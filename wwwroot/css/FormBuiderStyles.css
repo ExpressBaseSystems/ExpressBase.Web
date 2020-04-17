@@ -1284,7 +1284,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .card-btn-cont {
-    display:none !important;
+    display: none !important;
 }
 
 .loc-cont {
@@ -1306,7 +1306,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-color: white;
 }
 
- /*copy from chat bot styles======================== begin*/
+/*location related styles also used in bot======================== begin*/
 .map-div {
     height: 250px;
     width: 100%;
@@ -1374,24 +1374,25 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
 }
 
-.locinp {
-    height: 1.2em !important;
+input.locinp {
+    height: 1.8em !important;
     min-height: 0 !important;
     margin-left: 5px;
     border: none !important;
     border-bottom: solid 1px #e4e4e4 !important;
     font-size: calc(1em - 1px);
-    float: right;
+    max-width: 400px;
+    float: inherit;
     font-style: italic;
     width: calc(100% - 6em);
     outline: none !important;
 }
 
-    .locinp :focus {
-        outline: none !important;
-        border-bottom: solid 1px #6bac6b !important;
-    }
-/*copy from chat bot styles======================== end*/
+.locinp :focus {
+    outline: none !important;
+    border-bottom: solid 1px #6bac6b !important;
+}
+/*location related styles also used in bot======================== end*/
 
 /*.locinp-cont .locinp {
     border: none;
@@ -1403,10 +1404,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     line-height: 10px;
 }*/
 
-.locinp-cont .locinp {/*overriding style form bot*/
+[eb-type="WebForm"] .locinp-cont input.locinp { /*overriding '.locinp-cont .locinp' for web form*/
     width: 9.4em;
-    max-width: 400px;
-    float: inherit;
     padding: 3px;
     height: auto !important;
 }
@@ -2018,10 +2017,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         .simpleFUPdiv .SFUPcontainer .botfileSend {
             min-height: min-content !important;
         }
-    /* Style on hover */
-    .simpleFUPdiv .SFUPcontainer.drag-over {
-        background-color: #f3f3f3;
-    }
+        /* Style on hover */
+        .simpleFUPdiv .SFUPcontainer.drag-over {
+            background-color: #f3f3f3;
+        }
 
         /* Hide the file input */
         .simpleFUPdiv .SFUPcontainer input[type="file"] {

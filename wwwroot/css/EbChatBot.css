@@ -323,6 +323,10 @@
     padding: 8px 10px;
 }
 
+.eb-chat-cont .card-btn-cont {
+    display: block !important;
+} 
+
 .msg-cont .btn:focus {
     outline: none;
     filter: contrast(1.4);

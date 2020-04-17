@@ -1283,6 +1283,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
+.card-btn-cont {
+    display:none !important;
+}
+
 .loc-cont {
     border: solid 1px #e5e5e5;
     border-radius: 1.3em;
@@ -1302,7 +1306,94 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-color: white;
 }
 
-.locinp-cont .locinp {
+ /*copy from chat bot styles======================== begin*/
+.map-div {
+    height: 250px;
+    width: 100%;
+}
+
+.location-box {
+    display: none;
+    position: relative;
+    /*padding: 5px 5px 0px 5px;*/
+    background-color: white;
+    border-radius: 3px;
+    width: 100%;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
+}
+
+.picker-box {
+    padding: 5px 0 !important;
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.loc-opt-btn {
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 5px 5px 0px 0;
+    color: #868585;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .loc-opt-btn:focus {
+        outline: none;
+    }
+
+.loc-opt-cont {
+    padding: 0px 0px 3px 0px;
+}
+
+    .loc-opt-cont[loc-count='1'] {
+        display: none;
+    }
+
+.loc-opt-DD {
+    width: 100%;
+    padding: 3px 10px;
+    color: rgba(0, 0, 0, 0.7);
+    max-width: inherit;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
+}
+
+.locinp {
+    height: 1.2em !important;
+    min-height: 0 !important;
+    margin-left: 5px;
+    border: none !important;
+    border-bottom: solid 1px #e4e4e4 !important;
+    font-size: calc(1em - 1px);
+    float: right;
+    font-style: italic;
+    width: calc(100% - 6em);
+    outline: none !important;
+}
+
+    .locinp :focus {
+        outline: none !important;
+        border-bottom: solid 1px #6bac6b !important;
+    }
+/*copy from chat bot styles======================== end*/
+
+/*.locinp-cont .locinp {
     border: none;
     border-bottom: solid 1px #a4a4a4 !important;
     padding: 0px 0px;
@@ -1310,6 +1401,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     float: inherit;
     width: 9.4em;
     line-height: 10px;
+}*/
+
+.locinp-cont .locinp {/*overriding style form bot*/
+    width: 9.4em;
+    max-width: 400px;
+    float: inherit;
+    padding: 3px;
+    height: auto !important;
 }
 
 .pdf-frame {

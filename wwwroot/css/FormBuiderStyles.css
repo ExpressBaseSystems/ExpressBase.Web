@@ -1915,10 +1915,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         position: relative;
     }
 
-        /* Style on hover */
-        .simpleFUPdiv .SFUPcontainer.drag-over {
-            background-color: #f3f3f3;
+
+        .simpleFUPdiv .SFUPcontainer .botfileSend {
+            min-height: min-content !important;
         }
+    /* Style on hover */
+    .simpleFUPdiv .SFUPcontainer.drag-over {
+        background-color: #f3f3f3;
+    }
 
         /* Hide the file input */
         .simpleFUPdiv .SFUPcontainer input[type="file"] {

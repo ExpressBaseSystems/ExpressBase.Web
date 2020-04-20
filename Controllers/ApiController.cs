@@ -285,10 +285,15 @@ namespace ExpressBase.Web.Controllers
                     }
                     else if (s_obj != null && authResponse.User.LocationIds != null)
                     {
-                        foreach (int _locid in authResponse.User.LocationIds)
+                        if(authResponse.User.LocationIds.Contains(-1))
+                            response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                        else
                         {
-                            if (s_obj.Locations.ContainsKey(_locid))
-                                response.Locations.Add(s_obj.Locations[_locid]);
+                            foreach (int _locid in authResponse.User.LocationIds)
+                            {
+                                if (s_obj.Locations.ContainsKey(_locid))
+                                    response.Locations.Add(s_obj.Locations[_locid]);
+                            }
                         }
                     }
 

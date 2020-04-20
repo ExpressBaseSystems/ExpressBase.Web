@@ -476,7 +476,10 @@
         ebcontext.userLoc = { lat: 0, long: 0 };
         if (typeof _rowId === 'undefined' || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
@@ -501,7 +504,19 @@
             autocompleteOptions: {
                 types: ['(cities)'],
                 componentRestrictions: { country: 'fr' }
-            }
+            },
+            onchanged: function (currentLocation, radius, isMarkerDropped) {
+                let ctrl = this;
+                if (!ctrl.__isJustSetValue) {
+                    if (ctrl.__ebonchangeFns) {
+                        for (let i = 0; i < ctrl.__ebonchangeFns.length; i++) {
+                            ctrl.__ebonchangeFns[i]();
+                        }
+                    }
+                }
+                else
+                    ctrl.__isJustSetValue = false;
+            }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
@@ -883,12 +898,16 @@
         //else if (ctrl.TextTransform === 2)
         //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
 
-        $ctrl.keydown(function (event) {
+        //$ctrl.keydown(function (event) {
+        //    textTransform(this, ctrl.TextTransform);
+        //});
+
+        $ctrl.on('paste keydown', function (event) {
             textTransform(this, ctrl.TextTransform);
         });
 
-        $ctrl.on('paste', function (event) {
-            textTransform(this, ctrl.TextTransform);
+        $ctrl.on('change', function (event) {
+            textTransform(this, ctrl.TextTransform, true);
         });
     };
 

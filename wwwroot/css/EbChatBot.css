@@ -323,6 +323,10 @@
     padding: 8px 10px;
 }
 
+.eb-chat-cont .card-btn-cont {
+    display: block !important;
+} 
+
 .msg-cont .btn:focus {
     outline: none;
     filter: contrast(1.4);
@@ -830,7 +834,7 @@
     border: solid 1px #aaaaaa;
 }
 
-.map-div {
+/*.map-div {
     height: 250px;
     width: 100%;
 }
@@ -838,7 +842,6 @@
 .location-box {
     display: none;
     position: relative;
-    /*padding: 5px 5px 0px 5px;*/
     background-color: white;
     border-radius: 3px;
     width: 100%;
@@ -897,7 +900,7 @@
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
 }
 
-.locinp { /*overriding in formstyles.css*/
+.locinp {
     height: 1.2em !important;
     min-height: 0 !important;
     margin-left: 5px;
@@ -913,7 +916,7 @@
     .locinp :focus {
         outline: none !important;
         border-bottom: solid 1px #6bac6b !important;
-    }
+    }*/
 
 
 .radio-wrap:hover, .radio-wrap:focus {

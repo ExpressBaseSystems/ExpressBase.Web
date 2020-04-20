@@ -63,6 +63,7 @@ const EbSelect = function (ctrl, options) {
 
     //local variables
     this.container = this.name + "Container";
+    this.$wraper = $('#' + this.name + 'Wraper');
     this.DTSelector = '#' + this.name + 'tbl';
     this.DT_tbodySelector = "#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody';
     this.NoOfFields = this.dmNames.length;
@@ -737,6 +738,16 @@ const EbSelect = function (ctrl, options) {
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
         //console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);
         //console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
+        setTimeout(function () {
+            if (this.ComboObj.Padding && this.$wraper.find(".selected-tag").length > 0) {
+                if (this.ComboObj.Padding.Top >= 7) {
+                    this.$wraper.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 4)}px`);
+                    this.$wraper.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 4)}px`);
+                }
+                if (this.ComboObj.Padding.Bottom >= 7)
+                    this.$wraper.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 4)}px`);
+            }
+        }.bind(this),5);
     };
 
     this.trimDmValues = function (i) {

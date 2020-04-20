@@ -254,8 +254,7 @@ body {
 .del-row, .edit-row, .cancel-row {
     /*display: none;*/
     position: absolute;
-    height: 27px;
-    top: 0px;
+    top: 1px;
     /*width: 16.5px;*/
     padding-top: 5px;
 }
@@ -286,7 +285,9 @@ body {
 
 .tdtxt {
     display: none;
-    padding: 5px 6px;
+    /*padding: 5px 6px;*/
+    padding: 8px 6px;
+    font-size: 13px;
     word-break: break-word;
 }
 
@@ -296,6 +297,7 @@ body {
     background-color: transparent;
     border: none;
     width: 50%;
+    height: 30px;
     flex-grow: 1;
 }
 
@@ -647,7 +649,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     min-height: 24px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
-    padding: 3px;
+    /*padding: 3px;*/
+    padding: 7px 10px;
     font-size: 13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
@@ -921,7 +924,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
     border-radius: 1px;
     font-size: 13px;
-    height: 24px;
+    /*height: 24px;*/
+    height: 32px;
     background-color: white;
     box-shadow: none !important;
 }
@@ -939,8 +943,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle,
+{
+    /*padding: 0 0px 0 5px;*/
+    padding: 3px 0px 0 6px;
+}
+
 [tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
-    padding: 0 0px 0 5px;
+    /*padding: 0 0px 0 5px;*/
 }
 
 .ctrl-cover > .input-group > .nullable-check [type="checkbox"] {
@@ -959,7 +968,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .ctrl-cover .dropdown-toggle .filter-option-inner-inner {
-    margin-top: 3px;
+    /*margin-top: 3px;*/
+    margin-top: 1px;
 }
 
 .form-buider-form .Eb-ctrlContainer {

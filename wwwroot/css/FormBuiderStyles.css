@@ -1646,7 +1646,7 @@ input.locinp {
 }
 
 [eb-form="true"][mode="view"] .v-select .selected-tag {
-    padding: 0.01em .45em 0.15em 0.45em !important;
+    padding: 3px 12px;
 }
 
 .eb-radiobtn, .eb-chckbx {

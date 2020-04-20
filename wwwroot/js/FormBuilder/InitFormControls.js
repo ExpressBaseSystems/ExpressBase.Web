@@ -898,12 +898,16 @@
         //else if (ctrl.TextTransform === 2)
         //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
 
-        $ctrl.keydown(function (event) {
+        //$ctrl.keydown(function (event) {
+        //    textTransform(this, ctrl.TextTransform);
+        //});
+
+        $ctrl.on('paste keydown', function (event) {
             textTransform(this, ctrl.TextTransform);
         });
 
-        $ctrl.on('paste', function (event) {
-            textTransform(this, ctrl.TextTransform);
+        $ctrl.on('change', function (event) {
+            textTransform(this, ctrl.TextTransform, true);
         });
     };
 

@@ -1633,8 +1633,12 @@ input.locinp {
 
 
 
-[eb-form="true"][mode="view"] .v-select .selected-tag > .close {
+[eb-form="true"][mode="view"] .v-select .selected-tag > .close, [eb-form="true"][mode="view"] .input-group-addon.ps-srch {
     display: none;
+}
+
+[eb-form="true"][mode="view"] .v-select .selected-tag {
+    padding-right: 12px !important;
 }
 
 [eb-form="true"][mode="view"] .ctrl-cover > textarea, [eb-form="true"][mode="view"] [ctype="Numeric"] .numinput {

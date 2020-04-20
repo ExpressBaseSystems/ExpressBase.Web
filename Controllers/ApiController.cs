@@ -592,12 +592,12 @@ namespace ExpressBase.Web.Controllers
                     string RefId = form["refid"];
                     int LocId = Convert.ToInt32(form["locid"]);
 
-                    string Operation = OperationConstants.NEW;
-                    if (RowId > 0)
-                        Operation = OperationConstants.EDIT;
+                    //string Operation = OperationConstants.NEW;
+                    //if (RowId > 0)
+                    //    Operation = OperationConstants.EDIT;
 
-                    if (!this.LoggedInUser.HasFormPermission(RefId, Operation, LocId))
-                        return new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 };
+                    //if (!this.LoggedInUser.HasFormPermission(RefId, Operation, LocId))
+                    //    return new InsertDataFromWebformResponse { RowAffected = -2, RowId = -2 };
 
                     Resp = ServiceClient.Post(new InsertDataFromWebformRequest
                     {

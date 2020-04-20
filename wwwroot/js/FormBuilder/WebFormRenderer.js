@@ -137,7 +137,7 @@ const WebFormRender = function (option) {
             }
             else if (Obj.ObjType === "ProvisionUser" || Obj.ObjType === "ProvisionLocation")
                 opt.flatControls = this.flatControls;
-            else if (Obj.ObjType === "SubmitButton") { 
+            else if (Obj.ObjType === "SubmitButton") {
                 opt.renderMode = _renderMode;
             }
             this.initControls.init(Obj, opt);
@@ -648,7 +648,7 @@ const WebFormRender = function (option) {
                 return;
             }
             if (_renderMode === 5) {
-                EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' }); 
+                EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
                 return;
             }
 
@@ -1221,7 +1221,8 @@ const WebFormRender = function (option) {
         catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
         let rMode = reqstMode === 'Prefill Mode' ? 'New Mode' : reqstMode;
-        this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${rMode}</span>`);
+        if (_renderMode !== 3 && _renderMode !== 5)
+            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${rMode}</span>`);
         $('title').text(this.FormObj.DisplayName + title_val + `(${rMode})`);
 
         if (this.isPartial === "True") {

@@ -56,7 +56,7 @@ namespace ExpressBase.Web.Components
                 //************Localization - Feature Disabled Temporarily************
                 //string[] Keys = EbControlContainer.GetKeys(WebForm);
                 //Dictionary<string, string> KeyValue = ServiceClient.Get<GetDictionaryValueResponse>(new GetDictionaryValueRequest { Keys = Keys, Locale = Locale }).Dict;
-                //EbWebForm WebForm_L = EbControlContainer.Localize<EbWebForm>(WebForm, KeyValue);
+                //EbWebForm WebForm_L = WebForm.Localize(KeyValue) as EbWebForm;
                 EbWebForm WebForm_L = WebForm;
                 //*******************************************************************
 

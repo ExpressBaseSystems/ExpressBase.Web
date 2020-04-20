@@ -1,4 +1,4 @@
-﻿using ExpressBase.Common;
+﻿  using ExpressBase.Common;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.LocationNSolution;
@@ -148,7 +148,7 @@ namespace ExpressBase.Web2.Controllers
 
             var resp = this.ServiceClient.Get<LocationInfoResponse>(new LocationInfoRequest { });
             ViewBag.Config = JsonConvert.SerializeObject(resp.Config);
-            ViewBag.LocList = resp.Locations;
+            ViewBag.LocCount = resp.Locations.Count;
             ViewBag.LocType = resp.LocationTypes;
             return View();
         }

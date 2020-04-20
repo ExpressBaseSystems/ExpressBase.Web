@@ -23,14 +23,13 @@
     var cm = new EbHeader().setName("Configure Locations");
 </script>
 @{
-    Dictionary<int, EbLocation> locations = ViewBag.LocList;
     List<EbLocationType> location_types = ViewBag.LocType;
 }
 <div class="row s-dash-container h-100">
     <div class="s-dash-workplace tenant_workpane">
         <div class="col-md-12 col-lg-12 col-sm-12 s-dash-solution-desc border-style-none">
             <div class="col-md-10 pd-0">
-                <h4 class="mr-t-0 mr-b-0">Locations <span class="apps_count">(@locations.Count)</span></h4>
+                <h4 class="mr-t-0 mr-b-0">Locations <span class="apps_count">(@ViewBag.LocCount)</span></h4>
             </div>
         </div>
         <div class="col-md-12 pd-0 s-dash-workplace-tabs">
@@ -38,14 +37,14 @@
             <ul class="nav nav-tabs eb-styledTab" role="tablist">
                 <li class="nav-item active">
                     <a class="nav-link" data-toggle="tab" href="#locations_hierarchial_tab" role="tab">
-                        <i class="fa fa-indent" aria-hidden="true"></i> Locations Tree View
+                        <i class="fa fa-indent" aria-hidden="true"></i> Locations
                     </a>
                 </li>
-                <li class="nav-item ">
+                @*<li class="nav-item ">
                     <a class="nav-link" data-toggle="tab" href="#locations_tab" role="tab">
                         <i class="fa fa-list" aria-hidden="true"></i> Locations
                     </a>
-                </li>
+                </li>*@
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#location_types" role="tab"><i class="fa fa-object-group" aria-hidden="true"></i> Location Types</a>
                 </li>
@@ -55,7 +54,7 @@
             </ul>
 
             <div class="tab-content">
-                <div class="tab-pane" id="locations_tab" role="tabpanel">
+                @*<div class="tab-pane" id="locations_tab" role="tabpanel">
                     <div class="row col-md-12">
                         <div class="col-md-2 pd-0 pull-right ">
                             <a data-toggle="modal" data-target="#create_loc_mod" class="ebbtn eb_btnblue eb_btn-sm new_sol_lk pull-right "> <i class="fa fa-plus"></i> New Location</a>
@@ -75,7 +74,7 @@
                             </a>
                         </div>
                     }
-                </div>
+                </div>*@
 
                 <div class="tab-pane active" id="locations_hierarchial_tab" role="tabpanel">
                     <button id="add_root_loc" class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#add_location_modal" > Add New Root Location </button>
@@ -147,8 +146,8 @@
                                             <td class="text-center">@t.Id</td>
                                             <td class="text-center _type" key="@t.Type">@t.Type</td>
                                             <td class="text-center" id="@t.Id">
+                                                <i id="edit_@t.Id" class="fa fa-pencil edit-loc-type" style="padding-right:5px;"></i>
                                                 <i id="del_@t.Id" class="fa fa-trash delete-loc-type"></i>
-                                                <i id="edit_@t.Id" class="fa fa-pencil edit-loc-type"></i>
                                             </td>
                                         </tr>
                                         i++;
@@ -163,7 +162,7 @@
     </div>
 </div>
 
-<div class="modal fade create_loc_mod" id="create_loc_mod" role="dialog">
+@*<div class="modal fade create_loc_mod" id="create_loc_mod" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -204,7 +203,7 @@
         </div>
 
     </div>
-</div>
+</div>*@
 
 <div class="modal fade create_loc_mod" id="add_new_key" role="dialog">
     <div class="modal-dialog">
@@ -339,10 +338,7 @@
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);
     @Html.Raw(ViewBag.EbObjectTypes);
-   @{
-       var locs = JsonConvert.SerializeObject(ViewBag.LocList);
-   }
-      var Loc_ = new Eb_locationMeta(@Html.Raw(ViewBag.Config),@Html.Raw(locs),'@ViewBag.cid',@location_types.Count);
+      var Loc_ = new Eb_locationMeta(@Html.Raw(ViewBag.Config),'@ViewBag.cid',@location_types.Count);
 </script>
 
 <style>
@@ -351,6 +347,9 @@
     background-color: #055d9c;
     color: white;
 } 
+    #loc_tree_container td,context-menu-active {
+        background-color: unset;
+    } 
 
     div.dataTables_wrapper .info-search-cont {
         display: flex;

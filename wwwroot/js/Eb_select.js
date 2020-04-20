@@ -112,7 +112,14 @@ const EbSelect = function (ctrl, options) {
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
             this.Values = [];
 
-            this.$searchBoxes.css("padding", `${this.ComboObj.Padding.Top}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`);
+            {// temporary code
+                if (!this.ComboObj.Padding)
+                    this.ComboObj.Padding = { $type: "ExpressBase.Common.Objects.UISides, ExpressBase.Common", Top: 7, Right: 10, Bottom: 7, Left: 10 }
+            }
+
+            if (this.ComboObj.Padding)
+                this.$searchBoxes.css("padding", `${this.ComboObj.Padding.Top}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`);
+
             if (this.ComboObj.IsInsertable) {
                 this.ComboObj.__AddButtonInit(this.ComboObj.AddButton);
             }

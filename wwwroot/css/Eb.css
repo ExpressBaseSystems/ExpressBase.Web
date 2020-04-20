@@ -453,14 +453,16 @@
     position: relative;
     text-overflow: ellipsis;
     overflow: hidden;
-    height: 20px !important;
+    /*height: 20px !important;*/
+    height: auto;
     color: white !important;
     border: none !important;
     border-radius: 2px !important;
-    padding: 0.01em .45em 0.15em 0.45em !important;
+    /*padding: 0.01em .45em 0.15em 0.45em !important;*/
+    padding: 3px 7px;
     margin: 2px 0px 2px 3px !important;
     font-size: 12px;
-    padding-right: 18px !important;
+    padding-right: 23px !important;
 }
 
     .v-select .selected-tag .close {
@@ -471,6 +473,8 @@
         position: absolute;
         top: 1.5px;
         right: 4px;
+        padding: 3px;
+        font-size: 21px;
     }
 
         .v-select .selected-tag .close:hover {
@@ -484,7 +488,9 @@
 }
 
 [iblock] .selected-tag {
-    padding: 0.1em .45em 0.15em 0.45em !important;
+    /*padding: 0.1em .45em 0.15em 0.45em !important;*/
+    padding: 5px 8px;
+    padding-right: 8px !important;
 }
 
     .v-select .selected-tag:nth-child(5n - 4), [iblock] .selected-tag:nth-child(5n - 4) {

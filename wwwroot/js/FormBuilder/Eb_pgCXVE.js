@@ -22,10 +22,14 @@
         let value = "";
         let PropsObj = this.getPropsObj();
         let $curRowInp = $("#" + this.PGobj.wraperId + " [name=" + _CurProp + "Tr] input");
-        if (this.editor === 11 || this.editor === 16 || this.editor === 18 || this.editor > 63) {// script editors
+        if (this.editor === 41 || this.editor === 11 || this.editor === 16 || this.editor === 18 || this.editor > 63) {// script editors
             if (this.editor === 16) {
                 value = $(`#StrE_txtEdtr${this.PGobj.wraperId}`).val();
                 PropsObj[_CurProp] = value;
+            }
+            else if (this.editor === 41) {
+                value = $(`#Str64E_txtEdtr${this.PGobj.wraperId}`).val();
+                PropsObj[_CurProp] = btoa(value);
             }
             else if (this.editor === 11 || this.editor === 18 || this.editor > 63) {
                 value = window.editor.getValue();
@@ -86,22 +90,24 @@
         let _PropsObj = this.PGobj.PropsObj;
         let curprop = this.PGobj.CurProp;
         let relatedPropNames = this.getRltdNames(curprop);
-        relatedPropNames.forEach(function (name, i) {
-            let _meta = getObjByval(this.PGobj.Metas, "name", name);
-            let trHtml = this.PGobj.getPropertyRowHtml(name, this.PGobj.PropsObj[name], _meta, _meta.options, false, true);
+        relatedPropNames.forEach(function (relatedPropName, i) {
+            let _meta = getObjByval(this.PGobj.Metas, "name", relatedPropName);
+            let trHtml = this.PGobj.getPropertyRowHtml(relatedPropName, this.PGobj.PropsObj[relatedPropName], _meta, _meta.options, false, true);
             let $tr = $(trHtml);
-            $("#" + this.PGobj.wraperId + " [name=" + name + "Tr]").replaceWith($tr);
-            if (_PropsObj[name]) {
+            $("#" + this.PGobj.wraperId + " [name=" + relatedPropName + "Tr]").replaceWith($tr);
+            let idx;
+            if (_PropsObj[relatedPropName]) {
                 _enumoptions = ["--none--", ..._PropsObj[curprop].$values.map(a => (a.name || a.ColumnName || a.Name))];
-                let idx = _enumoptions.indexOf((_PropsObj[name].name || _PropsObj[name].ColumnName || _PropsObj[name].Name));
+                idx = _enumoptions.indexOf((_PropsObj[relatedPropName].name || _PropsObj[relatedPropName].ColumnName || _PropsObj[relatedPropName].Name));
                 if (idx < 0) {
                     idx = 0;
                     $tr.animate({ "opacity": "0" });
                     $tr.animate({ "opacity": "1" });
                 }
             }
-            $("#" + this.PGobj.wraperId + name).val(idx);
-            this.PGobj.postCreateInitFuncs[name]();
+            $("#" + this.PGobj.wraperId + relatedPropName).val(idx);
+            if (this.PGobj.postCreateInitFuncs[relatedPropName])
+                this.PGobj.postCreateInitFuncs[relatedPropName]();
             $tr.find('.selectpicker').on('changed.bs.select', this.PGobj.OnInputchangedFn.bind(this.PGobj));
         }.bind(this));
     };
@@ -138,6 +144,9 @@
         }
         else if (this.editor === 16)
             $(".strE-texarea").focus();
+        else if (this.editor === 41) {
+            $(".str64E-texarea").focus();
+        }
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -176,6 +185,8 @@
             this.initFE(e);
         else if (this.editor === 16)// string
             this.initStrE();
+        else if (this.editor === 41)// HTML
+            this.initStr64E();
         else if (this.editor === 18)// CS
             this.initCSE();
         else if (this.editor === 21)
@@ -235,6 +246,13 @@
         let PropsObj = this.getPropsObj();
         let StrEbody = '<textarea id="StrE_txtEdtr' + this.PGobj.wraperId + '" class="strE-texarea" rows="15" cols="85">' + (PropsObj[this.PGobj.CurProp] || "") + '</textarea>';
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(StrEbody);
+    };
+
+    this.initStr64E = function () {
+        this.curEditorLabel = "String Editor";
+        let PropsObj = this.getPropsObj();
+        let HtmlEbody = '<textarea id="Str64E_txtEdtr' + this.PGobj.wraperId + '" class="str64E-texarea" rows="15" cols="85">' + atob(PropsObj[this.PGobj.CurProp] || "") + '</textarea>';
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(HtmlEbody);
     };
 
     this.initCE = function () {
@@ -848,8 +866,8 @@
         }).on('change', function (e) {
             let str = e.icon;
         });
-        if (value) { $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected");}
-            
+        if (value) { $(`#icon_picker [value=${value}]`).addClass("btn-warning btn-icon-selected"); }
+
     };
 
     this.initShadowEditor = function () {
@@ -861,10 +879,10 @@
 
         let ShadowPickerbody = `<div id="shadow_editor"> </div>`;
         $(this.pgCXE_Cont_Slctr + " .modal-body").html(ShadowPickerbody);
-        ShadowPickerJs({ Id: "shadow_editor", Value: value});           
+        ShadowPickerJs({ Id: "shadow_editor", Value: value });
     };
 
-      this.initGradientColorPicker = function () {
+    this.initGradientColorPicker = function () {
         this.curEditorLabel = "Gradient Color Picker";
         //if (!this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp])
         //    this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp] = {};
@@ -872,8 +890,8 @@
         let value = this.PGobj.PropsObj[this.PGobj.CurProp];
 
         let gcpBody = `<div id="gradient_editor"> </div>`;
-          $(this.pgCXE_Cont_Slctr + " .modal-body").html(gcpBody);
-          GradientColorPicker({ Id: "gradient_editor", Value: value});           
+        $(this.pgCXE_Cont_Slctr + " .modal-body").html(gcpBody);
+        GradientColorPicker({ Id: "gradient_editor", Value: value });
     };
 
     this.initOSCE = function () {
@@ -1227,7 +1245,7 @@
     }.bind(this);
 
     this.colTileRightArrow = function (e) {// not tested for editors other than 26
-        let $tile = $(e.target).closest(".colTile")
+        let $tile = $(e.target).closest(".colTile");
         if (this.checkLimit($tile))
             return false;
         e.stopPropagation();
@@ -1261,6 +1279,10 @@
                     });
                 });
             }
+        }
+        else if (this.editor === 22) {
+            let DelObj = this.CElist.splice(this.CElist.indexOf(getObjByval(this.CElist, "EbSid", $tile.attr("ebsid"))), 1)[0];
+            this.onRemoveFromCE(this.PGobj.CurProp, this.PGobj.PropsObj[this.PGobj.CurProp].$values, DelObj);
         }
         else if (this.editor === 9 || this.editor === 8 || this.editor === 24 || this.editor === 26 || this.editor === 27 || this.editor === 35) {
             if (this.editor === 26 || this.editor === 24)

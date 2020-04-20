@@ -507,7 +507,7 @@
             this.GroupFormLink = temp[0].GroupFormLink;
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
-            this.treeColumnIndex = this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
+            this.treeColumnIndex = (this.Source === "locationTree") ? 0 :  this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
         }
         if (this.IsTree)
             this.EbObject.IsPaging = false;
@@ -767,7 +767,7 @@
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
-                if (this.IsTree ) {
+                if (this.IsTree) {
                     o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
@@ -1120,7 +1120,7 @@
         this.tableName = dd.tableName;
         this.treeData = dd.tree;
         this.SetColumnRef();
-        this.ImageArray = dd.imageList ? JSON.parse( dd.imageList) : [];
+        this.ImageArray = dd.imageList ? JSON.parse(dd.imageList) : [];
         return dd.formattedData;
     };
 
@@ -1265,7 +1265,7 @@
 
     this.initCompleteFunc = function (settings, json) {
         this.Run = false;
-        if (this.Source === "EbDataTable")
+        if (this.Source === "EbDataTable" || this.Source === "locationTree")
             this.GenerateButtons();
 
         else if (this.Source === "Calendar") {
@@ -1477,7 +1477,7 @@
             _form.submit();
             document.body.removeChild(_form);
 
-            
+
         }
         else {
             this.tabNum++;
@@ -1645,7 +1645,7 @@
         $('th.tdheight').tooltip({
             placement: 'bottom',
             container: 'body',
-            html:true
+            html: true
         });
     };
 
@@ -2447,11 +2447,11 @@
     this.LocalSearch = function (e) {
         var text = $(e.target).val();
         //if (e.keyCode === 13 && text.length > 2) {
-            //$(".match").each(function (i, span) {
-            //    $(span).parent().text($(span).parent().text());
-            //    $(span).remove();
-            //});
-        if(text !== "")
+        //$(".match").each(function (i, span) {
+        //    $(span).parent().text($(span).parent().text());
+        //    $(span).remove();
+        //});
+        if (text !== "")
             this.searchAndHighlight(text, ".dataTables_scrollBody");
         else
             $(".dataTables_scrollBody").find("tr").show();
@@ -2587,7 +2587,6 @@
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this)); 
-        $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this)); 
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -2614,16 +2613,38 @@
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        
         $('.columntooltip').popover({
             container: 'body',
             trigger: 'hover',
             placement: this.PopoverPlacement,
             html: true,
             content: function (e, i) {
+                $(".popover").remove();
                 return atob($(this).attr("data-contents"));
             },
         });
+        $('.btn-approval_popover').popover({
+            container: 'body',
+            trigger: 'click',
+            placement: this.PopoverPlacement,
+            html: true,
+            template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
+            },
+        });
+        $('.btn-approval_popover').on('click', function (e) {
+            $('.btn-approval_popover').not(this).popover("hide");
+        });
 
+        $('.btn-approval_popover').on('shown.bs.popover', function (e) {
+            $(".stage_actions").selectpicker();
+            let $td = $(e.target).parents().closest("td");
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+        }.bind(this)); 
+        
+        $(".popover").remove();
         $(".rating").rateYo({
             readOnly: true
         });
@@ -2637,7 +2658,6 @@
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
-        $(".stage_actions").selectpicker();
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         //this.Api.columns.adjust();
     };
@@ -2677,41 +2697,46 @@
         if (window.location.href.indexOf("hairocraft") !== -1 && this.login === "uc" && this.dvName.indexOf("leaddetails") !== -1)
             $("#obj_icons").prepend(`<button class='btn' data-toggle='tooltip' title='New Customer' onclick='window.open("/leadmanagement","_blank");' ><i class="fa fa-user-plus"></i></button>`);
 
-        if ($("#" + this.tableId).children().length > 0) {
-            if (this.login === "dc") {
-                $("#obj_icons").append(
-                    "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
-                    "<div class='btn-group'>" +
-                    "<div class='btn-group'>" +
-                    " <button id='btnPrint" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
-                    " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
-                    "   <span class='caret'></span>  <!-- caret --></div>" +
-                    "   <ul class='dropdown-menu' role='menu'>" +
-                    "      <li><a href = '#' id='btnprintAll" + this.tableId + "'> Print All</a></li>" +
-                    "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
-                    "</ul>" +
-                    "</div>" +
-                    "<button id='btnExcel" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
-                    "<button id='btnPdf" + this.tableId + "' class='btn'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
-                    "<button id='btnCsv" + this.tableId + "' class='btn'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
-                    "<button id='btnCopy" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
-                    "</div>" +
-                    "</div>" +
-                    "</div>");
-            }
-            $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
+        if (this.Source === "EbDataTable") {
+            if ($("#" + this.tableId).children().length > 0) {
+                if (this.login === "dc") {
+                    $("#obj_icons").append(
+                        "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
+                        "<div class='btn-group'>" +
+                        "<div class='btn-group'>" +
+                        " <button id='btnPrint" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
+                        " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
+                        "   <span class='caret'></span>  <!-- caret --></div>" +
+                        "   <ul class='dropdown-menu' role='menu'>" +
+                        "      <li><a href = '#' id='btnprintAll" + this.tableId + "'> Print All</a></li>" +
+                        "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
+                        "</ul>" +
+                        "</div>" +
+                        "<button id='btnExcel" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
+                        "<button id='btnPdf" + this.tableId + "' class='btn'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
+                        "<button id='btnCsv" + this.tableId + "' class='btn'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
+                        "<button id='btnCopy" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
+                        "</div>" +
+                        "</div>" +
+                        "</div>");
+                }
+                $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
 
-            if (this.login === "uc") {
-                $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
-                $.each(this.permission, function (i, obj) {
-                    if (obj === "Excel")
-                        $("#" + this.tableId + "_fileBtns .btn-group").append("<button id = 'btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
-                }.bind(this));
-            }
+                if (this.login === "uc") {
+                    $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
+                    $.each(this.permission, function (i, obj) {
+                        if (obj === "Excel")
+                            $("#" + this.tableId + "_fileBtns .btn-group").append("<button id = 'btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
+                    }.bind(this));
+                }
 
-            if (this.login === "uc") {
-                dvcontainerObj.modifyNavigation();
+                if (this.login === "uc") {
+                    dvcontainerObj.modifyNavigation();
+                }
             }
+        }
+        else {
+            $(".display-none").remove();
         }
 
         if (this.IsTree) {
@@ -2751,6 +2776,15 @@
                             }
                         };
                     }
+                }
+                else if (this.Source === "locationTree") {
+                    return {
+                        items: {
+                            "NewGroup": { name: "New", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
+                            "EditGroup": { name: "Edit", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
+                            "Move": { name: "Move", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                        }
+                    };
                 }
                 else {
                     if ($(e.currentTarget).hasClass("levelzero")) {
@@ -2792,6 +2826,44 @@
             }.bind(this)
 
         });
+    };
+
+    this.OpenLocationModal = function (key, opt, event) {
+        let id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "id")[0].data;
+      
+        let index = opt.$trigger.parent().closest("tr").index();
+        let rowData = this.unformatedData[index];
+
+        $('#add_location_modal').modal("show");
+        if (key === "EditGroup") {
+            let longname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "longname")[0].data;
+            let shortname_index = this.EbObject.Columns.$values.filter(obj => obj.name === "shortname")[0].data;
+            let parent_id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "parent_id")[0].data;
+            let image_index = this.EbObject.Columns.$values.filter(obj => obj.name === "image")[0].data;
+            let types_index = this.EbObject.Columns.$values.filter(obj => obj.name === "eb_location_types_id")[0].data;
+            let meta_index = this.EbObject.Columns.$values.filter(obj => obj.name === "meta_json")[0].data;
+
+            $("#add_location_modal").find("input[type='text']").val("");
+            $("#add_location").text("Update");
+            $("input[name='_LocId']").val(rowData[id_index]);
+            $("input[name='_longname']").val(rowData[longname_index]);
+            $("input[name='_shortname']").val(rowData[shortname_index]);
+            $("#_parentId").val(rowData[parent_id_index]);
+            $(`input[name='_Logo']`).val(rowData[image_index]);
+            $("#loc_type").val(rowData[types_index]);
+            let meta = JSON.parse(rowData[meta_index]);
+            for (var item in meta) {
+                $(`#add_location_modal input[name=n${item}]`).val(meta[item]);
+            }
+        }
+        else if (key === "NewGroup") {
+            $("#add_location").text("Add");
+            $("#_parentId").val(rowData[id_index]);
+            $("input[name='_LocId']").val("");
+            $(`input[name='_Logo']`).val("");
+            $("#loc_type").val("");
+            $("#add_location_modal").find("input[type='text']").val("");
+        }
     };
 
     this.CreateContextmenu4ObjectSelector = function () {
@@ -3215,7 +3287,10 @@
         if (this.clickCounter === 0) {
             if (options === undefined)
                 key = $(key.currentTarget).children("span").text();
-            $("#treemodal .treemodalul").text(key).append('<span class="caret"></span></button>');
+            let path = $(".contextmenu-custom__highlight .context-menu-visible").children().closest("span").map(function () {
+                return $(this).text();
+            }).get().join(' > ');
+            $("#treemodal .treemodalul").text(path).append('<span class="caret"></span></button>');
             this.getClickedItem(key);
             $(".contextmenu-custom__highlight").hide();
             $(".treemodalul").removeClass("context-menu-active");
@@ -3865,7 +3940,7 @@
         this.filterValuesforForm.push(new fltr_obj(11, "id", Paramvalue));
         this.dvformMode = 1;
         if (this.login === "uc")
-            dvcontainerObj.drawdvFromTable( btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
+            dvcontainerObj.drawdvFromTable(btoa(unescape(encodeURIComponent(JSON.stringify(this.filterValuesforForm)))), cData.toString(), this.dvformMode);//, JSON.stringify(this.filterValues)
         else
             this.OpeninNewTab(this.Api.row($(e.target).parents().closest("td")).index(), $(e.target).text());
     };
@@ -3889,26 +3964,27 @@
         this.Api.columns.adjust();
     };
 
-    this.ExecuteApproval = function (e) {
+    this.ExecuteApproval = function ($td, e) {
         $("#eb_common_loader").EbLoader("show");
-        let val = $(e.target).parents(".stage_actions_cont").find(".selectpicker").val();
-        let $td = $(e.target).parents().closest("td");
+        $('.btn-approval_popover').popover('hide');
+        let val = $(e.target).closest("#action").find(".selectpicker").val();
         val = JSON.parse(atob(val));
+        let comments = $(e.target).closest("#action").find(".comment-text").val();
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
         Columns.push(new fltr_obj(7, "eb_my_actions_id", val.My_action_id.toString()));
-        Columns.push(new fltr_obj(16, "comments", ""));
-        let webdata = {};
-        webdata["eb_approval_lines"] =[{ "Columns": Columns }];
-        let WebformData = {
-            "MultipleTables": [webdata]
-        };
+        Columns.push(new fltr_obj(16, "comments", comments));
         $.ajax({
             type: "POST",
             url: "../dv/PostWebformData",
             data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)},
-            success: this.cccccc.bind(this, $td)
+            success: this.cccccc.bind(this, $td),
+            error: function (xhr, error) {
+                console.log(xhr); console.log(error);
+                console.debug(xhr); console.debug(error);
+
+            },
         });
     };
 

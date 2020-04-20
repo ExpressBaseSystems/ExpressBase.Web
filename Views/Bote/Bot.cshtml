@@ -31,6 +31,10 @@
 <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.css" asp-append-version=@bApnd />
 @*amal*@
 <link href="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+
+<link rel="stylesheet" type="text/css" href="~/css/EbControls/EbCardSet.css" asp-append-version=@bApnd/>
+<link rel="stylesheet" href="~/css/yearpicker.css">
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 @*<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>*@
@@ -82,6 +86,7 @@
 <script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>
 <script src="~/js/EbControls/EbProgressBar.js" type="text/javascript" asp-append-version=@bApnd></script>
 <script src="~/js/EbControls/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>
+<script src="~/js/FormBuilder/EbCardRender.js" type="text/javascript" asp-append-version=@bApnd></script>
 @*amal*@
 <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>
 @*jith*@
@@ -89,6 +94,10 @@
         integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
         crossorigin="anonymous"></script>
 <script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+<script type="text/javascript" src="~/js/EbControls/EbSimpleFileUploader.js"></script>
+
+<script type="text/javascript" src="~/js/yearpicker.js" asp-append-version=@bApnd></script>
 
 <style>
     body {
@@ -170,5 +179,7 @@
         js.src = "//connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
+
+
 
 </script>

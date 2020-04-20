@@ -596,8 +596,10 @@ table.dataTable tr.group td {
 .columntooltip:hover{
     text-decoration:underline;
 }
-.popover-content{
-    color:black !important;
+.popover-content {
+    color: black !important;
+    overflow: auto;
+    width: 100%;
 }
 
 .footerli, .filterli {
@@ -749,40 +751,86 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     margin-left: 10px;
 }
 
-.popover-content td{
-   padding:5px;
+.popover-content td {
+    padding: 5px;
+    border: 1px solid #ddd;
 }
-.tdheight .stage_actions button {
+.popover-content th {
+    border: 1px solid #ddd;
+    border-top: 1px solid #ddd !important;
+}
+.popover-content .nav-tabs {
+    margin-bottom: 1rem;
+}
+.popover-content .nav-tabs .nav-link.active {
+    /*border: 1px solid #ddd;
+    padding: 3px 1px;
+    border-bottom-color: #fff;
+    background-color: #fff;*/
+}
+.approval-popover {
+    max-width: 100%;
+    /*width:350px;*/
+}
+
+ .stage_actions button {
     padding: 3px 30px 3px 10px;
     font-size: 12px;
     /*width: auto;*/
 }
-.tdheight .stage_actions  {
-    width: auto!important;
-    margin-right:10px;
+ .stage_actions  {
+    width: 100% !important;
+    margin-right: 10px;
 }
 
-.tdheight .stage_actions a{
-    color:black !important;
+ .stage_actions a {
+    color: black !important;
 }
 
-.tdheight .stage_actions_cont {
+ .stage_actions_cont {
     display: flex;
     flex-direction: column;
 }
 
-.tdheight .stage_actions_inner {
+ .stage-div {
     display: flex;
-    /*justify-content: space-between;*/
+    justify-content: space-between;
+    margin: 2px;
 }
-.tdheight .btn-action_execute {
+.stage-btn {
     padding: 1px 12px;
-    /*width: 25px;*/
+    background-color: #fff;
+    border: 1px solid #ddd;
 }
-.tdheight .btn-action_execute i{
-    color:black!important;
+.stage-btn i {
+    color: black !important;
+}
+
+.action-td{
+    border:0 !important;
+}
+
+.stage-label{
+    text-decoration:underline;
 }
 
 .tdheight .selectpicker {
-    display:none!important;
+    display: none !important;
 }
+.action-table, .comment-text{
+    width:100%
+}
+.comment-td {
+    width: 100px;
+    overflow: hidden;
+    /*display: inline-block;
+    white-space:nowrap;
+    text-overflow:ellipsis;*/
+    word-break: break-all;
+}
+/*.comment-td:hover {
+    text-overflow: clip;
+    white-space: normal;
+    word-break: break-all;
+}*/
+

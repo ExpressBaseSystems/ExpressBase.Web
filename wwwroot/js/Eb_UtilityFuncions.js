@@ -282,6 +282,8 @@ function ItemCount(array, item) {
 function dateDisplayNone() {
     document.addEventListener('scroll', function (e) {
         $('.xdsoft_datetimepicker').css("display", "none");
+        $('.month-picker').css("display", "none");
+        
     }, true);
 }
 function getObjCopy4PS(Obj) {

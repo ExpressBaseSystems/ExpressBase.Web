@@ -1,7 +1,6 @@
-﻿
-var InitControls = function (option) {
+﻿var InitControls = function (option) {
     if (option) {
-        this.Bot = option.botBuilder;
+        this.Bot = option.renderer;
         this.Wc = option.wc;
         this.Cid = option.Cid;
         this.Env = option.Env;
@@ -187,9 +186,10 @@ var InitControls = function (option) {
             //ctrl.setValue(moment(ebcontext.user.Preference.ShortDate, ebcontext.user.Preference.ShortDatePattern).format('MM/YYYY'));
         }
         else if (ctrl.ShowDateAs_ === 2) {
-            $input.datetimepickers({
-                format: "YYYY",
-                viewMode: "years"
+            $input.yearpicker({
+                year: parseInt(ctrl.DataVals.Value),
+                startYear: 1800,
+                endYear: 2200
             });
         }
         else {
@@ -257,7 +257,7 @@ var InitControls = function (option) {
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
             $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
         }
-        else
+        else if (ctrl.ShowDateAs_ !== 2)
             this.setCurrentDate(ctrl, $input);
 
         t1 = performance.now();
@@ -314,30 +314,32 @@ var InitControls = function (option) {
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            let $el = $(e.target);
-            if ($el[0].isOutside !== true) {
-                let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                let initDDwidth = $drpdwn.width();
-                let ofsetval = $drpdwn.offset();
-                let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
-                let $div_detached = $drpdwn.detach();
-                let $form_div = $(e.target).closest("[eb-root-obj-container]");
-                $div_detached.appendTo($form_div).wrap($divclone);
-                $div_detached.width(initDDwidth);
-                $el[0].isOutside = true;
-                $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
-                $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
+            if (!this.Bot) {
+                let $el = $(e.target);
+                if ($el[0].isOutside !== true) {
+                    let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                    let initDDwidth = $drpdwn.width();
+                    let ofsetval = $drpdwn.offset();
+                    let $divclone = ($("#" + ctrl.EbSid_CtxId).parent().clone().empty()).addClass("detch_select").attr({ "detch_select": true, "par_ebsid": ctrl.EbSid_CtxId, "MultiSelect": ctrl.MultiSelect, "objtype": ctrl.ObjType });
+                    let $div_detached = $drpdwn.detach();
+                    let $form_div = $(e.target).closest("[eb-root-obj-container]");
+                    $div_detached.appendTo($form_div).wrap($divclone);
+                    $div_detached.width(initDDwidth);
+                    $el[0].isOutside = true;
+                    $div_detached.offset({ top: (ofsetval.top), left: ofsetval.left });
+                    $div_detached.css("min-width", "unset");// to override bootstarp min-width 100% only after -appendTo-
 
+                }
+                //to set position of dropdrown just below selectpicker btn
+                else {
+                    let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
+                    let ddOfset = ($(e.target)).offsetParent().offset();
+                    let tgHght = ($(e.target)).offsetParent().height();
+                    $outdrpdwn.parent().addClass('open');
+                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
+                }
             }
-            //to set position of dropdrown just below selectpicker btn
-            else {
-                let $outdrpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
-                let ddOfset = ($(e.target)).offsetParent().offset();
-                let tgHght = ($(e.target)).offsetParent().height();
-                $outdrpdwn.parent().addClass('open');
-                $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
-            }
-        });
+        }.bind(this));
         if (ctrl.DataVals.Value !== null || ctrl.DataVals.Value !== undefined)
             ctrl.setValue(ctrl.DataVals.Value);
     };
@@ -474,7 +476,10 @@ var InitControls = function (option) {
         ebcontext.userLoc = { lat: 0, long: 0 };
         if (typeof _rowId === 'undefined' || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
@@ -499,25 +504,41 @@ var InitControls = function (option) {
             autocompleteOptions: {
                 types: ['(cities)'],
                 componentRestrictions: { country: 'fr' }
-            }
+            },
+            onchanged: function (currentLocation, radius, isMarkerDropped) {
+                let ctrl = this;
+                if (!ctrl.__isJustSetValue) {
+                    if (ctrl.__ebonchangeFns) {
+                        for (let i = 0; i < ctrl.__ebonchangeFns.length; i++) {
+                            ctrl.__ebonchangeFns[i]();
+                        }
+                    }
+                }
+                else
+                    ctrl.__isJustSetValue = false;
+            }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
+        $(window).resize(function () {
+            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
+        });
+
     };
 
-    this.Locations = function (ctrls) {
-        var name = ctrls.ebSid;
-        if (ctrls.showTabed) {
-            $(`#${name} .loc-opt-btn`).off("click").on("click", function (e) {
-                var $optBtn = $(e.target);
-                var loc = $optBtn.attr("for");
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.name === loc; });
-                var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.Name}`);
-                $(`#${name} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
+    this.Locations = function (ctrl) {
+        let EbSid = ctrl.EbSid;
+        if (ctrl.ShowTabed) {
+            $(`#${EbSid} .loc-opt-btn`).off("click").on("click", function (e) {
+                let $optBtn = $(e.target);
+                let loc = $optBtn.attr("for");
+                let ctrlArr = $.grep(ctrl.LocationCollection, function (ctrl, i) { return ctrl.name === loc; });
+                let ctrl = ctrlArr[0];
+                let $locDiv = $(`#${ctrl.Name}`);
+                $(`#${EbSid} .loc-opt-btn`).css("border-bottom", "solid 2px transparent").css("font-weight", "normal").css("color", "#868585");
                 $optBtn.css("border-bottom", "solid 2px #31d031").css("font-weight", "bold").css("color", "#333");
                 if ($locDiv.closest(".location-box").css("display") === "none") {
-                    $(`#${name} .location-box`).hide(10);
+                    $(`#${EbSid} .location-box`).hide(10);
                     $locDiv.closest(".location-box").show(10,
                         function () {
                             if ($locDiv.children().length === 0)
@@ -526,40 +547,45 @@ var InitControls = function (option) {
                 }
 
             }.bind(this));
-            $(`#${name} .loc-opt-btn`)[0].click();
+            $(`#${EbSid} .loc-opt-btn`)[0].click();
         }
         else {
-            $(`#${name} .loc-opt-DD`).off("change").on("change", function (e) {
-                var loc = $(e.target).children().filter(":selected").val();
-                var ctrlArr = $.grep(ctrls.locationCollection, function (ctrl, i) { return ctrl.Name === loc; });
-                var ctrl = ctrlArr[0];
-                var $locDiv = $(`#${ctrl.Name}`);
+            $(`#${EbSid} .loc-opt-DD`).off("change").on("change", function (e) {
+                let loc = $(e.target).children().filter(":selected").val();
+                let ctrlArr = $.grep(ctrl.LocationCollection.$values, function (ctrl, i) { return ctrl.Name === loc; });
+                let LocCtrl = ctrlArr[0];
+                let $locDiv = $(`#${LocCtrl.Name}`);
                 if ($locDiv.closest(".location-box").css("display") === "none") {
-                    $(`#${name} .location-box`).hide(10);
+                    $(`#${EbSid} .location-box`).hide(10);
                     $locDiv.closest(".location-box").show(10,
                         function () {
                             if ($locDiv.children().length === 0)
-                                this.initMap(ctrl);
+                                this.initMap(LocCtrl);
                         }.bind(this));
                 }
             }.bind(this));
 
-            $(`#${name} .location-box:eq(0)`).show();
-            this.initMap(ctrls.locationCollection[0]);
+            $(`#${EbSid} .location-box:eq(0)`).show();
+            this.initMap(ctrl.LocationCollection.$values[0]);
         }
-        this.Bot.nxtCtrlIdx++;
-        this.Bot.callGetControl();
+
+        //this.Bot.nxtCtrlIdx++;
+        //this.Bot.callGetControl();
     };
 
     this.initMap = function (ctrl) {
-        var uluru = { lat: ctrl.Position.latitude, lng: ctrl.Position.longitude };
-        var map = new google.maps.Map(document.getElementById(ctrl.Name), {
+        let uluru = { lat: ctrl.Position.Latitude, lng: ctrl.Position.Longitude };
+        let map = new google.maps.Map(document.getElementById(ctrl.Name), {
             zoom: 15,
             center: uluru
         });
-        var marker = new google.maps.Marker({
+        let marker = new google.maps.Marker({
             position: uluru,
             map: map
+        });
+
+        $(window).resize(function () {
+            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
         });
     };
 
@@ -620,16 +646,18 @@ var InitControls = function (option) {
 
     this.StaticCardSet = function (ctrl) {
         new EbCardRender({
-            $Ctrl: $('#' + ctrl.Name),
-            Bot: this.Bot
+            $Ctrl: $('#' + ctrl.EbSid),
+            Bot: this.Bot,
+            CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
     };
 
     this.DynamicCardSet = function (ctrl) {
         new EbCardRender({
-            $Ctrl: $('#' + ctrl.Name),
-            Bot: this.Bot
+            $Ctrl: $('#' + ctrl.EbSid),
+            Bot: this.Bot,
+            CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
     };
@@ -671,9 +699,64 @@ var InitControls = function (option) {
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
-    this.SubmitButton = function (ctrl) {
-        $('#webformsave').removeAttr("disabled");
+    this.SubmitButton = function (ctrl, ctrlOpts) {
+        $('#webform_submit').removeAttr("disabled");
+
+        //checksubmitbutton
+
+        $('#webformsave-selbtn').hide();
+        if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+            $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
+                    <input type='text' class = "text-center" placeholder='Enter the captcha' id='cpatchaTextBox' />`);
+
+            ctrlOpts.code = "";
+            this.CreateCaptcha(ctrlOpts);
+        }
+        $('#webform_submit').off('click').on('click', function () {
+            event.preventDefault();
+            if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
+                if (document.getElementById("cpatchaTextBox").value === ctrlOpts.code) {
+                    $('#webformsave').trigger('click');
+                } else {
+                    EbMessage("show", { Message: "Invalid Captcha. try Again", AutoHide: true, Background: '#aa0000' });
+                    this.CreateCaptcha(ctrlOpts);
+                }
+            } else {
+                $('#webformsave').trigger('click');
+            }
+        }.bind(this));
     }.bind(this);
+
+    this.CreateCaptcha = function (ctrlOpts) {
+        //CAPTCHA
+        //clear the contents of captcha div first 
+        document.getElementById('captcha').innerHTML = "";
+        var charsArray =
+            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@!#$%&*";
+        var lengthOtp = 6;
+        var captcha = [];
+        for (var i = 0; i < lengthOtp; i++) {
+            //below code will not allow Repetition of Characters
+            var index = Math.floor(Math.random() * charsArray.length + 1); //get the next character from the array
+            if (captcha.indexOf(charsArray[index]) === -1)
+                captcha.push(charsArray[index]);
+            else i--;
+        }
+        var canv = document.createElement("canvas");
+        canv.id = "captcha";
+        canv.width = 100;
+        canv.height = 50;
+        var ctx = canv.getContext("2d");
+        ctx.font = "25px Verdana";
+        ctx.strokeText(captcha.join(""), 0, 30);
+        ctx.moveTo(0, 0);
+        ctx.lineTo(300, 150);
+        ctx.stroke();
+        //storing captcha so that can validate you can save it somewhere else according to your specific requirements
+        ctrlOpts.code = captcha.join("");
+        document.getElementById("captcha").appendChild(canv); // adds the canvas to the body element
+    };
+
 
     this.iFrameOpen = function (ctrl) {
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
@@ -767,6 +850,33 @@ var InitControls = function (option) {
         new DisplayPictureControl(ctrl, {});
     };
 
+    this.ButtonSelect = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        let $buttons = $ctrl.find(".bs-btn");
+        $buttons.on("click", this.bs_btn_onclick);
+    };
+
+    this.bs_btn_onclick = function (e) {
+        let $btn = $(e.target).closest(".bs-btn");
+        $btn.siblings(".bs-btn").attr("active", "false");
+        $btn.attr("active", "true");
+        $btn.closest(".chat-ctrl-cont").find("[name='ctrlsend']").trigger("click");
+    }.bind(this);
+
+    //this.bs_btn_onclick = function (e) {
+    //    let $btn = $(e.target).closest(".bs-btn");
+    //    let $checkBox = $btn.find("input");
+    //    if ($btn.attr("active") === "false") {
+    //        $btn.attr("active", "true");
+    //        $checkBox.prop("checked", true);
+
+    //    }
+    //    else if ($btn.attr("active") === "true") {
+    //        $btn.attr("active", "false");
+    //        $checkBox.prop("checked", false);
+    //    }
+    //};
+
     this.UserSelect = function (ctrl, ctrlopts) {
 
         let itemList = new EbItemListControl({
@@ -779,13 +889,22 @@ var InitControls = function (option) {
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.AutoSuggestion === true) {
-            $("#" + ctrl.EbSid_CtxId).autocomplete({ source: ctrl.Suggestions.$values });
+            $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
         }
-        if (ctrl.TextTransform === 1)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
-        else if (ctrl.TextTransform === 2)
-            $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+        //if (ctrl.TextTransform === 1)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+        //else if (ctrl.TextTransform === 2)
+        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+
+        $ctrl.keydown(function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
+
+        $ctrl.on('paste', function (event) {
+            textTransform(this, ctrl.TextTransform);
+        });
     };
 
     this.initNumeric = function (ctrl, $input) {
@@ -1027,12 +1146,13 @@ var InitControls = function (option) {
     }
 
     this.Rating = function (ctrl) {
-        if (ebcontext.user.wc == 'uc') {
-            $("#" + ctrl.EbSid + "_ratingDiv").empty();
-            $("#" + ctrl.EbSid + "_ratingDiv").rateYo({
+        if ((ebcontext.user.wc == 'uc') || this.Bot) {
+            $("#" + ctrl.EbSid).empty();
+            $("#" + ctrl.EbSid).rateYo({
 
                 numStars: ctrl.MaxVal,
-                fullStar: ctrl.FullStar,
+                maxValue: ctrl.MaxVal,
+                fullStar: !(ctrl.HalfStar),
                 halfStar: ctrl.HalfStar,
                 spacing: `${ctrl.Spacing}px`,
                 starWidth: `${ctrl.StarWidth}px`,
@@ -1067,21 +1187,68 @@ var InitControls = function (option) {
                 ['view', ['undo', 'redo', 'help']],
             ],
             disableResizeEditor: true,
-            disableDragAndDrop: true, 
+            disableDragAndDrop: true,
             dialogsInBody: true
         });
 
 
         ctrl.clear = function (p1) {
             return $(`#${ctrl.EbSid}_RichText`).summernote('reset');
-        }
+        };
 
-    }
+    };
+
+    this.SimpleFileUploader = function (ctrl) {
+
+        let filePlugin = $("#" + ctrl.EbSid).fileUploader({
+            fileCtrl: ctrl,
+            botCtrl: this.Bot,
+            maxSize: ctrl.MaxSize,
+            fileTypes: ctrl.FileTypes,
+            maxFiles: ctrl.MaxFiles
+
+        });
+
+
+        ctrl.getValueFromDOM = function (p1) {
+            let lk = filePlugin.refidListfn();
+            console.log("getValueFromDOM " + " p1 " + p1 + "  refid:" + lk);
+            return lk;
+        };
+        ctrl.bindOnChange = function (p1) {
+            console.log("bindOnChange " + " p1 " + p1);
+            $("#" + ctrl.EbSid + "_bindfn").on("change", p1);
+        };
+
+
+        ctrl.setValue = function (p1) {
+            console.log("setvalue " + " p1 " + p1);
+            if (p1 !== null && p1 !== "") {
+                let preloaded = [];
+                let refidArr = p1.split(',');
+                for (var j = 0; j < refidArr.length; j++) {
+
+                    var src = `/images/small/${refidArr[j]}.jpg`;
+                    var fileno = j;
+                    var fltype = "png";
+                    preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
+                }
+
+                filePlugin.createPreloaded(preloaded);
+            }
+
+        };
+        ctrl.clear = function () {
+
+            console.log("clear ");
+            return filePlugin.clearFiles();
+        };
+    };
 
     this.ScriptButton = function (ctrl) {
 
+    };
 
-    }
 
 
 

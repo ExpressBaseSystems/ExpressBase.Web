@@ -87,7 +87,7 @@ console.log("ext_js loaded");
     var chatIcon = d.createElement("img");
     chatIcon.className = "boticon";
     chatIcon.id = "boticon" + AppId;
-    chatIcon.src = (d.botdpURL || d.botdpURLColl[d.appIdCount]);
+    chatIcon.src = this.eb_get_path(d.ebmod)+(d.botdpURL || d.botdpURLColl[d.appIdCount]);
 
 
     //place near chat head
@@ -115,7 +115,7 @@ console.log("ext_js loaded");
         document.getElementById("eb_iframecont" + AppId).style.display = "none";
         if (!d.appIdColl)
             document.getElementById("chatbtn" + AppId).style.display = "block";
-    }
+    };
     //to minimize chatbot
     maximizeDiv.onclick = function () {
         console.log(AppId);
@@ -127,7 +127,7 @@ console.log("ext_js loaded");
             document.getElementById("eb_iframecont" + AppId).style.width = "";
             maximizeDiv.innerHTML = '&#128470;';
         }
-    }
+    };
 
     //??????
     chatbtn.onclick = function () {

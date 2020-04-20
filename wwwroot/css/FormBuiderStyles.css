@@ -935,7 +935,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 [ctype=SimpleSelect] .ctrl-cover .dropdown-toggle,
-[ctype=PowerSelect] .ctrl-cover .dropdown-toggle,
+/*[ctype=PowerSelect] .ctrl-cover .dropdown-toggle,*/
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle,
@@ -1283,7 +1283,11 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
-.card-cont, .loc-cont {
+.card-btn-cont {
+    display: none !important;
+}
+
+.loc-cont {
     border: solid 1px #e5e5e5;
     border-radius: 1.3em;
     min-height: 300px;
@@ -1302,13 +1306,109 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-color: white;
 }
 
-.locinp-cont .locinp {
+/*location related styles also used in bot======================== begin*/
+.map-div {
+    height: 250px;
+    width: 100%;
+}
+
+.location-box {
+    display: none;
+    position: relative;
+    /*padding: 5px 5px 0px 5px;*/
+    background-color: white;
+    border-radius: 3px;
+    width: 100%;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
+}
+
+.picker-box {
+    padding: 5px 0 !important;
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.loc-opt-btn {
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 5px 5px 0px 0;
+    color: #868585;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .loc-opt-btn:focus {
+        outline: none;
+    }
+
+.loc-opt-cont {
+    padding: 0px 0px 3px 0px;
+}
+
+    .loc-opt-cont[loc-count='1'] {
+        display: none;
+    }
+
+.loc-opt-DD {
+    width: 100%;
+    padding: 3px 10px;
+    color: rgba(0, 0, 0, 0.7);
+    max-width: inherit;
+    border-radius: 8px;
     border: none;
-    border-bottom: solid 1px #a4a4a4;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
+}
+
+input.locinp {
+    height: 1.8em !important;
+    min-height: 0 !important;
+    margin-left: 5px;
+    border: none !important;
+    border-bottom: solid 1px #e4e4e4 !important;
+    font-size: calc(1em - 1px);
+    max-width: 400px;
+    float: inherit;
+    font-style: italic;
+    width: calc(100% - 6em);
+    outline: none !important;
+}
+
+.locinp :focus {
+    outline: none !important;
+    border-bottom: solid 1px #6bac6b !important;
+}
+/*location related styles also used in bot======================== end*/
+
+/*.locinp-cont .locinp {
+    border: none;
+    border-bottom: solid 1px #a4a4a4 !important;
     padding: 0px 0px;
     margin: 6px 10px 6px 6px;
+    float: inherit;
     width: 9.4em;
     line-height: 10px;
+}*/
+
+[eb-type="WebForm"] .locinp-cont input.locinp { /*overriding '.locinp-cont .locinp' for web form*/
+    width: 9.4em;
+    padding: 3px;
+    height: auto !important;
+    max-width: 287px;
 }
 
 .pdf-frame {
@@ -1317,7 +1417,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     height: 30.83em;
 }
 
-.card-label, .loc-label {
+.loc-label {
     font-size: 12pt;
     line-height: 15pt;
     float: left;
@@ -1329,28 +1429,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: calc(100% - 67px);
 }
 
-.card-content, .loc-content {
+.loc-content {
     color: rgba(0, 0, 0, .40);
-}
-
-.cards-cont {
-    padding-right: 3px;
-}
-
-.card-bottom, .loc-bottom {
-    padding: 8px 12px 0 12px;
-}
-
-.card-bottom {
-    border: solid 1px #ddd;
-    border-top: none;
-    border-radius: 0 0 1.3em 1.3em;
-}
-
-.card-img {
-    /*border-radius: 1.3em 1.3em 0 0;*/
-    height: 100%;
-    width: auto;
 }
 
 /*copied from css, for card img fieldset temp*/
@@ -1533,11 +1613,15 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .filter-box .input-group-addon, .form-buider-form .input-group-addon, [eb-type="BotForm"] .input-group-addon {
     padding: 0px !important;
+    padding: 0px 2.5px !important;
+    background-color: white;
 }
 
     .filter-box .input-group-addon > .fa, .form-buider-form .input-group-addon > .fa, [eb-type="BotForm"] .input-group-addon > .fa {
         padding: 3px 7px !important;
     }
+
+
 
 [eb-form="true"][mode="view"] .v-select .selected-tag > .close {
     display: none;
@@ -1888,4 +1972,296 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     font-size: 12px;
     line-height: 1.5;
     border-radius: 3px
+}
+
+
+
+
+
+
+
+/*EbSimpleFileUploader*/
+
+.simpleFUPdiv {
+    /*position: relative;
+    display: flex;*/
+}
+
+    .simpleFUPdiv .SFUPcontainer .SFUPcontent {
+        line-height: 2;
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column
+    }
+
+        .simpleFUPdiv .SFUPcontainer .SFUPcontent i {
+            font-size: 3rem;
+        }
+    /*image upload*/
+
+    /* Base style */
+    .simpleFUPdiv .SFUPcontainer {
+        min-height: 175px;
+        /*max-height: 175px;*/
+        overflow: auto;
+        border: 1px solid #d9d9d9;
+        position: relative;
+    }
+
+
+        .simpleFUPdiv .SFUPcontainer .botfileSend {
+            min-height: min-content !important;
+        }
+        /* Style on hover */
+        .simpleFUPdiv .SFUPcontainer.drag-over {
+            background-color: #f3f3f3;
+        }
+
+        /* Hide the file input */
+        .simpleFUPdiv .SFUPcontainer input[type="file"] {
+            width: 0;
+            height: 0;
+            position: absolute;
+            z-index: -1;
+            opacity: 0;
+        }
+
+        /* Text container */
+        /*.simpleFUPdiv .SFUPcontainer .upload-text {
+        position: absolute;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+        .simpleFUPdiv .SFUPcontainer .upload-text i {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: .5rem;
+        }
+
+        .simpleFUPdiv .SFUPcontainer .upload-text span {
+            display: block;
+        }*/
+
+        /* Hide the text if there is at least one uploaded image */
+        .simpleFUPdiv .SFUPcontainer.has-files .SFUPcontent {
+            display: none;
+        }
+
+        /* Uploaded images container */
+        .simpleFUPdiv .SFUPcontainer .uploaded {
+            padding: .5rem;
+            line-height: 0;
+        }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .filethumb {
+                border-radius: 4px;
+                float: left;
+                margin: 1%;
+                box-shadow: 1px 1px 5px 0 #a2958a;
+                position: relative;
+                height: 185px;
+                width: 250px;
+            }
+
+                .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image {
+                    /*display: inline-block;
+            width: calc(20% );
+            padding-bottom: calc(16.6666667% - 1rem);
+            height: 0;
+            position: relative;
+            margin: .5rem;
+            background: #f3f3f3;
+            cursor: default;*/
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    height: 100%;
+                }
+
+                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image img {
+                        /*width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: absolute;*/
+                        max-width: 240px;
+                        min-width: 110px;
+                        height: 156px;
+                        margin: auto;
+                        padding: 2px;
+                    }
+
+                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls {
+                        /*width:100%;*/
+                    }
+
+                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls .success {
+                            color: #47af08;
+                            font-size: 20px;
+                            align-self: center;
+                            margin-left: auto;
+                            display: none;
+                            text-align: right;
+                            position: absolute;
+                            bottom: 0;
+                            right: 0;
+                        }
+
+                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls .error {
+                            color: #f95655;
+                            font-size: 20px;
+                            align-self: center;
+                            margin-left: auto;
+                            display: none;
+                            text-align: right;
+                            position: absolute;
+                            bottom: 0;
+                            right: 0;
+                        }
+
+                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls .filename {
+                            /*margin-top: 5px;
+                    margin-bottom: 0;
+                    font-weight: 500;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;*/
+                        }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image iframe {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: absolute;
+            }
+
+            /* Delete image button */
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image .delete-image {
+                display: none;
+                cursor: pointer;
+                position: absolute;
+                top: .2rem;
+                right: .2rem;
+                border-radius: 50%;
+                /*padding: .3rem;*/
+                background-color: white;
+                -webkit-appearance: none;
+                border: none;
+            }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image:hover .delete-image {
+                display: block;
+            }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image .delete-image i {
+                color: #5b5959;
+                font-size: 1.5rem;
+            }
+
+
+            /*for bot*/
+            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb {
+                border-radius: 4px;
+                float: left;
+                margin: 1%;
+                box-shadow: 1px 1px 5px 0 #a2958a;
+                position: relative;
+                height: 60px;
+                width: 90px
+            }
+
+                .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image {
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    height: 100%;
+                }
+
+                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image img {
+                        max-width: 85px;
+                        min-width: 50px;
+                        height: 45px;
+                        margin: auto;
+                    }
+
+
+                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image .botfiledtls .success {
+                        color: #47af08;
+                        font-size: 12px;
+                        align-self: center;
+                        margin-left: auto;
+                        display: none;
+                        text-align: right;
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                    }
+
+                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image .botfiledtls .error {
+                        color: #f95655;
+                        font-size: 12px;
+                        align-self: center;
+                        margin-left: auto;
+                        display: none;
+                        text-align: right;
+                        position: absolute;
+                        bottom: 0;
+                        right: 0;
+                    }
+
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-image .delete-image {
+                display: none;
+                cursor: pointer;
+                position: absolute;
+                top: .2rem;
+                right: .2rem;
+                border-radius: 50%;
+                /*padding: .3rem;*/
+                background-color: white;
+                -webkit-appearance: none;
+                border: none;
+            }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-image:hover .delete-image {
+                display: block;
+            }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-image .delete-image i {
+                color: #5b5959;
+                font-size: 1.5rem;
+            }
+
+
+
+#cpatchaTextBox {
+    margin-bottom: 10px;
+    width: 70%;
+    margin-left: 15%;
+    background-color: aliceblue;
+    padding: 7px;
+}
+
+[ctype=SubmitButton] > .ctrl-cover {
+    border: none;
+}
+
+[ctype=SubmitButton] > #captcha {
+    pointer-events: none;
 }

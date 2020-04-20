@@ -14,45 +14,48 @@
         }
     }
 </script>
-@if (ViewBag.UId > 1 || ViewBag.cide == "demo")
-{
-    <div class="row" id="">
-        <div class="toolbar objectDashB-toolbar">
-            <div class="toolbar-brd-Container pd-0">
+
+<div class="row" id="">
+    <div class="toolbar objectDashB-toolbar">
+        <div class="toolbar-brd-Container pd-0">
+            @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+            {
+                if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
+                {
+                    <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+                }
+                else
+                {
+                    ml = "10px";
+                }
+            }
+            <div class="solution_logo_cont pull-left" style="margin-left:@ml">
                 @{
-                    if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
+                    if (ViewBag.wc == "tc")
                     {
-                        <button class="btn obj_list_shortCut quik_menu" id="quik_menu"><i class="fa fa-th" aria-hidden="true"></i></button>
+                        <img src="~/images/EB_Logo.png" class="solution_logo" />
                     }
                     else
                     {
-                        ml = "10px";
-                    }
-                }
-                <div class="solution_logo_cont pull-left" style="margin-left:@ml">
-                    @{
-                        if (ViewBag.wc == "tc")
-                        {
-                            <img src="~/images/EB_Logo.png" class="solution_logo" />
-                        }
-                        else
-                        {
-                            <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
-                        }
-                    }
-
-                </div>
-                @{
-                    if (ViewBag.wc == "uc")
-                    {
-                        <div class="LocInfCr" id="switch_loc">
-                            <div class="Locname" id="LocInfoCr_name"></div>
-                            <span style="margin-left:10px;" class="fa fa-caret-down"></span>
-                        </div>
+                        <img src="~/images/your_company_logo.png" data-src=@Logourl class="solution_logo Eb_Image" />
                     }
                 }
 
-                <div class="brd_cr_t EbHeadTitle hidden-xs">
+            </div>
+            @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+            {
+                if (ViewBag.wc == "uc")
+                {
+                    <div class="LocInfCr" id="switch_loc">
+                        <div class="Locname" id="LocInfoCr_name"></div>
+                        <span style="margin-left:10px;" class="fa fa-caret-down"></span>
+                    </div>
+                }
+            }
+
+            <div class="brd_cr_t EbHeadTitle hidden-xs">
+                @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+                {
                     <div class="brd_row">
 
                         @{ if (ViewBag.wc == "tc")
@@ -72,13 +75,15 @@
                         }
                         @Html.Raw(HttpUtility.HtmlDecode(ViewBag.BreadCrumb))
                     </div>
-                    <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
-                </div>
+                }
+                <div class="mr-0 Obj_title" id="objname">@ViewBag.ObjName</div>
             </div>
-            <div class="toolbar-buttons-Container comon_header_dy pd-0">
-                <div class='toolicons form-inline'>
-                    <div id="obj_icons" style="display:inline"></div>
-
+        </div>
+        <div class="toolbar-buttons-Container comon_header_dy pd-0">
+            <div class='toolicons form-inline'>
+                <div id="obj_icons" style="display:inline"></div>
+                @if (ViewBag.UId > 1 || ViewBag.cide == "demo")
+                {
                     <div class='form-group' id="notificaionandprofile">
                         <div class="dropdown obj_dash_proimage_drp">
                             <img src="~/images/proimg.jpg" data-src=@DpUrl data-toggle="dropdown" class="obj_dash_proimage dropdown-toggle Eb_Image" />
@@ -132,12 +137,12 @@
                         </div>
                         <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                     </div>
+                                        }
                 </div>
-            </div>
-            <div class="eb_common_loader" id="eb_common_loader"></div>
         </div>
+        <div class="eb_common_loader" id="eb_common_loader"></div>
     </div>
-}
+</div>
 <script>
     window.ebcontext.header = new EbHeader();
 </script>

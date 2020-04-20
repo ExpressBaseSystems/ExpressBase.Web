@@ -155,36 +155,62 @@ namespace ExpressBase.Web.Controllers
         //rowid => data id of the record - required only for edit mode
         public string GetCurForm_New(string refid, int rowid)
         {
-            EbBotForm BotForm = this.GetBotForm(refid);
-            foreach (EbControl control in BotForm.Controls)
+            var ObjResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+            var Obj = EbSerializers.Json_Deserialize(ObjResp.Data[0].Json);
+            string retStr = string.Empty;
+            //EbBotForm BotForm = this.GetBotForm(refid);
+            if (Obj is EbBotForm)
             {
-                if (control is EbSimpleSelect)
+                EbBotForm BotForm = Obj as EbBotForm;
+                foreach (EbControl control in BotForm.Controls)
                 {
-                    (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-                    (control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
+                    if (control is EbSimpleSelect)
+                    {
+                        (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+                        (control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
 
+                    }
+                    else if (control is EbImage)
+                    {
+                        (control as EbImage).BareControlHtml4Bot = (control as EbImage).GetBareHtml();
+                    }
+                    else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
+                    {
+                        (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);
+                    }
+                    else if (control is EbDynamicCardSet)
+                    {
+                        EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
+                        EbDynamicCards.InitFromDataBase(this.ServiceClient);
+                        EbDynamicCards.BareControlHtml4Bot = EbDynamicCards.GetBareHtml();
+                    }
+                    else if (control is EbSurvey)
+                    {
+                        (control as EbSurvey).InitFromDataBase(this.ServiceClient);
+                        (control as EbSurvey).BareControlHtml = (control as EbSurvey).GetBareHtml();
+                    }
                 }
-                else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
-                {
-                    (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);
-                }
-                else if (control is EbDynamicCardSet)
-                {
-                    EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
-                    EbDynamicCards.InitFromDataBase(this.ServiceClient);
-                    EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
-                }
-                else if (control is EbSurvey)
-                {
-                    (control as EbSurvey).InitFromDataBase(this.ServiceClient);
-                    (control as EbSurvey).BareControlHtml = (control as EbSurvey).GetBareHtml();
-                }
-            }            
-            Dictionary<string, string> Dict = new Dictionary<string, string>();
-            Dict.Add("object", EbSerializers.Json_Serialize(BotForm));
-            Dict.Add("data", this.GetFormData(refid, rowid));
+                Dictionary<string, string> Dict = new Dictionary<string, string>();
+                Dict.Add("object", EbSerializers.Json_Serialize(BotForm));
+                Dict.Add("data", this.GetFormData(refid, rowid));
+                retStr = JsonConvert.SerializeObject(Dict);
+            }
+            else if (Obj is EbTableVisualization)
+            {
+                EbTableVisualization Tobj = (Obj as EbTableVisualization);
+                Tobj.AfterRedisGet(this.Redis, this.ServiceClient);
+                Dictionary<string, string> Dict = new Dictionary<string, string>();
+                Dict.Add("object", EbSerializers.Json_Serialize(Obj));
+                retStr = JsonConvert.SerializeObject(Dict);
+            }
+            else if (Obj is EbChartVisualization)
+            {
+                Dictionary<string, string> Dict = new Dictionary<string, string>();
+                Dict.Add("object", EbSerializers.Json_Serialize(Obj));
+                retStr = JsonConvert.SerializeObject(Dict);
+            }
 
-            return JsonConvert.SerializeObject(Dict);
+            return retStr;
         }
 
         //refid => refid of botform

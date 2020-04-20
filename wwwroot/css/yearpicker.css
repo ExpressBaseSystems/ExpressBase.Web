@@ -1,0 +1,81 @@
+/*tref : https://www.codehim.com/date-time/jquery-datepicker-year-only/*/
+/*customised css*/
+
+:root {
+    --background-color: #fff;
+    --border-color: #ccc;
+    --text-color: #555;
+    --selected-text-color: rgb(70, 151, 247);
+    --hover-background-color: #eee;
+}
+
+.yearpicker-container {
+    position: absolute;
+    z-index: 1;
+    color: var(--text-color);
+    width: 280px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    font-size: 1.3rem;
+    box-shadow: 1px 1px 8px 0px rgba(0, 0, 0, 0.2);
+    background-color: var(--background-color);
+}
+
+.yearpicker-header {
+    display: flex;
+    width: 100%;
+    height: 5rem;
+    border-bottom: 1px solid var(--border-color);
+    align-items: center;
+    justify-content: space-around;
+}
+
+.yearpicker-prev,
+.yearpicker-next {
+    cursor: pointer;
+    font-size: 3rem;
+}
+
+.yearpicker-prev:hover,
+.yearpicker-next:hover {
+    color: var(--selected-text-color);
+}
+
+.yearpicker-year {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.yearpicker-items {
+    list-style: none;
+    padding: 1.1rem 0.75rem;
+    flex: 0 0 33.3%;
+    width: 100%;
+}
+.yearpicker-current {
+    font-weight: bold;
+    font-size: 1.35rem;
+}
+
+.yearpicker-items:hover {
+    background-color: var(--hover-background-color);
+    color: var(--selected-text-color);
+    cursor: pointer;
+}
+
+.yearpicker-items.selected {
+    color: var(--selected-text-color);
+}
+
+.hide {
+    display: none;
+}
+
+.yearpicker-items.disabled {
+    pointer-events: none;
+    color: #bbb;
+}

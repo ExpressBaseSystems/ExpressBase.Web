@@ -285,10 +285,15 @@ namespace ExpressBase.Web.Controllers
                     }
                     else if (s_obj != null && authResponse.User.LocationIds != null)
                     {
-                        foreach (int _locid in authResponse.User.LocationIds)
+                        if(authResponse.User.LocationIds.Contains(-1))
+                            response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                        else
                         {
-                            if (s_obj.Locations.ContainsKey(_locid))
-                                response.Locations.Add(s_obj.Locations[_locid]);
+                            foreach (int _locid in authResponse.User.LocationIds)
+                            {
+                                if (s_obj.Locations.ContainsKey(_locid))
+                                    response.Locations.Add(s_obj.Locations[_locid]);
+                            }
                         }
                     }
 
@@ -636,6 +641,34 @@ namespace ExpressBase.Web.Controllers
 
                     resp = this.ServiceClient.Get(request);
                 }
+                else
+                    resp = new GetMobileVisDataResponse { Message = ViewBag.Message };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("EXCEPTION AT get_data API" + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+            return resp;
+        }
+
+        [HttpGet("api/get_formdata")] //refid = mobileform
+        public GetMobileFormDataResponse GetMobileFormData(string refid, int row_id, int loc_id)
+        {
+            GetMobileFormDataResponse resp = null;
+            try
+            {
+                if (ViewBag.IsValid)
+                {
+                    resp = this.ServiceClient.Get(new GetMobileFormDataRequest
+                    {
+                        MobilePageRefId = refid,
+                        RowId = row_id,
+                        LocId = loc_id
+                    });
+                }
+                else
+                    resp = new GetMobileFormDataResponse { Message = ViewBag.Message };
             }
             catch (Exception ex)
             {

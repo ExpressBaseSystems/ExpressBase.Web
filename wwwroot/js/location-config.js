@@ -1,7 +1,6 @@
-﻿var Eb_locationMeta = function (Config, locations, tid, types_count) {
-    this.Locations = locations;
-    this.data = Config;
-    this.LocationObj = {};
+﻿var Eb_locationMeta = function (Config, tid, types_count) {
+   // this.Locations = locations;
+    this.data = Config; 
     this.Cropies = {};
     this.Tid = tid || null;
     this.init = function () {
@@ -10,8 +9,8 @@
         }.bind(this));
 
         this.Addmeta(this.data);
-        $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key
-        $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
+        $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key CreateConfig
+       // $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
         $('#add_location').off("click").on('click', this.AddLocation.bind(this));//createloc
 
 
@@ -24,7 +23,7 @@
             $("#type_id").val("");
         });
 
-        $(".loc_tile").off("click").on("click", this.locationEdit.bind(this));
+       // $(".loc_tile").off("click").on("click", this.locationEdit.bind(this));
         this.imageUploader("Logo_container", "#Logo_toggle_btn", "#Logo_prev", { Name: "Logo", FileName: "" }, false);
         $(`body`).off("click").on("click", ".delete_field", this.deleteConfig.bind(this));
         $("#locspace input[name='longname']").on("change", this.setLocNameToImg.bind(this));
@@ -137,54 +136,54 @@
         };
     };
 
-    this._CreateLocation = function (e) {
-        e.preventDefault();
-        let m = {};
-        $(this.data).each(function (i, item) {
-            m[item.Name] = $(`input[name='${item.Name}']`).val();
-        }.bind(this));
+    //this._CreateLocation = function (e) {
+    //    e.preventDefault();
+    //    let m = {};
+    //    $(this.data).each(function (i, item) {
+    //        m[item.Name] = $(`input[name='${item.Name}']`).val();
+    //    }.bind(this));
 
-        if (this.validateNewLoc()) {
-            $.post("../TenantUser/CreateLocation", {
-                locid: $("input[name='LocId']").val(),
-                lname: $("input[name='longname']").val(),
-                sname: $("input[name='shortname']").val(),
-                img: $(`input[name='Logo']`).val(),
-                meta: JSON.stringify(m)
-            }, function (result) {
-                if (result >= 1) {
-                    $('#create_loc_mod').modal("toggle");
-                    let locid = parseInt($("input[name='LocId']").val());
-                    if (locid > 0) {
-                        $(`div[locid='${locid}']`).find(".head4").text($("input[name='longname']").val());
-                        $(`div[locid='${locid}']`).find(".shortname").text($("input[name='shortname']").val());
-                    }
-                    else {
-                        this.addLocationTile({
-                            LocId: result,
-                            LongName: $("input[name='longname']").val(),
-                            ShortName: $("input[name='shortname']").val()
-                        });
-                    }
-                    this.clearInputs($('#create_loc_mod'));
-                }
-            }.bind(this));
-        }
-        else
-            alert("name exist");
-    };
+    //    if (this.validateNewLoc()) {
+    //        $.post("../TenantUser/CreateLocation", {
+    //            locid: $("input[name='LocId']").val(),
+    //            lname: $("input[name='longname']").val(),
+    //            sname: $("input[name='shortname']").val(),
+    //            img: $(`input[name='Logo']`).val(),
+    //            meta: JSON.stringify(m)
+    //        }, function (result) {
+    //            if (result >= 1) {
+    //                $('#create_loc_mod').modal("toggle");
+    //                let locid = parseInt($("input[name='LocId']").val());
+    //                if (locid > 0) {
+    //                    $(`div[locid='${locid}']`).find(".head4").text($("input[name='longname']").val());
+    //                    $(`div[locid='${locid}']`).find(".shortname").text($("input[name='shortname']").val());
+    //                }
+    //                else {
+    //                    this.addLocationTile({
+    //                        LocId: result,
+    //                        LongName: $("input[name='longname']").val(),
+    //                        ShortName: $("input[name='shortname']").val()
+    //                    });
+    //                }
+    //                this.clearInputs($('#create_loc_mod'));
+    //            }
+    //        }.bind(this));
+    //    }
+    //    else
+    //        alert("name exist");
+    //};
 
-    this.locationEdit = function (e) {
-        var locid = $(e.target).closest(".loc_tile").attr("locid");
-        var obj = this.Locations[parseInt(locid)];
-        $('#create_loc_mod').modal("toggle");
-        $("#create_loc_mod input[name='LocId']").val(obj.LocId);
-        $("#create_loc_mod input[name='longname']").val(obj.LongName);
-        $("#create_loc_mod input[name='shortname']").val(obj.ShortName);
-        for (var item in obj.Meta) {
-            $(`#create_loc_mod input[name='${item}']`).val(obj.Meta[item]);
-        }
-    };
+    //this.locationEdit = function (e) {
+    //    var locid = $(e.target).closest(".loc_tile").attr("locid");
+    //    var obj = this.Locations[parseInt(locid)];
+    //    $('#create_loc_mod').modal("toggle");
+    //    $("#create_loc_mod input[name='LocId']").val(obj.LocId);
+    //    $("#create_loc_mod input[name='longname']").val(obj.LongName);
+    //    $("#create_loc_mod input[name='shortname']").val(obj.ShortName);
+    //    for (var item in obj.Meta) {
+    //        $(`#create_loc_mod input[name='${item}']`).val(obj.Meta[item]);
+    //    }
+    //};
 
     this.uniqCheckCF = function (o) {
         let f = true;
@@ -199,32 +198,32 @@
         return f;
     };
 
-    this.validateNewLoc = function () {
-        let f = true;
-        if ($("input[name='longname']").val() === "" || $("input[name='shortname']").val() === "")
-            f = false;
-        $(this.data).each(function (k, item) {
-            if (item.IsRequired) {
-                if ($(`input[name='${item.Name}']`).val() === "")
-                    f = false;
-            }
-        }.bind(this));
-        return f;
-    };
+    //this.validateNewLoc = function () {
+    //    let f = true;
+    //    if ($("input[name='longname']").val() === "" || $("input[name='shortname']").val() === "")
+    //        f = false;
+    //    $(this.data).each(function (k, item) {
+    //        if (item.IsRequired) {
+    //            if ($(`input[name='${item.Name}']`).val() === "")
+    //                f = false;
+    //        }
+    //    }.bind(this));
+    //    return f;
+    //};
 
-    this.addLocationTile = function (o) {
-        $(`#locations_tab`).append(`<div class="solution_container" locid="${o.LocId}">
-                            <div class="solution_container_pd hoveron_block">
-                                <div class='col-md-1 pd-0'>
+    //this.addLocationTile = function (o) {
+    //    $(`#locations_tab`).append(`<div class="solution_container" locid="${o.LocId}">
+    //                        <div class="solution_container_pd hoveron_block">
+    //                            <div class='col-md-1 pd-0'>
 
-                                </div>
-                                <div class="col-md-11">
-                                    <h4 class='head4'>${o.LongName}</h4>
-                                    <p class='text-justify shortname'>${o.ShortName}</p>
-                                </div>
-                            </div>
-                        </div>`);
-    };
+    //                            </div>
+    //                            <div class="col-md-11">
+    //                                <h4 class='head4'>${o.LongName}</h4>
+    //                                <p class='text-justify shortname'>${o.ShortName}</p>
+    //                            </div>
+    //                        </div>
+    //                    </div>`);
+    //};
 
     this.deleteConfig = function (e) {
         let name = $(e.target).closest("tr").attr("key");
@@ -274,6 +273,9 @@
                 else {
                     o.Id = result.id;
                     this.AddTypeInUiTable(o, true);
+                    $('#loc_type').append(`<option value="${o.Id}"> 
+                                       ${o.Type} 
+                                  </option>`);
                 }
                 $("input[name='TypeName']").val("");
             }
@@ -283,13 +285,13 @@
     this.AddTypeInUiTable = function (item) {
         item = item || { Name: "", Id: 0 };
         let del_btn = `<i id="del_${item.Id}" class="fa fa-trash delete-loc-type"></i>`;
-        let edit_btn = `<i id="edit_${item.Id}" class="fa fa-pencil edit-loc-type" ></i>`;
+        let edit_btn = `<i id="edit_${item.Id}" class="fa fa-pencil edit-loc-type" style="padding-right:5px;"></i>`;
 
         $('#types-space tbody').append(`<tr key="${item.Id}">
                                     <td class="text-center">${++types_count}</td> 
                                     <td class="text-center">${item.Id}</td> 
                                     <td class="text-center _type" key="${item.Type}">${item.Type}</td> 
-                                    <td class="text-center" id = "${item.Id}">${del_btn} ${edit_btn}</td>
+                                    <td class="text-center" id = "${item.Id}">${edit_btn} ${del_btn} </td>
                                 </tr>`);
         $('.delete-loc-type').off('click').on('click', this.DeleteLocationType.bind(this));
         $('.edit-loc-type').off('click').on('click', this.EditLocationType.bind(this));
@@ -322,7 +324,6 @@
             m[item.Name] = $(`input[name='n${item.Name}']`).val();
         }.bind(this));
 
-        $('#add_location_modal').modal("hide");
         $("#eb_common_loader").EbLoader("show");
         let o = new Object();
         o.LocId = $("input[name='_LocId']").val();
@@ -333,16 +334,36 @@
         o.IsGroup = true;
         o.ParentId = $("#_parentId").val();
         o.Meta = m;
-        $.post("../TenantUser/CreateLocationH", {
-            loc: o
-        }, function (result) {
+        if (this.validateNewLoc()) {
+            $.post("../TenantUser/CreateLocationH", {
+                loc: o
+            }, function (result) {
                 if (result >= 1) {
                     {
+                        $('#add_location_modal').modal("hide");
                         $("#eb_common_loader").EbLoader("hide");
                         $('#btnGotbl').trigger('click');
                     }
+                }
+            }.bind(this));
+        }
+        else {
+            alert("Required field is empty");
+            $("#eb_common_loader").EbLoader("hide");
+        }
+    };
+
+    this.validateNewLoc = function () {
+        let f = true;
+        if ($("input[name='_longname']").val() === "" || $("input[name='_shortname']").val() === "")
+            f = false;
+        $(this.data).each(function (k, item) {
+            if (item.IsRequired) {
+                if ($(`input[name='n${item.Name}']`).val() === "")
+                    f = false;
             }
         }.bind(this));
+        return f;
     };
 
     this.AddLocationRoot = function () {

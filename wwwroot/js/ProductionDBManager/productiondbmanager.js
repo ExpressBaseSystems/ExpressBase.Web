@@ -81,7 +81,7 @@
                                     </div>
                                 </div>
                                 <div class="collapse" id="${val}sub" hidden>
-                                <div class=" div-sub-headings-main">
+                                <div class=" div-sub-headings-main" style="font-size: small;">
                                     <div class="div-sub-headings">
                                         <div class="col-md-8">
                                             <label>File Name</label>

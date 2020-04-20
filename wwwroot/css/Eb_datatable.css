@@ -833,4 +833,7 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     white-space: normal;
     word-break: break-all;
 }*/
+.treeview .context-menu-item {
+    padding: 0.4em 2em !important;
+}
 

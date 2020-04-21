@@ -1,4 +1,5 @@
 ﻿var InitControls = function (option) {
+
     if (option) {
         this.Bot = option.renderer;
         this.Wc = option.wc;
@@ -614,6 +615,10 @@
 
     this.Review = function (ctrl, ctrlOpts) {
         return new EbReview(ctrl, ctrlOpts);
+    };
+
+    this.MeetingPicker = function (ctrl, ctrlOpts) {
+        return new meetingPicker(ctrl, ctrlOpts);
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {

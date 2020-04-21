@@ -452,6 +452,7 @@
 .v-select .selected-tag, .tdtxt .selected-tag {
     position: relative;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
     /*height: 20px !important;*/
     height: auto;

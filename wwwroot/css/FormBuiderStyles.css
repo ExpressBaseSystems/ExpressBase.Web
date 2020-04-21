@@ -1505,8 +1505,9 @@ input.locinp {
 }
 
 .Dg_head .dgtbl > thead > tr > th {
-    padding: 5px;
+    padding: 8px 10px;
     vertical-align: middle;
+    letter-spacing: 0.1px;
 }
 
     .Dg_head .dgtbl > thead > tr > th:first-child {
@@ -1633,8 +1634,16 @@ input.locinp {
 
 
 
-[eb-form="true"][mode="view"] .v-select .selected-tag > .close, [eb-form="true"][mode="view"] .input-group-addon.ps-srch {
+[eb-form="true"][mode="view"] .v-select .selected-tag > .close {
     display: none;
+}
+
+[eb-form="true"][mode="view"].form-buider-form .input-group-addon, [eb-form="true"][mode="view"].form-buider-form .locinp-cont, [eb-form="true"][mode="view"].form-buider-form .locinp-cont .locinp {
+    background-color: #f3f3f3;
+}
+
+[eb-form="true"][mode="view"] .v-select .selected-tag, [iblock] .selected-tag {
+    filter: grayscale(0.2);
 }
 
 [eb-form="true"][mode="view"] .v-select .selected-tag {
@@ -1972,6 +1981,11 @@ input.locinp {
     width: 100%;
     border: none;
 }
+
+[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag {
+    font-size: 12px;
+}
+
 /*EbRitchText*/
 [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
     width: auto !important;

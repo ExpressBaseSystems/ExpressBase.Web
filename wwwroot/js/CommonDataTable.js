@@ -1328,6 +1328,9 @@
                 $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_LeftBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
                 $("#" + this.tableId + "_wrapper .dataTables_scroll .dataTables_scrollBody tr").css("height", this.EbObject.RowHeight + "px");
             }
+            if (Option.initCompleteCallback)
+                Option.initCompleteCallback();
+
             this.Api.columns.adjust();
         }.bind(this), 0);
     };
@@ -2751,7 +2754,7 @@
 
     this.CreateContexmenu4Tree = function () {
         $.contextMenu({
-            selector: ".groupform",
+            selector: ".groupform", className: 'treeview',
             build: function ($trigger, e) {
                 $("body").find("td").removeClass("focus");
                 $("body").find("[role=row]").removeClass("selected");
@@ -2760,19 +2763,19 @@
                     if ($(e.currentTarget).children().hasClass("levelzero")) {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) }
                             }
                         };
                     }
                     else {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
-                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) },
+                                "Move": { name: "Move Group", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
                     }
@@ -2780,9 +2783,9 @@
                 else if (this.Source === "locationTree") {
                     return {
                         items: {
-                            "NewGroup": { name: "New", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "EditGroup": { name: "Edit", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "Move": { name: "Move", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            "NewGroup": { name: "New", icon: "fa-plus-square", callback: this.OpenLocationModal.bind(this) },
+                            "EditGroup": { name: "Edit", icon: "fa-pencil-square-o", callback: this.OpenLocationModal.bind(this) },
+                            "Move": { name: "Move", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                         }
                     };
                 }

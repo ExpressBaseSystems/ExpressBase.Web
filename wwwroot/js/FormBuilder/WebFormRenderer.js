@@ -1470,6 +1470,7 @@ const WebFormRender = function (option) {
         else if (this.mode === "Preview Mode")
             this.Mode.isPreview = true;
     };
+
     this.resetRowIds = function (multipleTables) {
         multipleTables[this.MasterTable][0].RowId = 0;// foem data
 

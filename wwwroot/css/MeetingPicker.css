@@ -1,0 +1,47 @@
+﻿body {
+}
+
+.meeting-picker-outer {
+    padding: 1px;
+    width: 45rem;
+}
+
+    .meeting-picker-outer .head-cont {
+        padding: 1px;
+    }
+
+    .meeting-picker-outer .date-cont {
+        padding: 1px;
+    }
+
+    .meeting-picker-outer .picker-cont {
+        display: flex;
+        flex-flow: row wrap;
+        width: 100%;
+    }
+
+        .meeting-picker-outer .picker-cont .solts-div {
+            padding: 5px;
+            border: solid 1px #808080;
+            margin-right: 4px;
+            margin-bottom: 7px;
+            margin-top: 3px;
+            border-radius: 2px;
+        }
+
+            .meeting-picker-outer .picker-cont .solts-div:hover {
+                background-color: #00e0ea;
+                cursor: pointer;
+                border: solid 1px #00e0ea;
+            }
+
+        .meeting-picker-outer .picker-cont .solts-div-blocked {
+            padding: 5px;
+            border: solid 1px #ff0000a3;
+            margin-right: 4px;
+            margin-bottom: 7px;
+            margin-top: 3px;
+            background-color: #ff0000a3;
+            color: white;
+            border-radius: 2px;
+        }

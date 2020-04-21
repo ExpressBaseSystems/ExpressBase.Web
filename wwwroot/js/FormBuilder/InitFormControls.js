@@ -388,6 +388,18 @@
         }
     };
 
+    this.TVcontrol = function (ctrl) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        let o = new Object();
+        o.tableId = ctrl.EbSid_CtxId;
+        o.showCheckboxColumn = false;
+        o.showFilterRow = false;
+        o.IsPaging = false;
+        o.dvObject = JSON.parse(result);
+        //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
+        let data = new EbCommonDataTable(o);
+    };
+
     this.CalendarControl = function (ctrl) {
         console.log("eached");
         let userObject = ebcontext.user;
@@ -519,7 +531,6 @@
             }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
-
 
         if (this.Bot)
             this.bindMapResize(ctrl);

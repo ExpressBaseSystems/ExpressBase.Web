@@ -2695,6 +2695,11 @@
         this.$submit.click(this.getColumnsSuccess.bind(this));
 
         if (this.EbObject.FormLinks.$values.length > 0) {
+            this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                index === self.findIndex((t) => (
+                    t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                ))
+            );
             this.CreateNewFormLinks();
         }
 

@@ -828,6 +828,11 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     text-overflow:ellipsis;*/
     word-break: break-all;
 }
+
+.history-image {
+    height: 30px;
+    width: 30px;
+}
 /*.comment-td:hover {
     text-overflow: clip;
     white-space: normal;

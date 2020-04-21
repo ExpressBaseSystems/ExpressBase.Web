@@ -1972,6 +1972,11 @@ input.locinp {
     width: 100%;
     border: none;
 }
+
+[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag {
+    font-size: 12px;
+}
+
 /*EbRitchText*/
 [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
     width: auto !important;

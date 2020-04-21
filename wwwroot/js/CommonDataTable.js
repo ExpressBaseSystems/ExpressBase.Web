@@ -2649,7 +2649,8 @@
         
         $(".popover").remove();
         $(".rating").rateYo({
-            readOnly: true
+            readOnly: true,
+            starWidth: "24px"
         });
 
         $("[data-coltyp=date]").datepicker({

@@ -832,6 +832,7 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .history-image {
     height: 30px;
     width: 30px;
+    margin-right:8px;
 }
 /*.comment-td:hover {
     text-overflow: clip;

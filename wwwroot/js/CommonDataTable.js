@@ -2649,7 +2649,8 @@
         
         $(".popover").remove();
         $(".rating").rateYo({
-            readOnly: true
+            readOnly: true,
+            starWidth: "24px"
         });
 
         $("[data-coltyp=date]").datepicker({
@@ -2694,6 +2695,11 @@
         this.$submit.click(this.getColumnsSuccess.bind(this));
 
         if (this.EbObject.FormLinks.$values.length > 0) {
+            this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                index === self.findIndex((t) => (
+                    t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                ))
+            );
             this.CreateNewFormLinks();
         }
 

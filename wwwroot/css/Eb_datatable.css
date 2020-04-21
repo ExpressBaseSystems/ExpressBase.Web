@@ -832,6 +832,20 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .history-image {
     height: 30px;
     width: 30px;
+    margin-right:8px;
+}
+.color-green{
+    color:green;
+}
+.color-red {
+    color: red;
+}
+.color-blue {
+    color: #0a12f3;
+    font-weight: 900;
+}
+.status-icon {
+    padding-right: 10px;
 }
 /*.comment-td:hover {
     text-overflow: clip;

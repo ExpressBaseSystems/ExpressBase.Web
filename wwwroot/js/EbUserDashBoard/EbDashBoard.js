@@ -899,9 +899,9 @@ var DashBoardWrapper = function (options) {
             this.CurrentTile = $(event.target).closest(".grid-stack-item-content").attr("id");
             this.propGrid.setObject(this.TileCollection[`${this.CurrentTile}`], AllMetas["Tiles"]);
         }
-        //else {
-        //    this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
-        //}
+        else {
+            this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
+        }
         //metaId = $(event.target).closest(".gaugeChart").attr("eb-type");
         //let a = $(event.target).closest(".grid-stack-item-content").attr("id");
         //if (procId != null) {

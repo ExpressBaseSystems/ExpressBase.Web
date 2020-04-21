@@ -1638,7 +1638,7 @@ input.locinp {
     display: none;
 }
 
-[eb-form="true"][mode="view"].form-buider-form .input-group-addon {
+[eb-form="true"][mode="view"].form-buider-form .input-group-addon, [eb-form="true"][mode="view"].form-buider-form .locinp-cont, [eb-form="true"][mode="view"].form-buider-form .locinp-cont .locinp {
     background-color: #f3f3f3;
 }
 

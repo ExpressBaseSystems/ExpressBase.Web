@@ -520,9 +520,9 @@
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
-        $(window).resize(function () {
-            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
-        });
+
+        if (this.Bot)
+            this.bindMapResize(ctrl);
 
     };
 
@@ -583,7 +583,11 @@
             position: uluru,
             map: map
         });
+        if (this.Bot)
+            this.bindMapResize(ctrl);
+    };
 
+    this.bindMapResize = function (ctrl) {
         $(window).resize(function () {
             $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
         });

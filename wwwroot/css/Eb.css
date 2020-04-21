@@ -459,10 +459,11 @@
     border: none !important;
     border-radius: 2px !important;
     /*padding: 0.01em .45em 0.15em 0.45em !important;*/
-    padding: 3px 7px;
-    margin: 2px 0px 2px 3px !important;
-    font-size: 12px;
-    padding-right: 23px !important;
+    padding: 3px 12px;
+    margin: 3px 0px 3px 3px !important;
+    font-size: 13px;
+    border-radius: 18px !important;
+    padding-right: 30px !important;
 }
 
     .v-select .selected-tag .close {
@@ -472,7 +473,7 @@
         opacity: 1;
         position: absolute;
         top: 1.5px;
-        right: 4px;
+        right: 10px;
         padding: 3px;
         font-size: 21px;
     }

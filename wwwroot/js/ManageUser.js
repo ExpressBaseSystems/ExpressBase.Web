@@ -212,6 +212,7 @@
             //this.btnCreateUser.text("Update");
             this.txtEmail.attr("disabled", "true");
             this.divPassword.css("display", "none");
+            this.selUserType.attr("disabled", "true");
             $("#imgprofimage").attr("src", "/images/dp/" + this.itemId + ".png");
             if (this.whichMode === 3) {
                 this.menuBarObj.setName("My Profile");

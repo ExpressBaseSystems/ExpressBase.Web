@@ -1320,6 +1320,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .map-div {
     height: 250px;
     width: 100%;
+    border-radius: 2px 3px 0 0;
 }
 
 .location-box {
@@ -1333,7 +1334,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .picker-box {
-    padding: 5px 0 !important;
+    padding-bottom: 5px !important;
 }
 
 .locinp-cont {

@@ -449,7 +449,7 @@ var EditTicket = function () {
             //    data.append("imageUploadForm" + i, file);
             //}
             // data.append("filedelet", JSON.stringify(window.filedel));
-            var solu = $("#soluid").val();
+            var solu = $("#soluid").attr("sol_id");
             var tktid = $("#tktid").val();
             var typ = $('input[name=optradio]:checked').val();
             var sts = $("#stsid option:selected").text().trim();
@@ -800,17 +800,17 @@ var EditTicket = function () {
                 if (flno > 0) {
                     window.filedel.push(flno);
                 }
-
+                let $contParent = $container.parent();
                 // Remove this image from the container
                 $container.remove();
 
                 var nm = (((preloadedfile - window.filedel.length) + filearray.length) < 10);
 
                 // If there is no more uploaded files
-                if (!$container.find('.uploaded-image').length) {
+                if (!$contParent.find('.uploaded-image').length) {
 
                     // Remove the 'has-files' class
-                    $container.removeClass('has-files');
+                    $contParent.parent().removeClass('has-files');
 
                 }
 

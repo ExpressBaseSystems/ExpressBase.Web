@@ -344,6 +344,10 @@
     align-items: center;
 }
 
+.filter-box .input-group-addon.ps-srch > i, .form-buider-form .input-group-addon.ps-srch > i, [eb-type="BotForm"] .input-group-addon.ps-srch > i {
+    padding-left: 4.5px !important;
+}
+
 .v-select {
     flex-grow: 1;
     display: flex;
@@ -448,15 +452,19 @@
 .v-select .selected-tag, .tdtxt .selected-tag {
     position: relative;
     text-overflow: ellipsis;
+    white-space: nowrap;
     overflow: hidden;
-    height: 20px !important;
+    /*height: 20px !important;*/
+    height: auto;
     color: white !important;
     border: none !important;
     border-radius: 2px !important;
-    padding: 0.01em .45em 0.15em 0.45em !important;
-    margin: 2px 0px 2px 3px !important;
-    font-size: 12px;
-    padding-right: 18px !important;
+    /*padding: 0.01em .45em 0.15em 0.45em !important;*/
+    padding: 3px 12px;
+    margin: 3px 0px 3px 3px !important;
+    font-size: 13px;
+    border-radius: 18px !important;
+    padding-right: 30px !important;
 }
 
     .v-select .selected-tag .close {
@@ -466,7 +474,9 @@
         opacity: 1;
         position: absolute;
         top: 1.5px;
-        right: 4px;
+        right: 10px;
+        padding: 3px;
+        font-size: 21px;
     }
 
         .v-select .selected-tag .close:hover {
@@ -480,7 +490,9 @@
 }
 
 [iblock] .selected-tag {
-    padding: 0.1em .45em 0.15em 0.45em !important;
+    /*padding: 0.1em .45em 0.15em 0.45em !important;*/
+    padding: 5px 8px;
+    padding-right: 8px !important;
 }
 
     .v-select .selected-tag:nth-child(5n - 4), [iblock] .selected-tag:nth-child(5n - 4) {

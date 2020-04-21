@@ -292,6 +292,7 @@ namespace ExpressBase.Web.Controllers
         public ParticularApprovalColumnResponse PostWebformData(List<Param> Params, string RefId, int RowId, int CurrentLoc)
         {
             ParticularApprovalColumnResponse res = null;
+            InsertDataFromWebformResponse Resp = null;
             try
             {
                 WebformData obj = new WebformData();
@@ -308,7 +309,7 @@ namespace ExpressBase.Web.Controllers
                 SingleTable ss = new SingleTable();
                 ss.Add(new SingleRow { Columns = singleColumns });
                 obj.MultipleTables.Add("eb_approval_lines", ss);
-                InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                 Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
                          new InsertDataFromWebformRequest
                          {
                              RefId = RefId,
@@ -317,18 +318,32 @@ namespace ExpressBase.Web.Controllers
                              CurrentLoc = CurrentLoc,
                              UserObj = this.LoggedInUser
                          });
-                res = ServiceClient.Post<ParticularApprovalColumnResponse>(
-                         new ParticularApprovalColumnRequest
-                         {
-                             RefId = RefId,
-                             RowId = RowId,
-                             CurrentLoc = CurrentLoc,
-                             UserObj = this.LoggedInUser
-                         });
+                if (Resp.Status == 200)
+                {
+                    try
+                    {
+                        res = ServiceClient.Post<ParticularApprovalColumnResponse>(
+                                 new ParticularApprovalColumnRequest
+                                 {
+                                     RefId = RefId,
+                                     RowId = RowId,
+                                     CurrentLoc = CurrentLoc,
+                                     UserObj = this.LoggedInUser
+                                 });
+                    }
+                    catch(Exception ex)
+                    {
+                        res.Messaage = "EXCEPTION AT Approval in DV ParticularApprovalColumnResponse ---" + ex.Message;
+                        Console.WriteLine("EXCEPTION AT Approval in DV ParticularApprovalColumnResponse" + ex.Message);
+                        Console.WriteLine(ex.StackTrace);
+                    }
+                }
+
             }
             catch (Exception ex)
             {
-                Console.WriteLine("EXCEPTION AT webform_save API" + ex.Message);
+                res.Messaage = "EXCEPTION AT Approval in DV ---" + Resp.Message + "----"+ ex.Message;
+                Console.WriteLine("EXCEPTION AT Approval in DV" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
             return res;

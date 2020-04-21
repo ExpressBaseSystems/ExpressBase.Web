@@ -507,7 +507,7 @@
             this.GroupFormLink = temp[0].GroupFormLink;
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
-            this.treeColumnIndex = this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
+            this.treeColumnIndex = (this.Source === "locationTree") ? 0 :  this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
         }
         if (this.IsTree)
             this.EbObject.IsPaging = false;
@@ -1328,6 +1328,9 @@
                 $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_LeftBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
                 $("#" + this.tableId + "_wrapper .dataTables_scroll .dataTables_scrollBody tr").css("height", this.EbObject.RowHeight + "px");
             }
+            if (Option.initCompleteCallback)
+                Option.initCompleteCallback();
+
             this.Api.columns.adjust();
         }.bind(this), 0);
     };
@@ -2587,7 +2590,6 @@
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
         $(".closeTab").off("click").on("click", this.deleteTab.bind(this)); 
-        $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this)); 
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -2614,18 +2616,41 @@
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        
         $('.columntooltip').popover({
             container: 'body',
             trigger: 'hover',
             placement: this.PopoverPlacement,
             html: true,
             content: function (e, i) {
+                $(".popover").remove();
                 return atob($(this).attr("data-contents"));
             },
         });
+        $('.btn-approval_popover').popover({
+            container: 'body',
+            trigger: 'click',
+            placement: this.PopoverPlacement,
+            html: true,
+            template: '<div class="popover approval-popover" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>',
+            content: function (e, i) {
+                return atob($(this).attr("data-contents"));
+            },
+        });
+        $('.btn-approval_popover').on('click', function (e) {
+            $('.btn-approval_popover').not(this).popover("hide");
+        });
 
+        $('.btn-approval_popover').on('shown.bs.popover', function (e) {
+            $(".stage_actions").selectpicker();
+            let $td = $(e.target).parents().closest("td");
+            $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
+        }.bind(this)); 
+        
+        $(".popover").remove();
         $(".rating").rateYo({
-            readOnly: true
+            readOnly: true,
+            starWidth: "24px"
         });
 
         $("[data-coltyp=date]").datepicker({
@@ -2637,7 +2662,6 @@
         $("[data-coltyp=date]").on("click", function () {
             $(this).datepicker("show");
         });
-        $(".stage_actions").selectpicker();
         //$("#switch" + this.tableId).off("click").on("click", this.SwitchToChart.bind(this));
         //this.Api.columns.adjust();
     };
@@ -2731,7 +2755,7 @@
 
     this.CreateContexmenu4Tree = function () {
         $.contextMenu({
-            selector: ".groupform",
+            selector: ".groupform", className: 'treeview',
             build: function ($trigger, e) {
                 $("body").find("td").removeClass("focus");
                 $("body").find("[role=row]").removeClass("selected");
@@ -2740,19 +2764,19 @@
                     if ($(e.currentTarget).children().hasClass("levelzero")) {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) }
                             }
                         };
                     }
                     else {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
-                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) },
+                                "Move": { name: "Move Group", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
                     }
@@ -2760,9 +2784,9 @@
                 else if (this.Source === "locationTree") {
                     return {
                         items: {
-                            "NewGroup": { name: "New", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "EditGroup": { name: "Edit", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "Move": { name: "Move", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            "NewGroup": { name: "New", icon: "fa-plus-square", callback: this.OpenLocationModal.bind(this) },
+                            "EditGroup": { name: "Edit", icon: "fa-pencil-square-o", callback: this.OpenLocationModal.bind(this) },
+                            "Move": { name: "Move", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                         }
                     };
                 }
@@ -3267,7 +3291,10 @@
         if (this.clickCounter === 0) {
             if (options === undefined)
                 key = $(key.currentTarget).children("span").text();
-            $("#treemodal .treemodalul").text(key).append('<span class="caret"></span></button>');
+            let path = $(".contextmenu-custom__highlight .context-menu-visible").children().closest("span").map(function () {
+                return $(this).text();
+            }).get().join(' > ');
+            $("#treemodal .treemodalul").text(path).append('<span class="caret"></span></button>');
             this.getClickedItem(key);
             $(".contextmenu-custom__highlight").hide();
             $(".treemodalul").removeClass("context-menu-active");
@@ -3941,26 +3968,27 @@
         this.Api.columns.adjust();
     };
 
-    this.ExecuteApproval = function (e) {
+    this.ExecuteApproval = function ($td, e) {
         $("#eb_common_loader").EbLoader("show");
-        let val = $(e.target).parents(".stage_actions_cont").find(".selectpicker").val();
-        let $td = $(e.target).parents().closest("td");
+        $('.btn-approval_popover').popover('hide');
+        let val = $(e.target).closest("#action").find(".selectpicker").val();
         val = JSON.parse(atob(val));
+        let comments = $(e.target).closest("#action").find(".comment-text").val();
         let Columns = [];
         Columns.push(new fltr_obj(16, "stage_unique_id", val.Stage_unique_id.toString()));
         Columns.push(new fltr_obj(16, "action_unique_id", val.Action_unique_id.toString()));
         Columns.push(new fltr_obj(7, "eb_my_actions_id", val.My_action_id.toString()));
-        Columns.push(new fltr_obj(16, "comments", ""));
-        let webdata = {};
-        webdata["eb_approval_lines"] =[{ "Columns": Columns }];
-        let WebformData = {
-            "MultipleTables": [webdata]
-        };
+        Columns.push(new fltr_obj(16, "comments", comments));
         $.ajax({
             type: "POST",
             url: "../dv/PostWebformData",
             data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)},
-            success: this.cccccc.bind(this, $td)
+            success: this.cccccc.bind(this, $td),
+            error: function (xhr, error) {
+                console.log(xhr); console.log(error);
+                console.debug(xhr); console.debug(error);
+
+            },
         });
     };
 

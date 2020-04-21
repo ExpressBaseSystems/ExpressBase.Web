@@ -267,6 +267,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.tmpPropertyChanged = function (obj, Pname) {
+        this.EbObject = obj;
         if (Pname === "DataSourceRefId") {
             if (obj[Pname] !== null) {
                 this.PcFlag = true;

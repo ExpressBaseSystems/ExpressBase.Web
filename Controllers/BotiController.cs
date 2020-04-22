@@ -173,6 +173,7 @@ namespace ExpressBase.Web.Controllers
                     if (control is EbTVcontrol)
                     {
                         (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
+                        (control as EbTVcontrol).BareControlHtml4Bot = (control as EbTVcontrol).GetBareHtml();
                     }
                     else if (control is EbImage)
                     {

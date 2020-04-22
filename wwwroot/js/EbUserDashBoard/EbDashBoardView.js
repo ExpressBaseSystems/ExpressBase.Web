@@ -310,6 +310,9 @@
                             let object = this.Procs[this.currentId];
                             let designHtml = this.MakeLinks(object);
                             $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+                            $(`#${this.CurrentTile}`).addClass("eb-tile-link");
+                            $(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");
+                            $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
                             this.labelstyleApply(this.CurrentTile);
                             LinkStyle(obj, this.CurrentTile, this.TabNum);
                             this.TileCollection[t_id].LinksColl.$values[i] = object;

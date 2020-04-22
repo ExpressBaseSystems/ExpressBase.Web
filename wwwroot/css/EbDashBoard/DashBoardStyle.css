@@ -1377,6 +1377,9 @@ body {
         padding: 10px 10px;
     }
 
+.eb-tile-link{
+    cursor:pointer !important;
+}
 /*canvas Style*/
 canvas:focus {
     outline: none;

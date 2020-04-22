@@ -2676,7 +2676,7 @@
     };
 
     this.PopoverPlacement = function (context, source) {
-        var position = $(source).position();
+        var position = $(source).offset();
 
         if (position.left > 1000)
             return "left";

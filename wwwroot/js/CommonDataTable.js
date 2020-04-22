@@ -2627,6 +2627,7 @@
                 return atob($(this).attr("data-contents"));
             },
         });
+
         $('.btn-approval_popover').popover({
             container: 'body',
             trigger: 'click',
@@ -2637,6 +2638,7 @@
                 return atob($(this).attr("data-contents"));
             },
         });
+
         $('.btn-approval_popover').on('click', function (e) {
             $('.btn-approval_popover').not(this).popover("hide");
         });
@@ -2648,6 +2650,15 @@
         }.bind(this)); 
         
         $(".popover").remove();
+
+        $('body').on('click', function (e) {
+            $('[data-toggle=popover]').each(function () {
+                // hide any open popovers when the anywhere else in the body is clicked
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
         $(".rating").rateYo({
             readOnly: true,
             starWidth: "24px"

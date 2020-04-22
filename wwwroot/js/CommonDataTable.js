@@ -4512,6 +4512,12 @@ function returnOperator(op) {
         return op;
 }
 
+function imgError(image) {
+    image.onerror = "";
+    image.src = "/images/proimg.jpg";
+    return true;
+}
+
 (function ($) {
     if ($.fn.style) {
         return;

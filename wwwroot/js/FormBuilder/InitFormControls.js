@@ -396,7 +396,9 @@
         o.showCheckboxColumn = false;
         o.showFilterRow = false;
         o.IsPaging = false;
-        o.dvObject = JSON.parse(result);
+        o.Source = "form";
+        o.scrollHeight = ctrl.Height - 34.62;
+        o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
         //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
         let data = new EbCommonDataTable(o);
     };

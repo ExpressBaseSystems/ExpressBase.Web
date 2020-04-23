@@ -740,6 +740,7 @@ const EbSelect = function (ctrl, options) {
         //console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
         setTimeout(function () {
             this.adjustTag_closeHeight();
+            this.$wraper.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
         }.bind(this),5);
     };
 

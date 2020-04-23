@@ -1418,8 +1418,12 @@ input.locinp {
     line-height: 10px;
 }*/
 
-[eb-type="WebForm"] .dataTables_wrapper {
-    margin-top:-7px;
+[eb-type="WebForm"] .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
+    margin-top: -7px;
+}
+
+.eb-chat-cont .dataTables_wrapper {
+    box-shadow: -7px 10px 8px 0px #8282822e;
 }
 
 [eb-type="WebForm"] .locinp-cont input.locinp { /*overriding '.locinp-cont .locinp' for web form*/

@@ -54,6 +54,7 @@
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
 <link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
 <link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />
+<link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
 
 @*jith*@
 <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version=@bApnd></script>
@@ -107,6 +108,8 @@
 
 <script type="text/javascript" src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/splitWindow.js"></script>
+<script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>
 
 <style>
     body {
@@ -120,6 +123,7 @@
 
     <script>
         @Html.Raw(_toolBox.AllMetas);
+        @Html.Raw(_toolBox.EbObjectTypes);
     </script>
 }
 

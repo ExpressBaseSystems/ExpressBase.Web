@@ -66,6 +66,10 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
                     }
+                    if (control is EbTVcontrol)
+                    {
+                        (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
+                    }
                     else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
                     {
                         (control as EbPowerSelect).InitFromDataBase_SS(this.ServiceClient);

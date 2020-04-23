@@ -286,6 +286,7 @@ var EbBasicDataTable = function (Option) {
         dq.TFilters = this.columnSearch;
         //if (this.filterValues.length === 0)
         this.filterValues = this.getFilterValues();
+        this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.rowData = this.rowData || "";
         //if (this.orderColl.length > 0)
@@ -304,6 +305,15 @@ var EbBasicDataTable = function (Option) {
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.tableId;
         return dq;
+    };
+
+    this.AddUserAndLcation = function () {        
+        let temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_loc_id"; });
+        if (temp.length === 0)
+            this.filterValues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     };
 
     this.filterDisplay = function () {

@@ -5,6 +5,9 @@
         bApnd = false;
     }
 }
+
+@using ExpressBase.Objects;
+
 @*<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />*@
 <link rel="stylesheet" type="text/css" href="~/css/commonStyles/bootstrap.min.css" />
 @*jith*@
@@ -49,6 +52,9 @@
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
+<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />
+
 @*jith*@
 <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version=@bApnd></script>
 @*amal*@
@@ -99,12 +105,23 @@
 
 <script type="text/javascript" src="~/js/yearpicker.js" asp-append-version=@bApnd></script>
 
+<script type="text/javascript" src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/splitWindow.js"></script>
+
 <style>
     body {
         margin: 0;
         padding: 0px;
     }
 </style>
+
+@{
+    EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.BotForm);
+
+    <script>
+        @Html.Raw(_toolBox.AllMetas);
+    </script>
+}
 
 <script>
     @Html.Raw(ViewBag.ControlOperations);

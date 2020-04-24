@@ -128,7 +128,7 @@ namespace ExpressBase.Web.Controllers
 			//if (mode.Equals("s"))//if single bot
 			{
 				int appid = Convert.ToInt32(args[1]);
-				EbBotSettingsS settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
 				if (settings == null)
 					settings = new EbBotSettings()
 					{

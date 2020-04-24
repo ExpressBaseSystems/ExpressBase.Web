@@ -1,0 +1,82 @@
+﻿
+.btnarea {
+    display: flex;
+    flex-flow: row-reverse;
+    display: flex;
+    flex-flow: row-reverse;
+    padding-bottom: 10px;
+}
+
+.botappDashboard {
+    padding: 0px;
+}
+    .botappDashboard .tab-content {
+        margin-bottom: 0px;
+    }
+    .botappDashboard .botappConfig {
+        padding: 0px;
+        border: 1px solid #efe5e5;
+    }
+
+
+
+        .botappDashboard .botappConfig .botSetng {
+            padding: 10px
+        }
+
+            .botappDashboard .botappConfig .botSetng .bot_wcmsg {
+                resize: none;
+            }
+
+    .botappDashboard .srptarea {
+        width: 100%;
+        height: 230px;
+        resize: none;
+    }
+
+    .botappDashboard .botappConfig input[type="color"] {
+        padding: 0px;
+    }
+
+    .botappDashboard .botcssConfig .configcss .csstxtarea {
+        width: 100%;
+        height: 500px;
+        resize: none;
+    }
+
+    .botappDashboard .copyscript {
+        display: flex;
+        flex-flow: row-reverse;
+        display: flex;
+        flex-flow: row-reverse;
+    }
+
+   
+.botappDashboard .botcssConfig .tabs-left {
+    border-bottom: none;
+    border-right: 1px solid #ddd;
+}
+
+        .botappDashboard .botcssConfig .tabs-left > li {
+            float: none;
+            margin: 0px;
+        }
+
+.tabs-left > li.active > a,
+.tabs-left > li.active > a:hover,
+.tabs-left > li.active > a:focus {
+    background: #cbe0ecad;
+    border: none;
+    border-radius: 0px;
+}
+
+.tabs-left > li > a:hover {
+    /* margin-right: 2px; */
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    /* border-radius: 4px 4px 0 0; */
+}
+
+.botappDashboard .botcssConfig .cssconfig {
+    padding: 0px;
+}

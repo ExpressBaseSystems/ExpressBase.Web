@@ -52,8 +52,7 @@
             let $container = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`);
             $container.addClass('has-files');
             let $uploadedContainer = $container.find('.uploaded');
-
-            this.clearFiles(); // jith
+            this.clearFiles();
 
             for (let i = 0; i < plugin.settings.preloaded.length; i++) {
                 $uploadedContainer.append(createImg(plugin.settings.preloaded[i], plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].cntype, true, plugin.settings.preloaded[i].fileno, plugin.settings.preloaded[i].refid));
@@ -63,9 +62,7 @@
         };
 
         this.clearFiles = function () {
-
-            preloadedfile = 0; // jith
-
+            preloadedfile = 0; 
             refidArr = [];
             $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`).val("");
             let $container = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`).find('.uploaded').empty();
@@ -141,7 +138,7 @@
             let src = filelurl;
             if (plugin.settings.botCtrl) {
                 $filethumb = $('<div>', { class: 'botfilethumb' });
-                $inrContainer = $('<div>', { class: 'botuploaded-image', exact: file.name }).appendTo($filethumb);
+                $inrContainer = $('<div>', { class: 'botuploaded-image ', exact: file.name }).appendTo($filethumb);
 
                 if (cntype == 'application/pdf') {
 
@@ -339,11 +336,21 @@
                                 $uploadedContainer.append(createImg(file, filearray.length - 1, files[i].type), false);
                             }
 
-                            let type = getFileType(file);
-                            if (type === "image")
-                                url = "../StaticFile/UploadImageAsync";
+                            let type = getFileType(file); 
+                            if (plugin.settings.botCtrl) {
+                                if (type === "image")
+                                    url = "../Boti/UploadImageAsync";
+                                else
+                                    url = "../Boti/UploadFileAsync";
+                            }
                             else
-                                url = "../StaticFile/UploadFileAsync";
+                            {
+                                if (type === "image")
+                                    url = "../StaticFile/UploadImageAsync";
+                                else
+                                    url = "../StaticFile/UploadFileAsync";
+                            }
+                           
 
                             uploadItem(url, file);
 
@@ -384,18 +391,14 @@
             formData.append("File", file);
 
             $.ajax({
-                url: _url,
                 type: "POST",
+                url: _url,
                 data: formData,
-                cache: false,
+                //cache: false,
                 contentType: false,
-                processData: false,
-                beforeSend: function (evt) {
-
-                    thumb = $inrContainer;
-                    //thumb.find(".eb-upl-loader").show();
-                }.bind(this)
+                processData: false
             }).done(function (refid) {
+                thumb = $inrContainer;
                 successOper(thumb, refid, file);
             }.bind(this));
         };
@@ -421,6 +424,7 @@
             let $hiddenInput = $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`);
             $hiddenInput.val(refidArr.join(","));
             $hiddenInput.trigger('change');
+            $(`#${plugin.settings.fileCtrl.EbSid}`).attr("fileCount",refidArr.length)
         };
 
         this.refidListfn = function () {

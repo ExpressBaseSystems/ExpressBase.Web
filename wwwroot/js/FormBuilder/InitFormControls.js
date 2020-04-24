@@ -1151,14 +1151,15 @@
     }
 
     this.TagInput = function (ctrl) {
-
+        //$('#' + ctrl.EbSid).find('.bootstrap-tagsinput').find('.tag');
+        //$('input[name = ' + ctrl.EbSid_CtxId + '_tags]').css("font-size", ctrl.FontSizes + 'px')
         //ctrl.clear = function (p1) {
         //    return $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').va("");
         //}
     }
 
     this.RichText = function (ctrl) {
-        $(`#${ctrl.EbSid}_RichText`).summernote({
+        $(`#${ctrl.EbSid}`).summernote({
             height: ctrl.TextBoxHeight,
             toolbar: [
                 ['font', ['bold', 'underline', 'italic', 'strikethrough', 'subscript', 'superscript', 'clear']],
@@ -1178,9 +1179,10 @@
 
 
         ctrl.clear = function (p1) {
-            return $(`#${ctrl.EbSid}_RichText`).summernote('reset');
+            return $(`#${ctrl.EbSid}`).summernote('reset');
         };
 
+       
     };
 
     this.SimpleFileUploader = function (ctrl) {

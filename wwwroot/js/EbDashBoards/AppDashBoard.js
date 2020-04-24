@@ -5,6 +5,11 @@
     this.AppType = apptype;
     this.AppSettings = appsettings;
 
+
+    this.init = function () {
+        this.cssConfigFn();
+        $('#updateBotSettingsID').on('click', this.UpdateBotSettingsFn.bind(this));
+    }
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
         var srch = $(e.target).val().toLowerCase();
@@ -150,6 +155,61 @@
             this.setUpImport4Mob();
         }
     }
+    //for bot
+    this.cssConfigFn = function () {
 
+        //let property = atob(this.AppSettings.CssContent).split(";");
+        //for (i = 0; i < property.length; i++) {
+
+        //    let props = property[i].trim();
+        //    let cssProp = props.split(':');
+        //    html += `<label >${cssProp[0]}</label>
+        //            <input type='text' value='${cssProp[1]}' ><br><br>`;
+
+        //}
+        //$('#configcssTabContent #3tab').append(html);
+        let cssobj = this.AppSettings.CssContent;
+        for (let property in cssobj) {
+
+            let html = "";
+            for (let key in cssobj[property]) {
+                html += `<label obname='${key}'>${key}</label>
+                   <input type='text' obname=${key} value='${cssobj[property][key]}' ><br><br>`;
+            }
+            $(`#configcssTabContent #${property}`).append(html);
+        }
+    }
+    this.UpdateBotSettingsFn = function () {
+        var appSettings = {};
+        let cssConstObj = {};
+
+        let cssobj = this.AppSettings.CssContent;
+        for (let property in cssobj) {
+            let tempobj = {};
+            for (let key in cssobj[property]) {
+                let cssobjVal = $(`#configcssTabContent #${property} input[obname=${key}]`).val();
+                tempobj[key] = cssobjVal;
+            }
+            cssConstObj[property] = tempobj;
+        }
+        appSettings["Name"] = $("#bot_name_txt").val();
+        appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
+        appSettings["ThemeColor"] = $("#bot_tm_color").val();
+        appSettings["DpUrl"] = $("#bot_dp_url").val();
+        appSettings["CssContent"] = cssConstObj
+        $.ajax({
+            type: "POST",
+            url: "../Dev/UpdateAppSettings",
+            data: { id: this.AppId, type: this.AppType, settings: JSON.stringify(appSettings) },
+            success: function (data) {
+                if (data > 0)
+                    alert("Settings Updated Successfully");
+                else
+                    alert("Something went wrong");
+            }
+        });
+    }
     this.start_exe();
+    this.init();
+
 }

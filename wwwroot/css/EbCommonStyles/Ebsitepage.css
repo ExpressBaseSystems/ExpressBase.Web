@@ -21,7 +21,7 @@
     max-height:100vh;
 }
 .eb-signup_wrapper {
-    font-family: Montserrat;
+
 }
 
     .eb-signup_wrapper h1 {
@@ -594,7 +594,7 @@ input {
 
 
 .eb_mailverify {
-    font-family: Montserrat;
+
 }
 
     .eb_mailverify .veri_content {
@@ -629,7 +629,7 @@ input {
 
 /*css for forgotpassword page*/
 .eb_ext_pge_stl {
-    font-family: Montserrat;
+
 }
     .eb_ext_pge_stl .frgtpswdiv {
         justify-content: center;

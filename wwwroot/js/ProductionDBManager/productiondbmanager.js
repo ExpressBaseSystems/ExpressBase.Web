@@ -211,6 +211,7 @@
                 msg = msg + " \"DELETE\"";
             }
             else {
+                $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "body" } });
                 $.ajax({
                     type: "POST",
                     url: "../ProductionDBManager/ExecuteQuery",
@@ -221,6 +222,7 @@
             }
         }
         else {
+            $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "body" } });
             $.ajax({
                 type: "POST",
                 url: "../ProductionDBManager/ExecuteQuery",
@@ -258,6 +260,7 @@
     }
 
     this.getqueryAjaxSuccess = function (data) {
+        $("#eb_common_loader").EbLoader("hide", { maskItem: { Id: "body" } });
         if (data.errorMessage == "") {
             alert('Execution Completed !!!');
             let x = this.currentDiv.parentNode.parentNode.parentNode.parentNode.children[0].children[0].children[0].children[0].getAttribute("count-val");

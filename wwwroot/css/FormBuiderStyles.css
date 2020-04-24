@@ -1859,6 +1859,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100%;
     border: none;
 }
+
+/*[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag{
+font-size:12px;
+}*/
 /*EbRitchText*/
 [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
     width: auto !important;
@@ -1916,9 +1920,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     }
 
 
-        .simpleFUPdiv .SFUPcontainer .botfileSend {
-            min-height: min-content !important;
-        }
+.msg-cont .simpleFUPdiv .SFUPcontainer {
+    min-height: 120px;
+    /*max-height: 175px;*/
+    overflow: auto;
+    border: 1px solid #d9d9d9;
+    position: relative;
+}
     /* Style on hover */
     .simpleFUPdiv .SFUPcontainer.drag-over {
         background-color: #f3f3f3;

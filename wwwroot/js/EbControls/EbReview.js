@@ -220,6 +220,8 @@
             html = html.replace("@slno@", i + 1);
             for (let j = 0; j < row.Columns.length; j++) {
                 let column = row.Columns[j];
+                if (column.Value === null)
+                    column.Value = "null$$unknown";
                 if (column.Name === "eb_created_by") {
                     let userId = column.Value.split("$$")[0];
                     let userName = column.Value.split("$$")[1] || "-------";

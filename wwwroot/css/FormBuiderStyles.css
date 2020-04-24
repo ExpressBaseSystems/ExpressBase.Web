@@ -254,8 +254,7 @@ body {
 .del-row, .edit-row, .cancel-row {
     /*display: none;*/
     position: absolute;
-    height: 27px;
-    top: 0px;
+    top: 1px;
     /*width: 16.5px;*/
     padding-top: 5px;
 }
@@ -286,7 +285,9 @@ body {
 
 .tdtxt {
     display: none;
-    padding: 5px 6px;
+    /*padding: 5px 6px;*/
+    padding: 8px 6px;
+    font-size: 13px;
     word-break: break-word;
 }
 
@@ -296,6 +297,7 @@ body {
     background-color: transparent;
     border: none;
     width: 50%;
+    height: 30px;
     flex-grow: 1;
 }
 
@@ -647,7 +649,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     min-height: 24px;
     -webkit-tap-highlight-color: rgba(255,255,255,0);
     background: #FFF;
-    padding: 3px;
+    /*padding: 3px;*/
+    padding: 7px 10px;
     font-size: 13px;
     -webkit-transition: box-shadow .1s ease,border-color .1s ease;
     transition: box-shadow .1s ease,border-color .1s ease;
@@ -921,7 +924,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 .ctrl-cover .dropdown-toggle[data-toggle="dropdown"] {
     border-radius: 1px;
     font-size: 13px;
-    height: 24px;
+    /*height: 24px;*/
+    height: 32px;
     background-color: white;
     box-shadow: none !important;
 }
@@ -939,8 +943,13 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle,
+{
+    /*padding: 0 0px 0 5px;*/
+    padding: 3px 0px 0 6px;
+}
+
 [tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
-    padding: 0 0px 0 5px;
+    /*padding: 0 0px 0 5px;*/
 }
 
 .ctrl-cover > .input-group > .nullable-check [type="checkbox"] {
@@ -959,7 +968,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .ctrl-cover .dropdown-toggle .filter-option-inner-inner {
-    margin-top: 3px;
+    /*margin-top: 3px;*/
+    margin-top: 1px;
 }
 
 .form-buider-form .Eb-ctrlContainer {
@@ -1138,11 +1148,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     font-size: 11.5px;
     font-size: 12px;
     font-weight: 500;
+    font-weight: 400;
     font-family: Roboto;
     letter-spacing: 0.4PX;
+    letter-spacing: 0.3PX;
     padding: 1px;
     padding: 2px 0px;
     color: #6b6a6a;
+    color: #656565;
     border: none;
     display: inline-block;
     margin: 1px 0;
@@ -1283,6 +1296,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
+.card-btn-cont {
+    display: none !important;
+}
+
 .loc-cont {
     border: solid 1px #e5e5e5;
     border-radius: 1.3em;
@@ -1302,7 +1319,96 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     background-color: white;
 }
 
-.locinp-cont .locinp {
+/*location related styles also used in bot======================== begin*/
+.map-div {
+    height: 250px;
+    width: 100%;
+    border-radius: 2px 3px 0 0;
+}
+
+.location-box {
+    display: none;
+    position: relative;
+    /*padding: 5px 5px 0px 5px;*/
+    background-color: white;
+    border-radius: 3px;
+    width: 100%;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
+}
+
+.picker-box {
+    padding-bottom: 5px !important;
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.locinp-cont {
+    padding: 5px 15px;
+    font-size: 13px;
+    color: rgba(0, 0, 0, 0.55);
+}
+
+.loc-opt-btn {
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px;
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 5px 5px 0px 0;
+    color: #868585;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .loc-opt-btn:focus {
+        outline: none;
+    }
+
+.loc-opt-cont {
+    padding: 0px 0px 3px 0px;
+}
+
+    .loc-opt-cont[loc-count='1'] {
+        display: none;
+    }
+
+.loc-opt-DD {
+    width: 100%;
+    padding: 3px 10px;
+    color: rgba(0, 0, 0, 0.7);
+    max-width: inherit;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.07058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.1607843137254902);
+}
+
+input.locinp {
+    height: 1.8em !important;
+    min-height: 0 !important;
+    margin-left: 5px;
+    border: none !important;
+    border-bottom: solid 1px #e4e4e4 !important;
+    font-size: calc(1em - 1px);
+    max-width: 400px;
+    float: inherit;
+    font-style: italic;
+    width: calc(100% - 6em);
+    outline: none !important;
+}
+
+.locinp :focus {
+    outline: none !important;
+    border-bottom: solid 1px #6bac6b !important;
+}
+/*location related styles also used in bot======================== end*/
+
+/*.locinp-cont .locinp {
     border: none;
     border-bottom: solid 1px #a4a4a4 !important;
     padding: 0px 0px;
@@ -1310,6 +1416,21 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     float: inherit;
     width: 9.4em;
     line-height: 10px;
+}*/
+
+[eb-type="WebForm"] .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
+    margin-top: -7px;
+}
+
+.eb-chat-cont .dataTables_wrapper {
+    box-shadow: -7px 10px 8px 0px #8282822e;
+}
+
+[eb-type="WebForm"] .locinp-cont input.locinp { /*overriding '.locinp-cont .locinp' for web form*/
+    width: 9.4em;
+    padding: 3px;
+    height: auto !important;
+    max-width: 287px;
 }
 
 .pdf-frame {
@@ -1396,8 +1517,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .Dg_head .dgtbl > thead > tr > th {
-    padding: 5px;
+    padding: 8px 10px;
     vertical-align: middle;
+    letter-spacing: 0.1px;
 }
 
     .Dg_head .dgtbl > thead > tr > th:first-child {
@@ -1528,6 +1650,18 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none;
 }
 
+[eb-form="true"][mode="view"].form-buider-form .input-group-addon, [eb-form="true"][mode="view"].form-buider-form .locinp-cont, [eb-form="true"][mode="view"].form-buider-form .locinp-cont .locinp {
+    background-color: #f3f3f3;
+}
+
+[eb-form="true"][mode="view"] .v-select .selected-tag, [iblock] .selected-tag {
+    filter: grayscale(0.2);
+}
+
+[eb-form="true"][mode="view"] .v-select .selected-tag {
+    padding-right: 12px !important;
+}
+
 [eb-form="true"][mode="view"] .ctrl-cover > textarea, [eb-form="true"][mode="view"] [ctype="Numeric"] .numinput {
     background-image: none !important;
 }
@@ -1537,7 +1671,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 [eb-form="true"][mode="view"] .v-select .selected-tag {
-    padding: 0.01em .45em 0.15em 0.45em !important;
+    padding: 3px 12px;
 }
 
 .eb-radiobtn, .eb-chckbx {
@@ -1860,9 +1994,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
 }
 
-/*[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag{
-font-size:12px;
-}*/
+[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag {
+    font-size: 12px;
+}
+
 /*EbRitchText*/
 [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
     width: auto !important;

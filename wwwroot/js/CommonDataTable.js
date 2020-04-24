@@ -507,7 +507,7 @@
             this.GroupFormLink = temp[0].GroupFormLink;
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
-            this.treeColumnIndex = this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
+            this.treeColumnIndex = (this.Source === "locationTree") ? 0 :  this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
         }
         if (this.IsTree)
             this.EbObject.IsPaging = false;
@@ -1328,6 +1328,9 @@
                 $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_LeftBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
                 $("#" + this.tableId + "_wrapper .dataTables_scroll .dataTables_scrollBody tr").css("height", this.EbObject.RowHeight + "px");
             }
+            if (Option.initCompleteCallback)
+                Option.initCompleteCallback();
+
             this.Api.columns.adjust();
         }.bind(this), 0);
     };
@@ -2624,6 +2627,7 @@
                 return atob($(this).attr("data-contents"));
             },
         });
+
         $('.btn-approval_popover').popover({
             container: 'body',
             trigger: 'click',
@@ -2634,6 +2638,7 @@
                 return atob($(this).attr("data-contents"));
             },
         });
+
         $('.btn-approval_popover').on('click', function (e) {
             $('.btn-approval_popover').not(this).popover("hide");
         });
@@ -2645,8 +2650,18 @@
         }.bind(this)); 
         
         $(".popover").remove();
+
+        $('body').on('click', function (e) {
+            $('[data-toggle=popover]').each(function () {
+                // hide any open popovers when the anywhere else in the body is clicked
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
         $(".rating").rateYo({
-            readOnly: true
+            readOnly: true,
+            starWidth: "24px"
         });
 
         $("[data-coltyp=date]").datepicker({
@@ -2672,7 +2687,7 @@
     };
 
     this.PopoverPlacement = function (context, source) {
-        var position = $(source).position();
+        var position = $(source).offset();
 
         if (position.left > 1000)
             return "left";
@@ -2691,6 +2706,11 @@
         this.$submit.click(this.getColumnsSuccess.bind(this));
 
         if (this.EbObject.FormLinks.$values.length > 0) {
+            this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                index === self.findIndex((t) => (
+                    t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                ))
+            );
             this.CreateNewFormLinks();
         }
 
@@ -2751,7 +2771,7 @@
 
     this.CreateContexmenu4Tree = function () {
         $.contextMenu({
-            selector: ".groupform",
+            selector: ".groupform", className: 'treeview',
             build: function ($trigger, e) {
                 $("body").find("td").removeClass("focus");
                 $("body").find("[role=row]").removeClass("selected");
@@ -2760,19 +2780,19 @@
                     if ($(e.currentTarget).children().hasClass("levelzero")) {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) }
                             }
                         };
                     }
                     else {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
-                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) },
+                                "Move": { name: "Move Group", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
                     }
@@ -2780,9 +2800,9 @@
                 else if (this.Source === "locationTree") {
                     return {
                         items: {
-                            "NewGroup": { name: "New", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "EditGroup": { name: "Edit", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "Move": { name: "Move", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            "NewGroup": { name: "New", icon: "fa-plus-square", callback: this.OpenLocationModal.bind(this) },
+                            "EditGroup": { name: "Edit", icon: "fa-pencil-square-o", callback: this.OpenLocationModal.bind(this) },
+                            "Move": { name: "Move", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                         }
                     };
                 }
@@ -3287,7 +3307,10 @@
         if (this.clickCounter === 0) {
             if (options === undefined)
                 key = $(key.currentTarget).children("span").text();
-            $("#treemodal .treemodalul").text(key).append('<span class="caret"></span></button>');
+            let path = $(".contextmenu-custom__highlight .context-menu-visible").children().closest("span").map(function () {
+                return $(this).text();
+            }).get().join(' > ');
+            $("#treemodal .treemodalul").text(path).append('<span class="caret"></span></button>');
             this.getClickedItem(key);
             $(".contextmenu-custom__highlight").hide();
             $(".treemodalul").removeClass("context-menu-active");
@@ -4498,6 +4521,12 @@ function returnOperator(op) {
         return "=";
     else
         return op;
+}
+
+function imgError(image) {
+    image.onerror = "";
+    image.src = "/images/proimg.jpg";
+    return true;
 }
 
 (function ($) {

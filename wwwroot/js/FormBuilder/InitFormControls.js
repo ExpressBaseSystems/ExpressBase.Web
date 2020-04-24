@@ -1,4 +1,5 @@
 ﻿var InitControls = function (option) {
+
     if (option) {
         this.Bot = option.renderer;
         this.Wc = option.wc;
@@ -388,6 +389,20 @@
         }
     };
 
+    this.TVcontrol = function (ctrl) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
+        let o = new Object();
+        o.tableId = ctrl.EbSid_CtxId;
+        o.showCheckboxColumn = false;
+        o.showFilterRow = false;
+        o.IsPaging = false;
+        o.Source = "form";
+        o.scrollHeight = ctrl.Height - 34.62;
+        o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+        //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
+        let data = new EbCommonDataTable(o);
+    };
+
     this.CalendarControl = function (ctrl) {
         console.log("eached");
         let userObject = ebcontext.user;
@@ -476,7 +491,10 @@
         ebcontext.userLoc = { lat: 0, long: 0 };
         if (typeof _rowId === 'undefined' || _rowId === 0) {
             navigator.geolocation.getCurrentPosition(function (position) {
-                $('#' + ctrl.EbSid_CtxId).locationpicker('location', { latitude: position.coords.latitude, longitude: position.coords.longitude });
+                $('#' + ctrl.EbSid_CtxId).locationpicker('location', {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
@@ -501,13 +519,24 @@
             autocompleteOptions: {
                 types: ['(cities)'],
                 componentRestrictions: { country: 'fr' }
-            }
+            },
+            onchanged: function (currentLocation, radius, isMarkerDropped) {
+                let ctrl = this;
+                if (!ctrl.__isJustSetValue) {
+                    if (ctrl.__ebonchangeFns) {
+                        for (let i = 0; i < ctrl.__ebonchangeFns.length; i++) {
+                            ctrl.__ebonchangeFns[i]();
+                        }
+                    }
+                }
+                else
+                    ctrl.__isJustSetValue = false;
+            }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
 
-        $(window).resize(function () {
-            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
-        });
+        if (this.Bot)
+            this.bindMapResize(ctrl);
 
     };
 
@@ -568,7 +597,11 @@
             position: uluru,
             map: map
         });
+        if (this.Bot)
+            this.bindMapResize(ctrl);
+    };
 
+    this.bindMapResize = function (ctrl) {
         $(window).resize(function () {
             $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
         });
@@ -595,6 +628,10 @@
 
     this.Review = function (ctrl, ctrlOpts) {
         return new EbReview(ctrl, ctrlOpts);
+    };
+
+    this.MeetingPicker = function (ctrl, ctrlOpts) {
+        return new meetingPicker(ctrl, ctrlOpts);
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {
@@ -883,12 +920,16 @@
         //else if (ctrl.TextTransform === 2)
         //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
 
-        $ctrl.keydown(function (event) {
+        //$ctrl.keydown(function (event) {
+        //    textTransform(this, ctrl.TextTransform);
+        //});
+
+        $ctrl.on('paste keydown', function (event) {
             textTransform(this, ctrl.TextTransform);
         });
 
-        $ctrl.on('paste', function (event) {
-            textTransform(this, ctrl.TextTransform);
+        $ctrl.on('change', function (event) {
+            textTransform(this, ctrl.TextTransform, true);
         });
     };
 

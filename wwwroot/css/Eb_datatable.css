@@ -289,12 +289,15 @@ div.dataTables_wrapper div.dataTables_processing {
     padding: 0 8px !important;
 }
 
-.odd{
-    background-color: white !important;
+.odd {
+    background-color: #f3f3f3 !important;
 }
 
 .even {
     background-color: white !important;
+}
+.wrapper-cont tr.odd:hover, .wrapper-cont tr.evn:hover {
+    background-color: #e7edf4 !important;
 }
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
     background-color: #08C !important;
@@ -772,8 +775,17 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     max-width: 100%;
     /*width:350px;*/
 }
+.approval-popover #history {
+    max-height: 250px;
+    overflow-y: auto;
+}
+.approval-popover #history table {
+    height: 100%;
+    margin-bottom: 0px !important;
+    padding-bottom: 1px;
+}
 
- .stage_actions button {
+.stage_actions button {
     padding: 3px 30px 3px 10px;
     font-size: 12px;
     /*width: auto;*/
@@ -821,16 +833,47 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     width:100%
 }
 .comment-td {
-    width: 100px;
+    width: 175px;
     overflow: hidden;
     /*display: inline-block;
     white-space:nowrap;
     text-overflow:ellipsis;*/
     word-break: break-all;
 }
+
+.history-image {
+    height: 30px;
+    width: 30px;
+    margin-right:8px;
+}
+.color-green{
+    color:green;
+}
+.color-red {
+    color: red;
+}
+.color-warning {
+    color: #f0ad4e;
+}
+.color-blue {
+    color: #0a12f3;
+    font-weight: 900;
+}
+
+.status-icon {
+    padding-right: 10px;
+}
+
+.status-label {
+    padding: 5px;
+    font-size: 11px;
+}
 /*.comment-td:hover {
     text-overflow: clip;
     white-space: normal;
     word-break: break-all;
 }*/
+.treeview .context-menu-item {
+    padding: 0.4em 2em !important;
+}
 

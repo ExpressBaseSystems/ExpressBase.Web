@@ -1004,14 +1004,23 @@ document.addEventListener("click", function (e) {
 });
 
 
-function textTransform(element, transform_type) {
-    setTimeout(function () {
-        let value = $(element).val().trim();
-        if (transform_type === 1)
-            $(element).val(value.toLowerCase());
-        else if (transform_type === 2)
-            $(element).val(value.toUpperCase());
-    }, 100);
+function textTransform(element, transform_type, IsNoDelay) {
+    if (IsNoDelay) {
+        textTransformHelper(element, transform_type);
+    }
+    else {
+        setTimeout(function () {
+            textTransformHelper(element, transform_type);
+        }, 150);
+    }
+}
+
+function textTransformHelper(element, transform_type) {
+    let value = $(element).val().trim();
+    if (transform_type === 1)
+        $(element).val(value.toLowerCase());
+    else if (transform_type === 2)
+        $(element).val(value.toUpperCase());
 }
 
 

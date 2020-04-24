@@ -1,0 +1,110 @@
+﻿body {
+}
+
+.meeting-picker-outer {
+    padding: 0px !important;
+    width: 30rem;
+    border-radius: 5px;
+    border: solid 1px #d1d1d1 !important;
+}
+    .meeting-picker-outer .sub-head {
+        padding: 5px 10px;
+        border-top: solid 1px #d5d4d4;
+    }
+
+    .meeting-picker-outer .head-cont {
+        padding: 0px;
+        display: flex;
+        height: 3.3rem;
+        font-size: 16px;
+        background: #508bf9;
+        color: white;
+    }
+
+        .meeting-picker-outer .head-cont i {
+            padding: 0.3rem;
+            font-size: 2.4rem;
+        }
+
+        .meeting-picker-outer .head-cont div {
+            padding: .55rem;
+            font-size: 16px;
+            font-weight: 100;
+        }
+
+    .meeting-picker-outer .date-cont {
+        margin-top: 0rem;
+    }
+
+    .meeting-picker-outer .picker-cont {
+        display: flex;
+        flex-flow: row wrap;
+        width: 100%;
+    }
+
+        .meeting-picker-outer .picker-cont .solts-div {
+            padding: 5px;
+            border: solid 1px #cccccc !important;
+            margin-right: 2%;
+            margin-top: .5rem;
+            border-radius: 2px;
+            width: 49%;
+        }
+
+            .meeting-picker-outer .picker-cont .solts-div:nth-child(even) {
+                margin-right: 0px;
+                margin-top: .5rem;
+            }
+
+        .meeting-picker-outer .picker-cont .unblocked-slot:hover {
+            background-color: #00e0ea;
+            cursor: pointer;
+            border: solid 1px #00e0ea;
+        }
+
+        .meeting-picker-outer .picker-cont .blocked-slot {
+            background-color: #8b8b8b1f;
+            color: #c7c7c7;
+        }
+
+ /*form style over ride*/
+tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+    background-color: none !important;
+    border: none !important;
+}
+.dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+    background-color: white !important;
+}
+
+/*jquery style override*/
+.hasDatepicker {
+    height: 100%;
+    width: 100%;
+}
+
+    .hasDatepicker .ui-datepicker-inline {
+        height: 100%;
+        width: 100%;
+        padding: 0px;
+        border-radius: 0px;
+        border: none;
+    }
+
+        .hasDatepicker .ui-datepicker-inline .ui-state-active {
+            background: #508bf9;
+        }
+
+        .hasDatepicker .ui-datepicker-inline .ui-datepicker-header {
+            background: #ffffff;
+            /* color: white; */
+            margin-right: 0px;
+            border: none;
+            border-radius: 0px;
+        }
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #ffffff;
+    background: #ffffff url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
+    font-weight: 600;
+    color: #555555;
+}

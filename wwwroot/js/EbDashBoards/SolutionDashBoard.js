@@ -1798,7 +1798,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 $("#VersioningSwitch").bootstrapToggle('on');
                 EbDialog("show",
                     {
-                        Message: "The Versioning cannot is turend off !!!!",
+                        Message: "The Versioning cannot be turend off once its on !!!!",
                         Buttons: {
                             "Cancel": {
                                 Background: "red",

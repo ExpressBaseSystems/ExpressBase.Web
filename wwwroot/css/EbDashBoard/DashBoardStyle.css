@@ -249,6 +249,15 @@
     line-height: 3.5vh;
     cursor: move;
 }
+.usr .db-title {
+    width: 100%;
+    font-weight: 300;
+    font-size: 1.3em;
+    padding: 2px 2px 2px 15px;
+    height: 26px;
+    line-height: 3.5vh;
+    cursor: default;
+}
 
 
 .db-tbl-wraper {
@@ -1354,8 +1363,8 @@ body {
         height: 100%;
     }
 
-        .link-dashboard-pane .link-text a {
-            padding: 0px 10px;
+        .link-dashboard-pane .link-text .link-target {
+            padding: 12px 10px;
             color: white;
             text-decoration: none;
             white-space: nowrap;
@@ -1368,6 +1377,9 @@ body {
         padding: 10px 10px;
     }
 
+.eb-tile-link{
+    cursor:pointer !important;
+}
 /*canvas Style*/
 canvas:focus {
     outline: none;

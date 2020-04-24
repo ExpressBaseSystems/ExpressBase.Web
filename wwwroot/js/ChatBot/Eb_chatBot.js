@@ -1352,7 +1352,21 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.getTime = function () {
-        return `<div class='msg-time'>${new Date().getHours() % 12 + ':' + new Date().getMinutes() + 'pm'}</div>`;
+        let hour = new Date().getHours();
+        let am_pm = "am";
+        let minuteStr = new Date().getMinutes();
+
+        if (hour > 12) {
+            hourStr = hour % 12;
+            am_pm = "pm";
+        }
+        else if (hour === 12) {
+            hourStr = hour;
+            am_pm = "pm";
+        }
+
+        let timeString = hour + ':' + minuteStr + am_pm;
+        return `<div class='msg-time'>${timeString}</div>`;
     };
 
     this.loadCtrlScript = function () {

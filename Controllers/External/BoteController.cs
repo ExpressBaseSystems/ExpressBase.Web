@@ -24,198 +24,312 @@ using ExpressBase.Common.Application;
 using System.Security.Cryptography;
 using System.IO;
 using ExpressBase.Common.Security;
+using ExpressBase.Data;
 
 namespace ExpressBase.Web.Controllers
 {
-    public class BoteController : EbBaseExtController
-    {
-        public BoteController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc)
-        {
-        }
+	public class BoteController : EbBaseExtController
+	{
+		public BoteController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc)
+		{
+		}
 
-        [HttpGet]
-        public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL, string msg)
-        {
-            var host = this.HttpContext.Request.Host;
-            EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
-            ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
-            ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
-            ViewBag.tid = tid;
-            ViewBag.appid = appid;
-            ViewBag.settings = JsonConvert.SerializeObject(settings);
-            //ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
-            ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(new EbBotForm() as EbControlContainer, BuilderType.BotForm);
-            return View();
+		[HttpGet]
+		public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL, string msg)
+		{
+			var host = this.HttpContext.Request.Host;
+			EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
+			ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
+			ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
+			ViewBag.tid = tid;
+			ViewBag.appid = appid;
+			ViewBag.settings = JsonConvert.SerializeObject(settings);
+			//ViewBag.Env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+			ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(new EbBotForm() as EbControlContainer, BuilderType.BotForm);
+			return View();
 
-            //this.ServiceClient.Headers.Add("SolId", tid);
-            //GetBotSettingsResponse settings = this.ServiceClient.Get<GetBotSettingsResponse>(new GetBotSettingsRequest { AppId = Convert.ToInt32(appid) });
-            //EbBotSettings seObj =  this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", tid, appid));
-            //if(seObj != null)
-            //{
-            //	settings.ThemeColor = seObj.ThemeColor ?? settings.ThemeColor;
-            //	settings.DpUrl = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(seObj.DpUrl)) ?? botdpURL;
-            //	settings.WelcomeMessage = seObj.WelcomeMessage ?? "Hi, I am EBbot from EXPRESSbase!";
-            //}
-        }
+			//this.ServiceClient.Headers.Add("SolId", tid);
+			//GetBotSettingsResponse settings = this.ServiceClient.Get<GetBotSettingsResponse>(new GetBotSettingsRequest { AppId = Convert.ToInt32(appid) });
+			//EbBotSettings seObj =  this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", tid, appid));
+			//if(seObj != null)
+			//{
+			//	settings.ThemeColor = seObj.ThemeColor ?? settings.ThemeColor;
+			//	settings.DpUrl = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(seObj.DpUrl)) ?? botdpURL;
+			//	settings.WelcomeMessage = seObj.WelcomeMessage ?? "Hi, I am EBbot from EXPRESSbase!";
+			//}
+		}
 
-        public FileContentResult Js(string id, string mode)
-        {
-            string[] args = id.Split("-");
-            string PushContent = "";
-            string solid = args[0];
+		public FileContentResult Js(string id, string mode)
+		{
+			string[] args = id.Split("-");
+			string PushContent = "";
+			string solid = args[0];
 			string cid = this.GetIsolutionId(solid);
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			if (mode.Equals("s"))//if single bot
-            {
-                int appid = Convert.ToInt32(args[1]);
-                EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+			{
+				int appid = Convert.ToInt32(args[1]);
+				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
 				if (settings == null)
-                    settings = new EbBotSettings() 
-                    { 
-                        Name = "- Application Name -",
-                        ThemeColor = "#055c9b",
-                        DpUrl = "../images/demobotdp4.png",
-                        WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
-                    };
+					settings = new EbBotSettings()
+					{
+						Name = "- Application Name -",
+						ThemeColor = "#055c9b",
+						DpUrl = "../images/demobotdp4.png",
+						WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
+					};
 
-                PushContent = string.Format(@"
+				PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
                     window.EXPRESSbase_APP_ID = {1};
                     d.ebbotName = '{2}' || '< EBbot >';
                     d.ebbotThemeColor = '{3}' || '#055c9b';
                     d.botdpURL = '{4}';
                     d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';
-					d.ebmod='{6}'", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage,env);
-            }
-            else
-            {
-                //int[] appids = args[1].Split(',').Select(n => Convert.ToInt32(n)).ToArray();
-                //EbBotSettings temp = new EbBotSettings();
-                //string color = "";
-                //string name = "";
-                //string url = "";
-                //foreach(int i in appids)
-                //{
-                //	temp = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", solid, i));
-                //	if (temp == null)
-                //	{
-                //		temp = new EbBotSettings() { Name = "-EB-BOT-", ThemeColor = "#055c9b", DpUrl = " "};
-                //	}
-                //	color += "'" + temp.ThemeColor ?? "#055c9b" + "',";
-                //	name += "'" + temp.Name ?? "< EBbot >" + "',";
-                //	url += "'" + temp.DpUrl ?? " " + "',";
-                //}
+					d.ebmod='{6}'", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env);
+			}
+			else
+			{
+				//int[] appids = args[1].Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+				//EbBotSettings temp = new EbBotSettings();
+				//string color = "";
+				//string name = "";
+				//string url = "";
+				//foreach(int i in appids)
+				//{
+				//	temp = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", solid, i));
+				//	if (temp == null)
+				//	{
+				//		temp = new EbBotSettings() { Name = "-EB-BOT-", ThemeColor = "#055c9b", DpUrl = " "};
+				//	}
+				//	color += "'" + temp.ThemeColor ?? "#055c9b" + "',";
+				//	name += "'" + temp.Name ?? "< EBbot >" + "',";
+				//	url += "'" + temp.DpUrl ?? " " + "',";
+				//}
 
-                //PushContent = string.Format(@"
-                //	d.ebbotNameColl = [{0}];
-                //	d.ebbotThemeColorColl = [{1}];
-                //	d.botdpURLColl = [{2}];", name.Substring(0, name.Length-1), color.Substring(0, color.Length - 1), url.Substring(0, url.Length - 1));
-            }
+				//PushContent = string.Format(@"
+				//	d.ebbotNameColl = [{0}];
+				//	d.ebbotThemeColorColl = [{1}];
+				//	d.botdpURLColl = [{2}];", name.Substring(0, name.Length-1), color.Substring(0, color.Length - 1), url.Substring(0, url.Length - 1));
+			}
 
-            string FileContent = System.IO.File.ReadAllText("wwwroot/js/ChatBot/ebbot-ext.js");
-            FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
-            return File(FileContent.ToUtf8Bytes(), "text/javascript");
-        }
+			string FileContent = System.IO.File.ReadAllText("wwwroot/js/ChatBot/ebbot-ext.js");
+			FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
+			return File(FileContent.ToUtf8Bytes(), "text/javascript");
+		}
+
+		public FileContentResult Css(string id, string mode)
+		{
+			string[] args = id.Split("-");
+			string solid = args[0];
+			string cid = this.GetIsolutionId(solid);
+			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
+			string FileContent = "";
+			//if (mode.Equals("s"))//if single bot
+			{
+				int appid = Convert.ToInt32(args[1]);
+				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+				if (settings == null)
+					settings = new EbBotSettings()
+					{
+						CssContent = FetchCss()
+					};
+				if (settings.CssContent==null)
+				{
+					settings.CssContent = FetchCss();
+				}
+				FileContent = ReplaceCssContent(settings.CssContent);
+				//byte[] data = System.Convert.FromBase64String(settings.CssContent);
+				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
+
+			}
+			//else
+			{
+				//int[] appids = args[1].Split(',').Select(n => Convert.ToInt32(n)).ToArray();
+				//EbBotSettings temp = new EbBotSettings();
+				//string color = "";
+				//string name = "";
+				//string url = "";
+				//foreach(int i in appids)
+				//{
+				//	temp = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", solid, i));
+				//	if (temp == null)
+				//	{
+				//		temp = new EbBotSettings() { Name = "-EB-BOT-", ThemeColor = "#055c9b", DpUrl = " "};
+				//	}
+				//	color += "'" + temp.ThemeColor ?? "#055c9b" + "',";
+				//	name += "'" + temp.Name ?? "< EBbot >" + "',";
+				//	url += "'" + temp.DpUrl ?? " " + "',";
+				//}
+
+				//PushContent = string.Format(@"
+				//	d.ebbotNameColl = [{0}];
+				//	d.ebbotThemeColorColl = [{1}];
+				//	d.botdpURLColl = [{2}];", name.Substring(0, name.Length-1), color.Substring(0, color.Length - 1), url.Substring(0, url.Length - 1));
+			}
+
+			//FileContent = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
+			//FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
+			return File(FileContent.ToUtf8Bytes(), "text/css");
+		}
+		public Dictionary<string, Dictionary<string, string>> FetchCss()
+		{
+			var CssDict = new Dictionary<string, Dictionary<string, string>>();
+			//string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
+			//var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(Cssfile);
+			//return System.Convert.ToBase64String(plainTextBytes);
+
+			int i = 0;
+			List<string> CssList = new List<string>();
+			CssList.Add(Constants.BOT_HEADER);
+			CssList.Add(Constants.BOT_APP_NAME);
+			CssList.Add(Constants.BOT_IFRAME_CSS);
+			CssList.Add(Constants.BOT_CHAT_BUTTON);
+			CssList.Add(Constants.BOT_IMAGE_CONT);
+			CssList.Add(Constants.BOT_BUTTON_IMAGE);
+			string[] NameArr = { "BOT_HEADER", "BOT_APP_NAME", "BOT_IFRAME_CSS", "BOT_CHAT_BUTTON", "BOT_IMAGE_CONT", "BOT_BUTTON_IMAGE" };
+			foreach (string CssConst in CssList)
+			{
+				Dictionary<string, string> BotDict = new Dictionary<string, string>();
+				var CssProp = CssConst.Split(';');
+				foreach (String SingleProps in CssProp)
+				{
+					string PropTrim = SingleProps.Trim();
+					if (!String.IsNullOrEmpty(PropTrim))
+					{
+						var KeyVal = PropTrim.Split(':');
+						if (!BotDict.Keys.Contains(KeyVal[0]))
+						{
+							BotDict.Add(KeyVal[0], KeyVal[1]);
+						}
+					}
+				}
+				if (!CssDict.Keys.Contains(NameArr[i]))
+				{
+					CssDict.Add(NameArr[i], BotDict);
+					i++;
+				}
+			}
+			return CssDict;
+
+		}
+		public string ReplaceCssContent(Dictionary<string, Dictionary<string, string>> CssObj)
+		{
+
+			string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
 
 
-        //[HttpGet("/apitest")]
-        //public IActionResult Test()
-        //{
-        //    this.ServiceClient.BearerToken = "HxSLXUHuM5X_pZDW_0_SvbpupByEIlCw";
-        //    ServiceClient.Get(new ApiTestReq());
+			foreach (var item in CssObj)
+			{
+				string CssConst = item.Key;
+				var html = "";
+				foreach (var property in item.Value)
+				{
+					html += property.Key + ':' + property.Value + "!important;"+ '\n';
+				}
+				Cssfile = Cssfile.Replace(CssConst, html);
+			}
 
-        //    return Redirect("/statuscode/404"); ;
-        //}
+			return Cssfile;
+		}
+		//[HttpGet("/apitest")]
+		//public IActionResult Test()
+		//{
+		//    this.ServiceClient.BearerToken = "HxSLXUHuM5X_pZDW_0_SvbpupByEIlCw";
+		//    ServiceClient.Get(new ApiTestReq());
 
-        [HttpPost]
-        public async Task<string> UploadImageOrginal(string base64, string filename, string refreshToken, string bearerToken)
-        {
-            this.ServiceClient.BearerToken = bearerToken;
-            this.ServiceClient.RefreshToken = refreshToken;
-            string Id = string.Empty;
-            string url = string.Empty;
-            byte[] myFileContent;
-            try
-            {
-                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
-                uploadImageRequest.ImageInfo = new ImageMeta();
-                myFileContent = System.Convert.FromBase64String(base64);
-                uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
-                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
-                uploadImageRequest.ImageInfo.FileName = filename;
+		//    return Redirect("/statuscode/404"); ;
+		//}
 
-                Id = this.ServiceClient.Post<string>(uploadImageRequest);
-                url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception:" + e.ToString());
-                return "upload failed";
-            }
+		[HttpPost]
+		public async Task<string> UploadImageOrginal(string base64, string filename, string refreshToken, string bearerToken)
+		{
+			this.ServiceClient.BearerToken = bearerToken;
+			this.ServiceClient.RefreshToken = refreshToken;
+			string Id = string.Empty;
+			string url = string.Empty;
+			byte[] myFileContent;
+			try
+			{
+				UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+				uploadImageRequest.ImageInfo = new ImageMeta();
+				myFileContent = System.Convert.FromBase64String(base64);
+				uploadImageRequest.ImageByte = myFileContent;
+				uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
+				uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+				uploadImageRequest.ImageInfo.FileName = filename;
 
-            return url;
-        }
+				Id = this.ServiceClient.Post<string>(uploadImageRequest);
+				url = string.Format("{0}/static/{1}.{2}", ViewBag.BrowserURLContext, Id, uploadImageRequest.ImageInfo.FileType);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Exception:" + e.ToString());
+				return "upload failed";
+			}
 
-        [HttpPost]
-        public async Task<List<object>> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = TokenConstants.BC)
-        {
-            HttpClient client = new HttpClient();
-            string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
-            IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
-            cid = this.GetIsolutionId(cid);
-            Dictionary<string, string> _Meta;
-            _Meta = new Dictionary<string, string> {
-                    { TokenConstants.WC, wc },
-                    { TokenConstants.CID, cid },
-                    { TokenConstants.SOCIALID, socialId },
-                    { "phone", anon_phno },
-                    { "emailId", anon_email },
-                    { "anonymous", "true" },
-                    { "appid", appid },
-                    { "user_ip", this.RequestSourceIp },
-                    { "user_browser", user_browser },
-                    { "user_name", user_name },
-                    { "city", IpApi.City},
-                    { "region", IpApi.RegionName},
-                    { "country", IpApi.Country},
-                    { "latitude", IpApi.Lat},
-                    { "longitude", IpApi.Lon},
-                    { "timezone", IpApi.Timezone},
-                    { "iplocationjson", result}
-                };
+			return url;
+		}
 
-            this.ServiceClient.Headers.Add("SolId", cid);
+		[HttpPost]
+		public async Task<List<object>> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = TokenConstants.BC)
+		{
+			HttpClient client = new HttpClient();
+			string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
+			IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
+			cid = this.GetIsolutionId(cid);
+			Dictionary<string, string> _Meta;
+			_Meta = new Dictionary<string, string> {
+					{ TokenConstants.WC, wc },
+					{ TokenConstants.CID, cid },
+					{ TokenConstants.SOCIALID, socialId },
+					{ "phone", anon_phno },
+					{ "emailId", anon_email },
+					{ "anonymous", "true" },
+					{ "appid", appid },
+					{ "user_ip", this.RequestSourceIp },
+					{ "user_browser", user_browser },
+					{ "user_name", user_name },
+					{ "city", IpApi.City},
+					{ "region", IpApi.RegionName},
+					{ "country", IpApi.Country},
+					{ "latitude", IpApi.Lat},
+					{ "longitude", IpApi.Lon},
+					{ "timezone", IpApi.Timezone},
+					{ "iplocationjson", result}
+				};
 
-            MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
-            {
-                provider = CredentialsAuthProvider.Name,
-                UserName = "NIL",
-                Password = "NIL",
-                Meta = _Meta,
-            });
-            if (authResponse != null)
-            {
-                this.ServiceClient.BearerToken = authResponse.BearerToken;
-                this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-                var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
+			this.ServiceClient.Headers.Add("SolId", cid);
 
-                string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+			MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
+			{
+				provider = CredentialsAuthProvider.Name,
+				UserName = "NIL",
+				Password = "NIL",
+				Meta = _Meta,
+			});
+			if (authResponse != null)
+			{
+				this.ServiceClient.BearerToken = authResponse.BearerToken;
+				this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+				var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
 
-                User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, cid, email, wc));
-                var Ids = String.Join(",", user.EbObjectIds);
-                //GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
-                GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
-                List<object> returnlist = new List<object>();
-                List<object> objpro = new List<object>();
+				string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
 
-                returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
-                returnlist.Add(authResponse.RefreshToken);
-                returnlist.Add(formlist.BotForms);
-                if (user.UserId == 1)
-                    user.Preference.Locale = "en-IN";
-                returnlist.Add(JsonConvert.SerializeObject(user));
-                returnlist.Add(formlist.BotFormsDisp);
+				User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, cid, email, wc));
+				var Ids = String.Join(",", user.EbObjectIds);
+				//GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
+				GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
+				List<object> returnlist = new List<object>();
+				List<object> objpro = new List<object>();
+
+				returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
+				returnlist.Add(authResponse.RefreshToken);
+				returnlist.Add(formlist.BotForms);
+				if (user.UserId == 1)
+					user.Preference.Locale = "en-IN";
+				returnlist.Add(JsonConvert.SerializeObject(user));
+				returnlist.Add(formlist.BotFormsDisp);
 				foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
 				{
 					string rfid = rfidlst.Key;
@@ -225,170 +339,170 @@ namespace ExpressBase.Web.Controllers
 				returnlist.Add(objpro);
 				return returnlist;
 
-                //CookieOptions options = new CookieOptions();
-                //Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
-                //Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                //Mymain();
-                //string ctxt = GetEncriptedString("helleo", key_iv);
-                //string ptxt = GetDecriptedString(ctxt, key_iv);
-            }
-            else
-            {
-                return null;
-            }
-        }
+				//CookieOptions options = new CookieOptions();
+				//Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
+				//Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+				//Mymain();
+				//string ctxt = GetEncriptedString("helleo", key_iv);
+				//string ptxt = GetDecriptedString(ctxt, key_iv);
+			}
+			else
+			{
+				return null;
+			}
+		}
 
-        public class IpApiResponse
-        {
-            public string As { get; set; }
-            public string City { get; set; }
-            public string Country { get; set; }
-            public string CountryCode { get; set; }
-            public string Isp { get; set; }
-            public string Lat { get; set; }
-            public string Lon { get; set; }
-            public string Org { get; set; }
-            public string Query { get; set; }
-            public string Region { get; set; }
-            public string RegionName { get; set; }
-            public string Status { get; set; }
-            public string Timezone { get; set; }
-            public string Zip { get; set; }
-        }
+		public class IpApiResponse
+		{
+			public string As { get; set; }
+			public string City { get; set; }
+			public string Country { get; set; }
+			public string CountryCode { get; set; }
+			public string Isp { get; set; }
+			public string Lat { get; set; }
+			public string Lon { get; set; }
+			public string Org { get; set; }
+			public string Query { get; set; }
+			public string Region { get; set; }
+			public string RegionName { get; set; }
+			public string Status { get; set; }
+			public string Timezone { get; set; }
+			public string Zip { get; set; }
+		}
 
-        [HttpGet("Bots")]
-        public IActionResult Bots()
-        {
-            //var host = this.HttpContext.Request.Host;
-            //string[] hostParts = host.Host.Split(CharConstants.DOT);
-            //if (!(hostParts.Length > 1))
-            //{
-            //    return RedirectToAction("SignIn", "Common");
-            //}
-            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
-            var BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { });
-            ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
-            return View();
-        }
+		[HttpGet("Bots")]
+		public IActionResult Bots()
+		{
+			//var host = this.HttpContext.Request.Host;
+			//string[] hostParts = host.Host.Split(CharConstants.DOT);
+			//if (!(hostParts.Length > 1))
+			//{
+			//    return RedirectToAction("SignIn", "Common");
+			//}
+			this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
+			var BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { });
+			ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
+			return View();
+		}
 
-        //copied to boti - febin
-        //public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
-        //      {
-        //          this.ServiceClient.BearerToken = bearerToken;
-        //          this.ServiceClient.RefreshToken = refreshToken;
-        //          var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
+		//copied to boti - febin
+		//public dynamic GetCurForm(string refreshToken, string bearerToken, string refid)
+		//      {
+		//          this.ServiceClient.BearerToken = bearerToken;
+		//          this.ServiceClient.RefreshToken = refreshToken;
+		//          var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
 
-        //          var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-        //          if (Obj is EbBotForm)
-        //          {
-        //              //EbBotForm obj = Obj as EbBotForm;
-        //              foreach (EbControl control in Obj.Controls)
-        //              {
-        //                  if (control is EbSimpleSelect)
-        //                  {
-        //                      (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
-        //                  }
-        //                  else if (control is EbDynamicCardSet)
-        //                  {
-        //				EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
-        //				EbDynamicCards.InitFromDataBase(this.ServiceClient);
-        //				EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
-        //                  }
-        //                  //else if (control is EbImage)
-        //                  //{
-        //                  //    (control as EbCards).InitFromDataBase(this.ServiceClient);
-        //                  //}
-        //              }
-        //          }
-        //          if (Obj is EbTableVisualization)
-        //          {
-        //              EbTableVisualization Tobj = (Obj as EbTableVisualization);
-        //              string BotCols = "[";
-        //              string BotData = "[";
-        //              int i = 0;
+		//          var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+		//          if (Obj is EbBotForm)
+		//          {
+		//              //EbBotForm obj = Obj as EbBotForm;
+		//              foreach (EbControl control in Obj.Controls)
+		//              {
+		//                  if (control is EbSimpleSelect)
+		//                  {
+		//                      (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
+		//                  }
+		//                  else if (control is EbDynamicCardSet)
+		//                  {
+		//				EbDynamicCardSet EbDynamicCards = (control as EbDynamicCardSet);
+		//				EbDynamicCards.InitFromDataBase(this.ServiceClient);
+		//				EbDynamicCards.BareControlHtml = EbDynamicCards.GetBareHtml();
+		//                  }
+		//                  //else if (control is EbImage)
+		//                  //{
+		//                  //    (control as EbCards).InitFromDataBase(this.ServiceClient);
+		//                  //}
+		//              }
+		//          }
+		//          if (Obj is EbTableVisualization)
+		//          {
+		//              EbTableVisualization Tobj = (Obj as EbTableVisualization);
+		//              string BotCols = "[";
+		//              string BotData = "[";
+		//              int i = 0;
 
-        //              foreach (DVBaseColumn col in Tobj.Columns)
-        //              {
-        //                  BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
-        //              }
-        //              BotCols = BotCols.TrimEnd(',') + "]";
+		//              foreach (DVBaseColumn col in Tobj.Columns)
+		//              {
+		//                  BotCols += "{" + "\"data\":" + i++ + ",\"title\":\"" + col.Name + "\"},";
+		//              }
+		//              BotCols = BotCols.TrimEnd(',') + "]";
 
-        //              DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
-        //              var data = dresp.Data;
-        //              foreach (EbDataRow row in data)
-        //              {
-        //                  i = 0;
-        //                  BotData += "{";
-        //                  foreach (var item in row)
-        //                  {
-        //                      BotData += "\"" + i++ + "\":\"" + item + "\",";
-        //                      //BotData += "\"" + item + "\",";
-        //                  }
-        //                  BotData = BotData.TrimEnd(',') + "},";
-        //              }
-        //              BotData = BotData.TrimEnd(',') + "]";
+		//              DataSourceDataResponse dresp = this.ServiceClient.Get<DataSourceDataResponse>(new DataSourceDataRequest { RefId = Tobj.DataSourceRefId, Draw = 1 });
+		//              var data = dresp.Data;
+		//              foreach (EbDataRow row in data)
+		//              {
+		//                  i = 0;
+		//                  BotData += "{";
+		//                  foreach (var item in row)
+		//                  {
+		//                      BotData += "\"" + i++ + "\":\"" + item + "\",";
+		//                      //BotData += "\"" + item + "\",";
+		//                  }
+		//                  BotData = BotData.TrimEnd(',') + "},";
+		//              }
+		//              BotData = BotData.TrimEnd(',') + "]";
 
-        //              Tobj.BotCols = BotCols;
-        //              Tobj.BotData = BotData;
-        //              return EbSerializers.Json_Serialize(Tobj);
-        //          }
-        //          if (Obj is EbChartVisualization)
-        //          {
-        //              return EbSerializers.Json_Serialize(Obj);
-        //          }
-        //          //else if (Obj is EbChartVisualization)
-        //          //{
-        //          //}
-        //          return Obj;
-        //      }
+		//              Tobj.BotCols = BotCols;
+		//              Tobj.BotData = BotData;
+		//              return EbSerializers.Json_Serialize(Tobj);
+		//          }
+		//          if (Obj is EbChartVisualization)
+		//          {
+		//              return EbSerializers.Json_Serialize(Obj);
+		//          }
+		//          //else if (Obj is EbChartVisualization)
+		//          //{
+		//          //}
+		//          return Obj;
+		//      }
 
 
-        public IActionResult SurveyAuth(int SurveyId, string FbId, string Name, string Email, string Cid)
-        {
-            Dictionary<string, string> _Meta = new Dictionary<string, string> {
-                    { TokenConstants.WC, "bc" },
-                    { TokenConstants.CID, Cid },
-                    { TokenConstants.SOCIALID, FbId },
-                    { "emailId", Email },
-                    { "anonymous", "true" },
-                    { "user_name", Name }
-            };
+		public IActionResult SurveyAuth(int SurveyId, string FbId, string Name, string Email, string Cid)
+		{
+			Dictionary<string, string> _Meta = new Dictionary<string, string> {
+					{ TokenConstants.WC, "bc" },
+					{ TokenConstants.CID, Cid },
+					{ TokenConstants.SOCIALID, FbId },
+					{ "emailId", Email },
+					{ "anonymous", "true" },
+					{ "user_name", Name }
+			};
 
-            this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
+			this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
 
-            MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
-            {
-                provider = CredentialsAuthProvider.Name,
-                UserName = "NIL",
-                Password = "NIL",
-                Meta = _Meta,
-            });
-            if (authResponse != null)
-            {
-                this.ServiceClient.BearerToken = authResponse.BearerToken;
-                this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+			MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
+			{
+				provider = CredentialsAuthProvider.Name,
+				UserName = "NIL",
+				Password = "NIL",
+				Meta = _Meta,
+			});
+			if (authResponse != null)
+			{
+				this.ServiceClient.BearerToken = authResponse.BearerToken;
+				this.ServiceClient.RefreshToken = authResponse.RefreshToken;
 
-                SurveyMasterResponse resp = this.ServiceClient.Post(new SurveyMasterRequest
-                {
-                    SurveyId = SurveyId,
-                    AnonId = authResponse.AnonId,
-                    UserId = authResponse.User.UserId
-                });
+				SurveyMasterResponse resp = this.ServiceClient.Post(new SurveyMasterRequest
+				{
+					SurveyId = SurveyId,
+					AnonId = authResponse.AnonId,
+					UserId = authResponse.User.UserId
+				});
 
-                return ViewComponent("EbQuestionNaire", new
-                {
-                    sid = SurveyId,
-                    bToken = HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()),
-                    rToken = authResponse.RefreshToken,
-                    masterid = resp.Id
-                });
-            }
-            else
-            {
-                return null;
-            }
-        }
+				return ViewComponent("EbQuestionNaire", new
+				{
+					sid = SurveyId,
+					bToken = HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()),
+					rToken = authResponse.RefreshToken,
+					masterid = resp.Id
+				});
+			}
+			else
+			{
+				return null;
+			}
+		}
 
-    }
+	}
 
 }

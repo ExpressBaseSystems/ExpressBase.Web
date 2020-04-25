@@ -212,42 +212,47 @@
                     if (depCtrl === "not found")
                         return;
                     try {
-                        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                        if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
-                            let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                            if (valExpFnStr) {
-                                if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                                    //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-                                    if (!this.FO.Mode.isView || depCtrl.DoNotPersist)
-                                        depCtrl.setValue(ValueExpr_val);
-                                }
-                                else {
-                                    $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
-                                        row[depCtrl.Name].setValue(ValueExpr_val);
-                                    }.bind(this));
-                                }
-                                //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
-                                //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
-                            }
+                        if (depCtrl.ObjType === "TVcontrol") {
+                            depCtrl.reloadWithParam(curCtrl);
                         }
-                        else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
-                            let params = [];
-
-                            $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
-                                try {
-                                    let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                                    let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
-                                    let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
-                                    params.push(param);
+                        else {
+                            if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
+                                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                                let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                                if (valExpFnStr) {
+                                    if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                                        //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
+                                        if (!this.FO.Mode.isView || depCtrl.DoNotPersist)
+                                            depCtrl.setValue(ValueExpr_val);
+                                    }
+                                    else {
+                                        $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                                            row[depCtrl.Name].setValue(ValueExpr_val);
+                                        }.bind(this));
+                                    }
+                                    //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                                    //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
                                 }
-                                catch (e) {
-                                    console.eb_log("eb error :");
-                                    console.eb_log(e);
-                                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                                }
-                            }.bind(this));
+                            }
+                            else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+                                let params = [];
 
-                            ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                                $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                                    try {
+                                        let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                                        let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
+                                        let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
+                                        params.push(param);
+                                    }
+                                    catch (e) {
+                                        console.eb_log("eb error :");
+                                        console.eb_log(e);
+                                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                                    }
+                                }.bind(this));
+
+                                ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                            }
                         }
                     }
                     catch (e) {

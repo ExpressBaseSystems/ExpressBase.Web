@@ -744,8 +744,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             text = res.slice(0, -5);
         }
         if (ctrl.ObjType === "SimpleFileUploader") {
-            $("#" + ctrl.EbSid + "_SFUP").addClass("botfileSend");
-            text = $("#" + ctrl.EbSid)[0].outerHTML;
+            let tempCtrl = $("#" + ctrl.EbSid).clone();
+            tempCtrl.find('input[type="file"]').remove();
+            tempCtrl.find('input[type="text"]').remove();
+           
+            tempCtrl.attr('id',"");
+            tempCtrl.find('.SFUPcontainer').attr('id',"");
+            text = tempCtrl[0].outerHTML;
 
         }
         return text;

@@ -2055,13 +2055,17 @@ input.locinp {
     }
 
 
-        .simpleFUPdiv .SFUPcontainer .botfileSend {
-            min-height: min-content !important;
-        }
-        /* Style on hover */
-        .simpleFUPdiv .SFUPcontainer.drag-over {
-            background-color: #f3f3f3;
-        }
+.msg-cont .simpleFUPdiv .SFUPcontainer {
+    min-height: 120px;
+    /*max-height: 175px;*/
+    overflow: auto;
+    border: 1px solid #d9d9d9;
+    position: relative;
+}
+    /* Style on hover */
+    .simpleFUPdiv .SFUPcontainer.drag-over {
+        background-color: #f3f3f3;
+    }
 
         /* Hide the file input */
         .simpleFUPdiv .SFUPcontainer input[type="file"] {

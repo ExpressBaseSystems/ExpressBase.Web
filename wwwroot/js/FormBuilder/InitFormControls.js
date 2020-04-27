@@ -390,7 +390,6 @@
     };
 
     this.TVcontrol = function (ctrl) {
-        let $input = $("#" + ctrl.EbSid_CtxId);
         let o = new Object();
         o.tableId = ctrl.EbSid_CtxId;
         o.showCheckboxColumn = false;
@@ -400,7 +399,17 @@
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
         //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
-        let data = new EbCommonDataTable(o);
+        ctrl.initializer = new EbCommonDataTable(o);
+        ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
+        ctrl.reloadWithParam = function (depCtrl) {
+            let val = depCtrl.getValue();
+            let filterObj = getObjByval(ctrl.initializer.columnSearch, "Column", depCtrl.Name);
+            if (filterObj)
+                filterObj.Value = val;
+            else
+                ctrl.initializer.columnSearch.push(new filter_obj(depCtrl.Name, "=", val, depCtrl.Type));
+            ctrl.initializer.reloadTV();
+        };
     };
 
     this.CalendarControl = function (ctrl) {
@@ -911,6 +920,7 @@
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
+        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.AutoSuggestion === true) {
             $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
@@ -1077,7 +1087,8 @@
     };
 
     this.Numeric = function (ctrl) {
-        //setTimeout(function () {
+        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
+                //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.InputMode === 0) {
@@ -1192,14 +1203,15 @@
     }
 
     this.TagInput = function (ctrl) {
-
+        //$('#' + ctrl.EbSid).find('.bootstrap-tagsinput').find('.tag');
+        //$('input[name = ' + ctrl.EbSid_CtxId + '_tags]').css("font-size", ctrl.FontSizes + 'px')
         //ctrl.clear = function (p1) {
         //    return $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').va("");
         //}
     }
 
     this.RichText = function (ctrl) {
-        $(`#${ctrl.EbSid}_RichText`).summernote({
+        $(`#${ctrl.EbSid}`).summernote({
             height: ctrl.TextBoxHeight,
             toolbar: [
                 ['font', ['bold', 'underline', 'italic', 'strikethrough', 'subscript', 'superscript', 'clear']],
@@ -1219,9 +1231,10 @@
 
 
         ctrl.clear = function (p1) {
-            return $(`#${ctrl.EbSid}_RichText`).summernote('reset');
+            return $(`#${ctrl.EbSid}`).summernote('reset');
         };
 
+       
     };
 
     this.SimpleFileUploader = function (ctrl) {

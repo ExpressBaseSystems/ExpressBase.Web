@@ -2640,7 +2640,7 @@
         });
 
         $('.btn-approval_popover').on('click', function (e) {
-            $('.btn-approval_popover').not(this).popover("hide");
+            //$('.btn-approval_popover').not(this).popover("hide");
         });
 
         $('.btn-approval_popover').on('shown.bs.popover', function (e) {
@@ -2648,8 +2648,10 @@
             let $td = $(e.target).parents().closest("td");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
         }.bind(this)); 
-        
-        $(".popover").remove();
+
+        $('.btn-approval_popover').on('hidden.bs.popover', function (e) {
+            $(e.target).data("bs.popover").inState.click = false;
+        }.bind(this)); 
 
         $('body').on('click', function (e) {
             $('[data-toggle=popover]').each(function () {

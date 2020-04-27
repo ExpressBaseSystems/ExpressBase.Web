@@ -1,90 +1,95 @@
 ﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
 @using Newtonsoft.Json;
-<script>window.DBExplorer.TCobj = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables));</script>
-<div class="db_client_toolbox TablePannelHead">
-    @{
-        if (ViewBag.IsAdminOwn)
-        {
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="form-group">
-                        <select id="searchSolution" class="selectpicker" title="@ViewBag.DB_Name" data-live-search="true">
-                            @{
-        foreach (string solution in ViewBag.Solutions)
-        {
-                                    <option class="dropdown-item" type="button">@solution</option>
-        }
-                            }
-                        </select>
+@{
+    if (ViewBag.Message == null)
+    {
+        <script>
+window.DBExplorer.TCobj = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables));
+        </script>
+        <div class="db_client_toolbox TablePannelHead">
+            @{
+                if (ViewBag.IsAdminOwn && ViewBag.Message == null)
+                {
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <select id="searchSolution" class="selectpicker" title="@ViewBag.DB_Name" data-live-search="true">
+                                    @{
+                                        foreach (string solution in ViewBag.Solutions)
+                                        {
+                                            <option class="dropdown-item" type="button">@solution</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-        }
-    }
-</div>
-<div class="dbTyper" dt="@ViewBag.DB_Name" dOwn="@ViewBag.IsAdminOwn"></div>
+                }
+            }
+        </div>
+        <div class="dbTyper" dt="@ViewBag.DB_Name" dOwn="@ViewBag.IsAdminOwn"></div>
 
-<div class="db_client_toolbox TablePannelHead">
-    Table Explorer : @ViewBag.DB_Name : @ViewBag.TableCount
-    <input type="text" id="myInput" placeholder="Search for Table.." title="Table Name">
-</div>
-<div class="mytree db_client_toolbox_bdy" id="myUL">
-    @{
-        foreach (KeyValuePair<string, EbDbExplorerTable> Table_kvp in ViewBag.Tables.TableCollection)
-        {
-            <div table-name="@Table_kvp.Key" id="@Table_kvp.Key" class="treecontextmenu">
+        <div class="db_client_toolbox TablePannelHead">
+            Table Explorer : @ViewBag.DB_Name : @ViewBag.TableCount
+            <input type="text" id="myInput" placeholder="Search for Table.." title="Table Name">
+        </div>
+        <div class="mytree db_client_toolbox_bdy" id="myUL">
+            @{
+                foreach (KeyValuePair<string, EbDbExplorerTable> Table_kvp in ViewBag.Tables.TableCollection)
+                {
+                    <div table-name="@Table_kvp.Key" id="@Table_kvp.Key" class="treecontextmenu">
 
-                @{
-                    EbDbExplorerTable table = Table_kvp.Value;
-                    string schema = table.Schema;
-                    List<string> Indexes = table.Index;
-                    List<EbDbExplorerColumn> Columns = table.Columns;
+                        @{
+                            EbDbExplorerTable table = Table_kvp.Value;
+                            string schema = table.Schema;
+                            List<string> Indexes = table.Index;
+                            List<EbDbExplorerColumn> Columns = table.Columns;
 
-                    <span class="table-name" data-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns : @Columns.Count()">@Table_kvp.Key</span>
+                            <span class="table-name" data-name="@Table_kvp.Key" data-toggle="tooltip" data-placement="left" title="No. of Columns : @Columns.Count()">@Table_kvp.Key</span>
 
-                    <div class="child">
-                        <span>Schema</span>
-                        <div>@schema</div>
-                    </div>
-                    <div>
-                        <span>Index</span>
-                        @foreach (string Index in Indexes)
-                        {
-                            <div>@Index</div>
-                        }
-                    </div>
-                    <div>
-                        <span data-toggle="tooltip" data-placement="left" title="Count : @Columns.Count()">Column</span>
-                        @foreach (EbDbExplorerColumn Column in Columns)
-                        {
+                            <div class="child">
+                                <span>Schema</span>
+                                <div>@schema</div>
+                            </div>
                             <div>
-                                @{ if (Column.ColumnKey == "Primary key")
-                                    { <i class="fa fa-key fa-1x gold" aria-hidden="true"></i> }
-                                    else if (Column.ColumnKey == "Foreign key")
-                                    {<i class="fa fa-key fa-1x fkey" aria-hidden="true"></i> }
-                                    if (Column.ColumnType == "integer" || Column.ColumnType == "numeric")
-                                    {
-                                        <i class="fa fa-sort-numeric-asc data-type" aria-hidden="true"></i>
-                                    }
-                                    else if (Column.ColumnType == "text" || Column.ColumnType == "character")
-                                    {
-                                        <i class="fa fa-font data-type" aria-hidden="true"></i>
-                                    }
-                                    if (Column.ColumnType == "timestamp without time zone")
-                                    {
-                                        <i class="fa fa-calendar fa-1 data-type" aria-hidden="true"></i>
-                                    }
-                                } :: <span id="@Column.ColumnName" data-toggle="tooltip" data-placement="left" title="@Column.ColumnType :: @Column.ColumnKey">@Column.ColumnName     @Column.ColumnTable</span>
+                                <span>Index</span>
+                                @foreach (string Index in Indexes)
+                                {
+                                    <div>@Index</div>
+                                }
+                            </div>
+                            <div>
+                                <span data-toggle="tooltip" data-placement="left" title="Count : @Columns.Count()">Column</span>
+                                @foreach (EbDbExplorerColumn Column in Columns)
+                                {
+                                    <div>
+                                        @{ if (Column.ColumnKey == "Primary key")
+                                            { <i class="fa fa-key fa-1x gold" aria-hidden="true"></i> }
+                                            else if (Column.ColumnKey == "Foreign key")
+                                            {<i class="fa fa-key fa-1x fkey" aria-hidden="true"></i> }
+                                            if (Column.ColumnType == "integer" || Column.ColumnType == "numeric")
+                                            {
+                                                <i class="fa fa-sort-numeric-asc data-type" aria-hidden="true"></i>
+                                            }
+                                            else if (Column.ColumnType == "text" || Column.ColumnType == "character")
+                                            {
+                                                <i class="fa fa-font data-type" aria-hidden="true"></i>
+                                            }
+                                            if (Column.ColumnType == "timestamp without time zone")
+                                            {
+                                                <i class="fa fa-calendar fa-1 data-type" aria-hidden="true"></i>
+                                            }
+                                        } :: <span id="@Column.ColumnName" data-toggle="tooltip" data-placement="left" title="@Column.ColumnType :: @Column.ColumnKey">@Column.ColumnName     @Column.ColumnTable</span>
+                                    </div>
+                                }
                             </div>
                         }
                     </div>
                 }
-            </div>
-        }
-    }
-</div>
+            }
+        </div>
 
-<script>
+        <script>
     //window.onload = function () {
         if (window.DBExplorer !== null || window.DBExplorer !== undefined) {
             window.DBExplorer = new Eb_DBExplorer({
@@ -94,5 +99,18 @@
         else {
             window.DBExplorer.TCobj = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables));
        }
-    //}        
-</script>
+    //}
+        </script>
+    }
+    else
+    {
+
+        <script>
+    $(document).ready(function () {
+                 EbMessage("show", { Message: '@ViewBag.Message', Background: "red" });
+            });
+
+        </script>
+
+    }
+}

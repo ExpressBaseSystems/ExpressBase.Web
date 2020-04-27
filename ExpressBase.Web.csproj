@@ -9,11 +9,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Remove="bundleconfig.json" />
     <Content Remove="Views\TenantUser\ManageRoles1.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="robots.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="bundleconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +32,7 @@
     <Deterministic>false</Deterministic>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.447" />
     <PackageReference Include="DiffPlex" Version="1.4.1" />
     <PackageReference Include="Flurl" Version="2.7.1" />
     <PackageReference Include="Flurl.Http" Version="2.3.2" />
@@ -45,6 +51,10 @@
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="Views\Shared\Components\FilterDialogBuilder\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bundleconfig.json" />
   </ItemGroup>
 
   <ItemGroup>

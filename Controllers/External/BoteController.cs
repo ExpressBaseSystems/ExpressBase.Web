@@ -172,48 +172,57 @@ namespace ExpressBase.Web.Controllers
 			//FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
 			return File(FileContent.ToUtf8Bytes(), "text/css");
 		}
-		public Dictionary<string, Dictionary<string, string>> FetchCss()
+		public Dictionary<string, string> FetchCss()
 		{
-			var CssDict = new Dictionary<string, Dictionary<string, string>>();
+			//public Dictionary<string, Dictionary<string, string>> FetchCss()
+			var CssDict = new Dictionary<string, string>();
 			//string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
+			//string Cssfile = Constants.BOT_IFRAME_CSS;
 			//var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(Cssfile);
 			//return System.Convert.ToBase64String(plainTextBytes);
 
 			int i = 0;
 			List<string> CssList = new List<string>();
-			CssList.Add(Constants.BOT_HEADER);
-			CssList.Add(Constants.BOT_APP_NAME);
-			CssList.Add(Constants.BOT_IFRAME_CSS);
-			CssList.Add(Constants.BOT_CHAT_BUTTON);
-			CssList.Add(Constants.BOT_IMAGE_CONT);
-			CssList.Add(Constants.BOT_BUTTON_IMAGE);
+			CssList.Add(BotConstants.BOT_HEADER);
+			CssList.Add(BotConstants.BOT_APP_NAME);
+			CssList.Add(BotConstants.BOT_IFRAME_CSS);
+			CssList.Add(BotConstants.BOT_CHAT_BUTTON);
+			CssList.Add(BotConstants.BOT_IMAGE_CONT);
+			CssList.Add(BotConstants.BOT_BUTTON_IMAGE);
 			string[] NameArr = { "BOT_HEADER", "BOT_APP_NAME", "BOT_IFRAME_CSS", "BOT_CHAT_BUTTON", "BOT_IMAGE_CONT", "BOT_BUTTON_IMAGE" };
 			foreach (string CssConst in CssList)
 			{
-				Dictionary<string, string> BotDict = new Dictionary<string, string>();
-				var CssProp = CssConst.Split(';');
-				foreach (String SingleProps in CssProp)
-				{
-					string PropTrim = SingleProps.Trim();
-					if (!String.IsNullOrEmpty(PropTrim))
-					{
-						var KeyVal = PropTrim.Split(':');
-						if (!BotDict.Keys.Contains(KeyVal[0]))
-						{
-							BotDict.Add(KeyVal[0], KeyVal[1]);
-						}
-					}
-				}
-				if (!CssDict.Keys.Contains(NameArr[i]))
-				{
-					CssDict.Add(NameArr[i], BotDict);
-					i++;
-				}
+				//Dictionary<string, string> BotDict = new Dictionary<string, string>();
+				//var CssProp = CssConst.Split(';');
+				//foreach (String SingleProps in CssProp)
+				//{
+				//	string PropTrim = SingleProps.Trim();
+				//	if (!String.IsNullOrEmpty(PropTrim))
+				//	{
+				//		var KeyVal = PropTrim.Split(':');
+				//		if (!BotDict.Keys.Contains(KeyVal[0]))
+				//		{
+				//			BotDict.Add(KeyVal[0], KeyVal[1]);
+				//		}
+				//	}
+
+
+				//}
+				//if (!CssDict.Keys.Contains(NameArr[i]))
+				//{
+				//	CssDict.Add(NameArr[i], BotDict);
+				//	i++;
+				//}
+
+				CssDict.Add(NameArr[i], CssConst);
+				i++;
+
 			}
+
 			return CssDict;
 
 		}
-		public string ReplaceCssContent(Dictionary<string, Dictionary<string, string>> CssObj)
+		public string ReplaceCssContent( Dictionary<string, string> CssObj)
 		{
 
 			string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
@@ -222,12 +231,15 @@ namespace ExpressBase.Web.Controllers
 			foreach (var item in CssObj)
 			{
 				string CssConst = item.Key;
-				var html = "";
-				foreach (var property in item.Value)
-				{
-					html += property.Key + ':' + property.Value + "!important;"+ '\n';
-				}
-				Cssfile = Cssfile.Replace(CssConst, html);
+				//var html = "";
+				//foreach (var property in item.Value)
+				//{
+				//	html += property.Key + ':' + property.Value + "!important;"+ '\n';
+				//}
+				//Cssfile = Cssfile.Replace(CssConst, html);
+				Cssfile = Cssfile.Replace(CssConst, CssObj[CssConst]);
+
+
 			}
 
 			return Cssfile;

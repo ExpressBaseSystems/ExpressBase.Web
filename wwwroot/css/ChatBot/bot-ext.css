@@ -1,27 +1,12 @@
 ﻿.eb__-bot___-eb_iframecont {
-    /*right: 0.8%;
-    bottom: 1.5%;
-    width: 28%;
-    height: 97%;
-    min-width: 300px;
-    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);*/
-    BOT_IFRAME_CSS
-        
+
+    BOT_IFRAME_CSS 
     display: none;
-    flex-direction: column;
-    position: fixed;
-    transition: 0.4s;
-    overflow: hidden;
-    border-radius: 2px;
-    background-color: white;
-    border-radius: 20px;
     z-index: 16777270;
 }
 .eb__-bot___-eb-chat-head {
-    /*color: white;
-    padding: 5px 15px;*/
+   
     BOT_HEADER
-    background-color: var( --ebbotThemeColor );
     /*border-radius: 3px 3px 0px 0px;*/
 }
 
@@ -37,11 +22,8 @@
 
 
     .eb__-bot___-eb-chat-head .bot-head {
-        /*font-family: arial;
-        font-size: 20px;*/
+        
         BOT_APP_NAME
-        display: inline-block;
-        margin-top: 10px;
     }
 
 .usecase-bots-cont .eb__-bot___-eb_iframecont {
@@ -71,35 +53,17 @@
    border-radius:10px;
 }*/
 .eb__-bot___-chatbtn {
-    /*right: 24px;
-    bottom: 15px;
-    color: #fff;
-    padding: 12px;
-    border-radius: 50%;
-    box-shadow: 2px 2px 5px 1px rgba(0, 0, 0, 0.39);*/
+   
     BOT_CHAT_BUTTON
-        
-    position: fixed;
-    /*font-size: 24px;*/
-    background-color: var( --ebbotThemeColor );
-    Float: right;
     z-index: 16777271;
 }
 .eb__-bot___-iconCont {
-    /*width: 50px;
-    height: 50px;
-    border-radius: 50%;*/
+   
     BOT_IMAGE_CONT
-    
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 .eb__-bot___-boticon {
-    /*border-radius: 50%;*/
+  
     BOT_BUTTON_IMAGE
-    height:100%;
-    width: 100%;
 }
 #refreshdiv {
     font-weight: bold;

@@ -62,8 +62,6 @@ namespace ExpressBase.Web.Controllers
                     DataTable tbl = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames);
                     //int cnt = tbl.Columns.Count;
 
-                    string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
-
                     //....set ebdatacolumns....
                     char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
                    // int colcnt = tbl.Columns.Count;
@@ -87,9 +85,23 @@ namespace ExpressBase.Web.Controllers
 
                     }
 
-                    EbObjectParticularVersionResponse formObj = this.ServiceClient.Get(new EbObjectParticularVersionRequest() { RefId = _refid });
-                    EbWebForm _form = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-                    _form.AfterRedisGet(this.Redis, this.ServiceClient);
+                    string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
+
+                    if (_ebtbl.Columns.Contains(new EbDataColumn("eb_loc_id", EbDbTypes.Int32)))
+                    {
+                        InsertBatchDataResponse response = ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, RefId = _refid });
+                    }
+                   else
+                    {
+                        InsertBatchDataResponse response = ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, LocId = 1, RefId = _refid });
+                    }
+
+                    //EbObjectParticularVersionResponse formObj = this.ServiceClient.Get(new EbObjectParticularVersionRequest() { RefId = _refid });
+                    //EbWebForm _form = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
+                    //_form.AfterRedisGet(this.Redis, this.ServiceClient);
+
+
+
                     //Dictionary<string, SingleTable> _multiTable = new Dictionary<string, SingleTable>();
                     //foreach (TableSchema _schema in _form.FormSchema.Tables)
                     //{
@@ -167,7 +179,11 @@ namespace ExpressBase.Web.Controllers
                     if (_col.DbType.ToString() == "String")
                         _colValidation.AllowType = ExcelDataType.Any;
                     if (_col.DbType.ToString() == "Date")
+                    {
+                        
+                        worksheet.Range[colId].EntireColumn.NumberFormat = "YYYY-MM-DD";
                         _colValidation.AllowType = ExcelDataType.Date;
+                    }
                     if (_col.DbType.ToString() == "Decimal")
                         _colValidation.AllowType = ExcelDataType.Decimal;
                     if (_col.DbType.ToString() == "Int16" || _col.DbType.ToString() == "Int32" || _col.DbType.ToString() == "Int64")

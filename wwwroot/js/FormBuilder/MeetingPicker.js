@@ -1,4 +1,4 @@
-﻿
+﻿var DatePick;
 var meetingPicker = function (ctrl, ctrlOpts) {
     this.ctrl = ctrl;
     this.ctrlOpts = ctrlOpts;
@@ -33,15 +33,15 @@ var meetingPicker = function (ctrl, ctrlOpts) {
             let timeTo = this.TimeFormat(this.AllSlots[index].Time_to);
             if (this.AllSlots[index].IsHide) {
                 html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[index].Meeting_Id}" is-approved="${this.AllSlots[index].Is_approved}"
-                class="time-slots solts-div-blocked"> ${timeFrom} To ${timeTo}</div>`;
+                class="solts-div blocked-slot"> ${timeFrom} to ${timeTo}</div>`;
             }
             else {
                 html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[0].Meeting_Id}"  is-approved="${this.AllSlots[index].Is_approved}"
-                    class="time-slots solts-div"> ${timeFrom} To ${timeTo} </div>`;
+                    class="solts-div unblocked-slot"> ${timeFrom} to ${timeTo} </div>`;
             }
         }.bind(this));
         $(`#cont_${this.ctrl.EbSid} .picker-cont`).empty().append(html);
-        $(".time-slots").off("click").on("click", this.PickMeeting.bind(this));
+        $(".unblocked-slot").off("click").on("click", this.PickMeeting.bind(this));
     };
 
     this.PickMeeting = function (e) {
@@ -66,8 +66,14 @@ var meetingPicker = function (ctrl, ctrlOpts) {
     };
 
     this.InitDatePicker = function () {
-        $(`#${this.ctrl.EbSid}_datepicker`).datepicker({
+        DatePick = $(`#${this.ctrl.EbSid}_datepicker`).datepicker({
+            dateFormat: "yy-mm-dd",
             showOtherMonths: true,
+            minDate: 0,
+            onSelect: function (date) {
+                alert(date)
+            },
+            changeYear: false,
             selectOtherMonths: true,
             beforeShowDay: function (date) {
                 var day = date.getDay();
@@ -75,6 +81,11 @@ var meetingPicker = function (ctrl, ctrlOpts) {
             }
         });
     }
+    this.datechanged = function () {
+        //alert(DatePick.getDate());
+        var abc = $(`#${this.ctrl.EbSid}_datepicker`).datepicker("getDate");
+        alert(abc); 
+    };
 
     this.init = function () {
         this.InitDatePicker();
@@ -84,3 +95,11 @@ var meetingPicker = function (ctrl, ctrlOpts) {
     this.init();
 
 }
+
+//var jsDate = $('#your_datepicker_id').datepicker('getDate');
+//if (jsDate !== null) { // if any date selected in datepicker
+//    jsDate instanceof Date; // -> true
+//    jsDate.getDate();
+//    jsDate.getMonth();
+//    jsDate.getFullYear();
+//}

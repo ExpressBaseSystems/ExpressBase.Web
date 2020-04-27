@@ -20,25 +20,33 @@ namespace ExpressBase.Web.Components
         }
         public async Task<IViewComponentResult> InvokeAsync(string clientSolnid, User _user )
         {
-          
-            GetDbTablesResponse res = null;
-            if (ViewBag.cid == "admin" && (_user.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || _user.Roles.Contains(SystemRoles.SolutionAdmin.ToString())))
+            try
             {
-                if (clientSolnid != null)
-                    res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = clientSolnid });
+                GetDbTablesResponse res = null;
+                if (ViewBag.cid == "admin" && (_user.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || _user.Roles.Contains(SystemRoles.SolutionAdmin.ToString())))
+                {
+                    if (clientSolnid != null)
+                        res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = clientSolnid });
+                    else
+                        res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true });
+                    ViewBag.IsAdminOwn = true;
+                }
                 else
-                    res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true });
-                ViewBag.IsAdminOwn = true;
+                {
+                    res = this.ServiceClient.Get(new GetDbTablesRequest { });
+                    ViewBag.IsAdminOwn = false;
+                }
+                ViewBag.Tables = res.Tables;
+                ViewBag.DB_Name = res.DB_Name;
+                ViewBag.TableCount = res.TableCount;
+                ViewBag.Solutions = res.SolutionCollection;
+                ViewBag.Message = res.Message;
+               
             }
-            else
+            catch (Exception e)
             {
-                res = this.ServiceClient.Get(new GetDbTablesRequest { });
-                ViewBag.IsAdminOwn = false;
+                Console.WriteLine(e.Message + e.StackTrace);
             }
-            ViewBag.Tables = res.Tables;
-            ViewBag.DB_Name = res.DB_Name;
-            ViewBag.TableCount = res.TableCount;
-            ViewBag.Solutions = res.SolutionCollection;
             return View("DbClientComponent");
         }
     }

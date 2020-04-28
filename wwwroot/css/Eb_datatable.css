@@ -297,7 +297,7 @@ div.dataTables_wrapper div.dataTables_processing {
     background-color: white !important;
 }
 .wrapper-cont tr.odd:hover, .wrapper-cont tr.even:hover {
-    background-color: #e7edf4 !important;
+    background-color: #00000040 !important;
 }
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected, table.dataTable tbody > tr.selected:hover {
     background-color: #08C !important;

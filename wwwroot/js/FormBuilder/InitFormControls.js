@@ -306,9 +306,16 @@
     this.SimpleSelect = function (ctrl) {
 
         let $input = $("#" + ctrl.EbSid_CtxId);
+
+        $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
+            $(e.target).closest(".dropdown.bootstrap-select").attr("id", ctrl.EbSid_CtxId + "_dd"); // id added for test frame work
+        });
+
         $input.selectpicker({
             dropupAuto: false
         });
+
+
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
         $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
         $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
@@ -632,7 +639,7 @@
 
     this.bindMapResize = function (ctrl) {
         $(window).resize(function () {
-            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
+            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
         });
     };
 

@@ -107,9 +107,11 @@ window.DBExplorer.TCobj = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Tables))
 
         <script>
     $(document).ready(function () {
-                 EbMessage("show", { Message: '@ViewBag.Message', Background: "red" });
-            });
-
+        EbMessage("show", { Message: '@ViewBag.Message', Background: "red" });
+        setTimeout(function () {
+            location.reload(true);
+        }, 5000);
+    });
         </script>
 
     }

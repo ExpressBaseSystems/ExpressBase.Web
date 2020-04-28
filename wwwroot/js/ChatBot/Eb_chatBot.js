@@ -900,11 +900,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             $msgDiv.remove();
             this.CurDataMODEL[this.curCtrl.TableName] = this.curCtrl.getDataModel();
         }
-        else {            
-            this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
-            this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
-            this.curVal = this.curCtrl.getValue();
-
+        else {
+            if (this.curCtrl.IsNonDataInputControl === false) {
+                this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
+                this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
+                this.curVal = this.curCtrl.getValue();
+                this.tryOnChangeDuties(this.curCtrl);
+            }
             this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
 
             this.formValues[id] = this.curVal;

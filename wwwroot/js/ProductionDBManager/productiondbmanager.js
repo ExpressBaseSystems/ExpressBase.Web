@@ -9,7 +9,7 @@
     }
 
     this.function2update = function (e) {
-        let key = $(e.target).siblings("input").val();
+        let key = $(e.target).siblings("change_func").val();
         var $this = $(`#${key}subchange`);
         $this.button('loading');
 
@@ -39,7 +39,7 @@
     };
 
     this.ViewChanges = function (e) {
-        let val = $(e.target).siblings("input").val();
+        let val = $(e.target).siblings("chk_integrity").val();
         var $this = $(`#i_chk_${val}`);
         $this.button('loading');
         $.ajax({
@@ -76,7 +76,7 @@
                                         </label>
                                     </div>
                                     <div class="col-md-offset-6 col-md-2 align-center">
-                                        <input type="hidden" value="${val}" id="data_${val}" name="data"/>
+                                        <input type="hidden" value="${val}" id="data_${val}" name="data" class="change_func"/>
                                         <button type="button" class="btn btn-change btn-sm change_function" id="${val}subchange" data-loading-text="Changing <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;'  ></i> " style="display: none;">Update All Changes</button>
                                     </div>
                                 </div>
@@ -110,7 +110,7 @@
                                                             <label class="table-content-font align-center">${vals['fileType']}</label>
                                                         </div>
                                                         <div class="col-md-2">
-                                                            <input type="hidden" value="${val}" id="data_${val}" name="data"/>
+                                                            <input type="hidden" value="${val}" id="data_${val}" name="data" class="view_qry"/>
                                                             <button data-toggle="modal"  type="button" id="${val}showquery" obj-val="${btoa(unescape(encodeURIComponent(JSON.stringify(vals))))}" sol-id="${val}" 
                                                             class="btn btn-change btn-sm view_query" file-type="${vals['fileType']}" file-name = "${vals['fileHeader']}" id="${vals['fileHeader']}" data-loading-text="Getting Queries... <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;'  ></i> " >Show Query</button>
                                                         </div>
@@ -128,7 +128,7 @@
     this.viewquery = function (e) {
         let changes = JSON.parse(decodeURIComponent(escape(window.atob(e.target.getAttribute("obj-val")))));
         let solution = e.target.getAttribute("sol-id");
-        let key = $(e.target).siblings("input").val();
+        let key = $(e.target).siblings("view_qry").val();
         if (changes["type"] == "0" || changes["type"] == "2") {
             $.ajax({
                 type: "POST",

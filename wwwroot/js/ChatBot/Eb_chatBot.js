@@ -45,6 +45,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.ssurl = ssurl;
     this.userLoc = {};
 
+    this.formObject = {};// for passing to user defined functions
+    this.CurFormflatControls = [];// for passing to user defined functions
+
     this.init = function () {
         $("body").append(this.$chatCont);
         this.$chatCont.append(this.$chatBox);
@@ -226,6 +229,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     this.curFormObj = form;
                     let DataRes = JSON.parse(result.data);
                     if (DataRes.Status === 200) {
+
                         this.CurDataMODEL = DataRes.FormData.MultipleTables;
                         a___MT = DataRes.FormData.MultipleTables;
                         this.CurRowId = this.CurDataMODEL[form.TableName][0].RowId;
@@ -244,6 +248,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                         this.formsList[RefId] = form;
                         if (form.ObjType === "BotForm") {
                             this.curForm = form;
+                            this.CurFormflatControls = this.curForm.Controls.$values;
+                            this.setFormObject();
                             this.setFormControls();
                         }
                         else if (form.ObjType === "TableVisualization") {
@@ -747,13 +753,113 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             let tempCtrl = $("#" + ctrl.EbSid).clone();
             tempCtrl.find('input[type="file"]').remove();
             tempCtrl.find('input[type="text"]').remove();
-           
-            tempCtrl.attr('id',"");
-            tempCtrl.find('.SFUPcontainer').attr('id',"");
+
+            tempCtrl.attr('id', "");
+            tempCtrl.find('.SFUPcontainer').attr('id', "");
             text = tempCtrl[0].outerHTML;
 
         }
         return text;
+    };
+
+
+
+    this.setFormObject = function () {
+        this.formObject = {};
+        $.each(this.CurFormflatControls, function (i, ctrl) {
+            this.formObject[ctrl.Name] = ctrl;
+        }.bind(this));
+    };
+
+    this.getCtrlByPath = function (path) {
+        try {
+            let form = this.formObject;
+            let ctrl = {};
+            let pathArr = path.split(".");
+            //if (pathArr.length === 3) {
+            //    path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+            //    ctrl = eval(path);
+            //    ctrl.IsDGCtrl = true;
+            //} else
+            {
+                ctrl = eval(path);
+            }
+            return ctrl;
+        }
+        catch (e) {
+            console.warn("could not find:" + path);
+            return "not found";
+        }
+    }.bind(this);
+
+    this.tryOnChangeDuties = function (curCtrl) {
+        if (curCtrl.DependedValExp) {
+            $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                let depCtrl = this.getCtrlByPath(depCtrl_s);
+                if (depCtrl === "not found")
+                    return;
+                try {
+                    if (depCtrl.ObjType === "TVcontrol") {
+                        if (depCtrl.reloadWithParam) { // control comes after TVcontrol initialised - update cur control param and reload
+                            depCtrl.reloadWithParam(curCtrl);
+                        }
+                        else {//  control comes before TVcontrol initialised - set cur control param
+                            let val = curCtrl.getValue();
+
+                            if (!depCtrl.__columnSearch)
+                                depCtrl.__columnSearch = [];
+
+                            let filterObj = getObjByval(depCtrl.__columnSearch, "Column", curCtrl.Name);
+                            if (filterObj)
+                                filterObj.Value = val;
+                            else
+                                depCtrl.__columnSearch.push(new filter_obj(curCtrl.Name, "=", val, curCtrl.EbDbType));
+                        }
+                    }
+                    //else {
+                    //    if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
+                    //        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                    //        let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    //        if (valExpFnStr) {
+                    //            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                    //                if (!this.FO.Mode.isView || depCtrl.DoNotPersist)
+                    //                    depCtrl.setValue(ValueExpr_val);
+                    //            }
+                    //            else {
+                    //                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                    //                    row[depCtrl.Name].setValue(ValueExpr_val);
+                    //                }.bind(this));
+                    //            }
+                    //        }
+                    //    }
+                    //    else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+                    //        let params = [];
+
+                    //        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                    //            try {
+                    //                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                    //                let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
+                    //                let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
+                    //                params.push(param);
+                    //            }
+                    //            catch (e) {
+                    //                console.eb_log("eb error :");
+                    //                console.eb_log(e);
+                    //                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                    //            }
+                    //        }.bind(this));
+
+                    //        ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                    //    }
+                    //}
+                }
+                catch (e) {
+                    console.eb_log("eb error :");
+                    console.eb_log(e);
+                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                }
+            }.bind(this));
+        }
     };
 
     this.ctrlSend = function (e) {
@@ -770,14 +876,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //varghese
         //for cards  this.curDispValue  is used
         // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
-        this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
-        this.curVal = this.curCtrl.getValue();
+        
         //this.displayValue = this.getDisplayHTML(this.curCtrl);
-        if (this.curCtrl.ObjType !== 'StaticCardSet') {
-            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        }
-        else {
+        if (this.curCtrl.ObjType === 'StaticCardSet' || this.curCtrl.ObjType === 'DynamicCardSet') {
+            if (!this.curCtrl.MultiSelect) {
+                $('#' + this.curCtrl.EbSid_CtxId).find('.slick-current .card-btn-cont .btn').click();
+            }
             var $msg = this.$userMsgBox.clone();
             $btn.parent().parent().remove();
             if ($btn.parent().prev().find('.table tbody').length === 1) {// if summary is present
@@ -794,9 +898,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
+            this.CurDataMODEL[this.curCtrl.TableName] = this.curCtrl.getDataModel();
         }
-        this.formValues[id] = this.curVal;
-        this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        else {
+            if (this.curCtrl.IsNonDataInputControl === false) {
+                this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
+                this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
+                this.curVal = this.curCtrl.getValue();
+                this.tryOnChangeDuties(this.curCtrl);
+            }
+            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        }
         this.callGetControl(this.nxtCtrlIdx);
 
         if ($('[saveprompt]').length === 1) {

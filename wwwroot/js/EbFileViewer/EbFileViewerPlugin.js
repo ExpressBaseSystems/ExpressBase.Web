@@ -75,12 +75,33 @@
                     this.viewer.view(indx);
                 }
                 else if (this.pgSettings[indx].FileCategory == 0) {
-                    //pdf viewer
-                    console.log("need pdf viewer");
+                    let src = null;
+
+                    src = `/files/${rfid}`;
+
+                    var arr = this.pgSettings[indx].FileName.split('.');
+                    var exten = arr[arr.length - 1];
+                    if (exten == 'pdf') {
+                        let html = $(`<div id='ebfileview_ContDiv' style=''>
+                                    <button id='close-ebfileview_Cont' class="btn " style=''><i class="fa fa-close"></i>
+                                    </button>
+                                    </div>`);
+                        //$("body").append(` <iframe id="display_file" src="${src}.${exten}" frameborder="0" style=" bottom: 0;direction: ltr; font-size: 0; left: 0; line-height: 0;  overflow: hidden;position: absolute;right: 0;"></iframe>`);
+                        html.append(`<div id='ebfileview_Iframe-Cont' style=" ">
+                                    <iframe id='ebfileview_Iframe' src="${src}.${exten}" class='' style=''></iframe>
+                                    </div>`);
+                        $("body").append(html[0]);
+                        $('#close-ebfileview_Cont').on('click', this.CloseFileviewFn.bind(this));
+                        console.log("need pdf viewer");
+                    }
                 }
+                //pdf viewer
+
+
             }
-           
+
         }
+
         this.deleteimage = function (refidarr) {
             if (refidarr.length > 0) {
                 let refids = "";
@@ -94,7 +115,12 @@
                 this.initViewer();
             }
         }
-
+        this.CloseFileviewFn = function (e) {
+            let target = $(e.target).closest('button').parent();
+            if (target.attr("id") == "ebfileview_ContDiv") {
+                target.remove();
+            }
+        }
         this.init();
         return this;
     };

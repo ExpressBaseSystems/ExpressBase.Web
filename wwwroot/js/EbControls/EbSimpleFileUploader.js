@@ -20,6 +20,8 @@
         let filedel = [];
         let preloadedfile = 0;
         let refidArr = [];
+        let Files = [];
+
         // Set empty settings
         plugin.settings = {};
 
@@ -28,7 +30,7 @@
 
             // Define settings
             plugin.settings = $.extend(plugin.settings, defaults, options);
-
+            Files  = JSON.parse(fileCtrl.DataVals.F);
             // Run through the elements
             plugin.each(function (i, wrapper) {
 

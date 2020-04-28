@@ -399,17 +399,37 @@
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
         //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
+        if (ctrl.__columnSearch) { // if preloded parameters from chat bot
+            filterValues = [];
+            for (var i = 0; i < ctrl.__columnSearch.length; i++) {
+                let Obj = ctrl.__columnSearch[i];
+                filterValues.push(new fltr_obj(Obj.Type, Obj.Column, Obj.Value));
+            }
+            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(filterValues))));
+        }
+
         ctrl.initializer = new EbCommonDataTable(o);
         ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
+
         ctrl.reloadWithParam = function (depCtrl) {
-            let val = depCtrl.getValue();
-            let filterObj = getObjByval(ctrl.initializer.columnSearch, "Column", depCtrl.Name);
-            if (filterObj)
-                filterObj.Value = val;
-            else
-                ctrl.initializer.columnSearch.push(new filter_obj(depCtrl.Name, "=", val, depCtrl.Type));
+            if (depCtrl) {
+                let val = depCtrl.getValue();
+                if (!ctrl.__columnSearch)
+                    ctrl.__columnSearch = []; // this variable is introduced to handle pre setted  parameters from chat bot 
+
+                let filterObj = getObjByval(ctrl.__columnSearch, "Column", depCtrl.Name);
+                if (filterObj)
+                    filterObj.Value = val;
+                else
+                    ctrl.__columnSearch.push(new filter_obj(depCtrl.Name, "=", val, depCtrl.Type));
+            }
+            ctrl.initializer.columnSearch = ctrl.__columnSearch;
             ctrl.initializer.reloadTV();
         };
+
+        //if (ctrl.__columnSearch) // if preloded parameters from chat bot
+        //    ctrl.reloadWithParam();
+
     };
 
     this.CalendarControl = function (ctrl) {
@@ -1088,7 +1108,7 @@
 
     this.Numeric = function (ctrl) {
         //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
-                //setTimeout(function () {
+        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.InputMode === 0) {
@@ -1234,7 +1254,7 @@
             return $(`#${ctrl.EbSid}`).summernote('reset');
         };
 
-       
+
     };
 
     this.SimpleFileUploader = function (ctrl) {

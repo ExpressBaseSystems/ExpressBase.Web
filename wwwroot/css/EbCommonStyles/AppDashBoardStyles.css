@@ -6,7 +6,6 @@
     flex-flow: row-reverse;
     padding-bottom: 10px;
 }
-
 .botappDashboard {
     padding: 0px;
 }
@@ -39,9 +38,10 @@
     }
 
     .botappDashboard .botcssConfig .configcss .csstxtarea {
-        width: 100%;
-        height: 500px;
+        width: 70%;
+        height: 350px;
         resize: none;
+        line-height: 2;
     }
 
     .botappDashboard .copyscript {
@@ -80,3 +80,7 @@
 .botappDashboard .botcssConfig .cssconfig {
     padding: 0px;
 }
+.botappDashboard .botcssConfig .configcss .resetcss {
+    margin-top: 10px;
+}
+    

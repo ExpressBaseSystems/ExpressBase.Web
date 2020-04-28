@@ -129,7 +129,7 @@
         html = html + `
                     <ul class="nav nav-tabs eb-styledTab" >
                           <li class="nav-item devdshtab active"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#notification" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Notifications</a></li>
-                          <li class="nav-item devdshtab"><a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#pendingAction" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Pending Actions</a></li>
+                          <li class="nav-item devdshtab"><a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#pendingAction" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Review Pending</a></li>
                     </ul>
                     
                     <div class="tab-content">

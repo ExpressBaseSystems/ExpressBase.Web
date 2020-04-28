@@ -207,7 +207,6 @@
                         var bot_wc_msg = "";
                         var bot_tm_color = "";
                         var bot_dp_url = "";
-                        var css_content = "";
 
                         @if (appinfo.AppSettings != null)
                         {
@@ -215,8 +214,7 @@
                             bot_wc_msg = settings.WelcomeMessage;
                             bot_tm_color = settings.ThemeColor;
                             bot_dp_url = settings.DpUrl;
-                            //byte[] data = System.Convert.FromBase64String(settings.CssContent);
-                            //css_content = System.Text.ASCIIEncoding.ASCII.GetString(data);
+                           
 
                         }
                         <div class="btnarea">
@@ -312,13 +310,13 @@
                                 </div>
                                 <div class="tab-pane" id="botuserauth" role="tabpanel" aria-labelledby="">
                                     <div class="checkbox col-md-12 col-lg-12  col-sm-12">
-                                        <label><input type="checkbox" value="">Option 1</label>
+                                        <label><input type="checkbox" value="">Name</label>
                                     </div>
                                     <div class="checkbox col-md-12 col-lg-12  col-sm-12">
-                                        <label><input type="checkbox" value="">Option 2</label>
+                                        <label><input type="checkbox" value="">Email</label>
                                     </div>
                                     <div class="checkbox col-md-12 col-lg-12  col-sm-12">
-                                        <label><input type="checkbox" value="">Option 3</label>
+                                        <label><input type="checkbox" value="">Facebook</label>
                                     </div>
                                 </div>
                                 <div class="tab-pane botcssConfig" id="botcss" role="tabpanel" aria-labelledby="">

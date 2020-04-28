@@ -40,34 +40,21 @@ namespace ExpressBase.Web.Controllers
         public async void UploadExcelAsync()
         {
             IFormFileCollection files = Request.Form.Files;
-            Stream stream = (files[0].OpenReadStream());
-            //var y = x as FileStream;
-            //FileStream stream;
-            //var path = Path.Combine(Directory.GetCurrentDirectory(), "Exceluploaded", files[0].FileName);
-            //using (var stream = new FileStream(path, FileMode.Create))
-            //{
-            //    await files[0].CopyToAsync(stream);
-
-            //}
+            Stream stream = (files[0].OpenReadStream()); 
 
             using (ExcelEngine excelEngine = new ExcelEngine())
             {
                 IApplication application = excelEngine.Excel;
-                application.DefaultVersion = ExcelVersion.Excel2016;
-                //FileStream stream = new FileStream(path, FileMode.Open);
+                application.DefaultVersion = ExcelVersion.Excel2016; 
                 IWorkbook workbook = application.Workbooks.Open(stream, ExcelOpenType.Automatic);
                 foreach (IWorksheet worksheet in workbook.Worksheets)
-                { 
+                {
                     EbDataTable _ebtbl = new EbDataTable();
-                    DataTable tbl = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames);
-                    //int cnt = tbl.Columns.Count;
-
-                    string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
+                    DataTable tbl = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames); 
 
                     //....set ebdatacolumns....
                     char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-                   // int colcnt = tbl.Columns.Count;
-
+                     
                     for (int i = 1; i <= tbl.Columns.Count; i++)
                     {
                         string s = worksheet.Range[1, i].Comment.Text;
@@ -79,68 +66,34 @@ namespace ExpressBase.Web.Controllers
                     foreach (DataRow row in tbl.Rows)
                     {
                         EbDataRow rr = _ebtbl.NewDataRow2();
+                        bool isNonEmpty = false;
+
                         for (int i = 0; i < tbl.Columns.Count; i++)
                         {
-                            rr[i] = row[i];
+                            if (row[i] != null && row[i].ToString() != string.Empty)
+                            {
+                                isNonEmpty = true;
+                                rr[i] = row[i];
+                            }
                         }
-                        _ebtbl.Rows.Add(rr);
+                        if (isNonEmpty)
+                            _ebtbl.Rows.Add(rr);
 
                     }
 
-                    EbObjectParticularVersionResponse formObj = this.ServiceClient.Get(new EbObjectParticularVersionRequest() { RefId = _refid });
-                    EbWebForm _form = EbSerializers.Json_Deserialize(formObj.Data[0].Json);
-                    _form.AfterRedisGet(this.Redis, this.ServiceClient);
-                    //Dictionary<string, SingleTable> _multiTable = new Dictionary<string, SingleTable>();
-                    //foreach (TableSchema _schema in _form.FormSchema.Tables)
-                    //{
-                    //    SingleTable _stbl = new SingleTable();
-                    //    _form.GetFormattedData(_ebtbl, _stbl, _schema);
-                    //    _multiTable.Add(_form.TableName, _stbl);
-                    //}
-                    //WebformData formdata = new WebformData { MultipleTables = _multiTable };
-                    //InsertDataFromWebformResponse resp = this.ServiceClient.Post(new InsertDataFromWebformRequest
-                    //{
-                    //    RefId = _refid,
-                    //    CurrentLoc = this.LoggedInUser.Preference.DefaultLocation,
-                    //    FormData = formdata,
-                    //    TableName = _form.TableName,
-                    //    UserObj = this.LoggedInUser,
-                    //});
+                    string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
 
-                    //string PushJson = GetDataPusherJson(_form);
-                    //InsertOrUpdateFormDataResp resp = this.ServiceClient.Any(new InsertOrUpdateFormDataRqst
-                    //{
-                    //    RefId = _refid,
-                    //    PushJson = PushJson,
-                    //    RecordId = 0,
-                    //    UserObj = this.LoggedInUser,
-                    //    LocId = this.LoggedInUser.Preference.DefaultLocation,
-                    //    WhichConsole = "uc",
-                    //    FormGlobals = new FormGlobals { Params = Globals.Params },
-                    //    //TransactionConnection = TransactionConnection
-                    //});
+                    if (_ebtbl.Columns.Contains(new EbDataColumn("eb_loc_id", EbDbTypes.Int32)))
+                    {
+                        InsertBatchDataResponse response = ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, RefId = _refid });
+                    }
+                    else
+                    {
+                        InsertBatchDataResponse response = ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, LocId = 1, RefId = _refid });
+                    }                    
                 }
             }
-        }
-
-        //public string GetDataPusherJson(EbWebForm _form)
-        //{
-        //    JObject Obj = new JObject();
-
-        //    foreach (TableSchema _table in _form.FormSchema.Tables)
-        //    {
-        //        JObject o = new JObject();
-        //        foreach (ColumnSchema _column in _table.Columns)
-        //        {
-        //            o[_column.ColumnName] = "value";
-        //        }
-        //        JArray array = new JArray();
-        //        array.Add(o);
-        //        Obj[_table.TableName] = array;
-        //    }
-        //    return Obj.ToString();
-        //}
-
+        } 
 
         public FileStreamResult download()
         {
@@ -156,7 +109,6 @@ namespace ExpressBase.Web.Controllers
                 application.DefaultVersion = ExcelVersion.Excel2016;
                 IWorkbook workbook = application.Workbooks.Create(1);
                 IWorksheet worksheet = workbook.Worksheets[0];
-
                 int colIndex = 1;
                 foreach (ColumnsInfo _col in response.colsInfo)
                 {
@@ -167,7 +119,11 @@ namespace ExpressBase.Web.Controllers
                     if (_col.DbType.ToString() == "String")
                         _colValidation.AllowType = ExcelDataType.Any;
                     if (_col.DbType.ToString() == "Date")
+                    {
+
+                        worksheet.Range[colId].EntireColumn.NumberFormat = "YYYY-MM-DD";
                         _colValidation.AllowType = ExcelDataType.Date;
+                    }
                     if (_col.DbType.ToString() == "Decimal")
                         _colValidation.AllowType = ExcelDataType.Decimal;
                     if (_col.DbType.ToString() == "Int16" || _col.DbType.ToString() == "Int32" || _col.DbType.ToString() == "Int64")
@@ -176,7 +132,6 @@ namespace ExpressBase.Web.Controllers
                         _colValidation.AllowType = ExcelDataType.Time;
                     colIndex++;
                 }
-
                 MemoryStream stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 stream.Position = 0;

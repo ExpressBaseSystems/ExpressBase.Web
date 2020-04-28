@@ -24,27 +24,35 @@ namespace ExpressBase.Web.Controllers
         [Microsoft.AspNetCore.Mvc.Route("/dbclient")]
         public IActionResult DbClient(string clientSolnid)
         {
-            if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
-                return Redirect("/StatusCode/401");
-            //GetDbTablesResponse res = null;
-            //if (ViewBag.cid == "admin" && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
-            //{
-            //    if (clientSolnid != null)
-            //        res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = clientSolnid });
-            //    else
-            //        res = this.ServiceClient.Get(new GetDbTablesRequest { });
-            //    ViewBag.IsAdminOwn = true;
-            //}
-            //else
-            //{
-            //    res = this.ServiceClient.Get(new GetDbTablesRequest { });
-            //    ViewBag.IsAdminOwn = false;
-            //}
-            //ViewBag.Tables = res.Tables;
-            //ViewBag.DB_Name = res.DB_Name;
-            //ViewBag.TableCount = res.TableCount;
-            ViewBag.User = this.LoggedInUser;
-            ViewBag.solutionid = clientSolnid;
+            try
+            {
+                if (ViewBag.wc == RoutingConstants.UC || ViewBag.wc == RoutingConstants.TC)
+                    return Redirect("/StatusCode/401");
+                //GetDbTablesResponse res = null;
+                //if (ViewBag.cid == "admin" && this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                //{
+                //    if (clientSolnid != null)
+                //        res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = clientSolnid });
+                //    else
+                //        res = this.ServiceClient.Get(new GetDbTablesRequest { });
+                //    ViewBag.IsAdminOwn = true;
+                //}
+                //else
+                //{
+                //    res = this.ServiceClient.Get(new GetDbTablesRequest { });
+                //    ViewBag.IsAdminOwn = false;
+                //}
+                //ViewBag.Tables = res.Tables;
+                //ViewBag.DB_Name = res.DB_Name;
+                //ViewBag.TableCount = res.TableCount;
+                ViewBag.User = this.LoggedInUser;
+                ViewBag.solutionid = clientSolnid;
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
+            }
             return View();
         }
         [HttpPost]

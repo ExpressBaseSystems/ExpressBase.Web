@@ -2616,6 +2616,10 @@
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        $('.status-time').tooltip({
+            placement: 'top'
+        });
+        
         
         $('.columntooltip').popover({
             container: 'body',
@@ -2640,7 +2644,7 @@
         });
 
         $('.btn-approval_popover').on('click', function (e) {
-            $('.btn-approval_popover').not(this).popover("hide");
+            //$('.btn-approval_popover').not(this).popover("hide");
         });
 
         $('.btn-approval_popover').on('shown.bs.popover', function (e) {
@@ -2648,8 +2652,10 @@
             let $td = $(e.target).parents().closest("td");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
         }.bind(this)); 
-        
-        $(".popover").remove();
+
+        $('.btn-approval_popover').on('hidden.bs.popover', function (e) {
+            $(e.target).data("bs.popover").inState.click = false;
+        }.bind(this)); 
 
         $('body').on('click', function (e) {
             $('[data-toggle=popover]').each(function () {
@@ -4010,6 +4016,8 @@
 
     this.cccccc = function ($td, resp) {
         $td.html(resp._data);
+        if ($td.find(".status-label").text() === "Review Completed")
+            EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
         var cell = this.Api.cell($td);
         cell.data($td.html()).draw();
         $("#eb_common_loader").EbLoader("hide");

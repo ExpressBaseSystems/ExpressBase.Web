@@ -67,12 +67,18 @@
             success: function (data) {
                 //cmeditor = document.getElementById(".coder");
                 //cmeditor.toTextArea();
-                $('#viewdbclientappend').html(data);
-                $('.selectpicker').selectpicker('destroy').selectpicker();
-                $('#searchSolution').on('changed.bs.select', this.searchSolution);
-                this.makeDraggable();
-                $('.mytree div:has(div)').addClass('parent');
-                $('div.mytree div').click(this.create_tree);
+               // var temp = JSON.parse(data);
+              //  if (temp.Message == "") {
+                    $('#viewdbclientappend').html(data);
+                    $('.selectpicker').selectpicker('destroy').selectpicker();
+                    $('#searchSolution').on('changed.bs.select', this.searchSolution);
+                    this.makeDraggable();
+                    $('.mytree div:has(div)').addClass('parent');
+                    $('div.mytree div').click(this.create_tree);
+                //} else {
+                //    $('#viewdbclientappend').html(data);
+                //}
+               
                 
             }.bind(this)
         });

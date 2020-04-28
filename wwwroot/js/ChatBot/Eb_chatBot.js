@@ -876,19 +876,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //varghese
         //for cards  this.curDispValue  is used
         // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        if (this.curCtrl.IsNonDataInputControl === false) {
-            this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
-            this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
-            this.curVal = this.curCtrl.getValue();
-
-            this.tryOnChangeDuties(this.curCtrl);
-        }
-
+        
         //this.displayValue = this.getDisplayHTML(this.curCtrl);
-        if (this.curCtrl.ObjType !== 'StaticCardSet') {
-            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        }
-        else {
+        if (this.curCtrl.ObjType === 'StaticCardSet' || this.curCtrl.ObjType === 'DynamicCardSet') {
+            if (!this.curCtrl.MultiSelect) {
+                $('#' + this.curCtrl.EbSid_CtxId).find('.slick-current .card-btn-cont .btn').click();
+            }
             var $msg = this.$userMsgBox.clone();
             $btn.parent().parent().remove();
             if ($btn.parent().prev().find('.table tbody').length === 1) {// if summary is present
@@ -905,9 +898,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
+            this.CurDataMODEL[this.curCtrl.TableName] = this.curCtrl.getDataModel();
         }
-        this.formValues[id] = this.curVal;
-        this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        else {
+            if (this.curCtrl.IsNonDataInputControl === false) {
+                this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
+                this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
+                this.curVal = this.curCtrl.getValue();
+                this.tryOnChangeDuties(this.curCtrl);
+            }
+            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        }
         this.callGetControl(this.nxtCtrlIdx);
 
         if ($('[saveprompt]').length === 1) {

@@ -320,6 +320,26 @@
         return '';
     }.bind(this);
 
+    this.CtrlObj.getDataModel = function () {
+        let dataModel = [];
+        //if (!this.CtrlObj.MultiSelect) {
+        //    this.$Ctrl.find('.slick-current .card-btn-cont .btn').click();
+        //}
+        $.each(this.CtrlObj.CardCollection.$values, function (k, cObj) {
+            if (this.CtrlObj.SelectedCards.indexOf(cObj.CardId) !== -1) {
+                let dataRow = { RowId: 0, Columns: [] };
+                dataRow.Columns.push({ Name: 'card_id', Type: 7, Value: cObj.CardId });
+                $.each(this.CtrlObj.CardFields.$values, function (h, fObj) {
+                    if (!fObj.DoNotPersist) {
+                        dataRow.Columns.push({ Name: fObj.Name, Type: fObj.EbDbType, Value: cObj.CustomFields.$values[fObj.Name] });
+                    }
+                }.bind(this));
+                dataModel.push(dataRow);
+            }
+        }.bind(this));
+        return dataModel;
+    }.bind(this);
+
     this.initCards(this.$Ctrl);
 
 };

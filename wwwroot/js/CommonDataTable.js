@@ -2616,6 +2616,10 @@
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
+        $('.status-time').tooltip({
+            placement: 'top'
+        });
+        
         
         $('.columntooltip').popover({
             container: 'body',
@@ -4012,6 +4016,8 @@
 
     this.cccccc = function ($td, resp) {
         $td.html(resp._data);
+        if ($td.find(".status-label").text() === "Review Completed")
+            EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
         var cell = this.Api.cell($td);
         cell.data($td.html()).draw();
         $("#eb_common_loader").EbLoader("hide");

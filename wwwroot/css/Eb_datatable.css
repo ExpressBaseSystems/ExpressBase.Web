@@ -864,6 +864,10 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     font-weight: 900;
 }
 
+.size11{
+    font-size:11px;
+}
+
 .status-icon, .status-label {
     margin-right: 5px;
 }
@@ -874,6 +878,10 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 .status-time {
     margin-left: 10px;
     color: #041982;
+}
+
+.icon-status-cont{
+    display:inline-block;
 }
 /*.comment-td:hover {
     text-overflow: clip;

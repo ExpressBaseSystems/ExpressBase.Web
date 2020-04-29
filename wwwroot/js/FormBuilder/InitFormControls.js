@@ -720,7 +720,7 @@
 
         let EbCombo = new EbSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
-            rendererName: this.Renderer.rendererName;
+            rendererName: this.Renderer.rendererName
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)

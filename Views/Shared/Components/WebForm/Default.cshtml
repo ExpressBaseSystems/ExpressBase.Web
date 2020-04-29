@@ -29,6 +29,7 @@
 <link rel="stylesheet" type="text/css" href="~/css/EbControls/EbSignaturePad.css" asp-append-version=@bApnd />
 @*amal*@
 @*varghese*@
+<link rel="stylesheet" type="text/css" href="~/css/EbFileViewer/viewer.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="~/css/EbControls/EbBluePrintCss.css">
 <link rel="stylesheet" href="~/css/yearpicker.css">
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.css" asp-append-version=@bApnd />
@@ -87,7 +88,8 @@
 @*varghese*@
 <script src="~/js/EbControls/EbBluePrint.js" type="text/javascript"></script>
 <script type="text/javascript" src="~/js/EbControls/EbSimpleFileUploader.js"></script>
-
+<script type="text/javascript" src="~/js/EbFileViewer/EbFileViewerPlugin.js" asp-append-version=@bApnd></script>
+<script type="text/javascript" src="~/js/EbFileViewer/viewer.js" asp-append-version=@bApnd></script>
 @*varghese*@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.15.0/d3.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js"></script>
@@ -98,7 +100,7 @@
 @{
 
     EbToolbox _toolBox = new EbToolbox(ExpressBase.Common.Objects.BuilderType.WebForm);
-    
+
     <script>
     @Html.Raw(_toolBox.EbOnChangeUIfns);
     @Html.Raw(_toolBox.AllMetas);

@@ -466,6 +466,8 @@
     border-radius: 18px !important;
     padding-right: 30px !important;
     transition-duration: 0.2s;
+    outline:none;
+    cursor:default;
 }
 
     .v-select .selected-tag .close {

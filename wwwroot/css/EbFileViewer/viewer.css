@@ -1,4 +1,45 @@
+/*CSS for viewer.js and EbFileViewerPlugin.js */
 
+/*EbFileViewerPlugin.js */
+#ebfileview_ContDiv {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 1;
+    z-index: 2015;
+}
+    #ebfileview_ContDiv #close-ebfileview_Cont {
+        float: right;
+        border-radius: 50%;
+        background-color: #aaaaad;
+        color: white;
+    }
+    #ebfileview_ContDiv #ebfileview_Iframe-Cont {
+        height: 100%;
+        width: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        
+    }
+        #ebfileview_ContDiv #ebfileview_Iframe-Cont #ebfileview_Iframe {
+            height: 95%;
+            width: 100%;
+            border: 1px solid #666464;
+        }
+
+/**/
+/**/
+/**/
+/**/
+/*viewer.js*/
+/**/
+/**/
+/**/
 /*.viewer-zoom-in::before,
 .viewer-zoom-out::before,
 .viewer-one-to-one::before,
@@ -23,7 +64,6 @@
     line-height: 0;
     width: 20px;
 }*/
-
 .viewer-zoom-in,
 .viewer-zoom-out,
 .viewer-one-to-one,

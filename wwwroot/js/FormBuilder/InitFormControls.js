@@ -2,8 +2,6 @@
 
     if (option) {
         this.Renderer = option;
-        this.Bot = option.renderer;
-        this.Wc = option.wc;
         this.Cid = option.Cid;
         this.Env = option.Env;
     }
@@ -323,7 +321,7 @@
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            if (!this.Bot) {
+            if (!this.Renderer.rendererName === "Bot") {
                 let $el = $(e.target);
                 if ($el[0].isOutside !== true) {
                     let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
@@ -409,8 +407,9 @@
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
         //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
 
+        if (!ctrl.__filterValues)
+            ctrl.__filterValues = [];
 
-        ctrl.__filterValues = [];
         for (let i = 0; i < paramsList.length; i++) {
             let depCtrl_s = paramsList[i];
             let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);// temporary for web form
@@ -601,9 +600,9 @@
                     ctrl.__isJustSetValue = false;
             }.bind(ctrl)
         });
-        //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
+        //$(`#${name}_Cont .choose-btn`).click(this.Renderer.chooseClick);
 
-        if (this.Bot)
+        if (this.Renderer.rendererName === "Bot")
             this.bindMapResize(ctrl);
 
     };
@@ -651,8 +650,8 @@
             this.initMap(ctrl.LocationCollection.$values[0]);
         }
 
-        //this.Bot.nxtCtrlIdx++;
-        //this.Bot.callGetControl();
+        //this.Renderer.nxtCtrlIdx++;
+        //this.Renderer.callGetControl();
     };
 
     this.initMap = function (ctrl) {
@@ -665,7 +664,7 @@
             position: uluru,
             map: map
         });
-        if (this.Bot)
+        if (this.Renderer.rendererName === "Bot")
             this.bindMapResize(ctrl);
     };
 
@@ -721,7 +720,7 @@
 
         let EbCombo = new EbSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
-            wc: this.Wc
+            rendererName: this.Renderer.rendererName;
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
@@ -731,13 +730,13 @@
     };
 
     this.Survey = function (ctrl) {
-        new EbSurveyRender($('#' + ctrl.Name), this.Bot);
+        new EbSurveyRender($('#' + ctrl.Name), this.Renderer);
     };
 
     this.StaticCardSet = function (ctrl) {
         new EbCardRender({
             $Ctrl: $('#' + ctrl.EbSid),
-            Bot: this.Bot,
+            Bot: this.Renderer,
             CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
@@ -746,7 +745,7 @@
     this.DynamicCardSet = function (ctrl) {
         new EbCardRender({
             $Ctrl: $('#' + ctrl.EbSid),
-            Bot: this.Bot,
+            Bot: this.Renderer,
             CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
@@ -1242,7 +1241,7 @@
     }
 
     this.Rating = function (ctrl) {
-        if ((ebcontext.user.wc == 'uc') || this.Bot) {
+        if ((ebcontext.user.wc == 'uc') || this.Renderer.rendererName === "Bot") {
             $("#" + ctrl.EbSid).empty();
             $("#" + ctrl.EbSid).rateYo({
 
@@ -1300,7 +1299,7 @@
 
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
-            botCtrl: this.Bot,
+            botCtrl: this.Renderer,
             maxSize: ctrl.MaxSize,
             fileTypes: ctrl.FileTypes,
             maxFiles: ctrl.MaxFiles

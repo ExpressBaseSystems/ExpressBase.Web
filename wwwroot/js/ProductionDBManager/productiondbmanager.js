@@ -9,7 +9,7 @@
     }
 
     this.function2update = function (e) {
-        let key = $(e.target).siblings("change_func").val();
+        let key = $(e.target).siblings(".change_func").val();
         var $this = $(`#${key}subchange`);
         $this.button('loading');
 
@@ -39,7 +39,7 @@
     };
 
     this.ViewChanges = function (e) {
-        let val = $(e.target).siblings("chk_integrity").val();
+        let val = $(e.target).siblings(".chk_integrity").val();
         var $this = $(`#i_chk_${val}`);
         $this.button('loading');
         $.ajax({
@@ -128,7 +128,7 @@
     this.viewquery = function (e) {
         let changes = JSON.parse(decodeURIComponent(escape(window.atob(e.target.getAttribute("obj-val")))));
         let solution = e.target.getAttribute("sol-id");
-        let key = $(e.target).siblings("view_qry").val();
+        let key = $(e.target).siblings(".view_qry").val();
         if (changes["type"] == "0" || changes["type"] == "2") {
             $.ajax({
                 type: "POST",

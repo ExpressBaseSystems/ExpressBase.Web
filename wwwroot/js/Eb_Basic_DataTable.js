@@ -232,7 +232,7 @@ var EbBasicDataTable = function (Option) {
 
     this.createTblObject = function () {
         var url = "";
-        if (Option.wc === 'bc')
+        if (Option.rendererName === 'Bot')
             url = "../boti/getData";
         else if (this.IsQuery)
             url = "../Eb_Object/getData";
@@ -297,7 +297,7 @@ var EbBasicDataTable = function (Option) {
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        if (Option.wc === 'bc') {
+        if (Option.rendererName === 'Bot') {
             dq.start = 0;
             dq.length = 25;/////////hard coding
         }

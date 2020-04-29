@@ -378,7 +378,7 @@ const EbSelect = function (ctrl, options) {
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns;//////////////////////////////////////////////////////
         if (options)
-            o.wc = options.wc;
+            o.rendererName = options.rendererName;
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;

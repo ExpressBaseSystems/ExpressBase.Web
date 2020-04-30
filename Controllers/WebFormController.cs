@@ -635,6 +635,8 @@ namespace ExpressBase.Web.Controllers
                                 Time_to = Obj.Time_to,
                                 Title = Obj.Title,
                                 IsHide = true,
+                                Attendee_count = Obj.Attendee_count,
+                                Host_count = Obj.Host_count,
                             }
                         );
                     }
@@ -653,6 +655,8 @@ namespace ExpressBase.Web.Controllers
                                 Time_to = Obj.Time_to,
                                 Title = Obj.Title,
                                 IsHide = false,
+                                Attendee_count = Obj.Attendee_count,
+                                Host_count = Obj.Host_count,
                             }
                         );
                     }
@@ -665,6 +669,11 @@ namespace ExpressBase.Web.Controllers
         {
             MeetingSaveValidateResponse Resp = this.ServiceClient.Post<MeetingSaveValidateResponse>(new MeetingSaveValidateRequest { SlotParticipant = Obj });
             return JsonConvert.SerializeObject(Resp.ResponseStatus);
+        } 
+        public string AddMeetingTemp(AddMeetingSlotRequest obj) 
+        {
+            AddMeetingSlotResponse Resp = this.ServiceClient.Post<AddMeetingSlotResponse>(new AddMeetingSlotRequest { Date = obj.Date });
+            return JsonConvert.SerializeObject(Resp.Status);
         }
     }
 }

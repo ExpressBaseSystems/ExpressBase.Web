@@ -845,10 +845,17 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     word-break: break-all;
 }
 
+.datetime-td {
+    width: 80px;
+}
+.image-td{
+    display:flex;
+}
+
 .history-image {
     height: 30px;
     width: 30px;
-    margin-right:8px;
+    margin-right: 8px;
 }
 .color-green{
     color:green;

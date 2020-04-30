@@ -1,7 +1,7 @@
 /*CSS for viewer.js and EbFileViewerPlugin.js */
 
 /*EbFileViewerPlugin.js */
-#ebfileview_ContDiv {
+.eb_fileview-Cont {
     width: 100%;
     height: 100%;
     position: absolute;
@@ -14,19 +14,18 @@
     opacity: 1;
     z-index: 2015;
 }
-    #ebfileview_ContDiv #close-ebfileview_Cont {
+    .eb_fileview-Cont .ebclx_fileview-Cont {
         float: right;
         border-radius: 50%;
         background-color: #aaaaad;
         color: white;
     }
-    #ebfileview_ContDiv #ebfileview_Iframe-Cont {
+    .eb_fileview-Cont .eb_iframe-Cont {
         height: 100%;
         width: 100%;
         background-color: rgba(0, 0, 0, 0.5);
-        
     }
-        #ebfileview_ContDiv #ebfileview_Iframe-Cont #ebfileview_Iframe {
+        .eb_fileview-Cont .eb_iframe-Cont .ebfileview_Iframe {
             height: 95%;
             width: 100%;
             border: 1px solid #666464;

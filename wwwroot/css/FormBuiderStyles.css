@@ -1904,12 +1904,14 @@ input.locinp {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    height: 26px;
-    width: 26px;
+    height: 32px;
+    width: 32px;
 }
 
 .sysctrl_usrname {
-    padding: 3px 10px;
+    padding: 7px 10px;
+    vertical-align: middle;
+    font-size: 13px;
 }
 
 

@@ -61,7 +61,8 @@
     }
 
     multiThumbFlow() {
-        this.FullScreen = this.fullScreen();
+        //lines commented for testing
+        //this.FullScreen = this.fullScreen();
         if (this.Options.ShowGallery) {
             this.Gallery = this.appendGallery();
             // this.GalleryFS = this.appendFSHtml();//full screen preview init html
@@ -564,25 +565,25 @@
         document.getElementById("uploadtest-file-input").value = "";
         this.isDropZoneEmpty();
     }
-
+//lines commented for testing
     setFullscreen(e) {
-        let txt = $(e.target).closest("button").attr("fname") + " (" + $(e.target).closest("button").attr("size") + " Kb)";
-        let ft = $(e.target).closest("button").attr("ftype");
-        let ctrl = $(e.target).closest(".eb-upl_thumb");
-        if (ft === "image") {
-            this.FullScreen.find(".upl-body-file").hide();
-            let img = ctrl.find("img").attr("src");
-            this.FullScreen.find("img").attr("src", img);
-            this.FullScreen.find(".upl-body").show();
-        }
-        else {
-            this.FullScreen.find(".upl-body").hide();
-            let iframe = ctrl.find("iframe").attr("src");
-            this.FullScreen.find(".upl-body-file iframe").attr("src", iframe);
-            this.FullScreen.find(".upl-body-file").show();
-        }
-        this.FullScreen.find(".img-info").text(txt);
-        this.FullScreen.modal("show");
+        //let txt = $(e.target).closest("button").attr("fname") + " (" + $(e.target).closest("button").attr("size") + " Kb)";
+        //let ft = $(e.target).closest("button").attr("ftype");
+        //let ctrl = $(e.target).closest(".eb-upl_thumb");
+        //if (ft === "image") {
+        //    this.FullScreen.find(".upl-body-file").hide();
+        //    let img = ctrl.find("img").attr("src");
+        //    this.FullScreen.find("img").attr("src", img);
+        //    this.FullScreen.find(".upl-body").show();
+        //}
+        //else {
+        //    this.FullScreen.find(".upl-body").hide();
+        //    let iframe = ctrl.find("iframe").attr("src");
+        //    this.FullScreen.find(".upl-body-file iframe").attr("src", iframe);
+        //    this.FullScreen.find(".upl-body-file").show();
+        //}
+        //this.FullScreen.find(".img-info").text(txt);
+        //this.FullScreen.modal("show");
     }
 
     upload(e) {
@@ -710,31 +711,31 @@
 
         return $(`#${this.Options.Container}-upl-container`);
     }
-
+    //lines commented for testing
     fullScreen() {
-        $("body").append(`<div id="${this.Options.Container}-upl-container-fullscreen" class="upl-container-fullscreen">
-                            <div id="${this.Options.Container}-upl-fullscreen" class="modal fade upl-fullscreen" role="dialog">
-                              <div class="modal-dialog">
-                                <div class="modal-content">
-                                  <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title display-inline">Detailed Preview</h4>
-                                    <span class="img-info">amal.jpg 56.8 kb</span>
-                                  </div>
-                                  <div class="modal-body">
-                                        <div class="upl-body">
-                                            <img src=""/>
-                                        </div>
-                                        <div class="upl-body-file">
-                                            <iframe></iframe>
-                                        </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>`);
+        //$("body").append(`<div id="${this.Options.Container}-upl-container-fullscreen" class="upl-container-fullscreen">
+        //                    <div id="${this.Options.Container}-upl-fullscreen" class="modal fade upl-fullscreen" role="dialog">
+        //                      <div class="modal-dialog">
+        //                        <div class="modal-content">
+        //                          <div class="modal-header">
+        //                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+        //                            <h4 class="modal-title display-inline">Detailed Preview</h4>
+        //                            <span class="img-info">amal.jpg 56.8 kb</span>
+        //                          </div>
+        //                          <div class="modal-body">
+        //                                <div class="upl-body">
+        //                                    <img src=""/>
+        //                                </div>
+        //                                <div class="upl-body-file">
+        //                                    <iframe></iframe>
+        //                                </div>
+        //                          </div>
+        //                        </div>
+        //                      </div>
+        //                    </div>
+        //                  </div>`);
 
-        return $(`#${this.Options.Container}-upl-fullscreen`);
+        //return $(`#${this.Options.Container}-upl-fullscreen`);
     }
 
     startSE() {

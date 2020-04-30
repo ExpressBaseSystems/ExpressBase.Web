@@ -191,16 +191,16 @@
                                         <label class="sub-headings row-padding align-center">@ViewBag.ChangesLog[i].Vendor</label>
                                     </div>
                                 </div>
-                                <div class="col-md-2 align-center" id="modified_date_@ViewBag.ChangesLog[i].Solution">
+                                <div class="col-md-2 align-center" id="modified_date_@ViewBag.ChangesLog[i].ISolutionId">
                                     <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Last_Modified</label>
                                 </div>
                                 <div class="col-md-2 align-center">
-                                    <input type="hidden" value="@ViewBag.ChangesLog[i].Solution" id="solu_id" name="solu_id" />
-                                    <label class="sub-headings row-padding" id="uptodate_@ViewBag.ChangesLog[i].Solution" style="display:none">Up to Date</label>
-                                    <button id="i_chk_@ViewBag.ChangesLog[i].Solution" name="i_chk_@ViewBag.ChangesLog[i].Solution" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
+                                    <input type="hidden" value="@ViewBag.ChangesLog[i].ISolutionId" id="solu_id" name="solu_id" class="chk_integrity" />
+                                    <label class="sub-headings row-padding" id="uptodate_@ViewBag.ChangesLog[i].ISolutionId" style="display:none">Up to Date</label>
+                                    <button id="i_chk_@ViewBag.ChangesLog[i].ISolutionId" name="i_chk_@ViewBag.ChangesLog[i].ISolutionId" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
                                 </div>
                             </div>
-                            <div id="@ViewBag.ChangesLog[i].Solution" class="sol_changes">
+                            <div id="@ViewBag.ChangesLog[i].ISolutionId" class="sol_changes">
 
                             </div>
                         }

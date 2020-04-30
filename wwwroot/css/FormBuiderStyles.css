@@ -2120,7 +2120,7 @@ input.locinp {
                 width: 250px;
             }
 
-                .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image {
+                .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file {
                     /*display: inline-block;
             width: calc(20% );
             padding-bottom: calc(16.6666667% - 1rem);
@@ -2137,7 +2137,7 @@ input.locinp {
                     height: 100%;
                 }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image img {
+                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file img {
                         /*width: 100%;
                 height: 100%;
                 object-fit: cover;
@@ -2149,11 +2149,11 @@ input.locinp {
                         padding: 2px;
                     }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls {
+                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls {
                         /*width:100%;*/
                     }
 
-                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls .success {
+                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .success {
                             color: #47af08;
                             font-size: 20px;
                             align-self: center;
@@ -2165,7 +2165,7 @@ input.locinp {
                             right: 0;
                         }
 
-                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls .error {
+                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .error {
                             color: #f95655;
                             font-size: 20px;
                             align-self: center;
@@ -2177,7 +2177,7 @@ input.locinp {
                             right: 0;
                         }
 
-                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-image .filedtls .filename {
+                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .filename {
                             /*margin-top: 5px;
                     margin-bottom: 0;
                     font-weight: 500;
@@ -2186,7 +2186,7 @@ input.locinp {
                     white-space: nowrap;*/
                         }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image iframe {
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file iframe {
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
@@ -2194,7 +2194,7 @@ input.locinp {
             }
 
             /* Delete image button */
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image .delete-image {
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .delete-image {
                 display: none;
                 cursor: pointer;
                 position: absolute;
@@ -2207,11 +2207,11 @@ input.locinp {
                 border: none;
             }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image:hover .delete-image {
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file:hover .delete-image {
                 display: block;
             }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-image .delete-image i {
+            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .delete-image i {
                 color: #5b5959;
                 font-size: 1.5rem;
             }
@@ -2228,7 +2228,7 @@ input.locinp {
                 width: 90px
             }
 
-                .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image {
+                .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file {
                     width: 100%;
                     display: flex;
                     align-items: center;
@@ -2237,7 +2237,7 @@ input.locinp {
                     height: 100%;
                 }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image img {
+                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file img {
                         max-width: 85px;
                         min-width: 50px;
                         height: 45px;
@@ -2245,7 +2245,7 @@ input.locinp {
                     }
 
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image .botfiledtls .success {
+                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .success {
                         color: #47af08;
                         font-size: 12px;
                         align-self: center;
@@ -2257,7 +2257,7 @@ input.locinp {
                         right: 0;
                     }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-image .botfiledtls .error {
+                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .error {
                         color: #f95655;
                         font-size: 12px;
                         align-self: center;
@@ -2270,7 +2270,7 @@ input.locinp {
                     }
 
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-image .delete-image {
+            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image {
                 display: none;
                 cursor: pointer;
                 position: absolute;
@@ -2283,11 +2283,11 @@ input.locinp {
                 border: none;
             }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-image:hover .delete-image {
+            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file:hover .delete-image {
                 display: block;
             }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-image .delete-image i {
+            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image i {
                 color: #5b5959;
                 font-size: 1.5rem;
             }

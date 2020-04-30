@@ -20,10 +20,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.isAlreadylogined = true;
     this.bearerToken = null;
     this.refreshToken = null;
-    this.initControls = new InitControls({
-        renderer: this,
-        wc: "bc"
-    });
+    this.initControls = new InitControls(this);
+    this.rendererName = "Bot";
     this.typeDelay = 200;
     this.ChartCounter = 0;
     this.formsList = {};
@@ -44,6 +42,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.userDtls = {};
     this.ssurl = ssurl;
     this.userLoc = {};
+
+    this.formObject = {};// for passing to user defined functions
+    this.CurFormflatControls = [];// for passing to user defined functions
 
     this.init = function () {
         $("body").append(this.$chatCont);
@@ -101,7 +102,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let email = $("#anon_mail").val().trim();
         let phone = $("#anon_phno").val().trim();
         if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            this.msgFromBot("Please enter valid email/phone");
             return;
         }
         this.msgFromBot("Thank you.");
@@ -226,6 +228,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     this.curFormObj = form;
                     let DataRes = JSON.parse(result.data);
                     if (DataRes.Status === 200) {
+
                         this.CurDataMODEL = DataRes.FormData.MultipleTables;
                         a___MT = DataRes.FormData.MultipleTables;
                         this.CurRowId = this.CurDataMODEL[form.TableName][0].RowId;
@@ -244,6 +247,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                         this.formsList[RefId] = form;
                         if (form.ObjType === "BotForm") {
                             this.curForm = form;
+                            this.CurFormflatControls = this.curForm.Controls.$values;
+                            this.setFormObject();
                             this.setFormControls();
                         }
                         else if (form.ObjType === "TableVisualization") {
@@ -258,11 +263,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                         }
                     }
                     else if (DataRes.Status === 403) {
-                        EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+                        //EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+                        this.msgFromBot("Access denied to update this data entry!");
                         console.error(DataRes.MessageInt);
                     }
                     else {
-                        EbMessage("show", { Message: DataRes.Message, AutoHide: true, Background: '#aa0000' });
+                        //EbMessage("show", { Message: DataRes.Message, AutoHide: true, Background: '#aa0000' });
+                        this.msgFromBot(DataRes.Message);
                         console.error(DataRes.MessageInt);
                     }
                 }.bind(this)
@@ -356,7 +363,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         o.showCheckboxColumn = false;
         o.showFilterRow = false;
         o.IsPaging = false;
-        o.wc = 'bc';
+        o.rendererName = 'Bot';
         //o.scrollHeight = this.scrollHeight + "px";
         //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
@@ -747,13 +754,114 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             let tempCtrl = $("#" + ctrl.EbSid).clone();
             tempCtrl.find('input[type="file"]').remove();
             tempCtrl.find('input[type="text"]').remove();
-           
-            tempCtrl.attr('id',"");
-            tempCtrl.find('.SFUPcontainer').attr('id',"");
+
+            tempCtrl.attr('id', "");
+            tempCtrl.find('.SFUPcontainer').attr('id', "");
             text = tempCtrl[0].outerHTML;
 
         }
         return text;
+    };
+
+
+
+    this.setFormObject = function () {
+        this.formObject = {};
+        $.each(this.CurFormflatControls, function (i, ctrl) {
+            this.formObject[ctrl.Name] = ctrl;
+        }.bind(this));
+        this.formObject.__getCtrlByPath = this.getCtrlByPath;
+    };
+
+    this.getCtrlByPath = function (path) {
+        try {
+            let form = this.formObject;
+            let ctrl = {};
+            let pathArr = path.split(".");
+            //if (pathArr.length === 3) {
+            //    path = pathArr[0] + '.' + pathArr[1] + '.' + "currentRow" + '.' + pathArr[2];
+            //    ctrl = eval(path);
+            //    ctrl.IsDGCtrl = true;
+            //} else
+            {
+                ctrl = eval(path);
+            }
+            return ctrl;
+        }
+        catch (e) {
+            console.warn("could not find:" + path);
+            return "not found";
+        }
+    }.bind(this);
+
+    this.tryOnChangeDuties = function (curCtrl) {
+        if (curCtrl.DependedValExp) {
+            $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                let depCtrl = this.getCtrlByPath(depCtrl_s);
+                if (depCtrl === "not found")
+                    return;
+                try {
+                    if (depCtrl.ObjType === "TVcontrol") {
+                        if (depCtrl.reloadWithParam) { // control comes after TVcontrol initialised - update cur control param and reload
+                            depCtrl.reloadWithParam(curCtrl);
+                        }
+                        else {//  control comes before TVcontrol initialised - set cur control param
+                            let val = curCtrl.getValue();
+
+                            if (!depCtrl.__filterValues)
+                                depCtrl.__filterValues = [];
+
+                            let filterObj = getObjByval(depCtrl.__filterValues, "Name", curCtrl.Name);
+                            if (filterObj)
+                                filterObj.Value = val;
+                            else
+                                depCtrl.__filterValues.push(new fltr_obj(curCtrl.EbDbType, curCtrl.Name, val));
+                        }
+                    }
+                    //else {
+                    //    if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
+                    //        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                    //        let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                    //        if (valExpFnStr) {
+                    //            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                    //                if (!this.FO.Mode.isView || depCtrl.DoNotPersist)
+                    //                    depCtrl.setValue(ValueExpr_val);
+                    //            }
+                    //            else {
+                    //                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                    //                    row[depCtrl.Name].setValue(ValueExpr_val);
+                    //                }.bind(this));
+                    //            }
+                    //        }
+                    //    }
+                    //    else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+                    //        let params = [];
+
+                    //        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                    //            try {
+                    //                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                    //                let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
+                    //                let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
+                    //                params.push(param);
+                    //            }
+                    //            catch (e) {
+                    //                console.eb_log("eb error :");
+                    //                console.eb_log(e);
+                    //                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                    //            }
+                    //        }.bind(this));
+
+                    //        ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                    //    }
+                    //}
+                }
+                catch (e) {
+                    console.eb_log("eb error :");
+                    console.eb_log(e);
+                    alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                }
+            }.bind(this));
+        }
     };
 
     this.ctrlSend = function (e) {
@@ -770,14 +878,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //varghese
         //for cards  this.curDispValue  is used
         // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
-        this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
-        this.curVal = this.curCtrl.getValue();
+
         //this.displayValue = this.getDisplayHTML(this.curCtrl);
-        if (this.curCtrl.ObjType !== 'StaticCardSet') {
-            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        }
-        else {
+        if (this.curCtrl.ObjType === 'StaticCardSet' || this.curCtrl.ObjType === 'DynamicCardSet') {
+            if (!this.curCtrl.MultiSelect) {
+                $('#' + this.curCtrl.EbSid_CtxId).find('.slick-current .card-btn-cont .btn').click();
+            }
             var $msg = this.$userMsgBox.clone();
             $btn.parent().parent().remove();
             if ($btn.parent().prev().find('.table tbody').length === 1) {// if summary is present
@@ -794,9 +900,20 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
+            this.CurDataMODEL[this.curCtrl.TableName] = this.curCtrl.getDataModel();
         }
-        this.formValues[id] = this.curVal;
-        this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        else {
+            if (this.curCtrl.IsNonDataInputControl === false) {
+                this.curCtrl.DataVals.Value = this.curCtrl.getValueFromDOM();
+                this.curCtrl.DataVals.F = this.getDisplayHTML(this.curCtrl);
+                this.curVal = this.curCtrl.getValue();
+                this.tryOnChangeDuties(this.curCtrl);
+            }
+            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+
+            this.formValues[id] = this.curVal;
+            this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
+        }
         this.callGetControl(this.nxtCtrlIdx);
 
         if ($('[saveprompt]').length === 1) {
@@ -1321,10 +1438,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let respObj = JSON.parse(resp);
         if (respObj.Status === 200) {
             //EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
-            msg = `Your ${this.curForm.DisplayName} form submitted successfully`;
+            msg = `Your ${this.curForm.DisplayName} form submitted successfully 😊`;
         }
         else {
-            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            //EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            this.msgFromBot("Something went wrong ☹️");
             msg = `Your ${this.curForm.DisplayName} form submission failed`;
             console.log(respObj.MessageInt);
         }

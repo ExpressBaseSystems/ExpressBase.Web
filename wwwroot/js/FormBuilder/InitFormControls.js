@@ -1,8 +1,7 @@
 ﻿var InitControls = function (option) {
 
     if (option) {
-        this.Bot = option.renderer;
-        this.Wc = option.wc;
+        this.Renderer = option;
         this.Cid = option.Cid;
         this.Env = option.Env;
     }
@@ -306,16 +305,23 @@
     this.SimpleSelect = function (ctrl) {
 
         let $input = $("#" + ctrl.EbSid_CtxId);
+
+        $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
+            $(e.target).closest(".dropdown.bootstrap-select").attr("id", ctrl.EbSid_CtxId + "_dd"); // id added for test frame work
+        });
+
         $input.selectpicker({
             dropupAuto: false
         });
+
+
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
         $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
         $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            if (!this.Bot) {
+            if (!this.Renderer.rendererName === "Bot") {
                 let $el = $(e.target);
                 if ($el[0].isOutside !== true) {
                     let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
@@ -389,7 +395,8 @@
         }
     };
 
-    this.TVcontrol = function (ctrl) {
+    this.TVcontrol = function (ctrl, ctrlOpts) {
+        paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
         let o = new Object();
         o.tableId = ctrl.EbSid_CtxId;
         o.showCheckboxColumn = false;
@@ -399,17 +406,68 @@
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
         //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
+
+        if (!ctrl.__filterValues)
+            ctrl.__filterValues = [];
+
+        for (let i = 0; i < paramsList.length; i++) {
+            let depCtrl_s = paramsList[i];
+            let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);// temporary for web form
+            let val = '';
+            let ebDbType = 11;
+            let name = "";
+            if (depCtrl_s === "form.eb_loc_id") {
+                val = 1;// hard coding
+                name = "eb_loc_id";
+            }
+            else if (depCtrl_s === "form.eb_currentuser_id") {
+                val = 74;// hard coding
+                name = "eb_currentuser_id";
+            }
+            else {
+                val = depCtrl.getValue();
+                val = val === null ? "" : val;
+                name = depCtrl.Name;
+                ebDbType = depCtrl.EbDbType;
+            }
+
+            ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
+        }
+        o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
         ctrl.initializer = new EbCommonDataTable(o);
         ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
+
+
+        //if (ctrl.__columnSearch) { // if preloded parameters from chat bot
+        //    filterValues = [];
+        //    for (let i = 0; i < ctrl.__columnSearch.length; i++) {
+        //        let Obj = ctrl.__columnSearch[i];
+        //        filterValues.push(new fltr_obj(Obj.Type, Obj.Column, Obj.Value));
+        //    }
+        //    o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(filterValues))));
+        //}
+
+
         ctrl.reloadWithParam = function (depCtrl) {
-            let val = depCtrl.getValue();
-            let filterObj = getObjByval(ctrl.initializer.columnSearch, "Column", depCtrl.Name);
-            if (filterObj)
+            if (depCtrl) {
+                let val = depCtrl.getValue();
+                //if (!ctrl.__filterValues)
+                //    ctrl.__filterValues = []; // this variable is introduced to handle pre setted  parameters from chat bot 
+
+                let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
+                //if (filterObj)
                 filterObj.Value = val;
-            else
-                ctrl.initializer.columnSearch.push(new filter_obj(depCtrl.Name, "=", val, depCtrl.Type));
-            ctrl.initializer.reloadTV();
+                //else
+                //    ctrl.__filterValues.push(new fltr_obj(depCtrl.EbDbType, depCtrl.Name, val));
+            }
+
+            ctrl.initializer.filterValues = ctrl.__filterValues;
+            ctrl.initializer.Api.ajax.reload();
         };
+
+        //if (ctrl.__columnSearch) // if preloded parameters from chat bot
+        //    ctrl.reloadWithParam();
+
     };
 
     this.CalendarControl = function (ctrl) {
@@ -542,9 +600,9 @@
                     ctrl.__isJustSetValue = false;
             }.bind(ctrl)
         });
-        //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
+        //$(`#${name}_Cont .choose-btn`).click(this.Renderer.chooseClick);
 
-        if (this.Bot)
+        if (this.Renderer.rendererName === "Bot")
             this.bindMapResize(ctrl);
 
     };
@@ -592,8 +650,8 @@
             this.initMap(ctrl.LocationCollection.$values[0]);
         }
 
-        //this.Bot.nxtCtrlIdx++;
-        //this.Bot.callGetControl();
+        //this.Renderer.nxtCtrlIdx++;
+        //this.Renderer.callGetControl();
     };
 
     this.initMap = function (ctrl) {
@@ -606,13 +664,13 @@
             position: uluru,
             map: map
         });
-        if (this.Bot)
+        if (this.Renderer.rendererName === "Bot")
             this.bindMapResize(ctrl);
     };
 
     this.bindMapResize = function (ctrl) {
         $(window).resize(function () {
-            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
+            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
         });
     };
 
@@ -662,7 +720,7 @@
 
         let EbCombo = new EbSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
-            wc: this.Wc
+            rendererName: this.Renderer.rendererName
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
@@ -672,13 +730,13 @@
     };
 
     this.Survey = function (ctrl) {
-        new EbSurveyRender($('#' + ctrl.Name), this.Bot);
+        new EbSurveyRender($('#' + ctrl.Name), this.Renderer);
     };
 
     this.StaticCardSet = function (ctrl) {
         new EbCardRender({
             $Ctrl: $('#' + ctrl.EbSid),
-            Bot: this.Bot,
+            Bot: this.Renderer,
             CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
@@ -687,7 +745,7 @@
     this.DynamicCardSet = function (ctrl) {
         new EbCardRender({
             $Ctrl: $('#' + ctrl.EbSid),
-            Bot: this.Bot,
+            Bot: this.Renderer,
             CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
@@ -1088,7 +1146,7 @@
 
     this.Numeric = function (ctrl) {
         //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
-                //setTimeout(function () {
+        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.InputMode === 0) {
@@ -1183,7 +1241,7 @@
     }
 
     this.Rating = function (ctrl) {
-        if ((ebcontext.user.wc == 'uc') || this.Bot) {
+        if ((ebcontext.user.wc == 'uc') || this.Renderer.rendererName === "Bot") {
             $("#" + ctrl.EbSid).empty();
             $("#" + ctrl.EbSid).rateYo({
 
@@ -1234,14 +1292,14 @@
             return $(`#${ctrl.EbSid}`).summernote('reset');
         };
 
-       
+
     };
 
     this.SimpleFileUploader = function (ctrl) {
 
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
-            botCtrl: this.Bot,
+            botCtrl: this.Renderer,
             maxSize: ctrl.MaxSize,
             fileTypes: ctrl.FileTypes,
             maxFiles: ctrl.MaxFiles
@@ -1262,20 +1320,20 @@
 
         ctrl.setValue = function (p1) {
             console.log("setvalue " + " p1 " + p1);
-            if (p1 !== null && p1 !== "") {
-                let preloaded = [];
-                let refidArr = p1.split(',');
-                for (var j = 0; j < refidArr.length; j++) {
+            //if (p1 !== null && p1 !== "") {
+            //    let preloaded = [];
+            //    let refidArr = p1.split(',');
+            //    for (var j = 0; j < refidArr.length; j++) {
 
-                    var src = `/images/small/${refidArr[j]}.jpg`;
-                    var fileno = j;
-                    var fltype = "png";
-                    preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
-                }
+            //        var src = `/images/small/${refidArr[j]}.jpg`;
+            //        var fileno = j;
+            //        var fltype = "png";
+            //        preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
+            //    }
 
-                filePlugin.createPreloaded(preloaded);
-            }
-
+            //    filePlugin.createPreloaded(preloaded);
+            //}
+            filePlugin.createPreloaded(p1);
         };
         ctrl.clear = function () {
 

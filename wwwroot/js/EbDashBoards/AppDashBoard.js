@@ -8,7 +8,7 @@
 
     this.init = function () {
         this.cssConfigFn();
-        $('#updateBotSettingsID').on('click', this.UpdateBotSettingsFn.bind(this));
+        $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
         $('.resetcss').on('click', this.ResetCssFn.bind(this));
     }
     this.searchObjects = function (e) {
@@ -209,7 +209,7 @@
             }
         });
     }
-
+   
     this.ResetCssFn = function (e) {
         let cssConst = $(e.target).attr('obname');
         $.ajax({
@@ -222,6 +222,7 @@
             }
         });
     };
+    
     this.start_exe();
     this.init();
 

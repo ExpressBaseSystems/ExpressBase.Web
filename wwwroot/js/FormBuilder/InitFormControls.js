@@ -321,7 +321,7 @@
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            if (!this.Renderer.rendererName === "Bot") {
+            if (this.Renderer.rendererName !== "Bot") {
                 let $el = $(e.target);
                 if ($el[0].isOutside !== true) {
                     let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
@@ -396,7 +396,7 @@
     };
 
     this.TVcontrol = function (ctrl, ctrlOpts) {
-        paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
+        paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });//["form.textbox1", "form.id_max", "form.eb_loc_id", "form.eb_currentuser_id"];//
         let o = new Object();
         o.tableId = ctrl.EbSid_CtxId;
         o.showCheckboxColumn = false;
@@ -412,26 +412,28 @@
 
         for (let i = 0; i < paramsList.length; i++) {
             let depCtrl_s = paramsList[i];
-            let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);// temporary for web form
-            let val = '';
-            let ebDbType = 11;
-            let name = "";
-            if (depCtrl_s === "form.eb_loc_id") {
-                val = 1;// hard coding
-                name = "eb_loc_id";
-            }
-            else if (depCtrl_s === "form.eb_currentuser_id") {
-                val = 74;// hard coding
-                name = "eb_currentuser_id";
-            }
-            else {
-                val = depCtrl.getValue();
-                val = val === null ? "" : val;
-                name = depCtrl.Name;
-                ebDbType = depCtrl.EbDbType;
-            }
+            let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+            if (!getObjByval(ctrl.__filterValues, "Name", depCtrl_s.replace("form.",""))) { // bot related check
+                let val = '';
+                let ebDbType = 11;
+                let name = "";
+                if (depCtrl_s === "form.eb_loc_id") {
+                    val = 1;// hard coding
+                    name = "eb_loc_id";
+                }
+                else if (depCtrl_s === "form.eb_currentuser_id") {
+                    val = 74;//// hard coding
+                    name = "eb_currentuser_id";
+                }
+                else {
+                    val = depCtrl.getValue();
+                    val = val === null ? "e" : val;//  hard coding
+                    name = depCtrl.Name;
+                    ebDbType = depCtrl.EbDbType;
+                }
 
-            ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
+                ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
+            }
         }
         o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
         ctrl.initializer = new EbCommonDataTable(o);

@@ -1854,18 +1854,6 @@ input.locinp {
     user-select: none;
 }
 
-.ulstc-disp-img-c {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    height: 26px;
-    width: 26px;
-}
-
-.ulstc-disp-txt {
-    padding: 3px 10px;
-}
-
 .ulstc-list-c {
     position: absolute;
     width: 100%;
@@ -1912,19 +1900,20 @@ input.locinp {
     .ulstc-list-li:hover {
         background-color: #ddd;
     }
-/*-----------------Item List control End-----------------*/
 
-
-.sysctrl_usrimg {
+.sysctrl_usrimg, .ulstc-disp-img-c {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    height: 26px;
-    width: 26px;
+    height: 32px;
+    width: 32px;
 }
+/*-----------------Item List control End-----------------*/
 
-.sysctrl_usrname {
-    padding: 3px 10px;
+.sysctrl_usrname, .ulstc-disp-txt {
+    padding: 7px 10px;
+    vertical-align: middle;
+    font-size: 13px;
 }
 
 

@@ -418,11 +418,11 @@
                 let ebDbType = 11;
                 let name = "";
                 if (depCtrl_s === "form.eb_loc_id") {
-                    val = 1;// hard coding
+                    val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
                     name = "eb_loc_id";
                 }
                 else if (depCtrl_s === "form.eb_currentuser_id") {
-                    val = 74;//// hard coding
+                    val = ebcontext.user.UserId;//// hard coding
                     name = "eb_currentuser_id";
                 }
                 else {

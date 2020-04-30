@@ -507,7 +507,7 @@
             this.GroupFormLink = temp[0].GroupFormLink;
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
-            this.treeColumnIndex = (this.Source === "locationTree") ? 0 :  this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
+            this.treeColumnIndex = (this.Source === "locationTree") ? 0 : this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
         }
         if (this.IsTree)
             this.EbObject.IsPaging = false;
@@ -2589,7 +2589,7 @@
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
-        $(".closeTab").off("click").on("click", this.deleteTab.bind(this)); 
+        $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -2619,8 +2619,8 @@
         $('.status-time').tooltip({
             placement: 'top'
         });
-        
-        
+
+
         $('.columntooltip').popover({
             container: 'body',
             trigger: 'hover',
@@ -2651,11 +2651,11 @@
             $(".stage_actions").selectpicker();
             let $td = $(e.target).parents().closest("td");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
-        }.bind(this)); 
+        }.bind(this));
 
         $('.btn-approval_popover').on('hidden.bs.popover', function (e) {
             $(e.target).data("bs.popover").inState.click = false;
-        }.bind(this)); 
+        }.bind(this));
 
         $('body').on('click', function (e) {
             $('[data-toggle=popover]').each(function () {
@@ -2856,7 +2856,7 @@
 
     this.OpenLocationModal = function (key, opt, event) {
         let id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "id")[0].data;
-      
+
         let index = opt.$trigger.parent().closest("tr").index();
         let rowData = this.unformatedData[index];
 
@@ -4004,7 +4004,7 @@
         $.ajax({
             type: "POST",
             url: "../dv/PostWebformData",
-            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)},
+            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId) },
             success: this.cccccc.bind(this, $td),
             error: function (xhr, error) {
                 console.log(xhr); console.log(error);

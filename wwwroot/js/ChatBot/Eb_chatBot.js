@@ -20,10 +20,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.isAlreadylogined = true;
     this.bearerToken = null;
     this.refreshToken = null;
-    this.initControls = new InitControls({
-        renderer: this,
-        wc: "bc"
-    });
+    this.initControls = new InitControls(this);
+    this.rendererName = "Bot";
     this.typeDelay = 200;
     this.ChartCounter = 0;
     this.formsList = {};
@@ -104,7 +102,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let email = $("#anon_mail").val().trim();
         let phone = $("#anon_phno").val().trim();
         if (!((emailReg.test(email) || email === "") && (phoneReg.test(phone) || phone === "") && email !== phone)) {
-            EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            //EbMessage("show", { Message: "Please enter valid email/phone", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            this.msgFromBot("Please enter valid email/phone");
             return;
         }
         this.msgFromBot("Thank you.");
@@ -264,11 +263,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                         }
                     }
                     else if (DataRes.Status === 403) {
-                        EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+                        //EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+                        this.msgFromBot("Access denied to update this data entry!");
                         console.error(DataRes.MessageInt);
                     }
                     else {
-                        EbMessage("show", { Message: DataRes.Message, AutoHide: true, Background: '#aa0000' });
+                        //EbMessage("show", { Message: DataRes.Message, AutoHide: true, Background: '#aa0000' });
+                        this.msgFromBot(DataRes.Message);
                         console.error(DataRes.MessageInt);
                     }
                 }.bind(this)
@@ -362,7 +363,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         o.showCheckboxColumn = false;
         o.showFilterRow = false;
         o.IsPaging = false;
-        o.wc = 'bc';
+        o.rendererName = 'Bot';
         //o.scrollHeight = this.scrollHeight + "px";
         //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
@@ -769,6 +770,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $.each(this.CurFormflatControls, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
+        this.formObject.__getCtrlByPath = this.getCtrlByPath;
     };
 
     this.getCtrlByPath = function (path) {
@@ -806,14 +808,14 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                         else {//  control comes before TVcontrol initialised - set cur control param
                             let val = curCtrl.getValue();
 
-                            if (!depCtrl.__columnSearch)
-                                depCtrl.__columnSearch = [];
+                            if (!depCtrl.__filterValues)
+                                depCtrl.__filterValues = [];
 
-                            let filterObj = getObjByval(depCtrl.__columnSearch, "Column", curCtrl.Name);
+                            let filterObj = getObjByval(depCtrl.__filterValues, "Name", curCtrl.Name);
                             if (filterObj)
                                 filterObj.Value = val;
                             else
-                                depCtrl.__columnSearch.push(new filter_obj(curCtrl.Name, "=", val, curCtrl.EbDbType));
+                                depCtrl.__filterValues.push(new fltr_obj(curCtrl.EbDbType, curCtrl.Name, val));
                         }
                     }
                     //else {
@@ -876,7 +878,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //varghese
         //for cards  this.curDispValue  is used
         // this.sendCtrlAfter($msgDiv.hide(), this.curDispValue + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
-        
+
         //this.displayValue = this.getDisplayHTML(this.curCtrl);
         if (this.curCtrl.ObjType === 'StaticCardSet' || this.curCtrl.ObjType === 'DynamicCardSet') {
             if (!this.curCtrl.MultiSelect) {
@@ -1436,10 +1438,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let respObj = JSON.parse(resp);
         if (respObj.Status === 200) {
             //EbMessage("show", { Message: "DataCollection success", AutoHide: true, Background: '#1ebf1e', Delay: 4000 });
-            msg = `Your ${this.curForm.DisplayName} form submitted successfully`;
+            msg = `Your ${this.curForm.DisplayName} form submitted successfully 😊`;
         }
         else {
-            EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            //EbMessage("show", { Message: "Something went wrong", AutoHide: true, Background: '#bf1e1e', Delay: 4000 });
+            this.msgFromBot("Something went wrong ☹️");
             msg = `Your ${this.curForm.DisplayName} form submission failed`;
             console.log(respObj.MessageInt);
         }

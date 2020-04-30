@@ -194,12 +194,6 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="Appearance" role="tabpanel">
-
-                </div>
-                <div class="tab-pane" id="home" role="tabpanel">
-
-
-
                     @if (appinfo.AppType == 3)
                     {
                         EbBotSettings settings = ViewBag.AppSettings;
@@ -207,7 +201,6 @@
                         var bot_wc_msg = "";
                         var bot_tm_color = "";
                         var bot_dp_url = "";
-                        var css_content = "";
 
                         @if (appinfo.AppSettings != null)
                         {
@@ -215,20 +208,16 @@
                             bot_wc_msg = settings.WelcomeMessage;
                             bot_tm_color = settings.ThemeColor;
                             bot_dp_url = settings.DpUrl;
-                            //byte[] data = System.Convert.FromBase64String(settings.CssContent);
-                            //css_content = System.Text.ASCIIEncoding.ASCII.GetString(data);
+
 
                         }
                         <div class="btnarea">
-                            <button class="ebbtn eb_btn-sm eb_btngreen " id="updateBotSettingsID" >Update</button>
+                            <button class="ebbtn eb_btn-sm eb_btngreen " id="updateBotAppearance">Update</button>
                         </div>
                         <div class=" botappDashboard col-md-12 col-lg-12 col-xs-12 col-sm-12">
                             <ul class="nav nav-tabs " id="botsteeings" role="tablist">
                                 <li class="nav-item active">
-                                    <a class="nav-link active" id="botconfig-tab" data-toggle="tab" href="#botconfig" role="tab" aria-controls="botconfig" aria-selected="true">Bot Configuration</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" id="botuserauth-tab" data-toggle="tab" href="#botuserauth" role="tab" aria-controls="botuserauth" aria-selected="false">Authentication</a>
+                                    <a class="nav-link active" id="botconfig-tab" data-toggle="tab" href="#themeconfig" role="tab" aria-controls="botconfig" aria-selected="true">Theme</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" id="botcss-tab" data-toggle="tab" href="#botcss" role="tab" aria-controls="botcss" aria-selected="false">Css</a>
@@ -236,18 +225,10 @@
                             </ul>
 
                             <div class="tab-content">
-                                <div class="tab-pane active" id="botconfig" role="tabpanel" aria-labelledby="">
+                                <div class="tab-pane active" id="themeconfig" role="tabpanel" aria-labelledby="">
                                     <div class="  col-md-6 col-lg-6  col-sm-12 botappConfig">
-                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
-                                            <label>Bot Name: </label>
-                                            <div>
-                                                <input class="form-control " type="text" id="bot_name_txt" value="@bot_name_txt">
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
-                                            <label>Welcome Message: </label>
-                                            <textarea class="form-control bot_wcmsg" rows="2" id="bot_wc_msg">@bot_wc_msg</textarea>
-                                        </div>
+                                        
+                                        
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label>DP Url:</label>
 
@@ -290,39 +271,10 @@
                                     </div>
 
 
-
-                                    <div class="col-sm-6 col-md-6 col-lg-6 ">
-                                        <div class="copyscript">
-                                            <button class="btn btn-info btn-sm" onclick="$('#txtemdscript').select(); document.execCommand('copy');"><i style="padding-right:3px" class="fa fa-clipboard"></i> Copy</button>
-                                        </div>
-
-                                        <textarea id="txtemdscript" class="srptarea" readonly>
-                                        <script type="text/javascript">
-                                            (function () {
-                                                d = document;
-                                                s = d.createElement("script");
-                                                s.src = "@domurl/Bote/Js?id=@ViewBag.cide-@appinfo.Id&mode=s";
-                                                s.async = 1;
-                                                d.getElementsByTagName("head")[0].appendChild(s);
-                                            })();
-                                        </script>
-                                    </textarea>
-
-                                    </div>
                                 </div>
-                                <div class="tab-pane" id="botuserauth" role="tabpanel" aria-labelledby="">
-                                    <div class="checkbox col-md-12 col-lg-12  col-sm-12">
-                                        <label><input type="checkbox" value="">Option 1</label>
-                                    </div>
-                                    <div class="checkbox col-md-12 col-lg-12  col-sm-12">
-                                        <label><input type="checkbox" value="">Option 2</label>
-                                    </div>
-                                    <div class="checkbox col-md-12 col-lg-12  col-sm-12">
-                                        <label><input type="checkbox" value="">Option 3</label>
-                                    </div>
-                                </div>
+                                
                                 <div class="tab-pane botcssConfig" id="botcss" role="tabpanel" aria-labelledby="">
-                                    <div class="col-md-2 col-lg-2 col-sm-3 cssconfig" >
+                                    <div class="col-md-2 col-lg-2 col-sm-3 cssconfig">
                                         <ul class="nav nav-tabs tabs-left" id="cssconfigUl" role="tablist">
                                             <li class="nav-item active">
                                                 <a class="nav-link active" id="1-tab" data-toggle="tab" href="#BOT_HEADER" role="tab" aria-controls="botconfig" aria-selected="true">Bot header</a>
@@ -351,7 +303,7 @@
 
                                             </div>
                                             <div class="tab-pane " id="BOT_APP_NAME" role="tabpanel" aria-labelledby="">
-                                                
+
                                             </div>
                                             <div class="tab-pane " id="BOT_IFRAME_CSS" role="tabpanel" aria-labelledby="">
 
@@ -370,6 +322,92 @@
                                     </div>
                                 </div>
 
+                            </div>
+                        </div>
+
+                    }
+                </div>
+                <div class="tab-pane" id="home" role="tabpanel">
+
+
+
+                    @if (appinfo.AppType == 3)
+                    {
+                        EbBotSettings settings = ViewBag.AppSettings;
+                        var bot_name_txt = appinfo.Name;
+                        var bot_wc_msg = "";
+                        var bot_tm_color = "";
+                        var bot_dp_url = "";
+
+                        @if (appinfo.AppSettings != null)
+                        {
+                            bot_name_txt = settings.Name;
+                            bot_wc_msg = settings.WelcomeMessage;
+                            bot_tm_color = settings.ThemeColor;
+                            bot_dp_url = settings.DpUrl;
+                           
+
+                        }
+                        <div class="btnarea">
+                            <button class="ebbtn eb_btn-sm eb_btngreen " id="updateBotSettings" >Update</button>
+                        </div>
+                        <div class=" botappDashboard col-md-12 col-lg-12 col-xs-12 col-sm-12">
+                            <ul class="nav nav-tabs " id="botsteeings" role="tablist">
+                                <li class="nav-item active">
+                                    <a class="nav-link active" id="botconfig-tab" data-toggle="tab" href="#botconfig" role="tab" aria-controls="botconfig" aria-selected="true">Bot Configuration</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="botuserauth-tab" data-toggle="tab" href="#botuserauth" role="tab" aria-controls="botuserauth" aria-selected="false">Authentication</a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="botconfig" role="tabpanel" aria-labelledby="">
+                                    <div class="  col-md-6 col-lg-6  col-sm-12 botappConfig">
+                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
+                                            <label>Bot Name: </label>
+                                            <div>
+                                                <input class="form-control " type="text" id="bot_name_txt" value="@bot_name_txt">
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
+                                            <label>Welcome Message: </label>
+                                            <textarea class="form-control bot_wcmsg" rows="2" id="bot_wc_msg">@bot_wc_msg</textarea>
+                                        </div>
+                                        
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                                        <div class="copyscript">
+                                            <button class="btn btn-info btn-sm" onclick="$('#txtemdscript').select(); document.execCommand('copy');"><i style="padding-right:3px" class="fa fa-clipboard"></i> Copy</button>
+                                        </div>
+
+                                        <textarea id="txtemdscript" class="srptarea" readonly>
+                                        <script type="text/javascript">
+                                            (function () {
+                                                d = document;
+                                                s = d.createElement("script");
+                                                s.src = "@domurl/Bote/Js?id=@ViewBag.cide-@appinfo.Id&mode=s";
+                                                s.async = 1;
+                                                d.getElementsByTagName("head")[0].appendChild(s);
+                                            })();
+                                        </script>
+                                    </textarea>
+
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="botuserauth" role="tabpanel" aria-labelledby="">
+                                    <div class="checkbox col-md-12 col-lg-12  col-sm-12">
+                                        <label><input type="checkbox" value="">Name</label>
+                                    </div>
+                                    <div class="checkbox col-md-12 col-lg-12  col-sm-12">
+                                        <label><input type="checkbox" value="">Email</label>
+                                    </div>
+                                    <div class="checkbox col-md-12 col-lg-12  col-sm-12">
+                                        <label><input type="checkbox" value="">Facebook</label>
+                                    </div>
+                                </div>
+                               
                             </div>
                         </div>
 
@@ -546,25 +584,6 @@
     let appsetting = @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppSettings));
     var adash = new AppDashBoard(@appinfo.Id,@appinfo.AppType, appsetting);
 
-    @*function UpdateBotSettings() {
-        var appSettings = {};
-        appSettings["Name"] = $("#bot_name_txt").val();
-        appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
-        appSettings["ThemeColor"] = $("#bot_tm_color").val();
-        appSettings["DpUrl"] = $("#bot_dp_url").val();
-        appSettings["CssContent"] = btoa($("#cssbotstyle").val());
-        $.ajax({
-            type: "POST",
-            url: "../Dev/UpdateAppSettings",
-            data: { id: @appinfo.Id, type: @appinfo.AppType, settings: JSON.stringify(appSettings) },
-            success: function (data) {
-                if (data > 0)
-                    alert("Settings Updated Successfully");
-                else
-                    alert("Something went wrong");
-            }
-        });
-    }*@
     function clickOnDemoDp(path) {
         $('#AppDB_BotDemoDp').modal('hide');
         $('#bot_dp_url').val(path);

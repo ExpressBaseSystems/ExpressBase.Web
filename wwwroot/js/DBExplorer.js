@@ -28,13 +28,13 @@
         var down = $('.dbTyper').attr("dOwn");
         if (down == 'dOwn')
             down = true;
-        var data = this.editor[exe_window].getValue();        
+        var data = this.editor[exe_window].getValue();
         $.ajax({
             type: "POST",
             url: "../DbClient/ExecuteQuery",
             content: "application/json; charset=utf-8",
             dataType: "json",
-            data: { Query: data, solution: dt, Isadmin: down  },
+            data: { Query: data, solution: dt, Isadmin: down },
             traditional: true,
             success: function (result) {
                 if (result.length != 0) {
@@ -46,7 +46,7 @@
                     } else if (result[0].Result === 0) {
                         alert('Oh Yes success :(  : ' + result);
                     }
-                }               
+                }
                 $(".show_loader").EbLoader("hide");
             }.bind(this),
             error: function (result) {
@@ -58,7 +58,7 @@
     }.bind(this);
 
     this.searchSolution = function (e) {
-        //$("#eb_common_loader").EbLoader("show");
+        $("#eb_common_loader").EbLoader("show");
         var searchValue = e.target.selectedOptions[0].text;
         $.ajax({
             type: 'POST',
@@ -67,13 +67,20 @@
             success: function (data) {
                 //cmeditor = document.getElementById(".coder");
                 //cmeditor.toTextArea();
+                // var temp = JSON.parse(data);
+                //  if (temp.Message == "") {
                 $('#viewdbclientappend').html(data);
                 $('.selectpicker').selectpicker('destroy').selectpicker();
                 $('#searchSolution').on('changed.bs.select', this.searchSolution);
                 this.makeDraggable();
                 $('.mytree div:has(div)').addClass('parent');
                 $('div.mytree div').click(this.create_tree);
-                
+                $("#eb_common_loader").EbLoader("hide");
+                //} else {
+                //    $('#viewdbclientappend').html(data);
+                //}
+
+
             }.bind(this)
         });
     }.bind(this);
@@ -264,7 +271,7 @@
         this.makeDraggable();
         $('.mytree div:has(div)').addClass('parent');
         $('div.mytree div').click(this.create_tree);
-        $('#sqlquery').click(this.ajax_call);   
+        $('#sqlquery').click(this.ajax_call);
 
         this.pannelhide();
         //this.tableHide();
@@ -438,7 +445,7 @@
                                 }.bind(this)
                             }
                         }
-                    },  
+                    },
                     script: {
                         name: "Script",
                         items: {
@@ -455,7 +462,7 @@
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + ", ";
                                     }.bind(this))
-                                    this.editor[exe_window].setValue("INSERT INTO \n" + tb_name + " \n( " + Col_name +" )\nvalues(); ");
+                                    this.editor[exe_window].setValue("INSERT INTO \n" + tb_name + " \n( " + Col_name + " )\nvalues(); ");
                                 }.bind(this)
                             },
                             selecter: {
@@ -466,11 +473,11 @@
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
                                     var tb_name = key.$trigger[0].innerText;
-                                    var Col_name="";
+                                    var Col_name = "";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + ", ";
                                     }.bind(this))
-                                    this.editor[exe_window].setValue("SELECT \n" + Col_name + " \nFROM " + tb_name  +";");
+                                    this.editor[exe_window].setValue("SELECT \n" + Col_name + " \nFROM " + tb_name + ";");
                                 }.bind(this)
                             },
                             update: {
@@ -481,7 +488,7 @@
                                     var exe_window = $("#TabAdderMain li.active").attr("id");
                                     exe_window = exe_window[exe_window.length - 1];
                                     var tb_name = key.$trigger[0].innerText;
-                                    var Col_name="";
+                                    var Col_name = "";
                                     $.each(this.TCobj.TableCollection[tb_name].Columns, function (key, column) {
                                         Col_name += column['ColumnName'] + "= ?, ";
                                     }.bind(this))
@@ -489,7 +496,7 @@
                                 }.bind(this)
                             }
                         }
-                    }, 
+                    },
                     Count: {
                         name: "Row Count",
                         callback: function (opt, key) {
@@ -502,7 +509,7 @@
                             $('#sqlquery').trigger('click');
                         }.bind(this)
                     }
-                    
+
                 }
 
             };
@@ -515,10 +522,10 @@
 
 
     this.init = function () {
-        
+
         $('#myInput').keyup(this.SearchTool.bind(this));
         $(".DbClient_toolbox").resizable();
-        $('[data-toggle="tooltip"]').tooltip(); 
+        $('[data-toggle="tooltip"]').tooltip();
         $('#searchSolution').on('changed.bs.select', this.searchSolution);
     };
     this.init();

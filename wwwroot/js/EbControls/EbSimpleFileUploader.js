@@ -20,6 +20,8 @@
         let filedel = [];
         let preloadedfile = 0;
         let refidArr = [];
+        let filesView = [];
+
         // Set empty settings
         plugin.settings = {};
 
@@ -28,7 +30,8 @@
 
             // Define settings
             plugin.settings = $.extend(plugin.settings, defaults, options);
-
+            filesView = JSON.parse(plugin.settings.fileCtrl.DataVals.F);
+            createFileviewer();
             // Run through the elements
             plugin.each(function (i, wrapper) {
 
@@ -42,31 +45,42 @@
                 $container.on("dragover", fileDragHover.bind($container));
                 $container.on("dragleave", fileDragHover.bind($container));
                 $container.on("drop", fileSelectHandler.bind($container));
-
             });
 
         };
 
-        this.createPreloaded = function (prelod) {
-            plugin.settings.preloaded = prelod;
-            let $container = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`);
-            $container.addClass('has-files');
-            let $uploadedContainer = $container.find('.uploaded');
+        this.createPreloaded = function (p1) {
             this.clearFiles();
+            if (p1 !== null && p1 !== "") {
+                //let preloaded = [];
+                let refidArr = p1.split(',');
+                for (let j = 0; j < refidArr.length; j++) {
+                    let indx = filesView.findIndex(x => x.FileRefId == refidArr[j]);
+                    plugin.settings.preloaded.push({ id: refidArr[j], cntype: filesView[indx].FileCategory, name: filesView[indx].FileName, refid: refidArr[j] });
+                }
+
+            }
+            // plugin.settings.preloaded = prelod;
+            let $filecont = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`);
+            $filecont.addClass('has-files');
+            let $uploadedContainer = $filecont.find('.uploaded');
+
 
             for (let i = 0; i < plugin.settings.preloaded.length; i++) {
-                $uploadedContainer.append(createImg(plugin.settings.preloaded[i], plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].cntype, true, plugin.settings.preloaded[i].fileno, plugin.settings.preloaded[i].refid));
+                $uploadedContainer.append(createImg(plugin.settings.preloaded[i], plugin.settings.preloaded[i].id, plugin.settings.preloaded[i].cntype, true, plugin.settings.preloaded[i].refid));
                 setRefid(plugin.settings.preloaded[i].refid, $inrContainer);
                 preloadedfile++;
+                //$(".trggrpreview").on("click", viewFilesFn);
             }
         };
 
         this.clearFiles = function () {
-            preloadedfile = 0; 
+            preloadedfile = 0;
             refidArr = [];
+            plugin.settings.preloaded = [];
             $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`).val("");
-            let $container = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`).find('.uploaded').empty();
-            $container.removeClass('has-files');
+            let $contdiv = $(`#${plugin.settings.fileCtrl.EbSid}_SFUP`).find('.uploaded').empty();
+            $contdiv.removeClass('has-files');
             return;
 
         };
@@ -78,31 +92,31 @@
         let createContainer = function () {
 
             // Create the image uploader container
-            let $container = $("#" + plugin.settings.fileCtrl.EbSid + "_SFUP"),
+            let $flcontainer = $("#" + plugin.settings.fileCtrl.EbSid + "_SFUP"),
 
                 // Create the input type file and append it to the container
                 $input = $('<input>', {
                     type: 'file',
-                    id: "fileinputID",
+                    id: `${plugin.settings.fileCtrl.EbSid}_inputID`,
                     accept: plugin.settings.fileTypes,
                     name: "fileInputnm",
                     multiple: plugin.settings.maxFiles
-                }).appendTo($container),
+                }).appendTo($flcontainer),
 
                 // Create the uploaded images container and append it to the container
-                $uploadedContainer = $('<div>', { class: 'uploaded' }).appendTo($container);
-            $container.append(`<input type="text" id='${plugin.settings.fileCtrl.EbSid}_bindfn' hidden >`)
+                $uploadedContainer = $('<div>', { class: 'uploaded' }).appendTo($flcontainer);
+            $flcontainer.append(`<input type="text" id='${plugin.settings.fileCtrl.EbSid}_bindfn' hidden >`)
 
 
 
-            // Listen to container click and trigger input file click
-            $container.on('click', function (e) {
+            ////Listen to container click and trigger input file click
+            $flcontainer.on('click', function (e) {
                 // Prevent browser default event and stop propagation
-                //prevent(e);
+                prevent(e);
                 e.preventDefault();
                 e.stopPropagation();
 
-                // Trigger input click
+                //// Trigger input click
                 $input.trigger('click');
             });
 
@@ -112,9 +126,8 @@
             });
 
             // Listen to input files changed
-            $input.on('change', fileSelectHandler.bind($container));
-
-            return $container;
+            $input.on('change', fileSelectHandler.bind($flcontainer));
+            return $flcontainer;
         };
 
 
@@ -126,21 +139,31 @@
         };
 
 
-        let createImg = function (file, id, cntype, prelod, fileno, refid) {
+        let createImg = function (file, id, cntype, prelod, refid) {
             var filelurl;
             if (prelod) {
-                filelurl = file.src;//for pdf
-                file.name = refid;
+
+                if (cntype == 1) {
+                    filelurl = `/images/small/${refid}.jpg`;
+                } else {
+                    filelurl = '/images/pdf-image.png';
+                }
+                file.name = file.name;
             } else {
-                filelurl = URL.createObjectURL(file);//for pdf
+                if (cntype == 1) {
+                    filelurl = URL.createObjectURL(file);
+                } else {
+                    filelurl = '/images/pdf-image.png';
+                }
+
 
             }
             let src = filelurl;
             if (plugin.settings.botCtrl) {
                 $filethumb = $('<div>', { class: 'botfilethumb' });
-                $inrContainer = $('<div>', { class: 'botuploaded-image ', exact: file.name }).appendTo($filethumb);
+                $inrContainer = $('<div>', { class: 'botuploaded-file ', exact: file.name }).appendTo($filethumb);
 
-                if (cntype == 'application/pdf') {
+                if (cntype == 0) {
 
                     src = '/images/pdf-image.png';
 
@@ -161,11 +184,11 @@
                 //$i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
             }
             else {
-                $filethumb = $('<div>', { class: 'filethumb' });
+                $filethumb = $('<div>', { class: 'filethumb trggrpreview' });
                 $filethumb.append("<div id='file_disp'></div>");
 
                 // Create the upladed image container
-                $inrContainer = $('<div>', { class: 'uploaded-image', exact: file.name }).appendTo($filethumb);
+                $inrContainer = $('<div>', { class: 'uploaded-file', exact: file.name }).appendTo($filethumb);
                 // Create the img tag
 
                 if (cntype == 'application/pdf') {
@@ -196,7 +219,6 @@
                 // Set a identifier
                 $inrContainer.attr('data-preloaded', true);
                 $inrContainer.attr('data-index', id);
-                $inrContainer.attr('data-fileno', fileno);
                 $inrContainer.attr('data-cntype', cntype);
 
             } else {
@@ -229,7 +251,7 @@
             //        let index = parseInt($inrContainer.data('index'));
 
             //        // Update other indexes
-            //        $inrContainer.parent().find('.uploaded-image[data-index]').each(function (i, cont) {
+            //        $inrContainer.parent().find('.uploaded-file[data-index]').each(function (i, cont) {
             //            if (i > index) {
             //                $(cont).attr('data-index', i - 1);
             //            }
@@ -253,7 +275,7 @@
             //    var nm = (((preloadedfile - filedel.length) + filearray.length) < 10);
 
             //    // If there is no more uploaded files
-            //    if (!$contParent.find('.uploaded-image').length) {
+            //    if (!$contParent.find('.uploaded-file').length) {
 
             //        // Remove the 'has-files' class
             //        $contParent.parent().removeClass('has-files');
@@ -316,57 +338,61 @@
             // Run through the files
             $(files).each(function (i, file) {
                 let url = "";
-                if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
-                    if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
-                        if (((preloadedfile - filedel.length) + filearray.length) < plugin.settings.maxFiles) {
+                // if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
+                if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
+                   // if (((preloadedfile - filedel.length) + filearray.length) < plugin.settings.maxFiles) {
+                    if ( filearray.length< plugin.settings.maxFiles) {
 
 
 
-                            // Add it to data transfer
-                            //   dataTransfer.items.add(file);
+                        // Add it to data transfer
+                        //   dataTransfer.items.add(file);
 
-                            // Set preview
+                        // Set preview
 
-                            //if (files[i].type == "application/pdf") {
+                        //if (files[i].type == "application/pdf") {
 
-                            //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
-                            //}
-                            //else
-                            {
-                                $uploadedContainer.append(createImg(file, filearray.length - 1, files[i].type), false);
-                            }
+                        //    $uploadedContainer.append(createImg('/images/pdf-image.png', dataTransfer.items.length - 1));
+                        //}
+                        //else
+                        let type = getFileType(file);
+                        {
+                            $uploadedContainer.append(createImg(file, filearray.length, type), false);
+                           // $(".trggrpreview").on("click", viewFilesFn);
+                            // let createImg = function (file, id, cntype, prelod, fileno, refid) {
+                        }
 
-                            let type = getFileType(file); 
-                            if (plugin.settings.botCtrl) {
-                                if (type === "image")
-                                    url = "../Boti/UploadImageAsync";
-                                else
-                                    url = "../Boti/UploadFileAsync";
-                            }
+
+                        if (plugin.settings.botCtrl) {
+                            if (type === 1)
+                                url = "../Boti/UploadImageAsync";
                             else
-                            {
-                                if (type === "image")
-                                    url = "../StaticFile/UploadImageAsync";
-                                else
-                                    url = "../StaticFile/UploadFileAsync";
-                            }
-                           
-
-                            uploadItem(url, file);
-
-
+                                url = "../Boti/UploadFileAsync";
                         }
                         else {
-                            EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
+
+                            if (type === 1)
+                                url = "../StaticFile/UploadImageAsync";
+                            else
+                                url = "../StaticFile/UploadFileAsync";
                         }
+
+
+                        uploadItem(url, file);
+
+
                     }
                     else {
-                        EbMessage("show", { Message: `Maximum file size is ${plugin.settings.MaxSize}MB`, Background: 'red' });
+                        EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
                     }
                 }
                 else {
-                    EbMessage("show", { Message: "Only image and pdf are allowed", Background: 'red' });
+                    EbMessage("show", { Message: `Maximum file size is ${plugin.settings.MaxSize}MB`, Background: 'red' });
                 }
+                //}
+                //else {
+                //    EbMessage("show", { Message: "Only image and pdf are allowed", Background: 'red' });
+                //}
 
 
 
@@ -379,9 +405,9 @@
         //get file type
         let getFileType = function (file) {
             if (file.type.match('image.*'))
-                return "image";
+                return 1;
             else
-                return "file";
+                return 0;
         };
 
 
@@ -407,7 +433,16 @@
             // thumb.find(".eb-upl-loader").hide();
             if (refid > 0) {
                 //add it to file array
+                let fileobj = {};
+                fileobj["FileName"] = file.name;
+                fileobj["FileSize"] = file.size;
+                fileobj["FileRefId"] = refid;
+                fileobj["Meta"] = {};
+                fileobj["UploadTime"] = "";
+                fileobj["FileCategory"] = getFileType(file);
+                filesView.push(fileobj);
                 filearray.push(file);
+                plugin.ebFilesview.addToImagelist(fileobj);
                 setRefid(refid, thumb);
             }
             else {
@@ -420,16 +455,32 @@
             refidArr.push(refid);
             thumb.find(".success").show();
             thumb.find(".error").hide();
-            thumb.attr("fRefid", refid);
+            thumb.attr("filref", refid);
             let $hiddenInput = $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`);
             $hiddenInput.val(refidArr.join(","));
             $hiddenInput.trigger('change');
-            $(`#${plugin.settings.fileCtrl.EbSid}`).attr("fileCount",refidArr.length)
+            $(`#${plugin.settings.fileCtrl.EbSid}`).attr("fileCount", refidArr.length)
+            $(".trggrpreview").on("click", viewFilesFn);
         };
 
         this.refidListfn = function () {
             return refidArr.join(",");
         };
+
+        let createFileviewer = function () {
+            $("#ebfileviewdiv").remove();
+            $("body").append("<div id='ebfileviewdiv'></div>");
+            plugin.ebFilesview = $("#ebfileviewdiv").ebFileViewer(filesView);
+        }.bind(this);
+
+        let viewFilesFn = function (e) {
+            prevent(e);
+            let fileref = $(e.target).closest(".uploaded-file").attr("filref");
+
+            //ebfileviewer 
+            plugin.ebFilesview.showimage(fileref);
+        }
+
 
         this.init();
 

@@ -8,7 +8,8 @@
 
     this.init = function () {
         this.cssConfigFn();
-        $('#updateBotSettingsID').on('click', this.UpdateBotSettingsFn.bind(this));
+        $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
+        $('.resetcss').on('click', this.ResetCssFn.bind(this));
     }
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
@@ -158,24 +159,20 @@
     //for bot
     this.cssConfigFn = function () {
 
-        //let property = atob(this.AppSettings.CssContent).split(";");
-        //for (i = 0; i < property.length; i++) {
-
-        //    let props = property[i].trim();
-        //    let cssProp = props.split(':');
-        //    html += `<label >${cssProp[0]}</label>
-        //            <input type='text' value='${cssProp[1]}' ><br><br>`;
-
-        //}
-        //$('#configcssTabContent #3tab').append(html);
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
 
             let html = "";
-            for (let key in cssobj[property]) {
-                html += `<label obname='${key}'>${key}</label>
-                   <input type='text' obname=${key} value='${cssobj[property][key]}' ><br><br>`;
-            }
+            //for (let key in cssobj[property]) {
+            //    html += `<label obname='${key}'>${key}</label>
+            //       <input type='text' obname=${key} value='${cssobj[property][key]}' ><br><br>`;
+            //}
+            //$(`#configcssTabContent #${property}`).append(html);
+
+            html = `<div>
+                    <textarea id="${property}_txt" class="form-control csstxtarea " obname="${property}" >${cssobj[property]}</textarea> 
+                    <button id='${property}_btn' type="button" obname="${property}" class="ebbtn eb_btn-xs eb_btnblue   resetcss">Reset</button>
+                    </div>`;
             $(`#configcssTabContent #${property}`).append(html);
         }
     }
@@ -185,18 +182,21 @@
 
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
-            let tempobj = {};
-            for (let key in cssobj[property]) {
-                let cssobjVal = $(`#configcssTabContent #${property} input[obname=${key}]`).val();
-                tempobj[key] = cssobjVal;
-            }
-            cssConstObj[property] = tempobj;
+            //let tempobj = {};
+            //for (let key in cssobj[property]) {
+            //    let cssobjVal = $(`#configcssTabContent #${property} input[obname=${key}]`).val();
+            //    tempobj[key] = cssobjVal;
+            //}
+            //cssConstObj[property] = tempobj;
+
+            let cssobjVal = $(`#configcssTabContent #${property} textarea[obname=${property}]`).val();
+            cssConstObj[property] = cssobjVal;
         }
         appSettings["Name"] = $("#bot_name_txt").val();
         appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
         appSettings["ThemeColor"] = $("#bot_tm_color").val();
         appSettings["DpUrl"] = $("#bot_dp_url").val();
-        appSettings["CssContent"] = cssConstObj
+        appSettings["CssContent"] = cssConstObj;
         $.ajax({
             type: "POST",
             url: "../Dev/UpdateAppSettings",
@@ -209,6 +209,20 @@
             }
         });
     }
+   
+    this.ResetCssFn = function (e) {
+        let cssConst = $(e.target).attr('obname');
+        $.ajax({
+            type: "POST",
+            url: "../Dev/ResetCssContent",
+            data: { cssConst: cssConst },
+            success: function (data) {
+                $('#' + cssConst + '_txt').val('');
+                $('#' + cssConst + '_txt').val(data);
+            }
+        });
+    };
+    
     this.start_exe();
     this.init();
 

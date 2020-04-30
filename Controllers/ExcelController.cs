@@ -81,6 +81,17 @@ namespace ExpressBase.Web.Controllers
 
                     }
 
+                    foreach (EbDataColumn dc in _ebtbl.Columns)
+                    {
+                        if (dc.Type == EbDbTypes.Date)
+                        {
+                            for (int i = 0; i < _ebtbl.Rows.Count; i++)
+                            {
+                                _ebtbl.Rows[i][dc.ColumnName] = Convert.ToDateTime(_ebtbl.Rows[i][dc.ColumnName]).ToString("yyyy-MM-dd");
+                            }
+                        }
+                    }
+
                     string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
 
                     if (_ebtbl.Columns.Contains(new EbDataColumn("eb_loc_id", EbDbTypes.Int32)))
@@ -120,9 +131,9 @@ namespace ExpressBase.Web.Controllers
                         _colValidation.AllowType = ExcelDataType.Any;
                     if (_col.DbType.ToString() == "Date")
                     {
-
-                        worksheet.Range[colId].EntireColumn.NumberFormat = "YYYY-MM-DD";
                         _colValidation.AllowType = ExcelDataType.Date;
+                        worksheet.Range[colId].EntireColumn.NumberFormat = "YYYY-MM-DD";
+
                     }
                     if (_col.DbType.ToString() == "Decimal")
                         _colValidation.AllowType = ExcelDataType.Decimal;
@@ -132,6 +143,7 @@ namespace ExpressBase.Web.Controllers
                         _colValidation.AllowType = ExcelDataType.Time;
                     colIndex++;
                 }
+                
                 MemoryStream stream = new MemoryStream();
                 workbook.SaveAs(stream);
                 stream.Position = 0;
@@ -143,13 +155,7 @@ namespace ExpressBase.Web.Controllers
                 return fileStreamResult;
             }
         }
-        public void UploadAsync()
-        {
-            using (ExcelEngine excelEngine = new ExcelEngine())
-            {
-                //IWorkbook workbook = excelEngine.Excel.Workbooks.Open()
-            }
-        }
+       
     }
 
     public class ExcelColumns

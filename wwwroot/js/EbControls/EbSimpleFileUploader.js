@@ -159,7 +159,7 @@
 
             }
             let src = filelurl;
-            if (plugin.settings.botCtrl) {
+            if (plugin.settings.renderer === "Bot") {
                 $filethumb = $('<div>', { class: 'botfilethumb' });
                 $inrContainer = $('<div>', { class: 'botuploaded-file ', exact: file.name }).appendTo($filethumb);
 
@@ -363,7 +363,7 @@
                         }
 
 
-                        if (plugin.settings.botCtrl) {
+                        if (plugin.settings.renderer === "Bot") {
                             if (type === 1)
                                 url = "../Boti/UploadImageAsync";
                             else

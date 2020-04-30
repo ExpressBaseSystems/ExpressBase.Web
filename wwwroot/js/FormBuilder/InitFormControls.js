@@ -1299,7 +1299,7 @@
 
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
-            botCtrl: this.Renderer,
+            renderer: this.Renderer.rendererName,
             maxSize: ctrl.MaxSize,
             fileTypes: ctrl.FileTypes,
             maxFiles: ctrl.MaxFiles

@@ -405,7 +405,6 @@
         o.Source = "form";
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
-        //o.initCompleteCallback = this.AddRootLocationButton.bind(this);
 
         if (!ctrl.__filterValues)
             ctrl.__filterValues = [];
@@ -422,12 +421,11 @@
                     name = "eb_loc_id";
                 }
                 else if (depCtrl_s === "form.eb_currentuser_id") {
-                    val = ebcontext.user.UserId;//// hard coding
+                    val = ebcontext.user.UserId;
                     name = "eb_currentuser_id";
                 }
                 else {
                     val = depCtrl.getValue();
-                    val = val === null ? "e" : val;//  hard coding
                     name = depCtrl.Name;
                     ebDbType = depCtrl.EbDbType;
                 }
@@ -439,37 +437,16 @@
         ctrl.initializer = new EbCommonDataTable(o);
         ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 
-
-        //if (ctrl.__columnSearch) { // if preloded parameters from chat bot
-        //    filterValues = [];
-        //    for (let i = 0; i < ctrl.__columnSearch.length; i++) {
-        //        let Obj = ctrl.__columnSearch[i];
-        //        filterValues.push(new fltr_obj(Obj.Type, Obj.Column, Obj.Value));
-        //    }
-        //    o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(filterValues))));
-        //}
-
-
         ctrl.reloadWithParam = function (depCtrl) {
             if (depCtrl) {
                 let val = depCtrl.getValue();
-                //if (!ctrl.__filterValues)
-                //    ctrl.__filterValues = []; // this variable is introduced to handle pre setted  parameters from chat bot 
-
                 let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
-                //if (filterObj)
                 filterObj.Value = val;
-                //else
-                //    ctrl.__filterValues.push(new fltr_obj(depCtrl.EbDbType, depCtrl.Name, val));
             }
 
             ctrl.initializer.filterValues = ctrl.__filterValues;
             ctrl.initializer.Api.ajax.reload();
         };
-
-        //if (ctrl.__columnSearch) // if preloded parameters from chat bot
-        //    ctrl.reloadWithParam();
-
     };
 
     this.CalendarControl = function (ctrl) {
@@ -567,6 +544,7 @@
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
+        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
     };
 
     this.InitMap4inpG = function (ctrl) {

@@ -396,7 +396,6 @@
     };
 
     this.TVcontrol = function (ctrl, ctrlOpts) {
-        paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });//["form.textbox1", "form.id_max", "form.eb_loc_id", "form.eb_currentuser_id"];//
         let o = new Object();
         o.tableId = ctrl.EbSid_CtxId;
         o.showCheckboxColumn = false;
@@ -408,32 +407,34 @@
 
         if (!ctrl.__filterValues)
             ctrl.__filterValues = [];
+        if (ctrl.ParamsList) {
+            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });//["form.textbox1", "form.id_max", "form.eb_loc_id", "form.eb_currentuser_id"];//
+            for (let i = 0; i < paramsList.length; i++) {
+                let depCtrl_s = paramsList[i];
+                let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+                if (!getObjByval(ctrl.__filterValues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                    let val = '';
+                    let ebDbType = 11;
+                    let name = "";
+                    if (depCtrl_s === "form.eb_loc_id") {
+                        val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                        name = "eb_loc_id";
+                    }
+                    else if (depCtrl_s === "form.eb_currentuser_id") {
+                        val = ebcontext.user.UserId;
+                        name = "eb_currentuser_id";
+                    }
+                    else {
+                        val = depCtrl.getValue();
+                        name = depCtrl.Name;
+                        ebDbType = depCtrl.EbDbType;
+                    }
 
-        for (let i = 0; i < paramsList.length; i++) {
-            let depCtrl_s = paramsList[i];
-            let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
-            if (!getObjByval(ctrl.__filterValues, "Name", depCtrl_s.replace("form.",""))) { // bot related check
-                let val = '';
-                let ebDbType = 11;
-                let name = "";
-                if (depCtrl_s === "form.eb_loc_id") {
-                    val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
-                    name = "eb_loc_id";
+                    ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
                 }
-                else if (depCtrl_s === "form.eb_currentuser_id") {
-                    val = ebcontext.user.UserId;
-                    name = "eb_currentuser_id";
-                }
-                else {
-                    val = depCtrl.getValue();
-                    name = depCtrl.Name;
-                    ebDbType = depCtrl.EbDbType;
-                }
-
-                ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
             }
+            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
         }
-        o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
         ctrl.initializer = new EbCommonDataTable(o);
         ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
 

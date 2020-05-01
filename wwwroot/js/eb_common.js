@@ -980,14 +980,18 @@ document.addEventListener("click", function (e) {
     //to close opend select on click of another select
     if ((($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
         //  container.closest('[detch_select=true]').removeClass("open");
-        if ($(".detch_select").hasClass("open")) {
-            $(".detch_select").removeClass("open");
-            $(`#${par_ebSid}`).selectpicker('toggle');
-            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
-        }
-        else {
-            $(`#${par_ebSid}`).selectpicker('toggle');
-            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        //if ($(".detch_select").hasClass("open")) {
+        //    $(".detch_select").removeClass("open");
+        //    $(`#${par_ebSid}`).selectpicker('toggle');
+        //    $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        //}
+        //else {
+        //    $(`#${par_ebSid}`).selectpicker('toggle');
+        //    $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        //}
+        let $sss = $(`.detch_select:not([par_ebsid=${par_ebSid}])`);
+        if ($sss.hasClass("open")) {
+            $sss.removeClass("open");
         }
     }
     //to close dropdown on ouside click of dropdown

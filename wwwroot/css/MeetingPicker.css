@@ -6,10 +6,10 @@
     width: 30rem;
     border-radius: 5px;
     border: solid 1px #d1d1d1 !important;
+    padding-bottom: 10px !important;
 }
     .meeting-picker-outer .sub-head {
         padding: 5px 10px;
-        border-top: solid 1px #d5d4d4;
     }
 
     .meeting-picker-outer .head-cont {

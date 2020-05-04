@@ -1067,7 +1067,7 @@ canvas:hover {
     position: fixed;
 }
 
-    .component_cont .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    .component_cont .nav-tabs > li.active > a, .component_cont .nav-tabs > li.active > a:hover, .component_cont .nav-tabs > li.active > a:focus {
         cursor: default;
         border: 1px solid #ddd;
         padding: 5px 15px;
@@ -1080,12 +1080,12 @@ canvas:hover {
         clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
     }
 
-    .component_cont .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a > i {
-        font-size: 13px;
-        margin-top: 3px;
-        margin-right: 0;
-        cursor: pointer;
-    }
+        .component_cont .nav-tabs > li.active > a, .component_cont .nav-tabs > li.active > a:hover, .component_cont .nav-tabs > li.active > a > i {
+            font-size: 13px;
+            margin-top: 3px;
+            margin-right: 0;
+            cursor: pointer;
+        }
 
 #component_cont {
     display: flex;

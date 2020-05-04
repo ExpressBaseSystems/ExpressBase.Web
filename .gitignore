@@ -259,3 +259,5 @@ paket-files/
 *.ps1
 /Views/Dev/dragula.cshtml
 /StaticFiles
+/wwwroot/css/Bundles/*
+/wwwroot/js/Bundles/*

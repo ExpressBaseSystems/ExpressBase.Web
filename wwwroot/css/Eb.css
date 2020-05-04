@@ -324,7 +324,16 @@
     display: none !important;
 }
 
-.DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th,
+.DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th {
+    padding-top: 15px;
+    border-right: dotted 1px #dddddd;
+    background-color: white;
+    color: #656565f0;
+    vertical-align: bottom;
+    font-weight: 500;
+    letter-spacing: 0.15px;
+}
+
 .DDdiv .table > tfoot > tr > th, .DDdiv .table > thead > tr > td,
 .DDdiv .table > tbody > tr > td, .DDdiv .table > tfoot > tr > td {
     padding: 4px;

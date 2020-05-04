@@ -621,6 +621,10 @@ table.dataTable tr.group td {
     border-radius: 5px;
     text-align: center;
 }
+.conditionformat a{
+   color:inherit !important;
+}
+
 .dropdown-menu-inner {
     display: flex;
     flex-direction: column;

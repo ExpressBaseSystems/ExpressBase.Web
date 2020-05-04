@@ -539,7 +539,7 @@
 
     this.Init = function () {
         //this.MainData = null;
-        $.event.props.push('dataTransfer');
+        //$.event.props.push('dataTransfer');
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.copybtn = $("#btnCopy" + this.tableId);

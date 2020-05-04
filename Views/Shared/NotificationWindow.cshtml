@@ -1,0 +1,38 @@
+﻿
+<div class="eb-notification-window" id="nf-window">
+    <div class="notification-inner h-100" style="padding-top: 37px;display: flex; flex-flow: column nowrap;">
+        <ul class="nav nav-tabs eb-styledTab" style="padding-top:10px;background:white;">
+            <li class="nav-item active">
+                <a class="nav-link nf-window-tabstyle" data-toggle="tab" role="tab" href="#allnotification-tab">
+                    Notifications <span id="nf-notification-count"></span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link nf-window-tabstyle" data-toggle="tab" role="tab" href="#pendingactions-tab">
+                    Pending Actions <span id="nf-pendingact-count"></span>
+                </a>
+            </li>
+        </ul>
+        <div class="tab-content" style="flex:1;height:calc(100% - 45px);overflow-y:auto;background: #f2f2f2;">
+            <div id="allnotification-tab" class="tab-pane h-100 active">
+                <div class='allnotification-tab-inner h-100' style="display:flex;flex-flow:column nowrap;">
+                    <ul class="new_notifications nf-link-container" id="nf-container">                      
+                    </ul>
+                    <div class='nf-seemore'>
+                        <a href="/Notifications/GetAllNotifications" target="_blank">See All Notifications</a>
+                    </div>
+                </div>
+            </div>
+            <div id="pendingactions-tab" class="tab-pane h-100">
+                <div class='pendingactions-tab-inner h-100' style="display:flex;flex-flow:column nowrap;">
+                    <ul class="pendingactions nf-link-container" id="actn_container">
+                    </ul>
+                    <div class='nf-seemore'>
+                        <a href="/Notifications/GetAllActions" target="_blank">See All Actions</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="nf-fade" id="nf-window-fade" style="position: fixed;top:0; width: 100%;height: 100%;z-index: 7;background: black;opacity: 0.4;display: none;"></div>

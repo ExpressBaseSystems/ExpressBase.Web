@@ -425,7 +425,7 @@
 
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
-        $.LoadingOverlay('show');
+        //$.LoadingOverlay('show');
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
@@ -434,7 +434,7 @@
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
-                $.LoadingOverlay('hide');
+                //$.LoadingOverlay('hide');
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
             }.bind(this)

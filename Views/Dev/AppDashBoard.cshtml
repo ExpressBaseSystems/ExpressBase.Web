@@ -109,7 +109,7 @@
                     </div>
                     @*<div class="not-found text-center" style="margin-top: 150px;">No Objects...</div>*@
                     <div class="raw-obj-container">
-                        <div class="col-md-2 col-lg-2 col-xs-6 col-sm-4 pd-0 sidebar-objtypes">
+                        <div class="col-md-3 col-lg-3 col-xs-6 col-sm-4 pd-0 sidebar-objtypes">
                             <ul style="list-style:none;" class="pd-0">
                                 <li class="sidebar-objtypes-listitem">
                                     <a class="raw-obj-type" id="ebobject_type_all" link-id="ebobject_type_wrapper_all">
@@ -122,20 +122,23 @@
 
                                     foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
                                     {
-                                        string active = (_k == objectType.IntCode) ? "active_type" : "";
-                                        int o_c = list.ContainsKey(objectType.IntCode) ? list[objectType.IntCode].Objects.Count : 0;
+                                        if (objectType.IsAvailableIn(apptype))
+                                        {
+                                            string active = (_k == objectType.IntCode) ? "active_type" : "";
+                                            int o_c = list.ContainsKey(objectType.IntCode) ? list[objectType.IntCode].Objects.Count : 0;
 
-                                        <li class="sidebar-objtypes-listitem @active">
-                                            <a class="raw-obj-type" id="ebobject_type_@objectType.IntCode" link-id="ebobject_type_wrapper_@objectType.IntCode">
-                                                <span class="fa @objectType.Icon raw-obj-type-icon"></span>
-                                                <span class="name">@(objectType.Alias + "s") (@o_c)</span>
-                                            </a>
-                                        </li>
+                                            <li class="sidebar-objtypes-listitem @active">
+                                                <a class="raw-obj-type" id="ebobject_type_@objectType.IntCode" link-id="ebobject_type_wrapper_@objectType.IntCode">
+                                                    <span class="fa @objectType.Icon raw-obj-type-icon"></span>
+                                                    <span class="name">@(objectType.Alias + "s") (@o_c)</span>
+                                                </a>
+                                            </li>
+                                        }
                                     }
                                 }
                             </ul>
                         </div>
-                        <div class="col-md-10 col-lg-10 col-xs-6 col-sm-8 pd-r-0 raw-object-pane">
+                        <div class="col-md-9 col-lg-9 col-xs-6 col-sm-8 pd-r-0 raw-object-pane">
                             @{
                                 foreach (KeyValuePair<int, TypeWrap> kp in list)
                                 {
@@ -227,8 +230,8 @@
                             <div class="tab-content">
                                 <div class="tab-pane active" id="themeconfig" role="tabpanel" aria-labelledby="">
                                     <div class="  col-md-6 col-lg-6  col-sm-12 botappConfig">
-                                        
-                                        
+
+
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label>DP Url:</label>
 
@@ -272,7 +275,7 @@
 
 
                                 </div>
-                                
+
                                 <div class="tab-pane botcssConfig" id="botcss" role="tabpanel" aria-labelledby="">
                                     <div class="col-md-2 col-lg-2 col-sm-3 cssconfig">
                                         <ul class="nav nav-tabs tabs-left" id="cssconfigUl" role="tablist">
@@ -345,11 +348,11 @@
                             bot_wc_msg = settings.WelcomeMessage;
                             bot_tm_color = settings.ThemeColor;
                             bot_dp_url = settings.DpUrl;
-                           
+
 
                         }
                         <div class="btnarea">
-                            <button class="ebbtn eb_btn-sm eb_btngreen " id="updateBotSettings" >Update</button>
+                            <button class="ebbtn eb_btn-sm eb_btngreen " id="updateBotSettings">Update</button>
                         </div>
                         <div class=" botappDashboard col-md-12 col-lg-12 col-xs-12 col-sm-12">
                             <ul class="nav nav-tabs " id="botsteeings" role="tablist">
@@ -374,7 +377,7 @@
                                             <label>Welcome Message: </label>
                                             <textarea class="form-control bot_wcmsg" rows="2" id="bot_wc_msg">@bot_wc_msg</textarea>
                                         </div>
-                                        
+
                                     </div>
 
                                     <div class="col-sm-6 col-md-6 col-lg-6 ">
@@ -407,17 +410,11 @@
                                         <label><input type="checkbox" value="">Facebook</label>
                                     </div>
                                 </div>
-                               
+
                             </div>
                         </div>
 
                     }
-
-
-
-
-
-
                     else if (appinfo.AppType == 2)
                     {
                         EbMobileSettings MobSettings = (ViewBag.AppSettings as EbMobileSettings);
@@ -478,8 +475,8 @@
                         @{
                             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
                             {
-                                List<int> cs = new List<int> { 18, 23, 24, 22, 7, 25 };
-                                if (objectType.IsAvailableIn((EbApplicationTypes)appinfo.AppType))
+                                List<int> cs = new List<int> { 23, 7, 25 };
+                                if (objectType.IsAvailableIn(apptype))
                                 {
                                     string url = string.Empty, _class = string.Empty;
                                     if (cs.Contains(objectType.IntCode))
@@ -514,7 +511,7 @@
 
     <div id="import_data_mdl" class="modal fade import_data_mdl" role="dialog">
         <div class="modal-dialog h-100 w-100" style="margin:0;display: flex;justify-content: center;align-items: center;">
-            <div class="modal-content" style="width:50%;height:70%;display: flex;flex-direction: column;">
+            <div class="modal-content" style="min-width:40%;height:70%;display: flex;flex-direction: column;">
                 <div class="modal-header" style="border-style:none">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title">Import Data</h4>
@@ -523,26 +520,14 @@
                     @{
                         if (appinfo.AppType == 2)
                         {
-                            List<int> cs = new List<int> { 2, 20 };
                             <div class="import_data_mdl_mdlbdy">
-                                <div class="import_data_cols">
-                                    <label>Object Types</label>
-                                    <div class="import_data_cols_inner">
-                                        <div class="import_obj_link" exp-target="#import_expand_20">
-                                            Api
-                                        </div>
-                                        <div class="import_obj_link" exp-target="#import_expand_2">
-                                            DataReaders
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="import_data_cols import_data_objects">
-                                    <label>Objects</label>
+                                <div class="import_data_cols import_data_objects w-100">
+                                    <label>DataReader</label>
                                     <div class="import_data_cols_inner">
                                         @{
                                             foreach (KeyValuePair<int, TypeWrap> kvp in list)
                                             {
-                                                if (cs.Contains(kvp.Key))
+                                                if (kvp.Key == 2)
                                                 {
                                                     <div class="import_obj_expand" id="import_expand_@kvp.Key">
                                                         @if (!kvp.Value.Objects.Any())

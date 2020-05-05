@@ -343,7 +343,8 @@
                     let ddOfset = ($(e.target)).offsetParent().offset();
                     let tgHght = ($(e.target)).offsetParent().height();
                     $outdrpdwn.parent().addClass('open');
-                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
+                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
+                    $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"));
                 }
             }
         }.bind(this));

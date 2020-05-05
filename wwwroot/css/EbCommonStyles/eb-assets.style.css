@@ -1029,21 +1029,11 @@ pd-10 {
         flex: 1;
         padding: 5px;
     }
-        .import_data_mdl_mdlbdy .import_data_cols_inner .import_obj_expand:not(:first-child) {
-            display:none;
-        }
 .import_data_mdl_mdlbdy .import_data_cols {
-    width: 50%;
-    padding: 5px;
     height: 100%;
     display: flex;
     flex-flow: column;
 }
-        .import_data_mdl_mdlbdy .import_data_cols .import_obj_link {
-            background: #dadada;
-            padding: 5px;
-            margin: 5px 0;
-        }
         .import_data_mdl_mdlbdy .import_data_cols .import_obj_expand_objlinks {
             padding: 5px;
             cursor: auto;

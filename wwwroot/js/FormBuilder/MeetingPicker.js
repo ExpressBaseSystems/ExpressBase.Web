@@ -49,7 +49,7 @@ var meetingPicker = function (ctrl, ctrlOpts) {
             }.bind(this));
         }
        
-        $(`#cont_${this.ctrl.EbSid} .picker-cont`).empty().append(html);
+        $(`#${this.ctrl.EbSid} .picker-cont`).empty().append(html);
         $(".unblocked-slot").off("click").on("click", this.PickMeeting.bind(this));
         $("#add_slot").off("click").on("click", this.addSlot.bind(this));
     };

@@ -15,24 +15,21 @@ using ExpressBase.Common;
 using ExpressBase.Common.Objects;
 using System.Reflection;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace ExpressBase.Web.Controllers
 {
-    public class NotificationTestController : EbBaseIntCommonController
+    public class NotificationsController : EbBaseIntCommonController
     {
-        public NotificationTestController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
+        public NotificationsController(IServiceClient sclient, IRedisClient redis) : base(sclient, redis) { }
 
-        public IActionResult Index()
+        [HttpGet]
+        public GetNotificationsResponse GetNotifications()
         {
-            return View();
+            return this.ServiceClient.Post(new GetNotificationsRequest { user = this.LoggedInUser });
         }
 
         public void NotifyLogOut()
         {
-            NotifyLogOutResponse res = this.ServiceClient.Post<NotifyLogOutResponse>(new NotifyLogOutRequest
-            {
-            });
+            NotifyLogOutResponse res = this.ServiceClient.Post<NotifyLogOutResponse>(new NotifyLogOutRequest { });
         }
 
         public void NotifyByUserId(string user_id)
@@ -68,10 +65,7 @@ namespace ExpressBase.Web.Controllers
             return res;
         }
 
-        public object GetCompleteNotificationDetailsFromDB()
-        {
-            return this.ServiceClient.Post(new GetNotificationsRequest { user = this.LoggedInUser }); 
-        }       
+              
 
         public IActionResult GetAllActions()
         {

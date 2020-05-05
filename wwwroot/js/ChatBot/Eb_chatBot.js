@@ -754,11 +754,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             let tempCtrl = $("#" + ctrl.EbSid).clone();
             tempCtrl.find('input[type="file"]').remove();
             tempCtrl.find('input[type="text"]').remove();
-
             tempCtrl.attr('id', "");
-            tempCtrl.find('.SFUPcontainer').attr('id', "");
+            if (ctrl.DataVals.Value) {               
+                tempCtrl.find('.SFUPcontainer').attr('id', "");
+                
+            }
+            else {
+                tempCtrl.find('.SFUPcontainer').empty().append('<span>No file uploaded</span>');
+            }
             text = tempCtrl[0].outerHTML;
-
         }
         return text;
     };

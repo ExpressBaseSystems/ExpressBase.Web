@@ -261,7 +261,7 @@ body {
 
 .del-row, .cancel-row {
     left: 23.5px;
-    height: 26px !important;
+    height: 30px !important;
     color: #f55d5d;
     /*border-radius: 0 50px 50px 0;*/
     direction: rtl;
@@ -320,7 +320,7 @@ body {
 }
 
 .check-row > .fa {
-    margin-top: 3px;
+    /*margin-top: 3px;*/
 }
 
 /*.check-row {
@@ -345,8 +345,23 @@ body {
 }
 
 .check-row:hover, .del-c:hover {
-    box-shadow: 0 0 2.5px 1px #008000 !important;
+    box-shadow: inset 0 0 2.5px 1px #87c987 !important;
 }
+
+.edit-row:hover {
+    box-shadow: inset 0 0 2.5px 1px #adadef !important;
+}
+
+.del-row:hover {
+    box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
+}
+
+.cancel-row:hover {
+    box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
+}
+
+
+
 
 .dgtr:focus {
     /*border: solid 1px rgb(85, 94, 167) !important;*/
@@ -1340,16 +1355,36 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-bottom: 5px !important;
 }
 
-.locinp-cont {
-    padding: 5px 15px;
-    font-size: 13px;
-    color: rgba(0, 0, 0, 0.5);
+.locinp-span {
+    display: block;
+    min-width: 5em;
+}
+
+.locinp-address .locinp {
+    width:100%;
+}
+
+.locinp-address {
+    display: inline-block;
+    width: calc(100% - 82px);
 }
 
 .locinp-cont {
     padding: 5px 15px;
     font-size: 13px;
     color: rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+}
+
+.locinp-wraper-address {
+    display: inline-flex;
+}
+
+.locinp-wraper {
+    display: inline-flex;
+    width: calc( 50% - 5px );
+    min-width: 170px;
 }
 
 .loc-opt-btn {
@@ -1391,14 +1426,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 input.locinp {
     height: 1.8em !important;
     min-height: 0 !important;
-    margin-left: 5px;
+    margin-right: 10px;
     border: none !important;
     border-bottom: solid 1px #e4e4e4 !important;
     font-size: calc(1em - 1px);
-    max-width: 400px;
     float: inherit;
     font-style: italic;
-    width: calc(100% - 6em);
+    width: calc( 100% - 6em );
+    min-width: 100px !important;
     outline: none !important;
 }
 
@@ -1427,10 +1462,13 @@ input.locinp {
 }
 
 [eb-type="WebForm"] .locinp-cont input.locinp { /*overriding '.locinp-cont .locinp' for web form*/
-    width: 9.4em;
     padding: 3px;
     height: auto !important;
-    max-width: 287px;
+}
+
+
+[eb-type="WebForm"] .locinp-cont { /* for web form*/
+    max-width: 60em;
 }
 
 .pdf-frame {
@@ -1839,18 +1877,6 @@ input.locinp {
     user-select: none;
 }
 
-.ulstc-disp-img-c {
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-    height: 26px;
-    width: 26px;
-}
-
-.ulstc-disp-txt {
-    padding: 3px 10px;
-}
-
 .ulstc-list-c {
     position: absolute;
     width: 100%;
@@ -1897,19 +1923,20 @@ input.locinp {
     .ulstc-list-li:hover {
         background-color: #ddd;
     }
-/*-----------------Item List control End-----------------*/
 
-
-.sysctrl_usrimg {
+.sysctrl_usrimg, .ulstc-disp-img-c {
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
-    height: 26px;
-    width: 26px;
+    height: 32px;
+    width: 32px;
 }
+/*-----------------Item List control End-----------------*/
 
-.sysctrl_usrname {
-    padding: 3px 10px;
+.sysctrl_usrname, .ulstc-disp-txt {
+    padding: 7px 10px;
+    vertical-align: middle;
+    font-size: 13px;
 }
 
 
@@ -1994,9 +2021,9 @@ input.locinp {
     border: none;
 }
 
-[ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag {
-    font-size: 12px;
-}
+    [ctype=TagInput] > .ctrl-cover > .tagInputDiv > .bootstrap-tagsinput .tag {
+        font-size: 12px;
+    }
 
 /*EbRitchText*/
 [ctype=RichText] > .note-popover .popover-content > .btn-group, .panel-heading.note-toolbar > .btn-group {
@@ -2062,22 +2089,22 @@ input.locinp {
     border: 1px solid #d9d9d9;
     position: relative;
 }
-    /* Style on hover */
-    .simpleFUPdiv .SFUPcontainer.drag-over {
-        background-color: #f3f3f3;
-    }
+/* Style on hover */
+.simpleFUPdiv .SFUPcontainer.drag-over {
+    background-color: #f3f3f3;
+}
 
-        /* Hide the file input */
-        .simpleFUPdiv .SFUPcontainer input[type="file"] {
-            width: 0;
-            height: 0;
-            position: absolute;
-            z-index: -1;
-            opacity: 0;
-        }
+/* Hide the file input */
+.simpleFUPdiv .SFUPcontainer input[type="file"] {
+    width: 0;
+    height: 0;
+    position: absolute;
+    z-index: -1;
+    opacity: 0;
+}
 
-        /* Text container */
-        /*.simpleFUPdiv .SFUPcontainer .upload-text {
+/* Text container */
+/*.simpleFUPdiv .SFUPcontainer .upload-text {
         position: absolute;
         top: 0;
         right: 0;
@@ -2099,29 +2126,29 @@ input.locinp {
             display: block;
         }*/
 
-        /* Hide the text if there is at least one uploaded image */
-        .simpleFUPdiv .SFUPcontainer.has-files .SFUPcontent {
-            display: none;
-        }
+/* Hide the text if there is at least one uploaded image */
+.simpleFUPdiv .SFUPcontainer.has-files .SFUPcontent {
+    display: none;
+}
 
-        /* Uploaded images container */
-        .simpleFUPdiv .SFUPcontainer .uploaded {
-            padding: .5rem;
-            line-height: 0;
-        }
+/* Uploaded images container */
+.simpleFUPdiv .SFUPcontainer .uploaded {
+    padding: .5rem;
+    line-height: 0;
+}
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .filethumb {
-                border-radius: 4px;
-                float: left;
-                margin: 1%;
-                box-shadow: 1px 1px 5px 0 #a2958a;
-                position: relative;
-                height: 185px;
-                width: 250px;
-            }
+    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb {
+        border-radius: 4px;
+        float: left;
+        margin: 1%;
+        box-shadow: 1px 1px 5px 0 #a2958a;
+        position: relative;
+        height: 185px;
+        width: 250px;
+    }
 
-                .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file {
-                    /*display: inline-block;
+        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file {
+            /*display: inline-block;
             width: calc(20% );
             padding-bottom: calc(16.6666667% - 1rem);
             height: 0;
@@ -2129,168 +2156,168 @@ input.locinp {
             margin: .5rem;
             background: #f3f3f3;
             cursor: default;*/
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    flex-direction: column;
-                    height: 100%;
-                }
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+        }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file img {
-                        /*width: 100%;
+            .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file img {
+                /*width: 100%;
                 height: 100%;
                 object-fit: cover;
                 position: absolute;*/
-                        max-width: 240px;
-                        min-width: 110px;
-                        height: 156px;
-                        margin: auto;
-                        padding: 2px;
-                    }
+                max-width: 240px;
+                min-width: 110px;
+                height: 156px;
+                margin: auto;
+                padding: 2px;
+            }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls {
-                        /*width:100%;*/
-                    }
+            .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls {
+                /*width:100%;*/
+            }
 
-                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .success {
-                            color: #47af08;
-                            font-size: 20px;
-                            align-self: center;
-                            margin-left: auto;
-                            display: none;
-                            text-align: right;
-                            position: absolute;
-                            bottom: 0;
-                            right: 0;
-                        }
+                .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .success {
+                    color: #47af08;
+                    font-size: 20px;
+                    align-self: center;
+                    margin-left: auto;
+                    display: none;
+                    text-align: right;
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                }
 
-                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .error {
-                            color: #f95655;
-                            font-size: 20px;
-                            align-self: center;
-                            margin-left: auto;
-                            display: none;
-                            text-align: right;
-                            position: absolute;
-                            bottom: 0;
-                            right: 0;
-                        }
+                .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .error {
+                    color: #f95655;
+                    font-size: 20px;
+                    align-self: center;
+                    margin-left: auto;
+                    display: none;
+                    text-align: right;
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                }
 
-                        .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .filename {
-                            /*margin-top: 5px;
+                .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .filename {
+                    /*margin-top: 5px;
                     margin-bottom: 0;
                     font-weight: 500;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;*/
-                        }
-
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file iframe {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                position: absolute;
-            }
-
-            /* Delete image button */
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .delete-image {
-                display: none;
-                cursor: pointer;
-                position: absolute;
-                top: .2rem;
-                right: .2rem;
-                border-radius: 50%;
-                /*padding: .3rem;*/
-                background-color: white;
-                -webkit-appearance: none;
-                border: none;
-            }
-
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file:hover .delete-image {
-                display: block;
-            }
-
-            .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .delete-image i {
-                color: #5b5959;
-                font-size: 1.5rem;
-            }
-
-
-            /*for bot*/
-            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb {
-                border-radius: 4px;
-                float: left;
-                margin: 1%;
-                box-shadow: 1px 1px 5px 0 #a2958a;
-                position: relative;
-                height: 60px;
-                width: 90px
-            }
-
-                .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file {
-                    width: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    flex-direction: column;
-                    height: 100%;
                 }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file img {
-                        max-width: 85px;
-                        min-width: 50px;
-                        height: 45px;
-                        margin: auto;
-                    }
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file iframe {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: absolute;
+    }
+
+    /* Delete image button */
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .delete-image {
+        display: none;
+        cursor: pointer;
+        position: absolute;
+        top: .2rem;
+        right: .2rem;
+        border-radius: 50%;
+        /*padding: .3rem;*/
+        background-color: white;
+        -webkit-appearance: none;
+        border: none;
+    }
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file:hover .delete-image {
+        display: block;
+    }
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .delete-image i {
+        color: #5b5959;
+        font-size: 1.5rem;
+    }
 
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .success {
-                        color: #47af08;
-                        font-size: 12px;
-                        align-self: center;
-                        margin-left: auto;
-                        display: none;
-                        text-align: right;
-                        position: absolute;
-                        bottom: 0;
-                        right: 0;
-                    }
+    /*for bot*/
+    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb {
+        border-radius: 4px;
+        float: left;
+        margin: 1%;
+        box-shadow: 1px 1px 5px 0 #a2958a;
+        position: relative;
+        height: 60px;
+        width: 90px
+    }
 
-                    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .error {
-                        color: #f95655;
-                        font-size: 12px;
-                        align-self: center;
-                        margin-left: auto;
-                        display: none;
-                        text-align: right;
-                        position: absolute;
-                        bottom: 0;
-                        right: 0;
-                    }
+        .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            height: 100%;
+        }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file img {
+                max-width: 85px;
+                min-width: 50px;
+                height: 45px;
+                margin: auto;
+            }
 
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image {
+            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .success {
+                color: #47af08;
+                font-size: 12px;
+                align-self: center;
+                margin-left: auto;
                 display: none;
-                cursor: pointer;
+                text-align: right;
                 position: absolute;
-                top: .2rem;
-                right: .2rem;
-                border-radius: 50%;
-                /*padding: .3rem;*/
-                background-color: white;
-                -webkit-appearance: none;
-                border: none;
+                bottom: 0;
+                right: 0;
             }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file:hover .delete-image {
-                display: block;
+            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .error {
+                color: #f95655;
+                font-size: 12px;
+                align-self: center;
+                margin-left: auto;
+                display: none;
+                text-align: right;
+                position: absolute;
+                bottom: 0;
+                right: 0;
             }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image i {
-                color: #5b5959;
-                font-size: 1.5rem;
-            }
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image {
+        display: none;
+        cursor: pointer;
+        position: absolute;
+        top: .2rem;
+        right: .2rem;
+        border-radius: 50%;
+        /*padding: .3rem;*/
+        background-color: white;
+        -webkit-appearance: none;
+        border: none;
+    }
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file:hover .delete-image {
+        display: block;
+    }
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image i {
+        color: #5b5959;
+        font-size: 1.5rem;
+    }
 
 
 

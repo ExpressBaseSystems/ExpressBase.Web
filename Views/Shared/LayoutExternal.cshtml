@@ -15,20 +15,19 @@
 <html>
 <head>
     <title>@t</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/font-awesome.min.css" asp-append-version=@bApnd>
     <link rel="icon" href="~/images/favicon.ico">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet" asp-append-version=@bApnd>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">
     <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.css" asp-append-version=@bApnd />
 
-    <script type="text/javascript" src="~/js/jquery.min.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/bootstrap.min.js" asp-append-version=@bApnd></script>
-    @*<script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>*@
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>@*amal*@
-    <script src="~/js/EbControls/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>@*amal*@
-    <script src="~/js/EbControls/EbProgressBar.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script type="text/javascript" src="~/js/EbControls/EbMsgBox.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbControls/EbProgressBar.js" asp-append-version=@bApnd></script>
 
     @if (IsSectionDefined("StyleSheet"))
     {

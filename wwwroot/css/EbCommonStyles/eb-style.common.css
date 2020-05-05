@@ -294,8 +294,8 @@
 .eb-styledTab > li.active > a, .eb-styledTab > li.active > a:focus{
     font-weight: 500;
     color: #508bf9;
-    border: none;
-    background-color: transparent;
+    border: none !important;
+    background-color: transparent !important;
 }
 .s-dash-workplace > .nav-tabs li.active > a i, .s-dash-workplace .nav-tabs > li.active > a:focus i {
     color: #508bf9;

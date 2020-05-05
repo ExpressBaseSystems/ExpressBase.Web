@@ -147,6 +147,9 @@
         else if (this.editor === 41) {
             $(".str64E-texarea").focus();
         }
+        else if (this.editor === 13) { //ose
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").scrollTo($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont > .Otile-active"), { offset: -300});
+        }
     };
 
     this.pgCXE_BtnClicked = function (e) {
@@ -725,6 +728,7 @@
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
         }
         $(this.pgCXE_Cont_Slctr + " .modal-footer .searchinp").focus();
+
     }.bind(this);
 
     this.searchObj = function (event) {

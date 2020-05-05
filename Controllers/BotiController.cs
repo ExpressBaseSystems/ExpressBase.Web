@@ -181,6 +181,10 @@ namespace ExpressBase.Web.Controllers
                     else if (control is EbImage)
                     {
                         (control as EbImage).BareControlHtml4Bot = (control as EbImage).GetBareHtml();
+                    } 
+                    else if (control is EbMeetingPicker)
+                    {
+                        (control as EbMeetingPicker).BareControlHtml4Bot = (control as EbMeetingPicker).GetWrapedCtrlHtml4bot();
                     }
                     else if (control is EbPowerSelect && (control as EbPowerSelect).RenderAsSimpleSelect)
                     {

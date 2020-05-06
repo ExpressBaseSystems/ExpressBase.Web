@@ -1058,7 +1058,10 @@ function EBPSSetDisplayMember(p1, p2) {
             for (let j = 0; j < colNames.length; j++) {
                 let colName = colNames[j];
                 let val = this.DataVals.R[colName][i];
-                columnVals[colName].push(val);
+                if (columnVals[colName])
+                    columnVals[colName].push(val);
+                else
+                    console.warn("Not found colName: " + colName);
             }
         }
     }

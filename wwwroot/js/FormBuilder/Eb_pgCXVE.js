@@ -148,7 +148,7 @@
             $(".str64E-texarea").focus();
         }
         else if (this.editor === 13) { //ose
-            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").scrollTo($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont > .Otile-active"), { offset: -300});
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").scrollTo($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont > .Otile-active"), { offset: -($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").height() / 2) + 14});
         }
     };
 

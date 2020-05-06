@@ -224,7 +224,11 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.setValues = function (StrValues, callBFn = function () { }) {
+    this.defaultDTcallBFn = function () {
+        this.V_hideDD();
+    };
+
+    this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
         this.clearValues();
         if (StrValues === "" || StrValues === null)
             return;

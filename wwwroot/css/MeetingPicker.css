@@ -165,6 +165,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            border-radius: 25px;
+            text-align: center;
+            padding: 5px;
         }
 
             .eb-meeting-bot .picker-cont .solts-div:nth-child(even) {
@@ -173,9 +176,10 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             }
 
         .eb-meeting-bot .picker-cont .unblocked-slot:hover {
-            background-color: #00e0ea;
+            background-color: #2996cb;
             cursor: pointer;
             border: solid 1px #00e0ea;
+            color: white;
         }
 
         .eb-meeting-bot .picker-cont .blocked-slot {
@@ -227,6 +231,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
                     padding: 0px 10px;
                     text-align: center;
                 }
+    .eb-meeting-bot  button {
+        height: 3.5rem;
+    }
 
     .eb-meeting-bot .ui-datepicker-calendar {
         background-color: transparent;

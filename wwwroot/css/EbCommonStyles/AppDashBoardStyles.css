@@ -6,12 +6,15 @@
     flex-flow: row-reverse;
     padding-bottom: 10px;
 }
+
 .botappDashboard {
     padding: 0px;
 }
+
     .botappDashboard .tab-content {
         margin-bottom: 0px;
     }
+
     .botappDashboard .botappConfig {
         padding: 0px;
         border: 1px solid #efe5e5;
@@ -51,13 +54,33 @@
         flex-flow: row-reverse;
     }
 
-   
-.botappDashboard .botcssConfig .tabs-left {
-    border-bottom: none;
-    border-right: 1px solid #ddd;
-}
+
+    .botappDashboard .botcssConfig .tabs-left {
+        border-bottom: none;
+        border-right: 1px solid #ddd;
+    }
 
         .botappDashboard .botcssConfig .tabs-left > li {
+            float: none;
+            margin: 0px;
+        }
+
+    .botappDashboard .botUserAuth .userAuthConfig {
+        padding: 0px;
+    }
+    .botappDashboard .botUserAuth .selauth {
+        margin-bottom: 20px;
+        border: 1px solid #efe5e5;
+    }
+        .botappDashboard .botUserAuth .selauth .form-check {
+            padding-left: 20px;
+        }
+    .botappDashboard .botUserAuth .tabs-left {
+        border-bottom: none;
+        border-right: 1px solid #ddd;
+    }
+
+        .botappDashboard .botUserAuth .tabs-left > li {
             float: none;
             margin: 0px;
         }
@@ -80,7 +103,7 @@
 .botappDashboard .botcssConfig .cssconfig {
     padding: 0px;
 }
+
 .botappDashboard .botcssConfig .configcss .resetcss {
     margin-top: 10px;
 }
-    

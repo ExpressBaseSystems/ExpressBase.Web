@@ -1,5 +1,11 @@
 ﻿var DatePick;
-var meetingPicker = function (ctrl, ctrlOpts) {
+var meetingPicker = function (ctrl, ctrlOpts , type) {
+
+    this.type = type;
+    this.Url = "../Webform/GetAllMeetingSlots";
+    if (this.type === "Bot") {
+        this.Url = "../Boti/GetAllMeetingSlots";
+    }
     this.ctrl = ctrl;
     this.ctrlOpts = ctrlOpts;
     this.AllSlots = {};
@@ -7,7 +13,7 @@ var meetingPicker = function (ctrl, ctrlOpts) {
     this.getTimeSlots = function () {
         let meet = 1;
         let date = $(`#${this.ctrl.EbSid}_date`).val();
-        $.post("../Webform/GetAllMeetingSlots", { MeetingId: meet, date: date }, this.AppendSlots.bind(this));
+        $.post(this.Url , { MeetingId: meet, date: date }, this.AppendSlots.bind(this));
     };
 
     this.TimeFormat = function (time) {
@@ -36,14 +42,14 @@ var meetingPicker = function (ctrl, ctrlOpts) {
             $.each(this.AllSlots, function (index, obj) {
                 if (obj.Time_from !== "" && obj.Time_to !== "") {
                     let timeFrom = this.TimeFormat(this.AllSlots[index].Time_from);
-                    let timeTo = this.TimeFormat(this.AllSlots[index].Time_to);
+                    //let timeTo = this.TimeFormat(this.AllSlots[index].Time_to);
                     if (this.AllSlots[index].IsHide) {
                         html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[index].Meeting_Id}" is-approved="${this.AllSlots[index].Is_approved}"
-                    class="solts-div blocked-slot"> ${timeFrom} to ${timeTo}</div>`;
+                    class="solts-div blocked-slot"> <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timeFrom} </div>`;
                     }
                     else {
                         html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[0].Meeting_Id}"  is-approved="${this.AllSlots[index].Is_approved}"
-                    class="solts-div unblocked-slot"> ${timeFrom} to ${timeTo} </div>`;
+                    class="solts-div unblocked-slot"> <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timeFrom} </div>`;
                     }
                 }
             }.bind(this));
@@ -62,10 +68,16 @@ var meetingPicker = function (ctrl, ctrlOpts) {
     this.addSlotSuccess = function (data) {
 
     };
+
+
+
     this.PickMeeting = function (e) {
         let id = e.target.id;
+        let time = e.target.textContent.trim();
         $(`#${this.ctrl.EbSid_CtxId}_slot_val`).val(id).trigger("change");
+        $(`#${this.ctrl.EbSid_CtxId}_slot_time`).val(time);
         $(`#${this.ctrl.EbSid}_slot_change`).trigger("click");
+
        // this.SlotDetails = {};
        // this.SlotDetails.UserId = 1;
        // this.SlotDetails.RoleId = 1;

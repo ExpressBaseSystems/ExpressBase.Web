@@ -7,9 +7,10 @@
 
 
     this.init = function () {
-        this.cssConfigFn();
+        this.botConfigFn();
         $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
         $('.resetcss').on('click', this.ResetCssFn.bind(this));
+        $('input[name=authtype]').on('click', this.authMethodCheckFn.bind(this));
     }
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
@@ -157,9 +158,14 @@
         }
     }
     //for bot
-    this.cssConfigFn = function () {
+    this.botConfigFn = function () {
 
         let cssobj = this.AppSettings.CssContent;
+        $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
+        $('#email_anony').attr('checked', this.AppSettings.Authoptions.EmailAuth);
+        $('#name_anony').attr('checked', this.AppSettings.Authoptions.UserName);
+        $('#phone_anony').attr('checked', this.AppSettings.Authoptions.PhoneAuth);
+        $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
         for (let property in cssobj) {
 
             let html = "";
@@ -179,6 +185,18 @@
     this.UpdateBotSettingsFn = function () {
         var appSettings = {};
         let cssConstObj = {};
+        let authOptions = {};
+        let botProperties = {};
+        let authcheck = $("input[name=authtype]:checked").length;
+        if (!authcheck) {
+            EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
+            return;
+        }
+        authOptions.EmailAuth = $('#email_anony').is(":checked");
+        authOptions.UserName = $('#name_anony').is(":checked");
+        authOptions.PhoneAuth = $('#phone_anony').is(":checked");
+        authOptions.Fblogin = $('#fb_anony').is(":checked");
+        botProperties.EbTag = $('#useEbtag').is(":checked");
 
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
@@ -197,6 +215,8 @@
         appSettings["ThemeColor"] = $("#bot_tm_color").val();
         appSettings["DpUrl"] = $("#bot_dp_url").val();
         appSettings["CssContent"] = cssConstObj;
+        appSettings["Authoptions"] = authOptions;
+        appSettings["BotProp"] = botProperties;
         $.ajax({
             type: "POST",
             url: "../Dev/UpdateAppSettings",
@@ -209,7 +229,12 @@
             }
         });
     }
-   
+    this.authMethodCheckFn = function () {
+        let authcheck = $("input[name=authtype]:checked").length;
+        if (!authcheck) {
+            EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
+        }
+    }
     this.ResetCssFn = function (e) {
         let cssConst = $(e.target).attr('obname');
         $.ajax({
@@ -222,7 +247,7 @@
             }
         });
     };
-    
+
     this.start_exe();
     this.init();
 

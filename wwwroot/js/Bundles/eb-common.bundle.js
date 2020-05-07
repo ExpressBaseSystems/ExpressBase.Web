@@ -589,6 +589,9 @@ class Setup {
             }
         }
         ebcontext.header.updateNCount(this.notification_count + this.actions_count);
+        $('.status-time').tooltip({
+            placement: 'top'
+        });
     }
 
     drawNotifications(nf) {
@@ -600,7 +603,7 @@ class Setup {
                 <li class="nf-tile" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
                     <div class="notification-inner">
                         <h5>${nf[i].title || plc}</h5>
-                        <p class='pending_date'>${nf[i].duration}</p>
+                        <span class='pending_date status-time' title='${nf[i].createdDate}'>${nf[i].duration}</span>
                     </div>
                 </li>`);
             }
@@ -619,13 +622,15 @@ class Setup {
                 let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].dataId)]))));
                 let locid = this.getCurrentLocation();
                 let url = `../webform/index?refid=${pa[i].link}&_params=${params}&_mode=1&_locId=${locid}`;
-
+                let _label = "";
+                if (pa[i].actionType === "Approval")
+                    _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";
                 this.actn_container.append(`
                 <li class="nf-tile">
                         <a href="${url}" target="_blank">
                             <div class='pending_action_inner'>
                                 <h5>${pa[i].description}</h5>
-                                <p class='pending_date'>${pa[i].createdDate}</p>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].dateInString}</span></div>
                             </div>
                         </a>
                 </li>`);

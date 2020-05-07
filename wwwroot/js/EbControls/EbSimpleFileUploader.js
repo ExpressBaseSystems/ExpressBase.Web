@@ -185,7 +185,6 @@
             }
             else {
                 $filethumb = $('<div>', { class: 'filethumb trggrpreview' });
-                $filethumb.append("<div id='file_disp'></div>");
 
                 // Create the upladed image container
                 $inrContainer = $('<div>', { class: 'uploaded-file', exact: file.name }).appendTo($filethumb);
@@ -456,11 +455,12 @@
             thumb.find(".success").show();
             thumb.find(".error").hide();
             thumb.attr("filref", refid);
+            thumb.parent().attr('filrefid', refid);
             let $hiddenInput = $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`);
             $hiddenInput.val(refidArr.join(","));
             $hiddenInput.trigger('change');
             $(`#${plugin.settings.fileCtrl.EbSid}`).attr("fileCount", refidArr.length)
-            $(".trggrpreview").on("click", viewFilesFn);
+            $(`trggrpreview, [filrefid=${refid}]`).on("click", viewFilesFn);
         };
 
         this.refidListfn = function () {

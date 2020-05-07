@@ -398,8 +398,33 @@
 .chat-ctrl-cont[ebreadonly="true"] [name=ctrlsend] {
     display: none;
 }
-
-
+.eb-chat-cont .cntct_sec .cntct_btn {
+    margin-left:15px;
+    float: right;
+    color: white;
+    background: var(--botThemeColor);
+    border: none;
+    outline: none;
+    vertical-align: middle;
+    font-size: 17px;
+    height: 35px;
+    border-radius: 50%;
+    width: 35px;
+    transition-duration: 0.1s;
+    box-shadow: -2px 2px 4px 0 #00000073
+}
+.contct-cont [name=contactSubmitMail], [name=contactSubmitPhn], [contactSubmitName] {
+    position: absolute;
+    vertical-align: middle;
+    font-size: 17px;
+    height: 40px;
+    margin-left: 25px;
+    border-radius: 10em;
+    width: 40px;
+    padding: 13px 20px;
+    transition-duration: 0.1s;
+    box-shadow: -2px 2px 4px 0 #00000073
+}
 .msg-cont .bs-cont {
     display: flex;
     flex-direction: row;

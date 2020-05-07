@@ -35,6 +35,7 @@
                 this.FO.IsPSsInitComplete[select.EbSid_CtxId] = true;
                 if (isAllValuesTrue(this.FO.IsPSsInitComplete))
                     this.FO._allPSsInit = true;
+                select.initializer.V_hideDD();
             }.bind(this);
 
             if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)

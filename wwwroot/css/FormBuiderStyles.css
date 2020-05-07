@@ -1355,16 +1355,38 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding-bottom: 5px !important;
 }
 
-.locinp-cont {
-    padding: 5px 15px;
-    font-size: 13px;
-    color: rgba(0, 0, 0, 0.5);
+.locinp-span {
+    display: block;
+    min-width: 5em;
+}
+
+.locinp-address .locinp {
+    width: 100%;
+    padding-right: 25px;
+}
+
+.locinp-address {
+    position: relative;
+    display: inline-block;
+    width: calc(100% - 82px);
 }
 
 .locinp-cont {
     padding: 5px 15px;
     font-size: 13px;
     color: rgba(0, 0, 0, 0.55);
+    display: flex;
+    flex-direction: column;
+}
+
+.locinp-wraper-address {
+    display: inline-flex;
+}
+
+.locinp-wraper {
+    display: inline-flex;
+    width: calc( 50% - 5px );
+    min-width: 170px;
 }
 
 .loc-opt-btn {
@@ -1406,14 +1428,14 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 input.locinp {
     height: 1.8em !important;
     min-height: 0 !important;
-    margin-left: 5px;
+    margin-right: 10px;
     border: none !important;
     border-bottom: solid 1px #e4e4e4 !important;
     font-size: calc(1em - 1px);
-    max-width: 400px;
     float: inherit;
     font-style: italic;
-    width: calc(100% - 6em);
+    width: calc( 100% - 6em );
+    min-width: 100px !important;
     outline: none !important;
 }
 
@@ -1442,10 +1464,13 @@ input.locinp {
 }
 
 [eb-type="WebForm"] .locinp-cont input.locinp { /*overriding '.locinp-cont .locinp' for web form*/
-    width: 9.4em;
     padding: 3px;
     height: auto !important;
-    max-width: 287px;
+}
+
+
+[eb-type="WebForm"] .locinp-cont { /* for web form*/
+    max-width: 60em;
 }
 
 .pdf-frame {
@@ -2297,8 +2322,30 @@ input.locinp {
     }
 
 
+.ratingDiv_dc {
+    font-size: 20px;
+    padding: 7px 10px;
+}
 
-#cpatchaTextBox {
+.locinp-cont .loc-close {
+    display: none;
+    position: absolute;
+    top: -1px;
+    padding: 2px;
+    right: 5px;
+    color: #e7000091;
+    opacity: 0.6;
+    font-size: 16px;
+    transition-duration: 0.2s;
+}
+.loc-close:hover {
+    opacity: 1;
+}
+
+.locinp-cont:hover .loc-close {
+    display: inline-block;
+}
+    #cpatchaTextBox {
     margin-bottom: 10px;
     width: 70%;
     margin-left: 15%;

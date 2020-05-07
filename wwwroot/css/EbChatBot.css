@@ -665,7 +665,14 @@
     font-family: arial;
     font-size: 12px;
     color: #555555;
+    display: inline-block;
+    padding: 0 10px;
+    cursor: alias;
 }
+
+    .poweredby > span {
+        color: #4874a1;
+    }
 /*.poweredby {
     font-family: arial;
     font-size: 12px;

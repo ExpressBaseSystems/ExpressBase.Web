@@ -133,7 +133,6 @@
 }
 
     .objectDashB-toolbar .toolbar-brd-Container {
-
     }
 
     .objectDashB-toolbar .toolbar-buttons-Container {
@@ -691,23 +690,7 @@ input:checked + .proslider:before {
 }
 
 
-/*  Anoopa  */
-
-.drp_item p {
-    cursor: pointer;
-    margin: 3px 5px;
-    overflow: hidden;
-    padding: 5px;
-    width: 100%;
-    display: flex;
-    font-size: 12px;
-    color: #000000;
-    align-items: center;
-    font-weight: 400;
-    text-align: justify;
-    padding-right: 15px;
-}
-
+/*  Anoopa notifications window styles*/
 .notification_alert {
     position: absolute;
     font-size: 9px;
@@ -720,68 +703,90 @@ input:checked + .proslider:before {
     right: 5px;
     top: -1px;
 }
-
-.notification-duration {
-    height: 28px;
-    margin: 0px 0px -9px 20px;
-    overflow: hidden;
-    padding-top: 1px;
-    width: 70%;
-    color: #428bca;
-    font-family: roboto, sans-serif;
-    font-weight: 400;
-}
-
-.no_action {
-    margin: 20px 112px;
-    font-size: 13px;
-    font-family: roboto;
-    font-weight: 300;
-}
-.new_notifications .drp_item {
-    border-bottom: 1px solid rgba(0,0,0,.15);
-}
-.new_notifications .drp_item i {
-    float: right;
-    padding: 5px 20px 0px 0px;
-}
-.action_cont {
+.eb-notification-window {
+    display: none;
+    position: fixed;
+    right: 0;
+    height: 100vh;
+    top: 0;
+    z-index: 8;
     width: 350px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    height: calc(100% - 35px);
+    background: white;
+    border-right: 1px solid #ddd;
 }
-.Action_ul {
-    width: inherit;
-    height: inherit;
-    padding:0px;
-}
-.pending_action_inner {
+    .eb-notification-window .nf-window-tabstyle {
+        font-size: 12px;
+        color: #333;
+        background-color: transparent !important;
+        border: none;
+    }
+.eb-notification-window .nf-link-container {
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    margin-top: -1px;
-    min-height: 50px;
+    flex-flow: column nowrap;
+    flex: 1;
+    margin: 0;
+    padding: 10px;
+}
+
+.eb-notification-window .nf-tile {
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
+    padding: 10px;
+    margin-bottom: 9px;
+    border-radius: 4px;
+    background: white;
+}
+
+    .eb-notification-window .nf-tile a {
+        text-decoration: none;
+    }
+    .eb-notification-window .nf-seemore {
+        text-align: center;
+        font-size: 13px;
+        margin-bottom: 15px;
+    }
+
+.blink-when-new {
+    animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0;
+    }
+}
+
+.eb-notification-window .pending_action_inner {
     word-wrap: break-word;
 }
-.pendingaction a {
-    font-size: 12px !important;
-}
-.pendingaction .pending_date {
-    color: #428bca;
-}
-.see_all_action {
-    border-top: 1px solid #dddfe2;
-    display: block;
-    padding: 8px 12px;
-    position: relative;
-    text-align: center;
-    z-index: 100;
-    color: #385898;
-    cursor: pointer;
-    text-decoration: none;
+.eb-notification-window .notification-inner {
+    word-wrap: break-word;
 }
 
+.eb-notification-window .pending_action_inner h5 {
+    font-weight: 500;
+    color: #504e4e;
+}
+.eb-notification-window .notification-inner h5 {
+    font-weight: 500;
+    color: #504e4e;
+}
+
+.eb-notification-window  .pending_date {
+    margin: 0;
+    font-size: 11px;
+    color: #7b7b7b;
+}
+.eb-notification-window .pending_action_inner .status-icon {
+    margin-right: 5px;
+}
+.eb-notification-window .pending_action_inner .status-label {
+    margin-right: 5px;
+    font-size: 11px;
+    font-weight: 500;
+}
+.color-warning {
+    color: #f0ad4e;
+}
 
 .url-container {
     display: none;

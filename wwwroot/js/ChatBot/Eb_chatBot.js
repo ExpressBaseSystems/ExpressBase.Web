@@ -11,8 +11,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.$chatCont = $(`<div class="eb-chat-cont" eb-form='true'  eb-root-obj-container isrendermode='true'></div>`);
     this.$chatBox = $('<div class="eb-chatBox"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
-
-    //  this.$poweredby = $('<div class="poweredby-cont"><div class="poweredby"><a href="https://expressbase.com/" target="_blank" style="text-decoration: none;" ><i>powered by</i> EXPRESSbase</a></div></div>');
+    this.$poweredby = $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> <span>EXPRESSbase</span></div></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
     this.$botMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-bot"><div class="msg-wraper-bot"></div></div>'));
     this.$botMsgBox.prepend('<div class="bot-icon"></div>');
@@ -94,6 +93,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
         $("body").on("click", ".survey-final-btn .btn", this.ctrlSend);
         $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);
+        $("body").on("click", ".poweredby", this.poweredbyClick);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         this.initConnectionCheck();
         this.showDate();
@@ -102,6 +102,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //    selector: '.eb-chatBox'
         //});
     };
+
+    this.poweredbyClick = function () {
+        window.open('https://expressbase.com/Products/Bots/', '_blank');
+    }.bind(this);
 
 
     //if anonimous user /not loggegin using fb

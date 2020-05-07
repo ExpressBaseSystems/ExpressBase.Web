@@ -95,7 +95,6 @@ namespace ExpressBase.Web.Controllers
 				ViewBag.AppSettings = settings ?? new EbBotSettings() { CssContent = CssContent() };
 			}
 
-
 			this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
 			ViewBag.Title = _objects.AppInfo.Name;
 			ViewBag.ObjectsCount = _objects.ObjectsCount;

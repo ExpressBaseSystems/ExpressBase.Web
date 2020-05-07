@@ -45,21 +45,23 @@
 
 .eb_mobpage_pane_body {
     height: 100%;
-    /*justify-content: center;*/
     display: flex;
-    /*padding: 10px 0;*/
 }
 
 .eb_mobpage_pane_layout {
+    min-height: 550px;
     height: 550px;
     display: flex;
     justify-content: center;
     position: relative;
     margin: 0 auto;
+    background: white;
+    border-radius: 5em;
 }
 
 .eb_mobpage_pane_layout_emulator {
     height: 100%;
+    z-index:1;
 }
 
 .eb_mobpage_pane_layout .eb_mobpage_emulatorbody {
@@ -68,12 +70,13 @@
     height: 100%;
     top: 0;
     left: 0;
+    z-index: 2;
 }
 
 .eb_mobpage_pane_layout .eb_mobpage_drparea {
     width: 100%;
     height: 100%;
-    padding: 35px 14px 35px 16px;
+    padding: 72px 12px 52px 14px;
 }
 
     .eb_mobpage_pane_layout .eb_mobpage_drparea .eb_mobpage_drop {
@@ -162,11 +165,11 @@
     width: 100%;
     height: 100%;
     border: 2px dashed #ccc;
-    padding: 10px 10px 30px 10px;
+    padding: 0 10px;
     overflow-y: auto;
 }
 
-.eb_mob_form_container:after {
+/*.eb_mob_form_container:after {
     content: "Save";
     position: absolute;
     bottom: 0;
@@ -178,6 +181,91 @@
     align-items: center;
     justify-content: center;
     border-radius: 2px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.eb_mob_form_container:before {
+    content: "Save";
+    position: absolute;
+    bottom: 0;
+    background: #508bf9;
+    width: 100%;
+    display: flex;
+    color: white;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}*/
+
+/*.emulator_h_f:after {
+    content: "Save";
+    position: absolute;
+    bottom: 0;
+    background: #508bf9;
+    width: 100%;
+    display: flex;
+    color: white;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+.emulator_h_f:before {
+    content: "Save";
+    position: absolute;
+    bottom: 0;
+    background: #508bf9;
+    width: 100%;
+    display: flex;
+    color: white;
+    height: 30px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}*/
+.emulator_h_f {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    padding: 10px 6px 0px 10px;
+    display: flex;
+    flex-flow: column;
+    justify-content: space-between;
+}
+
+.emulator_h {
+    height: 60px;
+    background: #508bf9;
+    width: 100%;
+    border-top-left-radius: 30%;
+    border-top-right-radius: 30%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 5px;
+}
+
+.emulator_f {
+    height: 50px;
+    background: #508bf9;
+    width: 100%;
+    border-bottom-left-radius: 50%;
+    border-bottom-right-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .eb_mob_form_container:before {
@@ -192,12 +280,14 @@
 }
 
 .eb_mob_numericbox-btntype {
-    display:none;
+    display: none;
 }
+
     .eb_mob_numericbox-btntype .wraper {
         display: flex;
         justify-content: space-between;
     }
+
         .eb_mob_numericbox-btntype .wraper .numeric-btn {
             border-radius: 50%;
             border: 1px solid #ccc;
@@ -206,6 +296,7 @@
             height: 25px;
             padding: 0;
         }
+
         .eb_mob_numericbox-btntype .wraper .nemric-text input {
             border-radius: 4px;
             border: 1px solid #ccc;
@@ -233,8 +324,9 @@
 }
 
 .eb_mob_fupbtn {
-    width: 49%;
     border-radius: 4px;
+    background: white;
+    border: 1px solid #ccc;
 }
 
 .geoloc-ctrlwrapr {
@@ -256,6 +348,7 @@
         border: 1px solid #ccc;
         border-radius: 4px;
     }
+
 .eb_stacklayout .eb_mob_autoid {
     background: #dedddd;
     border: 1px solid #ccc;
@@ -292,8 +385,8 @@
     background: white;
     border: 1px solid #ccc;
     border-radius: 4px;
-    height: 550px;
     overflow: auto;
+    margin-bottom: -10px;
 }
 
     .eb_mobtree_body .eb_mobtree_inner {

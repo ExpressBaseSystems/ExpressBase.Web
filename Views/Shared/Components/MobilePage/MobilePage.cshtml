@@ -152,7 +152,15 @@
                             </div>
                         </div>
                     </div>
-                    <div class="eb_mobpage_pane_layout">
+                    <div class="eb_mobpage_pane_layout" style="display:none;">
+                        <div class="emulator_h_f">
+                            <div class="emulator_h" id="@("eb_emulater_title"+ViewBag.tabnum)">
+                                Untitled
+                            </div>
+                            <div class="emulator_f">
+                                Save
+                            </div>
+                        </div>
                         <div class="eb_mobpage_emulatorbody">
                             <div class="eb_mobpage_drparea">
                                 <div class="eb_mobpage_drop" id="@("eb_mobpage_pane"+ViewBag.tabnum)">
@@ -188,5 +196,6 @@
             TabNum: @ViewBag.tabnum,
             ServiceUrl: '@ViewBag.ServiceUrl'
         });
+        $(".eb_mobpage_pane_layout").fadeIn();
     });
 </script>

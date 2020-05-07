@@ -22,7 +22,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.refreshToken = null;
     this.initControls = new InitControls(this);
     this.rendererName = "Bot";
-    this.typeDelay = 200;
+    this.typeDelay = 600;
+    this.controlHideDelay = 300;
+    this.breathingDelay = 200;
     this.ChartCounter = 0;
     this.formsList = {};
     this.formsDict = {};
@@ -760,9 +762,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             tempCtrl.find('input[type="file"]').remove();
             tempCtrl.find('input[type="text"]').remove();
             tempCtrl.attr('id', "");
-            if (ctrl.DataVals.Value) {               
+            if (ctrl.DataVals.Value) {
                 tempCtrl.find('.SFUPcontainer').attr('id', "");
-                
+
             }
             else {
                 tempCtrl.find('.SFUPcontainer').empty().append('<span>No file uploaded</span>');
@@ -923,7 +925,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
         }
-        this.callGetControl(this.nxtCtrlIdx);
+        this.callGetControl(this.controlHideDelay);
 
         if ($('[saveprompt]').length === 1) {
             this.showConfirm();
@@ -1011,7 +1013,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //console.log(this.curForm.Controls.$values[0].selectedRow);//  hardcoding
     };
 
-    this.callGetControl = function () {
+    this.callGetControl = function (delay) {
         if (this.nxtCtrlIdx !== this.formControls.length) { // if not last control
             if (!this.IsEdtMode || this.IsDpndgCtrEdt) {   // (if not edit mode or IsDpndgCtr edit mode) if not skip calling getControl()
                 var visibleIfFn = this.formFunctions.visibleIfs[this.curForm.Controls.$values[this.nxtCtrlIdx].Name];
@@ -1019,11 +1021,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.valueExpHandler(this.curForm.Controls.$values[this.nxtCtrlIdx]);
                 //}
                 if ((!visibleIfFn || visibleIfFn(this.formValues)) && !this.curForm.Controls.$values[this.nxtCtrlIdx].Hidden) {//checks isVisible or no isVisible defined                    
-                    this.getControl(this.nxtCtrlIdx);
+                    this.getControl(this.nxtCtrlIdx, delay);
                 }
                 else {
                     this.nxtCtrlIdx++;
-                    this.callGetControl();
+                    this.callGetControl(delay);
                 }
             }
         }
@@ -1048,32 +1050,36 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
     };
 
-    this.getControl = function (idx) {
-        if (idx === this.formControls.length)
-            return;
-        var controlHTML = this.formControls[idx][0].outerHTML;
-        var $ctrlCont = $(controlHTML);
-        this.curCtrl = this.curForm.Controls.$values[idx];
-        var name = this.curCtrl.Name;
-        //if (!(this.curCtrl && (this.curCtrl.ObjType === "Cards" || this.curCtrl.ObjType === "Locations" || this.curCtrl.ObjType === "InputGeoLocation" || this.curCtrl.ObjType === "Image")))
-        if (!(this.curCtrl && this.curCtrl.IsFullViewContol))
-            $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
-        var label = this.curCtrl.Label;
-        if (label) {
-            if (this.curCtrl.HelpText)
-                label += ` (${this.curCtrl.HelpText})`;
-            this.msgFromBot(label);
-        }
-        if (this.curCtrl.ObjType === "Image") {
-            this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
-            this.nxtCtrlIdx++;
-            this.callGetControl();
-        }
-        else if (this.curCtrl.ObjType === "Labels") {
-            this.sendLabels(this.curCtrl);
-        }
-        else
-            this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
+    this.getControl = function (idx, delay = 0) {
+        delay = delay !== 0 ? (delay + 200) : delay;
+        setTimeout(function () {
+            if (idx === this.formControls.length)
+                return;
+            var controlHTML = this.formControls[idx][0].outerHTML;
+            var $ctrlCont = $(controlHTML);
+            this.curCtrl = this.curForm.Controls.$values[idx];
+            var name = this.curCtrl.Name;
+            //if (!(this.curCtrl && (this.curCtrl.ObjType === "Cards" || this.curCtrl.ObjType === "Locations" || this.curCtrl.ObjType === "InputGeoLocation" || this.curCtrl.ObjType === "Image")))
+            if (!(this.curCtrl && this.curCtrl.IsFullViewContol))
+                $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
+            var label = this.curCtrl.Label;
+            if (label) {
+                if (this.curCtrl.HelpText)
+                    label += ` (${this.curCtrl.HelpText})`;
+                this.msgFromBot(label);
+            }
+            if (this.curCtrl.ObjType === "Image") {
+                this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
+                this.nxtCtrlIdx++;
+                this.callGetControl();
+            }
+            else if (this.curCtrl.ObjType === "Labels") {
+                this.sendLabels(this.curCtrl);
+            }
+            else
+                this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
+
+        }.bind(this), delay);
     }.bind(this);
 
     this.sendLabels = function (ctrl) {
@@ -1123,7 +1129,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         });
         EbSE.onUploadSuccess = function (obj, e) {
             $(`[for=${id}] .img-loader:last`).hide(100);
-            this.callGetControl(this.nxtCtrlIdx);
+            this.callGetControl();
 
             this.formValues[id] = obj.objectId;
             this.formValuesWithType[id] = [this.formValues[id], 16];
@@ -1235,11 +1241,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.sendCtrlAfter = function ($prevMsg, msg) {
-        var $msg = this.$userMsgBox.clone();
-        $msg.find('.msg-wraper-user').html(msg).append(this.getTime());;
-        $msg.insertAfter($prevMsg);
-        $(".eb-chatBox").scrollTop($(".eb-chatBox")[0].scrollHeight);
-        //$('.eb-chatBox').scrollTop(99999999999);
+        setTimeout(function () {
+            var $msg = this.$userMsgBox.clone();
+            $msg.find('.msg-wraper-user').html(msg).append(this.getTime());
+            $msg.insertAfter($prevMsg);
+            this.scrollToBottom();
+        }.bind(this), this.controlHideDelay + this.breathingDelay);           
     };
 
     this.startTypingAnim = function ($msg) {
@@ -1288,7 +1295,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.ready = true;
                 if (callbackFn && typeof callbackFn === typeof function () { })
                     callbackFn();
-                $(".eb-chatBox").scrollTop($(".eb-chatBox")[0].scrollHeight);
+                this.scrollToBottom();
             }.bind(this), this.typeDelay);
             this.ready = false;
         }
@@ -1302,6 +1309,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //$('.eb-chatBox').animate({ scrollTop: $('.eb-chatBox')[0].scrollHeight });
 
     }.bind(this);
+
+    this.scrollToBottom = function () {
+        setTimeout(function () {
+            $(".eb-chatBox").scrollTop($(".eb-chatBox")[0].scrollHeight, 500, { easing: 'swing' });
+        }.bind(this), this.controlHideDelay + this.breathingDelay);
+    };
 
     //load control script
     this.loadcontrol = function () {
@@ -1482,7 +1495,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let hour = new Date().getHours();
         let am_pm = "am";
         let minuteStr = new Date().getMinutes();
-
+        minuteStr = minuteStr < 10 ? ("0" + minuteStr) : minuteStr;
         if (hour > 12) {
             hourStr = hour % 12;
             am_pm = "pm";

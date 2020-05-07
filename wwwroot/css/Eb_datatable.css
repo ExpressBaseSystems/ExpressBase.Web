@@ -888,8 +888,9 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     font-weight: 500;
 }
 .status-time {
-    margin-left: 10px;
+    font-size: 13px;
     color: #041982;
+    margin: 0;
 }
 
 /*.comment-td:hover {

@@ -82,6 +82,9 @@
             }
         }
         ebcontext.header.updateNCount(this.notification_count + this.actions_count);
+        $('.status-time').tooltip({
+            placement: 'top'
+        });
     }
 
     drawNotifications(nf) {
@@ -93,7 +96,7 @@
                 <li class="nf-tile" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
                     <div class="notification-inner">
                         <h5>${nf[i].title || plc}</h5>
-                        <p class='pending_date status-time' title='${nf[i].createdDate}'>${nf[i].duration}</p>
+                        <span class='pending_date status-time' title='${nf[i].createdDate}'>${nf[i].duration}</span>
                     </div>
                 </li>`);
             }

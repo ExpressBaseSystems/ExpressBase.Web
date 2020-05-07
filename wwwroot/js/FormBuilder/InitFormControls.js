@@ -546,6 +546,7 @@
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
+        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) =>  $(event.target).closest('.locinp-cont').find('.locinp').val(''));
         $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
     };
 

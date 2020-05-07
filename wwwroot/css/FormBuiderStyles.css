@@ -1361,10 +1361,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 }
 
 .locinp-address .locinp {
-    width:100%;
+    width: 100%;
+    padding-right: 25px;
 }
 
 .locinp-address {
+    position: relative;
     display: inline-block;
     width: calc(100% - 82px);
 }
@@ -2320,8 +2322,30 @@ input.locinp {
     }
 
 
+.ratingDiv_dc {
+    font-size: 20px;
+    padding: 7px 10px;
+}
 
-#cpatchaTextBox {
+.locinp-cont .loc-close {
+    display: none;
+    position: absolute;
+    top: -1px;
+    padding: 2px;
+    right: 5px;
+    color: #e7000091;
+    opacity: 0.6;
+    font-size: 16px;
+    transition-duration: 0.2s;
+}
+.loc-close:hover {
+    opacity: 1;
+}
+
+.locinp-cont:hover .loc-close {
+    display: inline-block;
+}
+    #cpatchaTextBox {
     margin-bottom: 10px;
     width: 70%;
     margin-left: 15%;

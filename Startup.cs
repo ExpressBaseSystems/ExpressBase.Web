@@ -157,7 +157,7 @@ namespace ExpressBase.Web2
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
-                app.UseHsts();
+                //app.UseHsts();
             }
             else
             {

@@ -75,11 +75,10 @@
             if (!(!rfid || rfid.length === 0)) {
                 let indx = this.pgSettings.findIndex(item => item.FileRefId == rfid);
                 if (this.pgSettings[indx].FileCategory == 1) {
-                    //let temparr = $.extend(this.pgSettings);
-                    let temparr = this.pgSettings.concat();
-                    for (let i = 0; i < temparr.length; i++) {
-                        if (temparr[i].FileCategory == 0) {
-                            temparr.splice(i, 1);
+                    let temparr = [];
+                    for (let i = 0; i < this.pgSettings.length; i++) {
+                        if (this.pgSettings[i].FileCategory == 1) {
+                            temparr.push(this.pgSettings[i]);
                         }
                     }
                     let j = temparr.findIndex(x => x.FileRefId == rfid);

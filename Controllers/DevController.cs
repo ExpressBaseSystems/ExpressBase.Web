@@ -81,12 +81,16 @@ namespace ExpressBase.Web.Controllers
 			else if (Type == EbApplicationTypes.Bot)
 			{
 				EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
-				if (settings != null)
+				 if (settings != null)
 				{
-					if (settings.CssContent == null)
+					if (settings.CssContent == null || settings.CssContent.Count==0)
 					{
 						settings.CssContent = CssContent();
 					}
+					//if (settings.otherprop == null)
+					//{
+					//	settings.otherprop.Ebtag = true;
+					//}
 				}
 				ViewBag.AppSettings = settings ?? new EbBotSettings() { CssContent = CssContent() };
 			}

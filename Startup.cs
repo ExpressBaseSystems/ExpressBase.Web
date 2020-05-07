@@ -116,21 +116,21 @@ namespace ExpressBase.Web2
             var redisServer = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_SERVER);
             var redisPassword = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PASSWORD);
             var redisPort = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_REDIS_PORT);
-            if (env == "Staging")
-            {
-                services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
-                {
-                    return new RedisClient(redisServer, Convert.ToInt32(redisPort));
-                });
-            }
-            else
-            {
+            //if (env == "Staging")
+            //{
+            //    services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
+            //    {
+            //        return new RedisClient(redisServer, Convert.ToInt32(redisPort));
+            //    });
+            //}
+            //else
+            //{
                 var redisConnectionString = string.Format("redis://{0}@{1}:{2}", redisPassword, redisServer, redisPort);
                 services.AddScoped<IRedisClient, RedisClient>(serviceProvider =>
                 {
                     return new RedisClient(redisConnectionString); ;
                 });
-            }
+            //}
 
             ////Setting Assembly version in Redis
             //AssemblyName assembly = Assembly.GetExecutingAssembly().GetName();

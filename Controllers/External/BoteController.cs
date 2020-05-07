@@ -38,7 +38,18 @@ namespace ExpressBase.Web.Controllers
 		public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL, string msg)
 		{
 			var host = this.HttpContext.Request.Host;
-			EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
+			//EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
+			string cid = this.GetIsolutionId(tid);
+			EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid));
+			if (settings == null)
+				settings = new EbBotSettings()
+				{
+					Name = "- Application Name -",
+					ThemeColor = "#055c9b",
+					DpUrl = "../images/demobotdp4.png",
+					WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
+				};
+
 			ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
 			ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
 			ViewBag.tid = tid;
@@ -85,8 +96,10 @@ namespace ExpressBase.Web.Controllers
                     d.ebbotName = '{2}' || '< EBbot >';
                     d.ebbotThemeColor = '{3}' || '#055c9b';
                     d.botdpURL = '{4}';
-                    d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';
+                    d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';					
 					d.ebmod='{6}'", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env);
+
+
 			}
 			else
 			{
@@ -134,7 +147,7 @@ namespace ExpressBase.Web.Controllers
 					{
 						CssContent = FetchCss()
 					};
-				if (settings.CssContent==null)
+				if (settings.CssContent==null || settings.CssContent.Count == 0)
 				{
 					settings.CssContent = FetchCss();
 				}

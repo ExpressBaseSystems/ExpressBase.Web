@@ -1053,13 +1053,13 @@ namespace ExpressBase.Web.Controllers
             return Encoding.UTF8.GetString(b);
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("{stripwebhook}")]
-        public string TestStripeWebhook()
-        {
-            string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
-            Console.WriteLine("Webhook Response  : " + json);
-            return json;
-        }
+        //[Microsoft.AspNetCore.Mvc.Route("{stripwebhook}")]
+        //public string TestStripeWebhook()
+        //{
+        //    string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+        //    Console.WriteLine("Webhook Response  : " + json);
+        //    return json;
+        //}
 
         public IActionResult InstallFromStore(int appid)
         {

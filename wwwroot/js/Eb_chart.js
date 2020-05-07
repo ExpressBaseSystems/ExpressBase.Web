@@ -287,7 +287,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.EbObject = this.EbObject;
         if (this.EbObject.Type !== "")
             this.type = this.EbObject.Type;
-        $.event.props.push('dataTransfer');
+        //$.event.props.push('dataTransfer');
             this.createChartDivs();
         this.appendColumns();
         if (!this.bot) {

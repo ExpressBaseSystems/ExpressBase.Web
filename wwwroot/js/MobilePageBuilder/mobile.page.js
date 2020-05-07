@@ -343,6 +343,9 @@ function EbMobStudio(config) {
         else if (obj.constructor.name === "EbMobileGeoLocation" && pname === "HideSearchBox") {
             obj._toggleSearchBar();
         }
+        else if (pname === "DisplayName" && obj.constructor.name === "EbMobilePage") {
+            this.setEmulatorTitle(obj[pname]);
+        }
         else {
             console.log("pg changed");
         }
@@ -368,6 +371,14 @@ function EbMobStudio(config) {
         }.bind(this));
     };
 
+    this.refreshEmulator = function () {
+        $(".eb_mobpage_pane_layout").height($("#eb_mobpage_toolbox0").height() - 10);
+    };
+
+    this.setEmulatorTitle = function (value) {
+        $("#eb_emulater_title" + this.Conf.TabNum).text(value);
+    };
+
     this.exe = function () {
         this.Controls = new MobileControls(this);
         if (this.EditObj === null || this.EditObj === undefined)
@@ -384,6 +395,9 @@ function EbMobStudio(config) {
         });
         this.Menu = new MobileMenu(this);
         $("body").on("dblclick", ".ctrl_label", this.labelOnDoubleClick.bind(this));
+        this.refreshEmulator();
+        this.setEmulatorTitle(this.EbObject.DisplayName || "Untitled");
+        $(window).resize(function () { this.refreshEmulator(); }.bind(this));
     };
 
     this.exe();

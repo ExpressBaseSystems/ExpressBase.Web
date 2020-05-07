@@ -390,7 +390,7 @@ var mapView = function (option) {
 
     this.Getdata = function () {
         this.EbObject = this.EbObject;
-        $.event.props.push('dataTransfer');
+        //$.event.props.push('dataTransfer');
         this.CreateGoggleDiv();
         this.appendColumns();
         this.appendLatLong();

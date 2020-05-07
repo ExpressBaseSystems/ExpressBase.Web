@@ -615,5 +615,60 @@ namespace ExpressBase.Web.Controllers
 			}
 			return res.FileRefId;
 		}
-	}
+
+        public string GetAllMeetingSlots(int MeetingId, string date)
+        {
+            GetMeetingSlotsResponse Resp = this.ServiceClient.Post<GetMeetingSlotsResponse>(new GetMeetingSlotsRequest { MeetingScheduleId = MeetingId, Date = date });
+
+            List<MeetingSlots> Slots = new List<MeetingSlots>();
+
+            foreach (var Obj in Resp.AllSlots)
+            {
+                if (Obj.SlotAttendeeCount >= Obj.No_Attendee)
+                {
+                    Slots.Add(
+                        new MeetingSlots()
+                        {
+                            Meeting_Id = Obj.Meeting_Id,
+                            Slot_id = Obj.Slot_id,
+                            Is_approved = Obj.Is_approved,
+                            Date = Obj.Date,
+                            Description = Obj.Description,
+                            Meeting_schedule_id = Obj.Meeting_schedule_id,
+                            Time_from = Obj.Time_from,
+                            Time_to = Obj.Time_to,
+                            Title = Obj.Title,
+                            IsHide = true,
+                            Attendee_count = Obj.Attendee_count,
+                            Host_count = Obj.Host_count,
+                            Duration = Obj.Duration,
+                        }
+                    );
+                }
+                else
+                {
+                    Slots.Add(
+                        new MeetingSlots()
+                        {
+                            Meeting_Id = Obj.Meeting_Id,
+                            Slot_id = Obj.Slot_id,
+                            Is_approved = Obj.Is_approved,
+                            Date = Obj.Date,
+                            Description = Obj.Description,
+                            Meeting_schedule_id = Obj.Meeting_schedule_id,
+                            Time_from = Obj.Time_from,
+                            Time_to = Obj.Time_to,
+                            Title = Obj.Title,
+                            IsHide = false,
+                            Attendee_count = Obj.Attendee_count,
+                            Host_count = Obj.Host_count,
+                            Duration = Obj.Duration,
+                        }
+                    );
+                }
+
+            }
+            return JsonConvert.SerializeObject(Slots);
+        }
+    }
 }

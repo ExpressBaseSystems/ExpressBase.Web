@@ -89,7 +89,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
-        $("body").on("click", ".btn-box [for=emaillogin]", this.emailLoginFn);
+        //$("body").on("click", ".btn-box [for=emaillogin]", this.emailLoginFn);
         $("body").on("click", ".cards-btn-cont .btn", this.ctrlSend);
         $("body").on("click", ".survey-final-btn .btn", this.ctrlSend);
         $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);

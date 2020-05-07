@@ -2620,7 +2620,6 @@
             placement: 'top'
         });
 
-
         $('.columntooltip').popover({
             container: 'body',
             trigger: 'hover',

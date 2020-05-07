@@ -771,7 +771,7 @@ input:checked + .proslider:before {
     color: #504e4e;
 }
 
-.eb-notification-window .pending_action_inner p {
+.eb-notification-window .pending_action_inner .pending_date {
     margin: 0;
     font-size: 13px;
     color: #7b7b7b;

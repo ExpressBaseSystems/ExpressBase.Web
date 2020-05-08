@@ -61,7 +61,7 @@
                         </div>
                         <div class="eb_mobpage_tbxcategory">
                             <div class="eb_mobpage_tbx_head">
-                                Form Controls
+                                Form Controls / Filter Controls
                             </div>
                             <div class="eb_mobpage_tbxbdy">
                                 <div eb-type="EbMobileTextBox" ctrname="TextBox" class="toolitems draggable">
@@ -142,13 +142,31 @@
                 <div class="eb_mobpage_pane_body">
                     <div class="eb_mobtree_body" style="display:none;" id="@("eb_mobtree_body_"+ViewBag.tabnum)">
                         <div class="eb_mobtree_inner">
-                            <div class="eb_mobtree_ds">
-                                <ul id="@("ds_parameter_list" + ViewBag.tabnum)" class="tool-box-items">
-                                    <li>
-                                        <a>Columns</a>
-                                        <ul class="ds_cols"></ul>
-                                    </li>
-                                </ul>
+                            <ul class="nav nav-tabs eb-styledTab eb_mobtree_body-tabhead">
+                                <li class="nav-item active">
+                                    <a class="nav-link" data-toggle="tab" role="tab" href="#dstree-tab">
+                                        Columns
+                                    </a>
+                                </li>
+                                <li class="nav-item" id="form_controls_tab" style="display:none;">
+                                    <a class="nav-link" data-toggle="tab" role="tab" href="#formtree-tab">
+                                        Form Controls
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content eb_mobtree_body-content">
+                                <div id="dstree-tab" class="tab-pane h-100 active">
+                                    <div class="eb_mobtree_ds">
+                                        <ul id="@("ds_parameter_list" + ViewBag.tabnum)" class="tool-box-items">
+                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="formtree-tab" class="tab-pane h-100">
+                                    <div id="@("form_controls_list" + ViewBag.tabnum)" class="mobtree_f-controls">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

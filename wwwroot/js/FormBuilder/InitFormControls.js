@@ -681,7 +681,7 @@
     };
 
     this.MeetingPicker = function (ctrl, ctrlOpts) {
-        return new meetingPicker(ctrl, ctrlOpts);
+        return new meetingPicker(ctrl, ctrlOpts, this.Renderer.rendererName);
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {

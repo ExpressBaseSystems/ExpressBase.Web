@@ -36,7 +36,7 @@
     }
 
     .eb_mobpage_wraper .eb_mobpage_toolbox .head {
-        padding: 2px 5px;
+        padding: 5px 5px;
         border-bottom: 1px solid #ddd;
         background: #eee;
         font-size: 13px;
@@ -61,7 +61,7 @@
 
 .eb_mobpage_pane_layout_emulator {
     height: 100%;
-    z-index:1;
+    z-index: 1;
 }
 
 .eb_mobpage_pane_layout .eb_mobpage_emulatorbody {
@@ -167,70 +167,10 @@
     border: 2px dashed #ccc;
     padding: 0 10px;
     overflow-y: auto;
+    display: flex;
+    flex-flow: column;
 }
 
-/*.eb_mob_form_container:after {
-    content: "Save";
-    position: absolute;
-    bottom: 0;
-    background: #508bf9;
-    width: 100%;
-    display: flex;
-    color: white;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-
-.eb_mob_form_container:before {
-    content: "Save";
-    position: absolute;
-    bottom: 0;
-    background: #508bf9;
-    width: 100%;
-    display: flex;
-    color: white;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}*/
-
-/*.emulator_h_f:after {
-    content: "Save";
-    position: absolute;
-    bottom: 0;
-    background: #508bf9;
-    width: 100%;
-    display: flex;
-    color: white;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}
-.emulator_h_f:before {
-    content: "Save";
-    position: absolute;
-    bottom: 0;
-    background: #508bf9;
-    width: 100%;
-    display: flex;
-    color: white;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-    border-radius: 2px;
-    border-bottom-left-radius: 15px;
-    border-bottom-right-radius: 15px;
-}*/
 .emulator_h_f {
     position: absolute;
     width: 100%;
@@ -327,6 +267,7 @@
     border-radius: 4px;
     background: white;
     border: 1px solid #ccc;
+    width: 49%;
 }
 
 .geoloc-ctrlwrapr {
@@ -381,7 +322,7 @@
     }
 /*tree div*/
 .eb_mobtree_body {
-    width: 270px;
+    width: auto;
     background: white;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -390,16 +331,52 @@
 }
 
     .eb_mobtree_body .eb_mobtree_inner {
+        display: flex;
+        flex-flow: column nowrap;
     }
 
-        .eb_mobtree_body .eb_mobtree_inner ul {
-            list-style: none;
+        .eb_mobtree_body .eb_mobtree_inner .eb_mobtree_body-tabhead {
+            background: #eeeeee;
         }
 
-        .eb_mobtree_body .eb_mobtree_inner .eb_mobtree_ds a {
-            font-size: 15px;
-            font-weight: 500;
-        }
+            .eb_mobtree_body .eb_mobtree_inner .eb_mobtree_body-tabhead.nav > li > a {
+                padding: 5px 15px;
+                font-size: 13px;
+                color: #323d46;
+            }
+
+.eb-styledTab > li.active > a, .eb-styledTab > li.active > a:focus {
+    color: #508bf9 !important;
+}
+
+.eb_mobtree_body .eb_mobtree_inner .eb_mobtree_body-content {
+    flex: 1;
+}
+
+.eb_mobtree_body .eb_mobtree_inner ul {
+    list-style: none;
+}
+
+.eb_mobtree_body .eb_mobtree_inner .eb_mobtree_ds a {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.eb_mobtree_body .mobtree_f-controls {
+    padding: 5px;
+}
+
+.eb_mobtree_body .filter_controls {
+    width: 100%;
+    padding: 10px 10px;
+    border-radius: 2px;
+    box-shadow: 0 0 30px 0px rgba(0, 0, 0, 0.05), 0 0 1px 0px rgba(0, 0, 0, 0.11);
+    background-color: white;
+    border: solid 1px rgba(0, 0, 255, 0);
+    transition-duration: 0.05s;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
 /*data col*/
 .data_column {
     display: flex;
@@ -424,52 +401,48 @@
     justify-content: center;*/
 }
 
-    .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container {
-        display: flex;
-        background: white;
-        border: 1px solid #ccc;
-    }
-
-        .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container .data_column {
-            position: relative !important;
-        }
-
-        .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container .list_item {
-            min-height: 50px;
-            padding: 5px;
-            width: 100%;
-        }
-
-            .eb_mob_vis_container .eb_mob_container_inner .vis-preview-container .list_item .eb_tablelayout_table {
-                width: 100%;
-            }
-
     .eb_mob_vis_container .eb_mob_container_inner .vis-table-container {
         margin-bottom: 15px;
     }
 
     .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container {
-        min-height: 100px;
-        background: white;
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
-        flex-flow: row wrap;
         overflow-y: auto;
+        padding: 0 10px;
+        height:100%;
     }
 
-        .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container .data_column {
-            background: #316396;
+    .eb_mob_vis_container .eb_mob_container_inner .filter_sort-tab {
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        flex: 1;
+        display: flex;
+        flex-flow: column;
+    }
+
+        .eb_mob_vis_container .eb_mob_container_inner .filter_sort-tab .nav > li > a {
+            padding: 5px 15px;
+        }
+
+    .eb_mob_vis_container .eb_mob_container_inner .filter_sort-tab-content {
+        flex: 1;
+    }
+
+    .eb_mob_vis_container .eb_mob_container_inner .vis-sort-container {
+        height: 100%;
+        padding: 10px;
+    }
+
+        .eb_mob_vis_container .eb_mob_container_inner .vis-sort-container .data_column {
+            background: #888888;
             color: white;
             padding: 5px;
             border-radius: 4px;
-            font-size: 12px;
-            margin: 5px;
-            width: auto;
+            font-size: 13px;
+            position: relative !important;
+            height: auto;
+            margin-bottom: 10px;
         }
 
-        .eb_mob_vis_container .eb_mob_container_inner .vis-filter-container .data_column {
-            position: relative !important;
-        }
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {
     width: 100%;
@@ -563,3 +536,9 @@
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
+
+/*toggle button styles*/
+    .ebmb-tooglebtn{
+
+    }
+/**/

@@ -1,5 +1,6 @@
 ﻿function MobileControls(root) {
     this.Root = root;
+    this.FilterControls = [];//only for vis filter
 
     this.initForm = function (o) {
         this.Root.makeDropable(o.EbSid, "EbMobileForm");
@@ -25,12 +26,17 @@
         if (this.Root.Mode === "edit" && this.Root.EditObj !== null) {
             tobj.fillControls(this.Root.EditObj.Container.DataLayout.CellCollection.$values, this.Root);//fill table cells
 
-            let filters = this.Root.EditObj.Container.Filters.$values;
-            for (let i = 0; i < filters.length; i++) {
-                this.renderFilter(filters[i]);
-            }
-            this.refreshList();
+            let filterControls = this.Root.EditObj.Container.FilterControls.$values;
+            this.Root.setCtrls($(`#${o.EbSid} .eb_mob_container_inner .vis-filter-container`), filterControls);
             this.Root.getColums4ListView(o);
+            this.setSortColumns(o);
+
+            this.getLinkFormControls(o, function (json) {
+                var controls = (json === null || json === undefined) ? [] : JSON.parse(json).$values;
+                this.FilterControls = controls;//store controls in vis object
+                if (controls.length > 0)
+                    this.drawFormControls(controls);
+            }.bind(this));
         }
     };
 
@@ -43,6 +49,22 @@
 
     this.makeFilterColsDropable = function (container) {
         $(`#${container.EbSid} .vis-filter-container`).droppable({
+            accept: this.Root.getDropAcceptClass("EbMobileForm") + ",.filter_controls",
+            hoverClass: "drop-hover-td",
+            tolerance: "fit",
+            greedy: true,
+            drop: function (event, ui) {
+                let o = this.Root.onDropFn(event, ui);
+                if ($(ui.draggable).hasClass("filter_controls")) {
+                    let name = $(ui.draggable).attr("name");
+                    let ctrl = this.FilterControls.find(el => el.Name === name) || {};
+                    $.extend(true, o, ctrl);
+                    this.Root.refreshControl(o);
+                }
+            }.bind(this)
+        });
+
+        $(`#${container.EbSid} .vis-sort-container`).droppable({
             accept: ".draggable_column",
             hoverClass: "drop-hover-td",
             drop: function (event, ui) {
@@ -54,40 +76,75 @@
                 obj.ColumnIndex = dragged.attr("index");
                 obj.TableIndex = dragged.attr("tableIndex");
                 $(event.target).append(obj.$Control.outerHTML());
+                obj.blackListProps = Array.from(["TextFormat","Font","Required"]);//for pghelper extension
                 this.Root.refreshControl(obj);
-                $("#" + obj.EbSid).off("focus");
             }.bind(this)
         });
     };
 
-    this.renderFilter = function (filterCol) {//render filter cols on edit
-        let obj = this.Root.makeElement("EbMobileDataColumn", "DataColumn");
-        $.extend(obj, filterCol);
-        $(".mob_container .vis-filter-container").append(obj.$Control.outerHTML());
-        this.Root.refreshControl(obj);
-        $("#" + obj.EbSid).off("focus");
+    this.getLinkFormControls = function (vis, callback) {
+        if (vis.LinkRefId) {
+            $.ajax({
+                url: "../Dev/GetMobileFormControls",
+                type: "GET",
+                cache: false,
+                data: { refid: vis.LinkRefId },
+                beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
+                success: function (result) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    callback(result);
+                }.bind(this),
+                error: function () {
+                    $("#eb_common_loader").EbLoader("hide");
+                }
+            });
+        }
     };
 
-    this.refreshList = function () {
-        let html = $(`div[eb-type="EbMobileVisualization"] [eb-type="EbMobileTableLayout"]`).html();
-        $(`div[eb-type="EbMobileVisualization"] .vis-preview-container`).html(`<div class="list_item">${html}</div>`);
+    this.setSortColumns = function (vis) {
+        let filters = vis.SortColumns.$values;
+        for (let i = 0; i < filters.length; i++) {
+            let obj = this.Root.makeElement("EbMobileDataColumn", "DataColumn");
+            $.extend(obj, filters[i]);
+            $(`#${vis.EbSid} .vis-sort-container`).append(obj.$Control.outerHTML());
+            this.Root.refreshControl(obj);
+            obj.blackListProps = Array.from(["TextFormat", "Font", "Required"]);//for pghelper extension
+        }
     };
 
-    this.getListHtml = function () {
-        let html = [];
-        html.push(`<div class='eb_mob_listwraper'>
-                        <div class='eb_mob_listinner'>
-                            
-                        </div>
-                </div >`);
-        return html.join("");
+    this.drawFormControls = function (controls) {
+        //sow tab
+        $(`#eb_mobtree_body_${this.Root.Conf.TabNum} #form_controls_tab`).show();
+
+        for (let i = 0; i < controls.length; i++) {
+
+            let ebtype = this.Root.getType(controls[i].$type);
+
+            $(`#form_controls_list${this.Root.Conf.TabNum}`).append(`
+            <div class="filter_controls" eb-type="${ebtype}" ctrname="${ebtype.replace("EbMobile", "")}" name="${controls[i].Name}">
+                <i class="fa ${controls[i].Icon}" style="margin-right:10px;"></i>
+                ${controls[i].Name}
+            </div>`);
+        }
+
+        //make filter controls draggable
+        $(`.filter_controls`).draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            appendTo: "body",
+            drag: function (event, ui) {
+                $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "auto", "padding": "5px", "border-radius": "4" });
+            }
+        });
     };
 
     this.drawDsColTree = function (colList) {
-        $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty();
+        $(`#ds_parameter_list${this.Root.Conf.TabNum}`).empty();
         var type = "EbMobileDataColumn";
         $.each(colList, function (i, columnCollection) {
-            $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).append("<li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
+            $(`#ds_parameter_list${this.Root.Conf.TabNum}`).append("<li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
                 let icon = this.getIconByType(obj.type);
                 let $div = $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[id='t${i}']`);
@@ -148,7 +205,7 @@
             }
         }
 
-        $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty().append(htmlString);
+        $(`#ds_parameter_list${this.Root.Conf.TabNum}`).empty().append(htmlString);
         $(`#ds_parameter_list${this.Root.Conf.TabNum}`).killTree();
         $(`#ds_parameter_list${this.Root.Conf.TabNum}`).treed();
         $(".branch").click();

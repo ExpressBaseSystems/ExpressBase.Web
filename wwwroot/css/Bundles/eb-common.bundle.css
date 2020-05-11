@@ -8,8 +8,6 @@ body {
     --colorDDD: #ddf;
     --sild1pxDDD: solid 1px var(--colorDDD);
     --pgTdBorder: solid 1px #eeeeff;
-    /*gradients*/
-    /*--gbm: -webkit-gradient(linear, left top, right bottom, color-stop(0.44, #336699), color-stop(0.16, #49b18f), color-stop(0.92, rgb(220, 9, 144)));*/
     --gbm: -webkit-gradient(linear, left top, left bottom, color-stop(0.44, #336689), color-stop(0.16, #235187), color-stop(0.92, rgb(61, 115, 140)));
     --blackpipe: -webkit-linear-gradient(top, #4c4c4c 3%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 46%,#000000 53%,#111111 64%,#2b2b2b 82%,#1c1c1c 94%,#131313 100%);
     --blum: -webkit-gradient(linear, left bottom, left top, color-stop(0.44, rgb(122,153,217)), color-stop(0.86, #369), color-stop(0.72, rgb(73,125,189)));
@@ -52,7 +50,6 @@ body, html, .html-root {
     border-radius: 3px;
     -webkit-transition: .2s;
     transition: .2s;
-    /*box-shadow: 0 3px 13px rgba(0,0,0,0.09), 0 1px 5px 0 rgba(0,0,0,0.14);*/
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -71,7 +68,6 @@ body, html, .html-root {
 }
 
     .ebbtn:hover {
-        /*box-shadow: 0 5px 16px 1px rgba(0,0,0,0.13), 0 1px 4px 0 rgba(0,0,0,0.09);*/
         text-decoration: none;
         color: inherit;
     }
@@ -882,6 +878,15 @@ body, html, .html-root {
                 background: #f2f2f2;
             }
 /*inner page expand button end*/
+
+/*dom common window modal*/
+.eb-common-popup .modal-header {
+    display:flex;
+}
+.eb-common-popup .modal-header {
+    padding: 10px 15px;
+}
+/*dom common window modal*/
 /*Responsive media queries*/
 @media (max-width: 768px) {
 }
@@ -890,20 +895,11 @@ body, html, .html-root {
 }
 
 @media (min-width: 450px) and (max-width: 800px) {
-    /*.ext-pageheader .drp_container {
-        width: 400px !important;
-    }*/
+
 }
 
 @media only screen and (min-device-width: 480px) and (max-device-width: 640px) and (orientation: landscape) {
-    /*.ext-pageheader .nav > li {
-        float: left;
-        width: 100%;
-    }
-
-    .ext-pageheader .drp_container::after {
-        display: none;
-    }*/
+    
 }
 
 @media (min-width: 20px) and (max-width: 450px) {
@@ -919,27 +915,6 @@ body, html, .html-root {
     .eb_login .eb_socilaWrpr {
         max-width: 100%;
     }
-    /*.ext-pageheader .navbar-collapse {
-        text-align: center;
-    }
-
-    .ext-pageheader .nav > li {
-        float: left;
-        width: 100%;
-    }
-
-    .ext-pageheader .drp_items_desc {
-        float: left;
-        width: 100%;
-        padding-left: 0;
-    }*/
-    /*.ext-pageheader li[class='open'] {
-        background: #fafafa;
-    }
-
-    .ext-pageheader .drp_container::after {
-        display: none;
-    }*/
     .login_container form, .login_container_usr form {
         flex: 1;
         max-width: 100%;

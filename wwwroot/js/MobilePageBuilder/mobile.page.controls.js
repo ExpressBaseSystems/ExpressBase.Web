@@ -227,13 +227,13 @@
         }
         else {
             html[propName].push(`<li class='styl'>
-                            <span eb-type='EbMobileDataColumn'
-                                  ctrname="DataColumn"
-                                  DbType='${jsobj.EbDbType}'
-                                  ColName='${jsobj.Name}' 
-                                  class='draggable_column'><i class='fa ${this.getIconByType(jsobj.EbDbType)} column_tree_typeicon'></i> ${jsobj.Name} 
-                            </span>
-                        </li>`);
+                                    <span eb-type='EbMobileDataColumn'
+                                          ctrname="DataColumn"
+                                          DbType='${jsobj.EbDbType}'
+                                          ColName='${jsobj.Name}' 
+                                          class='draggable_column'><i class='fa ${this.getIconByType(jsobj.EbDbType)} column_tree_typeicon'></i> ${jsobj.Name} 
+                                    </span>
+                                </li>`);
         }
     };
 

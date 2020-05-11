@@ -736,6 +736,9 @@ const EbSelect = function (ctrl, options) {
                 this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
 
+
+        this.requiredCheck();
+
         this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
@@ -952,15 +955,19 @@ const EbSelect = function (ctrl, options) {
                     EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
             }
             else {
-                if (this.required && this.Vobj.valueMembers.length === 0) {
-                    if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
-                        EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
-                }
-                else {
-                    EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);
-                }
-
+                this.requiredCheck();
             }
+        }
+    };
+
+    this.requiredCheck = function () {
+        let _name = this.ComboObj.EbSid_CtxId;
+        if (this.required && this.Vobj.valueMembers.length === 0) {
+            //if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
+                EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
+        }
+        else {
+            EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);
         }
     };
 

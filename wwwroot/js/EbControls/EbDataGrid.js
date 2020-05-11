@@ -204,6 +204,8 @@
         this.setRowValues_E(curRowCtrls);
         //this.attachModalCellRef_Row(getObjByval(this.DataMODEL, "RowId", rowid), curRowCtrls);
 
+        this.bindReq_Vali_UniqRow($tr);// need to check relavance
+
         $tr.attr("is-initialised", "true");
     };
 

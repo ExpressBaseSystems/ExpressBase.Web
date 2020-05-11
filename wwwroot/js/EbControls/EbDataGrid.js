@@ -997,7 +997,9 @@
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let $tr = this.get$RowByRowId(rowid);
-        if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true')) {
+        if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true') ||//in edit mode or clone mode untouched DG row skip for 4 checking
+            (this.Mode.isEdit || this.cloneMode) && $tr.attr("is-added") === "true")// avoid newly added rows from first check
+        {
             $.each(this.objectMODEL[rowid], function (i, Col) {
                 let $ctrl = $("#" + Col.EbSid_CtxId);
                 if (!this.isRequiredOK(Col)) {

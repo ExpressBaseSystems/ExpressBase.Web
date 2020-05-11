@@ -1,38 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Web.Filters;
-using Microsoft.Extensions.Options;
-using ExpressBase.Web2;
 using ServiceStack;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects;
 using ExpressBase.Common;
 using ServiceStack.Text;
-using System.Net;
-using ExpressBase.Data;
-using DiffPlex;
-using DiffPlex.DiffBuilder;
-using DiffPlex.DiffBuilder.Model;
-using System.Text;
-using ExpressBase.Objects.Objects;
 using Newtonsoft.Json;
-using ExpressBase.Common.Objects.Attributes;
 using ServiceStack.Redis;
 using ExpressBase.Common.Objects;
 using Microsoft.AspNetCore.Routing;
-using ExpressBase.Common.JsonConverters;
 using System.Reflection;
 using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
 using ExpressBase.Web.BaseControllers;
-using System.Text.RegularExpressions;
-using ExpressBase.Common.Extensions;
 using ExpressBase.Common.Data;
 using ExpressBase.Objects.Helpers;
-using Newtonsoft.Json.Linq;
 using ExpressBase.Common.Constants;
 using ExpressBase.Common.Application;
 using ExpressBase.Common.LocationNSolution;
@@ -79,12 +64,95 @@ namespace ExpressBase.Web.Controllers
             else if (Type == EbApplicationTypes.Mobile)
                 ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
             else if (Type == EbApplicationTypes.Bot)
-                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings) ?? new EbBotSettings();
+            {
+                EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
+                if (settings != null)
+                {
+                    if (settings.CssContent == null || settings.CssContent.Count == 0)
+                    {
+                        settings.CssContent = CssContent();
+                    }
+                    //if (settings.otherprop == null)
+                    //{
+                    //	settings.otherprop.Ebtag = true;
+                    //}
+                }
+                ViewBag.AppSettings = settings ?? new EbBotSettings() { CssContent = CssContent() };
+            }
 
             this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
             ViewBag.Title = _objects.AppInfo.Name;
             ViewBag.ObjectsCount = _objects.ObjectsCount;
+            //ViewBag.eSoln= this.GetIsolutionId(solid);
             return View();
+        }
+
+        public Dictionary<string, string> CssContent()
+        {
+            //public Dictionary<string, Dictionary<string, string>> CssContent()
+            var CssDict = new Dictionary<string, string>();
+            //string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
+            //string Cssfile = Constants.BOT_IFRAME_CSS;
+            //var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(Cssfile);
+            //return System.Convert.ToBase64String(plainTextBytes);
+
+            int i = 0;
+            List<string> CssList = new List<string>();
+            CssList.Add(BotConstants.BOT_HEADER);
+            CssList.Add(BotConstants.BOT_APP_NAME);
+            CssList.Add(BotConstants.BOT_IFRAME_CSS);
+            CssList.Add(BotConstants.BOT_CHAT_BUTTON);
+            CssList.Add(BotConstants.BOT_IMAGE_CONT);
+            CssList.Add(BotConstants.BOT_BUTTON_IMAGE);
+            string[] NameArr = { "BOT_HEADER", "BOT_APP_NAME", "BOT_IFRAME_CSS", "BOT_CHAT_BUTTON", "BOT_IMAGE_CONT", "BOT_BUTTON_IMAGE" };
+            foreach (string CssConst in CssList)
+            {
+                //Dictionary<string, string> BotDict = new Dictionary<string, string>();
+                //var CssProp = CssConst.Split(';');
+                //foreach (String SingleProps in CssProp)
+                //{
+                //	string PropTrim = SingleProps.Trim();
+                //	if (!String.IsNullOrEmpty(PropTrim))
+                //	{
+                //		var KeyVal = PropTrim.Split(':');
+                //		if (!BotDict.Keys.Contains(KeyVal[0]))
+                //		{
+                //			BotDict.Add(KeyVal[0], KeyVal[1]);
+                //		}
+                //	}
+
+
+                //}
+                //if (!CssDict.Keys.Contains(NameArr[i]))
+                //{
+                //	CssDict.Add(NameArr[i], BotDict);
+                //	i++;
+                //}
+
+                CssDict.Add(NameArr[i], CssConst);
+                i++;
+
+            }
+
+            return CssDict;
+        }
+
+        public string ResetCssContent(string cssConst)
+        {
+            if (cssConst.Equals("BOT_HEADER"))
+                return BotConstants.BOT_HEADER;
+            if (cssConst.Equals("BOT_APP_NAME"))
+                return BotConstants.BOT_APP_NAME;
+            if (cssConst.Equals("BOT_IFRAME_CSS"))
+                return BotConstants.BOT_IFRAME_CSS;
+            if (cssConst.Equals("BOT_CHAT_BUTTON"))
+                return BotConstants.BOT_CHAT_BUTTON;
+            if (cssConst.Equals("BOT_IMAGE_CONT"))
+                return BotConstants.BOT_IMAGE_CONT;
+            if (cssConst.Equals("BOT_BUTTON_IMAGE"))
+                return BotConstants.BOT_BUTTON_IMAGE;
+            else
+                return "";
         }
 
         [HttpPost]
@@ -808,45 +876,40 @@ namespace ExpressBase.Web.Controllers
             return "Something went wrong..";
         }
 
-        public IActionResult ApiConsole()
+        [HttpGet]
+        public string GetMobileFormControls(string refid)
         {
-            //string _json = @"{'Name':'Form1','MasterTable':'dg3f','MultipleTables':{'dg3f':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'textbox0','Value':'abhilasha','Type':16,'AutoIncrement':false}]}],'dg3c':[{'RowId':0,'IsUpdate':false,'Columns':[{'Name':'date0','Value':'2018-11-17','Type':5,'AutoIncrement':false},{'Name':'textbox1','Value':'pushpam','Type':16,'AutoIncrement':false}]}]}}";
-            string _json = @"{
-'FormName':'Form1',
-'MasterTable':'t1',
-'Tables':[
-{'TableName':'t1',
-'Colums':[
-	{'ColumName':'c1','EbDbType':16},
-	{'ColumName':'c2','EbDbType':5},
-	{'ColumName':'c3','EbDbType':16},
-	{'ColumName':'c4','EbDbType':11},
-	{'ColumName':'c5','EbDbType':16}
-	]},
-{'TableName':'t2',
-'Colums':[
-	{'ColumName':'c1','EbDbType':16},
-	{'ColumName':'c2','EbDbType':16},
-	{'ColumName':'c3','EbDbType':11},
-	{'ColumName':'c4','EbDbType':16},
-	{'ColumName':'c5','EbDbType':16}
-	]},
-	{'TableName':'t3',
-'Colums':[
-	{'ColumName':'c1','EbDbType':3},
-	{'ColumName':'c2','EbDbType':16},
-	{'ColumName':'c3','EbDbType':16},
-	{'ColumName':'c4','EbDbType':16},
-	{'ColumName':'c5','EbDbType':30}
-	]}
-]
-}";
-            var res = this.ServiceClient.Post<FormDataJsonResponse>(new FormDataJsonRequest
+            string controls = null;
+            try
             {
-                JsonData = _json
-            });
-            return View();
+                EbMobilePage mPage = this.Redis.Get<EbMobilePage>(refid);
+                if (mPage == null)
+                {
+                    var obj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest
+                    {
+                        RefId = refid
+                    });
+                    mPage = EbSerializers.Json_Deserialize<EbMobilePage>(obj.Data[0].Json);
+                }
+
+                if(mPage.Container is EbMobileForm)
+                {
+                    List<EbMobileControl> ctrlcoll = new List<EbMobileControl>();
+
+                    foreach(var ctrl in (mPage.Container as EbMobileForm).ChildControls)
+                    {
+                        if (ctrl is INonPersistControl || ctrl is ILinesEnabled || ctrl is ILayoutControl)
+                            continue;
+                        ctrlcoll.Add(ctrl);
+                    }
+                    controls = EbSerializers.Json_Serialize(ctrlcoll);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return controls;
         }
     }
-
 }

@@ -187,9 +187,28 @@
             this.getColumns();
         }  
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
-
+        $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
+        $(".grid-stack-item-content").off("click").on("click", this.TileslinkRedirectFn.bind(this));
     }
-
+    this.TileslinkRedirectFn = function (e) {
+        let id = e.target.id;
+        let href;
+        if (id != "") {
+            href = $(`#${id} .link-target`).attr('href');
+        }
+        //let href = e.target.attr('href');
+        if (href === undefined) {
+            id = e.target.parentElement.getAttribute("id");
+            href = $(`#${id} .link-target`).attr('href');
+        }
+        if (href === undefined) {
+            id = e.target.parentElement.parentElement.id;
+            href = $(`#${id} .link-target`).attr('href');
+        }
+        if (href != undefined ){
+            window.open(href, '_blank');
+        }
+    };
     this.DrawTiles = function () {
         //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         Eb_Dashboard_Bg(this.EbObject);
@@ -204,7 +223,7 @@
                 let dh = this.EbObject.Tiles.$values[i].TileDiv.Data_height;
                 let dw = this.EbObject.Tiles.$values[i].TileDiv.Data_width;
                 grid.addWidget(`<div id="${tile_id}"> 
-                    <div class="grid-stack-item-content" id=${t_id}>
+                    <div class="grid-stack-item-content usr" id=${t_id}>
                     <div style="display:flex" class="db-title-parent tile-header">
                     <div class="db-title" name-id="${t_id}" style="display:float"></div>
                     <div style="float:right;display:flex" u-id="${t_id}">
@@ -291,6 +310,9 @@
                             let object = this.Procs[this.currentId];
                             let designHtml = this.MakeLinks(object);
                             $(`[data-id="${this.CurrentTile}"]`).append(designHtml);
+                            $(`#${this.CurrentTile}`).addClass("eb-tile-link");
+                            $(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");
+                            $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
                             this.labelstyleApply(this.CurrentTile);
                             LinkStyle(obj, this.CurrentTile, this.TabNum);
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
@@ -313,7 +335,6 @@
         grid.movable('.grid-stack-item', false);
         grid.resizable('.grid-stack-item', false);
     }
-
 
     this.labelstyleApply = function (tileId) {
         $(`[data-id="${tileId}"]`).parent().css("background", "transparent");
@@ -386,7 +407,7 @@
     this.MakeLinks = function (obj) {
         let a = `<div id="${obj.EbSid}" class="link-dashboard-pane"  eb-type="Links"> 
             <div id="${obj.EbSid}_icon" class="link-icon" >  <i class="fa fa-external-link-square"> </i> </div>
-            <div id="${obj.EbSid}_text" class="link-text">  <a id="${obj.EbSid}_link" href="#" target="_blanc"></a> </div>
+            <div id="${obj.EbSid}_text" class="link-text">  <div class="link-target" id="${obj.EbSid}_link" href="#" target="_blanc"></div> </div>
         </div>`;
         return a;
     };
@@ -404,7 +425,7 @@
 
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
-        $.LoadingOverlay('show');
+        //$.LoadingOverlay('show');
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
@@ -413,7 +434,7 @@
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
-                $.LoadingOverlay('hide');
+                //$.LoadingOverlay('hide');
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
             }.bind(this)

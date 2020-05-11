@@ -1,7 +1,7 @@
 ﻿var InitControls = function (option) {
+
     if (option) {
-        this.Bot = option.renderer;
-        this.Wc = option.wc;
+        this.Renderer = option;
         this.Cid = option.Cid;
         this.Env = option.Env;
     }
@@ -305,16 +305,23 @@
     this.SimpleSelect = function (ctrl) {
 
         let $input = $("#" + ctrl.EbSid_CtxId);
+
+        $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
+            $(e.target).closest(".dropdown.bootstrap-select").attr("id", ctrl.EbSid_CtxId + "_dd"); // id added for test frame work
+        });
+
         $input.selectpicker({
             dropupAuto: false
         });
+
+
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
         $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
         $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {
-            if (!this.Bot) {
+            if (this.Renderer.rendererName !== "Bot") {
                 let $el = $(e.target);
                 if ($el[0].isOutside !== true) {
                     let $drpdwn = $('.dd_of_' + ctrl.EbSid_CtxId);
@@ -336,7 +343,8 @@
                     let ddOfset = ($(e.target)).offsetParent().offset();
                     let tgHght = ($(e.target)).offsetParent().height();
                     $outdrpdwn.parent().addClass('open');
-                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left })
+                    $outdrpdwn.offset({ top: (ddOfset.top + tgHght), left: ddOfset.left });
+                    $outdrpdwn.children("[role='listbox']").scrollTo($outdrpdwn.find("li.active"), { offset: ($outdrpdwn.children("[role='listbox']").height() / -2) + 11.5 });
                 }
             }
         }.bind(this));
@@ -386,6 +394,68 @@
                 $('#' + ctrl.EbSid_CtxId).next('div').children().find('li:eq(0)').children().find("input").trigger('click');
 
         }
+    };
+
+    this.ChartControl = function (ctrl, ctrlOpts) {
+        let o = new Object();
+        o.tableId = "chart" + ctrl.EbSid_CtxId;
+        o.dvObject = JSON.parse(ctrl.ChartVisualizationJson);
+        this.chartApi = new EbBasicChart(o);
+    };
+
+    this.TVcontrol = function (ctrl, ctrlOpts) {
+        let o = new Object();
+        o.tableId = ctrl.EbSid_CtxId;
+        o.showCheckboxColumn = false;
+        o.showFilterRow = false;
+        o.IsPaging = false;
+        o.Source = "form";
+        o.scrollHeight = ctrl.Height - 34.62;
+        o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
+
+        if (!ctrl.__filterValues)
+            ctrl.__filterValues = [];
+        if (ctrl.ParamsList) {
+            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });//["form.textbox1", "form.id_max", "form.eb_loc_id", "form.eb_currentuser_id"];//
+            for (let i = 0; i < paramsList.length; i++) {
+                let depCtrl_s = paramsList[i];
+                let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
+                if (!getObjByval(ctrl.__filterValues, "Name", depCtrl_s.replace("form.", ""))) { // bot related check
+                    let val = '';
+                    let ebDbType = 11;
+                    let name = "";
+                    if (depCtrl_s === "form.eb_loc_id") {
+                        val = (ebcontext.locations) ? ebcontext.locations.getCurrent() : 1;
+                        name = "eb_loc_id";
+                    }
+                    else if (depCtrl_s === "form.eb_currentuser_id") {
+                        val = ebcontext.user.UserId;
+                        name = "eb_currentuser_id";
+                    }
+                    else {
+                        val = depCtrl.getValue();
+                        name = depCtrl.Name;
+                        ebDbType = depCtrl.EbDbType;
+                    }
+
+                    ctrl.__filterValues.push(new fltr_obj(ebDbType, name, val));
+                }
+            }
+            o.filterValues = btoa(unescape(encodeURIComponent(JSON.stringify(ctrl.__filterValues))));
+        }
+        ctrl.initializer = new EbCommonDataTable(o);
+        ctrl.initializer.reloadTV = ctrl.initializer.Api.ajax.reload;
+
+        ctrl.reloadWithParam = function (depCtrl) {
+            if (depCtrl) {
+                let val = depCtrl.getValue();
+                let filterObj = getObjByval(ctrl.__filterValues, "Name", depCtrl.Name);
+                filterObj.Value = val;
+            }
+
+            ctrl.initializer.filterValues = ctrl.__filterValues;
+            ctrl.initializer.Api.ajax.reload();
+        };
     };
 
     this.CalendarControl = function (ctrl) {
@@ -483,6 +553,8 @@
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
+        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) =>  $(event.target).closest('.locinp-cont').find('.locinp').val(''));
+        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
     };
 
     this.InitMap4inpG = function (ctrl) {
@@ -518,11 +590,10 @@
                     ctrl.__isJustSetValue = false;
             }.bind(ctrl)
         });
-        //$(`#${name}_Cont .choose-btn`).click(this.Bot.chooseClick);
+        //$(`#${name}_Cont .choose-btn`).click(this.Renderer.chooseClick);
 
-        $(window).resize(function () {
-            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
-        });
+        if (this.Renderer.rendererName === "Bot")
+            this.bindMapResize(ctrl);
 
     };
 
@@ -569,8 +640,8 @@
             this.initMap(ctrl.LocationCollection.$values[0]);
         }
 
-        //this.Bot.nxtCtrlIdx++;
-        //this.Bot.callGetControl();
+        //this.Renderer.nxtCtrlIdx++;
+        //this.Renderer.callGetControl();
     };
 
     this.initMap = function (ctrl) {
@@ -583,9 +654,13 @@
             position: uluru,
             map: map
         });
+        if (this.Renderer.rendererName === "Bot")
+            this.bindMapResize(ctrl);
+    };
 
+    this.bindMapResize = function (ctrl) {
         $(window).resize(function () {
-            $("#" + ctrl.Name).css("height", parseInt(($("#" + ctrl.Name).width() / 100 * 60)) + "px");
+            $("#" + ctrl.EbSid).css("height", parseInt(($("#" + ctrl.EbSid).width() / 100 * 60)) + "px");
         });
     };
 
@@ -612,6 +687,10 @@
         return new EbReview(ctrl, ctrlOpts);
     };
 
+    this.MeetingPicker = function (ctrl, ctrlOpts) {
+        return new meetingPicker(ctrl, ctrlOpts, this.Renderer.rendererName);
+    };
+
     this.PowerSelect = function (ctrl, ctrlOpts) {
 
         let t0 = performance.now();
@@ -631,7 +710,7 @@
 
         let EbCombo = new EbSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
-            wc: this.Wc
+            rendererName: this.Renderer.rendererName
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)
@@ -641,13 +720,13 @@
     };
 
     this.Survey = function (ctrl) {
-        new EbSurveyRender($('#' + ctrl.Name), this.Bot);
+        new EbSurveyRender($('#' + ctrl.Name), this.Renderer);
     };
 
     this.StaticCardSet = function (ctrl) {
         new EbCardRender({
             $Ctrl: $('#' + ctrl.EbSid),
-            Bot: this.Bot,
+            Bot: this.Renderer,
             CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
@@ -656,7 +735,7 @@
     this.DynamicCardSet = function (ctrl) {
         new EbCardRender({
             $Ctrl: $('#' + ctrl.EbSid),
-            Bot: this.Bot,
+            Bot: this.Renderer,
             CtrlObj: ctrl
         });
         //this.initCards($('#' + ctrl.Name));
@@ -889,6 +968,7 @@
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
+        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.AutoSuggestion === true) {
             $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
@@ -898,12 +978,16 @@
         //else if (ctrl.TextTransform === 2)
         //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
 
-        $ctrl.keydown(function (event) {
+        //$ctrl.keydown(function (event) {
+        //    textTransform(this, ctrl.TextTransform);
+        //});
+
+        $ctrl.on('paste keydown', function (event) {
             textTransform(this, ctrl.TextTransform);
         });
 
-        $ctrl.on('paste', function (event) {
-            textTransform(this, ctrl.TextTransform);
+        $ctrl.on('change', function (event) {
+            textTransform(this, ctrl.TextTransform, true);
         });
     };
 
@@ -1051,6 +1135,7 @@
     };
 
     this.Numeric = function (ctrl) {
+        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
         //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
@@ -1146,7 +1231,7 @@
     }
 
     this.Rating = function (ctrl) {
-        if ((ebcontext.user.wc == 'uc') || this.Bot) {
+        if ((ebcontext.user.wc == 'uc') || this.Renderer.rendererName === "Bot") {
             $("#" + ctrl.EbSid).empty();
             $("#" + ctrl.EbSid).rateYo({
 
@@ -1166,14 +1251,15 @@
     }
 
     this.TagInput = function (ctrl) {
-
+        //$('#' + ctrl.EbSid).find('.bootstrap-tagsinput').find('.tag');
+        //$('input[name = ' + ctrl.EbSid_CtxId + '_tags]').css("font-size", ctrl.FontSizes + 'px')
         //ctrl.clear = function (p1) {
         //    return $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').va("");
         //}
     }
 
     this.RichText = function (ctrl) {
-        $(`#${ctrl.EbSid}_RichText`).summernote({
+        $(`#${ctrl.EbSid}`).summernote({
             height: ctrl.TextBoxHeight,
             toolbar: [
                 ['font', ['bold', 'underline', 'italic', 'strikethrough', 'subscript', 'superscript', 'clear']],
@@ -1193,8 +1279,9 @@
 
 
         ctrl.clear = function (p1) {
-            return $(`#${ctrl.EbSid}_RichText`).summernote('reset');
+            return $(`#${ctrl.EbSid}`).summernote('reset');
         };
+
 
     };
 
@@ -1202,7 +1289,7 @@
 
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
-            botCtrl: this.Bot,
+            renderer: this.Renderer.rendererName,
             maxSize: ctrl.MaxSize,
             fileTypes: ctrl.FileTypes,
             maxFiles: ctrl.MaxFiles
@@ -1223,20 +1310,20 @@
 
         ctrl.setValue = function (p1) {
             console.log("setvalue " + " p1 " + p1);
-            if (p1 !== null && p1 !== "") {
-                let preloaded = [];
-                let refidArr = p1.split(',');
-                for (var j = 0; j < refidArr.length; j++) {
+            //if (p1 !== null && p1 !== "") {
+            //    let preloaded = [];
+            //    let refidArr = p1.split(',');
+            //    for (var j = 0; j < refidArr.length; j++) {
 
-                    var src = `/images/small/${refidArr[j]}.jpg`;
-                    var fileno = j;
-                    var fltype = "png";
-                    preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
-                }
+            //        var src = `/images/small/${refidArr[j]}.jpg`;
+            //        var fileno = j;
+            //        var fltype = "png";
+            //        preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
+            //    }
 
-                filePlugin.createPreloaded(preloaded);
-            }
-
+            //    filePlugin.createPreloaded(preloaded);
+            //}
+            filePlugin.createPreloaded(p1);
         };
         ctrl.clear = function () {
 

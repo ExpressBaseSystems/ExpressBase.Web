@@ -5,13 +5,23 @@
         bApnd = false;
     }
 }
-<link rel="stylesheet" href="~/css/ApiRelated/leader-line.css" asp-append-version=@bApnd />
-<link rel="stylesheet" href="~/css/ApiRelated/EbPrettyJson.css" asp-append-version=@bApnd />
-<link rel="stylesheet" href="~/css/ApiRelated/Eb_ApiAssets.css" asp-append-version=@bApnd />
-<script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script src="~/js/ApiBuilder/EbPrettyJson.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script src="~/js/ApiBuilder/ApiBuilder.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script src="~/js/ApiBuilder/ApiContextMenu.js" type="text/javascript" asp-append-version=@bApnd></script>
+
+<environment include="Development">
+    <link rel="stylesheet" href="~/css/ApiRelated/leader-line.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/ApiRelated/EbPrettyJson.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/ApiRelated/Eb_ApiAssets.css" asp-append-version=@bApnd />
+
+    <script src="~/js/ApiBuilder/leader-line.min.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/ApiBuilder/EbPrettyJson.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/ApiBuilder/ApiBuilder.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/ApiBuilder/ApiContextMenu.js" type="text/javascript" asp-append-version=@bApnd></script>
+</environment>
+
+<environment exclude="Development">
+    <link rel="stylesheet" href="~/css/Bundles/eb-api.bundle.min.css" asp-append-version=@bApnd />
+    <script src="~/js/Bundles/eb-api.bundle.js" type="text/javascript" asp-append-version=@bApnd></script>
+</environment>
+
 <script>
     @Html.Raw(ViewBag.Meta);
     @Html.Raw(ViewBag.JsObjects);

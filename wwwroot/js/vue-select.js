@@ -206,13 +206,13 @@ function delid() {
                         ref: "toggle", staticClass: "dropdown-toggle clearfix", attrs: { type: "button" },
                         on: { mousedown: function (e) { e.preventDefault(), t.toggleDropdown(e) } }
                     },
-                    [t._l(t.valueAsArray, function (e) {
-                        return n("span", { key: e.index, staticClass: "selected-tag" }, [t._v("\n          " + t._s(t.getOptionLabel(e)) + "\n          "),
+                        [t._l(t.valueAsArray, function (e) {
+                            return n("span", { key: e.index, staticClass: "selected-tag" }, [t._v("\n          " + (t._s(t.getOptionLabel(e)) || "--")+ "\n          "),// costome code added to show"--" if empty
                             t.multiple ? n("button", {
                                 staticClass: "close", attrs: { type: "button" },
                                 on: { click: function (n) { t.deselect(e) } }
                             },
-                            [n("span", { attrs: { "aria-hidden": "true" } }, [t._v("×")])]) : t._e()])
+                                [n("span", { attrs: { "aria-hidden": "true" } }, [t._v("×")])]) : t._e()])
                     }),
                     t._v(" "), n("input", {
                         directives: [{ name: "model", rawName: "v-model", value: t.search, expression: "search" }], ref: "search", staticClass: "form-control", style: { width: t.isValueEmpty ? "100%" : "10px", padding: t.isValueEmpty ? "" : "1px" }, attrs: { debounce: t.debounce, type: "search", placeholder: t.searchPlaceholder, readonly: !t.searchable }, domProps: { value: t._s(t.search) }, on: {//edited

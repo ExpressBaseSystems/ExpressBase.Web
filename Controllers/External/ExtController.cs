@@ -304,18 +304,26 @@ namespace ExpressBase.Web.Controllers
         }
         private bool isAvailSolution()
         {
+            bool IsAvail = false;
             if (ViewBag.SolutionId != String.Empty && ViewBag.SolutionId != null)
             {
-                IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
-                if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
-                    return true;
-                else
+                IsAvail = isAvailInRedis();
+                if (!IsAvail)
                 {
                     RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
-                    return res.Status;
+                    IsAvail = isAvailInRedis();
                 }
             }
-            return false;
+            return IsAvail;
+        }
+
+        public bool isAvailInRedis()
+        {
+            bool IsAvail = false;
+            IEnumerable<string> resp = this.Redis.GetKeysByPattern(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, ViewBag.SolutionId));
+            if (resp.Any() || (ViewBag.SolutionId == CoreConstants.ADMIN))
+                IsAvail = true;
+            return IsAvail;
         }
 
         public IActionResult UsrSignIn()
@@ -1053,13 +1061,13 @@ namespace ExpressBase.Web.Controllers
             return Encoding.UTF8.GetString(b);
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("{stripwebhook}")]
-        public string TestStripeWebhook()
-        {
-            string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
-            Console.WriteLine("Webhook Response  : " + json);
-            return json;
-        }
+        //[Microsoft.AspNetCore.Mvc.Route("{stripwebhook}")]
+        //public string TestStripeWebhook()
+        //{
+        //    string json = new StreamReader(HttpContext.Request.Body).ReadToEnd();
+        //    Console.WriteLine("Webhook Response  : " + json);
+        //    return json;
+        //}
 
         public IActionResult InstallFromStore(int appid)
         {
@@ -1144,7 +1152,7 @@ namespace ExpressBase.Web.Controllers
         {
             MyAuthenticateResponse authResponse = null;
             User usr = null;
-            string[] hostParts = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Split(CharConstants.DOT); 
+            string[] hostParts = base.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty).Split(CharConstants.DOT);
             if (isAvailSolution())
             {
                 string sBToken = base.HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN];
@@ -1206,7 +1214,7 @@ namespace ExpressBase.Web.Controllers
                         }
                     }
                 }
-            }           
+            }
             return Redirect("/StatusCode/401");
         }
     }

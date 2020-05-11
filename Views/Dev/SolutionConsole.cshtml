@@ -70,6 +70,7 @@
 
 
     $("#save").on("click", function () {
+          $("#eb_common_loader").EbLoader("show");
          let arr = [];
         $(".usr_typ").each(function (index) {
             arr.push({Id : this.id, RefId :$('#'+this.id +' .user_type_forms').val()});
@@ -80,7 +81,10 @@
         };
         $.post("../Dev/SaveSolutionSettings",
             { obj: JSON.stringify(obj) },
-            function (result) { alert(result); }
+            function (result) {
+                  $("#eb_common_loader").EbLoader("hide");
+                alert(result);
+            }
         );
     });
 </script>

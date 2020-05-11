@@ -1,4 +1,5 @@
-﻿function EB_MobilePage(option) {
+﻿
+function EB_MobilePage(option) {
     this.Config = $.extend({}, option);
     this.validate = function () {
         return true;
@@ -58,6 +59,7 @@ function EbMobStudio(config) {
         var curObject = this.Procs[curControl.attr("id")];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas[type]);
+        this.pg.__extension.hideBlackListed(curObject);
     };
 
     this.newMobPage = function () {
@@ -187,6 +189,8 @@ function EbMobStudio(config) {
         //set tree col if form
         if (this.ContainerType === "EbMobileForm")
             this.Controls.refreshColumnTree();
+
+        return o;
     };
 
     this.containerOnDrop = function (event, ui) {
@@ -287,10 +291,15 @@ function EbMobStudio(config) {
         o.setObject();
         this.EbObject.Container.DataLayout = o;
 
-        this.EbObject.Container.Filters.$values.length = 0;
-        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j, obj) {
+        this.EbObject.Container.FilterControls.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .mob_control").each(function (j, obj) {
+            this.findFormContainerItems(j, obj, this.EbObject.Container.FilterControls);
+        }.bind(this));
+
+        this.EbObject.Container.SortColumns.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-sort-container .data_column").each(function (j, obj) {
             let data_col = this.Procs[obj.id];
-            this.EbObject.Container.Filters.$values.push(data_col);
+            this.EbObject.Container.SortColumns.$values.push(data_col);
         }.bind(this));
     };
 
@@ -343,6 +352,9 @@ function EbMobStudio(config) {
         else if (obj.constructor.name === "EbMobileGeoLocation" && pname === "HideSearchBox") {
             obj._toggleSearchBar();
         }
+        else if (pname === "DisplayName" && obj.constructor.name === "EbMobilePage") {
+            this.setEmulatorTitle(obj[pname]);
+        }
         else {
             console.log("pg changed");
         }
@@ -368,6 +380,16 @@ function EbMobStudio(config) {
         }.bind(this));
     };
 
+    this.refreshEmulator = function () {
+        let h = $(`#eb_mobpage_toolbox${this.Conf.TabNum}`).height();
+        $(`#eb_mobpage_wraper${this.Conf.TabNum} .eb_mobpage_pane_layout`).height(h - 10);
+        $(`#eb_mobpage_wraper${this.Conf.TabNum} .eb_mobtree_body`).height(h);
+    };
+
+    this.setEmulatorTitle = function (value) {
+        $("#eb_emulater_title" + this.Conf.TabNum).text(value);
+    };
+
     this.exe = function () {
         this.Controls = new MobileControls(this);
         if (this.EditObj === null || this.EditObj === undefined)
@@ -384,6 +406,10 @@ function EbMobStudio(config) {
         });
         this.Menu = new MobileMenu(this);
         $("body").on("dblclick", ".ctrl_label", this.labelOnDoubleClick.bind(this));
+        this.refreshEmulator();
+        this.setEmulatorTitle(this.EbObject.DisplayName || "Untitled");
+        $(window).resize(function () { this.refreshEmulator(); }.bind(this));
+        this.pg.__extension = new PgHelperMobile(this.pg);
     };
 
     this.exe();

@@ -8,114 +8,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>@ViewBag.Title</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
     <link rel="icon" href="~/images/favicon.ico">
-    @* BOOTSTRAP CSS *@
-    @*<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />*@
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
-    @*jith*@
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-    @*<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
-    @*<link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">*@
-
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-    @*<link rel="stylesheet" type="text/css" href="~/css/commonStyles/bootstrap.min.css" />*@@*jith*@
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-    @*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
+    <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
+    <link rel="stylesheet" href="~/css/Common/croppie.min.css" />
 
-    @* JQUERY CSS *@
-    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
-    @*jith*@
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.css" />
-    @*amal*@
+    <environment include="Development">
+        @*COMMON CSS*@
+        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-style.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-style.common.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-assets.style.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/ObjectDashboard.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/Eb_quickMenu.css" />
 
-    @* EB CSS *@
-    <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.css" asp-append-version=@bApnd />
-    @*amal*@
-    <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd />
-    <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />
-    <link rel="stylesheet" href="~/css/EbCommonStyles/eb-style.common.css" asp-append-version=@bApnd />
-    <link rel="stylesheet" href="~/css/EbCommonStyles/eb-assets.style.css" asp-append-version=@bApnd />
-    <link href="~/css/EbControls/EbFileUpload.css" rel="stylesheet" asp-append-version=@bApnd />
-    @*amal*@
-    <link href="~/css/EbControls/EbDialogBox.css" rel="stylesheet" asp-append-version=@bApnd />
-    @*amal*@
-    <link href="~/css/EbControls/EbFupFormControl.css" rel="stylesheet" asp-append-version=@bApnd />
-    @*amal*@
-    <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd />
-    @*amal*@
-    <link rel="stylesheet" href="~/css/EbFileViewer/viewer.css"> @*varghese*@
+        @*PLUGIN CSS*@
+        <link rel="stylesheet" href="~/css/EbControls/EbFileUpload.css" />
+        <link rel="stylesheet" href="~/css/EbControls/EbDialogBox.css" />
+        <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" />
+    </environment>
 
-    @* JQUERY JS *@
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-    @*jith*@
+    @*BUNDLES*@
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/css/Bundles/eb-common.bundle.css" asp-append-version="@bApnd" />
+        <link rel="stylesheet" href="~/css/Bundles/eb-plugins.bundle.min.css" asp-append-version=@bApnd />
+    </environment>
 
-    @* BOOTSTRAP JS *@
-    @*<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>*@
-    <script type="text/javascript" src="~/js/CommonJS/bootstrap.min.js"></script>
-    @*jith*@
+    <link rel="stylesheet" href="~/css/EbControls/EbFupFormControl.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/EbFileViewer/viewer.css" asp-append-version=@bApnd> @*varghese*@
+    <link rel="stylesheet" href="~/css/MeetingPicker.css" asp-append-version=@bApnd> @*nithin*@
+
+    @******************************************* JavaScript includes ********************** *@
+
+    <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
 
-    @* OTHER JS *@
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>
-    @*amal*@
-    <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbServerEvents/eventsource.min.js" type="text/javascript" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/store.legacy.min.js" asp-append-version=@bApnd></script>
-    @*amal*@
     <script src="~/js/validator.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/Eb_CommonHeader.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.js"></script>
-    @*amal*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
 
-    @* EB JS *@
-    <script src="~/js/EbControls/EbProgressBar.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbControls/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbControls/EbPopBox.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbServerEvents/ServerEvents.js" type="text/javascript" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/ElementQueries.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
+    <script src="~/js/ElementQueries.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/eb_common.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/Eb_UtilityFuncions.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>
+
+    @*COMMON JS && EB PLUGINS*@
+    <environment include="Development">
+        <script type="text/javascript" src="~/js/Common/croppie.min.js"></script>
+        <script type="text/javascript" src="~/js/Common/store.legacy.min.js"></script>
+        <script src="~/js/Common/Eb_CommonHeader.js" type="text/javascript"></script>
+        <script src="~/js/Common/eb-quickmenu.js" type="text/javascript"></script>
+        <script src="~/js/Common/eb-setup.js" type="text/javascript"></script>
+        <script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>
+        <script type="text/javascript" src="~/js/EbServerEvents/ss-utils.js"></script>
+        <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>
+
+        <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbParams.Mange.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbDialogBox.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbCropper.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbProgressBar.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbMsgBox.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbPopBox.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/Eb_FontEditor.js" type="text/javascript"></script>
+    </environment>
+
+    @*BUNDLES*@
+    <environment exclude="Development">
+        <script type="text/javascript" src="~/js/Bundles/eb-common.bundle.js" asp-append-version=@bApnd></script>
+        <script type="text/javascript" src="~/js/Bundles/eb-plugins.bundle.js" asp-append-version=@bApnd></script>
+    </environment>
+
     @*jith*@
     <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>
-    @*jith*@
-    <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbControls/EbCropper.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/Eb_CommonHeader.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbControls/EbDialogBox.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbQuickMenu/eb-quickmenu.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/Common/eb-setup.js" type="text/javascript" asp-append-version=@bApnd></script>
-    @*amal*@
-    <script src="~/js/EbFileViewer/EbFileViewerPlugin.js" type="text/javascript"></script> @*varghese*@
-    <script src="~/js/EbFileViewer/viewer.js" type="text/javascript"></script> @*varghese*@
+    <script src="~/js/EbFileViewer/EbFileViewerPlugin.js" type="text/javascript" asp-append-version=@bApnd></script> @*varghese*@
+    <script src="~/js/EbFileViewer/viewer.js" type="text/javascript" asp-append-version=@bApnd></script> @*varghese*@
+
+    @*nithin*@
+    <script src="~/js/FormBuilder/MeetingPicker.js" asp-append-version=@bApnd></script>
+
     @if (ViewBag.wc == "uc")
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
     }
     @if (IsSectionDefined("StyleSheet"))
     {
@@ -141,7 +124,7 @@
             header: {},
             env:'@ViewBag.Env',
             se_url: '@ViewBag.ServerEventUrl',
-            setup: new Setup({ se_url:'@ViewBag.ServerEventUrl'})
+            setup: {}
         }
     </script>
 </head>
@@ -153,7 +136,7 @@
                 if (ViewBag.wc == "dc" || ViewBag.wc == "uc" || ViewBag.wc == "tc")
                 {
                     <div id="eb-common-menu">
-                        @{ Html.RenderPartial("EbQuickMenu");}
+                        @{ await Html.RenderPartialAsync("EbQuickMenu");}
                     </div>
                 }
             }
@@ -203,7 +186,30 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade eb-common-popup" id="eb-common-popup" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="close" id="eb-common-popup-close" data-dismiss="modal" style="margin-left:auto;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="eb-common-popup-ok" class="btn btn-primary">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @{
+            await Html.RenderPartialAsync("NotificationWindow");
+        }
     </div>
+
     @if (ViewBag.wc == "uc" || ViewBag.wc == "dc" || ViewBag.wc == "tc")
     {
         <script>
@@ -224,18 +230,20 @@
                 Current:@ViewBag.CurrentLocation
             });
             window.ebcontext.locations = loc__;
-            //loc__.Listener.ChangeLocation = function (o) {
-            //    console.error(o);
-            //}
         </script>
     }
-    <script>
-        $('.Eb_Image').Lazy();
-    </script>
+
     @if (IsSectionDefined("JsCode"))
     {
         @RenderSection("JsCode")
     }
     @Html.RenderJsCode()
+
+    <script>
+        $(document).ready(function () {
+            window.ebcontext.setup = new Setup({ se_url: '@ViewBag.ServerEventUrl' });
+            $('.Eb_Image').Lazy();
+        });
+    </script>
 </body>
 </html>

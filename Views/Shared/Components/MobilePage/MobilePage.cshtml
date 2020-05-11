@@ -12,10 +12,16 @@
 </script>
 
 <link rel="stylesheet" href="~/css/MobilePageBuilder/mobile.style.css" asp-append-version=@bApnd />
-<script src="~/js/MobilePageBuilder/mobile.page.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script src="~/js/MobilePageBuilder/mobile.page.controls.js" type="text/javascript" asp-append-version=@bApnd></script>
-<script src="~/js/MobilePageBuilder/mobile.page.controls.extension.js" type="text/javascript" asp-append-version=@bApnd></script>
+
+<environment include="Development">
+    <script src="~/js/MobilePageBuilder/mobile.page.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/MobilePageBuilder/mobile.page.controls.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/MobilePageBuilder/mobile.page.controls.extension.js" type="text/javascript" asp-append-version=@bApnd></script>
+</environment>
 <script src="~/js/EbControls/eb_html.tree.js" type="text/javascript" asp-append-version="@bApnd"></script>
+<environment exclude="Development">
+    <script src="~/js/Bundles/eb-mobilepage.bundle.js" type="text/javascript"></script>
+</environment>
 
 <div class="container-fluid mob_body" id="@("mobviewversion-body"+ViewBag.tabnum)">
     <div class="row">
@@ -55,7 +61,7 @@
                         </div>
                         <div class="eb_mobpage_tbxcategory">
                             <div class="eb_mobpage_tbx_head">
-                                Form Controls
+                                Form Controls / Filter Controls
                             </div>
                             <div class="eb_mobpage_tbxbdy">
                                 <div eb-type="EbMobileTextBox" ctrname="TextBox" class="toolitems draggable">
@@ -136,17 +142,43 @@
                 <div class="eb_mobpage_pane_body">
                     <div class="eb_mobtree_body" style="display:none;" id="@("eb_mobtree_body_"+ViewBag.tabnum)">
                         <div class="eb_mobtree_inner">
-                            <div class="eb_mobtree_ds">
-                                <ul id="@("ds_parameter_list" + ViewBag.tabnum)" class="tool-box-items">
-                                    <li>
-                                        <a>Columns</a>
-                                        <ul class="ds_cols"></ul>
-                                    </li>
-                                </ul>
+                            <ul class="nav nav-tabs eb-styledTab eb_mobtree_body-tabhead">
+                                <li class="nav-item active">
+                                    <a class="nav-link" data-toggle="tab" role="tab" href="#dstree-tab">
+                                        Columns
+                                    </a>
+                                </li>
+                                <li class="nav-item" id="form_controls_tab" style="display:none;">
+                                    <a class="nav-link" data-toggle="tab" role="tab" href="#formtree-tab">
+                                        Form Controls
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content eb_mobtree_body-content">
+                                <div id="dstree-tab" class="tab-pane h-100 active">
+                                    <div class="eb_mobtree_ds">
+                                        <ul id="@("ds_parameter_list" + ViewBag.tabnum)" class="tool-box-items">
+                                            
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="formtree-tab" class="tab-pane h-100">
+                                    <div id="@("form_controls_list" + ViewBag.tabnum)" class="mobtree_f-controls">
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="eb_mobpage_pane_layout">
+                    <div class="eb_mobpage_pane_layout" style="display:none;">
+                        <div class="emulator_h_f">
+                            <div class="emulator_h" id="@("eb_emulater_title"+ViewBag.tabnum)">
+                                Untitled
+                            </div>
+                            <div class="emulator_f">
+                                Save
+                            </div>
+                        </div>
                         <div class="eb_mobpage_emulatorbody">
                             <div class="eb_mobpage_drparea">
                                 <div class="eb_mobpage_drop" id="@("eb_mobpage_pane"+ViewBag.tabnum)">
@@ -154,7 +186,7 @@
                                 </div>
                             </div>
                         </div>
-                        <img src="~/images/walls/emulator.png" class="eb_mobpage_pane_layout_emulator"/>
+                        <img src="~/images/walls/emulator.png" class="eb_mobpage_pane_layout_emulator" />
                     </div>
                 </div>
             </div>
@@ -182,5 +214,6 @@
             TabNum: @ViewBag.tabnum,
             ServiceUrl: '@ViewBag.ServiceUrl'
         });
+        $(".eb_mobpage_pane_layout").fadeIn();
     });
 </script>

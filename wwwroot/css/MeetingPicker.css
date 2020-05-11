@@ -1,0 +1,253 @@
+﻿body {
+}
+
+.meeting-picker-outer {
+    padding: 0px !important;
+    width: 30rem;
+    border-radius: 5px;
+    border: solid 1px #d1d1d1 !important;
+    padding-bottom: 10px !important;
+}
+
+    .meeting-picker-outer .sub-head {
+        padding: 5px 10px;
+    }
+
+    .meeting-picker-outer .head-cont {
+        padding: 0px;
+        display: flex;
+        height: 3.3rem;
+        font-size: 16px;
+        background: #508bf9;
+        color: white;
+    }
+
+        .meeting-picker-outer .head-cont i {
+            padding: 0.3rem;
+            font-size: 2.4rem;
+        }
+
+        .meeting-picker-outer .head-cont div {
+            padding: .55rem;
+            font-size: 16px;
+            font-weight: 100;
+        }
+
+    .meeting-picker-outer .date-cont {
+        margin-top: 0rem;
+    }
+
+    .meeting-picker-outer .picker-cont {
+        display: flex;
+        flex-flow: row wrap;
+        width: 100%;
+    }
+
+        .meeting-picker-outer .picker-cont .solts-div {
+            padding: 5px;
+            border: solid 1px #cccccc !important;
+            margin-right: 2%;
+            margin-top: .5rem;
+            border-radius: 2px;
+            width: 49%;
+        }
+
+            .meeting-picker-outer .picker-cont .solts-div:nth-child(even) {
+                margin-right: 0px;
+                margin-top: .5rem;
+            }
+
+        .meeting-picker-outer .picker-cont .unblocked-slot:hover {
+            background-color: #00e0ea;
+            cursor: pointer;
+            border: solid 1px #00e0ea;
+        }
+
+        .meeting-picker-outer .picker-cont .blocked-slot {
+            background-color: #8b8b8b1f;
+            color: #c7c7c7;
+        }
+
+/*form style over ride*/
+tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+    background-color: none !important;
+    border: none !important;
+}
+
+.dgtbl > tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+    background-color: white !important;
+}
+
+/*jquery style override*/
+.hasDatepicker {
+    height: 100%;
+    width: 100%;
+}
+
+    .hasDatepicker .ui-datepicker-inline {
+        height: 100%;
+        width: 100%;
+        padding: 0px;
+        border-radius: 0px;
+        border: none;
+    }
+
+        .hasDatepicker .ui-datepicker-inline .ui-state-active {
+            background: #508bf9;
+        }
+
+        .hasDatepicker .ui-datepicker-inline .ui-datepicker-header {
+            background: #ffffff;
+            /* color: white; */
+            margin-right: 0px;
+            border: none;
+            border-radius: 0px;
+        }
+
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default {
+    border: 1px solid #ffffff;
+    background: #ffffff url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
+    font-weight: 600;
+    color: #555555;
+}
+
+
+/*Meeting picker bot style*/
+.eb-meeting-bot {
+    width: 100% !important;
+    padding: 0px !important;
+    width: 30rem;
+    border-radius: 5px;
+    border: none !important;
+    padding-bottom: 10px !important;
+}
+
+    .eb-meeting-bot .sub-head {
+        padding: 15px 10px;
+    }
+
+    .eb-meeting-bot .head-cont {
+        padding: 0px;
+        display: flex;
+        font-size: 16px;
+        background: #508bf9;
+        color: white;
+    }
+
+        .eb-meeting-bot .head-cont i {
+            padding: 0.3rem;
+            font-size: 2.4rem;
+        }
+
+        .eb-meeting-bot .head-cont div {
+            font-size: 16px;
+            font-weight: 100;
+            padding-top: 15px;
+        }
+
+    .eb-meeting-bot .date-cont {
+        margin-top: 0rem;
+    }
+
+    .eb-meeting-bot .picker-cont {
+        display: flex;
+        flex-flow: row wrap;
+        width: 100%;
+    }
+
+        .eb-meeting-bot .picker-cont .solts-div {
+            padding: 14px 5px;
+            border: solid 1px #cccccc !important;
+            margin-right: 2%;
+            margin-top: .5rem;
+            border-radius: 2px;
+            width: 49%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-radius: 25px;
+            text-align: center;
+            padding: 5px;
+        }
+
+            .eb-meeting-bot .picker-cont .solts-div:nth-child(even) {
+                margin-right: 0px;
+                margin-top: .5rem;
+            }
+
+        .eb-meeting-bot .picker-cont .unblocked-slot:hover {
+            background-color: #2996cb;
+            cursor: pointer;
+            border: solid 1px #00e0ea;
+            color: white;
+        }
+
+        .eb-meeting-bot .picker-cont .blocked-slot {
+            background-color: #8b8b8b1f;
+            color: #c7c7c7;
+        }
+
+    .eb-meeting-bot .hasDatepicker {
+        width: 100%;
+        height: 21rem;
+    }
+
+        .eb-meeting-bot .hasDatepicker .ui-datepicker-inline {
+            width: 100%;
+            padding: 0px;
+            border-radius: 0px;
+            border: none;
+        }
+
+            .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-state-default {
+                text-align: center;
+            }
+            .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-state-active {
+                background: #508bf9;
+                color: white;
+            }
+
+            .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-datepicker-header {
+                background: #ffffff;
+                /* color: white; */
+                margin-right: 0px;
+                border: none;
+                border-radius: 0px;
+                width: 100%;
+                margin-top: 18px;
+            }
+
+                .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-datepicker-header .ui-datepicker-prev {
+                    float: left;
+                    margin-left: 25px;
+                }
+
+                .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-datepicker-header .ui-datepicker-next {
+                    float: right;
+                    margin-right: 25px;
+                }
+
+                .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-datepicker-header .ui-datepicker-title {
+                    padding: 0px 10px;
+                    text-align: center;
+                }
+    .eb-meeting-bot  button {
+        height: 3.5rem;
+    }
+
+    .eb-meeting-bot .ui-datepicker-calendar {
+        background-color: transparent;
+        width: 100%;
+    }
+
+        .eb-meeting-bot .ui-datepicker-calendar .ui-datepicker-other-month {
+            padding: 1px;
+        }
+
+            .eb-meeting-bot .ui-datepicker-calendar .ui-datepicker-other-month span {
+                display: none;
+            }
+
+            .eb-meeting-bot .ui-datepicker-calendar .ui-datepicker-other-month a {
+                display: none;
+            }

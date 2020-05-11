@@ -117,7 +117,7 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.Init = function () {
-        $.event.props.push('dataTransfer');
+        //$.event.props.push('dataTransfer');
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
 
@@ -232,7 +232,7 @@ var EbBasicDataTable = function (Option) {
 
     this.createTblObject = function () {
         var url = "";
-        if (Option.wc === 'bc')
+        if (Option.rendererName === 'Bot')
             url = "../boti/getData";
         else if (this.IsQuery)
             url = "../Eb_Object/getData";
@@ -286,6 +286,7 @@ var EbBasicDataTable = function (Option) {
         dq.TFilters = this.columnSearch;
         //if (this.filterValues.length === 0)
         this.filterValues = this.getFilterValues();
+        this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.rowData = this.rowData || "";
         //if (this.orderColl.length > 0)
@@ -296,7 +297,7 @@ var EbBasicDataTable = function (Option) {
             this.filterFlag = true;
         }
         dq.Ispaging = this.EbObject.IsPaging;
-        if (Option.wc === 'bc') {
+        if (Option.rendererName === 'Bot') {
             dq.start = 0;
             dq.length = 25;/////////hard coding
         }
@@ -304,6 +305,15 @@ var EbBasicDataTable = function (Option) {
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.tableId;
         return dq;
+    };
+
+    this.AddUserAndLcation = function () {        
+        let temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_loc_id"; });
+        if (temp.length === 0)
+            this.filterValues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(this.filterValues, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     };
 
     this.filterDisplay = function () {

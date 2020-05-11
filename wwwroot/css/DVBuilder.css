@@ -61,9 +61,9 @@
     margin-top: 3px;
     background-color: white;
 }
-.tool_item_head .fa-plus, .fa-trash, .fa-save {
+.tool_item_head .fa-plus, .tool_item_head .fa-trash, .tool_item_head .fa-save {
     float: right;
-    margin-right:10px;
+    margin-right: 10px;
 }
 .tool_item_head label {
     margin-bottom: 0px;

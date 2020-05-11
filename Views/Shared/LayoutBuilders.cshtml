@@ -11,312 +11,274 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>@ViewBag.Title</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="~/images/favicon.ico">
-    @* BOOTSTRAP CSS *@
+    <title>@ViewBag.Title</title>
+
+    @* CORE CSS *@
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
-    @*jith*@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
+    <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
 
-    @*
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">*@
+    @*jith*@
+    <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
 
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/Common/croppie.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" asp-append-version=@bApnd />
 
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-    @*
-        <link rel="stylesheet" type="text/css" href="~/css/commonStyles/bootstrap.min.css" />*@@*jith*@
-        <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
-        <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" asp-append-version=@bApnd />
-        <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />
-        @*amal*@
-        <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
-        <link rel="stylesheet" type="text/css" href="~/css/bootstrap-multiselect.css" asp-append-version=@bApnd />
-        @*amal*@
+    <environment include="Development">
+        @*COMMON CSS*@
+        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-style.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-style.common.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-assets.style.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/ObjectDashboard.css" />
+        <link rel="stylesheet" href="~/css/EbCommonStyles/Eb_quickMenu.css" />
 
-        @* JQUERY CSS *@
-        <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/themes/smoothness/jquery-ui.css">
-        @*jith*@
-        <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd />
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.css" />
+        @*PLUGIN CSS*@
+        <link rel="stylesheet" href="~/css/EbControls/EbFileUpload.css" />
+        <link rel="stylesheet" href="~/css/EbControls/EbDialogBox.css" />
+        <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" />
+    </environment>
 
+    @*BUNDLES CSS*@
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/css/Bundles/eb-common.bundle.css" asp-append-version="@bApnd" />
+        <link rel="stylesheet" href="~/css/Bundles/eb-plugins.bundle.min.css" asp-append-version=@bApnd />
+    </environment>
+    <link rel="stylesheet" href="~/css/Bundles/codemirror.bundle.min.css" asp-append-version=@bApnd />
 
-        @* OTHER CSS *@
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
-        @*jith*@
-        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.css" />
-        @*amal*@
-        <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
-        <link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" asp-append-version=@bApnd />
-        <link rel="stylesheet" type="text/css" href="~/css/FormBuiderStyles.css" asp-append-version=@bApnd />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
-        @*amal*@
+    <link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
+    <link rel="stylesheet" href="~/css/Eb.css" asp-append-version=@bApnd />
+    <link href="~/css/EbControls/EbFupFormControl.css" asp-append-version=@bApnd rel="stylesheet" />
 
-        @* EB CSS *@
-        <link rel="stylesheet" type="text/css" href="~/css/PropertyGrid.css" asp-append-version=@bApnd />
-        <link rel="stylesheet" type="text/css" href="~/css/EbCommonStyles/eb-style.css" asp-append-version=@bApnd />
-        @*amal*@
-        <link rel="stylesheet" type="text/css" href="~/css/ObjectDashboard.css" asp-append-version=@bApnd />
-        <link rel="stylesheet" href="~/css/Eb_quickMenu.css" asp-append-version=@bApnd />
-        @*amal*@
-        <link rel="stylesheet" href="~/css/Eb.css" asp-append-version=@bApnd />
-        @*jith*@
-        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-assets.style.css" asp-append-version=@bApnd />
-        <link href="~/css/EbControls/EbFileUpload.css" asp-append-version=@bApnd rel="stylesheet" />
-        @*amal*@
-        <link href="~/css/EbControls/EbDialogBox.css" asp-append-version=@bApnd rel="stylesheet" />
-        @*amal*@
-        <link href="~/css/EbControls/EbFupFormControl.css" asp-append-version=@bApnd rel="stylesheet" />
+    @*nithin*@
+    <link href="~/css/ColorPicker/ShadowPicker.css" asp-append-version=@bApnd rel="stylesheet" />
+    <link href="~/css/ColorPicker/Gradient.css" asp-append-version=@bApnd rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.min.css" />
 
-        @*nithin*@
-        <link href="~/css/ColorPicker/ShadowPicker.css" asp-append-version=@bApnd rel="stylesheet" />
-        <link href="~/css/ColorPicker/Gradient.css" asp-append-version=@bApnd rel="stylesheet" />
-        @*nithin*@
-        @*amal*@
-        <link rel="stylesheet" href="~/css/EbControls/eb-walkthrough.css" asp-append-version=@bApnd />
-        @*amal*@
-        @*<link rel="stylesheet" href="https://naver.github.io/billboard.js/release/latest/dist/billboard.css" asp-append-version=@bApnd />*@
+    @*roby*@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
 
-        @*Anoopa*@
-        <link rel="stylesheet" href="~/css/EbCommonStyles/eb-style.common.css" asp-append-version=@bApnd />
+    @******************************************* JavaScript includes ********************** *@
 
+    @*<script src="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.min.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.all.js"></script>
 
-        @*roby*@
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+    <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>
 
+    <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/jquery.fontselect.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
 
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
 
-        @* nithin*@
+    @* BOOTSTRAP JS *@
+    <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
+    @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>*@
 
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.min.css" />
-        <script src="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.all.js"></script>
-        @* nithin*@
+    @*nithin*@
+    <script type="text/javascript" src="~/js/ColorPicker/ShadowPicker.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ColorPicker/GradientColorPicker.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbGauge.js" asp-append-version=@bApnd></script>
 
-        @* JQUERY JS *@
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
-        @*jith*@
-        <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/jquery.fontselect.min.js" asp-append-version=@bApnd></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker-iconset-all.min.js" type="text/javascript"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-iconpicker/1.9.0/js/bootstrap-iconpicker.min.js"></script>
+    @*amal*@
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>
 
-        @*roby*@
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.js"></script>
+    @*jith*@
+    <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+    <script type="text/javascript" src="~/js/jwt-decode.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/bootstrap.datetimepicker.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ElementQueries.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>
 
-        @*nithin*@
-        <script type="text/javascript" src="~/js/ColorPicker/ShadowPicker.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/ColorPicker/GradientColorPicker.js" asp-append-version=@bApnd></script>
-        @*nithin*@
+    @*ROBY*@
+    <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
+    <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js" asp-append-version=@bApnd></script>
 
-        @* BOOTSTRAP JS *@
-        <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
-        @*
-            <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>*@
-        <script type="text/javascript" src="~/js/CommonJS/bootstrap.min.js"></script>
-        @*jith*@
-        <script type="text/javascript" src="~/js/bootstrap-checkbox.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-        @*Dona*@
-        <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
-        <script type="text/javascript" src="~/js/bootstrap-multiselect.js" asp-append-version=@bApnd></script>
-        @*
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>*@
+    @*jith*@
+    <script type="text/javascript" src="~/js/FormBuilder/MultiLanguage.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src='~/js/FormBuilder/FormBuilder.js' asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/PGHelper.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version=@bApnd></script>
+    <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>
+    <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/FormBuilder/jquery.scrollTo.js" asp-append-version=@bApnd></script>
 
-        @* OTHER JS *@
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>
-        @*amal*@
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay.min.js"></script>
-        @*amal*@
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.loadingoverlay/latest/loadingoverlay_progress.min.js"></script>
-        @*amal*@
-        <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
-        <script type="text/javascript" src="~/js/jwt-decode.min.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/ss-utils.js" asp-append-version=@bApnd></script>
+    @*COMMON JS && EB PLUGINS*@
+    <environment include="Development">
+        <script type="text/javascript" src="~/js/Common/croppie.min.js"></script>
+        <script type="text/javascript" src="~/js/Common/store.legacy.min.js"></script>
+        <script src="~/js/Common/Eb_CommonHeader.js" type="text/javascript"></script>
+        <script src="~/js/Common/eb-quickmenu.js" type="text/javascript"></script>
+        <script src="~/js/Common/eb-setup.js" type="text/javascript"></script>
+        <script type="text/javascript" src="~/js/EbServerEvents/eventsource.min.js"></script>
+        <script type="text/javascript" src="~/js/EbServerEvents/ss-utils.js"></script>
+        <script type="text/javascript" src="~/js/EbServerEvents/ServerEvents.js"></script>
 
-        <script type="text/javascript" src="~/js/bootstrap.datetimepicker.js" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbServerEvents/eventsource.min.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script type="text/javascript" src="~/js/ElementQueries.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/FormBuilder/Eb_pgCXVE.js" asp-append-version=@bApnd></script>
-        @*jith*@
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.6.2/jquery.contextMenu.min.js"></script>
-        @*amal*@
-        <script type="text/javascript" src="~/js/store.legacy.min.js" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>
-        @*dona*@
-        <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
-        <script src="~/js/Eb_Basic_DataTable.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
-        <script type="text/javascript" src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
-        <script type="text/javascript" src="~/js/jquery.inputmask.bundle.js"></script>
-        <script type="text/javascript" src="~/js/FormBuilder/MultiLanguage.js"></script>
-        @*Roby*@
-        <script type="text/javascript" src="~/js/EbGauge.js"></script>
-        @*<script src="https://d3js.org/d3.v5.min.js"></script>
-            <script src="https://naver.github.io/billboard.js/release/latest/dist/billboard.js"></script>*@
-        @*<script src="https://unpkg.com/gauge-chart@latest/dist/bundle.js"></script>*@
-        <script src="https://cdn.jsdelivr.net/npm/gaugeJS@1.3.7/dist/gauge.js"></script>
-        @*<script src="~/js/gauge.js"></script>*@
+        <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbParams.Mange.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/EbDialogBox.js" type="text/javascript"></script>
+        <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript"></script>
+        <script type="text/javascript" src="~/js/EbControls/EbCropper.js"></script>
+        <script type="text/javascript" src="~/js/EbControls/EbProgressBar.js"></script>
+        <script type="text/javascript" src="~/js/EbControls/EbMsgBox.js"></script>
+        <script type="text/javascript" src="~/js/EbControls/EbPopBox.js"></script>
+        <script type="text/javascript" src="~/js/EbControls/Eb_FontEditor.js"></script>
+    </environment>
 
-        @* EB JS *@
+    @*BUNDLES*@
+    <environment exclude="Development">
+        <script type="text/javascript" src="~/js/Bundles/eb-common.bundle.js" asp-append-version=@bApnd></script>
+        <script type="text/javascript" src="~/js/Bundles/eb-plugins.bundle.js" asp-append-version=@bApnd></script>
+    </environment>
+    <script type="text/javascript" src="~/js/Bundles/codemirror.bundle.js" asp-append-version=@bApnd></script>
 
-        <script type="text/javascript" src="~/js/FormBuilder/FormRenderCommon.js" asp-append-version=@bApnd></script>
-        <script src="~/js/EbControls/EbProgressBar.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbControls/EbMsgBox.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbControls/EbPopBox.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script type="text/javascript" src="~/js/Eb_FontEditor.js" asp-append-version=@bApnd></script>
-        <script src="~/js/EbServerEvents/ServerEvents.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script type="text/javascript" src="~/js/eb_common.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src='~/js/FormBuilder/FormBuilder.js' asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/FormBuilder/Eb_PropertyGrid.js" asp-append-version=@bApnd></script>
-        @*jith*@
-        <script type="text/javascript" src="~/js/FormBuilder/PGHelper.js" asp-append-version=@bApnd></script>
-        @*jith*@
-        <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
-        <script type="text/javascript" src='~/js/Eb_dragula.js' asp-append-version=@bApnd></script>
-        <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
-        @*jith*@
-        <script src="~/js/FormBuilder/EbControlCollection.js" asp-append-version=@bApnd></script>
-        @*jith*@
-        <script type="text/javascript" src="~/js/EbAlerts.js" asp-append-version=@bApnd></script>
-        @*jith*@
-        <script type="text/javascript" src="~/js/Eb_ObjectCommon.js" asp-append-version=@bApnd></script>
-        <script src="~/js/EbControls/EbCropper.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbControls/EbFileUpload.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbControls/EbParams.Mange.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbControls/EbDialogBox.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbControls/EbFupFormControl.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script type="text/javascript" src="~/js/Eb_CommonHeader.js" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbQuickMenu/eb-quickmenu.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/EbControls/eb-walkthrough.js" type="text/javascript" asp-append-version=@bApnd></script>
-        @*amal*@
-        <script src="~/js/Common/eb-setup.js" type="text/javascript" asp-append-version=@bApnd></script>
+    @if (ViewBag.wc == "uc")
+    {
+        <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>
+    }
 
-        @*code editor*@
-        <link rel="stylesheet" href="~/lib/codemirror/lib/codemirror.css" asp-append-version=@bApnd>
-        <link rel="stylesheet" href="~/lib/codemirror/addon/hint/show-hint.css" asp-append-version=@bApnd>
-        <link rel="stylesheet" href="~/lib/codemirror/addon/fold/foldgutter.css" asp-append-version=@bApnd />
-        <script src="~/lib/codemirror/lib/codemirror.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/hint/show-hint.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/hint/javascript-hint.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/mode/javascript/javascript.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/hint/sql-hint.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/mode/sql/sql.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/fold/foldcode.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/fold/foldgutter.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/fold/brace-fold.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/fold/xml-fold.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/fold/comment-fold.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/mode/xml/xml.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/hint/anyword-hint.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/mode/clike/clike.js" asp-append-version=@bApnd></script>
-        <script src="~/lib/codemirror/addon/edit/matchbrackets.js" asp-append-version=@bApnd></script>
-        <script src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
-        @if (ViewBag.wc == "uc")
-        {
-            <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>
-            @*amal*@
-        }
-        @if (IsSectionDefined("StyleSheet"))
-        {
-            @RenderSection("StyleSheet")
-        }
+    @if (IsSectionDefined("StyleSheet"))
+    {
+        @RenderSection("StyleSheet")
+    }
 
-        @Html.RenderStyles()
+    @Html.RenderStyles()
 
-        @if (IsSectionDefined("JavaScript"))
-        {
-            @RenderSection("JavaScript")
-        }
+    @if (IsSectionDefined("JavaScript"))
+    {
+        @RenderSection("JavaScript")
+    }
 
-        @Html.RenderScripts()
-        <script>
-        AllMetasRoot = {};
-        window.ebcontext= {
-            sid: "@ViewBag.cid",
-            user: @Html.Raw(ViewBag.UserObject) || null,
-            menu: {},
-            locations: {},
-            header: {},
-            env:'@ViewBag.Env',
-            font:@Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
-            EbObjectMeta:@Html.Raw(ViewBag.EbObjectTypeMeta),
-            se_url: '@ViewBag.ServerEventUrl',
-            setup: new Setup({ se_url: '@ViewBag.ServerEventUrl' })
-        };
-        </script>
-    </head>
-    <body>
-        <div class="html-root">
-            @{
-                if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
-                {
-                    <div id="eb-common-menu">
-                        @{ Html.RenderPartial("EbQuickMenu");}
-                    </div>
-                }
-                if (ViewBag.wc == "uc")
-                {
-                    <div id="eb-locswitch_wraper">
-                        <div class="loc_switchModal_fade"></div>
-                        <div class="loc_switchModal" id="loc_switchModal">
-                            <div class="loc_switchModal_outer">
-                                <div class="loc_switchModal_box">
-                                    <div class="locs_head">
-                                        <h4>Switch Location</h4>
-                                        <div class="loc_searchInput w-100">
-                                            <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
-                                        </div>
+    @Html.RenderScripts()
+    <script>
+            AllMetasRoot = {};
+            window.ebcontext = {
+                sid: "@ViewBag.cid",
+                user: @Html.Raw(ViewBag.UserObject) || null,
+                menu: {},
+                locations: {},
+                header: {},
+                env:'@ViewBag.Env',
+                font:@Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
+                EbObjectMeta:@Html.Raw(ViewBag.EbObjectTypeMeta),
+                se_url: '@ViewBag.ServerEventUrl',
+                setup: {}
+            };
+    </script>
+</head>
+<body>
+    <div class="html-root">
+        @{
+            if (ViewBag.wc == "dc" || ViewBag.wc == "uc")
+            {
+                <div id="eb-common-menu">
+                    @{ await Html.RenderPartialAsync("EbQuickMenu");}
+                </div>
+            }
+            if (ViewBag.wc == "uc")
+            {
+                <div id="eb-locswitch_wraper">
+                    <div class="loc_switchModal_fade"></div>
+                    <div class="loc_switchModal" id="loc_switchModal">
+                        <div class="loc_switchModal_outer">
+                            <div class="loc_switchModal_box">
+                                <div class="locs_head">
+                                    <h4>Switch Location</h4>
+                                    <div class="loc_searchInput w-100">
+                                        <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
                                     </div>
-                                    <div class="locs_bdy"></div>
-                                    <div class="locs_foot">
-                                        <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
-                                    </div>
-                                    <div class="no_loc_config">No Locations.</div>
                                 </div>
+                                <div class="locs_bdy"></div>
+                                <div class="locs_foot">
+                                    <button class="btn loc-switchbtn pull-right" id="setLocSub">Switch</button>
+                                </div>
+                                <div class="no_loc_config">No Locations.</div>
                             </div>
                         </div>
                     </div>
-                }
+                </div>
             }
-            <div id="layout_div" class="container-fluid html-root-layout">
-                @RenderBody()
+        }
+        <div id="layout_div" class="container-fluid html-root-layout">
+            @RenderBody()
+        </div>
+        <div class="modal fade eb-common-popup" id="eb-common-popup" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Modal title</h5>
+                        <button type="button" class="close" id="eb-common-popup-close" data-dismiss="modal" style="margin-left:auto;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="eb-common-popup-ok" class="btn btn-primary">OK</button>
+                    </div>
+                </div>
             </div>
         </div>
-        @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
-        {
-            <script>
+        @{
+            await Html.RenderPartialAsync("NotificationWindow");
+        }
+    </div>
+
+    @if (ViewBag.wc == "uc" || ViewBag.wc == "dc")
+    {
+        <script>
             window.ebcontext.menu = new EbMenu({
                 Console: '@ViewBag.wc',
                 Sid: '@ViewBag.cid',
                 Uid: '@ViewBag.UId'
             });
-            </script>
-        }
-        @if (ViewBag.wc == "uc")
-        {
-            <script>
+        </script>
+    }
+
+    @if (ViewBag.wc == "uc")
+    {
+        <script>
             let loc__ = new LocSwitch({
                 Location: '@Html.Raw(ViewBag.Locations)',
                 Tid: '@ViewBag.cid',
@@ -324,18 +286,20 @@
                 Current:@ViewBag.CurrentLocation
             });
             window.ebcontext.locations = loc__;
-            //loc__.Listener.ChangeLocation = function (o) {
-            //    console.error(o);
-            //}
-            </script>
-        }
-        <script>
-            $('.Eb_Image').Lazy();
         </script>
-        @if (IsSectionDefined("JsCode"))
-        {
-            @RenderSection("JsCode")
-        }
-        @Html.RenderJsCode()
-    </body>
+    }
+
+    @if (IsSectionDefined("JsCode"))
+    {
+        @RenderSection("JsCode")
+    }
+    @Html.RenderJsCode()
+
+    <script>
+        $(document).ready(function () {
+            window.ebcontext.setup = new Setup({ se_url: '@ViewBag.ServerEventUrl' });
+            $('.Eb_Image').Lazy();
+        });
+    </script>
+</body>
 </html>

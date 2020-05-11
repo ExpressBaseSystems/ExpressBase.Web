@@ -12,7 +12,6 @@
         $('#add_key_btn').on('click', this.AddNewKey.bind(this));//new key CreateConfig
        // $('#createloc').off("click").on('click', this._CreateLocation.bind(this));//createloc
         $('#add_location').off("click").on('click', this.AddLocation.bind(this));//createloc
-        $('#add_root_loc').off("click").on('click', this.AddLocationRoot.bind(this));//createloc
 
 
         this.AddmetaHierarchial(this.data);
@@ -286,7 +285,7 @@
     this.AddTypeInUiTable = function (item) {
         item = item || { Name: "", Id: 0 };
         let del_btn = `<i id="del_${item.Id}" class="fa fa-trash delete-loc-type"></i>`;
-        let edit_btn = `<i id="edit_${item.Id}" class="fa fa-pencil edit-loc-type" style="padding-right:5px;"></i>`;
+        let edit_btn = `<i id="edit_${item.Id}" class="fa fa-pencil edit-loc-type" style="padding-right:15px;"></i>`;
 
         $('#types-space tbody').append(`<tr key="${item.Id}">
                                     <td class="text-center">${++types_count}</td> 
@@ -313,6 +312,7 @@
         $.post("../TenantUser/DeleteLocationType", { id: id }, function (result) {
             if (result.status) {
                 $(e.target).closest("tr").remove();
+                $(`#loc_type option[value=${id}]`).remove();
             }
         }.bind(this));
     };
@@ -330,7 +330,7 @@
         o.LocId = $("input[name='_LocId']").val();
         o.LongName = $("input[name='_longname']").val();
         o.ShortName = $("input[name='_shortname']").val();
-        o.Logo = $(`input[name='_Logo']`).val();
+        o.Logo = $(`input[name='Logo']`).val();
         o.TypeId = $("#loc_type").val();
         o.IsGroup = true;
         o.ParentId = $("#_parentId").val();
@@ -371,7 +371,7 @@
         $("#_parentId").val("");
         $("#add_location").text("Add"); 
         $("input[name='_LocId']").val("");
-        $(`input[name='_Logo']`).val("");
+        $(`input[name='Logo']`).val("");
         $("#loc_type").val("");
         $("#add_location_modal").find("input[type='text']").val("");
     };
@@ -387,9 +387,15 @@
             o.IsPaging = false;
             o.dvObject = JSON.parse(result);
             o.Source = "locationTree";
-            var data = new EbCommonDataTable(o);
-        });
+            o.initCompleteCallback = this.AddRootLocationButton.bind(this);
+            let data = new EbCommonDataTable(o);
+        }.bind(this));
 
+    };
+
+    this.AddRootLocationButton = function(){
+        $("#tbl_filter").append(`<button id="add_root_loc" class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#add_location_modal" > Add New Root Location </button>`);
+        $('#add_root_loc').off("click").on('click', this.AddLocationRoot.bind(this));//createloc
     };
 
     //---------------------------------------------------

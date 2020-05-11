@@ -1,0 +1,141 @@
+[
+  {
+    "outputFileName": "wwwroot/js/Bundles/bootsrap_jq.bundle.min.js",
+    "inputFiles": [
+      "wwwroot/js/Bootstrap_JQuery/jquery-3.4.1.min.js",
+      "wwwroot/js/Bootstrap_JQuery/jquery-ui-1.12.1.min.js",
+      "wwwroot/js/Bootstrap_JQuery/jquery.lazy-1.7.8.min.js",
+      "wwwroot/js/Bootstrap_JQuery/bootstrap.min.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/Bundles/eb-common.bundle.css",
+    "inputFiles": [
+      "wwwroot/css/EbCommonStyles/eb-style.css",
+      "wwwroot/css/EbCommonStyles/eb-style.common.css",
+      "wwwroot/css/EbCommonStyles/eb-assets.style.css",
+      "wwwroot/css/EbCommonStyles/ObjectDashboard.css",
+      "wwwroot/css/EbCommonStyles/Eb_quickMenu.css"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-common.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/Common/croppie.min.js",
+      "wwwroot/js/Common/store.legacy.min.js",
+      "wwwroot/js/Common/Eb_CommonHeader.js",
+      "wwwroot/js/Common/eb-quickmenu.js",
+      "wwwroot/js/Common/eb-setup.js",
+      "wwwroot/js/EbServerEvents/eventsource.min.js",
+      "wwwroot/js/EbServerEvents/ss-utils.js",
+      "wwwroot/js/EbServerEvents/ServerEvents.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/Bundles/eb-api.bundle.min.css",
+    "inputFiles": [
+      "wwwroot/css/ApiRelated/leader-line.css",
+      "wwwroot/css/ApiRelated/EbPrettyJson.css",
+      "wwwroot/css/ApiRelated/Eb_ApiAssets.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-api.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/ApiBuilder/leader-line.min.js",
+      "wwwroot/js/ApiBuilder/EbPrettyJson.js",
+      "wwwroot/js/ApiBuilder/ApiBuilder.js",
+      "wwwroot/js/ApiBuilder/ApiContextMenu.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/Bundles/eb-plugins.bundle.min.css",
+    "inputFiles": [
+      "wwwroot/css/EbControls/EbFileUpload.css",
+      "wwwroot/css/EbControls/EbDialogBox.css",
+      "wwwroot/css/EbControls/eb-walkthrough.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-plugins.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/EbControls/EbCropper.js",
+      "wwwroot/js/EbControls/EbDialogBox.js",
+      "wwwroot/js/EbControls/EbFileUpload.js",
+      "wwwroot/js/EbControls/EbMsgBox.js",
+      "wwwroot/js/EbControls/EbPopBox.js",
+      "wwwroot/js/EbControls/EbProgressBar.js",
+      "wwwroot/js/EbControls/eb-walkthrough.js",
+      "wwwroot/js/EbControls/Eb_FontEditor.js",
+      "wwwroot/js/EbControls/EbParams.Mange.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-pdfreport.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/ReportBuilder/Eb_ReportBuilder.js",
+      "wwwroot/js/ReportBuilder/Eb_ReportBuilderExtended.js",
+      "wwwroot/js/ReportBuilder/Eb_ReportBuilderCom.js",
+      "wwwroot/js/ReportBuilder/ReportMenu.js",
+      "wwwroot/js/ReportBuilder/EbTableLayout.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/Bundles/codemirror.bundle.min.css",
+    "inputFiles": [
+      "wwwroot/lib/codemirror/lib/codemirror.css",
+      "wwwroot/lib/codemirror/addon/hint/show-hint.css",
+      "wwwroot/lib/codemirror/addon/fold/foldgutter.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/codemirror.bundle.js",
+    "inputFiles": [
+      "wwwroot/lib/codemirror/lib/codemirror.js",
+      "wwwroot/lib/codemirror/addon/hint/show-hint.js",
+      "wwwroot/lib/codemirror/addon/hint/javascript-hint.js",
+      "wwwroot/lib/codemirror/mode/javascript/javascript.js",
+      "wwwroot/lib/codemirror/addon/hint/sql-hint.js",
+      "wwwroot/lib/codemirror/mode/sql/sql.js",
+      "wwwroot/lib/codemirror/addon/fold/foldcode.js",
+      "wwwroot/lib/codemirror/addon/fold/foldgutter.js",
+      "wwwroot/lib/codemirror/addon/fold/brace-fold.js",
+      "wwwroot/lib/codemirror/addon/fold/xml-fold.js",
+      "wwwroot/lib/codemirror/addon/fold/comment-fold.js",
+      "wwwroot/lib/codemirror/mode/xml/xml.js",
+      "wwwroot/lib/codemirror/addon/hint/anyword-hint.js",
+      "wwwroot/lib/codemirror/mode/clike/clike.js",
+      "wwwroot/lib/codemirror/addon/edit/matchbrackets.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-mobilepage.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/MobilePageBuilder/mobile.page.js",
+      "wwwroot/js/MobilePageBuilder/mobile.page.controls.js",
+      "wwwroot/js/MobilePageBuilder/mobile.page.controls.extension.js",
+      "wwwroot/js/MobilePageBuilder/mobile.page.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  }
+]

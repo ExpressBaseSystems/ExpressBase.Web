@@ -1,15 +1,142 @@
 ﻿class Setup {
+
     constructor(option) {
         this.option = {};
+        this.se = {};
+        this.notification_count = 0;
+        this.actions_count = 0;
 
         $.extend(this.option, option);
+        this.initContainers_DomEvents();
+        this.initServerEvents();
+        this.getNotifications();
+        //this.userNotification();
 
-        this.userNotification();
-        this.GetNotificationFromDBForPageLoad();
+        this.modal = new EbCommonModal();
+    }
+
+    getCurrentLocation() {
+        if (!$.isEmptyObject(ebcontext.locations)) {
+            return ebcontext.locations.getCurrent();
+        }
+        return 1;
+    }
+
+    initContainers_DomEvents() {
+        this.nf_container = $(`#nf-window #nf-container`);
+        this.actn_container = $(`#nf-window #actn_container`);
+        this.nf_window = $("#nf-window.eb-notification-window");
+        this.nf_fade = $("#nf-window-fade");
+
+        $("#eb-expand-nfWindow").off("click").on("click", this.toggleNFWindow.bind(this));
+        this.nf_fade.on("click", this.toggleNFWindow.bind(this));
     }
 
     RMW() {
         $("#eb-expndLinkswrprWdgt").remove();
+    }
+
+    toggleNFWindow() {
+        if (!this.nf_window.is(":visible")) {
+            this.nf_fade.show();
+            this.nf_window.show("slide", { direction: 'right' });
+        }
+        else {
+            this.nf_fade.hide();
+            this.nf_window.hide();
+        }
+    }
+
+    initServerEvents() {
+        this.se = new EbServerEvents({
+            ServerEventUrl: this.option.se_url,
+            Channels: ["file-upload"]
+        });
+
+        this.se.onNotification = function (msg) {
+            console.log("new notification");
+            this.notified(msg);
+        }.bind(this);
+    }
+
+    notified(msg) {
+        var o = JSON.parse(msg);
+        this.notification_count = this.notification_count + 1;
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count);
+        //start again
+    }
+
+    getNotifications() {
+        $.ajax({
+            type: "GET",
+            url: "../Notifications/GetNotifications",
+            success: this.onGetNotificationsSuccess.bind(this)
+        });
+    }
+
+    onGetNotificationsSuccess(data) {
+        if (data === null || data === undefined) return;
+        else {
+            if ("notifications" in data && Array.isArray(data.notifications)) {
+                this.drawNotifications(data.notifications);
+            }
+            if ("pendingActions" in data && Array.isArray(data.pendingActions)) {
+                this.drawActions(data.pendingActions);
+            }
+        }
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count);
+        $('.status-time').tooltip({
+            placement: 'top'
+        });
+    }
+
+    drawNotifications(nf) {
+        let plc = "Untitled...";
+        this.nf_container.empty();
+        if (nf.length > 0) {
+            for (let i = 0; i < nf.length; i++) {
+                this.nf_container.append(`
+                <li class="nf-tile" notification-id="${nf[i].notificationId}" link-url="${nf[i].link}">
+                    <div class="notification-inner">
+                        <h5>${nf[i].title || plc}</h5>
+                        <span class='pending_date status-time' title='${nf[i].createdDate}'>${nf[i].duration}</span>
+                    </div>
+                </li>`);
+            }
+        }
+        else {
+            this.nf_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+        }
+        $("#nf-window #nf-notification-count").text(`(${nf.length})`);
+        this.notification_count = nf.length;
+    }
+
+    drawActions(pa) {
+        this.actn_container.empty();
+        if (pa.length > 0) {
+            for (let i = 0; i < pa.length; i++) {
+                let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].dataId)]))));
+                let locid = this.getCurrentLocation();
+                let url = `../webform/index?refid=${pa[i].link}&_params=${params}&_mode=1&_locId=${locid}`;
+                let _label = "";
+                if (pa[i].actionType === "Approval")
+                    _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";
+                this.actn_container.append(`
+                <li class="nf-tile">
+                        <a href="${url}" target="_blank">
+                            <div class='pending_action_inner'>
+                                <h5>${pa[i].description}</h5>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].dateInString}</span></div>
+                            </div>
+                        </a>
+                </li>`);
+            }
+        }
+        else {
+            this.actn_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Notifications</p>`);
+        }
+        $("#nf-window #nf-pendingact-count").text(`(${pa.length})`);
+        this.actions_count = pa.length;
     }
 
     userNotification() {
@@ -21,14 +148,14 @@
             var len = parseInt($('#notification-count').attr("count"));
             var html = "";
             var x = JSON.parse(msg);
-            if (len == 0) {
+            if (len === 0) {
                 len = x.Notification.length;
             }
             else {
                 len = len + x.Notification.length;
             }
 
-            if (len == 0) {
+            if (len === 0) {
                 $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
                 var html1 = `<p class="no_notification">No Notifications</p>`;
                 $('.new_notifications').append(html1);
@@ -40,7 +167,7 @@
             }
             $('#notification-count').attr("count", len);
             for (var i = 0; i < x.Notification.length; i++) {
-                if (x.Notification[i].Title != null && x.Notification[i].Link != null) {
+                if (x.Notification[i].Title !== null && x.Notification[i].Link !== null) {
                     html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
                                 <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>
                                 <div notification-id = "${x.Notification[i].NotificationId}" link-url="${x.Notification[i].Link}" class="notification-update" >
@@ -69,7 +196,7 @@
         });
         $(e.target).closest("li").detach();
         var x = parseInt($('#notification-count').attr("count")) - 1;
-        if (x == 0) {
+        if (x === 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
             var html = `<p class="no_notification">No Notifications</p>`;
             $('.new_notifications').append(html);
@@ -83,139 +210,6 @@
         $('#notification-count').attr("count", x);
     }
 
-    NotificationSuccessFun = function (link_url, data) {
-        //window.location = link_url;
-        window.open(link_url, '_blank');
-    }
-
-    GetNotificationFromDBForPageLoad() {
-        $.ajax({
-            type: "POST",
-            url: "../NotificationTest/GetCompleteNotificationDetailsFromDB",
-            data: {},
-            success:
-                this.CompleteNotificationDisplayFunc.bind(this)
-        });
-    }
-
-    CompleteNotificationDisplayFunc = function (data) {
-        this.AppendTabs(data);
-        this.AppendNotification(data);
-        this.AppendPendingAction(data);
-        let count = data.notifications.length + data.pendingActions.length;
-
-        if (count === 0)
-            $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
-        else {
-            $('#notification-count').attr("style", "");
-            $('#notification-count').html(count);
-        }
-        $('#notification-count').attr("count", count);
-        $('.notification-update').off("click").on('click', this.UpdateNotification.bind(this));
-        $('.notification-close').off("click").on('click', this.CloseNotification.bind(this));
-        $('#notificationTabs').on('click', '.nav-tabs a', function () {
-            $(this).closest('.dropdown').addClass('dontClose');
-        });
-        $('#notificationDropDown').on('hide.bs.dropdown', function (e) {
-            if ($(this).hasClass('dontClose')) {
-                e.preventDefault();
-            }
-            $(this).removeClass('dontClose');
-        });
-    }
-
-    AppendTabs = function (data) {
-        let html = ``;
-        html = html + `
-                    <ul class="nav nav-tabs eb-styledTab" >
-                          <li class="nav-item devdshtab active"> <a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#notification" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Notifications</a></li>
-                          <li class="nav-item devdshtab"><a class="nav-link devdshtab" data-toggle="tab" role="tab" href="#pendingAction" style="background: #f2f2f2;border: none;height: 35px;padding: 10px 15px;border-bottom: 1px solid #ddd;margin-top: 0px;color: #555;font-size: 12px;">Pending Actions</a></li>
-                    </ul>
-                    
-                    <div class="tab-content">
-                        <div id="notification" class="tab-pane active" role="tabpanel" style='height:calc(100vh - 74px)'>
-                            <div class='action_cont'>
-                                <ul class="drp_ul new_notifications Action_ul"></ul>
-                            </div>
-                            <div class='see_all_action see_all_notification'><a href="/NotificationTest/GetAllNotifications" target="_blank">See All Notifications</a></div>
-                        </div>
-                        <div id="pendingAction" class="tab-pane" role="tabpanel" style='height:calc(100vh - 74px)'>
-                            <div class='action_cont'>
-                                <ul class="drp_ul pendingactions Action_ul"></ul>
-                             </div>
-                            <div class='see_all_action see_all_pendingaction'><a href="/NotificationTest/GetAllActions" target="_blank">See All Actions</a></div>
-                        </div>
-                   </div>
-                    `;
-        $('.notifications').empty();
-        $('.notifications').append(html);
-    }
-
-    AppendNotification = function (data) {
-        let html = ``;
-        for (let i = 0; i < data.notifications.length; i++) {
-            if (data.notifications[i].title !== null && data.notifications[i].link !== null) {
-                html = html + `
-                            <li class="drp_item"> 
-                                <i class="fa fa-times notification-close"></i>
-                                <div notification-id = "${data.notifications[i].notificationId}" link-url="${data.notifications[i].link}" class="notification-update" >
-                                    <p>${data.notifications[i].title}</p>
-                                    <h6 class="notification-duration" style="margin-top: 0px;">${data.notifications[i].duration}</h6>
-                                </div>
-                            </li>`;
-            }
-        }
-        $("#notification .new_notifications").append(html);
-        html = ``;
-        html = `<div id="old" class="tab-pane" role="tabpanel">
-                            <ul class="drp_ul old_notifications" style="overflow: scroll;height: 100vh;">
-                            </ul>
-                        </div>
-                    `;
-        $("#notification").after(html);
-
-        if (data.notifications.length === 0) {
-            let html1 = `<p class="no_notification no_action">No Notifications</p>`;
-            $('.new_notifications').append(html1);
-            $("#notification .see_all_notification").hide();
-        }
-        else {
-            $('.no_notification').detach();
-            $("[href='#notification']").append(`(${data.notifications.length})`);
-        }
-    }
-
-    AppendPendingAction = function (data) {
-        let html = ``;
-        for (let i = 0; i < data.pendingActions.length; i++) {
-            let filters = [];
-            filters.push(new fltr_obj(11, "id", data.pendingActions[i].dataId));
-            let url = `../webform/index?refid=${data.pendingActions[i].link}&_params=${btoa(unescape(encodeURIComponent(JSON.stringify(filters))))}&_mode=1&_locId=${store.get("Eb_Loc-" + this.TenantId + this.UserId)}`;
-            html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
-                                <div class='pendingaction'>
-                                    <a href="${url}" target="_blank">
-                                        <div class='pending_action_inner'>
-                                            <span>${data.pendingActions[i].description}</span>
-                                            <span class='pending_date'>${data.pendingActions[i].createdDate}</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </li>`;
-        }
-
-        $("#pendingAction .Action_ul").append(html);
-
-        if (data.pendingActions.length === 0) {
-            let html1 = `<p class="no_pendingaction no_action">No Pending Action</p>`;
-            $('.pendingactions').append(html1);
-            $("#pendingAction .see_all_pendingaction").hide();
-        }
-        else {
-            $('.no_pendingaction').detach();
-            $("[href='#pendingAction']").append(`(${data.pendingActions.length})`);
-        }
-    }
-
     CloseNotification = function (e) {
         let notification_id = $(e.target).siblings('div').attr("notification-id");
         $.ajax({
@@ -225,7 +219,7 @@
         });
         $(e.target).closest("li").detach();
         var x = parseInt($('#notification-count').attr("count")) - 1;
-        if (x == 0) {
+        if (x === 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
             $('#notification-count').empty();
             var html = `<p class="no_notification">No Notifications</p>`;
@@ -239,5 +233,111 @@
         $('#notification-count').attr("count", x);
         $('#notificationDropDown').addClass("open");
         e.stopPropagation();
+    }
+}
+
+
+class EbCommonModal {
+
+    constructor() {
+
+        this.options = {
+            Title: "Title",
+            ButtonText: "OK",
+            ButtonColor: "#ffffff",
+            ButtonBackground: "#3876ea",
+            ShowHeader: true,
+            ShowFooter: true
+        };
+
+        this.callback = new Function();
+
+        this.$container = $("#eb-common-popup");
+        this.$close = this.$container.find("#eb-common-popup-close");
+        this.$ok = this.$container.find("#eb-common-popup-ok");
+
+        this.setStyle({});
+
+        this.$container.on('show.bs.modal', this.beforeShown.bind(this));
+        this.$container.on('shown.bs.modal', this.afterShown.bind(this));
+        this.$container.on('hide.bs.modal', this.beforeHide.bind(this));
+        this.$container.on('hidden.bs.modal', this.afterHide.bind(this));
+        this.$close.on("click", this.onClose.bind(this));
+        this.$ok.on("click", this.onComplete.bind(this));
+    }
+
+    setStyle(option) {
+
+        $.extend(this.options, option);
+
+        this.$ok.css({ background: this.options.ButtonBackground, color: this.options.ButtonColor });
+        this.$ok.text(this.options.ButtonText);
+
+        this.$container.find(".modal-title").text(this.options.Title);
+
+        if (this.options.ShowHeader)
+            this.$container.find(".modal-header").show();
+        else
+            this.$container.find(".modal-header").hide();
+
+        if (this.options.ShowFooter)
+            this.$container.find(".modal-footer").show();
+        else
+            this.$container.find(".modal-footer").hide();
+    }
+
+    setSize(width, height) {
+        if (typeof width === "string") {
+            this.$container.find(".modal-dialog").addClass(width);
+        }
+        else {
+            this.$container.height(height);
+            this.$container.width(width);
+        }
+    }
+
+    reset() {
+        this.$container.modal('handleUpdate');
+        this.setHtml("");
+    }
+
+    setHtml(html) {
+        this.$container.find(".modal-body").html(html);
+    }
+
+    show(callback) {
+        if (callback)
+            this.callback = callback;
+
+        this.$container.modal("show");
+    }
+
+    hide() {
+        this.$container.modal("hide");
+    }
+
+    beforeShown() {
+        this.callback("beforeShown");
+    }
+
+    afterShown() {
+        this.callback("afterShown");
+    }
+
+    beforeHide() {
+        this.callback("beforeHide");
+    }
+
+    afterHide() {
+        this.callback("afterHide");
+    }
+
+    onClose() {
+        this.callback("onClose");
+    }
+
+    onComplete() {
+        this.callback("onComplete");
+        this.hide();
     }
 }

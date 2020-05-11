@@ -289,14 +289,17 @@ div.dataTables_wrapper div.dataTables_processing {
     padding: 0 8px !important;
 }
 
-.odd{
-    background-color: white !important;
+.odd {
+    background-color: #f3f3f3 !important;
 }
 
 .even {
     background-color: white !important;
 }
-table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+.wrapper-cont tr.odd:hover, .wrapper-cont tr.even:hover {
+    background-color: #00000040 !important;
+}
+table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected, table.dataTable tbody > tr.selected:hover {
     background-color: #08C !important;
 }
 
@@ -618,6 +621,10 @@ table.dataTable tr.group td {
     border-radius: 5px;
     text-align: center;
 }
+.conditionformat a{
+   color:inherit !important;
+}
+
 .dropdown-menu-inner {
     display: flex;
     flex-direction: column;
@@ -759,9 +766,6 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     border: 1px solid #ddd;
     border-top: 1px solid #ddd !important;
 }
-.popover-content .nav-tabs {
-    margin-bottom: 1rem;
-}
 .popover-content .nav-tabs .nav-link.active {
     /*border: 1px solid #ddd;
     padding: 3px 1px;
@@ -769,11 +773,21 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     background-color: #fff;*/
 }
 .approval-popover {
-    max-width: 100%;
-    /*width:350px;*/
+    max-width: 600px;
+    width: 600px;
+
+}
+.approval-popover #history {
+    max-height: 250px;
+    overflow-y: auto;
+}
+.approval-popover #history table {
+    height: 100%;
+    margin-bottom: 0px !important;
+    padding-bottom: 1px;
 }
 
- .stage_actions button {
+.stage_actions button {
     padding: 3px 30px 3px 10px;
     font-size: 12px;
     /*width: auto;*/
@@ -787,18 +801,24 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     color: black !important;
 }
 
- .stage_actions_cont {
+.stage_actions_cont {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.stage-div {
     display: flex;
     flex-direction: column;
 }
 
- .stage-div {
-    display: flex;
-    justify-content: space-between;
-    margin: 2px;
+.stage-status-cont {
+    margin-bottom: 2px;
+    font-size: 13px;
+    font-weight: 500;
 }
 .stage-btn {
-    padding: 1px 12px;
+    padding: 8px 12px;
     background-color: #fff;
     border: 1px solid #ddd;
 }
@@ -821,16 +841,121 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     width:100%
 }
 .comment-td {
-    width: 100px;
+    width: 175px;
     overflow: hidden;
     /*display: inline-block;
     white-space:nowrap;
     text-overflow:ellipsis;*/
     word-break: break-all;
 }
+
+.datetime-td {
+    width: 80px;
+}
+.image-td{
+    display:flex;
+}
+
+.history-image {
+    height: 30px;
+    width: 30px;
+    margin-right: 8px;
+}
+.color-green{
+    color:green;
+}
+.color-red {
+    color: red;
+}
+.color-warning {
+    color: #f0ad4e;
+}
+.color-blue {
+    color: #0a12f3;
+    font-weight: 900;
+}
+
+.size11{
+    font-size:11px;
+}
+
+.status-icon, .status-label {
+    margin-right: 5px;
+}
+
+.status-label {
+    font-size: 11px;
+    font-weight: 500;
+}
+.status-time {
+    font-size: 13px;
+    color: #041982;
+    margin: 0;
+}
+
 /*.comment-td:hover {
     text-overflow: clip;
     white-space: normal;
     word-break: break-all;
 }*/
+.treeview .context-menu-item {
+    padding: 0.4em 2em !important;
+}
+
+.approval-popover .nav-tabs {
+    border-bottom: 2px solid #DDD;
+}
+
+.approval-popover .nav-tabs > li.active > a, .approval-popover .nav-tabs > li.active > a:focus, .approval-popover .nav-tabs > li.active > a:hover {
+    border-width: 0;
+}
+
+.approval-popover .nav-tabs > li > a {
+    border: none;
+    color: #5a4080;
+    /*background: #5a4080;*/
+}
+
+.approval-popover .nav-tabs > li.active > a, .approval-popover .nav-tabs > li > a:hover {
+    border: none;
+    color: #5a4080 !important;
+    background: #fff;
+}
+
+.approval-popover .nav-tabs > li > a::after {
+    content: "";
+    background: #5a4080;
+    height: 2px;
+    position: absolute;
+    width: 100%;
+    left: 0px;
+    bottom: -1px;
+    transition: all 250ms ease 0s;
+    transform: scale(0);
+}
+
+.approval-popover .nav-tabs > li.active > a::after, .approval-popover .nav-tabs > li:hover > a::after {
+    transform: scale(1);
+}
+
+.approval-popover .tab-nav > li > a::after {
+    background: ##5a4080 none repeat scroll 0% 0%;
+    color: #fff;
+}
+
+.approval-popover .tab-pane {
+    padding: 10px 0;
+}
+
+.approval-popover .tab-content {
+    padding: 5px
+}
+
+.approval-popover .nav-tabs > li {
+    width: 20%;
+    text-align: center;
+}
+
+
+
 

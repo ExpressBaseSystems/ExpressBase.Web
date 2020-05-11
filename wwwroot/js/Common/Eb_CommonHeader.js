@@ -2,6 +2,7 @@
     var _objName = $(".EbHeadTitle #objname");
     var _btnContainer = $(".comon_header_dy #obj_icons");
     var _layout = $("#layout_div");
+    var _nCounter = $(".comon_header_dy #notification-count,.objectDashB-toolbar #notification-count");
 
     this.insertButton = function ($html) {
         _btnContainer.prepend(`${$html}`);
@@ -37,6 +38,14 @@
 
     this.setLocation = function (t) {
         $("#LocInfoCr_name").text(t);
+    };
+
+    this.updateNCount = function (count) {
+        _nCounter.text(count);
+        if (count > 0)
+            _nCounter.show();
+        else
+            _nCounter.hide();
     };
 
     _layout.data("EbHeader", this);

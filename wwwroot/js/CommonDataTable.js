@@ -507,7 +507,7 @@
             this.GroupFormLink = temp[0].GroupFormLink;
             this.ItemFormLink = temp[0].ItemFormLink;
             this.treeColumn = temp[0];
-            this.treeColumnIndex = (this.Source === "locationTree") ? 0 :  this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
+            this.treeColumnIndex = (this.Source === "locationTree") ? 0 : this.EbObject.Columns.$values.findIndex(x => x.data === this.treeColumn.data);
         }
         if (this.IsTree)
             this.EbObject.IsPaging = false;
@@ -539,7 +539,7 @@
 
     this.Init = function () {
         //this.MainData = null;
-        $.event.props.push('dataTransfer');
+        //$.event.props.push('dataTransfer');
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.copybtn = $("#btnCopy" + this.tableId);
@@ -1328,6 +1328,9 @@
                 $("#" + this.tableId + "_wrapper .DTFC_ScrollWrapper .DTFC_LeftBodyWrapper tr").css("height", this.EbObject.RowHeight + "px");
                 $("#" + this.tableId + "_wrapper .dataTables_scroll .dataTables_scrollBody tr").css("height", this.EbObject.RowHeight + "px");
             }
+            if (Option.initCompleteCallback)
+                Option.initCompleteCallback();
+
             this.Api.columns.adjust();
         }.bind(this), 0);
     };
@@ -2586,7 +2589,7 @@
         $(".tablelink4calendar").off("click").on("click", this.linkFromCalendar.bind(this));
         //$(`tablelinkInline_${this.tableId}`).off("click").on("click", this.link2NewTableInline.bind(this));
         //$(".tablelink_" + this.tableId).off("mousedown").on("mousedown", this.link2NewTableInNewTab.bind(this));
-        $(".closeTab").off("click").on("click", this.deleteTab.bind(this)); 
+        $(".closeTab").off("click").on("click", this.deleteTab.bind(this));
 
 
         this.Api.on('key-focus', function (e, datatable, cell) {
@@ -2613,7 +2616,10 @@
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
         });
-        
+        $('.status-time').tooltip({
+            placement: 'top'
+        });
+
         $('.columntooltip').popover({
             container: 'body',
             trigger: 'hover',
@@ -2624,6 +2630,7 @@
                 return atob($(this).attr("data-contents"));
             },
         });
+
         $('.btn-approval_popover').popover({
             container: 'body',
             trigger: 'click',
@@ -2634,19 +2641,32 @@
                 return atob($(this).attr("data-contents"));
             },
         });
+
         $('.btn-approval_popover').on('click', function (e) {
-            $('.btn-approval_popover').not(this).popover("hide");
+            //$('.btn-approval_popover').not(this).popover("hide");
         });
 
         $('.btn-approval_popover').on('shown.bs.popover', function (e) {
             $(".stage_actions").selectpicker();
             let $td = $(e.target).parents().closest("td");
             $(".btn-action_execute").off("click").on("click", this.ExecuteApproval.bind(this, $td));
-        }.bind(this)); 
-        
-        $(".popover").remove();
+        }.bind(this));
+
+        $('.btn-approval_popover').on('hidden.bs.popover', function (e) {
+            $(e.target).data("bs.popover").inState.click = false;
+        }.bind(this));
+
+        $('body').on('click', function (e) {
+            $('[data-toggle=popover]').each(function () {
+                // hide any open popovers when the anywhere else in the body is clicked
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    $(this).popover('hide');
+                }
+            });
+        });
         $(".rating").rateYo({
-            readOnly: true
+            readOnly: true,
+            starWidth: "24px"
         });
 
         $("[data-coltyp=date]").datepicker({
@@ -2672,7 +2692,7 @@
     };
 
     this.PopoverPlacement = function (context, source) {
-        var position = $(source).position();
+        var position = $(source).offset();
 
         if (position.left > 1000)
             return "left";
@@ -2691,6 +2711,11 @@
         this.$submit.click(this.getColumnsSuccess.bind(this));
 
         if (this.EbObject.FormLinks.$values.length > 0) {
+            this.EbObject.FormLinks.$values = this.EbObject.FormLinks.$values.filter((thing, index, self) =>
+                index === self.findIndex((t) => (
+                    t.DisplayName === thing.DisplayName && t.Refid === thing.Refid
+                ))
+            );
             this.CreateNewFormLinks();
         }
 
@@ -2751,7 +2776,7 @@
 
     this.CreateContexmenu4Tree = function () {
         $.contextMenu({
-            selector: ".groupform",
+            selector: ".groupform", className: 'treeview',
             build: function ($trigger, e) {
                 $("body").find("td").removeClass("focus");
                 $("body").find("[role=row]").removeClass("selected");
@@ -2760,19 +2785,19 @@
                     if ($(e.currentTarget).children().hasClass("levelzero")) {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) }
                             }
                         };
                     }
                     else {
                         return {
                             items: {
-                                "NewGroup": { name: "New Group", icon: "fa-external-link-square", callback: this.FormNewGroup.bind(this) },
-                                "NewItem": { name: "New Item", icon: "fa-external-link-square", callback: this.FormNewItem.bind(this) },
-                                "EditGroup": { name: "View Group", icon: "fa-external-link-square", callback: this.FormEditGroup.bind(this) },
-                                "Move": { name: "Move Group", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                                "NewGroup": { name: "New Group", icon: "fa-plus-square", callback: this.FormNewGroup.bind(this) },
+                                "NewItem": { name: "New Item", icon: "fa-plus-square", callback: this.FormNewItem.bind(this) },
+                                "EditGroup": { name: "View Group", icon: "fa-pencil-square-o", callback: this.FormEditGroup.bind(this) },
+                                "Move": { name: "Move Group", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                             }
                         };
                     }
@@ -2780,9 +2805,9 @@
                 else if (this.Source === "locationTree") {
                     return {
                         items: {
-                            "NewGroup": { name: "New", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "EditGroup": { name: "Edit", icon: "fa-external-link-square", callback: this.OpenLocationModal.bind(this) },
-                            "Move": { name: "Move", icon: "fa-external-link-square", callback: this.MoveGroupOrItem.bind(this) }
+                            "NewGroup": { name: "New", icon: "fa-plus-square", callback: this.OpenLocationModal.bind(this) },
+                            "EditGroup": { name: "Edit", icon: "fa-pencil-square-o", callback: this.OpenLocationModal.bind(this) },
+                            "Move": { name: "Move", icon: "fa-arrows", callback: this.MoveGroupOrItem.bind(this) }
                         }
                     };
                 }
@@ -2830,7 +2855,7 @@
 
     this.OpenLocationModal = function (key, opt, event) {
         let id_index = this.EbObject.Columns.$values.filter(obj => obj.name === "id")[0].data;
-      
+
         let index = opt.$trigger.parent().closest("tr").index();
         let rowData = this.unformatedData[index];
 
@@ -3978,7 +4003,7 @@
         $.ajax({
             type: "POST",
             url: "../dv/PostWebformData",
-            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)},
+            data: { Params: Columns, RefId: val.Form_ref_id, RowId: val.Form_data_id, CurrentLoc: store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId) },
             success: this.cccccc.bind(this, $td),
             error: function (xhr, error) {
                 console.log(xhr); console.log(error);
@@ -3990,6 +4015,8 @@
 
     this.cccccc = function ($td, resp) {
         $td.html(resp._data);
+        if ($td.find(".status-label").text() === "Review Completed")
+            EbMessage("show", { Message: "Review Completed", Background: "#00AD6E" });
         var cell = this.Api.cell($td);
         cell.data($td.html()).draw();
         $("#eb_common_loader").EbLoader("hide");
@@ -4501,6 +4528,12 @@ function returnOperator(op) {
         return "=";
     else
         return op;
+}
+
+function imgError(image) {
+    image.onerror = "";
+    image.src = "/images/proimg.jpg";
+    return true;
 }
 
 (function ($) {

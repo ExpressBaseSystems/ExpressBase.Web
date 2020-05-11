@@ -70,7 +70,7 @@
 
         .sub-headings {
             font-family: inherit;
-            color: #4987fb;
+            color: #000000;
             font-size: small;
         }
 
@@ -83,8 +83,8 @@
         .div-table-contents {
             text-align: left;
             margin: 0px 10px 0px 10px;
-            padding: 0px 15px 0px 15px;
-            font-size: smaller;
+            padding: 20px 15px 0px 15px;
+            font-size: medium;
             font-weight: 100;
         }
 
@@ -114,7 +114,7 @@
         }
 
         .div-row-heading {
-            background-color: #eaeff7;
+            background-color: #ffffff;
             border-radius: 4px;
             border-bottom: 1px solid #a3b9dc;
         }
@@ -134,14 +134,18 @@
                     <button id="updateinfra" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Updating <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> "> Update Infra with SQL Script</button>
                 </div>
                 <div class="row div-label">
-                    <label class="headings">CHANGES</label>
+                    <label class="headings">ProductionDBManager</label>
+                    <label class="sub-headings">(@ViewBag.ChangesLog.Count Solutions)</label>
                 </div>
 
 
                 <div class="div-table-contents">
-                    <div class=" div-sub-headings-main">
-                        <div class="row ">
-                            <div class="col-md-4 align-center">
+                    <div class=" div-sub-headings-main" style="padding-bottom: 20px;border-bottom: 1px solid #a3b9dc;">
+                        <div class="row " >
+                            <div class="col-md-1 align-center">
+                                <label>Sl No.</label>
+                            </div>
+                            <div class="col-md-3 align-center">
                                 <label>Tenant Details</label>
                             </div>
                             <div class="col-md-4 align-center">
@@ -156,42 +160,50 @@
                         </div>
                     </div>
                     @{
-                    for (int i = 0; i < ViewBag.ChangesLog.Count; i++)
-                    {
-                    <div class="row row-padding div-row-heading">
-                        <div class="col-md-4 align-center">
-                            <div>
-                                <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantName</label>
+                        for (int i = 0; i < ViewBag.ChangesLog.Count; i++)
+                        {
+                            <div class="row row-padding div-row-heading">
+                                <div class="col-md-1 align-center">
+                                    <div>
+                                        <label class="sub-headings row-padding">@(i+1)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 align-center">
+                                    <div>
+                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantName</label>
+                                    </div>
+                                    <div>
+                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantEmail</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 align-center">
+                                    <div>
+                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Solution</label>
+                                    </div>
+                                    <div>
+                                        <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].ISolutionId</label>
+                                    </div>
+                                    <div>
+                                        <input type="hidden" value="@ViewBag.ChangesLog[i].DBName" id="dbname" name="dbname" />
+                                        <label class="sub-headings row-padding dbname">@ViewBag.ChangesLog[i].DBName</label>
+                                    </div>
+                                    <div>
+                                        <label class="sub-headings row-padding align-center">@ViewBag.ChangesLog[i].Vendor</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 align-center" id="modified_date_@ViewBag.ChangesLog[i].ISolutionId">
+                                    <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Last_Modified</label>
+                                </div>
+                                <div class="col-md-2 align-center">
+                                    <input type="hidden" value="@ViewBag.ChangesLog[i].ISolutionId" id="solu_id" name="solu_id" class="chk_integrity" />
+                                    <label class="sub-headings row-padding" id="uptodate_@ViewBag.ChangesLog[i].ISolutionId" style="display:none">Up to Date</label>
+                                    <button id="i_chk_@ViewBag.ChangesLog[i].ISolutionId" name="i_chk_@ViewBag.ChangesLog[i].ISolutionId" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
+                                </div>
                             </div>
-                            <div>
-                                <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].TenantEmail</label>
-                            </div>
-                        </div>
-                        <div class="col-md-4 align-center">
-                            <div>
-                                <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Solution</label>
-                            </div>
-                            <div>
-                                <input type="hidden" value="@ViewBag.ChangesLog[i].DBName" id="dbname" name="dbname" />
-                                <label class="sub-headings row-padding dbname">@ViewBag.ChangesLog[i].DBName</label>
-                            </div>
-                            <div>
-                                <label class="sub-headings row-padding align-center">@ViewBag.ChangesLog[i].Vendor</label>
-                            </div>
-                        </div>
-                        <div class="col-md-2 align-center" id="modified_date_@ViewBag.ChangesLog[i].Solution">
-                            <label class="sub-headings row-padding">@ViewBag.ChangesLog[i].Last_Modified</label>
-                        </div>
-                        <div class="col-md-2 align-center">
-                            <input type="hidden" value="@ViewBag.ChangesLog[i].Solution" id="solu_id" name="solu_id" />
-                            <label class="sub-headings row-padding" id="uptodate_@ViewBag.ChangesLog[i].Solution" style="display:none">Up to Date</label>
-                            <button id="i_chk_@ViewBag.ChangesLog[i].Solution" name="i_chk_@ViewBag.ChangesLog[i].Solution" class="btn btn-change btn-sm change_integrity align-center" data-loading-text="Checking <i class='fa fa-gear fa-spin' style='font-size:10px;margin-left:4px;' ></i> ">Check Integrity</button>
-                        </div>
-                    </div>
-                    <div id="@ViewBag.ChangesLog[i].Solution" class="sol_changes">
+                            <div id="@ViewBag.ChangesLog[i].ISolutionId" class="sol_changes">
 
-                    </div>
-                    }
+                            </div>
+                        }
                     }
                 </div>
             </div>
@@ -399,19 +411,23 @@
 
     .diffHeader {
         font-family: FreeMono, monospace;
-        padding:20px;
+        padding: 20px;
     }
+
     .diffmodalsize {
         height: 100vh;
         width: 100%;
         margin: 0px;
     }
+
     .diffmodal-contentsize {
         height: 100%;
     }
+
     .diffmodal-bodysize {
         height: calc(100% - 57px );
     }
+
     .diffresultsize {
         height: 100%;
     }

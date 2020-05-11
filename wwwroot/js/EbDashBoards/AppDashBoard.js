@@ -5,6 +5,13 @@
     this.AppType = apptype;
     this.AppSettings = appsettings;
 
+
+    this.init = function () {
+        this.botConfigFn();
+        $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
+        $('.resetcss').on('click', this.ResetCssFn.bind(this));
+        $('input[name=authtype]').on('click', this.authMethodCheckFn.bind(this));
+    }
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
         var srch = $(e.target).val().toLowerCase();
@@ -150,6 +157,126 @@
             this.setUpImport4Mob();
         }
     }
+    //for bot
+    this.botConfigFn = function () {
+
+        let cssobj = this.AppSettings.CssContent;
+        $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
+        $('#email_anony').attr('checked', this.AppSettings.Authoptions.EmailAuth);
+        $('#name_anony').attr('checked', this.AppSettings.Authoptions.UserName);
+        $('#phone_anony').attr('checked', this.AppSettings.Authoptions.PhoneAuth);
+        $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
+        $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
+        $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
+        for (let property in cssobj) {
+
+            let html = "";
+            //for (let key in cssobj[property]) {
+            //    html += `<label obname='${key}'>${key}</label>
+            //       <input type='text' obname=${key} value='${cssobj[property][key]}' ><br><br>`;
+            //}
+            //$(`#configcssTabContent #${property}`).append(html);
+
+            html = `<div>
+                    <textarea id="${property}_txt" class="form-control csstxtarea " obname="${property}" >${cssobj[property]}</textarea> 
+                    <button id='${property}_btn' type="button" obname="${property}" class="ebbtn eb_btn-xs eb_btnblue   resetcss">Reset</button>
+                    </div>`;
+            $(`#configcssTabContent #${property}`).append(html);
+        }
+    }
+    this.UpdateBotSettingsFn = function () {
+        var appSettings = {};
+        let cssConstObj = {};
+        let authOptions = {};
+        let botProperties = {};
+        let authcheck = $("input[name=authtype]:checked").length;
+        if (!authcheck) {
+            EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
+            return;
+        }
+        if ($('#fb_anony').is(":checked")) {
+            if ($('#fbAppidtxt').val().trim() === "") {
+                EbMessage("show", { Background: "red", Message: "Please provide facebook app ID" });
+                $('#fbAppidtxt').focus();
+                return;
+            }
+            if ($('#fbAppversn').val().trim() === "") {
+                EbMessage("show", { Background: "red", Message: "Please provide facebook app ID" });
+                $('#fbAppversn').focus();
+                return;
+            }
+        }
+        authOptions.EmailAuth = $('#email_anony').is(":checked");
+        authOptions.UserName = $('#name_anony').is(":checked");
+        authOptions.PhoneAuth = $('#phone_anony').is(":checked");
+        authOptions.Fblogin = $('#fb_anony').is(":checked");
+        authOptions.FbAppID = $('#fbAppidtxt').val().trim();
+        authOptions.FbAppVer = $('#fbAppversn').val().trim();
+        botProperties.EbTag = $('#useEbtag').is(":checked");
+
+        let cssobj = this.AppSettings.CssContent;
+        for (let property in cssobj) {
+            //let tempobj = {};
+            //for (let key in cssobj[property]) {
+            //    let cssobjVal = $(`#configcssTabContent #${property} input[obname=${key}]`).val();
+            //    tempobj[key] = cssobjVal;
+            //}
+            //cssConstObj[property] = tempobj;
+
+            let cssobjVal = $(`#configcssTabContent #${property} textarea[obname=${property}]`).val();
+            cssConstObj[property] = cssobjVal;
+        }
+        appSettings["Name"] = $("#bot_name_txt").val();
+        appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
+        appSettings["ThemeColor"] = $("#bot_tm_color").val();
+        appSettings["DpUrl"] = $("#bot_dp_url").val();
+        appSettings["CssContent"] = cssConstObj;
+        appSettings["Authoptions"] = authOptions;
+        appSettings["BotProp"] = botProperties;
+        $.ajax({
+            type: "POST",
+            url: "../Dev/UpdateAppSettings",
+            data: { id: this.AppId, type: this.AppType, settings: JSON.stringify(appSettings) },
+            success: function (data) {
+                if (data > 0)
+                    EbMessage("show", { Message: "Settings Updated Successfully" });
+                else
+                    EbMessage("show", { Background: "red", Message: "Something went wrong" });
+            }
+        });
+    }
+    this.authMethodCheckFn = function () {
+        let authcheck = $("input[name=authtype]:checked").length;
+        if (!authcheck) {
+            EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
+        }
+        if ($('#fb_anony').is(":checked")) {
+            if ($('#fbAppidtxt').val().trim() === "") {
+
+                // $('#fbAppidtxt').addClass('txthighlightred');
+                $('#fbAppidtxt').focus();
+                return;
+            }
+            if ($('#fbAppversn').val().trim() === "") {
+                $('#fbAppversn').focus();
+                return;
+            }
+        }
+    }
+    this.ResetCssFn = function (e) {
+        let cssConst = $(e.target).attr('obname');
+        $.ajax({
+            type: "POST",
+            url: "../Dev/ResetCssContent",
+            data: { cssConst: cssConst },
+            success: function (data) {
+                $('#' + cssConst + '_txt').val('');
+                $('#' + cssConst + '_txt').val(data);
+            }
+        });
+    };
 
     this.start_exe();
+    this.init();
+
 }

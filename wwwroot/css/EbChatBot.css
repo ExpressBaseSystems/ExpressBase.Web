@@ -72,7 +72,7 @@
     text-align: left;
     color: #555;
     padding: 4px 10px;
-    font-size: 100%;
+    font-size: 125%;
 }
 
 .msg-wraper-user {
@@ -80,7 +80,7 @@
     border-radius: 13px 13px 0px 13px;
     margin: 6px 5px 5px 50px;
     background-color: #fff;
-    padding-right: 47px;
+    padding-right: 69px;
     box-shadow: -1px 1px 6px rgba(0, 0, 0, 0.0784313725490196);
 }
 
@@ -95,7 +95,7 @@
     border-radius: 13px 13px 13px 0px;
     margin: 6px 5px 6px 5px;
     background-color: #f1f1f1;
-    padding-right: 47px;
+    padding-right: 49px;
 }
 
 .msg-cont {
@@ -124,10 +124,10 @@
 .eb-chatBox::-webkit-scrollbar, .eb-chatBox-dev::-webkit-scrollbar {
     width: 8px;
     background-color: #F5F5F5;
-    transition-duration:0.2s;
+    transition-duration: 0.2s;
 }
 
-    /*.eb-chatBox::-webkit-scrollbar:hover, .eb-chatBox-dev::-webkit-scrollbar:hover {
+/*.eb-chatBox::-webkit-scrollbar:hover, .eb-chatBox-dev::-webkit-scrollbar:hover {
         width: 10px;
     }*/
 
@@ -187,7 +187,7 @@
 }
 
 .bot-icon-user {
-    background: url(..//images/user_avatars.png)center center no-repeat;
+    background: url(/images/user_avatars.png)center center no-repeat;
     background-color: var(--botThemeColor);
     width: 26px;
     background-size: 100% !important;
@@ -202,7 +202,7 @@
     font-size: 9px;
     text-align: right;
     margin-top: -12px;
-    margin-right: -44px;
+    margin-right: -40px;
 }
 
 .chat-date {
@@ -325,7 +325,7 @@
 
 .eb-chat-cont .card-btn-cont {
     display: block !important;
-} 
+}
 
 .msg-cont .btn:focus {
     outline: none;
@@ -364,6 +364,7 @@
     position: absolute;
 }*/
 
+
 .chat-ctrl-cont [name=ctrlsend] {
     position: absolute;
     vertical-align: middle;
@@ -373,8 +374,14 @@
     border-radius: 10em;
     width: 40px;
     padding: 13px 20px;
+    transition-duration: 0.1s;
     box-shadow: -2px 2px 4px 0 #00000073
 }
+
+    .chat-ctrl-cont [name=ctrlsend]:hover {
+        filter: hue-rotate(60deg);
+        color: white;
+    }
 
 
 /*.chat-ctrl-cont [name=ctrlsend] {
@@ -391,8 +398,33 @@
 .chat-ctrl-cont[ebreadonly="true"] [name=ctrlsend] {
     display: none;
 }
-
-
+.eb-chat-cont .cntct_sec .cntct_btn {
+    margin-left:15px;
+    float: right;
+    color: white;
+    background: var(--botThemeColor);
+    border: none;
+    outline: none;
+    vertical-align: middle;
+    font-size: 17px;
+    height: 35px;
+    border-radius: 50%;
+    width: 35px;
+    transition-duration: 0.1s;
+    box-shadow: -2px 2px 4px 0 #00000073
+}
+.contct-cont [name=contactSubmitMail], [name=contactSubmitPhn], [contactSubmitName] {
+    position: absolute;
+    vertical-align: middle;
+    font-size: 17px;
+    height: 40px;
+    margin-left: 25px;
+    border-radius: 10em;
+    width: 40px;
+    padding: 13px 20px;
+    transition-duration: 0.1s;
+    box-shadow: -2px 2px 4px 0 #00000073
+}
 .msg-cont .bs-cont {
     display: flex;
     flex-direction: row;
@@ -633,7 +665,14 @@
     font-family: arial;
     font-size: 12px;
     color: #555555;
+    display: inline-block;
+    padding: 0 10px;
+    cursor: alias;
 }
+
+    .poweredby > span {
+        color: #4874a1;
+    }
 /*.poweredby {
     font-family: arial;
     font-size: 12px;
@@ -674,17 +713,44 @@
         border-radius: 10px;
     }
 
+
 .img-edit {
     position: absolute;
-    color: #333;
+    border-radius: 18px;
+    padding: 5px 6px;
+    top: 8px;
+    font-size: 11.5px;
+    color: var(--botThemeColor);
+    right: 7px;
+    transition-duration: 0.1s;
+}
+
+    .img-edit:hover {
+         background: #a1a1a11c;
+    }
+
+.img-box .img-edit {
     border-radius: 18px;
     padding: 2px 6px;
     top: -1px;
     font-size: 11px;
     right: -1px;
+    background-color: rgba(255,255,255,.5);
+    font-size: inherit;
+    right: 0px;
+    top: 0px;
+}
+
+.img-edit:hover {
+    background: #a1a1a133;
 }
 
 .img-box .img-edit {
+    border-radius: 18px;
+    padding: 2px 6px;
+    top: -1px;
+    font-size: 11px;
+    right: -1px;
     background-color: rgba(255,255,255,.5);
     font-size: inherit;
     right: 0px;
@@ -741,8 +807,7 @@
 	border: 1px solid #555;
 	margin-top: 65px;
 }*/
-
-.survey-qry-cont {
+    .survey-qry-cont {
 }
 
 .survey-opt-cont {

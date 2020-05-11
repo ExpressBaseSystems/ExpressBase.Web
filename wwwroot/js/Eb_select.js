@@ -63,6 +63,7 @@ const EbSelect = function (ctrl, options) {
 
     //local variables
     this.container = this.name + "Container";
+    this.$wraper = $('#' + this.name + 'Wraper');
     this.DTSelector = '#' + this.name + 'tbl';
     this.DT_tbodySelector = "#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody';
     this.NoOfFields = this.dmNames.length;
@@ -223,7 +224,11 @@ const EbSelect = function (ctrl, options) {
         }
     };
 
-    this.setValues = function (StrValues, callBFn = function () { }) {
+    this.defaultDTcallBFn = function () {
+        this.V_hideDD();
+    };
+
+    this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
         this.clearValues();
         if (StrValues === "" || StrValues === null)
             return;
@@ -377,7 +382,7 @@ const EbSelect = function (ctrl, options) {
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns;//////////////////////////////////////////////////////
         if (options)
-            o.wc = options.wc;
+            o.rendererName = options.rendererName;
         o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
@@ -740,6 +745,24 @@ const EbSelect = function (ctrl, options) {
         //console.log("DISPLAY MEMBER 0 =" + this.Vobj.displayMembers[this.dmNames[0]]);
         //console.log("DISPLAY MEMBER 1 =" + this.Vobj.displayMembers[this.dmNames[1]]);
         //console.log("DISPLAY MEMBER 3 =" + this.Vobj.displayMembers[this.dmNames[3]]);
+        setTimeout(function () {
+            this.adjustTag_closeHeight();
+            this.$wraper.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
+        }.bind(this),5);
+    };
+
+    this.adjustTag_closeHeight = function () {
+        if (this.ComboObj.Padding && this.$wraper.find(".selected-tag").length > 0) {
+            if (this.ComboObj.Padding.Top >= 7) {
+                this.$wraper.find(".selected-tag").css("padding-top", `${(this.ComboObj.Padding.Top - 5)}px`);
+                this.$wraper.find(".v-select input[type=search]").css("padding-top", `${(this.ComboObj.Padding.Top - 2)}px`);
+                this.$wraper.find(".v-select .selected-tag .close").css("padding-top", `${(this.ComboObj.Padding.Top - 3.5)}px`);
+            }
+            if (this.ComboObj.Padding.Bottom >= 7) {
+                this.$wraper.find(".selected-tag").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 5)}px`);
+                this.$wraper.find(".v-select input[type=search]").css("padding-bottom", `${(this.ComboObj.Padding.Bottom - 2)}px`);
+            }
+        }
     };
 
     this.trimDmValues = function (i) {

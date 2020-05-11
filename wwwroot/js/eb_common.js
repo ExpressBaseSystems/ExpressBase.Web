@@ -980,14 +980,18 @@ document.addEventListener("click", function (e) {
     //to close opend select on click of another select
     if ((($(e.target).hasClass('filter-option-inner-inner')) || ($(e.target).closest('.filter-option').length == 1))) {
         //  container.closest('[detch_select=true]').removeClass("open");
-        if ($(".detch_select").hasClass("open")) {
-            $(".detch_select").removeClass("open");
-            $(`#${par_ebSid}`).selectpicker('toggle');
-            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
-        }
-        else {
-            $(`#${par_ebSid}`).selectpicker('toggle');
-            $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        //if ($(".detch_select").hasClass("open")) {
+        //    $(".detch_select").removeClass("open");
+        //    $(`#${par_ebSid}`).selectpicker('toggle');
+        //    $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        //}
+        //else {
+        //    $(`#${par_ebSid}`).selectpicker('toggle');
+        //    $(`[par_ebsid=${par_ebSid}]`).addClass('open');
+        //}
+        let $sss = $(`.detch_select:not([par_ebsid=${par_ebSid}])`);
+        if ($sss.hasClass("open")) {
+            $sss.removeClass("open");
         }
     }
     //to close dropdown on ouside click of dropdown
@@ -1004,14 +1008,23 @@ document.addEventListener("click", function (e) {
 });
 
 
-function textTransform(element, transform_type) {
-    setTimeout(function () {
-        let value = $(element).val().trim();
-        if (transform_type === 1)
-            $(element).val(value.toLowerCase());
-        else if (transform_type === 2)
-            $(element).val(value.toUpperCase());
-    }, 100);
+function textTransform(element, transform_type, IsNoDelay) {
+    if (IsNoDelay) {
+        textTransformHelper(element, transform_type);
+    }
+    else {
+        setTimeout(function () {
+            textTransformHelper(element, transform_type);
+        }, 150);
+    }
+}
+
+function textTransformHelper(element, transform_type) {
+    let value = $(element).val().trim();
+    if (transform_type === 1)
+        $(element).val(value.toLowerCase());
+    else if (transform_type === 2)
+        $(element).val(value.toUpperCase());
 }
 
 
@@ -1045,7 +1058,10 @@ function EBPSSetDisplayMember(p1, p2) {
             for (let j = 0; j < colNames.length; j++) {
                 let colName = colNames[j];
                 let val = this.DataVals.R[colName][i];
-                columnVals[colName].push(val);
+                if (columnVals[colName])
+                    columnVals[colName].push(val);
+                else
+                    console.warn("Not found colName: " + colName);
             }
         }
     }

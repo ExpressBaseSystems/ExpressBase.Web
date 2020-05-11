@@ -9,17 +9,21 @@
         bApnd = false;
     }
 }
-@*<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.css">*@
-<link rel="stylesheet" type="text/css" href="~/css/ReportBuilder/Eb_ReportBuilder2.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="~/css/ReportBuilder/Eb_ReportBuilder.css" asp-append-version=@bApnd />
-<link rel="stylesheet" type="text/css" href="~/css/Common/commonBuilderStyles.css" asp-append-version=@bApnd />
 
-@*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/minimap/1.0.0/minimap.min.js"></script>*@
-<script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilder.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilderExtended.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilderCom.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/ReportBuilder/ReportMenu.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/ReportBuilder/EbTableLayout.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" type="text/css" href="~/css/ReportBuilder/Eb_ReportBuilder.css" asp-append-version=@bApnd />
+
+<environment include="Development">
+    <script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilder.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilderExtended.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ReportBuilder/Eb_ReportBuilderCom.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ReportBuilder/ReportMenu.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/ReportBuilder/EbTableLayout.js" asp-append-version=@bApnd></script>
+</environment>
+
+<environment exclude="Development">
+    <script src="~/js/Bundles/eb-pdfreport.bundle.js" type="text/javascript" asp-append-version=@bApnd></script>
+</environment>
+
 <script>
     PosOBjOFdrag = {};
     $.fn.extend({

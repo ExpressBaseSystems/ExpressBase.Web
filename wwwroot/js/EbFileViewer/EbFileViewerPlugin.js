@@ -29,17 +29,18 @@
             print: 1
         }
         let _toolbar = tlbar || dftlbar;
-
+        this.imagelist = "";
         this.pgSettings = $.extend(defaults, options);
 
         this.init = function () {
-            this.initViewer();
+            this.createViewer();
+            
         }
 
-        this.initViewer = function () {
+        this.createViewer = function () {
             this.infono = 1;
             if (this.pgSettings.length) {
-                let ulview = (`<div id='viewdiv' > <ul id='imageContainer'>`);
+                let ulview = (`<div id='ebviewdiv_tmp-f' > <ul id='imageContainer'>`);
                 ulview += `</ul> </div>`
                 $("body").append(ulview);
                 this.pgSettings.forEach(function (obj) {
@@ -50,37 +51,67 @@
                         let lk = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${obj.FileName}' alt='${filename}'></li>`);
                         var l = lk.find("img").data("details", obj.Meta);
                         $('#imageContainer').append(lk);
-
                     }
                 });
 
-
-                this.viewer = new Viewer($('#viewdiv')[0], {
+                this.imagelist = $('#ebviewdiv_tmp-f');
+                $('#ebviewdiv_tmp-f').remove();
+                this.viewer = new Viewer(this.imagelist[0], {
                     url: 'data-src',
                     navbar: 1,
                     toolbar: _toolbar
                 }
                 );
-
-                $('#viewdiv').remove();
+               
             }
             else {
                 EbMessage("show", { Message: "No image found", Background: 'red' });
             }
         }
+
+        
+
         this.showimage = function (rfid) {
             if (!(!rfid || rfid.length === 0)) {
                 let indx = this.pgSettings.findIndex(item => item.FileRefId == rfid);
                 if (this.pgSettings[indx].FileCategory == 1) {
-                    this.viewer.view(indx);
+                    let temparr = [];
+                    for (let i = 0; i < this.pgSettings.length; i++) {
+                        if (this.pgSettings[i].FileCategory == 1) {
+                            temparr.push(this.pgSettings[i]);
+                        }
+                    }
+                    let j = temparr.findIndex(x => x.FileRefId == rfid);
+                    this.viewer.view(j);
                 }
                 else if (this.pgSettings[indx].FileCategory == 0) {
-                    //pdf viewer
-                    console.log("need pdf viewer");
+                    let src = null;
+                    let html = '';
+                    src = `/files/${rfid}`;
+
+                    var arr = this.pgSettings[indx].FileName.split('.');
+                    var exten = arr[arr.length - 1];
+                    if (exten == 'pdf') {
+                        let html = $(`<div id='ebfileview_ContDiv' class='eb_fileview-Cont' style=''>
+                                    <button id='' class="btn close-ebfileview_Cont ebclx_fileview-Cont" style=''><i class="fa fa-close"></i>
+                                    </button>
+                                    </div>`);
+                        //$("body").append(` <iframe id="display_file" src="${src}.${exten}" frameborder="0" style=" bottom: 0;direction: ltr; font-size: 0; left: 0; line-height: 0;  overflow: hidden;position: absolute;right: 0;"></iframe>`);
+                        html.append(`<div id='ebfileview_Iframe-Cont' class='eb_iframe-Cont' style=" ">
+                                    <iframe id='ebfileview_Iframe' class='ebfileview_Iframe' src="${src}.${exten}" class='' style=''></iframe>
+                                    </div>`);
+                        $("body").append(html[0]);
+                        $('.close-ebfileview_Cont').on('click', this.CloseFileviewFn.bind(this));
+                        console.log("need pdf viewer");
+                    }
                 }
+                //pdf viewer
+
+
             }
-           
+
         }
+
         this.deleteimage = function (refidarr) {
             if (refidarr.length > 0) {
                 let refids = "";
@@ -91,10 +122,31 @@
                         this.pgSettings.splice(indx, 1);
                     }
                 }
-                this.initViewer();
+                this.createViewer();
             }
         }
 
+        this.CloseFileviewFn = function (e) {
+            let target = $(e.target).closest('button').parent();
+            if (target.attr("id") == "ebfileview_ContDiv") {
+                target.remove();
+            }
+        }
+        this.addToImagelist = function (file) {
+            if (file.FileCategory == 1) {
+                let filethumbnail = `/images/small/${file.FileRefId}.jpg`;
+                let filesrc = `/images/${file.FileRefId}.jpg`;
+                let filename = file.FileName || "image";
+                let li = $(`<li class="fileviewerimg"><img id="tst" data-original='' data-src='${filesrc}' src='${filethumbnail}'  dtls='${file.FileName}' alt='${filename}'></li>`);
+                var l = li.find("img").data("details", file.Meta);
+                this.imagelist.find('#imageContainer').append(li);
+                this.pgSettings.push(file);
+                this.viewer.update();
+            }
+            else {
+                this.pgSettings.push(file);
+            }
+        }
         this.init();
         return this;
     };

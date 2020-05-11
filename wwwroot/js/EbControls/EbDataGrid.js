@@ -327,7 +327,7 @@
             for (let j = 0; j < col.DisplayMembers.$values.length; j++) {
                 let DMName = col.DisplayMembers.$values[j].name;
                 let DMVal = dispA[DMName];
-                textspn += `<span class='selected-tag'>${DMVal === null ? "" : DMVal}</span>`;
+                textspn += `<span contenteditable='true'onkeydown="event.preventDefault()" class='selected-tag'>${DMVal === null ? "" : DMVal}</span>`;
             }
             textspn += "</span>&nbsp;&nbsp;&nbsp;";
         }

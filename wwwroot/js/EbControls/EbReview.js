@@ -241,7 +241,7 @@
                     html = html.replace("@time@", column.Value || "--/--/----");
                 }
                 else if (column.Name === "comments") {
-                    html = html.replace("@comment@", column.Value);
+                    html = html.replace("@comment@", column.Value || '');
                 }
             }
             this.$tableBody.append(html);

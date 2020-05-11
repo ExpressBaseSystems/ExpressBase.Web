@@ -3,11 +3,10 @@
 
 (function () {
     var d = document;
-console.log("ext_js loaded");
+    console.log("ext_js loaded");
     //PUSHED_JS_STATEMENTS
 
     this.eb_get_path = function (ebmod) {
-        console.log("mode : "+ebmod);
         if (ebmod === 'Production')
             return "https://" + window.EXPRESSbase_SOLUTION_ID + ".expressbase.com/";
         else if (ebmod === 'Staging')
@@ -21,26 +20,47 @@ console.log("ext_js loaded");
         AppId = d.appIdColl[d.appIdCount];
     }
     else {
-        AppId = window.EXPRESSbase_SOLUTION_ID
+        AppId = window.EXPRESSbase_APP_ID;
         var themeColor = d.ebbotThemeColor;
         var html = d.getElementsByTagName('html')[0];
         html.style.setProperty("--ebbotThemeColor", themeColor);
     }
 
-    //ss=stylesheet => create a link for including bot-ext.css and append into head of iframe
+    ////ss=stylesheet => create a link for including bot-ext.css and append into head of iframe
+    //var ss = d.createElement("link");
+    //ss.type = "text/css";
+    //ss.rel = "stylesheet";
+    //ss.href = this.eb_get_path(d.ebmod) + "css/ChatBot/bot-ext.css";
+    //ss.onload = function () { console.log('style has loaded'); };
+    //d.getElementsByTagName("head")[0].appendChild(ss); 
+
+      
     var ss = d.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
-    ss.href = this.eb_get_path(d.ebmod) + "css/ChatBot/bot-ext.css";
-    d.getElementsByTagName("head")[0].appendChild(ss);
+    ss.href = this.eb_get_path(d.ebmod) + `Bote/Css?id=${window.EXPRESSbase_SOLUTION_ID}-${AppId}&mode=s"`;
+    d.getElementsByTagName("head")[0].appendChild(ss); 
+
+
+
+    //var ss1 = d.createElement("style");
+    //ss1.type = "text/css";
+    //ss1.innerHTML = atob(d.botCSS);
+    ////if (ss1.styleSheet) ss1.styleSheet.cssText = atob(d.botCSS); // Support for IE
+    ////else ss1.appendChild(document.createTextNode(atob(d.botCSS))); // Support for the rest
+    //ss1.onload = function() {  console.log('style has loaded'); };
+    //d.getElementsByTagName("head")[0].appendChild(ss1);
+
+
+
 
     //division for header part of chat bot ie for heading(d.ebbotName), close btn,maximize window (above iframe)......(2)
     var chatHead = d.createElement("div");
-    chatHead.className = "eb-chat-head";
+    chatHead.className = "eb-chat-head eb__-bot___-eb-chat-head";
 
     //creata a div for chatbot heading and append in chathead div ie, division for header part of chat bot
     var botHeadDiv = d.createElement("div");
-    botHeadDiv.className = "bot-head";
+    botHeadDiv.className = "bot-head eb__-bot___-bot-head";
     botHeadDiv.innerHTML = "&nbsp; " + (d.ebbotName || d.ebbotNameColl[d.appIdCount]);
 
     //var html = d.getElementsByTagName('html')[0];
@@ -57,12 +77,12 @@ console.log("ext_js loaded");
     var iframecont = d.createElement("div");
     iframecont.id = "eb_iframecont" + AppId;
     iframecont.setAttribute("appid", AppId);
-    iframecont.className = "eb_iframecont";
+    iframecont.className = "eb_iframecont eb__-bot___-eb_iframecont";
 
     //create a iframe and place in iframecont contrainer........(4)
     var iframe = d.createElement("iframe");
     iframe.id = "ebbot_iframe" + AppId;
-    iframe.className = "ebbot_iframe";
+    iframe.className = "ebbot_iframe eb__-bot___-ebbot_iframe";
     iframe.frameBorder = "0";
     iframe.allowFullscreen = true;
     iframe.setAttribute("allow", "geolocation");
@@ -73,7 +93,7 @@ console.log("ext_js loaded");
     //iframe placed in loaderd div........(3)
     var loaderDiv = d.createElement("div");
     loaderDiv.id = "loderdiv" + AppId;
-    loaderDiv.className = "loderdiv";
+    loaderDiv.className = "loderdiv eb__-bot___-loderdiv";
 
     loaderDiv.appendChild(iframe);
     iframecont.appendChild(loaderDiv);
@@ -82,12 +102,12 @@ console.log("ext_js loaded");
     //??????????
     var chatbtn = d.createElement("div");
     chatbtn.id = "chatbtn" + AppId;
-    chatbtn.className = "chatbtn";
+    chatbtn.className = "chatbtn eb__-bot___-chatbtn";
     //var chatIcon = d.getElementsByClassName('boticon')[0];
     var chatIcon = d.createElement("img");
-    chatIcon.className = "boticon";
+    chatIcon.className = "boticon eb__-bot___-boticon";
     chatIcon.id = "boticon" + AppId;
-    chatIcon.src = this.eb_get_path(d.ebmod)+(d.botdpURL || d.botdpURLColl[d.appIdCount]);
+    chatIcon.src = this.eb_get_path(d.ebmod) + (d.botdpURL || d.botdpURLColl[d.appIdCount]);
 
 
     //place near chat head
@@ -134,7 +154,7 @@ console.log("ext_js loaded");
         var iframecont = document.getElementById("eb_iframecont" + AppId);
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
-        if (!ebbot_iframe.getAttribute("src")) {
+        if (!ebbot_iframe.getAttribute("src")) {            
             ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}&msg=${(d.botWelcomeMsg || d.botWelcomeMsgColl[d.appIdCount])}`);
         }
         if (iframecont.style.display !== "flex") {
@@ -148,16 +168,17 @@ console.log("ext_js loaded");
 
 
     if (!d.appIdColl) {
-        chatIcon.setAttribute("width", "100%");
-        chatIcon.setAttribute("height", "100%");
+        //chatIcon.setAttribute("width", "100%");
+        //chatIcon.setAttribute("height", "100%");
         d.body.appendChild(chatbtn);
         var iconCont = d.createElement("div");
-
-        iconCont.style.width = "30px";
-        iconCont.style.height = "30px";
+        iconCont.className = "iconCont eb__-bot___-iconCont";
+        //iconCont.style.width = "30px";
+        //iconCont.style.height = "30px";
         iconCont.appendChild(chatIcon);
         chatbtn.appendChild(iconCont);
-        chatbtn.click();////////////////////////////////
+       // chatbtn.appendChild(chatIcon);
+        // chatbtn.click();//////////////////////////////// for showing chatarea on load
     }
     else {
         iframecont.style.minWidth = "inherit";

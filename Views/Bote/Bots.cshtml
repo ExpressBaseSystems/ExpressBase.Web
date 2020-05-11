@@ -9,28 +9,19 @@
 <head>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link async rel="stylesheet" type="text/css" href="~/css/bootstrap.min.css" />
-    @*<link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css" />*@
-    @*<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />*@
+    <link async rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
-    @*jith*@
     <link rel="icon" href="~/images/favicon.ico">
-    <link async href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
-    <link async href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">
 
-    @*
-        <link rel="stylesheet" type="text/css" href="~/css/Ebproducts.css" />*@
-
-    <script type="text/javascript" src="~/js/jquery.min.js"></script>
-    <script type="text/javascript" src="~/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.8/jquery.lazy.min.js"></script>
-    @*amal*@
+    <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version="true"></script>
 
     <script type="text/javascript">
         //window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
         //window.EXPRESSbase_APP_IDS = [13, 93];
 
         $(document).ready(function () {
+            console.log("bots");
             d = document;
             d.ebmod = '@ViewBag.Env';
             var BotList = @BotDtls ;

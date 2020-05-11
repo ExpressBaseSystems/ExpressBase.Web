@@ -44,6 +44,7 @@
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
 <link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
+<link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
 @*<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />*@
 <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
 <link rel="stylesheet" type="text/css" href="~/css/EbFileViewer/viewer.css" asp-append-version=@bApnd>
@@ -92,6 +93,7 @@
 <script type="text/javascript" src="~/js/EbControls/EbSimpleFileUploader.js"></script>
 <script type="text/javascript" src="~/js/yearpicker.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/splitWindow.js"></script>
 <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
 <script type="text/javascript" src="~/js/FormBuilder/jquery.scrollTo.js" asp-append-version=@bApnd></script>
@@ -171,12 +173,15 @@
             };
 
             window.fbAsyncInit = function () {
+                 console.log("bot"+ settings.Authoptions.FbAppVer);
                 FB.init({
-                    appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
+                    appId: settings.Authoptions.FbAppID,
+                    //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
                     cookie: true,  // enable cookies to allow the server to access
                     // the session
                     xfbml: true,  // parse social plugins on this page
-                    version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
+                    version:settings.Authoptions.FbAppVer                     
+                    //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
                 });
                 FB.getLoginStatus(function (response) {
                     statusChangeCallback(response);

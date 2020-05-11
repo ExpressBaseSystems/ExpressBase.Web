@@ -166,6 +166,8 @@
         $('#name_anony').attr('checked', this.AppSettings.Authoptions.UserName);
         $('#phone_anony').attr('checked', this.AppSettings.Authoptions.PhoneAuth);
         $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
+        $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
+        $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
         for (let property in cssobj) {
 
             let html = "";
@@ -192,10 +194,24 @@
             EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
             return;
         }
+        if ($('#fb_anony').is(":checked")) {
+            if ($('#fbAppidtxt').val().trim() === "") {
+                EbMessage("show", { Background: "red", Message: "Please provide facebook app ID" });
+                $('#fbAppidtxt').focus();
+                return;
+            }
+            if ($('#fbAppversn').val().trim() === "") {
+                EbMessage("show", { Background: "red", Message: "Please provide facebook app ID" });
+                $('#fbAppversn').focus();
+                return;
+            }
+        }
         authOptions.EmailAuth = $('#email_anony').is(":checked");
         authOptions.UserName = $('#name_anony').is(":checked");
         authOptions.PhoneAuth = $('#phone_anony').is(":checked");
         authOptions.Fblogin = $('#fb_anony').is(":checked");
+        authOptions.FbAppID = $('#fbAppidtxt').val().trim();
+        authOptions.FbAppVer = $('#fbAppversn').val().trim();
         botProperties.EbTag = $('#useEbtag').is(":checked");
 
         let cssobj = this.AppSettings.CssContent;
@@ -223,9 +239,9 @@
             data: { id: this.AppId, type: this.AppType, settings: JSON.stringify(appSettings) },
             success: function (data) {
                 if (data > 0)
-                    alert("Settings Updated Successfully");
+                    EbMessage("show", { Message: "Settings Updated Successfully" });
                 else
-                    alert("Something went wrong");
+                    EbMessage("show", { Background: "red", Message: "Something went wrong" });
             }
         });
     }
@@ -233,6 +249,18 @@
         let authcheck = $("input[name=authtype]:checked").length;
         if (!authcheck) {
             EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
+        }
+        if ($('#fb_anony').is(":checked")) {
+            if ($('#fbAppidtxt').val().trim() === "") {
+
+                // $('#fbAppidtxt').addClass('txthighlightred');
+                $('#fbAppidtxt').focus();
+                return;
+            }
+            if ($('#fbAppversn').val().trim() === "") {
+                $('#fbAppversn').focus();
+                return;
+            }
         }
     }
     this.ResetCssFn = function (e) {

@@ -11,9 +11,17 @@
     padding: 0px;
 }
 
-    .botappDashboard .tab-content {
-        margin-bottom: 0px;
+    .botappDashboard .mrg10btm {
+        margin-bottom: 10px;
     }
+
+    .botappDashboard .nrmfntsiz {
+        font-weight: normal;
+    }
+
+.botappDashboard .tab-content {
+    margin-bottom: 0px;
+}
 
     .botappDashboard .botappConfig {
         padding: 0px;

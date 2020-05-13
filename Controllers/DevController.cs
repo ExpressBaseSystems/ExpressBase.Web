@@ -81,83 +81,77 @@ namespace ExpressBase.Web.Controllers
 			else if (Type == EbApplicationTypes.Bot)
 			{
 				EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
-				 if (settings != null)
+				if (settings != null)
 				{
-					if (settings.CssContent == null || settings.CssContent.Count==0)
+					 if (settings.CssContent == null || settings.CssContent.Count < 9)
 					{
-						settings.CssContent = CssContent();
+
+						settings.CssContent = CssContent(settings.CssContent);
 					}
-					//if (settings.otherprop == null)
-					//{
-					//	settings.otherprop.Ebtag = true;
-					//}
+					
 				}
-				ViewBag.AppSettings = settings ?? new EbBotSettings() { CssContent = CssContent() };
+				ViewBag.AppSettings = settings ?? new EbBotSettings() { };
 			}
 
 			this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
 			ViewBag.Title = _objects.AppInfo.Name;
 			ViewBag.ObjectsCount = _objects.ObjectsCount;
-			//ViewBag.eSoln= this.GetIsolutionId(solid);
 			return View();
 		}
 
-		public Dictionary<string, string> CssContent()
+		public Dictionary<string, string> CssContent(Dictionary<string, string> btCss)
 		{
 			//public Dictionary<string, Dictionary<string, string>> CssContent()
 			var CssDict = new Dictionary<string, string>();
-			//string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
-			//string Cssfile = Constants.BOT_IFRAME_CSS;
-			//var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(Cssfile);
-			//return System.Convert.ToBase64String(plainTextBytes);
-
+			var Cssconst = new Dictionary<string, string>();
+			Cssconst = new EbBotSettings().CssContent;
 			int i = 0;
 			List<string> CssList = new List<string>();
-			CssList.Add(BotConstants.BOT_HEADER);
-			CssList.Add(BotConstants.BOT_APP_NAME);
-			CssList.Add(BotConstants.BOT_IFRAME_CSS);
-			CssList.Add(BotConstants.BOT_CHAT_BUTTON);
-			CssList.Add(BotConstants.BOT_IMAGE_CONT);
-			CssList.Add(BotConstants.BOT_BUTTON_IMAGE);
-			string[] NameArr = { "BOT_HEADER", "BOT_APP_NAME", "BOT_IFRAME_CSS", "BOT_CHAT_BUTTON", "BOT_IMAGE_CONT", "BOT_BUTTON_IMAGE" };
-			foreach (string CssConst in CssList)
+			List<string> NameArr = new List<string>();
+			//if any changes change in bote too
+			foreach (var item in Cssconst)
 			{
-				//Dictionary<string, string> BotDict = new Dictionary<string, string>();
-				//var CssProp = CssConst.Split(';');
-				//foreach (String SingleProps in CssProp)
-				//{
-				//	string PropTrim = SingleProps.Trim();
-				//	if (!String.IsNullOrEmpty(PropTrim))
-				//	{
-				//		var KeyVal = PropTrim.Split(':');
-				//		if (!BotDict.Keys.Contains(KeyVal[0]))
-				//		{
-				//			BotDict.Add(KeyVal[0], KeyVal[1]);
-				//		}
-				//	}
-
-
-				//}
-				//if (!CssDict.Keys.Contains(NameArr[i]))
-				//{
-				//	CssDict.Add(NameArr[i], BotDict);
-				//	i++;
-				//}
-
-				CssDict.Add(NameArr[i], CssConst);
-				i++;
-
+				NameArr.Add(item.Key);
+				CssList.Add(item.Value);
 			}
-
+			
+			if (btCss.Count == 0)
+			{
+				foreach (string CssConst in CssList)
+				{
+					CssDict.Add(NameArr[i], CssConst);
+					i++;
+				}
+			}
+			else if (btCss.Count < NameArr.Count)
+			{
+				for(int j = 0; j < NameArr.Count; j++)
+				{
+					if (btCss.ContainsKey(NameArr[j]))
+					{
+						CssDict.Add(NameArr[j], btCss[NameArr[j]]);
+					}
+					else
+					{
+						CssDict.Add(NameArr[j], CssList[j]);
+					}
+				}
+				
+			}
 			return CssDict;
-
 		}
 		public string ResetCssContent(string cssConst)
 		{
-			if (cssConst.Equals("BOT_HEADER"))
-				return BotConstants.BOT_HEADER;
+			if (cssConst.Equals("BOT_HEADER_PART"))
+				return BotConstants.BOT_HEADER_PART;
+			if (cssConst.Equals("BOT_HEADER_ICON_CONT"))
+				return BotConstants.BOT_HEADER_ICON_CONT;
+			if (cssConst.Equals("BOT_HEADER_IMAGE"))
+				return BotConstants.BOT_HEADER_IMAGE;
 			if (cssConst.Equals("BOT_APP_NAME"))
 				return BotConstants.BOT_APP_NAME;
+			if (cssConst.Equals("BOT_HEADERSUBTEXT"))
+				return BotConstants.BOT_HEADERSUBTEXT;
 			if (cssConst.Equals("BOT_IFRAME_CSS"))
 				return BotConstants.BOT_IFRAME_CSS;
 			if (cssConst.Equals("BOT_CHAT_BUTTON"))
@@ -479,6 +473,7 @@ namespace ExpressBase.Web.Controllers
 		public IActionResult CreateApplication(int i)
 		{
 			var req = this.HttpContext.Request.Form;
+
 			var resultlist = this.ServiceClient.Post<CreateApplicationResponse>(new CreateApplicationRequest
 			{
 				AppId = Convert.ToInt32(req["Id"]),

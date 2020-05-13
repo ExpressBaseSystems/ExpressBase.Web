@@ -137,7 +137,7 @@
     $(document).ready(function () {
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", (settings.ThemeColor || "#055c9b"));
-
+        console.log("bot loaded");
         chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.ServiceUrl', ServerEventUrl);
 
         $.get("https://ipinfo.io", function (response) {

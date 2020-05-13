@@ -69,11 +69,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     </circle>
                 </svg><div>`);
 
-        var html = document.getElementsByTagName('html')[0];
+        let html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botdpURL", this.botdpURL);
         //html.style.setProperty("--botThemeColor", this.ebbotThemeColor);
 
-        var $botMsgBox = this.$botMsgBox.clone();
+        let $botMsgBox = this.$botMsgBox.clone();
         $botMsgBox.find('.msg-wraper-bot').html(this.$TypeAnim.clone()).css("width", "82px");
         this.$TypeAnimMsg = $botMsgBox;
 
@@ -97,6 +97,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);
         $("body").on("click", ".poweredby", this.poweredbyClick);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
+        $("body").on("keyup",".chat-ctrl-cont [ui-inp]", this.inpkeyUp);
+        $("body").on("keyup",".chat-ctrl-cont [chat-inp]", this.chatInpkeyUp);
         this.initConnectionCheck();
         this.showDate();
         this.showTypingAnim();
@@ -161,7 +163,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             return;
         }
         this.userDtls.phone = phone;
-        this.postmenuClick(e,phone);
+        this.postmenuClick(e, phone);
         if (this.botQueue.length > 0) {
             (this.botQueue.shift())();
         }
@@ -188,7 +190,6 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         else {
             this.submitAnonymous();
         }
-
     }.bind(this);
 
     this.submitAnonymous = function () {
@@ -199,9 +200,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let mail = this.userDtls.email;
         let phn = this.userDtls.phone;
         let nme = this.userDtls.name;
-        this.authenticateAnon(mail, phn,nme);
-      //  $(e.target).closest('.msg-cont').remove();
-    }
+        this.authenticateAnon(mail, phn, nme);
+        //  $(e.target).closest('.msg-cont').remove();
+    };
 
     //check user is valid / is user authenticated
     this.ajaxSetup4Future = function () {
@@ -211,7 +212,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         });
     };
 
-    this.authenticateAnon = function (email, phno,name) {
+    this.authenticateAnon = function (email, phno, name) {
         this.showTypingAnim();
 
         $.post("../bote/AuthAndGetformlist",
@@ -242,14 +243,15 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.ajaxSetup4Future();
 
                 /////////////////////////////////////////////////
-                //setTimeout(function () {
-                //    //$(".btn-box .btn:last").click();
-                //    $(".btn-box").find("[idx=4]").click();
-                //}.bind(this), this.typeDelay * 2 + 100);
+
+                setTimeout(function () {
+                    //$(".btn-box .btn:last").click();
+                    //$(".btn-box_botformlist button:eq(1)").click();// auto
+                }.bind(this), this.typeDelay * 4 + 100);
+
             }.bind(this));
 
     }.bind(this);
-
 
 
     this.postmenuClick = function (e, reply) {
@@ -262,7 +264,6 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $('.eb-chat-inp-cont').hide();
         this.CurFormIdx = idx;
     }.bind(this);
-
 
 
     this.FBlogin = function (e) {
@@ -307,6 +308,52 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     //    }
     //};
 
+    this.getFormSuccess = function (RefId, res) {
+        let result = JSON.parse(res);
+        let form = JSON.parse(result.object);
+        this.curFormObj = form;
+        let DataRes = JSON.parse(result.data);
+        if (DataRes.Status === 200) {
+
+            this.CurDataMODEL = DataRes.FormData.MultipleTables;
+            a___MT = DataRes.FormData.MultipleTables;
+            this.CurRowId = this.CurDataMODEL[form.TableName][0].RowId;
+            this.hideTypingAnim();
+            //data = JSON.parse(data);
+
+            attachModalCellRef_form(form, this.CurDataMODEL);
+
+            //this.setDataModel(form);
+            JsonToEbControls(form);
+            this.formsList[RefId] = form;
+            if (form.ObjType === "BotForm") {
+                this.curForm = form;
+                this.CurFormflatControls = this.curForm.Controls.$values;
+                this.setFormObject();
+                this.setFormControls();
+            }
+            else if (form.ObjType === "TableVisualization") {
+                //form.BotCols = JSON.parse(form.BotCols);
+                //form.BotData = JSON.parse(form.BotData);
+                this.curTblViz = form;
+                this.showTblViz();
+            }
+            else if (form.ObjType === "ChartVisualization") {
+                this.curChartViz = form;
+                this.showChartViz();
+            }
+        }
+        else if (DataRes.Status === 403) {
+            //EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
+            this.msgFromBot("Access denied to update this data entry!");
+            console.error(DataRes.MessageInt);
+        }
+        else {
+            //EbMessage("show", { Message: DataRes.Message, AutoHide: true, Background: '#aa0000' });
+            this.msgFromBot(DataRes.Message);
+            console.error(DataRes.MessageInt);
+        }
+    }.bind(this);
 
     this.getForm = function (RefId) {
         this.showTypingAnim();
@@ -317,308 +364,30 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 url: "../Boti/GetCurForm_New",
                 data: { refid: RefId },
 
-                success: function (res) {
-                    let result = JSON.parse(res);
-                    let form = JSON.parse(result.object);
-                    this.curFormObj = form;
-                    let DataRes = JSON.parse(result.data);
-                    if (DataRes.Status === 200) {
-
-                        this.CurDataMODEL = DataRes.FormData.MultipleTables;
-                        a___MT = DataRes.FormData.MultipleTables;
-                        this.CurRowId = this.CurDataMODEL[form.TableName][0].RowId;
-                        this.hideTypingAnim();
-                        //data = JSON.parse(data);
-
-                        attachModalCellRef_form(form, this.CurDataMODEL);
-
-                        //this.setDataModel(form);
-                        JsonToEbControls(form);
-
-                        //if (typeof data === "string") {
-                        //    data = JSON.parse(data);
-                        //    data.ObjType = data.ObjType;
-                        //}
-                        this.formsList[RefId] = form;
-                        if (form.ObjType === "BotForm") {
-                            this.curForm = form;
-                            this.CurFormflatControls = this.curForm.Controls.$values;
-                            this.setFormObject();
-                            this.setFormControls();
-                        }
-                        else if (form.ObjType === "TableVisualization") {
-                            //form.BotCols = JSON.parse(form.BotCols);
-                            //form.BotData = JSON.parse(form.BotData);
-                            this.curTblViz = form;
-                            this.showTblViz();
-                        }
-                        else if (form.ObjType === "ChartVisualization") {
-                            this.curChartViz = form;
-                            this.showChartViz();
-                        }
-                    }
-                    else if (DataRes.Status === 403) {
-                        //EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
-                        this.msgFromBot("Access denied to update this data entry!");
-                        console.error(DataRes.MessageInt);
-                    }
-                    else {
-                        //EbMessage("show", { Message: DataRes.Message, AutoHide: true, Background: '#aa0000' });
-                        this.msgFromBot(DataRes.Message);
-                        console.error(DataRes.MessageInt);
-                    }
-                }.bind(this)
+                success: this.getFormSuccess.bind(this, RefId)
 
             });
-            //$.post("../Boti/GetCurForm", {
-            //    "refid": RefId
-            //}, function (data) {
-            //    this.hideTypingAnim();
-
-            //    if (typeof data === "string") {
-            //        data = JSON.parse(data);
-            //        data.ObjType = data.ObjType;
-            //    }
-
-
-            //    this.formsList[RefId] = data;
-            //    if (data.ObjType === "BotForm") {
-            //        this.curForm = data;
-            //        this.setFormControls();
-            //    }
-            //    else if (data.ObjType === "TableVisualization") {
-            //        data.BotCols = JSON.parse(data.BotCols);
-            //        data.BotData = JSON.parse(data.BotData);
-            //        this.curTblViz = data;
-            //        this.showTblViz();
-            //    }
-            //    else if (data.ObjType === "ChartVisualization") {
-            //        this.curChartViz = data;
-            //        this.showChartViz();
-            //    }
-            //    }.bind(this));
-
         }
         else {
             this.hideTypingAnim();
             this.curForm = this.formsList[RefId];
-
-            var form = this.formsList[RefId];
-            if (form.ObjType === "BotForm")
-                this.curForm = form;
-            else if (form.ObjType === "TableVisualization")
-                this.curTblViz = form;
-            else if (form.ObjType === "ChartVisualization")
-                this.showChartViz();//////////////////////////////////////////////////////////////////////////////////
-
             this.setFormControls();
         }
-    };
-
-    this.showTblViz = function (e) {
-        var $tableCont = $('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>');
-        this.$chatBox.append($tableCont);
-        this.showTypingAnim();
-        //$(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
-        //    processing: true,
-        //    serverSide: false,
-        //    dom: 'rt',
-        //    columns: this.curTblViz.BotCols,
-        //    data: this.curTblViz.BotData,
-        //    initComplete: function () {
-        //        this.hideTypingAnim();
-        //        this.AskWhatU();
-        //        $tableCont.show(100);
-        //    }.bind(this)
-        //dom: "rt",
-        //ajax: {
-        //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
-        //    type: 'POST',
-        //    timeout: 180000,
-        //    data: function (dq) {
-        //        delete dq.columns; delete dq.order; delete dq.search;
-        //        dq.RefId = this.curTblViz.DataSourceRefId;
-        //        return dq;
-        //    }.bind(this),
-        //    dataSrc: function (dd) {
-        //        return dd.data;
-        //    },
-        //    beforeSend: function (xhr) {
-        //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-        //    }.bind(this),
-        //    crossDomain: true
-        //}
-        //});
-
-        var o = new Object();
-        o.containerId = this.curTblViz.name + "Container";
-        o.dsid = this.curTblViz.dataSourceRefId;
-        o.tableId = this.curTblViz.name + "tbl";
-        o.showSerialColumn = true;
-        o.showCheckboxColumn = false;
-        o.showFilterRow = false;
-        o.IsPaging = false;
-        o.rendererName = 'Bot';
-        //o.scrollHeight = this.scrollHeight + "px";
-        //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
-        //o.fnKeyUpCallback = this.xxx.bind(this);
-        //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
-        //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
-        //o.fninitComplete = this.initDTpost.bind(this);
-        //o.hiddenFieldName = this.vmName;
-        //o.showFilterRow = true;
-        //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
-        o.columns = this.curTblViz.columns;//////////////////////////////////////////////////////
-        this.datatable = new EbBasicDataTable(o);
-
-        this.hideTypingAnim();
-        this.AskWhatU();
-    }.bind(this);
-
-    this.showChartViz = function (e) {
-        this.showTypingAnim();
-        $.ajax({
-            type: 'POST',
-            url: '../boti/getData',
-            data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
-            //beforeSend: function (xhr) {
-            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            //}.bind(this),
-            success: this.getDataSuccess.bind(this),
-            error: function () { }
-        });
-    }.bind(this);
-
-    this.getDataSuccess = function (result) {
-        this.Gdata = result.data;
-        $canvasDiv = $('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>');
-        $canvasDiv.find("canvas").attr("id", $canvasDiv.find("canvas").attr("id") + ++this.ChartCounter);
-        this.$chatBox.append($canvasDiv);
-        this.drawGeneralGraph();
-        this.hideTypingAnim();
-        this.AskWhatU();
-    };
-
-    this.drawGeneralGraph = function () {
-        this.getBarData();
-        this.gdata = {
-            labels: this.XLabel,
-            datasets: this.dataset
-        };
-        this.animateOPtions = this.curChartViz.ShowValue ? new animateObj(0) : false;
-        this.goptions = {
-            scales: {
-                yAxes: [{
-                    scaleLabel: {
-                        display: (this.type !== "pie") ? true : false,
-                        labelString: (this.curChartViz.YaxisTitle !== "") ? this.curChartViz.YaxisTitle : "YLabel",
-                        fontColor: (this.curChartViz.YaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisTitleColor : "#000000"
-                    },
-                    stacked: false,
-                    gridLines: {
-                        display: (this.curChartViz.Type !== "pie") ? true : false
-                    },
-                    ticks: {
-                        fontSize: 10,
-                        fontColor: (this.curChartViz.YaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisLabelColor : "#000000"
-                    }
-                }],
-                xAxes: [{
-                    scaleLabel: {
-                        display: (this.type !== "pie") ? true : false,
-                        labelString: (this.curChartViz.XaxisTitle !== "") ? this.curChartViz.XaxisTitle : "XLabel",
-                        fontColor: (this.curChartViz.XaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisTitleColor : "#000000"
-                    },
-                    gridLines: {
-                        display: this.type !== "pie" ? true : false
-                    },
-                    ticks: {
-                        fontSize: 10,
-                        fontColor: (this.curChartViz.XaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisLabelColor : "#000000"
-                    }
-                }]
-            },
-            zoom: {
-                // Boolean to enable zooming
-                enabled: true,
-
-                // Zooming directions. Remove the appropriate direction to disable 
-                // Eg. 'y' would only allow zooming in the y direction
-                mode: 'x'
-            },
-            pan: {
-                enabled: true,
-                mode: 'x'
-            },
-            legend: {
-                //onClick: this.legendClick.bind(this)
-            },
-
-            tooltips: {
-                enabled: this.curChartViz.ShowTooltip
-            },
-            animation: this.animateOPtions
-
-        };
-        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Xaxis.$values.length > 0)
-            this.drawGraph();
-
-    };
-
-    this.getBarData = function () {
-        this.Xindx = [];
-        this.Yindx = [];
-        this.dataset = [];
-        this.XLabel = [];
-        this.YLabel = [];
-        var xdx = [], ydx = [];
-        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Yaxis.$values.length > 0) {
-
-            $.each(this.curChartViz.Xaxis.$values, function (i, obj) {
-                xdx.push(obj.data);
-            });
-
-            $.each(this.curChartViz.Yaxis.$values, function (i, obj) {
-                ydx.push(obj.data);
-            });
-
-            $.each(this.Gdata, this.getBarDataLabel.bind(this, xdx));
-
-            for (k = 0; k < ydx.length; k++) {
-                this.YLabel = [];
-                for (j = 0; j < this.Gdata.length; j++)
-                    this.YLabel.push(this.Gdata[j][ydx[k]]);
-                if (this.curChartViz.Type !== "googlemap") {
-                    if (this.curChartViz.Type !== "pie") {
-                        this.piedataFlag = false;
-                        this.dataset.push(new datasetObj(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
-                    }
-                    else {
-                        this.dataset.push(new datasetObj4Pie(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
-                        this.piedataFlag = true;
-                    }
-                }
-            }
-        }
-    };
-
-    this.getBarDataLabel = function (xdx, i, value) {
-        for (k = 0; k < xdx.length; k++)
-            this.XLabel.push(value[xdx[k]]);
-    };
-
-    this.drawGraph = function () {
-        var canvas = document.getElementById(this.curChartViz.EbSid + this.ChartCounter);//change ebsid to name
-        this.chartApi = new Chart(canvas, {
-            type: this.curChartViz.Type,
-            data: this.gdata,
-            options: this.goptions,
-        });
     };
 
     this.txtboxKeyup = function (e) {
         if (e.which === 13)/////////////////////////////
             this.send_btn();
+    }.bind(this);
+
+    this.inpkeyUp = function (e) {
+        if (e.which === 13)/////////////////////////////
+            $(e.target).closest(".chat-ctrl-cont").find('[name="ctrlsend"]').trigger("click");
+    }.bind(this);
+
+    this.chatInpkeyUp = function (e) {
+        if (e.which === 13)/////////////////////////////
+            $(e.target).closest(".chat-ctrl-cont").find('.cntct_btn').trigger("click");
     }.bind(this);
 
     this.send_btn = function () {
@@ -628,14 +397,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
         };
 
-        var $e = $('.msg-inp');
-        var msg = $e.val().trim();
+        let $e = $('.msg-inp');
+        let msg = $e.val().trim();
         if (!msg) {
             $e.val('');
             return;
-        };
+        }
         this.sendMsg(msg);
-        //$('.eb-chatBox').scrollTop(99999999999);
         $e.val('');
 
     }.bind(this);
@@ -1008,7 +776,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.curVal = this.curCtrl.getValue();
                 this.tryOnChangeDuties(this.curCtrl);
             }
-            this.sendCtrlAfter($msgDiv.hide(), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            this.sendCtrlAfter($msgDiv.fadeOut(this.controlHideDelay), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
 
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
@@ -1334,7 +1102,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             $msg.find('.msg-wraper-user').html(msg).append(this.getTime());
             $msg.insertAfter($prevMsg);
             this.scrollToBottom();
-        }.bind(this), this.controlHideDelay + this.breathingDelay);           
+        }.bind(this), this.controlHideDelay);
     };
 
     this.startTypingAnim = function ($msg) {
@@ -1610,11 +1378,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.enableCtrledit = function () {
-        $('[name="ctrledit"]').show(50);
+        $('[name="ctrledit"]').show(200);
     };
 
     this.disableCtrledit = function () {
-        $('[name="ctrledit"]').hide(50);
+        $('[name="ctrledit"]').hide(200);
     };
 
     this.authenticate = function () {
@@ -1667,8 +1435,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.FBNotLogined = function () {
         this.hideTypingAnim();
         this.isAlreadylogined = false;
-       // this.msgFromBot(this.welcomeMessage);
-      //  this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook", "I don't have facebook account"], "fblogin");
+        // this.msgFromBot(this.welcomeMessage);
+        //  this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook", "I don't have facebook account"], "fblogin");
         this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook"], "fblogin");
     }.bind(this);
 
@@ -1706,13 +1474,28 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.emailauthFn = function (e) {
-        this.msgFromBot("Please share your email address so that I can get in touch with you");
+        this.msgFromBot("Please share your email address so that I can get in touch with you 😊");
         //this.msgFromBot($(`<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div>
         //    <button class="btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button> `));
-        this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="email" class="form-control " id="anon_mail" placeholder="Enter email">   
-             <span class="input-group-btn"><button class="btn btn-lg cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></span> </div></div>`));
+        //this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="email" class="form-control " id="anon_mail" placeholder="Enter email">   
+        //     <span class="input-group-btn"><button class="btn btn-lg cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></span> </div></div>`));
+        let controlHTML = `
+    <div class="ctrl-wraper">
+        <div class="input-group" style="width:100%;">
+            
+            <input chat-inp type="email" id="anon_mail" placeholder="Enter email">
+            <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-envelope" aria-hidden="true"></i> </span>
+        </div>
+    </div>`;
+        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#anon_mail`).focus(); }, "anon_mail");
+
+        //setTimeout(function () {
+        //    $("#anon_mail").val("email@valid.com");// test auto
+        //    $("[name=contactSubmitMail]").click();
+        //}.bind(this), this.typeDelay*4);
     }.bind(this);
-   
+
     this.phoneauthFn = function (e) {
         this.msgFromBot("Please provide your phone number");
         //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button class="btn" name="contactSubmitPhn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button> '));
@@ -1731,6 +1514,213 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             Offline.check();
         console.log(Offline.state);
     };
+
+    //==========================================
+
+
+
+    this.showTblViz = function (e) {
+        var $tableCont = $('<div class="table-cont">' + this.curTblViz.bareControlHtml + '</div>');
+        this.$chatBox.append($tableCont);
+        this.showTypingAnim();
+        //$(`#${this.curTblViz.EbSid}`).DataTable({//change ebsid to name
+        //    processing: true,
+        //    serverSide: false,
+        //    dom: 'rt',
+        //    columns: this.curTblViz.BotCols,
+        //    data: this.curTblViz.BotData,
+        //    initComplete: function () {
+        //        this.hideTypingAnim();
+        //        this.AskWhatU();
+        //        $tableCont.show(100);
+        //    }.bind(this)
+        //dom: "rt",
+        //ajax: {
+        //    url: 'http://localhost:8000/ds/data/' + this.curTblViz.DataSourceRefId,
+        //    type: 'POST',
+        //    timeout: 180000,
+        //    data: function (dq) {
+        //        delete dq.columns; delete dq.order; delete dq.search;
+        //        dq.RefId = this.curTblViz.DataSourceRefId;
+        //        return dq;
+        //    }.bind(this),
+        //    dataSrc: function (dd) {
+        //        return dd.data;
+        //    },
+        //    beforeSend: function (xhr) {
+        //        xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+        //    }.bind(this),
+        //    crossDomain: true
+        //}
+        //});
+
+        var o = new Object();
+        o.containerId = this.curTblViz.name + "Container";
+        o.dsid = this.curTblViz.dataSourceRefId;
+        o.tableId = this.curTblViz.name + "tbl";
+        o.showSerialColumn = true;
+        o.showCheckboxColumn = false;
+        o.showFilterRow = false;
+        o.IsPaging = false;
+        o.rendererName = 'Bot';
+        //o.scrollHeight = this.scrollHeight + "px";
+        //o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
+        //o.fnKeyUpCallback = this.xxx.bind(this);
+        //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
+        //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
+        //o.fninitComplete = this.initDTpost.bind(this);
+        //o.hiddenFieldName = this.vmName;
+        //o.showFilterRow = true;
+        //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
+        o.columns = this.curTblViz.columns;//////////////////////////////////////////////////////
+        this.datatable = new EbBasicDataTable(o);
+
+        this.hideTypingAnim();
+        this.AskWhatU();
+    }.bind(this);
+
+    this.showChartViz = function (e) {
+        this.showTypingAnim();
+        $.ajax({
+            type: 'POST',
+            url: '../boti/getData',
+            data: { draw: 1, RefId: this.curChartViz.DataSourceRefId, Start: 0, Length: 50, TFilters: [] },
+            //beforeSend: function (xhr) {
+            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
+            //}.bind(this),
+            success: this.getDataSuccess.bind(this),
+            error: function () { }
+        });
+    }.bind(this);
+
+    this.getDataSuccess = function (result) {
+        this.Gdata = result.data;
+        $canvasDiv = $('<div class="chart-cont">' + this.curChartViz.BareControlHtml + '</div>');
+        $canvasDiv.find("canvas").attr("id", $canvasDiv.find("canvas").attr("id") + ++this.ChartCounter);
+        this.$chatBox.append($canvasDiv);
+        this.drawGeneralGraph();
+        this.hideTypingAnim();
+        this.AskWhatU();
+    };
+
+    this.drawGeneralGraph = function () {
+        this.getBarData();
+        this.gdata = {
+            labels: this.XLabel,
+            datasets: this.dataset
+        };
+        this.animateOPtions = this.curChartViz.ShowValue ? new animateObj(0) : false;
+        this.goptions = {
+            scales: {
+                yAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.curChartViz.YaxisTitle !== "") ? this.curChartViz.YaxisTitle : "YLabel",
+                        fontColor: (this.curChartViz.YaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisTitleColor : "#000000"
+                    },
+                    stacked: false,
+                    gridLines: {
+                        display: (this.curChartViz.Type !== "pie") ? true : false
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.curChartViz.YaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.YaxisLabelColor : "#000000"
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel: {
+                        display: (this.type !== "pie") ? true : false,
+                        labelString: (this.curChartViz.XaxisTitle !== "") ? this.curChartViz.XaxisTitle : "XLabel",
+                        fontColor: (this.curChartViz.XaxisTitleColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisTitleColor : "#000000"
+                    },
+                    gridLines: {
+                        display: this.type !== "pie" ? true : false
+                    },
+                    ticks: {
+                        fontSize: 10,
+                        fontColor: (this.curChartViz.XaxisLabelColor !== null && this.curChartViz.YaxisTitleColor !== "#ffffff") ? this.curChartViz.XaxisLabelColor : "#000000"
+                    }
+                }]
+            },
+            zoom: {
+                // Boolean to enable zooming
+                enabled: true,
+
+                // Zooming directions. Remove the appropriate direction to disable 
+                // Eg. 'y' would only allow zooming in the y direction
+                mode: 'x'
+            },
+            pan: {
+                enabled: true,
+                mode: 'x'
+            },
+            legend: {
+                //onClick: this.legendClick.bind(this)
+            },
+
+            tooltips: {
+                enabled: this.curChartViz.ShowTooltip
+            },
+            animation: this.animateOPtions
+
+        };
+        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Xaxis.$values.length > 0)
+            this.drawGraph();
+
+    };
+
+    this.getBarData = function () {
+        this.Xindx = [];
+        this.Yindx = [];
+        this.dataset = [];
+        this.XLabel = [];
+        this.YLabel = [];
+        var xdx = [], ydx = [];
+        if (this.curChartViz.Xaxis.$values.length > 0 && this.curChartViz.Yaxis.$values.length > 0) {
+
+            $.each(this.curChartViz.Xaxis.$values, function (i, obj) {
+                xdx.push(obj.data);
+            });
+
+            $.each(this.curChartViz.Yaxis.$values, function (i, obj) {
+                ydx.push(obj.data);
+            });
+
+            $.each(this.Gdata, this.getBarDataLabel.bind(this, xdx));
+
+            for (k = 0; k < ydx.length; k++) {
+                this.YLabel = [];
+                for (j = 0; j < this.Gdata.length; j++)
+                    this.YLabel.push(this.Gdata[j][ydx[k]]);
+                if (this.curChartViz.Type !== "googlemap") {
+                    if (this.curChartViz.Type !== "pie") {
+                        this.piedataFlag = false;
+                        this.dataset.push(new datasetObj(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
+                    }
+                    else {
+                        this.dataset.push(new datasetObj4Pie(this.curChartViz.Yaxis.$values[k].name, this.YLabel, this.curChartViz.LegendColor.$values[k].color, this.curChartViz.LegendColor.$values[k].color, false));
+                        this.piedataFlag = true;
+                    }
+                }
+            }
+        }
+    };
+
+    this.getBarDataLabel = function (xdx, i, value) {
+        for (k = 0; k < xdx.length; k++)
+            this.XLabel.push(value[xdx[k]]);
+    };
+
+    this.drawGraph = function () {
+        var canvas = document.getElementById(this.curChartViz.EbSid + this.ChartCounter);//change ebsid to name
+        this.chartApi = new Chart(canvas, {
+            type: this.curChartViz.Type,
+            data: this.gdata,
+            options: this.goptions,
+        });
+    };
+
+    //==========================================
     this.init();
 };
 

@@ -34,6 +34,8 @@
             window.EXPRESSbase_APP_IDS = [];
             d.ebbotThemeColorColl = [];
             d.botWelcomeMsgColl = [];
+            d.botPropColl = [];
+            d.ebbotSubtextColl = [];
             botNames = [];
             botDpUrl = [];
             botIcon = [];
@@ -43,10 +45,12 @@
                 }
                 window.EXPRESSbase_APP_IDS.push(bobj.id);
                 botNames.push(bobj.botsettings.Name);
-                botDpUrl.push(bobj.botsettings.DpUrl);
+                botDpUrl.push(bobj.botsettings.DpUrl||'../images/demobotdp4.png');
                 botIcon.push(bobj.icon);
                 d.ebbotThemeColorColl.push(bobj.botsettings.ThemeColor);
                 d.botWelcomeMsgColl.push(bobj.botsettings.WelcomeMessage);
+                d.botPropColl.push(bobj.botsettings.BotProp);
+                d.ebbotSubtextColl.push(bobj.botsettings.Description);
             });
 
             d.appIdColl = window.EXPRESSbase_APP_IDS;

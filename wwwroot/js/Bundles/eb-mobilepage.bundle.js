@@ -1,3 +1,4 @@
+
 function EB_MobilePage(option) {
     this.Config = $.extend({}, option);
     this.validate = function () {
@@ -58,6 +59,7 @@ function EbMobStudio(config) {
         var curObject = this.Procs[curControl.attr("id")];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas[type]);
+        this.pg.__extension.hideBlackListed(curObject);
     };
 
     this.newMobPage = function () {
@@ -187,6 +189,8 @@ function EbMobStudio(config) {
         //set tree col if form
         if (this.ContainerType === "EbMobileForm")
             this.Controls.refreshColumnTree();
+
+        return o;
     };
 
     this.containerOnDrop = function (event, ui) {
@@ -287,10 +291,15 @@ function EbMobStudio(config) {
         o.setObject();
         this.EbObject.Container.DataLayout = o;
 
-        this.EbObject.Container.Filters.$values.length = 0;
-        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j, obj) {
+        this.EbObject.Container.FilterControls.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .mob_control").each(function (j, obj) {
+            this.findFormContainerItems(j, obj, this.EbObject.Container.FilterControls);
+        }.bind(this));
+
+        this.EbObject.Container.SortColumns.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-sort-container .data_column").each(function (j, obj) {
             let data_col = this.Procs[obj.id];
-            this.EbObject.Container.Filters.$values.push(data_col);
+            this.EbObject.Container.SortColumns.$values.push(data_col);
         }.bind(this));
     };
 
@@ -372,7 +381,9 @@ function EbMobStudio(config) {
     };
 
     this.refreshEmulator = function () {
-        $(".eb_mobpage_pane_layout").height($("#eb_mobpage_toolbox0").height() - 10);
+        let h = $(`#eb_mobpage_toolbox${this.Conf.TabNum}`).height();
+        $(`#eb_mobpage_wraper${this.Conf.TabNum} .eb_mobpage_pane_layout`).height(h - 10);
+        $(`#eb_mobpage_wraper${this.Conf.TabNum} .eb_mobtree_body`).height(h);
     };
 
     this.setEmulatorTitle = function (value) {
@@ -398,12 +409,14 @@ function EbMobStudio(config) {
         this.refreshEmulator();
         this.setEmulatorTitle(this.EbObject.DisplayName || "Untitled");
         $(window).resize(function () { this.refreshEmulator(); }.bind(this));
+        this.pg.__extension = new PgHelperMobile(this.pg);
     };
 
     this.exe();
 }
 function MobileControls(root) {
     this.Root = root;
+    this.FilterControls = [];//only for vis filter
 
     this.initForm = function (o) {
         this.Root.makeDropable(o.EbSid, "EbMobileForm");
@@ -429,12 +442,17 @@ function MobileControls(root) {
         if (this.Root.Mode === "edit" && this.Root.EditObj !== null) {
             tobj.fillControls(this.Root.EditObj.Container.DataLayout.CellCollection.$values, this.Root);//fill table cells
 
-            let filters = this.Root.EditObj.Container.Filters.$values;
-            for (let i = 0; i < filters.length; i++) {
-                this.renderFilter(filters[i]);
-            }
-            this.refreshList();
+            let filterControls = this.Root.EditObj.Container.FilterControls.$values;
+            this.Root.setCtrls($(`#${o.EbSid} .eb_mob_container_inner .vis-filter-container`), filterControls);
             this.Root.getColums4ListView(o);
+            this.setSortColumns(o);
+
+            this.getLinkFormControls(o, function (json) {
+                var controls = (json === null || json === undefined) ? [] : JSON.parse(json).$values;
+                this.FilterControls = controls;//store controls in vis object
+                if (controls.length > 0)
+                    this.drawFormControls(controls);
+            }.bind(this));
         }
     };
 
@@ -447,6 +465,22 @@ function MobileControls(root) {
 
     this.makeFilterColsDropable = function (container) {
         $(`#${container.EbSid} .vis-filter-container`).droppable({
+            accept: this.Root.getDropAcceptClass("EbMobileForm") + ",.filter_controls",
+            hoverClass: "drop-hover-td",
+            tolerance: "fit",
+            greedy: true,
+            drop: function (event, ui) {
+                let o = this.Root.onDropFn(event, ui);
+                if ($(ui.draggable).hasClass("filter_controls")) {
+                    let name = $(ui.draggable).attr("name");
+                    let ctrl = this.FilterControls.find(el => el.Name === name) || {};
+                    $.extend(true, o, ctrl);
+                    this.Root.refreshControl(o);
+                }
+            }.bind(this)
+        });
+
+        $(`#${container.EbSid} .vis-sort-container`).droppable({
             accept: ".draggable_column",
             hoverClass: "drop-hover-td",
             drop: function (event, ui) {
@@ -458,40 +492,75 @@ function MobileControls(root) {
                 obj.ColumnIndex = dragged.attr("index");
                 obj.TableIndex = dragged.attr("tableIndex");
                 $(event.target).append(obj.$Control.outerHTML());
+                obj.blackListProps = Array.from(["TextFormat","Font","Required"]);//for pghelper extension
                 this.Root.refreshControl(obj);
-                $("#" + obj.EbSid).off("focus");
             }.bind(this)
         });
     };
 
-    this.renderFilter = function (filterCol) {//render filter cols on edit
-        let obj = this.Root.makeElement("EbMobileDataColumn", "DataColumn");
-        $.extend(obj, filterCol);
-        $(".mob_container .vis-filter-container").append(obj.$Control.outerHTML());
-        this.Root.refreshControl(obj);
-        $("#" + obj.EbSid).off("focus");
+    this.getLinkFormControls = function (vis, callback) {
+        if (vis.LinkRefId) {
+            $.ajax({
+                url: "../Dev/GetMobileFormControls",
+                type: "GET",
+                cache: false,
+                data: { refid: vis.LinkRefId },
+                beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
+                success: function (result) {
+                    $("#eb_common_loader").EbLoader("hide");
+                    callback(result);
+                }.bind(this),
+                error: function () {
+                    $("#eb_common_loader").EbLoader("hide");
+                }
+            });
+        }
     };
 
-    this.refreshList = function () {
-        let html = $(`div[eb-type="EbMobileVisualization"] [eb-type="EbMobileTableLayout"]`).html();
-        $(`div[eb-type="EbMobileVisualization"] .vis-preview-container`).html(`<div class="list_item">${html}</div>`);
+    this.setSortColumns = function (vis) {
+        let filters = vis.SortColumns.$values;
+        for (let i = 0; i < filters.length; i++) {
+            let obj = this.Root.makeElement("EbMobileDataColumn", "DataColumn");
+            $.extend(obj, filters[i]);
+            $(`#${vis.EbSid} .vis-sort-container`).append(obj.$Control.outerHTML());
+            this.Root.refreshControl(obj);
+            obj.blackListProps = Array.from(["TextFormat", "Font", "Required"]);//for pghelper extension
+        }
     };
 
-    this.getListHtml = function () {
-        let html = [];
-        html.push(`<div class='eb_mob_listwraper'>
-                        <div class='eb_mob_listinner'>
-                            
-                        </div>
-                </div >`);
-        return html.join("");
+    this.drawFormControls = function (controls) {
+        //sow tab
+        $(`#eb_mobtree_body_${this.Root.Conf.TabNum} #form_controls_tab`).show();
+
+        for (let i = 0; i < controls.length; i++) {
+
+            let ebtype = this.Root.getType(controls[i].$type);
+
+            $(`#form_controls_list${this.Root.Conf.TabNum}`).append(`
+            <div class="filter_controls" eb-type="${ebtype}" ctrname="${ebtype.replace("EbMobile", "")}" name="${controls[i].Name}">
+                <i class="fa ${controls[i].Icon}" style="margin-right:10px;"></i>
+                ${controls[i].Name}
+            </div>`);
+        }
+
+        //make filter controls draggable
+        $(`.filter_controls`).draggable({
+            cancel: "a.ui-icon",
+            revert: "invalid",
+            helper: "clone",
+            cursor: "move",
+            appendTo: "body",
+            drag: function (event, ui) {
+                $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "auto", "padding": "5px", "border-radius": "4" });
+            }
+        });
     };
 
     this.drawDsColTree = function (colList) {
-        $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty();
+        $(`#ds_parameter_list${this.Root.Conf.TabNum}`).empty();
         var type = "EbMobileDataColumn";
         $.each(colList, function (i, columnCollection) {
-            $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).append("<li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
+            $(`#ds_parameter_list${this.Root.Conf.TabNum}`).append("<li><a>Table " + i + "</a><ul id='t" + i + "'></ul></li>");
             $.each(columnCollection, function (j, obj) {
                 let icon = this.getIconByType(obj.type);
                 let $div = $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[id='t${i}']`);
@@ -552,7 +621,7 @@ function MobileControls(root) {
             }
         }
 
-        $(`#ds_parameter_list${this.Root.Conf.TabNum} ul[class='ds_cols']`).empty().append(htmlString);
+        $(`#ds_parameter_list${this.Root.Conf.TabNum}`).empty().append(htmlString);
         $(`#ds_parameter_list${this.Root.Conf.TabNum}`).killTree();
         $(`#ds_parameter_list${this.Root.Conf.TabNum}`).treed();
         $(".branch").click();
@@ -574,13 +643,13 @@ function MobileControls(root) {
         }
         else {
             html[propName].push(`<li class='styl'>
-                            <span eb-type='EbMobileDataColumn'
-                                  ctrname="DataColumn"
-                                  DbType='${jsobj.EbDbType}'
-                                  ColName='${jsobj.Name}' 
-                                  class='draggable_column'><i class='fa ${this.getIconByType(jsobj.EbDbType)} column_tree_typeicon'></i> ${jsobj.Name} 
-                            </span>
-                        </li>`);
+                                    <span eb-type='EbMobileDataColumn'
+                                          ctrname="DataColumn"
+                                          DbType='${jsobj.EbDbType}'
+                                          ColName='${jsobj.Name}' 
+                                          class='draggable_column'><i class='fa ${this.getIconByType(jsobj.EbDbType)} column_tree_typeicon'></i> ${jsobj.Name} 
+                                    </span>
+                                </li>`);
         }
     };
 
@@ -711,6 +780,13 @@ function MobileMenu(option) {
 (function (doc) {
     var d = doc || document;
 
+    window.getCurrent = function () {
+        var id = $("#versionTab .tab-pane.active").attr("id");
+        let creator = window.MobilePage["Tab" + id.charAt(id.length - 1)].Creator;
+        console.log("mode : " + creator.Mode);
+        return creator.EbObject;
+    };
+
     window.expand = function (o) {
         let constructor = o.constructor.name;
         let common = {
@@ -719,7 +795,8 @@ function MobileMenu(option) {
                 this.tab = root.Conf.TabNum || "";
             },
             setObject: function () { return null; },
-            propertyChanged: function (propname) { }
+            propertyChanged: function (propname) { },
+            blackListProps: []
         };
 
         $.extend(o, common, window.expandable[constructor] || {});
@@ -896,8 +973,25 @@ function MobileMenu(option) {
             }
         }
     };
-
 })(jQuery);
+
+function PgHelperMobile(g) {
+
+    this.grid = g;
+
+    this.hideBlackListed = function (o) {
+        let props = o.blackListProps;
+        for (let i = 0; i < props.length; i++) {
+            let el = this.grid.$PGcontainer.find(`tr[name="${props[i]}Tr"]`);
+
+            if (el.prevAll(":visible:first").hasClass("pgGroupRow") && el.next(":visible:first").hasClass("pgGroupRow")) {
+                el.prevAll(":visible:first").hide();
+            }
+            el.hide();
+        }
+    };
+}
+
 function EB_MobilePage(option) {
     this.Config = $.extend({}, option);
     this.validate = function () {
@@ -958,6 +1052,7 @@ function EbMobStudio(config) {
         var curObject = this.Procs[curControl.attr("id")];
         var type = curControl.attr('eb-type');
         this.pg.setObject(curObject, AllMetas[type]);
+        this.pg.__extension.hideBlackListed(curObject);
     };
 
     this.newMobPage = function () {
@@ -1087,6 +1182,8 @@ function EbMobStudio(config) {
         //set tree col if form
         if (this.ContainerType === "EbMobileForm")
             this.Controls.refreshColumnTree();
+
+        return o;
     };
 
     this.containerOnDrop = function (event, ui) {
@@ -1187,10 +1284,15 @@ function EbMobStudio(config) {
         o.setObject();
         this.EbObject.Container.DataLayout = o;
 
-        this.EbObject.Container.Filters.$values.length = 0;
-        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .data_column").each(function (j, obj) {
+        this.EbObject.Container.FilterControls.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-filter-container .mob_control").each(function (j, obj) {
+            this.findFormContainerItems(j, obj, this.EbObject.Container.FilterControls);
+        }.bind(this));
+
+        this.EbObject.Container.SortColumns.$values.length = 0;
+        $(`#${o.EbSid}`).closest(".mob_container").find(".vis-sort-container .data_column").each(function (j, obj) {
             let data_col = this.Procs[obj.id];
-            this.EbObject.Container.Filters.$values.push(data_col);
+            this.EbObject.Container.SortColumns.$values.push(data_col);
         }.bind(this));
     };
 
@@ -1272,7 +1374,9 @@ function EbMobStudio(config) {
     };
 
     this.refreshEmulator = function () {
-        $(".eb_mobpage_pane_layout").height($("#eb_mobpage_toolbox0").height() - 10);
+        let h = $(`#eb_mobpage_toolbox${this.Conf.TabNum}`).height();
+        $(`#eb_mobpage_wraper${this.Conf.TabNum} .eb_mobpage_pane_layout`).height(h - 10);
+        $(`#eb_mobpage_wraper${this.Conf.TabNum} .eb_mobtree_body`).height(h);
     };
 
     this.setEmulatorTitle = function (value) {
@@ -1298,6 +1402,7 @@ function EbMobStudio(config) {
         this.refreshEmulator();
         this.setEmulatorTitle(this.EbObject.DisplayName || "Untitled");
         $(window).resize(function () { this.refreshEmulator(); }.bind(this));
+        this.pg.__extension = new PgHelperMobile(this.pg);
     };
 
     this.exe();

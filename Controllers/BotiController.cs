@@ -173,7 +173,12 @@ namespace ExpressBase.Web.Controllers
                         (control as EbSimpleSelect).BareControlHtml4Bot = (control as EbSimpleSelect).GetBareHtml();
 
                     }
-                    if (control is EbTVcontrol)
+                    else if (control is EbChartControl)
+                    {
+                        (control as EbChartControl).InitFromDataBase(this.ServiceClient);
+                        (control as EbChartControl).BareControlHtml4Bot = (control as EbChartControl).GetBareHtml();
+                    }
+                    else if (control is EbTVcontrol )
                     {
                         (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
                         (control as EbTVcontrol).BareControlHtml4Bot = (control as EbTVcontrol).GetBareHtml();

@@ -1,6 +1,13 @@
 ﻿(function (doc) {
     var d = doc || document;
 
+    window.getCurrent = function () {
+        var id = $("#versionTab .tab-pane.active").attr("id");
+        let creator = window.MobilePage["Tab" + id.charAt(id.length - 1)].Creator;
+        console.log("mode : " + creator.Mode);
+        return creator.EbObject;
+    };
+
     window.expand = function (o) {
         let constructor = o.constructor.name;
         let common = {
@@ -9,7 +16,8 @@
                 this.tab = root.Conf.TabNum || "";
             },
             setObject: function () { return null; },
-            propertyChanged: function (propname) { }
+            propertyChanged: function (propname) { },
+            blackListProps: []
         };
 
         $.extend(o, common, window.expandable[constructor] || {});
@@ -186,5 +194,21 @@
             }
         }
     };
-
 })(jQuery);
+
+function PgHelperMobile(g) {
+
+    this.grid = g;
+
+    this.hideBlackListed = function (o) {
+        let props = o.blackListProps;
+        for (let i = 0; i < props.length; i++) {
+            let el = this.grid.$PGcontainer.find(`tr[name="${props[i]}Tr"]`);
+
+            if (el.prevAll(":visible:first").hasClass("pgGroupRow") && el.next(":visible:first").hasClass("pgGroupRow")) {
+                el.prevAll(":visible:first").hide();
+            }
+            el.hide();
+        }
+    };
+}

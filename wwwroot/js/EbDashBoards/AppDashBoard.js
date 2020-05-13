@@ -1,9 +1,10 @@
-﻿var AppDashBoard = function (appid, apptype, appsettings) {
+﻿var AppDashBoard = function (appid, apptype, appsettings,appinfo) {
     this.objectTab = $("#Objects");
     this.ExportCollection = [];
     this.AppId = appid;
     this.AppType = apptype;
     this.AppSettings = appsettings;
+    this.AppInfo = appinfo;
 
 
     this.init = function () {
@@ -162,10 +163,14 @@
 
         let cssobj = this.AppSettings.CssContent;
         $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
+        $('#headerIcon').attr('checked', this.AppSettings.BotProp.HeaderIcon);
+        $('#headerSubtxt').attr('checked', this.AppSettings.BotProp.HeaderSubtxt);
         $('#email_anony').attr('checked', this.AppSettings.Authoptions.EmailAuth);
         $('#name_anony').attr('checked', this.AppSettings.Authoptions.UserName);
         $('#phone_anony').attr('checked', this.AppSettings.Authoptions.PhoneAuth);
         $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
+        $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
+        $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
         for (let property in cssobj) {
 
             let html = "";
@@ -192,12 +197,27 @@
             EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
             return;
         }
+        if ($('#fb_anony').is(":checked")) {
+            if ($('#fbAppidtxt').val().trim() === "") {
+                EbMessage("show", { Background: "red", Message: "Please provide facebook app ID" });
+                $('#fbAppidtxt').focus();
+                return;
+            }
+            if ($('#fbAppversn').val().trim() === "") {
+                EbMessage("show", { Background: "red", Message: "Please provide facebook app ID" });
+                $('#fbAppversn').focus();
+                return;
+            }
+        }
         authOptions.EmailAuth = $('#email_anony').is(":checked");
         authOptions.UserName = $('#name_anony').is(":checked");
         authOptions.PhoneAuth = $('#phone_anony').is(":checked");
         authOptions.Fblogin = $('#fb_anony').is(":checked");
+        authOptions.FbAppID = $('#fbAppidtxt').val().trim();
+        authOptions.FbAppVer = $('#fbAppversn').val().trim();
         botProperties.EbTag = $('#useEbtag').is(":checked");
-
+        botProperties.HeaderIcon = $('#headerIcon').is(":checked");
+        botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
             //let tempobj = {};
@@ -210,7 +230,8 @@
             let cssobjVal = $(`#configcssTabContent #${property} textarea[obname=${property}]`).val();
             cssConstObj[property] = cssobjVal;
         }
-        appSettings["Name"] = $("#bot_name_txt").val();
+        appSettings["Name"] = this.AppInfo.Name;
+        appSettings["Description"] = this.AppInfo.Description;
         appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
         appSettings["ThemeColor"] = $("#bot_tm_color").val();
         appSettings["DpUrl"] = $("#bot_dp_url").val();
@@ -223,9 +244,9 @@
             data: { id: this.AppId, type: this.AppType, settings: JSON.stringify(appSettings) },
             success: function (data) {
                 if (data > 0)
-                    alert("Settings Updated Successfully");
+                    EbMessage("show", { Message: "Settings Updated Successfully" });
                 else
-                    alert("Something went wrong");
+                    EbMessage("show", { Background: "red", Message: "Something went wrong" });
             }
         });
     }
@@ -233,6 +254,18 @@
         let authcheck = $("input[name=authtype]:checked").length;
         if (!authcheck) {
             EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
+        }
+        if ($('#fb_anony').is(":checked")) {
+            if ($('#fbAppidtxt').val().trim() === "") {
+
+                // $('#fbAppidtxt').addClass('txthighlightred');
+                $('#fbAppidtxt').focus();
+                return;
+            }
+            if ($('#fbAppversn').val().trim() === "") {
+                $('#fbAppversn').focus();
+                return;
+            }
         }
     }
     this.ResetCssFn = function (e) {

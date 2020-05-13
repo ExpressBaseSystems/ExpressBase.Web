@@ -736,6 +736,9 @@ const EbSelect = function (ctrl, options) {
                 this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
 
+
+        this.required_min_Check();
+
         this.ComboObj.DataVals.R = JSON.parse(JSON.stringify(this.columnVals));
 
         //console.log("VALUE MEMBERS =" + this.Vobj.valueMembers);
@@ -745,7 +748,7 @@ const EbSelect = function (ctrl, options) {
         setTimeout(function () {
             this.adjustTag_closeHeight();
             this.$wraper.find(".selected-tag:contains(--)").css("color", "rgba(255, 255, 255, 0.71) !important");
-        }.bind(this),5);
+        }.bind(this), 5);
     };
 
     this.adjustTag_closeHeight = function () {
@@ -947,22 +950,34 @@ const EbSelect = function (ctrl, options) {
         let _name = this.ComboObj.EbSid_CtxId;
         if (this.Vobj.DDstate === true && (!container.is(e.target) && container.has(e.target).length === 0) && (!container1.is(e.target) && container1.has(e.target).length === 0)) {
             this.Vobj.hideDD();/////
-            if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
-                if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
-                    EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`, 'This field  require minimum ' + this.minLimit + ' values');
-            }
-            else {
-                if (this.required && this.Vobj.valueMembers.length === 0) {
-                    if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
-                        EbMakeInvalid(`#${_name}Container`, `#${_name}Wraper`);
-                }
-                else {
-                    EbMakeValid(`#${_name}Container`, `#${_name}Wraper`);
-                }
-
-            }
+            this.required_min_Check();
         }
     };
+
+    this.required_min_Check = function () {
+        let reqNotOK = false;
+        let minLimitNotOk = false;
+
+        let contId = (this.ComboObj.constructor.name === "DGPowerSelectColumn") ? `#td_${this.ComboObj.EbSid_CtxId}` : `#${this.ComboObj.EbSid_CtxId}Container`;// to handle special case of DG powerselect 
+        let wraperId = `#${this.ComboObj.EbSid_CtxId}Wraper`;
+        let msg = "This field is required";
+
+        if (this.required && this.Vobj.valueMembers.length === 0) {
+            reqNotOK = true;
+        }
+        else if (this.Vobj.valueMembers.length < this.minLimit && this.minLimit !== 0) {
+            minLimitNotOk = true;
+            msg = 'This field  require minimum ' + this.minLimit + ' values';
+        }
+
+        if (reqNotOK || minLimitNotOk) {
+            //if (this.IsSearchBoxFocused || this.IsDatatableInit)// if countrol is touched
+            EbMakeInvalid(contId, wraperId, msg);
+        }
+        else {
+            EbMakeValid(contId, wraperId);
+        }
+    }.bind(this);
 
     this.getDisplayMemberModel = function () {
         let newDMs = {};

@@ -96,6 +96,7 @@
     margin: 6px 5px 6px 5px;
     background-color: #f1f1f1;
     padding-right: 49px;
+    max-width: calc(100% - 26px);
 }
 
 .msg-cont {
@@ -341,7 +342,7 @@
     outline: none;
     padding: 4px;
 }*/
-.eb-chat-inp-cont .msg-send, [name=ctrlsend] {
+.eb-chat-inp-cont .msg-send, [name=ctrlsend], .cntct_btn {
     border-radius: 15px;
     color: white;
     background: var(--botThemeColor);
@@ -365,7 +366,7 @@
 }*/
 
 
-.chat-ctrl-cont [name=ctrlsend] {
+.chat-ctrl-cont [name=ctrlsend], .cntct_btn {
     position: absolute;
     vertical-align: middle;
     font-size: 17px;
@@ -378,7 +379,7 @@
     box-shadow: -2px 2px 4px 0 #00000073
 }
 
-    .chat-ctrl-cont [name=ctrlsend]:hover {
+    .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
         filter: hue-rotate(60deg);
         color: white;
     }
@@ -398,7 +399,7 @@
 .chat-ctrl-cont[ebreadonly="true"] [name=ctrlsend] {
     display: none;
 }
-.eb-chat-cont .cntct_sec .cntct_btn {
+/*.eb-chat-cont .cntct_sec .cntct_btn {
     margin-left:15px;
     float: right;
     color: white;
@@ -412,7 +413,7 @@
     width: 35px;
     transition-duration: 0.1s;
     box-shadow: -2px 2px 4px 0 #00000073
-}
+}*/
 .contct-cont [name=contactSubmitMail], [name=contactSubmitPhn], [contactSubmitName] {
     position: absolute;
     vertical-align: middle;
@@ -425,6 +426,7 @@
     transition-duration: 0.1s;
     box-shadow: -2px 2px 4px 0 #00000073
 }
+
 .msg-cont .bs-cont {
     display: flex;
     flex-direction: row;
@@ -620,6 +622,7 @@
 }
 
     .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
+        width: 100%;
         height: 34px;
         border: none;
         outline: none;
@@ -635,7 +638,7 @@
         /*padding-right:5px;*/
     }
 
-[name=ctrlsend] .fa {
+[name=ctrlsend] .fa, .cntct_btn .fa {
     margin-left: -5.5px;
     margin-top: -1px;
 }
@@ -726,7 +729,7 @@
 }
 
     .img-edit:hover {
-         background: #a1a1a11c;
+        background: #a1a1a11c;
     }
 
 .img-box .img-edit {
@@ -807,7 +810,7 @@
 	border: 1px solid #555;
 	margin-top: 65px;
 }*/
-    .survey-qry-cont {
+.survey-qry-cont {
 }
 
 .survey-opt-cont {

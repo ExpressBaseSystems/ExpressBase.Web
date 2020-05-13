@@ -234,7 +234,7 @@ var EbMenu = function (option) {
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
         $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item" klink="true">
-                                                        <a href='${this.decideUrl(_obj)}'>
+                                                        <a href='${this.decideUrl(_obj)}' objid='${_obj.Id}'>
                                                             <span class="obj-icon">
                                                                 <i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i>
                                                             </span>
@@ -443,7 +443,7 @@ var EbMenu = function (option) {
         }
 
         $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item ${fav}" klink="true">
-                                                        <a href='${this.decideUrl(_obj)}'>
+                                                        <a href='${this.decideUrl(_obj)}' objid='${_obj.Id}'>
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}
@@ -506,6 +506,7 @@ var EbMenu = function (option) {
     this.start();
 }
 class Setup {
+
     constructor(option) {
         this.option = {};
         this.se = {};
@@ -517,6 +518,8 @@ class Setup {
         this.initServerEvents();
         this.getNotifications();
         //this.userNotification();
+
+        this.modal = new EbCommonModal();
     }
 
     getCurrentLocation() {
@@ -652,14 +655,14 @@ class Setup {
             var len = parseInt($('#notification-count').attr("count"));
             var html = "";
             var x = JSON.parse(msg);
-            if (len == 0) {
+            if (len === 0) {
                 len = x.Notification.length;
             }
             else {
                 len = len + x.Notification.length;
             }
 
-            if (len == 0) {
+            if (len === 0) {
                 $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
                 var html1 = `<p class="no_notification">No Notifications</p>`;
                 $('.new_notifications').append(html1);
@@ -671,7 +674,7 @@ class Setup {
             }
             $('#notification-count').attr("count", len);
             for (var i = 0; i < x.Notification.length; i++) {
-                if (x.Notification[i].Title != null && x.Notification[i].Link != null) {
+                if (x.Notification[i].Title !== null && x.Notification[i].Link !== null) {
                     html += `<li class="drp_item" style="border-bottom: 1px solid rgba(0,0,0,.15);"> 
                                 <i class="fa fa-times notification-close" style="float: right;padding: 5px 10px 0px 0px;"></i>
                                 <div notification-id = "${x.Notification[i].NotificationId}" link-url="${x.Notification[i].Link}" class="notification-update" >
@@ -700,7 +703,7 @@ class Setup {
         });
         $(e.target).closest("li").detach();
         var x = parseInt($('#notification-count').attr("count")) - 1;
-        if (x == 0) {
+        if (x === 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
             var html = `<p class="no_notification">No Notifications</p>`;
             $('.new_notifications').append(html);
@@ -723,7 +726,7 @@ class Setup {
         });
         $(e.target).closest("li").detach();
         var x = parseInt($('#notification-count').attr("count")) - 1;
-        if (x == 0) {
+        if (x === 0) {
             $('#notification-count').attr("style", "background-color: transparent;border: 2px solid transparent;");
             $('#notification-count').empty();
             var html = `<p class="no_notification">No Notifications</p>`;
@@ -737,6 +740,112 @@ class Setup {
         $('#notification-count').attr("count", x);
         $('#notificationDropDown').addClass("open");
         e.stopPropagation();
+    }
+}
+
+
+class EbCommonModal {
+
+    constructor() {
+
+        this.options = {
+            Title: "Title",
+            ButtonText: "OK",
+            ButtonColor: "#ffffff",
+            ButtonBackground: "#3876ea",
+            ShowHeader: true,
+            ShowFooter: true
+        };
+
+        this.callback = new Function();
+
+        this.$container = $("#eb-common-popup");
+        this.$close = this.$container.find("#eb-common-popup-close");
+        this.$ok = this.$container.find("#eb-common-popup-ok");
+
+        this.setStyle({});
+
+        this.$container.on('show.bs.modal', this.beforeShown.bind(this));
+        this.$container.on('shown.bs.modal', this.afterShown.bind(this));
+        this.$container.on('hide.bs.modal', this.beforeHide.bind(this));
+        this.$container.on('hidden.bs.modal', this.afterHide.bind(this));
+        this.$close.on("click", this.onClose.bind(this));
+        this.$ok.on("click", this.onComplete.bind(this));
+    }
+
+    setStyle(option) {
+
+        $.extend(this.options, option);
+
+        this.$ok.css({ background: this.options.ButtonBackground, color: this.options.ButtonColor });
+        this.$ok.text(this.options.ButtonText);
+
+        this.$container.find(".modal-title").text(this.options.Title);
+
+        if (this.options.ShowHeader)
+            this.$container.find(".modal-header").show();
+        else
+            this.$container.find(".modal-header").hide();
+
+        if (this.options.ShowFooter)
+            this.$container.find(".modal-footer").show();
+        else
+            this.$container.find(".modal-footer").hide();
+    }
+
+    setSize(width, height) {
+        if (typeof width === "string") {
+            this.$container.find(".modal-dialog").addClass(width);
+        }
+        else {
+            this.$container.height(height);
+            this.$container.width(width);
+        }
+    }
+
+    reset() {
+        this.$container.modal('handleUpdate');
+        this.setHtml("");
+    }
+
+    setHtml(html) {
+        this.$container.find(".modal-body").html(html);
+    }
+
+    show(callback) {
+        if (callback)
+            this.callback = callback;
+
+        this.$container.modal("show");
+    }
+
+    hide() {
+        this.$container.modal("hide");
+    }
+
+    beforeShown() {
+        this.callback("beforeShown");
+    }
+
+    afterShown() {
+        this.callback("afterShown");
+    }
+
+    beforeHide() {
+        this.callback("beforeHide");
+    }
+
+    afterHide() {
+        this.callback("afterHide");
+    }
+
+    onClose() {
+        this.callback("onClose");
+    }
+
+    onComplete() {
+        this.callback("onComplete");
+        this.hide();
     }
 }
 /** @license

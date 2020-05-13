@@ -16,13 +16,24 @@
     };
     //appIdColl??
     var AppId;
+    var themeColor;
+    var html;
+    var dpurl;
+    var subtxt;
     if (d.appIdColl) {
         AppId = d.appIdColl[d.appIdCount];
+        dpurl = d.botdpURLColl[d.appIdCount] || '../images/demobotdp4.png';
+        themeColor = d.ebbotThemeColorColl[d.appIdCount] || '#055c9b';
+        subtxt = d.ebbotSubtextColl[d.appIdCount] || '';
+        html = d.getElementsByTagName('html')[0];
+        html.style.setProperty("--ebbotThemeColor", themeColor);
     }
     else {
         AppId = window.EXPRESSbase_APP_ID;
-        var themeColor = d.ebbotThemeColor;
-        var html = d.getElementsByTagName('html')[0];
+        dpurl = d.botdpURL || '../images/demobotdp4.png';
+        themeColor = d.ebbotThemeColor;
+        subtxt = d.botsubtext||'';
+        html = d.getElementsByTagName('html')[0];
         html.style.setProperty("--ebbotThemeColor", themeColor);
     }
 
@@ -34,12 +45,12 @@
     //ss.onload = function () { console.log('style has loaded'); };
     //d.getElementsByTagName("head")[0].appendChild(ss); 
 
-      
+
     var ss = d.createElement("link");
     ss.type = "text/css";
     ss.rel = "stylesheet";
     ss.href = this.eb_get_path(d.ebmod) + `Bote/Css?id=${window.EXPRESSbase_SOLUTION_ID}-${AppId}&mode=s"`;
-    d.getElementsByTagName("head")[0].appendChild(ss); 
+    d.getElementsByTagName("head")[0].appendChild(ss);
 
 
 
@@ -58,11 +69,23 @@
     var chatHead = d.createElement("div");
     chatHead.className = "eb-chat-head eb__-bot___-eb-chat-head";
 
+    if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderIcon : d.botProp.HeaderIcon) {
+        var headericonCont = d.createElement("div");
+        headericonCont.className = "headericonCont eb__-bot___-headericonCont";
+        var headerIcon = d.createElement("img");
+        headerIcon.className = "headerIcon eb__-bot___-headerIcon";
+        headerIcon.id = "headerIcon" + AppId;
+        headerIcon.src = this.eb_get_path(d.ebmod) + dpurl;
+        headericonCont.appendChild(headerIcon);
+        chatHead.appendChild(headericonCont);
+    }
+
+
     //creata a div for chatbot heading and append in chathead div ie, division for header part of chat bot
     var botHeadDiv = d.createElement("div");
     botHeadDiv.className = "bot-head eb__-bot___-bot-head";
-    botHeadDiv.innerHTML = "&nbsp; " + (d.ebbotName || d.ebbotNameColl[d.appIdCount]);
-
+    botHeadDiv.innerHTML = (d.ebbotName || d.ebbotNameColl[d.appIdCount]);
+    chatHead.appendChild(botHeadDiv);
     //var html = d.getElementsByTagName('html')[0];
     //html.style.setProperty("--ebbotThemeColor", themeColor);
 
@@ -71,7 +94,15 @@
 
     //chatHead.appendChild(botdp);
 
-    chatHead.appendChild(botHeadDiv);
+   
+
+    if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderIcon : d.botProp.HeaderIcon) {
+        var headersubtext = d.createElement("div");
+        headersubtext.className = "headersubtext eb__-bot___-headersubtext";
+        headersubtext.innerHTML = subtxt;
+        botHeadDiv.appendChild(headersubtext);
+    }
+
 
     //creatting a division/container to place iframe and hearer part ie complete bot....(1)
     var iframecont = d.createElement("div");
@@ -107,16 +138,7 @@
     var chatIcon = d.createElement("img");
     chatIcon.className = "boticon eb__-bot___-boticon";
     chatIcon.id = "boticon" + AppId;
-    chatIcon.src = this.eb_get_path(d.ebmod) + (d.botdpURL || d.botdpURLColl[d.appIdCount]);
-
-
-    //place near chat head
-    //creata a close btn and append in chathead div ie, division for header part of chat bot
-    var closeDiv = d.createElement("div");
-    closeDiv.className = "chatclose";
-    closeDiv.id = "closediv" + AppId;
-    closeDiv.innerHTML = '&#10006;';
-    chatHead.appendChild(closeDiv);
+    chatIcon.src = this.eb_get_path(d.ebmod) + dpurl;
 
     //creata a maximize btn and append in chathead div ie, division for header part of chat bot
     var maximizeDiv = d.createElement("div");
@@ -125,6 +147,13 @@
     maximizeDiv.innerHTML = '&#128470;';
     chatHead.appendChild(maximizeDiv);
 
+    //creata a close btn and append in chathead div ie, division for header part of chat bot
+    var closeDiv = d.createElement("div");
+    closeDiv.className = "chatclose";
+    closeDiv.id = "closediv" + AppId;
+    closeDiv.innerHTML = '&#10006;';
+    chatHead.appendChild(closeDiv);
+    
     //???
     iframe.onload = function (e) {
         iframe.style.visibility = 'visible';
@@ -154,8 +183,9 @@
         var iframecont = document.getElementById("eb_iframecont" + AppId);
         var ebbot_iframe = document.getElementById("ebbot_iframe" + AppId);
 
-        if (!ebbot_iframe.getAttribute("src")) {            
-            ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${((d.ebbotThemeColor || d.ebbotThemeColorColl[d.appIdCount])).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}&msg=${(d.botWelcomeMsg || d.botWelcomeMsgColl[d.appIdCount])}`);
+        if (!ebbot_iframe.getAttribute("src")) {
+            ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}`);
+            //ebbot_iframe.setAttribute("src", `${eb_get_path(d.ebmod)}bote/bot?tid=${window.EXPRESSbase_SOLUTION_ID}&appid=${(window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount])}&themeColor=${(themeColor).replace('#', 'HEX')}&botdpURL=${window.btoa((d.botdpURL || d.botdpURLColl[d.appIdCount]))}&msg=${(d.botWelcomeMsg || d.botWelcomeMsgColl[d.appIdCount])}`);
         }
         if (iframecont.style.display !== "flex") {
             this.style.display = "none";
@@ -177,7 +207,7 @@
         //iconCont.style.height = "30px";
         iconCont.appendChild(chatIcon);
         chatbtn.appendChild(iconCont);
-       // chatbtn.appendChild(chatIcon);
+        // chatbtn.appendChild(chatIcon);
         // chatbtn.click();//////////////////////////////// for showing chatarea on load
     }
     else {

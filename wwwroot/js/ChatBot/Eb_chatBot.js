@@ -1469,21 +1469,25 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.userNameFn = function () {
         this.msgFromBot("May I know your name?");
         //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_name" type="text" placeholder="Name" class="plain-inp"></div><button name="contactSubmitName" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
-        this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="text" class="form-control " id="anon_name" placeholder="Enter Name">  
-           <span class="input-group-btn"> <button class="btn btn-lg cntct_btn" name="contactSubmitName"><i class="fa fa-chevron-right" aria-hidden="true"></i></button> </span> </div></div>`));
+        let controlHTML = `
+    <div class="ctrl-wraper">
+        <div class="input-group" style="width:100%;">
+            <input chat-inp type="email" id="anon_name" placeholder="Enter Name">
+        </div>
+    </div>`;
+        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="contactSubmitName"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#anon_name`).focus(); }, "anon_name");
     }.bind(this);
 
     this.emailauthFn = function (e) {
-        this.msgFromBot("Please share your email address so that I can get in touch with you 😊");
-        //this.msgFromBot($(`<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div>
-        //    <button class="btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button> `));
+        this.msgFromBot("Please share your email address so that I can get in touch with you 😊");        
         //this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="email" class="form-control " id="anon_mail" placeholder="Enter email">   
         //     <span class="input-group-btn"><button class="btn btn-lg cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></span> </div></div>`));
         let controlHTML = `
     <div class="ctrl-wraper">
         <div class="input-group" style="width:100%;">
             
-            <input chat-inp type="email" id="anon_mail" placeholder="Enter email">
+            <input chat-inp type="email" id="anon_mail" placeholder="Enter Email">
             <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-envelope" aria-hidden="true"></i> </span>
         </div>
     </div>`;
@@ -1499,8 +1503,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.phoneauthFn = function (e) {
         this.msgFromBot("Please provide your phone number");
         //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button class="btn" name="contactSubmitPhn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button> '));
-        this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="tel" class="form-control " id="anon_phno" placeholder="Enter Phone Number">   
-            <span class="input-group-btn"><button class="btn btn-lg cntct_btn" name="contactSubmitPhn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></span> </div></div>`));
+        let controlHTML = `
+    <div class="ctrl-wraper">
+        <div class="input-group" style="width:100%;">
+            
+            <input chat-inp type="tel" id="anon_phno" placeholder="Phone Number">
+            <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-phone" aria-hidden="true"></i> </span>
+        </div>
+    </div>`;
+        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="contactSubmitPhn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#anon_phno`).focus(); }, "anon_phno");
     }.bind(this);
 
     this.initConnectionCheck = function () {

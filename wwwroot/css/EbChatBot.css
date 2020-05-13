@@ -414,7 +414,8 @@
     transition-duration: 0.1s;
     box-shadow: -2px 2px 4px 0 #00000073
 }*/
-.contct-cont [name=contactSubmitMail], [name=contactSubmitPhn], [contactSubmitName] {
+/*.cntct_btn [name=contactSubmitPhn], [name=contactSubmitName] {
+    padding: 0px;
     position: absolute;
     vertical-align: middle;
     font-size: 17px;
@@ -425,7 +426,7 @@
     padding: 13px 20px;
     transition-duration: 0.1s;
     box-shadow: -2px 2px 4px 0 #00000073
-}
+}*/
 
 .msg-cont .bs-cont {
     display: flex;
@@ -823,13 +824,12 @@
     text-align: right;
 }
 
-.contct-cont {
-    /*border: solid 1px #cecece;*/
+/*.contct-cont {
     box-shadow: 1px 1px 5px 1px #e8e8e8;
     padding: .5em;
     text-align: center;
     border-radius: 4px;
-}
+}*/
 
 .contact-inp-wrap {
     border: solid 1px #cecece;

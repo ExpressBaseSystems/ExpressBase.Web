@@ -98,6 +98,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".poweredby", this.poweredbyClick);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         $("body").on("keyup",".chat-ctrl-cont [ui-inp]", this.inpkeyUp);
+        $("body").on("keyup",".chat-ctrl-cont [chat-inp]", this.chatInpkeyUp);
         this.initConnectionCheck();
         this.showDate();
         this.showTypingAnim();
@@ -382,6 +383,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.inpkeyUp = function (e) {
         if (e.which === 13)/////////////////////////////
             $(e.target).closest(".chat-ctrl-cont").find('[name="ctrlsend"]').trigger("click");
+    }.bind(this);
+
+    this.chatInpkeyUp = function (e) {
+        if (e.which === 13)/////////////////////////////
+            $(e.target).closest(".chat-ctrl-cont").find('.cntct_btn').trigger("click");
     }.bind(this);
 
     this.send_btn = function () {
@@ -1468,11 +1474,22 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.emailauthFn = function (e) {
-        this.msgFromBot("Please share your email address so that I can get in touch with you");
+        this.msgFromBot("Please share your email address so that I can get in touch with you 😊");
         //this.msgFromBot($(`<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div>
         //    <button class="btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button> `));
-        this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="email" class="form-control " id="anon_mail" placeholder="Enter email">   
-             <span class="input-group-btn"><button class="btn btn-lg cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></span> </div></div>`));
+        //this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="email" class="form-control " id="anon_mail" placeholder="Enter email">   
+        //     <span class="input-group-btn"><button class="btn btn-lg cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></span> </div></div>`));
+        let controlHTML = `
+    <div class="ctrl-wraper">
+        <div class="input-group" style="width:100%;">
+            
+            <input chat-inp type="email" id="anon_mail" placeholder="Enter email">
+            <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-envelope" aria-hidden="true"></i> </span>
+        </div>
+    </div>`;
+        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#anon_mail`).focus(); }, "anon_mail");
+
         //setTimeout(function () {
         //    $("#anon_mail").val("email@valid.com");// test auto
         //    $("[name=contactSubmitMail]").click();

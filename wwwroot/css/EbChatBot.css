@@ -621,9 +621,11 @@
     /* padding: 3px; */
     /* background: #f1f1f1;*/
 }
+    .ctrl-wraper input[chat-inp] {
+        width: 100%;
+    }
 
     .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
-        width: 100%;
         height: 34px;
         border: none;
         outline: none;

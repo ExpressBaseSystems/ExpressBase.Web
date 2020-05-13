@@ -1120,7 +1120,7 @@ class DvBuilder {
     }
 
     DropApprovalColumn = function () {
-        let name = "approval"+this.calcfieldCounter++;
+        let name = "eb_approval"+this.calcfieldCounter++;
         let type = "DVApprovalColumn";
         let obj = new EbObjects[type](name);
         obj.Type = 16;

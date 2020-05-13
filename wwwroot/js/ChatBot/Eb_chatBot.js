@@ -97,8 +97,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);
         $("body").on("click", ".poweredby", this.poweredbyClick);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
-        $("body").on("keyup",".chat-ctrl-cont [ui-inp]", this.inpkeyUp);
-        $("body").on("keyup",".chat-ctrl-cont [chat-inp]", this.chatInpkeyUp);
+        $("body").on("keyup", ".chat-ctrl-cont [ui-inp]", this.inpkeyUp);
+        $("body").on("keyup", ".chat-ctrl-cont [chat-inp]", this.chatInpkeyUp);
         this.initConnectionCheck();
         this.showDate();
         this.showTypingAnim();
@@ -1466,33 +1466,31 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     }.bind(this);
 
-    this.userNameFn = function () {
-        this.msgFromBot("May I know your name?");
-        //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_name" type="text" placeholder="Name" class="plain-inp"></div><button name="contactSubmitName" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
-        let controlHTML = `
-    <div class="ctrl-wraper">
-        <div class="input-group" style="width:100%;">
-            <input chat-inp type="email" id="anon_name" placeholder="Enter Name">
-        </div>
-    </div>`;
-        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="contactSubmitName"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
-        this.msgFromBot($ctrlCont, function () { $(`#anon_name`).focus(); }, "anon_name");
-    }.bind(this);
-
-    this.emailauthFn = function (e) {
-        this.msgFromBot("Please share your email address so that I can get in touch with you 😊");        
-        //this.msgFromBot($(` <div class="form-group cntct_sec"><div class="input-group"><input type="email" class="form-control " id="anon_mail" placeholder="Enter email">   
-        //     <span class="input-group-btn"><button class="btn btn-lg cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></span> </div></div>`));
+    this.sendWrapedCtrl = function (msg, ctrlHtml, id, name, icon) {
+        this.msgFromBot(msg);
         let controlHTML = `
     <div class="ctrl-wraper">
         <div class="input-group" style="width:100%;">
             
-            <input chat-inp type="email" id="anon_mail" placeholder="Enter Email">
-            <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-envelope" aria-hidden="true"></i> </span>
+           ${ctrlHtml}
+            <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-${icon}" aria-hidden="true"></i> </span>
         </div>
     </div>`;
-        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="contactSubmitMail"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
-        this.msgFromBot($ctrlCont, function () { $(`#anon_mail`).focus(); }, "anon_mail");
+        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="${name}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#${id}`).focus(); }, "anon_mail");
+    };
+
+    this.userNameFn = function () {
+        let msg = "May I know your name?";
+        let ctrlHtml = `<input chat-inp type="text" id="anon_name" placeholder="Enter Name">`;
+        this.sendWrapedCtrl(msg, ctrlHtml, "anon_name", "contactSubmitName", "user");
+    }.bind(this);
+
+    this.emailauthFn = function (e) {
+        let msg = "Please share your email address so that I can get in touch with you 😊";
+        let ctrlHtml = `<input chat-inp type="email" id="anon_mail" placeholder="Enter Email">`;
+        this.sendWrapedCtrl(msg, ctrlHtml, "anon_mail", "contactSubmitMail", "envelope");
+
 
         //setTimeout(function () {
         //    $("#anon_mail").val("email@valid.com");// test auto
@@ -1501,18 +1499,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.phoneauthFn = function (e) {
-        this.msgFromBot("Please provide your phone number");
-        //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button class="btn" name="contactSubmitPhn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button> '));
-        let controlHTML = `
-    <div class="ctrl-wraper">
-        <div class="input-group" style="width:100%;">
-            
-            <input chat-inp type="tel" id="anon_phno" placeholder="Phone Number">
-            <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-phone" aria-hidden="true"></i> </span>
-        </div>
-    </div>`;
-        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="contactSubmitPhn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
-        this.msgFromBot($ctrlCont, function () { $(`#anon_phno`).focus(); }, "anon_phno");
+        let msg = "Please provide your phone number";
+        let ctrlHtml = `<input chat-inp type="tel" id="anon_phno" placeholder="Phone Number">`;
+        this.sendWrapedCtrl(msg, ctrlHtml, "anon_phno", "contactSubmitPhn", "phone");
     }.bind(this);
 
     this.initConnectionCheck = function () {

@@ -38,7 +38,7 @@ namespace ExpressBase.Web.Components
 
             //WebForm.SetContextId("ctx_" + timeStampInt);
 
-            if(WebForm == null)
+            if (WebForm == null)
             {
                 EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
                 WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
@@ -66,7 +66,11 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbSimpleSelect).InitFromDataBase(this.ServiceClient);
                     }
-                    if (control is EbTVcontrol)
+                    if (control is EbChartControl)
+                    {
+                        (control as EbChartControl).InitFromDataBase(this.ServiceClient);
+                    }
+                    else if (control is EbTVcontrol)
                     {
                         (control as EbTVcontrol).InitFromDataBase(this.ServiceClient);
                     }
@@ -89,7 +93,7 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbUserLocation).InitFromDataBase(this.ServiceClient, ViewBag.__User, ViewBag.__Solution, ViewBag.formRefId);
                     }
-                    else if((control is EbRadioButton) && control.Name.Equals("eb_default"))
+                    else if ((control is EbRadioButton) && control.Name.Equals("eb_default"))
                     {
                         if (ViewBag.wc == RoutingConstants.UC)
                         {
@@ -97,22 +101,22 @@ namespace ExpressBase.Web.Components
                                 control.IsDisable = true;
                         }
                     }
-                    else if(control is EbUserSelect )
+                    else if (control is EbUserSelect)
                     {
                         (control as EbUserSelect).InitOptions(WebForm.SolutionObj.Users);
                     }
-					else if (control is EbDGUserSelectColumn)
-					{
-						(control as EbDGUserSelectColumn).InitOptions(WebForm.SolutionObj.Users);
-					}
-					else if(control is EbTextBox)
+                    else if (control is EbDGUserSelectColumn)
+                    {
+                        (control as EbDGUserSelectColumn).InitOptions(WebForm.SolutionObj.Users);
+                    }
+                    else if (control is EbTextBox)
                     {
                         (control as EbTextBox).InitFromDataBase(this.ServiceClient);
                     }
-					else if (control is EbDGStringColumn)
-					{
-						(control as EbDGStringColumn).InitFromDataBase(this.ServiceClient);
-					}                    
+                    else if (control is EbDGStringColumn)
+                    {
+                        (control as EbDGStringColumn).InitFromDataBase(this.ServiceClient);
+                    }
 
                 }
                 foreach (EbControl control in WebForm_L.Controls.FlattenAllEbControls())

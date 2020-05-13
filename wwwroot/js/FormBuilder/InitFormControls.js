@@ -396,6 +396,13 @@
         }
     };
 
+    this.ChartControl = function (ctrl, ctrlOpts) {
+        let o = new Object();
+        o.tableId = "chart" + ctrl.EbSid_CtxId;
+        o.dvObject = JSON.parse(ctrl.ChartVisualizationJson);
+        this.chartApi = new EbBasicChart(o);
+    };
+
     this.TVcontrol = function (ctrl, ctrlOpts) {
         let o = new Object();
         o.tableId = ctrl.EbSid_CtxId;

@@ -179,7 +179,7 @@
             set_fav = `<button appid="${_obj.AppId}" otype="${_obj.EbObjectType}" title="${tooltip}" objid="${_obj.Id}" class="${isfav}"><i class="fa fa-heart"></i></button>`;
         }
         $("#ebm-objectcontainer .ebm-objlist").append(`<div class="obj-item" klink="true">
-                                                        <a href='${this.decideUrl(_obj)}'>
+                                                        <a href='${this.decideUrl(_obj)}' objid='${_obj.Id}'>
                                                             <span class="obj-icon">
                                                                 <i class="fa ${this.objTypes[_obj.EbObjectType].Icon}"></i>
                                                             </span>
@@ -388,7 +388,7 @@
         }
 
         $(`#ebm-objectcontainer #categoryType${_obj.EbObjectType}`).append(`<div class="obj-item ${fav}" klink="true">
-                                                        <a href='${this.decideUrl(_obj)}'>
+                                                        <a href='${this.decideUrl(_obj)}' objid='${_obj.Id}'>
                                                             ${_obj.DisplayName || 'Untitled'}
                                                         </a>
                                                         ${set_fav}

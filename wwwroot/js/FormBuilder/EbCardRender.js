@@ -99,6 +99,7 @@
                 map: map
             });
         });
+        $Ctrl.find("select.select-picker").selectpicker();
     };
 
     this.filterCards = function ($Ctrl) {

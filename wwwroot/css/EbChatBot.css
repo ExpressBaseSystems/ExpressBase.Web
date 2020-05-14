@@ -534,6 +534,9 @@
     border: none;
 }
 
+.msg-cont[ctrl-type="DynamicCardSet"] .msg-cont-bot, .msg-cont[ctrl-type="StaticCardSet"] .msg-cont-bot {
+    margin-left: 10px;
+}
 
 .choose-btn {
     display: inline-block;

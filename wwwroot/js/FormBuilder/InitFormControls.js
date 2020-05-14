@@ -22,7 +22,7 @@
         }.bind(catTitle));
 
         if (ctrlOpts.FormDataExtdObj.val !== null && ctrlOpts.FormDataExtdObj.val[ctrl.EbSid] !== undefined) {
-            files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.EbSid][0].Columns[0].Value);
+            files = JSON.parse(ctrlOpts.FormDataExtdObj.val[ctrl.Name || ctrl.EbSid][0].Columns[0].Value);
         }
 
         if (fileType === 'image') {

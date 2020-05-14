@@ -540,6 +540,7 @@
     this.Init = function () {
         //this.MainData = null;
         //$.event.props.push('dataTransfer');
+        //this.Eb_DataTable_StyleFn();
         this.updateRenderFunc();
         this.table_jQO = $('#' + this.tableId);
         this.copybtn = $("#btnCopy" + this.tableId);
@@ -1222,7 +1223,9 @@
                                         else if (Rtype === 5 || Rtype === 6) {
                                             //val1 = this.changeDateOrder(val1);
                                             //val2 = this.changeDateOrder(val2);
-                                            if (val2 > val1) {
+                                            let d1 = Date.parse( moment(val1, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+                                            let d2 = Date.parse( moment(val2, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+                                            if (d2 > d1) {
                                                 filter_obj_arr.push(new filter_obj(colum, ">=", val1, type));
                                                 filter_obj_arr.push(new filter_obj(colum, "<=", val2, type));
                                             }
@@ -2611,7 +2614,7 @@
         $(".columnMarker" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".columnimage").one("load", function () {
             $(".columnimage").off("click").on("click", this.ViewImage.bind(this));
-            $(".columnimage").error(this.OnErrorImage);
+            $(".columnimage").on("error", this.OnErrorImage);
         }.bind(this));
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'
@@ -4479,6 +4482,44 @@
 
             }.bind(this)
         });
+    };
+
+    this.Eb_DataTable_StyleFn = function () {
+        let Tile = this.EbObject;
+        let TileId = "content_" + this.tableId;
+        if (Tile.IsGradient) {
+            let direction = this.GradientDirection(Tile.Direction);
+            let bg = "linear-gradient(" + direction + "," + Tile.GradientColor1 + "," + Tile.GradientColor2 + ")";
+            $(`#${TileId}`).css("background-image", bg);
+        }
+        else {
+            $(`#${TileId}`).css("background", Tile.BackColor);
+        }
+
+        //Tile border
+        $(`#${TileId}`).css("border-radius", Tile.BorderRadius == 0 ? 4 + "px" : Tile.BorderRadius + "px");
+        $(`#${TileId}`).css("border", `solid 1px ${Tile.BorderColor}`);
+
+        //Tile Text Font 
+        $(`#${TileId} tr`).css("color", `${Tile.FontColor}`);
+        $(`#${TileId} th`).css({ "color": `${Tile.FontColor} !important;` });
+        $(`#${TileId} td`).css({ "color": `${Tile.FontColor} !important;` });
+        $(`#${TileId} a`).css("color", `${Tile.LinkColor} !important;`).css("font-size: 14px;");
+
+        $(`#${TileId} td`).css("border-bottom", "1px solid #2b2b2b;!important");
+    };
+
+    this.GradientDirection = function (val) {
+        gradient = [];
+        gradient[0] = "to right";
+        gradient[1] = "to left";
+        gradient[2] = "to bottom";
+        gradient[3] = "to bottom right";
+        gradient[4] = "to bottom left";
+        gradient[5] = "to top right";
+        gradient[6] = "to top left";
+
+        return gradient[val];
     };
     if (this.Source === "EbDataTable")
         this.start4EbDataTable();

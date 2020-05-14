@@ -42,13 +42,31 @@ namespace ExpressBase.Web.Controllers
 			string cid = this.GetIsolutionId(tid);
 			EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid));
 			if (settings == null)
-				settings = new EbBotSettings()
+			{
+				RedisBotSettingsResponse stgres = this.ServiceClient.Post<RedisBotSettingsResponse>(new RedisBotSettingsRequest
 				{
-					Name = "- Application Name -",
-					ThemeColor = "#055c9b",
-					DpUrl = "../images/demobotdp4.png",
-					WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
-				};
+					AppId = Int32.Parse(appid),
+					AppType = 3,
+					SolnId=cid
+					
+				});
+				if (stgres.ResStatus == 1)
+				{
+					settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid));
+				}
+				else
+				{
+					settings = new EbBotSettings()
+					{
+						Name = "- Application Name -",
+						ThemeColor = "#055c9b",
+						DpUrl = "../images/demobotdp4.png",
+						WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
+					};
+				}
+
+			}
+
 
 			ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
 			ViewBag.ServerEventUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVEREVENTS_EXT_URL);
@@ -82,14 +100,30 @@ namespace ExpressBase.Web.Controllers
 				int appid = Convert.ToInt32(args[1]);
 				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
 				if (settings == null)
-					settings = new EbBotSettings()
+				{
+					
+					RedisBotSettingsResponse stgres = this.ServiceClient.Post<RedisBotSettingsResponse>(new RedisBotSettingsRequest
 					{
-						Name = "- Application Name -",
-						ThemeColor = "#055c9b",
-						DpUrl = "../images/demobotdp4.png",
-						WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
-					};
-
+						AppId = Int32.Parse(args[1]),
+						AppType = 3,
+						SolnId=cid
+					});
+					if (stgres.ResStatus == 1)
+					{
+						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+					}
+					else
+					{
+						settings = new EbBotSettings()
+						{
+							Name = "- Application Name -",
+							ThemeColor = "#055c9b",
+							DpUrl = "../images/demobotdp4.png",
+							WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
+						};
+					}
+					
+				}
 				PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
                     window.EXPRESSbase_APP_ID = {1};
@@ -97,7 +131,9 @@ namespace ExpressBase.Web.Controllers
                     d.ebbotThemeColor = '{3}' || '#055c9b';
                     d.botdpURL = '{4}';
                     d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';					
-					d.ebmod='{6}'", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env);
+					d.ebmod='{6}';
+					d.botsubtext='{7}';
+d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env, settings.Description,(JSON.stringify( settings.BotProp)) );
 
 
 			}
@@ -138,101 +174,89 @@ namespace ExpressBase.Web.Controllers
 			string cid = this.GetIsolutionId(solid);
 			string env = Environment.GetEnvironmentVariable(EnvironmentConstants.ASPNETCORE_ENVIRONMENT);
 			string FileContent = "";
-			//if (mode.Equals("s"))//if single bot
 			{
 				int appid = Convert.ToInt32(args[1]);
 				EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
 				if (settings == null)
-					settings = new EbBotSettings()
-					{
-						CssContent = FetchCss()
-					};
-				if (settings.CssContent==null || settings.CssContent.Count == 0)
 				{
-					settings.CssContent = FetchCss();
+
+					RedisBotSettingsResponse stgres = this.ServiceClient.Post<RedisBotSettingsResponse>(new RedisBotSettingsRequest
+					{
+						AppId = Int32.Parse(args[1]),
+						AppType = 3,
+						SolnId = cid
+					});
+					if (stgres.ResStatus == 1)
+					{
+						settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, args[1]));
+					}
+					else
+					{
+						settings = new EbBotSettings()
+						{
+							Name = "- Application Name -",
+							ThemeColor = "#055c9b",
+							DpUrl = "../images/demobotdp4.png",
+							WelcomeMessage = "Hi, I am EBbot from EXPRESSbase!!"
+						};
+					}
+
+				}
+
+				if (settings.CssContent==null || settings.CssContent.Count <9)
+				{
+					settings.CssContent = FetchCss(settings.CssContent);
 				}
 				FileContent = ReplaceCssContent(settings.CssContent);
 				//byte[] data = System.Convert.FromBase64String(settings.CssContent);
 				//FileContent = System.Text.ASCIIEncoding.ASCII.GetString(data);
 
 			}
-			//else
-			{
-				//int[] appids = args[1].Split(',').Select(n => Convert.ToInt32(n)).ToArray();
-				//EbBotSettings temp = new EbBotSettings();
-				//string color = "";
-				//string name = "";
-				//string url = "";
-				//foreach(int i in appids)
-				//{
-				//	temp = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", solid, i));
-				//	if (temp == null)
-				//	{
-				//		temp = new EbBotSettings() { Name = "-EB-BOT-", ThemeColor = "#055c9b", DpUrl = " "};
-				//	}
-				//	color += "'" + temp.ThemeColor ?? "#055c9b" + "',";
-				//	name += "'" + temp.Name ?? "< EBbot >" + "',";
-				//	url += "'" + temp.DpUrl ?? " " + "',";
-				//}
-
-				//PushContent = string.Format(@"
-				//	d.ebbotNameColl = [{0}];
-				//	d.ebbotThemeColorColl = [{1}];
-				//	d.botdpURLColl = [{2}];", name.Substring(0, name.Length-1), color.Substring(0, color.Length - 1), url.Substring(0, url.Length - 1));
-			}
-
+			
 			//FileContent = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
 			//FileContent = FileContent.Replace("//PUSHED_JS_STATEMENTS", PushContent);
 			return File(FileContent.ToUtf8Bytes(), "text/css");
 		}
-		public Dictionary<string, string> FetchCss()
-		{
-			//public Dictionary<string, Dictionary<string, string>> FetchCss()
+		public Dictionary<string, string> FetchCss(Dictionary<string, string> btCss)
+		{//public Dictionary<string, Dictionary<string, string>> CssContent()
 			var CssDict = new Dictionary<string, string>();
-			//string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
-			//string Cssfile = Constants.BOT_IFRAME_CSS;
-			//var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(Cssfile);
-			//return System.Convert.ToBase64String(plainTextBytes);
-
+			var Cssconst = new Dictionary<string, string>();
+			Cssconst = new EbBotSettings().CssContent;
 			int i = 0;
 			List<string> CssList = new List<string>();
-			CssList.Add(BotConstants.BOT_HEADER);
-			CssList.Add(BotConstants.BOT_APP_NAME);
-			CssList.Add(BotConstants.BOT_IFRAME_CSS);
-			CssList.Add(BotConstants.BOT_CHAT_BUTTON);
-			CssList.Add(BotConstants.BOT_IMAGE_CONT);
-			CssList.Add(BotConstants.BOT_BUTTON_IMAGE);
-			string[] NameArr = { "BOT_HEADER", "BOT_APP_NAME", "BOT_IFRAME_CSS", "BOT_CHAT_BUTTON", "BOT_IMAGE_CONT", "BOT_BUTTON_IMAGE" };
-			foreach (string CssConst in CssList)
+			List<string> NameArr = new List<string>();
+			//if any changes change in bote too
+			foreach (var item in Cssconst)
 			{
-				//Dictionary<string, string> BotDict = new Dictionary<string, string>();
-				//var CssProp = CssConst.Split(';');
-				//foreach (String SingleProps in CssProp)
-				//{
-				//	string PropTrim = SingleProps.Trim();
-				//	if (!String.IsNullOrEmpty(PropTrim))
-				//	{
-				//		var KeyVal = PropTrim.Split(':');
-				//		if (!BotDict.Keys.Contains(KeyVal[0]))
-				//		{
-				//			BotDict.Add(KeyVal[0], KeyVal[1]);
-				//		}
-				//	}
-
-
-				//}
-				//if (!CssDict.Keys.Contains(NameArr[i]))
-				//{
-				//	CssDict.Add(NameArr[i], BotDict);
-				//	i++;
-				//}
-
-				CssDict.Add(NameArr[i], CssConst);
-				i++;
-
+				NameArr.Add(item.Key);
+				CssList.Add(item.Value);
 			}
 
+			if (btCss.Count == 0)
+			{
+				foreach (string CssConst in CssList)
+				{
+					CssDict.Add(NameArr[i], CssConst);
+					i++;
+				}
+			}
+			else if (btCss.Count < NameArr.Count)
+			{
+				for (int j = 0; j < NameArr.Count; j++)
+				{
+					if (btCss.ContainsKey(NameArr[j]))
+					{
+						CssDict.Add(NameArr[j], btCss[NameArr[j]]);
+					}
+					else
+					{
+						CssDict.Add(NameArr[j], CssList[j]);
+					}
+				}
+
+			}
 			return CssDict;
+
 
 		}
 		public string ReplaceCssContent( Dictionary<string, string> CssObj)

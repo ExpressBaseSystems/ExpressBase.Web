@@ -247,43 +247,66 @@
                                             <label>Theme Colour:</label>
                                             <input type="color" class="form-control botclr " id="bot_tm_color" value="@bot_tm_color">
                                         </div>
+                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
+                                            <div class="form-check mrg10btm" >
+                                                <label>
+                                                    <input class="form-check-input" name="botheadr" type="checkbox" value="1" id="headerIcon">
+                                                    Bot header icon
+                                                </label>
+                                            </div>
+                                            <div class="form-check mrg10btm">
+                                                <label>
+                                                    <input class="form-check-input" name="botheadr" type="checkbox" value="1" id="headerSubtxt">
+                                                    Bot header subtext
+                                                </label>
+                                            </div>
+                                        </div>
 
-                                        <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
-                                            <div class="modal-dialog" style="width:445px">
-                                                <div class="modal-content">
-                                                    <div class="modal-header" style="">
-                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                        <div>
-                                                            <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Bot DP Clip Art</h4> </div>
+                                            <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
+                                                <div class="modal-dialog" style="width:445px">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header" style="">
+                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                            <div>
+                                                                <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Bot DP Clip Art</h4> </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="modal-body" style="height:185px">
-                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp1.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp1.png')"></div>
-                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp2.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp2.png')"></div>
-                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp3.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp3.png')"></div>
-                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp4.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp4.png')"></div>
-                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp5.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp5.png')"></div>
-                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp6.png')"></div>
-                                                    </div>
-                                                    <div class="modal-footer" style="">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                        <div class="modal-body" style="height:185px">
+                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp1.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp1.png')"></div>
+                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp2.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp2.png')"></div>
+                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp3.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp3.png')"></div>
+                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp4.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp4.png')"></div>
+                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp5.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp5.png')"></div>
+                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp6.png')"></div>
+                                                        </div>
+                                                        <div class="modal-footer" style="">
+                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
                                     </div>
-
-
-                                </div>
 
                                 <div class="tab-pane botcssConfig" id="botcss" role="tabpanel" aria-labelledby="">
                                     <div class="col-md-2 col-lg-2 col-sm-3 cssconfig">
                                         <ul class="nav nav-tabs tabs-left" id="cssconfigUl" role="tablist">
                                             <li class="nav-item active">
-                                                <a class="nav-link active" id="bot_header_li" data-toggle="tab" href="#BOT_HEADER" role="tab" aria-controls="bot_header" aria-selected="true">Bot header</a>
+                                                <a class="nav-link active" id="bot_header_li" data-toggle="tab" href="#BOT_HEADER_PART" role="tab" aria-controls="bot_header" aria-selected="true">Bot header</a>
+                                            </li>
+                                            <li class="nav-item ">
+                                                <a class="nav-link " id="bot_headerIcon_li" data-toggle="tab" href="#BOT_HEADER_ICON_CONT" role="tab" aria-controls="bot_headerIcon" aria-selected="false">Bot header icon Container</a>
+                                            </li>
+                                            <li class="nav-item ">
+                                                <a class="nav-link " id="bot_header_img_li" data-toggle="tab" href="#BOT_HEADER_IMAGE" role="tab" aria-controls="bot_header_img" aria-selected="false">Bot header icon</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" id="botAppName_li" data-toggle="tab" href="#BOT_APP_NAME" role="tab" aria-controls="botAppName" aria-selected="false">Header text</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="botheadersubtxt_li" data-toggle="tab" href="#BOT_HEADERSUBTEXT" role="tab" aria-controls="botheadersubtxt" aria-selected="false">Header Subtext</a>
                                             </li>
                                             <li class="nav-item">
                                                 <a class="nav-link" id="botIframeCss_li" data-toggle="tab" href="#BOT_IFRAME_CSS" role="tab" aria-controls="botIframeCss" aria-selected="false">Iframe Container</a>
@@ -302,10 +325,19 @@
 
                                     <div class="col-md-10 col-lg-10 col-sm-9 configcss">
                                         <div class="tab-content" id="configcssTabContent">
-                                            <div class="tab-pane   active" id="BOT_HEADER" role="tabpanel" aria-labelledby="">
+                                            <div class="tab-pane active" id="BOT_HEADER_PART" role="tabpanel" aria-labelledby="">
+
+                                            </div>
+                                            <div class="tab-pane" id="BOT_HEADER_ICON_CONT" role="tabpanel" aria-labelledby="">
+
+                                            </div>
+                                            <div class="tab-pane" id="BOT_HEADER_IMAGE" role="tabpanel" aria-labelledby="">
 
                                             </div>
                                             <div class="tab-pane " id="BOT_APP_NAME" role="tabpanel" aria-labelledby="">
+
+                                            </div>
+                                            <div class="tab-pane " id="BOT_HEADERSUBTEXT" role="tabpanel" aria-labelledby="">
 
                                             </div>
                                             <div class="tab-pane " id="BOT_IFRAME_CSS" role="tabpanel" aria-labelledby="">
@@ -367,18 +399,18 @@
                             <div class="tab-content">
                                 <div class="tab-pane active" id="botconfig" role="tabpanel" aria-labelledby="">
                                     <div class="  col-md-6 col-lg-6  col-sm-12 botappConfig">
-                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
+                                        @*<div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label>Bot Name: </label>
                                             <div>
                                                 <input class="form-control " type="text" id="bot_name_txt" value="@bot_name_txt">
                                             </div>
-                                        </div>
+                                        </div>*@
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label>Welcome Message: </label>
                                             <textarea class="form-control bot_wcmsg" rows="2" id="bot_wc_msg">@bot_wc_msg</textarea>
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
-                                            <div class="form-check">
+                                            <div class="form-check mrg10btm">
                                                 <input class="form-check-input" type="checkbox" value="1" id="useEbtag">
                                                 <label class="form-check-label" for="useEbtag">
                                                     Use Expressbase Tagline
@@ -421,39 +453,39 @@
                                             <div class="tab-pane   active" id="anonymousLogin" role="tabpanel" aria-labelledby="">
                                                 <div class="selauth">
                                                     <label>Authentication methods</label>
-                                                    <div class="form-check">
-                                                        <label>
+                                                    <div class="form-check mrg10btm">
+                                                        <label class="nrmfntsiz">
                                                             <input class="form-check-input" name="authtype" type="checkbox" value="1" id="email_anony">
                                                             Email
                                                         </label>
                                                     </div>
 
-                                                    <div class="form-check">
-                                                        <label>
+                                                    <div class="form-check mrg10btm">
+                                                        <label class="nrmfntsiz">
                                                             <input class="form-check-input" name="authtype" type="checkbox" value="1" id="phone_anony">
                                                             Phone
                                                         </label>
                                                     </div>
-                                                    <div class="form-check">
-                                                        <label>
+                                                    <div class="form-check mrg10btm">
+                                                        <label class="nrmfntsiz">
                                                             <input class="form-check-input" name="authtype" type="checkbox" value="1" id="fb_anony">
                                                             Facebook
                                                         </label>
                                                     </div>
                                                     <div class="form-inline">
-                                                        <label for="fbAppidtxt">Facebook App ID</label>
+                                                        <label for="fbAppidtxt" class="nrmfntsiz">Facebook App ID</label>
                                                         <input type="text" class="form-control" style="margin-left:15px" name="fbAppidtxt" id="fbAppidtxt" />
                                                     </div>
                                                     <div class="form-inline">
-                                                        <label for="fbAppversn">Facebook version</label>
+                                                        <label for="fbAppversn" class="nrmfntsiz">Facebook version</label>
                                                         <input type="text" class="form-control" style="margin-left:10px" name="fbAppversn" placeholder="eg: v1.0" id="fbAppversn" />
                                                     </div>
                                                 </div>
                                                 <div class="selauth">
                                                     <label>Additional optional</label>
 
-                                                    <div class="form-check">
-                                                        <label>
+                                                    <div class="form-check mrg10btm">
+                                                        <label class="nrmfntsiz">
                                                             <input class="form-check-input" type="checkbox" value="1" id="name_anony">
                                                             Ask for name
                                                         </label>
@@ -622,8 +654,9 @@
 </div>
 @section JsCode{
     <script>
-    let appsetting = @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppSettings));
-    var adash = new AppDashBoard(@appinfo.Id,@appinfo.AppType, appsetting);
+        let appsetting = @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppSettings));
+       let appinfo= @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppInfo));
+    var adash = new AppDashBoard(@appinfo.Id,@appinfo.AppType, appsetting,appinfo);
 
     function clickOnDemoDp(path) {
         $('#AppDB_BotDemoDp').modal('hide');

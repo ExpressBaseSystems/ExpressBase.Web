@@ -1,9 +1,10 @@
-﻿var AppDashBoard = function (appid, apptype, appsettings) {
+﻿var AppDashBoard = function (appid, apptype, appsettings,appinfo) {
     this.objectTab = $("#Objects");
     this.ExportCollection = [];
     this.AppId = appid;
     this.AppType = apptype;
     this.AppSettings = appsettings;
+    this.AppInfo = appinfo;
 
 
     this.init = function () {
@@ -162,6 +163,8 @@
 
         let cssobj = this.AppSettings.CssContent;
         $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
+        $('#headerIcon').attr('checked', this.AppSettings.BotProp.HeaderIcon);
+        $('#headerSubtxt').attr('checked', this.AppSettings.BotProp.HeaderSubtxt);
         $('#email_anony').attr('checked', this.AppSettings.Authoptions.EmailAuth);
         $('#name_anony').attr('checked', this.AppSettings.Authoptions.UserName);
         $('#phone_anony').attr('checked', this.AppSettings.Authoptions.PhoneAuth);
@@ -213,7 +216,8 @@
         authOptions.FbAppID = $('#fbAppidtxt').val().trim();
         authOptions.FbAppVer = $('#fbAppversn').val().trim();
         botProperties.EbTag = $('#useEbtag').is(":checked");
-
+        botProperties.HeaderIcon = $('#headerIcon').is(":checked");
+        botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
             //let tempobj = {};
@@ -226,7 +230,8 @@
             let cssobjVal = $(`#configcssTabContent #${property} textarea[obname=${property}]`).val();
             cssConstObj[property] = cssobjVal;
         }
-        appSettings["Name"] = $("#bot_name_txt").val();
+        appSettings["Name"] = this.AppInfo.Name;
+        appSettings["Description"] = this.AppInfo.Description;
         appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
         appSettings["ThemeColor"] = $("#bot_tm_color").val();
         appSettings["DpUrl"] = $("#bot_dp_url").val();

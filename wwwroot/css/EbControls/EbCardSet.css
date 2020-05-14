@@ -43,8 +43,9 @@
 /*================= User =================*/
 
 .eb-chatBox .card-cont {
-    border-radius: 0em;
+    border-radius: 0 0 10px 10px;
     border: 1px solid #eee;
+    padding: 10px 12px;
     /*box-shadow: 0px 0px 20px #ccc;*/
     /*margin: auto;*/
     width: 100%;
@@ -68,14 +69,15 @@
     }
 
 .eb-chatBox .card-header-cont, .eb-chatBox-dev .card-header-cont {
-    border: 1px solid #eee;    
+    /*border: 1px solid #eee;*/
     background-color: #555;
     height: 32px;
     color: white;
+    border-radius: 9px 9px 0 0;
 }
 
 .eb-chatBox .card-header-cont {
-    margin: 0px 16px;
+    margin: 0px 15px;
 }
 
 .eb-chatBox .card-head-searchdiv, .eb-chatBox-dev .card-head-searchdiv {

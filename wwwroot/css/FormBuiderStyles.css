@@ -1076,6 +1076,16 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
         font-size: 17px;
     }
 
+[eb-form="true"] [ctype="ChartControl"] .chartjs-hidden-iframe {
+    width: auto !important;
+}
+
+
+[eb-form="true"] [ctype="ChartControl"] .ctrl-cover {
+    padding: 10px !important;
+    border: 1px dotted rgba(34, 36, 38, 0.05);
+}
+
 [ctype="RadioButton"] > .eb-ctrl-label {
     display: none;
 }

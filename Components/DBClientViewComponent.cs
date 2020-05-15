@@ -22,11 +22,19 @@ namespace ExpressBase.Web.Components
         {
             try
             {
+                Boolean support = false; ;
                 GetDbTablesResponse res = null;
+
+                if (_user.Email == "support@expressbase.com")
+                    support = true;
+                else
+                    support = false;
+
+
                 if (ViewBag.cid == "admin" && (_user.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || _user.Roles.Contains(SystemRoles.SolutionAdmin.ToString())))
                 {
                     if (clientSolnid != null)
-                        res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = clientSolnid });
+                        res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true, ClientSolnid = clientSolnid, SupportLogin = support });
                     else
                         res = this.ServiceClient.Get(new GetDbTablesRequest { IsAdminOwn = true });
                     ViewBag.IsAdminOwn = true;

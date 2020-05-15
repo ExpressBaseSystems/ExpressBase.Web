@@ -171,5 +171,11 @@ namespace ExpressBase.Web.Controllers
             return html;
         }
 
+        public string LastAccess()
+        {
+            LastSolnAccessResponse res = this.ServiceClient.Post(new LastSolnAccessRequest());
+            return res.LastDbAccess;
+        }
+
     }
 }

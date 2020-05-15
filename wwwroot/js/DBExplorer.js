@@ -300,7 +300,7 @@
         let $TabHtml = $(`<li id="query_li${++quer}"><a data-toggle="tab" class="cetab" href="#result_set${++tab}">QUERY ${quer}<i class="fa fa-window-close fa-1x Tabclose" style="padding: 4px; "  onclick="this.Tab_Closer()" id="Tabclose"></i></a></li>`);
         $('#pannel #TabAdderMain').append($TabHtml);
         $(`body`).off("click").on("click", ".Tabclose", this.Tab_Closer.bind(this));
-        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><div id="code' + quer + '" class="Resize_toolbox"><textarea id="coder' + quer + '" class="coder" name="coder" style="visibility:hidden"></textarea></div ><div class="tttab-session"><ul class="nav nav-tabs tab-section" id="Result_Tab' + tab + '"></ul></div><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
+        let $TabHtml_cont = $('<div id="result_set' + tab + '"class="tab-pane fade" ><div class="show_loader"></div><textarea id="coder' + quer + '" class="coder" name="coder" /*style="visibility:hidden"*/></textarea><div class="tttab-session"><ul class="nav nav-tabs tab-section" id="Result_Tab' + tab + '"></ul></div><div class="tab-content resulttab" id="resulttab' + tab + '"><div id = "Tab' + tab + 'R" >');
         $('#maintab').append($TabHtml_cont);
         //let $ResultHtml = $(' <li class="active"><a data-toggle="tab" href="#queryresult' + res + '" style="margin: 25px 5px 0px 5px;">Result ' + res + '</a></li>');
         //$('#Result_Tab').append($ResultHtml);
@@ -309,21 +309,37 @@
         $('#query_li' + tab + ' a').trigger('click');
         var mime = 'text/x-pgsql';
         // get mime type
-        if (window.location.href.indexOf('mime=') > -1) {
-            mime = window.location.href.substr(window.location.href.indexOf('mime=') + 3);
-        }
+        //if (window.location.href.indexOf('mime=') > -1) {
+        //    mime = window.location.href.substr(window.location.href.indexOf('mime=') + 3);
+        //}
 
         //var editor = {};
         //'editor' + tab;
+        //this.editor[quer] = CodeMirror.fromTextArea(document.getElementById('coder' + quer), {
+        //    mode: mime,
+        //    lineNumbers: true,
+        //    lineWrapping: true,
+        //    extraKeys: { "Ctrl-Space": "autocomplete" },
+        //    autoRefresh: true,
+        //    readOnly: false,
+        //    foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
+        //    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        //});
         this.editor[quer] = CodeMirror.fromTextArea(document.getElementById('coder' + quer), {
-            mode: mime,
+            mode: "text/x-mysql",
             lineNumbers: true,
-            lineWrapping: true,
+            indentWithTabs: true,
+            smartIndent: true,
+            lineNumbers: true,
+            matchBrackets: true,
+            autofocus: true,
             extraKeys: { "Ctrl-Space": "autocomplete" },
-            autoRefresh: true,
-            readOnly: false,
-            foldGutter: { rangeFinder: new CodeMirror.fold.combine(CodeMirror.fold.brace, CodeMirror.fold.comment) },
-            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+            hintOptions: {
+                tables: {
+                    users: { name: null, score: null, birthDate: null },
+                    countries: { name: null, population: null, size: null }
+                }
+            }
         });
     };
 

@@ -188,7 +188,7 @@
         }  
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
         $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
-        $(".grid-stack-item-content").off("click").on("click", this.TileslinkRedirectFn.bind(this));
+        $(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
     }
     this.TileslinkRedirectFn = function (e) {
         let id = e.target.id;
@@ -313,6 +313,7 @@
                             $(`#${this.CurrentTile}`).addClass("eb-tile-link");
                             $(`#${this.CurrentTile} .db-title-parent`).addClass("eb-tile-link");
                             $(`#${this.CurrentTile} .db-title`).addClass("eb-tile-link");
+                            $(`#${tile_id}`).removeClass('ext-linktoform').addClass('ext-linktoform');
                             this.labelstyleApply(this.CurrentTile);
                             LinkStyle(obj, this.CurrentTile, this.TabNum);
                             this.TileCollection[t_id].LinksColl.$values[i] = object;

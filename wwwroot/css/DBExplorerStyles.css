@@ -7,13 +7,20 @@
 .TablePannelHead .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
     width: 313px !important;
 }
-    div .mytree div {
+
+#myInput {
+    width: 100%;
+    padding: 1%;
+}
+
+div .mytree div {
     padding-left: 20px;
-    background: transparent url(http://www3.telus.net/jianlu58/bullet.gif) no-repeat top left;
+    /*background: transparent url(http://www3.telus.net/jianlu58/bullet.gif) no-repeat top left;
+    background-image: url('data:image/gif;base64,R0lGODlhEwATAIABAAAAAO7u7iH5BAEAAAEALAAAAAATABMAAAIVjI+py+0Po5y0LoApBjrbD4biSEIFADs=');*/
 }
     div.mytree div.parent:hover {
         background-color: #b0bed9;
-        cursor:move;
+        /*cursor:move;*/
     }
     div.mytree div.child:hover {
         background-color: #b0bed9;
@@ -24,17 +31,20 @@
         cursor: default;
     }
 
-    div.mytree div.parent {
-        cursor: pointer;
-        background: transparent url(http://www3.telus.net/jianlu58/plus.gif) no-repeat top left;
-        background-position-y: 4px;
-        
-    }
+        div.mytree div.parent {
+            cursor: pointer;
+            background: transparent /*url(http://www3.telus.net/jianlu58/plus.gif)*/ no-repeat top left;
+            background-image: url('data:image/gif;base64,R0lGODlhDwANAJEAAP///2ZmZgAAAMDAwCH5BAEAAAMALAAAAAAPAA0AQAIlnI95AS0NgmIOSoVx2JxPIIRhNHVdhiIU1Fwq9LRfJScr66ZJAQA7');
+            background-position-y: 4px;
+        }
 
-    div.mytree div.expanded {
-        background: transparent url(http://www3.telus.net/jianlu58/minus.gif) no-repeat top left;
-        background-position-y: 2px;
-    }
+
+
+        div.mytree div.expanded {
+            background: transparent /*url(http://www3.telus.net/jianlu58/minus.gif)*/ no-repeat top left;
+            background-image: url('data:image/gif;base64,R0lGODlhEwATAJEDAP///4CAgAAAAO7u7iH5BAEAAAMALAAAAAATABMAAAIonI+py+0PYwu0VheA3iBgvnkTqIlMJqRp95Hmkrkt+CrWLeX6zvdDAQA7');
+            background-position-y: 2px;
+        }
 
     div.mytree div.selected{
         background-color:#aee5fb;
@@ -50,12 +60,13 @@
     padding-left: 12px;
 }
 
-    .db_client_toolbox_bdy {
-    padding: 12px;
+
+.db_client_toolbox_bdy {
+    padding: 8px;
     background-color: white;
     position: relative;
-    height: 618px;
-    overflow: auto;
+    height: 600px;
+    overflow-x: scroll;
     border: 1px solid #ccc;
     border-top: 0;
 }
@@ -116,8 +127,10 @@
     overflow-x: hidden;
     z-index: 10;
 }
-    .page_grid {
+.page_grid {
     background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2UwZTBlMCIgb3BhY2l0eT0iMC4yIiBzdHJva2Utd2lkdGg9IjEiLz48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTBlMGUwIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=");
+    
+    
 }
 
     .drop-box {
@@ -171,11 +184,11 @@
     margin: 29px;
 }
 
-div.CodeMirror.cm-s-default {
+/*div.CodeMirror.cm-s-default {
     top: 12px;
     height: 321px;
     /*z-index: auto;*/
-}
+}*/
 
 .CodeMirror-wrap pre {
     word-wrap: break-word !important;

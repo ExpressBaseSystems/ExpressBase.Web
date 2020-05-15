@@ -15,7 +15,8 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
         this.formObject = {};
         this.initCompleteCallback = initCompleteCallback;
         this.onChangeExeFuncs = {};
-        this.initControls = new InitControls();
+        this.rendererName = 'FilterDialog';
+        this.initControls = new InitControls(this);
         if (submitId) {
             this.submitId = submitId;
             this.$submitBtn = $("#" + this.submitId);

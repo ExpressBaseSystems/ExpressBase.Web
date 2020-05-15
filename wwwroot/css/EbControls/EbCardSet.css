@@ -43,11 +43,13 @@
 /*================= User =================*/
 
 .eb-chatBox .card-cont {
-    border-radius: 0em;
-    border: 1px solid #eee;
+    /*border-radius: 0 0 10px 10px;*/
+    /*border: 1px solid #eee;*/
+    padding: 10px 12px;
     /*box-shadow: 0px 0px 20px #ccc;*/
     /*margin: auto;*/
     width: 100%;
+    outline: none;
     height: inherit;
 }
 
@@ -61,6 +63,7 @@
     border-radius: 0;
     margin-top: 20px;
 }
+
     .eb-chatBox .card-summary-cont div {
         font-size: 15px;
         padding: 5px 5px 0px 5px;
@@ -68,83 +71,120 @@
     }
 
 .eb-chatBox .card-header-cont, .eb-chatBox-dev .card-header-cont {
-    border: 1px solid #eee;    
-    background-color: #555;
-    height: 32px;
-    color: white;
+    background-color: #adadadde;
+    height: 40px;
+    color: #555555;
+    display: flex;
+    padding: 0 16px;
+    font-size: 13px;
+    border-radius: 9px 9px 0 0;
 }
 
-.eb-chatBox .card-header-cont {
-    margin: 0px 16px;
+.card-outer-cont {
+    width: 100%;
+    box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
+    /* padding: 5px; */
+    border-radius: 9px;
+    padding-bottom: 13px;
 }
 
 .eb-chatBox .card-head-searchdiv, .eb-chatBox-dev .card-head-searchdiv {
-    float: right;
-    display: inline-block;
-    border: 1px solid #aaa;
-    height: 27px;
-    border-radius: 12px;
-    color: #222;
+    width: 55%;
+    margin: auto;
+    position: relative;
+    display: flex;
+    border-radius: 25px;
 }
 
 .eb-chatBox .card-head-filterdiv, .eb-chatBox-dev .card-head-filterdiv {
-    float: right;
-    display: inline-block;
-    border: 1px solid #aaa;
-    height: 30px;
-    border-radius: 12px;
+    width: 30%;
+    height: 28px;
+    border-radius: 40px;
     background-color: white;
     color: #222;
+    margin: auto;
+    margin-right: 0;
+    position: relative;
 }
 
 .eb-chatBox .card-head-search-box, .eb-chatBox-dev .card-head-search-box {
-    width: 75px;
+    width: 100%;
     -webkit-transition: width 0.4s ease-in-out;
     transition: width 0.4s ease-in-out;
     height: 28px;
     min-height: 25px;
     border-radius: 12px;
-    border: none;
     padding-right: 22px;
+    font-size: 13px;
+    padding-left: 8px;
 }
 
-    .eb-chatBox .card-head-search-box:focus {
+    /*.eb-chatBox .card-head-search-box:focus {
         width: 120px;
-    }
+    }*/
 
 .eb-chatBox .card-head-search-icon, .eb-chatBox-dev .card-head-search-icon {
-    position: relative;
-    top: -20px;
-    float: right;
-    margin-right: 8px;
+    position: absolute;
+    right: 10;
+    margin-right: -1px;
+    top: 8px;
 }
 
 .eb-chatBox .card-head-filter-box, .eb-chatBox-dev .card-head-filter-box {
-    width: 72px;
-    border-radius: 12px;
-    height: 28px;
-    border: 1px solid #aaa;
-    padding-right: 22px;
+    background: white !important;
+    width: calc(100% - 24px);
+    border-radius: 40px;
+    height: 100%;
     -webkit-transition: width 0.4s ease-in-out;
     transition: width 0.4s ease-in-out;
-    display: inline-block;
     border: none;
-    padding: 0px;
+    padding-left: 8px;
+    padding-right: 16px;
+    font-size: 13px;
+    line-height: 0px;
+    outline: none;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-    .eb-chatBox .card-head-filter-box:focus {
-        width: 117px;
-    }
+.card-head-filterdiv .dropdown-toggle[data-toggle="dropdown"] span.filter-option {
+    background-color: white !important;
+}
 
+.card-head-filterdiv .dropdown-toggle[data-toggle="dropdown"] {
+    height: 27px;
+    padding-top: 0px;
+    padding-left: 0;
+    padding-bottom: 0px;
+    background: #e7000000 !important;
+    outline: none !important;
+    margin-top: 0px;
+    padding-top: 0 !important;
+}
+
+/*.eb-chatBox .card-head-filter-box:focus {
+        width: 117px;
+    }*/
 .eb-chatBox .card-head-filter-icon, .eb-chatBox-dev .card-head-filter-icon {
-    position: relative;
+    position: absolute;
     display: inline-block;
-    margin-right: 8px;
+    top: 7.5px;
+    color: #555;
+    right: 11px;
 }
 
 .eb-chatBox .card-head-cardno, .eb-chatBox-dev .card-head-cardno {
     display: inline-block;
-    padding: 5px;
+    color: #474747;
+    padding-top: 19px;
+    font-size: 13px;
+    font-family: roboto, sans-serif;
+    vertical-align: baseline;
+    height: 100%;
+    margin: auto;
+    font-weight: 500;
+    text-shadow: 0 0 10px #ffffff;
+    margin-left: 0;
 }
 
 
@@ -153,11 +193,11 @@
 }
 
 .slick-next {
-    right: -17px;
+    right: -31.5px;
 }
 
 .slick-prev {
-    left: -17px;
+    left: -31.5px;
     z-index: 1;
 }
 

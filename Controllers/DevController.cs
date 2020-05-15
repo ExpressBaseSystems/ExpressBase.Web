@@ -59,101 +59,95 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjectCollection = _objects.Data;
             ViewBag.AppInfo = _objects.AppInfo;
 
-            if (Type == EbApplicationTypes.Web)
-                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
-            else if (Type == EbApplicationTypes.Mobile)
-                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
-            else if (Type == EbApplicationTypes.Bot)
-            {
-                EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
-                if (settings != null)
-                {
-                    if (settings.CssContent == null || settings.CssContent.Count == 0)
-                    {
-                        settings.CssContent = CssContent();
-                    }
-                    //if (settings.otherprop == null)
-                    //{
-                    //	settings.otherprop.Ebtag = true;
-                    //}
-                }
-                ViewBag.AppSettings = settings ?? new EbBotSettings() { CssContent = CssContent() };
-            }
+			if (Type == EbApplicationTypes.Web)
+				ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
+			else if (Type == EbApplicationTypes.Mobile)
+				ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
+			else if (Type == EbApplicationTypes.Bot)
+			{
+				EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
+				if (settings != null)
+				{
+					 if (settings.CssContent == null || settings.CssContent.Count < 9)
+					{
 
-            this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
-            ViewBag.Title = _objects.AppInfo.Name;
-            ViewBag.ObjectsCount = _objects.ObjectsCount;
-            //ViewBag.eSoln= this.GetIsolutionId(solid);
-            return View();
-        }
+						settings.CssContent = CssContent(settings.CssContent);
+					}
+					
+				}
+				ViewBag.AppSettings = settings ?? new EbBotSettings() { };
+			}
 
-        public Dictionary<string, string> CssContent()
-        {
-            //public Dictionary<string, Dictionary<string, string>> CssContent()
-            var CssDict = new Dictionary<string, string>();
-            //string Cssfile = System.IO.File.ReadAllText("wwwroot/css/ChatBot/bot-ext.css");
-            //string Cssfile = Constants.BOT_IFRAME_CSS;
-            //var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(Cssfile);
-            //return System.Convert.ToBase64String(plainTextBytes);
+			this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
+			ViewBag.Title = _objects.AppInfo.Name;
+			ViewBag.ObjectsCount = _objects.ObjectsCount;
+			return View();
+		}
 
-            int i = 0;
-            List<string> CssList = new List<string>();
-            CssList.Add(BotConstants.BOT_HEADER);
-            CssList.Add(BotConstants.BOT_APP_NAME);
-            CssList.Add(BotConstants.BOT_IFRAME_CSS);
-            CssList.Add(BotConstants.BOT_CHAT_BUTTON);
-            CssList.Add(BotConstants.BOT_IMAGE_CONT);
-            CssList.Add(BotConstants.BOT_BUTTON_IMAGE);
-            string[] NameArr = { "BOT_HEADER", "BOT_APP_NAME", "BOT_IFRAME_CSS", "BOT_CHAT_BUTTON", "BOT_IMAGE_CONT", "BOT_BUTTON_IMAGE" };
-            foreach (string CssConst in CssList)
-            {
-                //Dictionary<string, string> BotDict = new Dictionary<string, string>();
-                //var CssProp = CssConst.Split(';');
-                //foreach (String SingleProps in CssProp)
-                //{
-                //	string PropTrim = SingleProps.Trim();
-                //	if (!String.IsNullOrEmpty(PropTrim))
-                //	{
-                //		var KeyVal = PropTrim.Split(':');
-                //		if (!BotDict.Keys.Contains(KeyVal[0]))
-                //		{
-                //			BotDict.Add(KeyVal[0], KeyVal[1]);
-                //		}
-                //	}
-
-
-                //}
-                //if (!CssDict.Keys.Contains(NameArr[i]))
-                //{
-                //	CssDict.Add(NameArr[i], BotDict);
-                //	i++;
-                //}
-
-                CssDict.Add(NameArr[i], CssConst);
-                i++;
-
-            }
-
-            return CssDict;
-        }
-
-        public string ResetCssContent(string cssConst)
-        {
-            if (cssConst.Equals("BOT_HEADER"))
-                return BotConstants.BOT_HEADER;
-            if (cssConst.Equals("BOT_APP_NAME"))
-                return BotConstants.BOT_APP_NAME;
-            if (cssConst.Equals("BOT_IFRAME_CSS"))
-                return BotConstants.BOT_IFRAME_CSS;
-            if (cssConst.Equals("BOT_CHAT_BUTTON"))
-                return BotConstants.BOT_CHAT_BUTTON;
-            if (cssConst.Equals("BOT_IMAGE_CONT"))
-                return BotConstants.BOT_IMAGE_CONT;
-            if (cssConst.Equals("BOT_BUTTON_IMAGE"))
-                return BotConstants.BOT_BUTTON_IMAGE;
-            else
-                return "";
-        }
+		public Dictionary<string, string> CssContent(Dictionary<string, string> btCss)
+		{
+			//public Dictionary<string, Dictionary<string, string>> CssContent()
+			var CssDict = new Dictionary<string, string>();
+			var Cssconst = new Dictionary<string, string>();
+			Cssconst = new EbBotSettings().CssContent;
+			int i = 0;
+			List<string> CssList = new List<string>();
+			List<string> NameArr = new List<string>();
+			//if any changes change in bote too
+			foreach (var item in Cssconst)
+			{
+				NameArr.Add(item.Key);
+				CssList.Add(item.Value);
+			}
+			
+			if (btCss.Count == 0)
+			{
+				foreach (string CssConst in CssList)
+				{
+					CssDict.Add(NameArr[i], CssConst);
+					i++;
+				}
+			}
+			else if (btCss.Count < NameArr.Count)
+			{
+				for(int j = 0; j < NameArr.Count; j++)
+				{
+					if (btCss.ContainsKey(NameArr[j]))
+					{
+						CssDict.Add(NameArr[j], btCss[NameArr[j]]);
+					}
+					else
+					{
+						CssDict.Add(NameArr[j], CssList[j]);
+					}
+				}
+				
+			}
+			return CssDict;
+		}
+		public string ResetCssContent(string cssConst)
+		{
+			if (cssConst.Equals("BOT_HEADER_PART"))
+				return BotConstants.BOT_HEADER_PART;
+			if (cssConst.Equals("BOT_HEADER_ICON_CONT"))
+				return BotConstants.BOT_HEADER_ICON_CONT;
+			if (cssConst.Equals("BOT_HEADER_IMAGE"))
+				return BotConstants.BOT_HEADER_IMAGE;
+			if (cssConst.Equals("BOT_APP_NAME"))
+				return BotConstants.BOT_APP_NAME;
+			if (cssConst.Equals("BOT_HEADERSUBTEXT"))
+				return BotConstants.BOT_HEADERSUBTEXT;
+			if (cssConst.Equals("BOT_IFRAME_CSS"))
+				return BotConstants.BOT_IFRAME_CSS;
+			if (cssConst.Equals("BOT_CHAT_BUTTON"))
+				return BotConstants.BOT_CHAT_BUTTON;
+			if (cssConst.Equals("BOT_IMAGE_CONT"))
+				return BotConstants.BOT_IMAGE_CONT;
+			if (cssConst.Equals("BOT_BUTTON_IMAGE"))
+				return BotConstants.BOT_BUTTON_IMAGE;
+			else
+				return "";
+		}
 
         [HttpPost]
         public UpdateAppSettingsResponse UpdateAppSettingsMob(string settings, int appid, EbApplicationTypes type)

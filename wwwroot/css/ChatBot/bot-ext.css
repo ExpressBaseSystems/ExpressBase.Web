@@ -1,16 +1,44 @@
 ﻿.eb__-bot___-eb_iframecont {
-
-    BOT_IFRAME_CSS 
-    display: none;
+    BOT_IFRAME_CSS display: none;
     z-index: 16777270;
+    /*right: 0.8%;
+    bottom: 1.5%;
+    width: 28%;
+    height: 97%;
+    min-width: 300px;
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, .175);
+    flex-direction: column;
+    position: fixed;
+    transition: 0.4s;
+    overflow: hidden;
+    border-radius: 2px;
+    background-color: white;
+    border-radius: 20px;*/
 }
+
 .eb__-bot___-eb-chat-head {
+    BOT_HEADER_PART
+    /*color: white;
+    padding: 10px 15px;
+    background-color: var( --ebbotThemeColor );*/
    
-    BOT_HEADER
-    /*border-radius: 3px 3px 0px 0px;*/
 }
 
+.eb__-bot___-headericonCont {
+    BOT_HEADER_ICON_CONT
+    /*width: 35px;
+height: 35px;
+border-radius: 50%;
+display: flex;
+float: left;*/
+}
 
+.eb__-bot___-headerIcon {
+    BOT_HEADER_IMAGE
+    /*border-radius: 50%;
+height: 100%;
+width: 100%;*/
+}
 /*amal*/
 /*.eb__-bot___-eb-chat-head {
     background-color: var( --ebbotThemeColor );
@@ -19,24 +47,23 @@
     color: white;
     padding: 5px 15px;
 }*/
-
-
-    .eb__-bot___-eb-chat-head .bot-head {
-        
-        BOT_APP_NAME
-    }
-
+.eb__-bot___-eb-chat-head .eb__-bot___-bot-head {
+    BOT_APP_NAME
+}
+.eb__-bot___-headersubtext{
+    BOT_HEADERSUBTEXT
+}
 .usecase-bots-cont .eb__-bot___-eb_iframecont {
     position: absolute !important;
     /*right: 5%;*/
 }
 
 .loderdiv {
-	display: flex;
-	background-color: blueviolet;
-	background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
-	background-size: 30%;
-	flex: 1 1 auto;
+    display: flex;
+    background-color: blueviolet;
+    background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
+    background-size: 30%;
+    flex: 1 1 auto;
 }
 
 .eb__-bot___-eb_iframecont .ebbot_iframe {
@@ -53,18 +80,17 @@
    border-radius:10px;
 }*/
 .eb__-bot___-chatbtn {
-   
-    BOT_CHAT_BUTTON
-    z-index: 16777271;
+    BOT_CHAT_BUTTON z-index: 16777271;
 }
+
 .eb__-bot___-iconCont {
-   
     BOT_IMAGE_CONT
 }
+
 .eb__-bot___-boticon {
-  
     BOT_BUTTON_IMAGE
 }
+
 #refreshdiv {
     font-weight: bold;
 }
@@ -81,30 +107,33 @@
         border-radius: 0px;
     }
 }
+
 .usecase-bots-cont {
-	/*width: 100%;*/
-	float: right;
-	/*height: 100%;*/
-	/*border: solid 1px red;*/
+    /*width: 100%;*/
+    float: right;
+    /*height: 100%;*/
+    /*border: solid 1px red;*/
 }
+
 @media (max-width: 450px) and (min-width: 20px) {
     .eb__-bot___-eb_iframecont {
         width: 100% !important;
     }
 
-	.usecase-bots-cont {
-		width: 100% !important;
-	}
+    .usecase-bots-cont {
+        width: 100% !important;
+    }
 
-	.chatmaximize {
-		display: none !important;
-	}
+    .chatmaximize {
+        display: none !important;
+    }
 }
+
 .eb-chatbtn {
-	bottom: calc( 65% - 55px) !important;
-	right: 0 !important;
-	box-shadow: unset !important;
-	background-color: #428bca !important;
+    bottom: calc( 65% - 55px) !important;
+    right: 0 !important;
+    box-shadow: unset !important;
+    background-color: #428bca !important;
 }
 
 /*-----*/
@@ -119,87 +148,88 @@
 
 
 .poweredby {
-	font-size: 10px;
-	font-family: arial;
+    font-size: 10px;
+    font-family: arial;
 }
 
 
 
 .inline-block {
-	display: inline-block;
+    display: inline-block;
 }
 
 .chatclose {
-	display: inline-block;
-	float: right;
-	font-size: 1.2em;
-	padding: 0px 5px;
-	margin: 10px 0px;
-	cursor: pointer;
+    display: inline-block;
+    float: right;
+    font-size: 1.2em;
+    padding: 0px 5px;
+    margin: 10px 0px;
+    cursor: pointer;
 }
 
 .chatmaximize {
-	display: inline-block;
-	float: right;
-	font-size: 1.2em;
-	padding: 0px 5px;
-	margin: 8px 3px;
-	cursor: pointer;
+    margin-left: auto !important;
+    display: inline-block;
+    float: right;
+    font-size: 1.2em;
+    padding: 0px 5px;
+    margin: 8px 3px;
+    cursor: pointer;
 }
 
 .cssload-container {
-	width: 100%;
-	height: 49px;
-	text-align: center;
+    width: 100%;
+    height: 49px;
+    text-align: center;
 }
 
 .cssload-double-torus {
-	width: 49px;
-	height: 49px;
-	margin: 0 auto;
-	border: 4px double;
-	border-radius: 50%;
-	border-color: transparent rgba(28,54,227,0.9) rgba(62,28,199,0.9);
-	animation: cssload-spin 690ms infinite linear;
-	-o-animation: cssload-spin 690ms infinite linear;
-	-ms-animation: cssload-spin 690ms infinite linear;
-	-webkit-animation: cssload-spin 690ms infinite linear;
-	-moz-animation: cssload-spin 690ms infinite linear;
+    width: 49px;
+    height: 49px;
+    margin: 0 auto;
+    border: 4px double;
+    border-radius: 50%;
+    border-color: transparent rgba(28,54,227,0.9) rgba(62,28,199,0.9);
+    animation: cssload-spin 690ms infinite linear;
+    -o-animation: cssload-spin 690ms infinite linear;
+    -ms-animation: cssload-spin 690ms infinite linear;
+    -webkit-animation: cssload-spin 690ms infinite linear;
+    -moz-animation: cssload-spin 690ms infinite linear;
 }
 
 
 
 @keyframes cssload-spin {
-	100% {
-		transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
+    100% {
+        transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 
 @-o-keyframes cssload-spin {
-	100% {
-		-o-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
+    100% {
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 
 @-ms-keyframes cssload-spin {
-	100% {
-		-ms-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
+    100% {
+        -ms-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 
 @-webkit-keyframes cssload-spin {
-	100% {
-		-webkit-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 
 @-moz-keyframes cssload-spin {
-	100% {
-		-moz-transform: rotate(360deg);
-		transform: rotate(360deg);
-	}
+    100% {
+        -moz-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }

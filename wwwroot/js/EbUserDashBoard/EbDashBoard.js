@@ -82,7 +82,7 @@ var DashBoardWrapper = function (options) {
 
     this.Redrawfn = function (items, element) {
         var newHeight = $(element).attr('data-gs-height');
-        var id = $(element).context.children[0].id;
+        var id = $(`#${element.id} .grid-stack-item-content`).attr("id");
         this.RedrwFnHelper(id);
     };
     this.RedrwFnHelper = function (id) {

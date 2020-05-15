@@ -2614,7 +2614,7 @@
         $(".columnMarker" + this.tableId).off("click").on("click", this.link2NewTable.bind(this));
         $(".columnimage").one("load", function () {
             $(".columnimage").off("click").on("click", this.ViewImage.bind(this));
-            $(".columnimage").error(this.OnErrorImage);
+            $(".columnimage").on("error", this.OnErrorImage);
         }.bind(this));
         $('[data-toggle="tooltip"],[data-toggle-second="tooltip"]').tooltip({
             placement: 'bottom'

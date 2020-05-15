@@ -42,20 +42,35 @@ var meetingPicker = function (ctrl, ctrlOpts , type) {
             $.each(this.AllSlots, function (index, obj) {
                 if (obj.Time_from !== "" && obj.Time_to !== "") {
                     let timeFrom = this.TimeFormat(this.AllSlots[index].Time_from);
-                    //let timeTo = this.TimeFormat(this.AllSlots[index].Time_to);
-                    if (this.AllSlots[index].IsHide) {
-                        html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[index].Meeting_Id}" is-approved="${this.AllSlots[index].Is_approved}"
+                    let timeTo = this.TimeFormat(this.AllSlots[index].Time_to);
+                    if (this.type === "Bot") {
+                        if (this.AllSlots[index].IsHide) {
+                            html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[index].Meeting_Id}" is-approved="${this.AllSlots[index].Is_approved}"
                     class="solts-div blocked-slot"> <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timeFrom} </div>`;
+                        }
+                        else {
+                            html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[0].Meeting_Id}"  is-approved="${this.AllSlots[index].Is_approved}"
+                    class="solts-div unblocked-slot"> <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timeFrom} </div>`;
+                        }
                     }
                     else {
-                        html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[0].Meeting_Id}"  is-approved="${this.AllSlots[index].Is_approved}"
-                    class="solts-div unblocked-slot"> <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timeFrom} </div>`;
+                        if (this.AllSlots[index].IsHide) {
+                            html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[index].Meeting_Id}" is-approved="${this.AllSlots[index].Is_approved}"
+                    class="solts-div blocked-slot"> <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timeFrom} to ${timeTo} </div>`;
+                        }
+                        else {
+                            html += `<div id="${this.AllSlots[index].Slot_id}" m-id="${this.AllSlots[0].Meeting_Id}"  is-approved="${this.AllSlots[index].Is_approved}"
+                    class="solts-div unblocked-slot"> <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timeFrom} to ${timeTo} </div>`;
+                        }
                     }
                 }
             }.bind(this));
         }
-       
-        $(`#${this.ctrl.EbSid} .picker-cont`).empty().append(html);
+        if (this.type === "Bot") {
+            $(`#${this.ctrl.EbSid} .picker-cont`).empty().append(html);
+        } else {
+            $(`#cont_${this.ctrl.EbSid} .picker-cont`).empty().append(html);
+        }
         $(".unblocked-slot").off("click").on("click", this.PickMeeting.bind(this));
         $("#add_slot").off("click").on("click", this.addSlot.bind(this));
     };

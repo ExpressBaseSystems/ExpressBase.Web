@@ -534,6 +534,9 @@
     border: none;
 }
 
+.msg-cont[ctrl-type="DynamicCardSet"] .msg-cont-bot, .msg-cont[ctrl-type="StaticCardSet"] .msg-cont-bot {
+    margin-left: 10px;
+}
 
 .choose-btn {
     display: inline-block;
@@ -605,7 +608,7 @@
 .ctrl-wraper {
     display: inline-block;
     width: calc(100% - 36px);
-    border: solid 1px #ccc;
+    border: solid 1px #cccccc8a;
 }
 
 .ctrl-send-wraper {
@@ -614,10 +617,18 @@
     justify-content: space-around;
 }
 
+.msg-cont[ctrl-type="RadioGroup"] .ctrl-wraper, .msg-cont[ctrl-type="CheckBoxGroup"] .ctrl-wraper {
+    border-radius: 6px !important;
+}
+
+.msg-cont .list-ctrl-box {
+    padding: 6px 10px;
+}
+
+
 .ctrl-wraper {
     display: inline-block;
     width: calc(100% - 57px);
-    border-radius: 2px;
     /* padding: 3px; */
     /* background: #f1f1f1;*/
 }

@@ -425,13 +425,11 @@
 }
 
 .ctrl-wraper .input-group {
-    /*height: 100%;*/
-    width: calc( 100% + 1px ) !important;
+    width: calc( 100% + 0.5px ) !important;
 }
 
 .chat-ctrl-cont .input-group {
-    /*height: 100%;*/
-    width: 100% !important;
+    width: calc( 100% + 0.5px ) !important;
 }
 
 .ctrl-wraper .div.dataTables_wrapper .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn {

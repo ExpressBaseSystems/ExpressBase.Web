@@ -78,7 +78,7 @@ namespace ExpressBase.Web.Controllers
             GetFunctionOrProcedureQueriesResponse resp = this.ServiceClient.Post<GetFunctionOrProcedureQueriesResponse>((object)new GetFunctionOrProcedureQueriesRequest
             {
                 ChangeList = change,
-                SolutionId = solution_id 
+                SolutionId = solution_id
             });
             return resp;
         }
@@ -114,7 +114,7 @@ namespace ExpressBase.Web.Controllers
                 FilePath = filepath,
                 FileType = filetype
             });
-            resp.Result = GetDiffer(resp.InfraFileContent,resp.TenantFileContent );
+            resp.Result = GetDiffer(resp.InfraFileContent, resp.TenantFileContent);
             return resp;
         }
 
@@ -169,6 +169,17 @@ namespace ExpressBase.Web.Controllers
             html += "</table></div>";
 
             return html;
+        }
+
+        [HttpGet("/LastAccess")]
+        public string LastAccess()
+        { 
+            if (ViewBag.cid == "admin")
+                if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                {
+                    LastSolnAccessResponse res = this.ServiceClient.Post(new LastSolnAccessRequest { SolnId = ViewBag.cid });
+                }            
+            return "No prmission";
         }
 
     }

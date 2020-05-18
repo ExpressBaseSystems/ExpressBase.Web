@@ -1,4 +1,5 @@
-﻿class Setup {
+﻿var MeetingRequestView;
+class Setup {
 
     constructor(option) {
         this.option = {};
@@ -13,6 +14,8 @@
         //this.userNotification();
 
         this.modal = new EbCommonModal();
+
+        MeetingRequestView = this.MeetingRequestView.bind(this);
     }
 
     getCurrentLocation() {
@@ -117,13 +120,16 @@
             for (let i = 0; i < pa.length; i++) {
                 let params = btoa(unescape(encodeURIComponent(JSON.stringify([new fltr_obj(11, "id", pa[i].dataId)]))));
                 let locid = this.getCurrentLocation();
-                let url = `../webform/index?refid=${pa[i].link}&_params=${params}&_mode=1&_locId=${locid}`;
+                let Id = pa[i].myActionId;
+                let url = `href='../webform/index?refid=${pa[i].link}&_params=${params}&_mode=1&_locId=${locid}' target='_blank'`;
                 let _label = "";
                 if (pa[i].actionType === "Approval")
                     _label = "<span class='status-icon'><i class='fa fa-commenting color-warning' aria-hidden='true'></i></span><span class='status-label label label-warning'>Review Required</span>";
+                else
+                    url = 'href="#" onclick="MeetingRequestView(this); return false;"';
                 this.actn_container.append(`
                 <li class="nf-tile">
-                        <a href="${url}" target="_blank">
+                        <a ${url} data-id='${Id}'>
                             <div class='pending_action_inner'>
                                 <h5>${pa[i].description}</h5>
                                 <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].dateInString}</span></div>
@@ -234,6 +240,11 @@
         $('#notificationDropDown').addClass("open");
         e.stopPropagation();
     }
+
+    MeetingRequestView = function(e) {
+        let id = $(e).closest("a").attr("data-id");
+        alert(id);
+    };
 }
 
 

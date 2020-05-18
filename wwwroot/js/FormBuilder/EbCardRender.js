@@ -24,7 +24,7 @@
         //resetting cards. required for reopening same cardset
         this.resetSelectedCardDisplay($Ctrl);
 
-        $Ctrl.find(".card-btn-cont .btn").off('click').on('click', function (evt) {
+        $Ctrl.find(".card-selbtn-cont .btn").off('click').on('click', function (evt) {
             var $e = $(evt.target).closest(".btn");
             var $card = $e.closest('.card-cont');
 
@@ -99,6 +99,9 @@
                 map: map
             });
         });
+        $Ctrl.find("select.select-picker").selectpicker();
+        $Ctrl.on('click', '.card-pls-mns.mns', this.minusClick);
+        $Ctrl.on('click', '.card-pls-mns.pls', this.plusClick);
     };
 
     this.filterCards = function ($Ctrl) {
@@ -202,7 +205,7 @@
             $tbody.append(trhtml);
         }.bind(this));
 
-        var sumhtml = "<tr style='font-size: 14px;font-weight: 600;'><td style='padding-left:10%;' colspan=" + tcols + ">";
+        var sumhtml = "<tr style='font-size: 14px;font-weight: 600;'><td style='padding-left:10%;font-size: 13.3px;' colspan=" + tcols + ">";
         $.each(this.sumFieldsName, function (fi, fn) {
             var sum = 0.0;
             $.each(this.SelectedCards, function (k, obj) {
@@ -216,7 +219,7 @@
         $('.remove-cart-item').off('click').on('click', function (evt) {
             var cardid = $(evt.target).closest('tr').attr('card-id');
             this.spliceCardArray(cardid);
-            $('#' + this.Bot.curCtrl.EbSid).find(".card-cont[card-id='" + cardid + "']").find(".card-btn-cont .btn").html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
+            $('#' + this.Bot.curCtrl.EbSid).find(".card-cont[card-id='" + cardid + "']").find(".card-selbtn-cont .btn").html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
             $($('#' + this.Bot.curCtrl.EbSid).find(".card-cont[card-id='" + cardid + "']").find(".card-title-cont").children()[0]).hide();
             this.drawSummaryTable($(evt.target).closest('tbody'));
         }.bind(this));
@@ -278,7 +281,7 @@
     this.resetSelectedCardDisplay = function ($Ctrl) {
         //reset cardset for reopening
         this.Bot.curCtrl.SelectedCards = [];
-        $.each($Ctrl.find(".card-btn-cont .btn"), function (h, elemt) {
+        $.each($Ctrl.find(".card-selbtn-cont .btn"), function (h, elemt) {
             $(elemt).html('Select <i class="fa fa-check" style="color: green; display: inline-block;" aria-hidden="true"></i>');
             $($(elemt).parent().siblings('.card-title-cont').children()[0]).hide();
         });
@@ -295,7 +298,7 @@
         }.bind(this));
 
         if (!this.CtrlObj.MultiSelect && isPersistAnyField) {
-            this.$Ctrl.find('.slick-current .card-btn-cont .btn').click();
+            this.$Ctrl.find('.slick-current .card-selbtn-cont .btn').click();
         }
         if (isPersistAnyField) {
             $.each(this.CtrlObj.CardCollection.$values, function (k, cObj) {
@@ -323,7 +326,7 @@
     this.CtrlObj.getDataModel = function () {
         let dataModel = [];
         //if (!this.CtrlObj.MultiSelect) {
-        //    this.$Ctrl.find('.slick-current .card-btn-cont .btn').click();
+        //    this.$Ctrl.find('.slick-current .card-selbtn-cont .btn').click();
         //}
         $.each(this.CtrlObj.CardCollection.$values, function (k, cObj) {
             if (this.CtrlObj.SelectedCards.indexOf(cObj.CardId) !== -1) {
@@ -338,6 +341,30 @@
             }
         }.bind(this));
         return dataModel;
+    }.bind(this);
+
+    this.minusClick = function () {
+        let $e = $(event.target).closest(".mns");
+        let $input = $e.closest(".inp-wrap").find(".cart-inp");
+        let num = parseFloat($input.val());
+        let limit = parseFloat($e.closest(".card-pls-mns").attr("limit"));
+        if (num > limit) {
+            $input.val(num - 1);
+            $e.parents('.card-numeric-cont').attr('data-value', num - 1);
+        }
+    }.bind(this);
+
+    this.plusClick = function () {
+        let $e = $(event.target).closest(".pls");
+        let $input = $e.closest(".inp-wrap").find(".cart-inp");
+        let num = parseFloat($input.val());
+        let limit = parseFloat($e.closest(".card-pls-mns").attr("limit"));
+
+        if (num < limit) {
+            $input.val(num + 1);
+            $e.parents('.card-numeric-cont').attr('data-value', num + 1);
+        }
+
     }.bind(this);
 
     this.initCards(this.$Ctrl);

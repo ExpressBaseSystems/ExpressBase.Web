@@ -22,6 +22,7 @@ const WebFormRender = function (option) {
     this.$cloneBtn = $('#webformclone');
     this.Env = option.env;
     this.Cid = option.cid;
+    this.rendererName = 'WebForm';
     this.initControls = new InitControls(this);
     //this.editModeObj = option.editModeObj;
     this.formRefId = option.formRefId || "";

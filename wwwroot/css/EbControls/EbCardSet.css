@@ -217,10 +217,11 @@
     }
 
     .card-btn-cont .ctrl-submit-btn, .cards-btn-cont .ctrl-submit-btn {
-        width: 98%;
-        font-weight: 600;
-        font-size: 14px;
-        letter-spacing: 0.4px;
+        width: 92%;
+        font-weight: 500;
+        font-size: 13.5px;
+        font-family: roboto;
+        letter-spacing: 0.5px;
         margin: auto;
         border-radius: 3em;
     }

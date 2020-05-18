@@ -7,105 +7,14 @@
 }
 
 <head>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link async rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="~/css/font-awesome.css" />
     <link rel="icon" href="~/images/favicon.ico">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">
-
     <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version="true"></script>
 
-    <script type="text/javascript">
-        //window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
-        //window.EXPRESSbase_APP_IDS = [13, 93];
-
-        $(document).ready(function () {
-            console.log("bots");
-            d = document;
-            d.ebmod = '@ViewBag.Env';
-            var BotList = @BotDtls ;
-            var jssrc = "http://localhost:41500";
-            if (d.ebmod === 'Production')
-                jssrc = "https://files.expressbase.com";
-            else if (d.ebmod === 'Staging')
-                jssrc = "https://files.eb-test.cloud";
-            window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
-            window.EXPRESSbase_APP_IDS = [];
-            d.ebbotThemeColorColl = [];
-            d.botWelcomeMsgColl = [];
-            d.botPropColl = [];
-            d.ebbotSubtextColl = [];
-            botNames = [];
-            botDpUrl = [];
-            botIcon = [];
-            $.each(BotList.$values, function (k, bobj) {
-                if (bobj.botsettings === null) {
-                    bobj.botsettings = { Name : 'EbBot', DpUrl : '', ThemeColor : '#fcb714', WelcomeMessage : 'Hi, I am EBbot from EXPRESSbase!!!' };
-                }
-                window.EXPRESSbase_APP_IDS.push(bobj.id);
-                botNames.push(bobj.botsettings.Name);
-                botDpUrl.push(bobj.botsettings.DpUrl||'../images/demobotdp4.png');
-                botIcon.push(bobj.icon);
-                d.ebbotThemeColorColl.push(bobj.botsettings.ThemeColor);
-                d.botWelcomeMsgColl.push(bobj.botsettings.WelcomeMessage);
-                d.botPropColl.push(bobj.botsettings.BotProp);
-                d.ebbotSubtextColl.push(bobj.botsettings.Description);
-            });
-
-            d.appIdColl = window.EXPRESSbase_APP_IDS;
-            //d.ebbotThemeColorColl = ["#fcb714", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
-            d.ebbotNameColl = botNames;
-            d.botdpURLColl = botDpUrl;
-
-            d.appIdCount = 0;
-            d.createBotFns = [];
-            for (var i = 0; i < d.appIdColl.length; i++) {
-                d = document;
-                d.createBotFns.push(function () {
-                    s = d.createElement("script");
-                    s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_SOLUTION_ID + "-" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
-                    s.async = 1;
-                    d.getElementsByTagName("head")[0].appendChild(s);
-                });
-            }
-            $.each(d.createBotFns, function (i, fun) {
-                $(".botBtnsCont").append(`<div class="btnOutCont">
-                                            <div class="btnInnerCont" onclick="clickOnDiv(${i}, ${d.appIdColl[i]});">
-                                                <i class='fa fa-2x ${botIcon[i]}' aria-hidden='true' style='padding: 7px;'></i>
-                                                <h4 style='display: inline-block;'>${botNames[i]}</h4>
-                                            </div>
-                                          </div>`);
-            });
-            if (d.appIdColl.length > 0) {
-                clickOnDiv(0, d.appIdColl[0]);
-            }
-        });
-
-
-        function clickOnDiv(i, appid) {
-            //console.error(7);
-            var d = document;
-            if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')
-                return;
-            d.appIdCount = i;
-            if ($(`[appid=${appid}]`).length === 0) {
-                d.createBotFns[i]();
-            }
-
-            var html = d.getElementsByTagName('html')[0];
-            html.style.setProperty("--ebbotThemeColor", d.ebbotThemeColorColl[i]);
-            $(`.usecase-bots-cont [appid=${appid}] .eb-chat-head`).css("background-color", d.ebbotThemeColorColl[i]);
-            $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
-            $(".eb_iframecont").hide();
-            $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex"); $(this).animate({ opacity: '1' }, 400); });
-            //setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);//////////
-            d.latestAppid = appid;
-        }
-    </script>
     <style>
-
-
         .eb_iframecont {
             position: relative !important;
             float: right;
@@ -113,100 +22,249 @@
         }
 
         .botBtnsCont {
-            /*height: 80vh;
-            overflow-y: auto;*/
-            width: 75%;
+            /*height: 100%;*/
+            /*overflow-y: auto;*/
+            display: flex;
+            flex-flow: row wrap;
+            width: 100%;
+        }
+
+        .botlstCont {
+            background: #ffff;
         }
 
         .botBtnsParent {
+            margin-top: 33px;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 95vh;
-            /*padding-top: 100px;*/
-            overflow-y: auto;
             flex-direction: column;
+            background: inherit;
         }
 
         .btnOutCont {
-            width: 100%;
+            width: 50%;
             float: left;
-            padding: 10px;
+            padding: 15px;
         }
 
         div.botBtnsCont h4 {
             margin: 0;
-            position: absolute;
-            top: 18px;
+            font-weight: 600;
+        }
+
+        .btnOutCont .actvbot {
+            box-shadow: 1px 1px 8px 2px #a1a1a4;
+            border: 1px solid #010a76;
+            background: linear-gradient(280deg, rgba(255,255,255,0.692612079011292) 0%, rgba(228, 228, 228, 0.35) 100%);
         }
 
         .btnInnerCont {
+            height: 100%;
+            display: flex;
+            border-radius: 0.5rem;
+            box-shadow: 1px 1px 6px #c1c0da;
             float: left;
-            background: #369;
-            box-shadow: var(--eb-shadow);
+            background: #ffff;
             width: 100%;
-            padding: 5px;
-            border-radius: 2px;
+            padding: 35px;
             position: relative;
-            color: #ffffff;
+            color: #010a76;
             cursor: pointer;
-            transition: 0.3;
+            transition: 0.3s;
             border: solid 1px rgba(177, 177, 177, 0.37);
             vertical-align: middle;
+            background: linear-gradient(280deg, rgba(255,255,255,0.692612079011292) 0%, rgba(228, 228, 228, 0.35) 100%);
         }
+
+
 
             .btnInnerCont:hover {
-                background: #336699d7;
+                /*background: #336699d7;*/
+                box-shadow: 1px 1px 8px 2px #c1c0da;
+                border: 1px solid #010a76;
             }
 
-        .livebothead {
-            text-align: center;
-            color: #220058;
+            .btnInnerCont .btn_txtcont {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+
+        .ext-pageheader {
+            width: 100%;
+            background-color: #ffffff;
+            position: fixed;
+            z-index: 10;
+            padding: 2px 2px 2px 2px;
+            box-shadow: 0 0 5px 0 rgba(0,0,0,0.35);
+            display: flex;
+            flex-flow: row;
         }
 
-        .eb-banner-local {
-            padding: 15px;
-            background-color: #f7f7f7;
-            /*background-color: #0280db;
-            background-image: linear-gradient(46deg,rgba(245,248,253,0.17) 0,rgba(0,0,0,0.32) 100%);*/
+            .ext-pageheader .solun_logo_cont {
+                height: 33px;
+                padding: 2px;
+                margin-right: 10px;
+            }
+
+                .ext-pageheader .solun_logo_cont img {
+                    height: 100%;
+                    width: auto;
+                }
+
+
+            .ext-pageheader .secHeadCont {
+                margin-left: 5px;
+                display: flex;
+                align-items: center;
+            }
+
+        .secHeadCont .livebothead {
+            font-size: 18px;
+            font-weight: 600;
+            color: #010a76;
         }
 
-        .ext-pageheader .navbar {
-            height: auto;
-            padding: 5px;
-        }
-
-        .ext-pageheader .navbar-default {
-            background-color: white;
-            box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 1px 1px -2px rgba(0, 0, 0, 0.1);
-        }
-
-        .ext-pageheader .navbar img {
-            height: 50px;
+        .usecase-bots-cont {
+            /*position: -webkit-sticky;
+            position: sticky;
+            bottom: 1rem;
+            align-self: flex-end;*/
         }
     </style>
 </head>
 <body>
-    <section class="ext-pageheader" id="pgheaderExt">
-        <nav class="navbar navbar-default navbar-fixed-top" style="top: 0px;">
-            <div class="">
-                <div class="navbar-header">
-                    <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="solution_logo Eb_Image" />
-                </div>
-            </div>
-        </nav>
-    </section>
-    <section class="slider eb-banner-local">
-        <div class="container-fluid">
-            <div class="col-md-6 col-lg-6 col-sm-6 col-xs-12 botBtnsParent">
-                <div class="col-md-12"><h2 class="livebothead">Live Bots</h2></div>
-                <div class="botBtnsCont">
 
-                </div>
+    <div>
+        <div class="ext-pageheader" id="pgheaderExt">
+            <div class="solun_logo_cont">
+                <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="solution_logo Eb_Image" />
+            </div>
+            <div class="secHeadCont col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                <span class="livebothead">Live Bots</span>
             </div>
         </div>
-        <div class="usecase-bots-cont"></div>
-    </section>
+    </div>
+
+    <div class="botlstCont ">
+        <div class="col-md-8 col-lg-8 col-sm-8 col-xs-12 botBtnsParent">
+            <div class="botBtnsCont">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="usecase-bots-cont"></div>
+    <script type="text/javascript">
+                //window.EXPRESSbase_SOLUTION_ID = "eb_dbpjl5pgxleq20180130063835";
+                //window.EXPRESSbase_APP_IDS = [13, 93];
+
+                $(document).ready(function () {
+                    console.log("bots");
+                    d = document;
+                    /**/
+                    d.ebmod = '@ViewBag.Env';
+                    /**/
+                    /**/
+                    var BotList = @BotDtls ;
+                    /**/
+                    var jssrc = "http://localhost:41500";
+                    if (d.ebmod === 'Production')
+                        jssrc = "https://files.expressbase.com";
+                    else if (d.ebmod === 'Staging')
+                        jssrc = "https://files.eb-test.cloud";
+                    window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
+                    window.EXPRESSbase_APP_IDS = [];
+                    d.ebbotThemeColorColl = [];
+                    d.botWelcomeMsgColl = [];
+                    d.botPropColl = [];
+                    d.ebbotSubtextColl = [];
+                    botNames = [];
+                    botSubtext = [];
+                    botSubtext22 = [];
+                    botDpUrl = [];
+                    botIcon = [];
+                    $.each(BotList.$values, function (k, bobj) {
+                        if (bobj.botsettings === null) {
+                            bobj.botsettings = { Name: 'EbBot', DpUrl: '', ThemeColor: '#fcb714', WelcomeMessage: 'Hi, I am EBbot from EXPRESSbase!!!' };
+                        }
+                        window.EXPRESSbase_APP_IDS.push(bobj.id);
+                        botNames.push(bobj.botsettings.Name);
+                        botDpUrl.push(bobj.botsettings.DpUrl || '../images/demobotdp4.png');
+                        botIcon.push(bobj.icon);
+                        d.ebbotThemeColorColl.push(bobj.botsettings.ThemeColor);
+                        d.botWelcomeMsgColl.push(bobj.botsettings.WelcomeMessage);
+                        d.botPropColl.push(bobj.botsettings.BotProp);
+                        botSubtext.push(bobj.Description || "");
+                        botSubtext22.push(bobj.botsettings.Description || "");
+                    });
+
+                    d.appIdColl = window.EXPRESSbase_APP_IDS;
+                    //d.ebbotThemeColorColl = ["#fcb714", "#4B0082", "#0000FF", "#00FF00", "#FFFF00", "#FF7F00", "#FF0000"];
+                    d.ebbotNameColl = botNames;
+                    d.botdpURLColl = botDpUrl;
+                    d.ebbotSubtextColl = botSubtext;
+
+                    d.appIdCount = 0;
+                    d.createBotFns = [];
+                    for (var i = 0; i < d.appIdColl.length; i++) {
+                        d = document;
+                        d.createBotFns.push(function () {
+                            s = d.createElement("script");
+                            s.src = jssrc + "/Bote/Js?id=" + window.EXPRESSbase_SOLUTION_ID + "-" + window.EXPRESSbase_APP_IDS.toString() + "&mode=m";
+                            s.async = 1;
+                            d.getElementsByTagName("head")[0].appendChild(s);
+                        });
+                    }
+                    $.each(d.createBotFns, function (i, fun) {
+                         $(".botBtnsCont").append(`<div class="btnOutCont col ">
+                                                        <div class="btnInnerCont" onclick="clickOnDiv(${i}, ${d.appIdColl[i]});">
+                                                            <div class='btn_txtcont'>
+                                                           <div >
+                                                                <h4 style='display: inline-block;'>${botNames[i]}</h4>
+                                                            </div>
+                                                            <div >${botSubtext[i]}</div>
+                                                             </div>
+                                                            <div style='margin-left:auto;'>
+                                                            <i class='fa fa-2x ${botIcon[i]}' aria-hidden='true' style='padding: 7px;'></i
+                                                            </div>
+                                                        </div>
+                                                      </div>`);
+                    });
+
+
+                    if (d.appIdColl.length > 0) {
+                        clickOnDiv(0, d.appIdColl[0]);
+                    }
+                });
+
+
+                function clickOnDiv(i, appid, e) {
+                    $('.btnInnerCont').removeClass('actvbot');
+                    //console.error(7);
+                    console.log(354345);
+                    $(`#${appid}`).addClass('actvbot');
+                    var d = document;
+                    if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')
+                        return;
+                    d.appIdCount = i;
+                    if ($(`[appid=${appid}]`).length === 0) {
+                        d.createBotFns[i]();
+                    }
+
+                    var html = d.getElementsByTagName('html')[0];
+                    html.style.setProperty("--ebbotThemeColor", d.ebbotThemeColorColl[i]);
+                    $(`.usecase-bots-cont [appid=${appid}] .eb-chat-head`).css("background-color", d.ebbotThemeColorColl[i]);
+                    $(".eb_iframecont").not(`[appid=${appid}]`).animate({ opacity: '0' }, 400);
+                    $(".eb_iframecont").hide();
+                    $(`.usecase-bots-cont [appid=${appid}]`).show(100, function () { $(this).css("display", "flex"); $(this).animate({ opacity: '1' }, 400); });
+                    //setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);//////////
+                    d.latestAppid = appid;
+                }
+    </script>
     <script>
         $('.Eb_Image').Lazy();
     </script>

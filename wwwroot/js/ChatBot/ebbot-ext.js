@@ -96,7 +96,7 @@
 
    
 
-    if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderIcon : d.botProp.HeaderIcon) {
+    if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderSubtxt : d.botProp.HeaderSubtxt) {
         var headersubtext = d.createElement("div");
         headersubtext.className = "headersubtext eb__-bot___-headersubtext";
         headersubtext.innerHTML = subtxt;

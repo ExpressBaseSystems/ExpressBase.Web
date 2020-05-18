@@ -21,7 +21,6 @@
     /*color: white;
     padding: 10px 15px;
     background-color: var( --ebbotThemeColor );*/
-   
 }
 
 .eb__-bot___-headericonCont {
@@ -50,12 +49,13 @@ width: 100%;*/
 .eb__-bot___-eb-chat-head .eb__-bot___-bot-head {
     BOT_APP_NAME
 }
-.eb__-bot___-headersubtext{
+
+.eb__-bot___-headersubtext {
     BOT_HEADERSUBTEXT
 }
+
 .usecase-bots-cont .eb__-bot___-eb_iframecont {
     position: absolute !important;
-    /*right: 5%;*/
 }
 
 .loderdiv {
@@ -109,10 +109,7 @@ width: 100%;*/
 }
 
 .usecase-bots-cont {
-    /*width: 100%;*/
     float: right;
-    /*height: 100%;*/
-    /*border: solid 1px red;*/
 }
 
 @media (max-width: 450px) and (min-width: 20px) {

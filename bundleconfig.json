@@ -152,7 +152,7 @@
       "wwwroot/js/EbServerEvents/eventsource.min.js",
       "wwwroot/js/EbServerEvents/ss-utils.js",
       "wwwroot/js/EbServerEvents/ServerEvents.js",
-      "wwwroot/js/Common/offline.js.js",
+      "wwwroot/js/Common/offline.js",
       "wwwroot/js/eb_common.js",
       "wwwroot/js/FormBuilder/bootstrap-confirmation.min.js",
       "wwwroot/js/ChatBot/Eb_chatBot.js",

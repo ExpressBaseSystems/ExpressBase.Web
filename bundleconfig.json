@@ -137,5 +137,21 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-botpage.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/moment.min.js",
+      "wwwroot/js/jquery.datetimepicker.min.js",
+      "wwwroot/js/EbDataTable.js",
+      "wwwroot/js/vue-select.js",
+      "wwwroot/js/Eb_UtilityFuncions.js",
+      "wwwroot/js/FormBuilder/vue.js",
+      "wwwroot/js/Eb_select.js",
+      "wwwroot/js/FormBuilder/InitFormControls.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
   }
 ]

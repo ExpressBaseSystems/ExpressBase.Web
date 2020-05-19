@@ -160,6 +160,14 @@
       "wwwroot/js/FormBuilder/EbSurveyRender.js",
       "wwwroot/js/jQuery Mask Plugin v1.14.9.js",
       "wwwroot/js/FormBuilder/Bootstrap-select.v1.12.2.js",
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-botpage.bundle2.js",
+    "inputFiles": [
       "wwwroot/js/slick.min.js",
       "wwwroot/js/datatables.min.js",
       "wwwroot/js/FormBuilder/locationpicker.jquery.min.js",

@@ -246,7 +246,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
                 setTimeout(function () {
                     //$(".btn-box .btn:last").click();
-                    //$(".btn-box_botformlist button:eq(1)").click();// auto
+                    //$(".btn-box_botformlist button:eq(2)").click();// test auto
                 }.bind(this), this.typeDelay * 4 + 100);
 
             }.bind(this));
@@ -1168,7 +1168,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.scrollToBottom = function () {
         setTimeout(function () {
-            $(".eb-chatBox").scrollTop($(".eb-chatBox")[0].scrollHeight, 500, { easing: 'swing' });
+            $(".eb-chatBox").scrollTo($(".eb-chatBox")[0].scrollHeight, 500, { easing: 'swing' });
         }.bind(this), this.controlHideDelay + this.breathingDelay);
     };
 

@@ -8,6 +8,11 @@
 
 @using ExpressBase.Objects;
 
+<script>
+    console.log(Date.now);
+    var t0 = performance.now();
+</script>
+
 <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">   
@@ -95,6 +100,11 @@
 
 @*nithin*@
 <script src="~/js/FormBuilder/MeetingPicker.js"></script>
+
+<script>
+    var t1 = performance.now();
+    console.log("bot link loading took " + (t1 - t0) + " milliseconds.");
+</script>
 
 <style>
     body {

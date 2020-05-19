@@ -139,6 +139,39 @@
     }
   },
   {
+    "outputFileName": "wwwroot/css/Bundles/eb-botpage.bundle.css",
+    "inputFiles": [
+      "wwwroot/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css",
+      "wwwroot/css/Bootstrap_JQuery/bootstrap.min.css",
+      "wwwroot/css/Robotofont.300.400.500.swap.css",
+      "wwwroot/css/EbCommonStyles/ObjectDashboard.css",
+      "wwwroot/css/slick-theme.css",
+      "wwwroot/css/jquery.datetimepicker.css",
+      "wwwroot/css/bootstrap-select.min.css",
+      "wwwroot/css/Common/offline-theme-dark.css",
+      "wwwroot/css/font-awesome.css",
+      "wwwroot/css/datatables.min.css",
+      "wwwroot/css/slick.css",
+      "wwwroot/css/FormBuilder/MonthPicker.min.css",
+      "wwwroot/css/FormBuilder/jquery.rateyo.min.css",
+      "wwwroot/css/Eb.css",
+      "wwwroot/css/EbControls/EbCardSet.css",
+      "wwwroot/css/yearpicker.css",
+      "wwwroot/css/Eb_datatable.css",
+      "wwwroot/css/FormBuiderStyles.css",
+      "wwwroot/css/EbChatBot.css",
+      "wwwroot/css/EbCommonStyles/eb-style.css",
+      "wwwroot/css/DVBuilder.css",
+      "wwwroot/css/ChartStyle.css",
+      "wwwroot/css/FormBuilder/bootstrap-toggle.min.css",
+      "wwwroot/css/EbFileViewer/viewer.css",
+      "wwwroot/css/MeetingPicker.css"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
     "outputFileName": "wwwroot/js/Bundles/eb-botpage.bundle.js",
     "inputFiles": [
       "wwwroot/js/moment.min.js",

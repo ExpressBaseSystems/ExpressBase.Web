@@ -1,6 +1,9 @@
 ﻿
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600");
-
+body {
+    --botbgclr: transparent;
+    --bgclrwhite: white;
+}
 .eb-chat-cont {
     display: block;
     position: fixed;
@@ -23,7 +26,7 @@
     padding: 0px 5px;
     /*padding-bottom: 230px;*/
     padding-bottom: 130px;
-    background-color: white;
+    background-color: var(--botbgclr);
 }
 
 .chat-icon {
@@ -99,10 +102,31 @@
     max-width: calc(100% - 26px);
 }
 
+
+
+.msg-cont, .req-cont {
+    font-size: 11.2px;
+    position: absolute;
+    /*right: 1px;*/
+    margin-top: 3px;
+    animation-duration: 0.3s;
+    z-index: 1;
+    background-color: var(--botbgclr);
+    /*background-color: rgba(255, 255, 255, 0.8);*/
+    /*box-shadow: 0 2px 3px 0px white;*/
+}
+
 .msg-cont {
     /*display: inline-block;
     min-width: 87%;*/
+    position: relative;
 }
+
+    .msg-cont > label, .req-cont > label {
+        font-weight: normal !important;
+        margin-bottom: 0 !important;
+        padding-left: 2px;
+    }
 
 .msg-cont-user {
     text-align: -webkit-right;
@@ -165,11 +189,13 @@
     position: relative;
     width: 98%;
     border: solid 5px #ffffff;
-    /* border-radius: 0px 29px 29px 0px; */
     background-color: #ffffff;
     margin-left: 16px;
     line-height: 0;
     display: flex;
+    /*vrgs*/
+    padding: 10px;
+    border-radius: 4px;
 }
 
 .bot-icon {
@@ -188,7 +214,7 @@
 }
 
 .bot-icon-user {
-    background: url(/images/user_avatars.png)center center no-repeat;
+    background: url('../images/user_avatars.png')center center no-repeat;
     background-color: var(--botThemeColor);
     width: 26px;
     background-size: 100% !important;
@@ -284,7 +310,8 @@
 }
 
     .formname-btn:hover {
-        filter: hue-rotate(180deg);
+        /*filter: hue-rotate(180deg);*/
+        filter: brightness(1.6);
         color: var(--botThemeColor);
     }
 
@@ -314,7 +341,8 @@
 }
 
     .formname-btn_botformlist:hover {
-        filter: hue-rotate(180deg);
+        /*filter: hue-rotate(180deg);*/
+        filter: brightness(1.6);
         color: var(--botThemeColor);
         box-shadow: 0px 0px 5px 1px #dedfe1;
     }
@@ -380,7 +408,8 @@
 }
 
     .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
-        filter: hue-rotate(60deg);
+        /*filter: hue-rotate(60deg);*/
+        filter: brightness(1.6);
         color: white;
     }
 
@@ -1043,4 +1072,7 @@
 
 .eb-chat-cont .locinp-span {
     line-height: 2;
+}
+.card-outer-cont {
+    background-color: var(--bgclrwhite);
 }

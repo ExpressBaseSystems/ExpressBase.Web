@@ -105,6 +105,7 @@
     body {
         margin: 0;
         padding: 0px;
+         background: var(--eb-bot-bg-color,#ffffff);
     }
 </style>
 
@@ -137,9 +138,14 @@
     var ServerEventUrl = "@ViewBag.ServerEventUrl";
     var chatBotObj = null;
     $(document).ready(function () {
+        console.log("bot loaded");
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", (settings.ThemeColor || "#055c9b"));
-        console.log("bot loaded");
+       // html.style.setProperty("--eb-bot-bg-color", "red");
+        if (settings.BotProp.BgImg) {
+             html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.BgImg}.jpg") no-repeat center`);
+        }
+       
         chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.ServiceUrl', ServerEventUrl);
 
         $.get("https://ipinfo.io", function (response) {

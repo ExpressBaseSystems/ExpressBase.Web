@@ -1,4 +1,4 @@
-﻿var AppDashBoard = function (appid, apptype, appsettings,appinfo) {
+﻿var AppDashBoard = function (appid, apptype, appsettings, appinfo) {
     this.objectTab = $("#Objects");
     this.ExportCollection = [];
     this.AppId = appid;
@@ -12,6 +12,7 @@
         $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
         $('.resetcss').on('click', this.ResetCssFn.bind(this));
         $('input[name=authtype]').on('click', this.authMethodCheckFn.bind(this));
+        this.BgImageUpload();
     }
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
@@ -171,6 +172,12 @@
         $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
         $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
         $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
+        $('#bgImgPreview').attr('imgrefid', this.AppSettings.BotProp.BgImg);
+        if (this.AppSettings.BotProp.BgImg) {
+            $('#bgImgPreview').attr('src', `/images/${this.AppSettings.BotProp.BgImg}.jpg`);
+            $('#bgImgPreview').attr('imgrefid', `${this.AppSettings.BotProp.BgImg}`);
+            $("#imgPrvwCont").show();
+        }
         for (let property in cssobj) {
 
             let html = "";
@@ -218,6 +225,7 @@
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
+        botProperties.BgImg = $('#bgImgPreview').attr('imgrefid');
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
             //let tempobj = {};
@@ -279,6 +287,41 @@
                 $('#' + cssConst + '_txt').val(data);
             }
         });
+    };
+    this.BgImageUpload = function () {
+
+        var bgimg = new EbFileUpload({
+            Type: "image",
+            Toggle: "#bgimg_btn",
+            TenantId: "ViewBagcid",
+            SolutionId: this.Sid,
+            Container: "onboarding_logo",
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.xyz',
+            EnableTag: false,
+            //EnableCrop: true,
+            ResizeViewPort: false //if single and crop
+        });
+
+        bgimg.uploadSuccess = function (fileid) {
+            $('#bot_bg_url').val(`${this.Files[0].name}`);
+            if (this.Files[0] && this.Files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#bgImgPreview').attr('src', e.target.result);
+                    $('#bgImgPreview').attr('imgrefid', fileid);
+                }
+
+                reader.readAsDataURL(this.Files[0]); // convert to base64 string
+            }
+            $("#imgPrvwCont").show();
+          //  $('#bgImgPreview').attr('src', URL.createObjectURL(`${this.Files[0]}`));
+            //const img = document.createElement("img");
+            //img.src = URL.createObjectURL(this.files[i]);
+            //img.height = 60;
+        }
+
     };
 
     this.start_exe();

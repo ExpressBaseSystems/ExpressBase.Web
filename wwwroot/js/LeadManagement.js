@@ -27,6 +27,7 @@
     this.$Age = $("#txtAge");
     this.$Sex = $("#selSex");
     this.$Phone = $("#txtPhone");
+    this.$WhatsApp = $("#txtWhatsApp");
     this.$Profession = $("#txtProfession");
     this.$Email = $("#txtEmail");
     this.$Nri = $("#selNri");
@@ -111,6 +112,7 @@
     //this.imgPageSize = 10;//page size const
     this.isMobileUnique = null;
     this.isPhoneUnique = null;
+    this.isWhatsAppUnique = null;
     //this.isSlickInit = false;
 
     this.init = function () {
@@ -188,8 +190,9 @@
         }.bind(this));
 
         this.$Age.on("focusout", function (evt) {
-            if (parseInt(moment.duration(moment().diff(moment(this.$Dob.val(), "DD-MM-YYYY"))).asYears()) !== parseInt(this.$Age.val()))
-                this.$Dob.val("01-01-" + (moment().year() - parseInt(this.$Age.val())));
+            let age = parseInt(this.$Age.val());
+            if (!isNaN(age) && (parseInt(moment.duration(moment().diff(moment(this.$Dob.val(), "DD-MM-YYYY"))).asYears()) !== age))
+                this.$Dob.val("01-01-" + (moment().year() - age));
         }.bind(this));
 
         this.$ConsultedDate.datetimepicker({ timepicker: false, format: "d-m-Y" });
@@ -253,7 +256,7 @@
                         
         this.$Mobile.on("change", function (e) {
             let newMob = $(e.target).val().trim();
-            if (this.Mode === 1 && this.CustomerInfo["genurl"] === newMob) {
+            if (this.Mode === 1 && (this.CustomerInfo["genurl"] === newMob || this.CustomerInfo["watsapp_phno"] === newMob)) {
                 this.isMobileUnique = true;
             }
             else {
@@ -276,7 +279,7 @@
 
         this.$Phone.on("change", function (e) {
             let newMob = $(e.target).val().trim();
-            if (this.Mode === 1 && this.CustomerInfo["genphoffice"] === newMob) {
+            if (this.Mode === 1 && (this.CustomerInfo["genphoffice"] === newMob || this.CustomerInfo["watsapp_phno"] === newMob)) {
                 this.isPhoneUnique = true;
             }
             else {
@@ -297,18 +300,45 @@
             }
         }.bind(this));
 
+        this.$WhatsApp.on("change", function (e) {
+            let newMob = $(e.target).val().trim();
+            if (this.Mode === 1 && (this.CustomerInfo["genphoffice"] === newMob || this.CustomerInfo["genurl"] === newMob)) {
+                this.isWhatsAppUnique = true;
+            }
+            else {
+                this.isWhatsAppUnique = false;
+                $.ajax({
+                    type: "POST",
+                    url: "../CustomPage/UniqueCheck",
+                    data: { Key: "watsapp_phno", Value: newMob },
+                    success: function (result) {
+                        if (!result) {
+                            EbMessage("show", { Message: 'Entered WhatsApp Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+                            this.isWhatsAppUnique = false;
+                        }
+                        else
+                            this.isWhatsAppUnique = true;
+                    }.bind(this)
+                });
+            }
+        }.bind(this));
+
         if (this.Mode === 1) {
             this.fillCustomerData();
             this.isMobileUnique = true;
             this.isPhoneUnique = true;
+            this.isWhatsAppUnique = true;
         }
         else if (this.Mode === 0) {
             this.$EnDate.val(moment(new Date()).format("DD-MM-YYYY"));
             this.$Closing.val("");
             this.$Doctor.val("");
             this.$LeadOwner.val("");
+            this.$Service.val("");
+            this.$SourceCategory.val("");
             this.isMobileUnique = false;
             this.isPhoneUnique = false;
+            this.isWhatsAppUnique = false;
         }
     };
 
@@ -832,6 +862,7 @@
         this.$Dob.trigger("change");
         this.$Sex.val(this.CustomerInfo["sex"]);///////////
         this.$Phone.val(this.CustomerInfo["genphoffice"]);
+        this.$WhatsApp.val(this.CustomerInfo["watsapp_phno"]);
         this.$Profession.val(this.CustomerInfo["profession"]);
         this.$Email.val(this.CustomerInfo["genemail"]);
         this.$Nri.val(this.CustomerInfo["customertype"]);
@@ -913,6 +944,10 @@
             EbMessage("show", { Message: 'Entered Phone Number is Already Exists', AutoHide: true, Background: '#aa0000' });
             return false;
         }
+        if (!this.isWhatsAppUnique && this.$WhatsApp.val().trim() !== "") {
+            EbMessage("show", { Message: 'Entered WhatsApp Number is Already Exists', AutoHide: true, Background: '#aa0000' });
+            return false;
+        }
         
         this.OutDataList = [];
         this.OutDataList.push({ Key: "accountid", Value: this.AccId });
@@ -924,6 +959,7 @@
         this.pushToList("dob", this.$Dob.val());
         this.pushToList("sex", this.$Sex.val());////////////
         this.pushToList("genphoffice", this.$Phone.val());
+        this.pushToList("watsapp_phno", this.$WhatsApp.val());
         this.pushToList("profession", this.$Profession.val());
         this.pushToList("genemail", this.$Email.val());
         this.pushToList("customertype", this.$Nri.val());

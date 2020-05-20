@@ -8,6 +8,11 @@
 
 @using ExpressBase.Objects;
 
+<script>
+    console.log(Date.now);
+    var t0 = performance.now();
+</script>
+
 <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">   
@@ -38,14 +43,12 @@
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/EbDataTable.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/vue-select.js" asp-append-version=@bApnd></script>
-<script type="text/javascript" src="~/js/splitWindow.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/Eb_UtilityFuncions.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://unpkg.com/vue@2.1.10"></script>
 <script type="text/javascript" src="~/js/Eb_select.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/FormBuilder/InitFormControls.js" asp-append-version=@bApnd></script>
 <link rel="stylesheet" type="text/css" href="~/css/DVBuilder.css" />
 <link rel="stylesheet" href="~/css/ChartStyle.css" asp-append-version=@bApnd>
-@*<link rel="stylesheet" type="text/css" href="~/css/splitWindow.css" />*@
 <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
 <link rel="stylesheet" type="text/css" href="~/css/EbFileViewer/viewer.css" asp-append-version=@bApnd>
 <link rel="stylesheet" href="/resources/demos/style.css">
@@ -68,11 +71,8 @@
 <script type="text/javascript" src="~/js/jQuery Mask Plugin v1.14.9.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
 <script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
-@*<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>*@
 <script type="text/javascript" src="~/js/datatables.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-locationpicker/0.1.12/locationpicker.jquery.min.js"></script>
-@*<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&callback=initMap&libraries=places"></script>*@
-@*<script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&sensor=false&libraries=places'></script>*@
 <script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.3/Chart.js"></script>
@@ -100,6 +100,11 @@
 
 @*nithin*@
 <script src="~/js/FormBuilder/MeetingPicker.js"></script>
+
+<script>
+    var t1 = performance.now();
+    console.log("bot link loading took " + (t1 - t0) + " milliseconds.");
+</script>
 
 <style>
     body {

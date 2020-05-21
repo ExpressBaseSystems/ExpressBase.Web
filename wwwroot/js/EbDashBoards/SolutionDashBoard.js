@@ -18,6 +18,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "MongoDB": "<img class='img-responsive' src='../images/mongodb.png' align='middle' style='height:40px' />",
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
         "ExpertTexting": "<img class='img-responsive' src='../images/Expert Texting.png' align='middle' style='height:26px' />",
+        "TextLocal": "<img class='img- responsive image-vender' src='../images/textlocal_logo.png' style='width:65%' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
         "GoogleMap": "<img class='img- responsive image-vender' src='../images/maps-google.png' style='width: 100 %' />",
@@ -27,7 +28,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "DropBox": "<img class='img- responsive image-vender' src='../images/dropbox-logo.png' style='width:100%' />",
         "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />",
         "Facebook": "<img class='img- responsive image-vender' src='../images/fb_logo.png' style='width:46%' />",
-        "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"
+        "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"        
     }
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
@@ -319,6 +320,24 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }.bind(this));
     };
 
+    this.textLocalAccountSubmit = function (e) {
+        e.preventDefault();
+        var postData = $(e.target).serializeArray();
+        $.ajax({
+            type: 'POST',
+            url: "../ConnectionManager/AddTextLocal",
+            data: postData,
+            beforeSend: function () {
+                $("#textLocalConnection_loder").EbLoader("show", { maskItem: { Id: "#textlocal_mask", Style: { "left": "0" } } });
+            }
+        }).done(function (data) {
+            this.Conf_obj_update(JSON.parse(data));
+            $("#textLocalConnection_loder").EbLoader("hide");
+            EbMessage("show", { Message: "Connection Changed Successfully" });
+            $("#TextLocalConnectionEdit").modal("toggle");
+        }.bind(this));
+    };
+
     this.twilioAccountSubmit = function (e) {
         e.preventDefault();
         var postData = $(e.target).serializeArray();
@@ -347,7 +366,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             url: "../ConnectionManager/AddUnifonic",
             data: postData,
             beforeSend: function () {
-                $("#UnifonicConnection_loder").EbLoader("show", { maskItem: { Id: "#twilio_mask", Style: { "left": "0" } } });
+                $("#UnifonicConnection_loder").EbLoader("show", { maskItem: { Id: "#unifonic_mask", Style: { "left": "0" } } });
             }
         }).done(function (data) {
             this.Conf_obj_update(JSON.parse(data));
@@ -357,7 +376,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
         }.bind(this));
-    };
+    };    
 
     this.CloudnaryConSubmit = function (e) {
         e.preventDefault();
@@ -801,6 +820,22 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             }
         }
     };
+    this.TextLocalinteConfEditr = function (data, INt_conf_id, dt) {
+        var temp = this.Connections.IntegrationsConfig[dt];
+        $('#TextLocalConnectionEdit').modal('toggle');
+        for (var obj in temp) {
+            if (temp[obj].Id == INt_conf_id) {
+                $('#TextLocalInputNickname').val(temp[obj].NickName);
+                $('#TextLocalInputIntConfId').val(temp[obj].Id);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
+                $('#TextLocalInputUsername').val(temp1["UserName"]);
+                $('#TextLocalInputPassword').val(temp1["Password"]);
+                $('#TextLocalInputApi').val(temp1["ApiKey"]);
+                $('#TextLocalInputFrom').val(temp1["From"]);
+                $('#IsSSL').prop('checked', temp1["IsSSL"]);
+            }
+        }
+    };
     this.GoogleMapinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#MapConnectionEdit').modal('toggle');
@@ -1006,7 +1041,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             case "SMS":
                 var SMS = [
                     "ExpertTexting",
-                    "Twilio"
+                    "Twilio",
+                    "TextLocal"
                 ];
                 for (let j = 0; j < SMS.length; j++)
                     if (temp[SMS[j]] !== undefined) {
@@ -1086,10 +1122,12 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             html.push('<img class="img-responsive" src="../images/cloudnary.png" style="height: 25px;" />');
         } else if (type == "SMTP") {
             html.push('<img class="img-responsive" src="../images/svg/email.svg" style="height:50px" />');
-        } else if (type == "SMTP") {
+        } else if (type == "Twilio") {
             html.push('<img class="img-responsive" src="../images/twilio.png" style="height: 50px;" />');
-        } else {
+        } else if (type == "ExpertTexting"){
             html.push('<img class="img-responsive" src="../images/expert texting.png" style="height: 35px;" />');
+        } else if (type == "TextLocal"){
+            html.push('<img class="img-responsive" src="../images/textlocal_logo.png" style="height: 35px;" />');
         }
         return html.join("");
     };
@@ -1109,6 +1147,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $('#TwilioConnectionEdit').modal('toggle');
         } else if (which == "ExpertTexting") {
             $('#ExpertTextingConnectionEdit').modal('toggle');
+        } else if (which == "TextLocal") {
+            $('#TextLocalConnectionEdit').modal('toggle');
         }
     };
 
@@ -1273,6 +1313,11 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         options.items.Edit = { name: "Edit" };
                 }
                 else if ($trigger.hasClass('ExpertTextingedit')) {
+                    options.items.SMS = { name: "Set as SMS" },
+                        options.items.Delete = { name: "Remove" },
+                        options.items.Edit = { name: "Edit" };
+                }
+                else if ($trigger.hasClass('TextLocaledit')) {
                     options.items.SMS = { name: "Set as SMS" },
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
@@ -1876,6 +1921,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#TwilioConnectionSubmit").on("submit", this.twilioAccountSubmit.bind(this));
         $("#UnifonicConnectionSubmit").on("submit", this.UnifonicAccountSubmit.bind(this));
         $("#ExpertConnectionSubmit").on("submit", this.expertAccountSubmit.bind(this));
+        $("#TextLocalConnectionSubmit").on("submit", this.textLocalAccountSubmit.bind(this));
         $("#CloudnaryConnectionSubmit").on("submit", this.CloudnaryConSubmit.bind(this));
         $("#FtpConnectionSubmit").on("submit", this.ftpOnSubmit.bind(this));
         $("#MapsConnectionSubmit").on("submit", this.mapOnSubmit.bind(this));

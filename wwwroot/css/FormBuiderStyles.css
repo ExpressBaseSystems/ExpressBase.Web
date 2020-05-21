@@ -999,6 +999,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 2px;*/
 }
 
+.DDdiv .dataTable tbody tr td {
+    padding: 8px 10px !important;
+}
+
 .form-buider-form .tab-btn-cont {
     padding: 0.75rem 0 0 0;
     border: solid 4px #dddddd;
@@ -2348,6 +2352,7 @@ input.locinp {
     font-size: 16px;
     transition-duration: 0.2s;
 }
+
 .loc-close:hover {
     opacity: 1;
 }
@@ -2355,7 +2360,8 @@ input.locinp {
 .locinp-cont:hover .loc-close {
     display: inline-block;
 }
-    #cpatchaTextBox {
+
+#cpatchaTextBox {
     margin-bottom: 10px;
     width: 70%;
     margin-left: 15%;

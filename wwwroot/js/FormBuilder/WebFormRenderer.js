@@ -674,6 +674,7 @@ const WebFormRender = function (option) {
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
             this.DynamicTabObject.disposeDynamicTab();
+            this.reSetMode(this.afterSavemodeS);
             this.RefreshFormControlValues(this.EditModeFormData);
             this.afterSaveAction();
             //window.parent.closeModal();
@@ -1472,6 +1473,22 @@ const WebFormRender = function (option) {
             this.Mode.isPreview = true;
     };
 
+    this.reSetMode = function (mode) {
+        this.Mode.isView = false;
+        this.Mode.isEdit = false;
+        this.Mode.isNew = false;
+        this.Mode.isPrefill = false;
+        this.Mode.isFail = false;
+        this.Mode.isPreview = false;
+
+        if (mode === "view")
+            this.Mode.isView = true;
+        else if (mode === "new")
+            this.Mode.isNew = true;
+        else if (mode === "edit")
+            this.Mode.isEdit = true;
+    };
+
     this.resetRowIds = function (multipleTables) {
         multipleTables[this.MasterTable][0].RowId = 0;// foem data
 
@@ -1532,7 +1549,8 @@ const WebFormRender = function (option) {
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
-        this.afterSaveAction = this.getAfterSaveActionFn(getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase());
+        this.afterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
+        this.afterSaveAction = this.getAfterSaveActionFn(this.afterSavemodeS);
         this.setMode();
 
 

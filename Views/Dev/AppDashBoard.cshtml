@@ -243,12 +243,13 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-sm-3 col-md-2 col-lg-2 botSetng">
+
+                                        <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label>Theme Colour:</label>
-                                            <input type="color" class="form-control botclr " id="bot_tm_color" value="@bot_tm_color">
+                                            <input type="color" class="form-control botclr " id="bot_tm_color" style=" width: 20%;" value="@bot_tm_color">
                                         </div>
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
-                                            <div class="form-check mrg10btm" >
+                                            <div class="form-check mrg10btm">
                                                 <label>
                                                     <input class="form-check-input" name="botheadr" type="checkbox" value="1" id="headerIcon">
                                                     Bot header icon
@@ -262,33 +263,82 @@
                                             </div>
                                         </div>
 
-                                            <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
-                                                <div class="modal-dialog" style="width:445px">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header" style="">
-                                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                                            <div>
-                                                                <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Bot DP Clip Art</h4> </div>
-                                                            </div>
+                                        <div id="AppDB_BotDemoDp" class="modal fade" role="dialog">
+                                            <div class="modal-dialog" style="width:445px">
+                                                <div class="modal-content">
+                                                    <div class="modal-header" style="">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <div>
+                                                            <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Bot DP Clip Art</h4> </div>
                                                         </div>
-                                                        <div class="modal-body" style="height:185px">
-                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp1.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp1.png')"></div>
-                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp2.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp2.png')"></div>
-                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp3.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp3.png')"></div>
-                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp4.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp4.png')"></div>
-                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp5.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp5.png')"></div>
-                                                            <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp6.png')"></div>
-                                                        </div>
-                                                        <div class="modal-footer" style="">
-                                                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                                        </div>
+                                                    </div>
+                                                    <div class="modal-body" style="height:185px">
+                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp1.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp1.png')"></div>
+                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp2.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp2.png')"></div>
+                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp3.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp3.png')"></div>
+                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp4.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp4.png')"></div>
+                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp5.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp5.png')"></div>
+                                                        <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" onclick="clickOnDemoDp('../images/demobotdp6.png')"></div>
+                                                    </div>
+                                                    <div class="modal-footer" style="">
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-
-
                                     </div>
+
+                                    <div class="  col-md-6 col-lg-6  col-sm-12 botappConfig">
+                                        <div class=" row botSetng">
+
+                                            <div class="col">
+                                                <label>Background Type:</label>
+                                                <div class="col">
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="bgradio" id="rdo_bg_clr" value="bg_clr" checked>Background Color
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="bgradio" id="rdo_bg_grdnt" value="bg_grdnt">Background Gradient
+                                                    </label>
+                                                    <label class="radio-inline">
+                                                        <input type="radio" name="bgradio" id="rdo_bg_img" value="bg_img">Background Image
+                                                    </label>
+                                                </div>
+
+
+                                                <div class="col">
+                                                    <div class="col-md-12 col-lg-12  col-sm-12 bg_cont" hidden id="bg_clr">
+                                                        <div class="col" style=" width: 25%;">
+                                                            <input type="color" class="form-control  " id="bot_bg_clr" value="#ffffff">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col bg_cont" hidden id="bg_grdnt">
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" id="bot_bg_grdnt" aria-describedby="bg_grdnt_hlp"  placeholder="eg: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%)">
+                                                            <small id="bg_grdnt_hlp" class="form-text text-muted">Enter only gradient value </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col bg_cont" hidden id="bg_img">                                                        
+                                                        <div class=" input-group">
+                                                            <input type="text" class="form-control " id="bot_bg_url">
+                                                            <div class="input-group-btn">
+                                                                <button id="bgimg_btn" class="btn btn-info">Browse</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col imgPrvwCont" hidden id="imgPrvwCont">
+                                                            <img src="#" id="bgImgPreview" class="imgPrevw">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
 
                                 <div class="tab-pane botcssConfig" id="botcss" role="tabpanel" aria-labelledby="">
                                     <div class="col-md-2 col-lg-2 col-sm-3 cssconfig">
@@ -400,11 +450,11 @@
                                 <div class="tab-pane active" id="botconfig" role="tabpanel" aria-labelledby="">
                                     <div class="  col-md-6 col-lg-6  col-sm-12 botappConfig">
                                         @*<div class="col-sm-12 col-md-12 col-lg-12 botSetng">
-                                            <label>Bot Name: </label>
-                                            <div>
-                                                <input class="form-control " type="text" id="bot_name_txt" value="@bot_name_txt">
-                                            </div>
-                                        </div>*@
+                                                <label>Bot Name: </label>
+                                                <div>
+                                                    <input class="form-control " type="text" id="bot_name_txt" value="@bot_name_txt">
+                                                </div>
+                                            </div>*@
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label>Welcome Message: </label>
                                             <textarea class="form-control bot_wcmsg" rows="2" id="bot_wc_msg">@bot_wc_msg</textarea>
@@ -658,6 +708,7 @@
        let appinfo= @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppInfo));
     var adash = new AppDashBoard(@appinfo.Id,@appinfo.AppType, appsetting,appinfo);
 
+        $('#bgImgPreview').attr('onerror',`this.onerror=null;this.src='/images/imageplaceholder.png'`);
     function clickOnDemoDp(path) {
         $('#AppDB_BotDemoDp').modal('hide');
         $('#bot_dp_url').val(path);

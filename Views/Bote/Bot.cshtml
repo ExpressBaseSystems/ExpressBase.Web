@@ -15,7 +15,7 @@
 
 <link href="~/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="~/css/Bootstrap_JQuery/bootstrap.min.css" />
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">   
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap">
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick-theme.css" />
 <link rel="stylesheet" type="text/css" href="~/css/jquery.datetimepicker.css" asp-append-version=@bApnd>
 <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />
@@ -110,7 +110,7 @@
     body {
         margin: 0;
         padding: 0px;
-         background: var(--eb-bot-bg-color,#ffffff);
+        background: var(--eb-bot-bg-color,#ffffff);
     }
 </style>
 
@@ -147,10 +147,20 @@
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", (settings.ThemeColor || "#055c9b"));
        // html.style.setProperty("--eb-bot-bg-color", "red");
-        if (settings.BotProp.BgImg) {
-             html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.BgImg}.jpg") no-repeat center`);
+
+
+        if (settings.BotProp.Bg_value) {
+           let bgtyp=settings.BotProp.Bg_type ;
+            if (bgtyp === 'bg_clr') {
+              html.style.setProperty("--eb-bot-bg-color", settings.BotProp.Bg_value);
+            }
+            else if (bgtyp === 'bg_grdnt') {
+              html.style.setProperty("--eb-bot-bg-color", settings.BotProp.Bg_value);
+            } else if (bgtyp === 'bg_img') {
+                html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
+            }
         }
-       
+
         chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.ServiceUrl', ServerEventUrl);
 
         $.get("https://ipinfo.io", function (response) {
@@ -191,7 +201,7 @@
                     cookie: true,  // enable cookies to allow the server to access
                     // the session
                     xfbml: true,  // parse social plugins on this page
-                    version:settings.Authoptions.FbAppVer                     
+                    version:settings.Authoptions.FbAppVer
                     //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
                 });
                 FB.getLoginStatus(function (response) {

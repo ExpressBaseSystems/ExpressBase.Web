@@ -68,7 +68,7 @@
     //division for header part of chat bot ie for heading(d.ebbotName), close btn,maximize window (above iframe)......(2)
     var chatHead = d.createElement("div");
     chatHead.className = "eb-chat-head eb__-bot___-eb-chat-head";
-
+    chatHead.style.visibility = 'hidden';
     if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderIcon : d.botProp.HeaderIcon) {
         var headericonCont = d.createElement("div");
         headericonCont.className = "headericonCont eb__-bot___-headericonCont";
@@ -153,11 +153,16 @@
     closeDiv.id = "closediv" + AppId;
     closeDiv.innerHTML = '&#10006;';
     chatHead.appendChild(closeDiv);
-    
+
+    ss.onload = function () {
+        chatHead.style.visibility = 'visible';
+    }
     //???
     iframe.onload = function (e) {
         iframe.style.visibility = 'visible';
     };
+
+    
 
     //to close chatbot
     closeDiv.onclick = function () {

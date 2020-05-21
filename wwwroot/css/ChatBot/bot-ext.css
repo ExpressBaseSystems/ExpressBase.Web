@@ -60,7 +60,7 @@ width: 100%;*/
 
 .loderdiv {
     display: flex;
-    background-color: blueviolet;
+    background-color: #ffffff;
     background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
     background-size: 30%;
     flex: 1 1 auto;

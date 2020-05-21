@@ -3,6 +3,7 @@
 body {
     --botbgclr: transparent;
     --bgclrwhite: white;
+    --botfilter_btn: opacity(0.7);
 }
 .eb-chat-cont {
     display: block;
@@ -311,7 +312,7 @@ body {
 
     .formname-btn:hover {
         /*filter: hue-rotate(180deg);*/
-        filter: brightness(1.6);
+        filter: var(--botfilter_btn);
         color: var(--botThemeColor);
     }
 
@@ -342,7 +343,7 @@ body {
 
     .formname-btn_botformlist:hover {
         /*filter: hue-rotate(180deg);*/
-        filter: brightness(1.6);
+        filter: var(--botfilter_btn);
         color: var(--botThemeColor);
         box-shadow: 0px 0px 5px 1px #dedfe1;
     }
@@ -409,7 +410,7 @@ body {
 
     .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
         /*filter: hue-rotate(60deg);*/
-        filter: brightness(1.6);
+        filter:var(--botfilter_btn);
         color: white;
     }
 

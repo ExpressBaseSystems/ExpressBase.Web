@@ -172,11 +172,29 @@
         $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
         $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
         $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
-        $('#bgImgPreview').attr('imgrefid', this.AppSettings.BotProp.BgImg);
-        if (this.AppSettings.BotProp.BgImg) {
-            $('#bgImgPreview').attr('src', `/images/${this.AppSettings.BotProp.BgImg}.jpg`);
-            $('#bgImgPreview').attr('imgrefid', `${this.AppSettings.BotProp.BgImg}`);
-            $("#imgPrvwCont").show();
+        $('#bgImgPreview').attr('imgrefid', this.AppSettings.BotProp.Bg_value);
+        if (this.AppSettings.BotProp.Bg_value) {
+            if (this.AppSettings.BotProp.Bg_type === 'bg_clr') {
+                $("#rdo_bg_clr").prop("checked", true);
+                $('#bot_bg_clr').val(`${this.AppSettings.BotProp.Bg_value}`);
+                $('#bg_clr').show();
+            }
+            else if (this.AppSettings.BotProp.Bg_type === 'bg_grdnt') {
+                $("#rdo_bg_grdnt").prop("checked", true);
+                $('#bot_bg_grdnt').val(`${this.AppSettings.BotProp.Bg_value}`);
+                $('#bg_grdnt').show();
+            }
+            else if (this.AppSettings.BotProp.Bg_type === 'bg_img') {
+                $("#rdo_bg_img").prop("checked", true);
+                $('#bgImgPreview').attr('src', `/images/${this.AppSettings.BotProp.Bg_value}.jpg`);
+                $('#bgImgPreview').attr('imgrefid', `${this.AppSettings.BotProp.Bg_value}`);
+                $("#imgPrvwCont").show();
+                $('#bg_img').show();
+            }
+        }
+        else {
+            $("#rdo_bg_clr").prop("checked", true);
+            $('#bg_clr').show();
         }
         for (let property in cssobj) {
 
@@ -199,6 +217,7 @@
         let cssConstObj = {};
         let authOptions = {};
         let botProperties = {};
+        let bgtyp = '';
         let authcheck = $("input[name=authtype]:checked").length;
         if (!authcheck) {
             EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
@@ -225,7 +244,18 @@
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
-        botProperties.BgImg = $('#bgImgPreview').attr('imgrefid');
+        
+        bgtyp = $('input[name="bgradio"]:checked').val();
+        botProperties.Bg_type = bgtyp;
+        if (bgtyp === 'bg_clr') {
+            botProperties.Bg_value = $('#bot_bg_clr').val();
+        }
+        else if (bgtyp === 'bg_grdnt') {
+            botProperties.Bg_value = $('#bot_bg_grdnt').val();
+        } else if (bgtyp === 'bg_img') {
+            botProperties.Bg_value = $('#bgImgPreview').attr('imgrefid');
+        }
+    
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
             //let tempobj = {};
@@ -246,11 +276,13 @@
         appSettings["CssContent"] = cssConstObj;
         appSettings["Authoptions"] = authOptions;
         appSettings["BotProp"] = botProperties;
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: "POST",
             url: "../Dev/UpdateAppSettings",
             data: { id: this.AppId, type: this.AppType, settings: JSON.stringify(appSettings) },
             success: function (data) {
+                $("#eb_common_loader").EbLoader("hide");
                 if (data > 0)
                     EbMessage("show", { Message: "Settings Updated Successfully" });
                 else
@@ -323,6 +355,12 @@
         }
 
     };
+    $("input[name='bgradio']").click(function () {
+        var bg = $(this).val();
+
+        $("div.bg_cont").hide();
+        $("#" + bg).show();
+    });
 
     this.start_exe();
     this.init();

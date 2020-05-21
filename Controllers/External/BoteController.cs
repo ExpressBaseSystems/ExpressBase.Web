@@ -420,7 +420,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 		}
 
 		[HttpGet("Bots")]
-		public IActionResult Bots()
+		public IActionResult Bots(string bt)
 		{
 			//var host = this.HttpContext.Request.Host;
 			//string[] hostParts = host.Host.Split(CharConstants.DOT);
@@ -429,7 +429,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			//    return RedirectToAction("SignIn", "Common");
 			//}
 			this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
-			var BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { });
+			var BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest {Id_lst= bt });
 			ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
 			return View();
 		}

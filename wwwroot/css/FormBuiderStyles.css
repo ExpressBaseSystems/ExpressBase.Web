@@ -999,6 +999,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 2px;*/
 }
 
+.DDdiv .dataTable tbody tr td {
+    padding: 8px 10px !important;
+}
+
 .form-buider-form .tab-btn-cont {
     padding: 0.75rem 0 0 0;
     border: solid 4px #dddddd;
@@ -1008,27 +1012,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
     .form-buider-form .tab-btn-cont > .nav.nav-tabs {
         min-height: 39px;
-    }
-
-.msg-cont, .req-cont {
-    font-size: 11.2px;
-    position: absolute;
-    /*right: 1px;*/
-    margin-top: 3px;
-    animation-duration: 0.3s;
-    z-index: 1;
-    background-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 2px 3px 0px white;
-}
-
-.msg-cont {
-    position: relative;
-}
-
-    .msg-cont > label, .req-cont > label {
-        font-weight: normal !important;
-        margin-bottom: 0 !important;
-        padding-left: 2px;
     }
 
 .web-form-wraper .Eb-ctrlContainer {
@@ -2348,6 +2331,7 @@ input.locinp {
     font-size: 16px;
     transition-duration: 0.2s;
 }
+
 .loc-close:hover {
     opacity: 1;
 }
@@ -2355,7 +2339,8 @@ input.locinp {
 .locinp-cont:hover .loc-close {
     display: inline-block;
 }
-    #cpatchaTextBox {
+
+#cpatchaTextBox {
     margin-bottom: 10px;
     width: 70%;
     margin-left: 15%;

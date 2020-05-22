@@ -173,7 +173,8 @@
         $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
         $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
         $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
-        $('#bgImgPreview').attr('imgrefid', this.AppSettings.BotProp.Bg_value);
+        $('#ebfont_size').val(this.AppSettings.BotProp.AppFontSize);
+       
         if (this.AppSettings.BotProp.Bg_value) {
             if (this.AppSettings.BotProp.Bg_type === 'bg_clr') {
                 $("#rdo_bg_clr").prop("checked", true);
@@ -260,8 +261,8 @@
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
+        botProperties.AppFontSize = $('#ebfont_size').val();
         botProperties.AppFont = $('#ebfont_lst :selected').val();
-        console.log(botProperties.AppFont);
         bgtyp = $('input[name="bgradio"]:checked').val();
         botProperties.Bg_type = bgtyp;
         if (bgtyp === 'bg_clr') {

@@ -537,3 +537,14 @@
 span[iblock] .selected-tag:empty::before {
     content: '--';
 }
+
+.req-cont {
+    position:relative;
+}
+
+.req-cont > label {
+    position: absolute;
+    font-weight: 500;
+    top: 3px;
+    z-index: 1;
+}

@@ -400,19 +400,17 @@ body {
     }
 
 .addrow-btn {
-    box-shadow: inset 0px 1px 0px 0px #a4e271;
-    background: linear-gradient(to bottom,#00D036 5%, #3ebf09 100%);
-    background-color: #00D036;
-    border: 1px solid #c1c1c1;
-    border-bottom: none;
     display: inline-block;
     cursor: pointer;
     color: white;
-    padding: 2px 10px;
-    /*text-shadow: 0px 1px 0px #528009;*/
+    padding: 3px 11.5px;
     position: absolute;
+    text-shadow: none;
     top: 3.5px;
+    border-radius: 3px 5px 0 0;
+    letter-spacing: 0.2px;
     right: 0;
+    background-color: #00bd31 !important;
 }
 
     .addrow-btn:hover {

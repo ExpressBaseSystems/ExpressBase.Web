@@ -961,6 +961,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 3px 0px 0 6px;
 }
 
+[tdcoltype=DGCreatedByColumn] .tdtxt {
+    padding: 0;
+}
+
 [tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
     /*padding: 0 0px 0 5px;*/
 }

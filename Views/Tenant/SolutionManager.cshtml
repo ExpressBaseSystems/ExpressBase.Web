@@ -45,6 +45,7 @@
     Image_url.Add("MongoDB", "<img class='img-responsive' src='../images/MongodB.png' align='middle' style='height:40px' />");
     Image_url.Add("Cloudinary", "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />");
     Image_url.Add("ExpertTexting", "<img class='img-responsive' src='../images/expert texting.png' align='middle' style='height:26px' />");
+    Image_url.Add("TextLocal", "<img class='img-responsive' src='../images/textlocal_logo.png' align='middle' style='height:26px' />");
     Image_url.Add("Twilio", "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />");
     Image_url.Add("SMTP", "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />");
 
@@ -217,6 +218,16 @@
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="ExpertTextingConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/Expert Texting.png" style="width:85%" />
+                                                <div class="image-add">
+                                                    <i class="fa fa-plus-circle" aria-hidden="true"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="textlocal" class="connection_wrap_outer" data-toggle="modal" data-target="#TextLocalConnectionEdit" data-whatever="TextLocal">
+                                        <div class="connection_wrap w-100">
+                                            <div class="connection_wrap_header w-100 image-hover" id="TextLocalConnection_config">
+                                                <img class="img-responsive image-vender" src="~/images/textlocal_logo.png" style="width:55%" />
                                                 <div class="image-add">
                                                     <i class="fa fa-plus-circle" aria-hidden="true"></i>
                                                 </div>
@@ -938,6 +949,79 @@
                         </div>
                         <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="ExpertInputIntConfId" name="Id" value="0" />
+                    </div>
+                </div>
+                <div class="modal-footer border-style-none">
+                    <button type="submit" class="ebbtn eb_btnblue eb_btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="TextLocalConnectionEdit" class="modal fade input-clear" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" id="textlocal_mask">
+            <form id="TextLocalConnectionSubmit" method="post" data-toggle="validator">
+                <div class="modal-header relative border-style-none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">TextLocal Accounts</h4>
+                    <div id="textLocalConnection_loder" class="dbConnection_loder"></div>
+                </div>
+                <div class="modal-body" style="display:flex">
+                    <div class="vender-data-holder" style="width:25%;">
+                        <img class='img-responsive' src='~/images/textlocal_logo.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+                        <div class="connection-vender-desp">
+                            <span>Textlocalhas allowed over 165,000 users to communicate via SMS, MMS and Mobile Web. Its services include inbound and outbound SMS and MMS communications using a web-based control panel, SMS Gateway and MMS API, mobile web page creation, mobile forms and surveys, SMS attachments and mobile vouchers and loyalty cards.</span>
+                        </div>
+                    </div>
+                    <div class="connection-data-holder">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nick Name</label>
+                                    <input id="TextLocalInputNickname" name="NickName" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input name="DatabaseVendor" value="TextLocal" class="form-control Vendor " type="hidden" readonly />
+                                <div class="form-group">
+                                    <label>Sender Number</label>
+                                    <input id="TextLocalInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Api Key</label>
+                                    <input id="TextLocalInputApi" name="ApiKey" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Username</label>
+                                    <input id="TextLocalInputUsername" name="UserName" class="form-control Inputclear eb_input-h" type="text" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label>Password</label>
+                                    <div class="input-group eb-inputWicon" style="padding:0;">
+                                        <input id="TextLocalInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear eb_input-h" type="password" required />
+                                        <div class='input-group-addon' id="ShowPasswordd">
+                                            <i class="fa fa-eye " aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
+                        <input type="hidden" class="Inputclear IntConfId" id="TextLocalInputIntConfId" name="Id" value="0" />
                     </div>
                 </div>
                 <div class="modal-footer border-style-none">

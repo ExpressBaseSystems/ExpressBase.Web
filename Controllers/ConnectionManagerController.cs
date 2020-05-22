@@ -56,12 +56,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        //[Microsoft.AspNetCore.Mvc.Route("/sampletest")]
-        //public IActionResult SampleTest()
-        //{
-        //    this.ServiceClient.Post(new sampletest { });
-        //    return View("test");
-        //}
+        [Microsoft.AspNetCore.Mvc.Route("/sampletest")]
+        public IActionResult SampleTest()
+        {
+            this.ServiceClient.Post(new sampletest { });
+            return View("test");
+        }
 
         // GET: /<controller>/
 
@@ -776,6 +776,34 @@ namespace ExpressBase.Web.Controllers
                 return null;
             }
         }
+
+        public string AddTextLocal()
+        {
+            AddTLResponse res = new AddTLResponse();
+            try
+            {
+                var req = this.HttpContext.Request.Form;
+
+                EbTextLocalConfig con = new EbTextLocalConfig
+                {
+                    UserName = req["UserName"],
+                    From = req["From"],
+                    Password = req["Password"],
+                    ApiKey = req["ApiKey"],
+                    Id = Convert.ToInt32(req["Id"]),
+                    NickName = req["nickname"]
+                };
+                res = this.ServiceClient.Post<AddTLResponse>(new AddTLRequest { Config = con,/* IsNew = true,*/  SolnId = req["SolutionId"] });
+                GetSolutioInfoResponses resp = this.ServiceClient.Get<GetSolutioInfoResponses>(new GetSolutioInfoRequests { IsolutionId = req["SolutionId"] });
+                return JsonConvert.SerializeObject(resp);
+            }
+            catch (Exception e)
+            {
+                res.ResponseStatus.Message = e.Message;
+                return null;
+            }
+        }
+
         public string AddMongo()
         {
             AddMongoResponse res = new AddMongoResponse();

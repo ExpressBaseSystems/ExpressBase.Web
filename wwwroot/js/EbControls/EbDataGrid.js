@@ -1630,6 +1630,7 @@
         this.$gridCont.attr("is-disabled", "false");
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).show(300);
+        this.$addRowBtn.removeClass("eb-disablebtn");
     };
 
     this.disable = function () {
@@ -1637,6 +1638,7 @@
         this.$gridCont.attr("is-disabled", "true");
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).hide(300);
+        this.$addRowBtn.addClass("eb-disablebtn");
     };
 
     this.defineRowCount = function () {

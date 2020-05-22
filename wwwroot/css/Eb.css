@@ -365,6 +365,7 @@
 .v-select {
     flex-grow: 1;
     display: flex;
+    max-width: calc(100% - 27px); /*substracting search icon width*/
 }
 
 [eb-form="true"][mode="view"] .searchable [type="search"] {
@@ -453,12 +454,14 @@
     background-color: white;
     display: flex;
     flex-grow: 1;
+    width:100%;
 }
 
     .search-block > .input-group {
         display: flex;
         align-items: stretch;
         flex: 1 0;
+        width: 100%;
     }
 
 .v-select .selected-tag, .tdtxt .selected-tag {

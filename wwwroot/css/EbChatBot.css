@@ -4,6 +4,7 @@ body {
     --botbgclr: transparent;
     --bgclrwhite: white;
     --botfilter_btn: opacity(0.7);
+    /*--bot_fontfamily: Open Sans;*/
 }
 .eb-chat-cont {
     display: block;
@@ -70,7 +71,8 @@ body {
 .msg-wraper-user, .msg-wraper-bot {
     position: relative;
     word-break: break-word;
-    font-family: Open Sans;
+    /*font-family: Open Sans;*/
+    /*font-family:var(--bot_fontfamily);*/
     position: relative;
     display: inline-block;
     text-align: left;
@@ -605,7 +607,8 @@ body {
     background-repeat: no-repeat !important;
     border-radius: 4px !important;
     color: white !important;
-    font-family: "Merriweat!important;er Sans", sans-serif;
+    /*font-family: var(--bot_fontfamily)*/
+    /*font-family: "Merriweat!important;er Sans", sans-serif;*/
     font-size: 14px !important;
     border-bottom: 2px solid transparent !important;
     border-left: 1px solid transparent !important;

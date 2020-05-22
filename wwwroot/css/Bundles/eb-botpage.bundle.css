@@ -9299,6 +9299,8 @@ input.locinp {
 body {
     --botbgclr: transparent;
     --bgclrwhite: white;
+    --botfilter_btn: opacity(0.7);
+    /*--bot_fontfamily: Open Sans;*/
 }
 .eb-chat-cont {
     display: block;
@@ -9365,7 +9367,8 @@ body {
 .msg-wraper-user, .msg-wraper-bot {
     position: relative;
     word-break: break-word;
-    font-family: Open Sans;
+    /*font-family: Open Sans;*/
+    /*font-family:var(--bot_fontfamily);*/
     position: relative;
     display: inline-block;
     text-align: left;
@@ -9607,7 +9610,7 @@ body {
 
     .formname-btn:hover {
         /*filter: hue-rotate(180deg);*/
-        filter: brightness(1.6);
+        filter: var(--botfilter_btn);
         color: var(--botThemeColor);
     }
 
@@ -9638,7 +9641,7 @@ body {
 
     .formname-btn_botformlist:hover {
         /*filter: hue-rotate(180deg);*/
-        filter: brightness(1.6);
+        filter: var(--botfilter_btn);
         color: var(--botThemeColor);
         box-shadow: 0px 0px 5px 1px #dedfe1;
     }
@@ -9705,7 +9708,7 @@ body {
 
     .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
         /*filter: hue-rotate(60deg);*/
-        filter: brightness(1.6);
+        filter:var(--botfilter_btn);
         color: white;
     }
 
@@ -9900,7 +9903,8 @@ body {
     background-repeat: no-repeat !important;
     border-radius: 4px !important;
     color: white !important;
-    font-family: "Merriweat!important;er Sans", sans-serif;
+    /*font-family: var(--bot_fontfamily)*/
+    /*font-family: "Merriweat!important;er Sans", sans-serif;*/
     font-size: 14px !important;
     border-bottom: 2px solid transparent !important;
     border-left: 1px solid transparent !important;

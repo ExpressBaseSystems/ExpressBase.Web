@@ -111,6 +111,7 @@
         margin: 0;
         padding: 0px;
         background: var(--eb-bot-bg-color,#ffffff);
+        font-family: var(--bot_fontfamily,Open Sans);
     }
 </style>
 
@@ -146,9 +147,11 @@
         console.log("bot loaded");
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", (settings.ThemeColor || "#055c9b"));
-       // html.style.setProperty("--eb-bot-bg-color", "red");
 
-
+        if (settings.BotProp.AppFont) {
+             $("head").append("<link href='https://fonts.googleapis.com/css?family=" + settings.BotProp.AppFont + "' rel='stylesheet' type='text/css'>");
+        html.style.setProperty("--bot_fontfamily", settings.BotProp.AppFont);
+        }
         if (settings.BotProp.Bg_value) {
            let bgtyp=settings.BotProp.Bg_type ;
             if (bgtyp === 'bg_clr') {

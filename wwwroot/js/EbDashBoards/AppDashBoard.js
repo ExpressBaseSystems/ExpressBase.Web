@@ -1,10 +1,11 @@
-﻿var AppDashBoard = function (appid, apptype, appsettings, appinfo) {
+﻿var AppDashBoard = function (appid, apptype, appsettings, appinfo, font_lst) {
     this.objectTab = $("#Objects");
     this.ExportCollection = [];
     this.AppId = appid;
     this.AppType = apptype;
     this.AppSettings = appsettings;
     this.AppInfo = appinfo;
+    this.EbFontLst = font_lst;
 
 
     this.init = function () {
@@ -161,7 +162,7 @@
     }
     //for bot
     this.botConfigFn = function () {
-
+        let fnthtml = "";
         let cssobj = this.AppSettings.CssContent;
         $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
         $('#headerIcon').attr('checked', this.AppSettings.BotProp.HeaderIcon);
@@ -196,6 +197,21 @@
             $("#rdo_bg_clr").prop("checked", true);
             $('#bg_clr').show();
         }
+        if (this.EbFontLst.length>0) {
+            for (let i = 0; i < this.EbFontLst.length; i++) {
+                if (this.AppSettings.BotProp.AppFont === this.EbFontLst[i].CSSFontName) {
+                    $('#ebfont_lst :selected').removeAttr('selected');
+                    fnthtml += `<option selected="selected" value="${this.EbFontLst[i].CSSFontName}">${this.EbFontLst[i].SystemFontName}</option>`;
+                }
+                else {
+                    fnthtml += `<option value="${this.EbFontLst[i].CSSFontName}">${this.EbFontLst[i].SystemFontName}</option>`;
+                }
+               
+            }
+            $('#ebfont_lst').append(fnthtml);
+        }
+        
+
         for (let property in cssobj) {
 
             let html = "";
@@ -244,7 +260,8 @@
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
-        
+        botProperties.AppFont = $('#ebfont_lst :selected').val();
+        console.log(botProperties.AppFont);
         bgtyp = $('input[name="bgradio"]:checked').val();
         botProperties.Bg_type = bgtyp;
         if (bgtyp === 'bg_clr') {

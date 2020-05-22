@@ -870,15 +870,21 @@
         //}        
     };
     this.SysCreatedBy = function (ctrl) {
+        let $input = $("#" + ctrl.EbSid_CtxId);
         //if (ctrl.DisplayMember === 1) {
         //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
         //}
         //else {
         let usrId = ebcontext.user.UserId;
-        $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
-        $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
+        $input.attr('data-id', usrId);
+        $input.text(ebcontext.user.FullName);
         let usrImg = '/images/dp/' + usrId + '.png';
         $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
+
+        if (ctrl.constructor.name === "DGCreatedByColumn") {
+            let width = $(`#td_${ctrl.EbSid_CtxId}`).width() - 34;
+            $input.css("width", width + "px");
+        }
         //}
     };
     this.SysModifiedBy = function (ctrl) {

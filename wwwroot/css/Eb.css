@@ -343,8 +343,13 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    height: 100%;
     box-shadow: inherit;
     align-items: stretch;
+}
+
+.ps-cont {
+    height: 100%;
 }
 
 .ps-srch {
@@ -473,8 +478,8 @@
     border-radius: 18px !important;
     padding-right: 30px !important;
     transition-duration: 0.2s;
-    outline:none;
-    cursor:default;
+    outline: none;
+    cursor: default;
 }
 
     .v-select .selected-tag .close {

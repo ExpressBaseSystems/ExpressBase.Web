@@ -189,7 +189,7 @@ const WebFormRender = function (option) {
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3 + disables disabled controls
         this.initDGs();
         this.initReviewCtrl();
 

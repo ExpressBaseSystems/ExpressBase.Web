@@ -1,5 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
+    this.DGcols = this.ctrl.Controls.$values;
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
@@ -691,7 +692,7 @@
     };
 
     this.getTdWidth = function (i, col) {
-        return (i === 0 ? col.Width + 0.1 : col.Width) + "%";
+        return (col.Width <= 0 || (this.DGcols[this.DGcols.length - 1] === col)) ? "auto" : (i === 0 ? col.Width : col.Width) + "%";
     };
 
     this.getAggTrHTML = function () {

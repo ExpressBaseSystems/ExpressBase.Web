@@ -78,7 +78,8 @@ body {
     text-align: left;
     color: #555;
     padding: 4px 10px;
-    font-size: 125%;
+    /*font-size: 125%;*/
+    font-size: var(--bot_fontsize,14px);
 }
 
 .msg-wraper-user {

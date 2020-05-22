@@ -6,7 +6,21 @@
     flex-flow: row-reverse;
     padding-bottom: 10px;
 }
+.pad10 {
+    padding: 10px
+}
 
+.pad0 {
+    padding: 0px
+}
+
+.mrg10 {
+    margin: 10px
+}
+
+.mrg0 {
+    margin: 0px
+}
 .botappDashboard {
     padding: 0px;
 }

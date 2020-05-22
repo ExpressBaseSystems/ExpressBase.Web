@@ -112,6 +112,7 @@
         padding: 0px;
         background: var(--eb-bot-bg-color,#ffffff);
         font-family: var(--bot_fontfamily,Open Sans);
+        font-size: var(--bot_fontsize,14px);
     }
 </style>
 
@@ -151,6 +152,9 @@
         if (settings.BotProp.AppFont) {
              $("head").append("<link href='https://fonts.googleapis.com/css?family=" + settings.BotProp.AppFont + "' rel='stylesheet' type='text/css'>");
         html.style.setProperty("--bot_fontfamily", settings.BotProp.AppFont);
+        }
+        if (settings.BotProp.AppFontSize) {           
+        html.style.setProperty("--bot_fontsize", settings.BotProp.AppFontSize+"px");
         }
         if (settings.BotProp.Bg_value) {
            let bgtyp=settings.BotProp.Bg_type ;

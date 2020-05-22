@@ -56,12 +56,12 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        [Microsoft.AspNetCore.Mvc.Route("/sampletest")]
-        public IActionResult SampleTest()
-        {
-            this.ServiceClient.Post(new sampletest { });
-            return View("test");
-        }
+        //[Microsoft.AspNetCore.Mvc.Route("/sampletest")]
+        //public IActionResult SampleTest()
+        //{
+        //    this.ServiceClient.Post(new sampletest { });
+        //    return View("test");
+        //}
 
         // GET: /<controller>/
 

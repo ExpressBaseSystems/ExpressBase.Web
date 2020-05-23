@@ -973,6 +973,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 0;
 }
 
+[tdcoltype=DGBooleanColumn] .ctrl-cover{
+    border:none
+}
+
 [tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
     /*padding: 0 0px 0 5px;*/
 }
@@ -1753,7 +1757,7 @@ input.locinp {
     position: absolute;
     z-index: 1;
     top: 1px;
-    height: 23px;
+    height: 32px;
 }
 
 .webform-cont .eb-textarea, .webform-cont .fs-textarea {

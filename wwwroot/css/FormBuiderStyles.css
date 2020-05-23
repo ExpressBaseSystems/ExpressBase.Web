@@ -671,7 +671,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: none;
 }
 
-.eb-disablebtn {
+
+
+.Eb-ctrlContainer[eb-readonly="true"] .addrow-btn, .eb-disablebtn {
     filter: grayscale(90%);
     pointer-events: none;
 }
@@ -1193,6 +1195,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [isrendermode="true"] [eb-hidden="true"] {
     display: none;
+}
+
+.Eb-ctrlContainer[eb-readonly="true"] .ctrlth, .Eb-ctrlContainer[eb-readonly="true"] .ctrlstd {
+    display: none !important;
 }
 
 .ctrl-cover[eb-readonly="true"] .v-select .selected-tag .close, .ctrl-cover[eb-readonly="true"] .v-select [type="search"] {

@@ -1632,6 +1632,7 @@
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).show(300);
         this.$addRowBtn.removeClass("eb-disablebtn");
+        $(`#cont_${this.ctrl.EbSid_CtxId}`).attr("eb-readonly", "false");
     };
 
     this.disable = function () {
@@ -1640,6 +1641,7 @@
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).hide(300);
         this.$addRowBtn.addClass("eb-disablebtn");
+        $(`#cont_${this.ctrl.EbSid_CtxId}`).attr("eb-readonly", "true");
     };
 
     this.defineRowCount = function () {

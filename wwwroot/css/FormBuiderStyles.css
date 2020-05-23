@@ -673,6 +673,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 
 
+.Eb-ctrlContainer[eb-readonly="true"] .dg-th {
+    background-color: #fafafa;
+    color: #555;
+}
+
+
 .Eb-ctrlContainer[eb-readonly="true"] .addrow-btn, .eb-disablebtn {
     filter: grayscale(90%);
     pointer-events: none;

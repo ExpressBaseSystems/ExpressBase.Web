@@ -671,6 +671,8 @@
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {
+            if (!this.Renderer.FRC.AllRequired_valid_Check())
+                return;
             let params = [];
             params.push(new fltr_obj(16, "srcRefId", ctrlOpts.formObj.RefId));
             params.push(new fltr_obj(11, "srcRowId", ctrlOpts.dataRowId));

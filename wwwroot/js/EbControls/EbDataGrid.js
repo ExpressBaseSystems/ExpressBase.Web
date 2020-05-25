@@ -49,6 +49,7 @@
         this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
         this.drawHTMLView();
+        this.callOnRowPaintFns();
         this.updateAggCols(false);
     }.bind(this);
 
@@ -85,7 +86,14 @@
                 if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined)
                     inpCtrl.DataVals.Value = ValueExpr_val;
             }
-            this.onRowPaintFn(["tr"], "check", "e");// --
+            //this.onRowPaintFn(["tr"], "check", "e");// --
+        }.bind(this));
+    };
+
+    this.callOnRowPaintFns = function () {
+        $.each(this.objectMODEL, function (rowId, inpCtrls) {
+            this.setCurRow(rowId);
+            this.onRowPaintFn(["tr"], "check", "e");
         }.bind(this));
     };
 

@@ -285,7 +285,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     else if (s_obj != null && authResponse.User.LocationIds != null)
                     {
-                        if(authResponse.User.LocationIds.Contains(-1))
+                        if (authResponse.User.LocationIds.Contains(-1))
                             response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
                         else
                         {
@@ -618,7 +618,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_data")] //refid = datasourcerefid
-        public GetMobileVisDataResponse GetMobileVisData(string refid, string param, int limit, int offset, bool is_powerselect)
+        public GetMobileVisDataResponse GetMobileVisData(string refid, string param, string sort_order, int limit, int offset, bool is_powerselect)
         {
             GetMobileVisDataResponse resp = null;
             try
@@ -634,10 +634,10 @@ namespace ExpressBase.Web.Controllers
                     };
 
                     if (param != null)
-                    {
-                        var p = JsonConvert.DeserializeObject<List<Param>>(param);
-                        request.Params.AddRange(p);
-                    }
+                        request.Params.AddRange(JsonConvert.DeserializeObject<List<Param>>(param));
+
+                    if (sort_order != null)
+                        request.SortOrder.AddRange(JsonConvert.DeserializeObject<List<SortColumn>>(sort_order));
 
                     resp = this.ServiceClient.Get(request);
                 }

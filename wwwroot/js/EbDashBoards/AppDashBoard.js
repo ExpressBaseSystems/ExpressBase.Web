@@ -1,10 +1,11 @@
-﻿var AppDashBoard = function (appid, apptype, appsettings,appinfo) {
+﻿var AppDashBoard = function (appid, apptype, appsettings, appinfo, font_lst) {
     this.objectTab = $("#Objects");
     this.ExportCollection = [];
     this.AppId = appid;
     this.AppType = apptype;
     this.AppSettings = appsettings;
     this.AppInfo = appinfo;
+    this.EbFontLst = font_lst;
 
 
     this.init = function () {
@@ -12,6 +13,7 @@
         $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
         $('.resetcss').on('click', this.ResetCssFn.bind(this));
         $('input[name=authtype]').on('click', this.authMethodCheckFn.bind(this));
+        this.BgImageUpload();
     }
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
@@ -160,7 +162,7 @@
     }
     //for bot
     this.botConfigFn = function () {
-
+        let fnthtml = "";
         let cssobj = this.AppSettings.CssContent;
         $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
         $('#headerIcon').attr('checked', this.AppSettings.BotProp.HeaderIcon);
@@ -171,6 +173,46 @@
         $('#fb_anony').attr('checked', this.AppSettings.Authoptions.Fblogin);
         $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
         $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
+        $('#ebfont_size').val(this.AppSettings.BotProp.AppFontSize);
+       
+        if (this.AppSettings.BotProp.Bg_value) {
+            if (this.AppSettings.BotProp.Bg_type === 'bg_clr') {
+                $("#rdo_bg_clr").prop("checked", true);
+                $('#bot_bg_clr').val(`${this.AppSettings.BotProp.Bg_value}`);
+                $('#bg_clr').show();
+            }
+            else if (this.AppSettings.BotProp.Bg_type === 'bg_grdnt') {
+                $("#rdo_bg_grdnt").prop("checked", true);
+                $('#bot_bg_grdnt').val(`${this.AppSettings.BotProp.Bg_value}`);
+                $('#bg_grdnt').show();
+            }
+            else if (this.AppSettings.BotProp.Bg_type === 'bg_img') {
+                $("#rdo_bg_img").prop("checked", true);
+                $('#bgImgPreview').attr('src', `/images/${this.AppSettings.BotProp.Bg_value}.jpg`);
+                $('#bgImgPreview').attr('imgrefid', `${this.AppSettings.BotProp.Bg_value}`);
+                $("#imgPrvwCont").show();
+                $('#bg_img').show();
+            }
+        }
+        else {
+            $("#rdo_bg_clr").prop("checked", true);
+            $('#bg_clr').show();
+        }
+        if (this.EbFontLst.length>0) {
+            for (let i = 0; i < this.EbFontLst.length; i++) {
+                if (this.AppSettings.BotProp.AppFont === this.EbFontLst[i].CSSFontName) {
+                    $('#ebfont_lst :selected').removeAttr('selected');
+                    fnthtml += `<option selected="selected" value="${this.EbFontLst[i].CSSFontName}">${this.EbFontLst[i].SystemFontName}</option>`;
+                }
+                else {
+                    fnthtml += `<option value="${this.EbFontLst[i].CSSFontName}">${this.EbFontLst[i].SystemFontName}</option>`;
+                }
+               
+            }
+            $('#ebfont_lst').append(fnthtml);
+        }
+        
+
         for (let property in cssobj) {
 
             let html = "";
@@ -192,6 +234,7 @@
         let cssConstObj = {};
         let authOptions = {};
         let botProperties = {};
+        let bgtyp = '';
         let authcheck = $("input[name=authtype]:checked").length;
         if (!authcheck) {
             EbMessage("show", { Background: "red", Message: "Atleast one authentication method must be selected" });
@@ -218,6 +261,19 @@
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
+        botProperties.AppFontSize = $('#ebfont_size').val();
+        botProperties.AppFont = $('#ebfont_lst :selected').val();
+        bgtyp = $('input[name="bgradio"]:checked').val();
+        botProperties.Bg_type = bgtyp;
+        if (bgtyp === 'bg_clr') {
+            botProperties.Bg_value = $('#bot_bg_clr').val();
+        }
+        else if (bgtyp === 'bg_grdnt') {
+            botProperties.Bg_value = $('#bot_bg_grdnt').val();
+        } else if (bgtyp === 'bg_img') {
+            botProperties.Bg_value = $('#bgImgPreview').attr('imgrefid');
+        }
+    
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
             //let tempobj = {};
@@ -238,11 +294,13 @@
         appSettings["CssContent"] = cssConstObj;
         appSettings["Authoptions"] = authOptions;
         appSettings["BotProp"] = botProperties;
+        $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: "POST",
             url: "../Dev/UpdateAppSettings",
             data: { id: this.AppId, type: this.AppType, settings: JSON.stringify(appSettings) },
             success: function (data) {
+                $("#eb_common_loader").EbLoader("hide");
                 if (data > 0)
                     EbMessage("show", { Message: "Settings Updated Successfully" });
                 else
@@ -280,6 +338,47 @@
             }
         });
     };
+    this.BgImageUpload = function () {
+
+        var bgimg = new EbFileUpload({
+            Type: "image",
+            Toggle: "#bgimg_btn",
+            TenantId: "ViewBagcid",
+            SolutionId: this.Sid,
+            Container: "onboarding_logo",
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.xyz',
+            EnableTag: false,
+            //EnableCrop: true,
+            ResizeViewPort: false //if single and crop
+        });
+
+        bgimg.uploadSuccess = function (fileid) {
+            $('#bot_bg_url').val(`${this.Files[0].name}`);
+            if (this.Files[0] && this.Files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#bgImgPreview').attr('src', e.target.result);
+                    $('#bgImgPreview').attr('imgrefid', fileid);
+                }
+
+                reader.readAsDataURL(this.Files[0]); // convert to base64 string
+            }
+            $("#imgPrvwCont").show();
+          //  $('#bgImgPreview').attr('src', URL.createObjectURL(`${this.Files[0]}`));
+            //const img = document.createElement("img");
+            //img.src = URL.createObjectURL(this.files[i]);
+            //img.height = 60;
+        }
+
+    };
+    $("input[name='bgradio']").click(function () {
+        var bg = $(this).val();
+
+        $("div.bg_cont").hide();
+        $("#" + bg).show();
+    });
 
     this.start_exe();
     this.init();

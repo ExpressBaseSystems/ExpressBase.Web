@@ -1,5 +1,6 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
+    this.DGcols = this.ctrl.Controls.$values;
     this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
@@ -679,19 +680,19 @@
     this.getCogsTdHtml = function (isAnyColEditable) {
         return `@cogs@
                 </tr>`
-            .replace("@cogs@", !this.ctrl.IsDisable ? `
+            .replace("@cogs@", `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
                     <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
                     <button type='button' class='cancel-row rowc'><span class='fa fa-times'></span></button>
                     <button type='button' class='del-row rowc @del-c@'><span class='fa fa-trash'></span></button>
-                </td>` : "")
+                </td>`)
             .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
             .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
     };
 
     this.getTdWidth = function (i, col) {
-        return (i === 0 ? col.Width + 0.1 : col.Width) + "%";
+        return (col.Width <= 0 || (this.DGcols[this.DGcols.length - 1] === col)) ? "auto" : (i === 0 ? col.Width : col.Width) + "%";
     };
 
     this.getAggTrHTML = function () {
@@ -1630,6 +1631,9 @@
         this.$gridCont.attr("is-disabled", "false");
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).show(300);
+        this.$addRowBtn.removeClass("eb-disablebtn");
+        $(`#cont_${this.ctrl.EbSid_CtxId}`).attr("eb-readonly", "false");
+        this.ctrl.IsDisable = false;
     };
 
     this.disable = function () {
@@ -1637,6 +1641,9 @@
         this.$gridCont.attr("is-disabled", "true");
         if ($(`#${this.TableId}>tbody>tr.dgtr:last`).attr("is-editing") === "true")
             $(`#${this.TableId}>tbody>tr.dgtr:last`).hide(300);
+        this.$addRowBtn.addClass("eb-disablebtn");
+        $(`#cont_${this.ctrl.EbSid_CtxId}`).attr("eb-readonly", "true");
+        this.ctrl.IsDisable = true;
     };
 
     this.defineRowCount = function () {
@@ -1730,6 +1737,10 @@
 
                 getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = (tdWidth / $bodyTbl.outerWidth()) * 100;
                 //getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = tdWidth;
+                //if ($curTd.attr("type") === "DGCreatedByColumn" || $curTd.next().attr("type") === "DGCreatedByColumn") {
+                //    let width = $curTd.width() - 34;
+                //    $(`#${this.TableId} [tdcoltype='DGCreatedByColumn']`).css("width", width + "px");                    
+                //}
             }.bind(this)
         });
     };

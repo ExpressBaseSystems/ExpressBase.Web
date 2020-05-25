@@ -78,7 +78,7 @@ namespace ExpressBase.Web.Controllers
             GetFunctionOrProcedureQueriesResponse resp = this.ServiceClient.Post<GetFunctionOrProcedureQueriesResponse>((object)new GetFunctionOrProcedureQueriesRequest
             {
                 ChangeList = change,
-                SolutionId = solution_id 
+                SolutionId = solution_id
             });
             return resp;
         }
@@ -114,7 +114,7 @@ namespace ExpressBase.Web.Controllers
                 FilePath = filepath,
                 FileType = filetype
             });
-            resp.Result = GetDiffer(resp.InfraFileContent,resp.TenantFileContent );
+            resp.Result = GetDiffer(resp.InfraFileContent, resp.TenantFileContent);
             return resp;
         }
 
@@ -171,10 +171,16 @@ namespace ExpressBase.Web.Controllers
             return html;
         }
 
+        [HttpGet("/LastAccess")]
         public string LastAccess()
-        {
-            LastSolnAccessResponse res = this.ServiceClient.Post(new LastSolnAccessRequest());
-            return res.LastDbAccess;
+        { 
+            if (ViewBag.cid == "admin")
+                if (this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || this.LoggedInUser.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
+                {
+                     this.ServiceClient.Post(new LastSolnAccessRequest { SolnId = ViewBag.cid });
+                    return "Servicestack is processing your request. Check mail after sometime.";
+                }            
+            return "No prmission";
         }
 
     }

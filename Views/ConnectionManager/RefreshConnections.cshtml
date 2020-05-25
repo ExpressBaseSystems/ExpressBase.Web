@@ -1,5 +1,5 @@
 ﻿@{
-    Layout = "~/Views/Shared/_Layout1.cshtml";
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
 }
 <!DOCTYPE html>
 <html>
@@ -70,7 +70,7 @@
     @using (Html.BeginForm("RefreshConnections", "ConnectionManager", FormMethod.Post))
     {
         <div class="form-group">
-            <input type="text" class="form-control" id="solutionId" name="solutionId" placeholder=@ViewBag.tenantid>
+            <input type="text" class="form-control" id="solutionId" name="solutionId" placeholder=@ViewBag.cid style="margin-top:60px;">
         </div>
         <div id="submit" class="form-group">
             <button type="submit" class="btn btn-primary pull-right">Submit</button>

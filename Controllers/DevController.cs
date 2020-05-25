@@ -76,6 +76,7 @@ namespace ExpressBase.Web.Controllers
 					
 				}
 				ViewBag.AppSettings = settings ?? new EbBotSettings() { };
+				ViewBag.EbfontLst = EbFont.FontFamilies;
 			}
 
 			this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;

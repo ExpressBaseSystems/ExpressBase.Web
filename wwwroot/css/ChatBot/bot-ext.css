@@ -21,7 +21,6 @@
     /*color: white;
     padding: 10px 15px;
     background-color: var( --ebbotThemeColor );*/
-   
 }
 
 .eb__-bot___-headericonCont {
@@ -50,17 +49,18 @@ width: 100%;*/
 .eb__-bot___-eb-chat-head .eb__-bot___-bot-head {
     BOT_APP_NAME
 }
-.eb__-bot___-headersubtext{
+
+.eb__-bot___-headersubtext {
     BOT_HEADERSUBTEXT
 }
+
 .usecase-bots-cont .eb__-bot___-eb_iframecont {
     position: absolute !important;
-    /*right: 5%;*/
 }
 
 .loderdiv {
     display: flex;
-    background-color: blueviolet;
+    background-color: #ffffff;
     background: url("https://expressbase.com/images/svg/botloader.svg") no-repeat center;
     background-size: 30%;
     flex: 1 1 auto;
@@ -72,6 +72,7 @@ width: 100%;*/
     flex: 1 1 auto;
     /*border-radius: 0px 0px 3.5px 3.5px;*/
 }
+
 /*amal*/
 /*.eb__-bot___-eb_iframecont .ebbot_iframe {
     visibility: hidden;
@@ -109,18 +110,16 @@ width: 100%;*/
 }
 
 .usecase-bots-cont {
-    /*width: 100%;*/
     float: right;
-    /*height: 100%;*/
-    /*border: solid 1px red;*/
 }
 
 @media (max-width: 450px) and (min-width: 20px) {
     .eb__-bot___-eb_iframecont {
         width: 100% !important;
     }
-
+    
     .usecase-bots-cont {
+        margin-left: auto !important;
         width: 100% !important;
     }
 

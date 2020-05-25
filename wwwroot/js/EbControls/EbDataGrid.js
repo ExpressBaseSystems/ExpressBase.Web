@@ -1545,6 +1545,19 @@
             console.eb_error(`Row with Serial number '${slno}' not found`);
     };
 
+    this.getValuesOfColumn = function (column) {
+        let vals = [];
+        for (let i = 0, j = 1; i < this.DataMODEL.length; i++) {
+            let row = this.DataMODEL[i];
+            let colObj = getObjByval(row.Columns, "Name", column);
+            if (!colObj) {
+                console.error("no column '" + column + "' found in DataGrid" + this.ctrl.Name);
+                return;
+            }
+            vals.push(colObj.Value);
+        }
+        return vals;
+    }.bind(this);
 
     this.getRowByIndex = function (idx) {
         let rowId = $(`#${this.TableId}>tbody>tr.dgtr:eq(${idx})`).attr("rowid");
@@ -1872,6 +1885,7 @@
         this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;
         this.ctrl.sum = this.sumOfCol;
         this.ctrl.getRowByIndex = this.getRowByIndex;
+        this.ctrl.getValuesOfColumn = this.getValuesOfColumn;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

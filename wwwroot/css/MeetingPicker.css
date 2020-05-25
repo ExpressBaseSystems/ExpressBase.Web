@@ -3,11 +3,14 @@
 
 .meeting-picker-outer {
     padding: 0px !important;
-    width: 30rem;
+    width: 100%;
     border-radius: 5px;
     border: solid 1px #d1d1d1 !important;
     padding-bottom: 10px !important;
 }
+    .meeting-picker-outer tr {
+         background-color: none !important;
+    }
 
     .meeting-picker-outer .sub-head {
         padding: 5px 10px;
@@ -69,7 +72,7 @@
         }
 
 /*form style over ride*/
-tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+        tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     background-color: none !important;
     border: none !important;
 }
@@ -109,6 +112,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     background: #ffffff url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
     font-weight: 600;
     color: #555555;
+    text-align: center;
 }
 
 

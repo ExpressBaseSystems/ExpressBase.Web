@@ -317,7 +317,7 @@
 
         let $DD = $input.siblings(".dropdown-menu[role='combobox']");
         $DD.addClass("dd_of_" + ctrl.EbSid_CtxId);
-        $DD.find(".inner[role='listbox']").css({ "height": ctrl.DropdownHeight, "overflow-y": "scroll" });
+        $DD.find(".inner[role='listbox']").css({ "max-height": ctrl.DropdownHeight, "overflow-y": "scroll" });
 
         //code review..... to set dropdown on body
         $("#" + ctrl.EbSid_CtxId).on("shown.bs.select", function (e) {

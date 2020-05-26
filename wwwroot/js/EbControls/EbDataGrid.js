@@ -177,8 +177,8 @@
         this.setCurRow(rowId);
         if ($tr.attr("is-initialised") === 'false')
             this.rowInit_E($tr, rowId);
-        $td.find(".del-row").hide();
-        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
+        $td.find(".del-row").hide(300);
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide(300);
         //$addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
         this.$addRowBtn.addClass("eb-disablebtn");
@@ -1119,8 +1119,8 @@
 
         let $td = $(`#${this.TableId}>tbody>tr[rowid=${rowId}] td.ctrlstd`);
         let $activeTr = $td.closest("tr");
-        $td.find(".check-row").hide();
-        $td.find(".del-row").show();
+        $td.find(".check-row").hide(300);
+        $td.find(".del-row").show(300);
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
         //if ($activeTr.attr("is-checked") === "true") {
@@ -1143,8 +1143,8 @@
         let rowid = $tr.attr("rowid");
         if (!this.RowRequired_valid_Check(rowid))
             return false;
-        $td.find(".check-row").hide();
-        $td.find(".del-row").show();
+        $td.find(".check-row").hide(300);
+        $td.find(".del-row").show(300);
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
 
@@ -1172,8 +1172,8 @@
         let rowid = $tr.attr("rowid");
         if (!this.RowRequired_valid_Check(rowid))
             return false;
-        $td.find(".check-row").hide();
-        $td.find(".del-row").show();
+        $td.find(".check-row").hide(300);
+        $td.find(".del-row").show(300);
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
 

@@ -620,60 +620,110 @@ namespace ExpressBase.Web.Controllers
 
             foreach (var Obj in Resp.AllSlots)
             {
-                    if (Obj.SlotAttendeeCount >= Obj.No_Attendee )
-                    {
-                        Slots.Add(
-                            new MeetingSlots()
-                            {
-                                Meeting_Id = Obj.Meeting_Id,
-                                Slot_id = Obj.Slot_id,
-                                Is_approved = Obj.Is_approved,
-                                Date = Obj.Date,
-                                Description = Obj.Description,
-                                Meeting_schedule_id = Obj.Meeting_schedule_id,
-                                Time_from = Obj.Time_from,
-                                Time_to = Obj.Time_to,
-                                Title = Obj.Title,
-                                IsHide = true,
-                                Attendee_count = Obj.Attendee_count,
-                                Host_count = Obj.Host_count,
-                            }
-                        );
-                    }
-                    else
-                    {
-                        Slots.Add(
-                            new MeetingSlots()
-                            {
-                                Meeting_Id = Obj.Meeting_Id,
-                                Slot_id = Obj.Slot_id,
-                                Is_approved = Obj.Is_approved,
-                                Date = Obj.Date,
-                                Description = Obj.Description,
-                                Meeting_schedule_id = Obj.Meeting_schedule_id,
-                                Time_from = Obj.Time_from,
-                                Time_to = Obj.Time_to,
-                                Title = Obj.Title,
-                                IsHide = false,
-                                Attendee_count = Obj.Attendee_count,
-                                Host_count = Obj.Host_count,
-                            }
-                        );
-                    }
+                if (Obj.SlotAttendeeCount >= Obj.Max_Attendee)
+                {
+                    Slots.Add(
+                        new MeetingSlots()
+                        {
+                            Meeting_Id = Obj.Meeting_Id,
+                            Slot_id = Obj.Slot_id,
+                            Is_approved = Obj.Is_approved,
+                            Date = Obj.Date,
+                            Description = Obj.Description,
+                            Meeting_schedule_id = Obj.Meeting_schedule_id,
+                            Time_from = Obj.Time_from,
+                            Time_to = Obj.Time_to,
+                            Title = Obj.Title,
+                            IsHide = true,
+                            Attendee_count = Obj.Attendee_count,
+                            Host_count = Obj.Host_count,
+                        }
+                    );
+                }
+                else
+                {
+                    Slots.Add(
+                        new MeetingSlots()
+                        {
+                            Meeting_Id = Obj.Meeting_Id,
+                            Slot_id = Obj.Slot_id,
+                            Is_approved = Obj.Is_approved,
+                            Date = Obj.Date,
+                            Description = Obj.Description,
+                            Meeting_schedule_id = Obj.Meeting_schedule_id,
+                            Time_from = Obj.Time_from,
+                            Time_to = Obj.Time_to,
+                            Title = Obj.Title,
+                            IsHide = false,
+                            Attendee_count = Obj.Attendee_count,
+                            Host_count = Obj.Host_count,
+                        }
+                    );
+                }
 
             }
             return JsonConvert.SerializeObject(Slots);
         }
 
-        public string UpdateMeetingFromAttendee(SlotParticipants Obj) 
+        public string UpdateMeetingFromAttendee(SlotParticipants Obj)
         {
             MeetingSaveValidateResponse Resp = this.ServiceClient.Post<MeetingSaveValidateResponse>(new MeetingSaveValidateRequest { SlotParticipant = Obj });
             return JsonConvert.SerializeObject(Resp.ResponseStatus);
-        } 
-        public string AddMeetingTemp(AddMeetingSlotRequest obj) 
+        }
+        public string AddMeetingTemp(AddMeetingSlotRequest obj)
         {
             AddMeetingSlotResponse Resp = this.ServiceClient.Post<AddMeetingSlotResponse>(new AddMeetingSlotRequest { Date = obj.Date });
             return JsonConvert.SerializeObject(Resp.Status);
+        }
+        public string GetSlotDetails(int id)
+        {
+            SlotDetailsResponse Resp = this.ServiceClient.Post<SlotDetailsResponse>(new SlotDetailsRequest { Id = id });
+            string htm = "";
+            string hosts = "";
+            string attendees = "";
+            for (int i = 0; i < Resp.MeetingRequest.Count; i++)
+            {
+                if (Resp.MeetingRequest[i].ParticipantType == 1)
+                {
+                    hosts += $@" <div class='mr-hosts'>{Resp.MeetingRequest[i].fullname}</div>";
+                }
+                else
+                {
+                    attendees += $@" <divclass='mr-attendees'>{Resp.MeetingRequest[i].fullname}</div>";
+                }
+            }
+           
+            if (Resp.MeetingRequest.Count > 0)
+            {
+                string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");
+                string TimeTo = Convert.ToDateTime(Resp.MeetingRequest[0].TimeTo).ToString("hh:mm tt");
+                string Date = Convert.ToDateTime(Resp.MeetingRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
+                htm += $@" <div class='mr'> <div class='mr-title'> {Resp.MeetingRequest[0].Title} </div>
+                        <div class='mr-description'> {Resp.MeetingRequest[0].Description}  </div>
+                        <div class='meeting-details'> 
+                        <div class='mr-venue'> {Resp.MeetingRequest[0].Venue}  </div>
+                        <div class='mr-date'> {Date}  </div>
+                        <div class='mr-time-from'>{TimeFrom}</div>
+                        <div class='mr-time-to'> {TimeTo}</div>
+                        </div>
+                        <div><h5>Attendees</h5> {attendees}
+                        </div> 
+                        <div><h5>Hosts</h5> {hosts}
+                        </div>
+<button id='accept-meeting' data-id='{Resp.MeetingRequest[0].Slotid}'> Accept Meeting</button>
+                        </div>
+                    ";
+            }
+            else
+            {
+                htm += $@"</div> in valid request </div>";
+            }
+            return JsonConvert.SerializeObject(htm);
+        }
+        public string AcceptMeeting(int Slot, int myactionid)
+        {
+            MeetingUpdateByUsersResponse Resp = this.ServiceClient.Post<MeetingUpdateByUsersResponse>(new MeetingUpdateByUsersRequest { Id = Slot, UserInfo = this.LoggedInUser, MyActionId = myactionid });
+            return JsonConvert.SerializeObject(Resp);
         }
     }
 }

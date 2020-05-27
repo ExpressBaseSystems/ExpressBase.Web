@@ -343,8 +343,13 @@
     display: flex;
     flex-direction: row;
     width: 100%;
+    height: 100%;
     box-shadow: inherit;
     align-items: stretch;
+}
+
+.ps-cont {
+    height: 100%;
 }
 
 .ps-srch {
@@ -360,6 +365,7 @@
 .v-select {
     flex-grow: 1;
     display: flex;
+    max-width: calc(100% - 27px); /*substracting search icon width*/
 }
 
 [eb-form="true"][mode="view"] .searchable [type="search"] {
@@ -448,12 +454,14 @@
     background-color: white;
     display: flex;
     flex-grow: 1;
+    width:100%;
 }
 
     .search-block > .input-group {
         display: flex;
         align-items: stretch;
         flex: 1 0;
+        width: 100%;
     }
 
 .v-select .selected-tag, .tdtxt .selected-tag {
@@ -473,8 +481,8 @@
     border-radius: 18px !important;
     padding-right: 30px !important;
     transition-duration: 0.2s;
-    outline:none;
-    cursor:default;
+    outline: none;
+    cursor: default;
 }
 
     .v-select .selected-tag .close {
@@ -487,6 +495,7 @@
         right: 10px;
         padding: 3px;
         font-size: 21px;
+        outline:none;
     }
 
         .v-select .selected-tag .close:hover {
@@ -528,4 +537,15 @@
 
 span[iblock] .selected-tag:empty::before {
     content: '--';
+}
+
+.req-cont {
+    position:relative;
+}
+
+.req-cont > label {
+    position: absolute;
+    font-weight: 500;
+    top: 3px;
+    z-index: 1;
 }

@@ -35,10 +35,12 @@
             }
     </style>
     <link rel="stylesheet" href="~/css/EbCommonStyles/AppDashBoardStyles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/ColorPicker/Gradient.css" asp-append-version="true">
 }
 
 @section JavaScript{
     <script src="~/js/EbDashBoards/AppDashBoard.js" type="text/javascript"></script>
+    <script src="~/js/ColorPicker/GradientColorPicker.js" type="text/javascript"></script>
 }
 <script>
     new EbHeader().setName("Application Configuration");
@@ -259,7 +261,7 @@
                                         <div class="col-sm-12 col-md-12 col-lg-12 botSetng">
                                             <label for="ebfont_size"></label>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" id="ebfont_size" aria-describedby="fntsz_hlp" >
+                                                <input type="number" class="form-control" id="ebfont_size" aria-describedby="fntsz_hlp">
                                                 <small id="fntsz_hlp" class="form-text text-muted">Enter value in pixel </small>
                                             </div>
                                         </div>
@@ -332,6 +334,10 @@
                                                             <input type="text" class="form-control" id="bot_bg_grdnt" aria-describedby="bg_grdnt_hlp" placeholder="eg: linear-gradient(45deg, #FA8BFF 0%, #2BD2FF 52%, #2BFF88 90%)">
                                                             <small id="bg_grdnt_hlp" class="form-text text-muted">Enter only gradient value </small>
                                                         </div>
+                                                        <div class="btnarea">
+                                                            <button class="btn btn-info btn-sm" onclick="$('#grdntgenerator').modal('show');"> Gradient generator</button>
+                                                        </div>
+
                                                     </div>
                                                     <div class="col bg_cont" hidden id="bg_img">
                                                         <div class=" input-group">
@@ -345,11 +351,29 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-
                                             </div>
+                                        </div>
 
+                                        <div id="grdntgenerator" class="modal fade" role="dialog">
+                                            <div class="modal-dialog" >
+                                                <div class="modal-content">
+                                                    <div class="modal-header" style="">
+                                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                                        <div>
+                                                            <div style="margin-left:10px ; display:inline-block"> <h4 class="modal-title">Gradient generator</h4> </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-body" >
+                                                        <div id="grdnt_txt">
 
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer" style="">
+                                                        <button type="button" id="grdntmodalbtn" class="btn btn-default" >Ok</button>
+                                                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

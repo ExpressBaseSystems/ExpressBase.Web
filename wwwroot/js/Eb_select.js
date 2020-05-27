@@ -393,6 +393,10 @@ const EbSelect = function (ctrl, options) {
             let contWidth = $('#' + this.name + 'Container').width();
             contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
             let div_tble = $("#" + o.containerId);
+            let parentCont = div_tble.parentsUntil('form').last();
+            if (parentCont.attr('ctype') === "TabControl") {
+                div_tble.attr('drp_parent', 'TabControl');
+            }
             let tbl_cod = div_tble.offset();
             let tbl_height = div_tble.height();
             let div_detach = div_tble.detach();
@@ -413,7 +417,7 @@ const EbSelect = function (ctrl, options) {
                     top += 38;
             }
             div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
-
+            scrollDropDown();
         }.bind(this), 30);
 
         //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);

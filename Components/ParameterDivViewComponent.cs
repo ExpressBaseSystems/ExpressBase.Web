@@ -46,6 +46,10 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbUserLocation).InitFromDataBase(this.ServiceClient, _user, _sol, ParentRefid);
                     }
+                    else if (control is EbLocationSelector)
+                    {
+                        (control as EbLocationSelector).InitFromDataBase(this.ServiceClient, _user, _sol, ParentRefid);
+                    }
                 }
                 ViewBag.HtmlHead = FilterDialogObj.GetHead();
                 if(!noCtrlOps)

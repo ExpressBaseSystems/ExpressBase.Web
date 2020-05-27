@@ -396,6 +396,104 @@
         }
     };
 
+    this.LocationSelector = function (ctrl) {
+        let $input = "#" + ctrl.EbSid_CtxId;
+        ctrl.LocData.$values.map(e => delete e.$type);
+
+        this.DDTreeApi = simTree({
+            el: $input,
+            data: ctrl.LocData.$values,
+            check: true,
+            //linkParent: true,
+            onClick: this.ClickLocationSelector.bind(this,ctrl),
+            //onChange: this.ChangeLocationSelector.bind(this)
+        });
+
+        $("body").on("click", "#" + ctrl.EbSid_CtxId + "_checkbox", this.LocationSelectorCheckboxChanged.bind(this, ctrl));
+        $('#' + ctrl.EbSid_CtxId + "_button").off("click").on("click", function () {
+            $('#' + ctrl.EbSid_CtxId).toggle();
+        });
+        this.DDTreeApi.data.map(el => (el.children) ? $(`[data-id='${el.id}']`).addClass("parent") : $(`[data-id='${el.id}']`).addClass("child"));
+        $.contextMenu({
+            selector: ".parent",
+            events: {
+                show: function (options) {
+                    if($(event.target).closest("li").hasClass("child"))
+                        return false;
+                }
+            },
+            items: {
+                //    "SelectGroup": { name: "Select Group", icon: "fa-check-square-o", callback: this.SelectGroup.bind(this) },
+                //    "SelectChildren": { name: "Select Children", icon: "fa-check-square-o", callback: this.SelectChildren.bind(this) },
+                "SelectAll": { name: "Select All", icon: "fa-check-square-o", callback: this.SelectAll.bind(this) },
+                "DeSelectAll": { name: "DeSelect All", icon: "fa-square-o", callback: this.DeSelectAll.bind(this) }
+            }
+        });
+        if (ebcontext.user.Roles.findIndex(x => (x === "SolutionOwner" || x === "SolutionDeveloper" || x === "SolutionAdmin")) > -1) {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox").trigger('click');
+        }
+        else {
+            $('#' + ctrl.EbSid_CtxId + "_checkbox_div").hide();
+            if (ebcontext.user.wc === "uc") {
+                if (ctrl.LoadCurrentLocation)
+                    $('#' + ctrl.EbSid_CtxId).find('[data-id=' + ebcontext.locations.CurrentLocObj.LocId + '] .sim-tree-checkbox').eq(0).trigger('click');
+            }
+        }
+        ctrl.DataVals.Value = ctrl.getValueFromDOM();
+    };
+
+    this.LocationSelectorCheckboxChanged = function (ctrl) {
+        if ($(event.target).prop("checked")) {
+            $('#' + ctrl.EbSid_CtxId).hide();
+            //$("[data-level='1']").each(function (i, obj) {
+            //    if (!$(obj).find(".sim-tree-checkbox").eq(0).hasClass("checked"))
+            //        $(obj).find(".sim-tree-checkbox").eq(0).trigger("click");
+            //});
+            $(".sim-tree-checkbox").toArray()
+                .map(el => $(el).hasClass("checked") ? console.log("checked") : $(el).trigger("click"));
+            $('#' + ctrl.EbSid_CtxId + "_button").attr("disabled", "disabled");
+        }
+        else {
+            $('#' + ctrl.EbSid_CtxId + "_button").removeAttr('disabled');
+            $('#' + ctrl.EbSid_CtxId).show();
+            //$("[data-level='1']").each(function (i, obj) {
+            //    if ($(obj).find(".sim-tree-checkbox").eq(0).hasClass("checked"))
+            //        $(obj).find(".sim-tree-checkbox").eq(0).trigger("click");
+            //});
+            $(".sim-tree-checkbox").toArray()
+                .map(el => $(el).hasClass("checked") ? $(el).trigger("click") : console.log("Unchecked"));
+        }
+    };
+
+    this.ClickLocationSelector = function (ctrl,item, x, y) {
+        if (this.DDTreeApi) {
+            if (item.length === this.DDTreeApi.data.length)
+                $(".multiselect-selected-text").text(`All Selected (${item.length})`);
+            else if (item.length === 1)
+                $(".multiselect-selected-text").text(`${item[0].name}`);
+            else if (item.length === 0)
+                $(".multiselect-selected-text").text(`None Selected`);
+            else
+                $(".multiselect-selected-text").text(`${item.length} Selected`);
+            let value = item.map(obj => obj.id).join(",");
+            $("#" + ctrl.EbSid_CtxId).val(value).trigger("cssClassChanged");
+        }
+    };
+
+    this.SelectAll = function (key, opt, event) {
+        opt.$trigger.find(".sim-tree-checkbox").toArray()
+            .map(el => $(el).hasClass("checked") ? console.log("checked") : $(el).trigger("click"));
+    };
+
+    this.DeSelectAll = function (key, opt, event) {
+        opt.$trigger.find(".sim-tree-checkbox").toArray()
+            .map(el => $(el).hasClass("checked") ? $(el).trigger("click") : console.log("Unchecked"));
+    };
+
+    this.SelectGroup = function (key, opt, event) {
+
+    };
+
     this.ChartControl = function (ctrl, ctrlOpts) {
         let o = new Object();
         o.tableId = "chart" + ctrl.EbSid_CtxId;
@@ -553,7 +651,7 @@
             }.bind(this));
         }
         this.InitMap4inpG(ctrl);
-        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) =>  $(event.target).closest('.locinp-cont').find('.locinp').val(''));
+        $("#" + ctrl.EbSid_CtxId + "_Cont").find(".loc-close").on("click", (e) => $(event.target).closest('.locinp-cont').find('.locinp').val(''));
         $("#" + ctrl.EbSid_CtxId + "_Cont").find(".locinp").on("focus", (e) => { $(e.target).select(); });
     };
 

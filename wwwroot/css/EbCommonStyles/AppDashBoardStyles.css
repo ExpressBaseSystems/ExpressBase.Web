@@ -6,7 +6,21 @@
     flex-flow: row-reverse;
     padding-bottom: 10px;
 }
+.pad10 {
+    padding: 10px
+}
 
+.pad0 {
+    padding: 0px
+}
+
+.mrg10 {
+    margin: 10px
+}
+
+.mrg0 {
+    margin: 0px
+}
 .botappDashboard {
     padding: 0px;
 }
@@ -24,8 +38,9 @@
 }
 
     .botappDashboard .botappConfig {
-        padding: 0px;
+        /*padding: 0px;*/
         border: 1px solid #efe5e5;
+        border-radius: 4px;
     }
 
 
@@ -33,6 +48,26 @@
         .botappDashboard .botappConfig .botSetng {
             padding: 10px
         }
+            .botappDashboard .botappConfig .botSetng .bg_cont {
+                margin-top: 15px ;
+                padding: 0px
+            }
+
+        .botappDashboard .botappConfig .imgPrvwCont {
+            margin-top: 20px;
+            height: 125px;
+            width: 100px;
+            max-height: 150px;
+            max-width: 150px;
+            border-radius: 4px;
+            border: 1px solid #efe5e5;
+            padding: 10px;
+        }
+            .botappDashboard .botappConfig .imgPrvwCont .imgPrevw {
+                height: 100%;
+                width: 100%;
+            }
+       
 
             .botappDashboard .botappConfig .botSetng .bot_wcmsg {
                 resize: none;

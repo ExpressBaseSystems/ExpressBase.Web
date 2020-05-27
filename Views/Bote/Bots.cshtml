@@ -38,13 +38,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 95vh;
+            /*height: 95vh;*/
             flex-direction: column;
             background: inherit;
         }
 
         .btnOutCont {
-            width: 50%;
+            /*width: 50%;*/
             float: left;
             padding: 15px;
         }
@@ -138,7 +138,7 @@
 </head>
 <body>
 
-    <div>
+    <div class="botslst_pge">
         <div class="ext-pageheader" id="pgheaderExt">
             <div class="solun_logo_cont">
                 <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="solution_logo Eb_Image" />
@@ -147,15 +147,16 @@
                 <span class="livebothead">Live Bots</span>
             </div>
         </div>
-    </div>
 
-    <div class="botlstCont ">
-        <div class="col-md-8 col-lg-8 col-sm-8 col-xs-12 botBtnsParent">
-            <div class="botBtnsCont">
 
+        <div class="botlstCont ">
+            <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 botBtnsParent">
+                <div class="botBtnsCont row">
+
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
     <div class="usecase-bots-cont"></div>
     <script type="text/javascript">
@@ -220,8 +221,8 @@
                         });
                     }
                     $.each(d.createBotFns, function (i, fun) {
-                         $(".botBtnsCont").append(`<div class="btnOutCont col ">
-                                                        <div class="btnInnerCont" onclick="clickOnDiv(${i}, ${d.appIdColl[i]});">
+                         $(".botBtnsCont").append(`<div class="btnOutCont col col-md-6 col-lg-6 col-sm-12 col-xs-12">
+                                                        <div class="btnInnerCont" id='botno${d.appIdColl[i]}' onclick="clickOnDiv(${i}, ${d.appIdColl[i]});">
                                                             <div class='btn_txtcont'>
                                                            <div >
                                                                 <h4 style='display: inline-block;'>${botNames[i]}</h4>
@@ -246,7 +247,7 @@
                     $('.btnInnerCont').removeClass('actvbot');
                     //console.error(7);
                     console.log(354345);
-                    $(`#${appid}`).addClass('actvbot');
+                    $(`#botno${appid}`).addClass('actvbot');
                     var d = document;
                     if (d.latestAppid === appid && $($(`[appid=${appid}]`)[0]).css("display") !== 'none')
                         return;

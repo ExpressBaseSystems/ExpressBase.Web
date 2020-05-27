@@ -108,21 +108,9 @@ body {
 }
 
 
-
-.msg-cont, .req-cont {
-    font-size: 11.2px;
-    position: absolute;
-    /*right: 1px;*/
-    margin-top: 3px;
-    animation-duration: 0.3s;
-    z-index: 1;
-    background-color: var(--botbgclr);
-    /*background-color: rgba(255, 255, 255, 0.8);*/
-    /*box-shadow: 0 2px 3px 0px white;*/
-}
-
 .msg-cont {
     width: 100%;
+    background-color: var(--botbgclr);
     position: relative;
 }
 

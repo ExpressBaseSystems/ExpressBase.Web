@@ -575,7 +575,7 @@ const EbSelect = function (ctrl, options) {
             if (type === 5 || type === 11)
                 cellData = this.datatable.data[$rowEl.index()][idx];// unformatted data for date or integer
             else
-                cellData = this.datatable.Api.row($rowEl).data()[idx];// formatted data
+                cellData = this.datatable.formatteddata[$rowEl.index()][idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
 
             let fval = EbConvertValue(cellData, type);
             this.columnVals[name].push(fval);

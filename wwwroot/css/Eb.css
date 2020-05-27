@@ -495,6 +495,7 @@
         right: 10px;
         padding: 3px;
         font-size: 21px;
+        outline:none;
     }
 
         .v-select .selected-tag .close:hover {

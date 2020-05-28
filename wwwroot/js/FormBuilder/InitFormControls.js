@@ -468,13 +468,13 @@
     this.ClickLocationSelector = function (ctrl,item, x, y) {
         if (this.DDTreeApi) {
             if (item.length === this.DDTreeApi.data.length)
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`All Selected (${item.length})`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`All Selected (${item.length})`);
             else if (item.length === 1)
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`${item[0].name}`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`${item[0].name}`);
             else if (item.length === 0)
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`None Selected`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`None Selected`);
             else
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`${item.length} Selected`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`${item.length} Selected`);
             let value = item.map(obj => obj.id).join(",");
             $("#" + ctrl.EbSid_CtxId).val(value).trigger("cssClassChanged");
         }

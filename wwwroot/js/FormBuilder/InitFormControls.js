@@ -413,12 +413,12 @@
         $('#' + ctrl.EbSid_CtxId + "_button").off("click").on("click", function () {
             $('#' + ctrl.EbSid_CtxId).toggle();
         });
-        this.DDTreeApi.data.map(el => (el.children) ? $(`[data-id='${el.id}']`).addClass("parent") : $(`[data-id='${el.id}']`).addClass("child"));
+        this.DDTreeApi.data.map(el => (el.children) ? $(`#${ctrl.EbSid_CtxId} [data-id='${el.id}']`).addClass("parentNode") : $(`[data-id='${el.id}']`).addClass("childNode"));
         $.contextMenu({
-            selector: ".parent",
+            selector: ".parentNode",
             events: {
                 show: function (options) {
-                    if($(event.target).closest("li").hasClass("child"))
+                    if($(event.target).closest("li").hasClass("childNode"))
                         return false;
                 }
             },
@@ -449,7 +449,7 @@
             //    if (!$(obj).find(".sim-tree-checkbox").eq(0).hasClass("checked"))
             //        $(obj).find(".sim-tree-checkbox").eq(0).trigger("click");
             //});
-            $(".sim-tree-checkbox").toArray()
+            $("#" + ctrl.EbSid_CtxId+" .sim-tree-checkbox").toArray()
                 .map(el => $(el).hasClass("checked") ? console.log("checked") : $(el).trigger("click"));
             $('#' + ctrl.EbSid_CtxId + "_button").attr("disabled", "disabled");
         }
@@ -460,7 +460,7 @@
             //    if ($(obj).find(".sim-tree-checkbox").eq(0).hasClass("checked"))
             //        $(obj).find(".sim-tree-checkbox").eq(0).trigger("click");
             //});
-            $(".sim-tree-checkbox").toArray()
+            $("#" + ctrl.EbSid_CtxId + " .sim-tree-checkbox").toArray()
                 .map(el => $(el).hasClass("checked") ? $(el).trigger("click") : console.log("Unchecked"));
         }
     };
@@ -468,13 +468,13 @@
     this.ClickLocationSelector = function (ctrl,item, x, y) {
         if (this.DDTreeApi) {
             if (item.length === this.DDTreeApi.data.length)
-                $(".multiselect-selected-text").text(`All Selected (${item.length})`);
+                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`All Selected (${item.length})`);
             else if (item.length === 1)
-                $(".multiselect-selected-text").text(`${item[0].name}`);
+                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`${item[0].name}`);
             else if (item.length === 0)
-                $(".multiselect-selected-text").text(`None Selected`);
+                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`None Selected`);
             else
-                $(".multiselect-selected-text").text(`${item.length} Selected`);
+                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`${item.length} Selected`);
             let value = item.map(obj => obj.id).join(",");
             $("#" + ctrl.EbSid_CtxId).val(value).trigger("cssClassChanged");
         }

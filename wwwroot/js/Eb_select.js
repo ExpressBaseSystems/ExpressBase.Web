@@ -571,10 +571,13 @@ const EbSelect = function (ctrl, options) {
             let type = obj.Type;
             let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
             let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
-            let cellData = this.datatable.Api.row($rowEl).data()[idx];
+            let cellData;
+            if (type === 5 || type === 11)
+                cellData = this.datatable.data[$rowEl.index()][idx];// unformatted data for date or integer
+            else
+                cellData = this.datatable.formatteddata[$rowEl.index()][idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
+
             let fval = EbConvertValue(cellData, type);
-            if (type === 5)
-                fval = this.datatable.data[$rowEl.index()][idx];// unformatted data
             this.columnVals[name].push(fval);
         }.bind(this));
     };

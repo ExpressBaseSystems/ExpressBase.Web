@@ -161,6 +161,7 @@
     //???
     iframe.onload = function (e) {
         iframe.style.visibility = 'visible';
+        loaderDiv.style.background = 'none';
     };
 
     

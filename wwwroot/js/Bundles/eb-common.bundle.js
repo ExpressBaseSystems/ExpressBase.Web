@@ -518,8 +518,7 @@ class Setup {
         this.initContainers_DomEvents();
         this.initServerEvents();
         this.getNotifications();
-        //this.userNotification();
-
+        //this.userNotification();aler
         this.modal = new EbCommonModal();
 
         MeetingRequestView = this.MeetingRequestView.bind(this);
@@ -563,7 +562,7 @@ class Setup {
             Channels: ["file-upload"]
         });
 
-        this.se.onNotification = function (msg) {
+        this.se.onNotification = function(msg) {
             console.log("new notification");
             this.notified(msg);
         }.bind(this);
@@ -654,10 +653,10 @@ class Setup {
 
     userNotification() {
         this.ss = new EbServerEvents({ ServerEventUrl: this.option.se_url, Channels: ["file-upload"] });
-        this.ss.onLogOut = function (msg) {
+        this.ss.onLogOut = function(msg) {
 
         }.bind(this);
-        this.ss.onNotification = function (msg) {
+        this.ss.onNotification = function(msg) {
             var len = parseInt($('#notification-count').attr("count"));
             var html = "";
             var x = JSON.parse(msg);
@@ -697,7 +696,7 @@ class Setup {
         }.bind(this);
     }
 
-    UpdateNotification = function (e) {
+    UpdateNotification = function(e) {
         let notification_id = $(e.target).closest("div").attr("notification-id");
         let link_url = $(e.target).closest("div").attr("link-url");
         $.ajax({
@@ -723,7 +722,7 @@ class Setup {
         $('#notification-count').attr("count", x);
     }
 
-    CloseNotification = function (e) {
+    CloseNotification = function(e) {
         let notification_id = $(e.target).siblings('div').attr("notification-id");
         $.ajax({
             type: "POST",
@@ -750,7 +749,26 @@ class Setup {
 
     MeetingRequestView = function(e) {
         let id = $(e).closest("a").attr("data-id");
-        alert(id);
+        //alert(id);
+        $.post("../Webform/GetSlotDetails", { id: id }, function(data) {
+            let html = JSON.parse(data);
+            ebcontext.setup.modal.setSize('modal-sm');
+            ebcontext.setup.modal.setHtml(html);
+            ebcontext.setup.modal.show();
+            $('#accept-meeting').off('click').on('click', function() {
+                let slot = $('#accept-meeting').attr('data-id');
+                $.post("../Webform/AcceptMeeting", { Slot: slot, myactionid: id }, function(data) {
+                    let sts = JSON.parse(data);
+                    if (sts.ResponseStatus) {
+                        $(`#accept-meeting`).attr('disabled', 'disabled');
+                    }
+                    else {
+                        
+                    }
+                });
+            });
+        });
+
     };
 }
 

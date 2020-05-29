@@ -763,8 +763,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 }
                 $msg.find('.msg-wraper-user').html($cartSummary.html()).append(this.getTime());
             }
-            else
-                $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
+            else {
+                let disphtml = $btn.parent().prev().find('.slick-active').css('display', 'block');
+                //var rmv = disphtml.find('.card-selbtn-cont').empty();
+                $msg.find('.msg-wraper-user').html(disphtml.outerHTML()).append(this.getTime());
+              //  $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
+            }
+
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
             this.CurDataMODEL[this.curCtrl.TableName] = this.curCtrl.getDataModel();

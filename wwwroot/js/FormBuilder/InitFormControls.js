@@ -1436,7 +1436,7 @@
 
             console.log("clear ");
             return filePlugin.clearFiles();
-        };
+        };        
     };
 
     this.ScriptButton = function (ctrl) {

@@ -405,7 +405,7 @@
             data: ctrl.LocData.$values,
             check: true,
             //linkParent: true,
-            onClick: this.ClickLocationSelector.bind(this,ctrl),
+            onClick: this.ClickLocationSelector.bind(this, ctrl),
             //onChange: this.ChangeLocationSelector.bind(this)
         });
 
@@ -465,16 +465,16 @@
         }
     };
 
-    this.ClickLocationSelector = function (ctrl,item, x, y) {
+    this.ClickLocationSelector = function (ctrl, item, x, y) {
         if (this.DDTreeApi) {
             if (item.length === this.DDTreeApi.data.length)
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`All Selected (${item.length})`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`All Selected (${item.length})`);
             else if (item.length === 1)
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`${item[0].name}`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`${item[0].name}`);
             else if (item.length === 0)
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`None Selected`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`None Selected`);
             else
-                $("#" + ctrl.EbSid_CtxId + " .multiselect-selected-text").text(`${item.length} Selected`);
+                $("#" + ctrl.EbSid_CtxId + "_text").text(`${item.length} Selected`);
             let value = item.map(obj => obj.id).join(",");
             $("#" + ctrl.EbSid_CtxId).val(value).trigger("cssClassChanged");
         }
@@ -1238,7 +1238,7 @@
         //}.bind(this), 0);
         var elm = $input[0];
         if (ctrl.MaxLimit !== 0 || ctrl.MinLimit !== 0)
-            elm.onblur = createValidator(elm);
+            elm.onblur = createValidator.bind(ctrl)(elm);
     };
 
     this.Numeric = function (ctrl) {
@@ -1454,6 +1454,8 @@ function createValidator(element) {
     return function () {
         //if (!isPrintable(event))
         //    return;
+        if (this.getValueFromDOM() === element.value)// exit if no change in value
+            return;
         var min = parseInt(element.getAttribute("min")) || 0;
         var max = parseInt(element.getAttribute("max")) || 0;
 
@@ -1462,5 +1464,6 @@ function createValidator(element) {
 
         if (value < min && min !== 0) element.value = min;
         if (value > max && max !== 0) element.value = max;
-    };
+        $(element).trigger("change");
+    }.bind(this);
 }

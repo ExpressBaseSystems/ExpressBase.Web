@@ -281,7 +281,7 @@ function DGremoveInvalidStyle() {
 
 
 function EbMakeInvalid(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
-    let shadowColor = "rgb(174, 0, 0)";
+    let shadowColor = "#ee0000b8";
     if (type === "warning")
         shadowColor = "rgb(236, 151, 31)";
     if ($(`${contSel} .req-cont`).length !== 0)

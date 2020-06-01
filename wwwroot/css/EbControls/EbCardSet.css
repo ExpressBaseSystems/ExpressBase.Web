@@ -35,6 +35,7 @@
 .card-img {
     /*border-radius: 1.3em 1.3em 0 0;*/
     height: 100%;
+    max-width:100%;
     width: auto;
 }
 
@@ -77,6 +78,7 @@
     padding: 0 16px;
     font-size: 13px;
     border-radius: 9px 9px 0 0;
+    align-items: center;
 }
 
 .card-outer-cont {
@@ -89,7 +91,7 @@
 
 .eb-chatBox .card-head-searchdiv, .eb-chatBox-dev .card-head-searchdiv {
     width: 55%;
-    margin: auto;
+    /*margin: auto;*/
     position: relative;
     display: flex;
     border-radius: 25px;
@@ -227,7 +229,10 @@
     }
 
 .card-numeric-cont {
-    padding: 0px 5px 0px 5px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 5px;
     /*width: 50%;*/
     /*display: inline-block;*/
     /*text-align:center;*/
@@ -256,7 +261,8 @@
 }
 
 .card-cont .inp-wrap {
-    display: inline-block;
+    display:flex;
+    /*display: inline-block;*/
     width: 58%;
     border-bottom: solid 1px #eee;
 }
@@ -308,8 +314,33 @@
 }
 
 .card-text-cont {
-    padding: 0px 5px 0px 5px;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content:center;
     /*width: 50%;*/
     /*display: inline-block;*/
     /*text-align: center;*/
+}
+
+.card-contenthtml-cont {
+    padding: 5px;
+}
+
+.card-title-cont {
+    display: flex;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 20px;
+    padding: 5px;
+}
+.card-img-cont {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0px;
+}
+.card_sumry_tle {
+    font-size: 15px;
+    padding: 22px 5px 8px 5px;
+    text-align: center;
 }

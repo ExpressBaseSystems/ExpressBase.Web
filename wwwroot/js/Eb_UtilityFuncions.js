@@ -283,7 +283,7 @@ function dateDisplayNone() {
     document.addEventListener('scroll', function (e) {
         $('.xdsoft_datetimepicker').css("display", "none");
         $('.month-picker').css("display", "none");
-        
+
     }, true);
 }
 function getObjCopy4PS(Obj) {
@@ -356,4 +356,33 @@ if (!Array.prototype.clear) {
     Array.prototype.clear = function () {
         this.splice(0, this.length);
     };
+}
+function scrollDropDown(e) {
+    //document.addEventListener('scroll', function (e) {
+    //    var scrl_trg = $("#PowerSelect3DDdiv");
+    //    if ($(e.target).hasClass('tab-content')) {
+    //        ////$(e.target).scroll(function () {
+    //        ////    let topval = 0;
+    //        ////     topval = (scrl_trg.offset().top - $(this).scrollTop());
+    //        ////    console.log(scrl_trg.offset().top,  $(this).scrollTop(), topval);
+    //        ////    scrl_trg.css("top", topval );
+    //        ////    //scrl_trg.offset({ top: topval });
+    //        ////});
+
+    //        let lstscrlTop = 0;
+    //        let topval = scrl_trg.offset().top;
+    //        let drpval = 0;
+    //        $(e.target).scroll(function (event) {
+    //            var st = $(this).scrollTop();
+    //            if (st > lstscrlTop) {
+    //                drpval = topval - $(this).scrollTop();
+    //                scrl_trg.css("top", drpval ); 
+    //            } else {
+    //                scrl_trg.css("top", drpval + $(this).scrollTop());
+    //            }
+    //            lstscrlTop = st;
+    //        });
+    //    }
+
+    //}, true);
 }

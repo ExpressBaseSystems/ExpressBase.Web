@@ -2,8 +2,6 @@
 .btnarea {
     display: flex;
     flex-flow: row-reverse;
-    display: flex;
-    flex-flow: row-reverse;
     padding-bottom: 10px;
 }
 .pad10 {

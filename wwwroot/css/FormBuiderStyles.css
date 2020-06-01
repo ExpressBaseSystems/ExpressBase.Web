@@ -1260,7 +1260,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-    vertical-align: initial;
+/*    vertical-align: initial;*/
 }
 
 .moveBtn {
@@ -1741,7 +1741,7 @@ input.locinp {
     margin: 0 0 0 6px;
 }
 
-.webform-cont .radio-wrap, .msg-wraper-bot .radio-wrap {
+.Eb-ctrlContainer .radio-wrap, .msg-wraper-bot .radio-wrap {
     padding: 5px;
     display: flex;
     align-items: center;

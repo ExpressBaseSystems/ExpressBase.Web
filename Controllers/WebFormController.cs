@@ -689,7 +689,7 @@ namespace ExpressBase.Web.Controllers
                 }
                 else
                 {
-                    attendees += $@" <divclass='mr-attendees'>{Resp.MeetingRequest[i].fullname}</div>";
+                    attendees += $@" <div class='mr-attendees'>{Resp.MeetingRequest[i].fullname}</div>";
                 }
             }
            
@@ -698,20 +698,32 @@ namespace ExpressBase.Web.Controllers
                 string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");
                 string TimeTo = Convert.ToDateTime(Resp.MeetingRequest[0].TimeTo).ToString("hh:mm tt");
                 string Date = Convert.ToDateTime(Resp.MeetingRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
-                htm += $@" <div class='mr'> <div class='mr-title'> {Resp.MeetingRequest[0].Title} </div>
-                        <div class='mr-description'> {Resp.MeetingRequest[0].Description}  </div>
+                htm += $@"   <div class='mr'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
+                        	<div id='tabs'>
+					  <ul>
+						<li><a href='#tabs-1'>Details</a></li>
+						<li><a href='#tabs-2'>Participants</a></li>
+					    </ul>
+						<div id='tabs-1'>
+						<div class='mr'>
+                        <div class='mr-description'> <i class='fa fa-info-circle' aria-hidden='true'></i> <div>{Resp.MeetingRequest[0].Description} </div> </div>
                         <div class='meeting-details'> 
-                        <div class='mr-venue'> {Resp.MeetingRequest[0].Venue}  </div>
-                        <div class='mr-date'> {Date}  </div>
-                        <div class='mr-time-from'>{TimeFrom}</div>
-                        <div class='mr-time-to'> {TimeTo}</div>
-                        </div>
-                        <div><h5>Attendees</h5> {attendees}
-                        </div> 
-                        <div><h5>Hosts</h5> {hosts}
-                        </div>
-<button id='accept-meeting' data-id='{Resp.MeetingRequest[0].Slotid}'> Accept Meeting</button>
-                        </div>
+                        <div class='mr-venue'> <i class='fa fa-map-marker' aria-hidden='true'></i> <div>{Resp.MeetingRequest[0].Venue}</div>  </div>
+                        <div class='mr-date'> <i class='fa fa-calendar-o' aria-hidden='true'></i> <div>{Date}</div> </div>
+                        <div class='mr-time'> <div>{TimeTo}</div> <span>to</span> <div>{TimeFrom}</div></div></div>
+                        </div></div>
+					  <div id='tabs-2'>
+							<div class='mr-list'>
+                            <div class='mr-attendees-list'><h5>Attendees</h5> {attendees}</div> 
+							<div class='mr-hosts-list'><h5>Hosts</h5> {hosts}</div></div></div>  
+					   </div> 
+					   </div>
+					</div>
+                    <div class='mr-btn-grp'>
+                    <button id='reject-meeting' data-id='{Resp.MeetingRequest[0].Slotid}' class='mr-btn'> Reject Meeting</button>
+                    <button id='cancel-meeting' data-id='{Resp.MeetingRequest[0].Slotid}' class='mr-btn'> Cancel Meeting</button>
+                    <button id='accept-meeting' data-id='{Resp.MeetingRequest[0].Slotid}' class='mr-btn'> Accept Meeting</button>
+                    </div>
                     ";
             }
             else
@@ -723,6 +735,11 @@ namespace ExpressBase.Web.Controllers
         public string AcceptMeeting(int Slot, int myactionid)
         {
             MeetingUpdateByUsersResponse Resp = this.ServiceClient.Post<MeetingUpdateByUsersResponse>(new MeetingUpdateByUsersRequest { Id = Slot, UserInfo = this.LoggedInUser, MyActionId = myactionid });
+            return JsonConvert.SerializeObject(Resp);
+        }
+        public string CancelMeeting(int Slot, int myactionid)
+        {
+            MeetingCancelByHostResponse Resp = this.ServiceClient.Post<MeetingCancelByHostResponse>(new MeetingCancelByHostRequest { SlotId = Slot, UserInfo = this.LoggedInUser, MyActionId = myactionid });
             return JsonConvert.SerializeObject(Resp);
         }
     }

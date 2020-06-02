@@ -45,7 +45,7 @@
                 $row.find("[col='review-dtls'] .fs-uname").text(cell.Value);
             }
             else if (cell.Name === "eb_created_by_id") {
-                let url = `url(../images/dp/${cell.Value}.png)`;
+                let url = `url(../images/dp/${cell.Value}.png), url(../images/nulldp.png)`;
                 $row.find("[col='review-dtls'] .fs-dp").css("background-image", url);
             }
         }.bind(this));
@@ -223,7 +223,7 @@
                 if (column.Name === "eb_created_by") {
                     let userId = column.Value.split("$$")[0];
                     let userName = column.Value.split("$$")[1] || "-------";
-                    let url = `url(../images/dp/${userId}.png)`;
+                    let url = `url(../images/dp/${userId}.png), url(../images/nulldp.png)`;
                     if (!userId)
                         url = `url(../images/proimg.jpg)`;
                     html = html.replace("@dpstyle@", `style='background-image:${url}'`)

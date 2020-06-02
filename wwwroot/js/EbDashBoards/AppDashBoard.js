@@ -251,6 +251,7 @@
         let cssConstObj = {};
         let authOptions = {};
         let botProperties = {};
+        let loginCnt = 0;
         let bgtyp = '';
         let authcheck = $("input[name=authtype]:checked").length;
         if (!authcheck) {
@@ -269,12 +270,16 @@
                 return;
             }
         }
-        authOptions.EmailAuth = $('#email_anony').is(":checked");
         authOptions.UserName = $('#name_anony').is(":checked");
+        authOptions.EmailAuth = $('#email_anony').is(":checked");
         authOptions.PhoneAuth = $('#phone_anony').is(":checked");
         authOptions.Fblogin = $('#fb_anony').is(":checked");
+        if (authOptions.PhoneAuth || authOptions.EmailAuth) loginCnt += 1;
+        if (authOptions.Fblogin) loginCnt += 1;
         authOptions.FbAppID = $('#fbAppidtxt').val().trim();
         authOptions.FbAppVer = $('#fbAppversn').val().trim();
+        authOptions.LoginOpnCount = loginCnt;
+        
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");

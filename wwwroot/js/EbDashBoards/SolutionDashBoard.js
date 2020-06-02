@@ -17,7 +17,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "ORACLE": "<img class='img-responsive' src='../images/oracle.png' align='middle' style='height: 50px;' />",
         "MongoDB": "<img class='img-responsive' src='../images/mongodb.png' align='middle' style='height:40px' />",
         "Cloudinary": "<img class='img-responsive' src='../images/cloudnary.png' align='middle' style='height: 17px;' />",
-        "ExpertTexting": "<img class='img-responsive' src='../images/Expert Texting.png' align='middle' style='height:26px' />",
+        "ExpertTexting": "<img class='img-responsive' src='../images/expert_texting.png' align='middle' style='height:26px' />",
         "TextLocal": "<img class='img- responsive image-vender' src='../images/textlocal_logo.png' style='width:65%' />",
         "Twilio": "<img class='img-responsive' src='../images/twilio.png' align='middle' style='height: 38px;' />",
         "SMTP": "<img class='img-responsive' src='../images/svg/email.svg' align='middle' style='height: 36px;' />",
@@ -31,7 +31,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"        
     }
     var venderdec = {
-        "PGSQL": `<img class='img-responsive' src='../images/POSTGRES.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
+        "PGSQL": `<img class='img-responsive' src='../images/postgres.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
                             <span>PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and technical standards compliance. It is designed to handle a range of workloads, from single machines to data warehouses or Web services with many concurrent users.</span>
                         </div>`,
@@ -1125,7 +1125,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         } else if (type == "Twilio") {
             html.push('<img class="img-responsive" src="../images/twilio.png" style="height: 50px;" />');
         } else if (type == "ExpertTexting"){
-            html.push('<img class="img-responsive" src="../images/expert texting.png" style="height: 35px;" />');
+            html.push('<img class="img-responsive" src="../images/expert_exting.png" style="height: 35px;" />');
         } else if (type == "TextLocal"){
             html.push('<img class="img-responsive" src="../images/textlocal_logo.png" style="height: 35px;" />');
         }

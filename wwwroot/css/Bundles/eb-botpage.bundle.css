@@ -9171,10 +9171,6 @@ input.locinp {
         height: 185px;
         width: 250px;
     }
-         /*.trggrpreview :hover {
-            box-shadow: 2px 2px 5px 3px #a2958a;
-            transform: translateY(-2px) scale(1.01);
-        }*/
 
         .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file {
             /*display: inline-block;
@@ -9392,12 +9388,14 @@ input.locinp {
 
 
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600");
+
 body {
     --botbgclr: transparent;
     --bgclrwhite: white;
     --botfilter_btn: opacity(0.7);
     /*--bot_fontfamily: Open Sans;*/
 }
+
 .eb-chat-cont {
     display: block;
     position: fixed;
@@ -9793,7 +9791,7 @@ body {
 
     .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
         /*filter: hue-rotate(60deg);*/
-        filter:var(--botfilter_btn);
+        filter: var(--botfilter_btn);
         color: white;
     }
 
@@ -10046,6 +10044,7 @@ body {
     /* padding: 3px; */
     /* background: #f1f1f1;*/
 }
+
     .ctrl-wraper input[chat-inp] {
         width: 100%;
     }
@@ -10455,12 +10454,38 @@ body {
     z-index: 9999;
 }
 
+
+.loginOptnCont .lgnBtnCont {
+    padding: 3px;
+}
+
+    .loginOptnCont .lgnBtnCont .loginOptnBtn {
+        justify-content: flex-start;
+        width: 75%;
+        font-weight: 600;
+        outline: none;
+        border: solid 1px;
+        background: #fff;
+        color: inherit;
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        .loginOptnCont .lgnBtnCont .loginOptnBtn :hover {
+            box-shadow: inset 0px 0px 8px 1px #dedfe1;
+        }
+
 .eb-chat-cont .locinp-span {
     line-height: 2;
 }
+
 .card-outer-cont {
     background-color: var(--bgclrwhite);
 }
+
 .alt {
     background-color: rgb(243, 249, 249);
 }

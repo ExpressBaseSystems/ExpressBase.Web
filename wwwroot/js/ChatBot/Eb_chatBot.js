@@ -1594,12 +1594,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.hideTypingAnim();
         // this.isAlreadylogined = false;
 
-        if (settings.Authoptions.EmailAuth) {
-            this.emailauthFn();
+        if (settings.Authoptions.EmailAuth || settings.Authoptions.PhoneAuth) {
+            this.AnonymousUserLogin()
         }
-        else if (settings.Authoptions.PhoneAuth) {
-            this.phoneauthFn();
-        }
+        
         else if (settings.Authoptions.Fblogin) {
             if (this.FB != null) {
                 this.FB.getLoginStatus(function (response) {

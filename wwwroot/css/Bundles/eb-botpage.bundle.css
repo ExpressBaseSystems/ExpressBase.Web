@@ -5404,6 +5404,8 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
 
 .ps-cont {
     height: 100%;
+    margin-top: auto;
+    margin-bottom: auto;
 }
 
 .ps-srch {
@@ -5541,7 +5543,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
 
     .v-select .selected-tag .close {
         color: #fff;
-        text-shadow: 0px 1px 0px #000;
+        text-shadow: 0px 1px 0px #000000d4;
         opacity: 1;
         opacity: 1;
         position: absolute;
@@ -5549,7 +5551,8 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
         right: 10px;
         padding: 3px;
         font-size: 21px;
-        outline:none;
+        outline: none;
+        font-weight: 500;
     }
 
         .v-select .selected-tag .close:hover {
@@ -7415,10 +7418,10 @@ body {
     padding: 3px 11.5px;
     position: absolute;
     text-shadow: none;
-    top: 3.5px;
+    top: -25px;
     border-radius: 3px 5px 0 0;
     letter-spacing: 0.2px;
-    right: 0;
+    right: -1px;
     background-color: #00bd31 !important;
 }
 
@@ -7695,6 +7698,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .grid-cont {
     /*overflow: auto;*/
+    position: relative;
 }
 
     .grid-cont th {
@@ -7901,6 +7905,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-right: solid 1px #c7c7c7;
 }
 
+.tdInnerDiv {
+    height: 100%;
+    width: 100%;
+    min-height: 30px;
+}
+
 .tdDropable {
     min-height: 30px;
 }
@@ -7982,8 +7992,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 0;
 }
 
-[tdcoltype=DGBooleanColumn] .ctrl-cover{
-    border:none
+[tdcoltype=DGBooleanColumn] .ctrl-cover {
+    border: none
 }
 
 [tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
@@ -8061,6 +8071,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*width: 100%;*/
     /*vertical-align: top;*/
     padding: 1px;
+    height: 0px;/*to fix drop issue by preventing auto padding in td*/
 }
 
 .Eb-ctrlContainer {
@@ -8261,7 +8272,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-    vertical-align: initial;
+/*    vertical-align: initial;*/
 }
 
 .moveBtn {
@@ -8742,7 +8753,7 @@ input.locinp {
     margin: 0 0 0 6px;
 }
 
-.webform-cont .radio-wrap, .msg-wraper-bot .radio-wrap {
+.Eb-ctrlContainer .radio-wrap, .msg-wraper-bot .radio-wrap {
     padding: 5px;
     display: flex;
     align-items: center;
@@ -9171,10 +9182,6 @@ input.locinp {
         height: 185px;
         width: 250px;
     }
-         /*.trggrpreview :hover {
-            box-shadow: 2px 2px 5px 3px #a2958a;
-            transform: translateY(-2px) scale(1.01);
-        }*/
 
         .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file {
             /*display: inline-block;
@@ -9392,12 +9399,14 @@ input.locinp {
 
 
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600");
+
 body {
     --botbgclr: transparent;
     --bgclrwhite: white;
     --botfilter_btn: opacity(0.7);
     /*--bot_fontfamily: Open Sans;*/
 }
+
 .eb-chat-cont {
     display: block;
     position: fixed;
@@ -9678,7 +9687,8 @@ body {
 }*/
 .formname-btn {
     border-radius: 4px;
-    color: var(--botThemeColor);
+    border: 1.5px solid var(--botThemeColor);
+    /*color: var(--botThemeColor);*/
     margin: 1px 1px;
     width: 90%;
     margin-bottom: 8px;
@@ -9687,16 +9697,16 @@ body {
     margin-right: 15px;
     background-color: white;
     outline: none;
-    border: solid 1px;
     padding: 5px;
     font-size: 13px;
     transition-duration: 0.1s;
 }
 
     .formname-btn:hover {
+        cursor: pointer;
         /*filter: hue-rotate(180deg);*/
-        filter: var(--botfilter_btn);
-        color: var(--botThemeColor);
+        /*color: var(--botThemeColor);*/
+        box-shadow: inset 0 0 3px 1px var(--botThemeColor);
     }
 
 .formname-btn_botformlist {
@@ -9729,6 +9739,7 @@ body {
         filter: var(--botfilter_btn);
         color: var(--botThemeColor);
         box-shadow: 0px 0px 5px 1px #dedfe1;
+        cursor: pointer;
     }
 
 
@@ -9793,8 +9804,9 @@ body {
 
     .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
         /*filter: hue-rotate(60deg);*/
-        filter:var(--botfilter_btn);
+        filter: var(--botfilter_btn);
         color: white;
+        cursor: pointer;
     }
 
 
@@ -9980,7 +9992,32 @@ body {
         outline: none;
     }
 
-.btn-box [for=fblogin]:first-child {
+/*.xxxxxbtn-box [for=fblogin]:first-child {
+    border: none !important;
+    background-size: 35px 35px !important;
+    background-repeat: no-repeat !important;
+    border-radius: 4px !important;
+    color: white !important;
+    font-size: 14px !important;
+    border-bottom: 2px solid transparent !important;
+    border-left: 1px solid transparent !important;
+    border-right: 1px solid transparent !important;
+    box-shadow: 0 4px 2px -2px gray !important;
+    text-shadow: rgba(0, 0, 0, .5) -1px -1px 0 !important;
+    border-color: #2d5073 !important;
+    background-color: #3b5998 !important;
+    background-image: url(http://icons.iconarchive.com/icons/danleech/simple/512/facebook-icon.png) !important;
+    margin-bottom: 10px;*/
+    /*..
+    ..
+    ..*/
+    /*font-family: var(--bot_fontfamily)*/
+    /*font-family: "Merriweat!important;er Sans", sans-serif;*/
+    /*background-position: right center !important;*/
+    /*padding-right: 45px !important;*/
+/*}*/
+
+.btn-box .fbbtnstyl {
     /*padding-right: 45px !important;*/
     border: none !important;
     background-size: 35px 35px !important;
@@ -10046,6 +10083,7 @@ body {
     /* padding: 3px; */
     /* background: #f1f1f1;*/
 }
+
     .ctrl-wraper input[chat-inp] {
         width: 100%;
     }
@@ -10455,12 +10493,38 @@ body {
     z-index: 9999;
 }
 
+
+/*.loginOptnCont .lgnBtnCont {
+    padding: 3px;
+}
+
+    .loginOptnCont .lgnBtnCont .loginOptnBtn {
+        justify-content: flex-start;
+        width: 75%;
+        font-weight: 600;
+        outline: none;
+        border: solid 1px;
+        background: #fff;
+        color: inherit;
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        .loginOptnCont .lgnBtnCont .loginOptnBtn :hover {
+            box-shadow: inset 0px 0px 8px 1px #dedfe1;
+        }*/
+
 .eb-chat-cont .locinp-span {
     line-height: 2;
 }
+
 .card-outer-cont {
     background-color: var(--bgclrwhite);
 }
+
 .alt {
     background-color: rgb(243, 249, 249);
 }
@@ -12431,8 +12495,9 @@ body {
     border: solid 1px #d1d1d1 !important;
     padding-bottom: 10px !important;
 }
+
     .meeting-picker-outer tr {
-         background-color: none !important;
+        background-color: none !important;
     }
 
     .meeting-picker-outer .sub-head {
@@ -12495,7 +12560,7 @@ body {
         }
 
 /*form style over ride*/
-        tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
+tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     background-color: none !important;
     border: none !important;
 }
@@ -12629,6 +12694,7 @@ body {
             .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-state-default {
                 text-align: center;
             }
+
             .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-state-active {
                 background: #508bf9;
                 color: white;
@@ -12658,7 +12724,8 @@ body {
                     padding: 0px 10px;
                     text-align: center;
                 }
-    .eb-meeting-bot  button {
+
+    .eb-meeting-bot button {
         height: 3.5rem;
     }
 
@@ -12678,3 +12745,155 @@ body {
             .eb-meeting-bot .ui-datepicker-calendar .ui-datepicker-other-month a {
                 display: none;
             }
+
+/*Meeting Request style*/
+.mr {
+    font-size: 16px;
+}
+    .mr .header {
+        font-size: 16px;
+    }
+
+    .mr .mr-title {
+        font-size: 20px;
+        text-align: center;
+        font-weight: 400;
+    }
+
+        .mr .mr-title i {
+            font-size: 20px;
+        }
+
+        .mr .mr-title div {
+            font-size: 20px;
+            text-align: center;
+        }
+
+    .mr .mr-description {
+        padding: 1px;
+        display: flex;
+    }
+
+        .mr .mr-description i {
+            font-size: 19px;
+            padding: 5px 0px 0px 0px;
+        }
+
+        .mr .mr-description div {
+            padding: 5px 10px;
+            border: solid 1px #c0c0c0;
+            border-radius: 4px;
+            width: 100%;
+            margin-left: 1rem;
+            background: #0000000d;
+        }
+
+    .mr .meeting-details {
+        padding: 1px;
+    }
+
+        .mr .meeting-details .mr-venue {
+            padding: 5px 0px;
+            display: flex;
+        }
+
+            .mr .meeting-details .mr-venue i {
+                font-size: 20px;
+                padding: 5px 5px 0px 3px;
+            }
+
+            .mr .meeting-details .mr-venue div {
+                padding: 5px 10px;
+                border: solid 1px #c0c0c0;
+                border-radius: 4px;
+                width: 100%;
+                margin-left: 8px;
+                background: #0000000d;
+            }
+
+        .mr .meeting-details .mr-date {
+            padding: 5px 0px;
+            display: flex;
+        }
+
+            .mr .meeting-details .mr-date i {
+                font-size: 20px;
+                padding: 5px 5px 0px 0px;
+            }
+
+            .mr .meeting-details .mr-date div {
+                padding: 5px 10px;
+                border: solid 1px #c0c0c0;
+                border-radius: 4px;
+                width: 100%;
+                margin-left: 4px;
+                background: #0000000d;
+            }
+
+        .mr .meeting-details .mr-time {
+            padding: 5px 0px;
+            display: flex;
+            padding-left: 2.7rem;
+        }
+
+            .mr .meeting-details .mr-time i {
+                font-size: 20px;
+                padding: 5px 5px 0px 0px;
+            }
+            .mr .meeting-details .mr-time span {
+                font-size: 18px;
+                padding: 5px 5px 0px 0px;
+                margin: 0px 2rem;
+            }
+
+            .mr .meeting-details .mr-time div {
+                padding: 5px 10px;
+                border: solid 1px #c0c0c0;
+                border-radius: 4px;
+                width: 100%;
+                background: #0000000d;
+            }
+
+    .mr .mr-list {
+        display: flex;
+    }
+
+        .mr .mr-list .mr-attendees-list {
+            padding: 5px 0px 15px 0px;
+            width: 50%;
+        }
+
+        .mr .mr-list .mr-hosts-list {
+            padding: 5px 0px 15px 0px;
+            width: 50%;
+        }
+
+.mr-btn-grp {
+    padding: 10px 0px;
+    display:flex;
+}
+
+    .mr-btn-grp .mr-btn {
+        border: 0px;
+        padding: 8px 20px;
+        background: #6fa9d2;
+        color: white;
+        border-radius: 4px;
+        width: 100%;
+        margin-right: 3rem;
+    }
+        .mr-btn-grp .mr-btn:last-child {
+            margin-right: 0rem;
+        }
+
+/*tabs style*/
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    float: left;
+    padding: .5em 1em;
+    text-decoration: none;
+}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+    color: #fff;
+    text-decoration: none;
+    background-color:dodgerblue;
+}

@@ -893,6 +893,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-right: solid 1px #c7c7c7;
 }
 
+.tdInnerDiv {
+    height: 100%;
+    width: 100%;
+    min-height: 30px;
+}
+
 .tdDropable {
     min-height: 30px;
 }
@@ -1053,6 +1059,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*width: 100%;*/
     /*vertical-align: top;*/
     padding: 1px;
+    height: 0px;/*to fix drop issue by preventing auto padding in td*/
 }
 
 .Eb-ctrlContainer {
@@ -1253,7 +1260,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-    vertical-align: initial;
+/*    vertical-align: initial;*/
 }
 
 .moveBtn {
@@ -1734,7 +1741,7 @@ input.locinp {
     margin: 0 0 0 6px;
 }
 
-.webform-cont .radio-wrap, .msg-wraper-bot .radio-wrap {
+.Eb-ctrlContainer .radio-wrap, .msg-wraper-bot .radio-wrap {
     padding: 5px;
     display: flex;
     align-items: center;

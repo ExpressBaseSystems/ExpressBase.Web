@@ -329,12 +329,12 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
-                {
-                    GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid, UserObj = this.LoggedInUser });
+                //if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
+                //{
+                    GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
                     return Resp.Json;
-                }
-                throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
+                //}
+                //throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
             }
             catch (Exception ex)
             {

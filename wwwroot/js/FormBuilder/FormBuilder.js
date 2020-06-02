@@ -647,7 +647,7 @@
         if (this.PGobj.PropsObj.ObjType === "TableLayout" && prop === "Controls") {
             let $tblTr = $(`#cont_${this.PGobj.CurObj.EbSid}>table>tbody>tr`);
             let $td = $(`<td id='@name@' ebsid='${addedObj.EbSid}' style='padding: 3px; width:auto;' class='form-render-table-Td ebResizable ebcont-ctrl ppbtn-cont'>
-                            <div style='height: 100%; width: 100%; min-height: 30px;'><div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div></div>
+                            <div class='tdInnerDiv'><div ctrl-ebsid='${addedObj.EbSid}' class='cont-prop-btn'><i class='fa fa-ellipsis-v' aria-hidden='true'></i></div></div>
                        </td>`);
             $tblTr.append($td);
             this.pushToDragables($($td.children()[0]));

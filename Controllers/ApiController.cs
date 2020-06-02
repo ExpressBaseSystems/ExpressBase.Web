@@ -23,6 +23,8 @@ using ExpressBase.Web.Filters;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.Connections;
+using System.Net.Http;
+using System.Net;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -489,6 +491,69 @@ namespace ExpressBase.Web.Controllers
             }
             return resp;
         }
+
+        [HttpGet("/api/get_file")]
+        public HttpResponseMessage GetStaticFiles(EbFileCategory category, string filename)
+        {
+            HttpResponseMessage response = new HttpResponseMessage();
+            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+
+            if (ViewBag.IsValid)
+            {
+                try
+                {
+                    int id = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First());
+                    DownloadFileResponse dfs = null;
+
+                    if (category == EbFileCategory.File)
+                    {
+                        dfs = this.FileClient.Get(new DownloadFileByIdRequest
+                        {
+                            FileDetails = new FileMeta
+                            {
+                                FileRefId = id,
+                                FileCategory = EbFileCategory.File
+                            }
+                        });
+                    }
+                    else if (category == EbFileCategory.Images)
+                    {
+                        dfs = this.FileClient.Get(new DownloadImageByIdRequest
+                        {
+                            ImageInfo = new ImageMeta
+                            {
+                                FileRefId = id,
+                                FileCategory = EbFileCategory.Images,
+                                ImageQuality = ImageQuality.original
+                            }
+                        });
+                    }
+
+                    if (dfs.StreamWrapper != null)
+                    {
+                        response.StatusCode = HttpStatusCode.OK;
+                        //Read the File into a Byte Array.
+                        byte[] bytes = dfs.StreamWrapper.Memorystream.ToArray();
+
+                        response.Content = new ByteArrayContent(bytes);
+
+                        response.Content.Headers.Add("Content-Length", bytes.LongLength.ToString());
+                        response.Content.Headers.Add("Content-Type", this.GetMime(filename));
+                    }
+                    else
+                    {
+                        response.StatusCode = HttpStatusCode.NotFound;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    response.StatusCode = HttpStatusCode.NotFound;
+                }
+            }
+            return response;
+        }
+
 
         private string GetMime(string fname)
         {

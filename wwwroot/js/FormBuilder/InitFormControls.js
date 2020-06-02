@@ -807,7 +807,7 @@
         Vue.config.devtools = true;
 
         $(`#${ctrl.EbSid_CtxId}_loading-image`).hide();
-        $(`#cont_${ctrl.EbSid_CtxId} .ctrl-cover`).css("height", ctrl.Padding.Top + ctrl.Padding.Bottom + 20 + "px");
+        $(`#cont_${ctrl.EbSid_CtxId} .ctrl-cover`).css("min-height", ctrl.Padding.Top + ctrl.Padding.Bottom + 20 + "px");
 
         let EbCombo = new EbSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,

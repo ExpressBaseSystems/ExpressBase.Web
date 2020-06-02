@@ -354,8 +354,10 @@
             }
         }.bind(this));
 
-        if ($notOk1stCtrl)
+        if ($notOk1stCtrl) {
             $notOk1stCtrl.select();
+            $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+        }
         required_valid_flag = required_valid_flag && this.runFormValidations();
         return required_valid_flag;
     }.bind(this);

@@ -1059,45 +1059,65 @@ const WebFormRender = function (option) {
 
         $.each(auditObj, function (idx, Obj) {
             let $trans = $(`<div class="single-trans"></div>`);
-            let temptitle = (Obj.ActionType === "Insert" ? "Created by " : "Updated by ") + Obj.CreatedBy + " at " + Obj.CreatedAt;
+            let temptitle = Obj.ActionType + " by " + Obj.CreatedBy + " at " + Obj.CreatedAt;
+            let chevronIcon = Obj.ActionType === 'Updated' ? `<div style="display:inline-block; width: 20px;"><i class="fa fa-chevron-down"></i></div>` : '';
             $trans.append(` <div class="trans-head row">
                                 <div class="col-md-10" style="padding: 5px 8px;">
-                                    <div style="display:inline-block;"><i class="fa fa-chevron-down"></i></div>
+                                    ${chevronIcon}
                                     <div style="display:inline-block;">${temptitle}</div>
                                 </div>
                                 <div class="col-md-2">
                                     <div style="float: right;">
-                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; border-radius: 15px;">
-                                    </div>                                    
+                                        <img src="/images/dp/${Obj.CreatedById}.png" onerror="this.src = '/images/imagenotfound.svg';" style="height: 30px; width: 30px; border-radius: 50%;">
+                                    </div>
                                 </div>
                             </div>`);
 
+            if (Obj.ActionType === 'Updated') {
+                $trans.find('.trans-head').css('cursor', 'pointer');
+                $trans.find('.trans-head').hover(function () {
+                    $(this).css("background-color", "#ddd");
+                }, function () {
+                    $(this).css("background-color", "#ccc");
+                });
+            }
             $trans.append(`<div class="trans-body collapse in"></div>`);
             let tempHtml = ``;
+            let tempHtml2 = ``;
 
             $.each(Obj.Tables, function (i, Tbl) {
+                let indx = 0;
                 $.each(Tbl.Columns, function (j, Row) {
-                    tempHtml += `
+                    let temp = `
                         <tr>
-                            <td class="col-md-4 col-sm-4">${Row.Title}</td>
-                            <td class="col-md-4 col-sm-4" style="color: red;">${Row.NewValue}</td>
-                            <td class="col-md-4 col-sm-4">${Row.OldValue}</td>
-                        </tr>`;
+                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Row.Title}</td>
+                            <td class="col-md-4 col-sm-4">${Row.NewValue}</td>                            
+                        </tr>
+                        <tr><td class="col-md-4 col-sm-4" style="text-decoration: line-through;">${Row.OldValue}</td></tr>`;
+                    if (indx++ % 2 === 0)
+                        tempHtml += temp;
+                    else
+                        tempHtml2 += temp;
                 });
             });
             if (tempHtml.length !== 0) {
-                tempHtml = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
-                                <thead>
-                                    <tr class="table-title-tr">
-                                        <th class="col-md-4 col-sm-4">Field Name</th>
-                                        <th class="col-md-4 col-sm-4">New Value</th>
-                                        <th class="col-md-4 col-sm-4">Old Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody>`
-                    + tempHtml +
+                //<thead>
+                //  <tr class="table-title-tr">
+                //      <th class="col-md-4 col-sm-4" style='font-weight: 400;'>Field Name</th>
+                //      <th class="col-md-4 col-sm-4" style='font-weight: 400;'>New Value</th>
+                //      <th class="col-md-4 col-sm-4" style='font-weight: 400;'>Old Value</th>
+                //  </tr>
+                //</thead>
+                let temp = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
+                     <tbody>`
+                    + '@replacethis@' +
                     `</tbody>
                             </table></div>`;
+                tempHtml = temp.replace('@replacethis@', tempHtml);
+                if (tempHtml2.length !== 0)
+                    tempHtml += temp.replace('@replacethis@', tempHtml2);
+                else
+                    tempHtml += `<div class="form-table-div"></div>`;
                 $trans.children(".trans-body").append(tempHtml);
             }
 
@@ -1109,19 +1129,40 @@ const WebFormRender = function (option) {
                                     <tr class="table-title-tr">
                                         <th></th>`;
                 $.each(Tbl.ColumnMeta, function (j, cmeta) {
-                    tempHtml += `<th>${cmeta}</th>`;
+                    tempHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
                 });
                 tempHtml += `     </tr>
                                 </thead><tbody>`;
-                $.each(Tbl.Rows, function (m, Cols) {
-                    let newRow = `<tr><td>New</td>`;
-                    let oldRow = `<tr><td>Old</td>`;
+                $.each(Tbl.NewRows, function (m, Cols) {
+                    let newRow = `<tr><td>Added</td>`;
                     $.each(Cols.Columns, function (n, Col) {
-                        if (Col.IsModified)
-                            newRow += `<td style="color: red;">${Col.NewValue}</td>`;
-                        else
-                            newRow += `<td>${Col.NewValue}</td>`;
+                        newRow += `<td>${Col.NewValue}</td>`;
+                    });
+                    newRow += `</tr>`;
+                    tempHtml += newRow;
+                });
+
+                $.each(Tbl.DeletedRows, function (m, Cols) {
+                    let oldRow = `<tr><td>Deleted</td>`;
+                    $.each(Cols.Columns, function (n, Col) {
                         oldRow += `<td>${Col.OldValue}</td>`;
+                    });
+                    oldRow += `</tr>`;
+                    tempHtml += oldRow;
+                });
+
+                $.each(Tbl.EditedRows, function (m, Cols) {
+                    let newRow = `<tr><td rowspan='2' style='vertical-align: middle;'>Edited</td>`;
+                    let oldRow = `<tr>`;
+                    $.each(Cols.Columns, function (n, Col) {
+                        if (Col.IsModified) {
+                            newRow += `<td>${Col.NewValue}</td>`;
+                            oldRow += `<td style="text-decoration: line-through;">${Col.OldValue}</td>`;
+                        }
+                        else {
+                            newRow += `<td>${Col.NewValue}</td>`;
+                            oldRow += `<td>${Col.OldValue}</td>`;
+                        }
                     });
                     newRow += `</tr>`;
                     oldRow += `</tr>`;

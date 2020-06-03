@@ -418,7 +418,7 @@
             selector: ".parentNode",
             events: {
                 show: function (options) {
-                    if($(event.target).closest("li").hasClass("childNode"))
+                    if ($(event.target).closest("li").hasClass("childNode"))
                         return false;
                 }
             },
@@ -449,7 +449,7 @@
             //    if (!$(obj).find(".sim-tree-checkbox").eq(0).hasClass("checked"))
             //        $(obj).find(".sim-tree-checkbox").eq(0).trigger("click");
             //});
-            $("#" + ctrl.EbSid_CtxId+" .sim-tree-checkbox").toArray()
+            $("#" + ctrl.EbSid_CtxId + " .sim-tree-checkbox").toArray()
                 .map(el => $(el).hasClass("checked") ? console.log("checked") : $(el).trigger("click"));
             $('#' + ctrl.EbSid_CtxId + "_button").attr("disabled", "disabled");
         }
@@ -807,7 +807,7 @@
         Vue.config.devtools = true;
 
         $(`#${ctrl.EbSid_CtxId}_loading-image`).hide();
-        $(`#cont_${ctrl.EbSid_CtxId} .ctrl-cover`).css("height", ctrl.Padding.Top + ctrl.Padding.Bottom + 20 + "px");
+        $(`#cont_${ctrl.EbSid_CtxId} .ctrl-cover`).css("min-height", ctrl.Padding.Top + ctrl.Padding.Bottom + 20 + "px");
 
         let EbCombo = new EbSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
@@ -1238,7 +1238,7 @@
         //}.bind(this), 0);
         var elm = $input[0];
         if (ctrl.MaxLimit !== 0 || ctrl.MinLimit !== 0)
-            elm.onblur = createValidator.bind(ctrl)(elm);
+            elm.onchange = createValidator.bind(ctrl)(elm);
     };
 
     this.Numeric = function (ctrl) {
@@ -1436,7 +1436,7 @@
 
             console.log("clear ");
             return filePlugin.clearFiles();
-        };
+        };        
     };
 
     this.ScriptButton = function (ctrl) {
@@ -1454,16 +1454,18 @@ function createValidator(element) {
     return function () {
         //if (!isPrintable(event))
         //    return;
-        if (this.getValueFromDOM() === element.value)// exit if no change in value
-            return;
-        var min = parseInt(element.getAttribute("min")) || 0;
-        var max = parseInt(element.getAttribute("max")) || 0;
 
-        var value = parseInt(element.value) || min;
+        if (element.__latestValue === parseFloat(element.value))// to prevent recursion from trigger("change");
+            return;
+        let min = parseFloat(element.getAttribute("min")) || 0;
+        let max = parseFloat(element.getAttribute("max")) || 0;
+
+        let value = parseFloat(element.value) || min;
         element.value = value; // make sure we got an int
 
         if (value < min && min !== 0) element.value = min;
         if (value > max && max !== 0) element.value = max;
+        element.__latestValue = parseFloat(element.value);
         $(element).trigger("change");
     }.bind(this);
 }

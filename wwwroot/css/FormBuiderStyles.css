@@ -406,10 +406,10 @@ body {
     padding: 3px 11.5px;
     position: absolute;
     text-shadow: none;
-    top: 3.5px;
+    top: -25px;
     border-radius: 3px 5px 0 0;
     letter-spacing: 0.2px;
-    right: 0;
+    right: -1px;
     background-color: #00bd31 !important;
 }
 
@@ -678,7 +678,6 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     color: #555;
 }
 
-
 .Eb-ctrlContainer[eb-readonly="true"] .addrow-btn, .eb-disablebtn {
     filter: grayscale(90%);
     pointer-events: none;
@@ -686,6 +685,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 .grid-cont {
     /*overflow: auto;*/
+    position: relative;
 }
 
     .grid-cont th {
@@ -892,6 +892,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-right: solid 1px #c7c7c7;
 }
 
+.tdInnerDiv {
+    height: 100%;
+    width: 100%;
+    min-height: 30px;
+}
+
 .tdDropable {
     min-height: 30px;
 }
@@ -973,8 +979,8 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     padding: 0;
 }
 
-[tdcoltype=DGBooleanColumn] .ctrl-cover{
-    border:none
+[tdcoltype=DGBooleanColumn] .ctrl-cover {
+    border: none
 }
 
 [tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
@@ -1052,6 +1058,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*width: 100%;*/
     /*vertical-align: top;*/
     padding: 1px;
+    height: 0px;/*to fix drop issue by preventing auto padding in td*/
 }
 
 .Eb-ctrlContainer {
@@ -1252,7 +1259,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-    vertical-align: initial;
+/*    vertical-align: initial;*/
 }
 
 .moveBtn {
@@ -1733,7 +1740,7 @@ input.locinp {
     margin: 0 0 0 6px;
 }
 
-.webform-cont .radio-wrap, .msg-wraper-bot .radio-wrap {
+.Eb-ctrlContainer .radio-wrap, .msg-wraper-bot .radio-wrap {
     padding: 5px;
     display: flex;
     align-items: center;

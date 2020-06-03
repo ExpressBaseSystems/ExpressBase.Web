@@ -692,6 +692,19 @@ function Test() {
     });
 }
 
+function string2EBType(val, type) {
+    if (typeof val !== "string")
+        return val;
+    let formatedVal = val;
+    if (type === 7 || type === 8) {
+        formatedVal = parseFloat(val);
+    }
+    else if (type === 10 || type === 11 || type === 12) {
+        formatedVal = parseInt(val);
+    }
+    return formatedVal;
+}
+
 function EbConvertValue(val, type) {
     if (type === 11) {
         val = val.replace(/,/g, "");//  temporary fix

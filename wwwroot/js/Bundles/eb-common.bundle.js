@@ -751,9 +751,19 @@ class Setup {
         let id = $(e).closest("a").attr("data-id");
         //alert(id);
         $.post("../Webform/GetSlotDetails", { id: id }, function(data) {
-            let html = JSON.parse(data);
-            ebcontext.setup.modal.setSize('modal-sm');
+            let html = JSON.parse(data);     
+            let object = {
+                Title: "Meeting Request",
+                ButtonText: "OK",
+                ButtonColor: "#ffffff",
+                ButtonBackground: "#3876ea",
+                ShowHeader: true,
+			    ShowFooter: false
+            }
+            ebcontext.setup.modal.setStyle(object);
             ebcontext.setup.modal.setHtml(html);
+            $("#tabs").tabs();
+            $("#tab-2").height($('#tabs-1').height());
             ebcontext.setup.modal.show();
             $('#accept-meeting').off('click').on('click', function() {
                 let slot = $('#accept-meeting').attr('data-id');

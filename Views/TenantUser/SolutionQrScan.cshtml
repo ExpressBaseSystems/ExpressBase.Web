@@ -1,0 +1,39 @@
+﻿@{
+    Layout = "~/Views/Shared/LayoutInner.cshtml";
+}
+
+<style>
+    .qr-innercontainer{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        flex-flow:column;
+    }
+</style>
+
+@section JavaScript{
+    <script>
+        $('title').text("Scan qr code");
+    </script>
+}
+<script src="~/js/Common/qrcode.min.js" type="text/javascript"></script>
+
+<div class="container h-100">
+    <div class="qr-innercontainer h-100">
+        <div class="qr-container" id="qrcontainer" style="margin-top:2rem;">
+
+        </div>
+        <h4 style="margin-top:2em;">Scan Qr Code</h4>
+    </div>
+</div>
+<script>
+    var qrcode = new QRCode("qrcontainer", {
+        text: JSON.stringify({ Sid: location.host }),
+        width: 128,
+        height: 128,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+    ebcontext.header.setName("Qr Code")
+</script>

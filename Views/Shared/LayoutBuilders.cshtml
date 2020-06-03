@@ -73,7 +73,7 @@
     @*roby*@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
-    <link rel="stylesheet" type="text/css" href="~/css/simTree.css"/>
+    <link rel="stylesheet" type="text/css" href="~/css/simTree.css" />
 
     @******************************************* JavaScript includes ********************** *@
 
@@ -177,6 +177,7 @@
     @if (ViewBag.wc == "uc")
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>
+        <script src="~/js/EbLocationPicker.js" type="text/javascript" asp-append-version=@bApnd></script>
     }
 
     @if (IsSectionDefined("StyleSheet"))
@@ -281,7 +282,7 @@
     @if (ViewBag.wc == "uc")
     {
         <script>
-            let loc__ = new LocSwitch({
+            let loc__ = new LocationPicker({
                 Location: '@Html.Raw(ViewBag.Locations)',
                 Tid: '@ViewBag.cid',
                 Uid:'@ViewBag.UId',

@@ -493,10 +493,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/get_file")]
-        public HttpResponseMessage GetStaticFiles(EbFileCategory category, string filename)
+        public ApiFileResponse GetStaticFiles(EbFileCategory category, string filename)
         {
-            HttpResponseMessage response = new HttpResponseMessage();
-            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ApiFileResponse response = new ApiFileResponse();
 
             if (ViewBag.IsValid)
             {
@@ -532,18 +531,13 @@ namespace ExpressBase.Web.Controllers
                     if (dfs.StreamWrapper != null)
                     {
                         response.StatusCode = HttpStatusCode.OK;
+
                         //Read the File into a Byte Array.
-                        byte[] bytes = dfs.StreamWrapper.Memorystream.ToArray();
-
-                        response.Content = new ByteArrayContent(bytes);
-
-                        response.Content.Headers.Add("Content-Length", bytes.LongLength.ToString());
-                        response.Content.Headers.Add("Content-Type", this.GetMime(filename));
+                        response.Bytea = dfs.StreamWrapper.Memorystream.ToArray();
+                        response.ContentType = this.GetMime(filename);
                     }
                     else
-                    {
                         response.StatusCode = HttpStatusCode.NotFound;
-                    }
                 }
                 catch (Exception ex)
                 {

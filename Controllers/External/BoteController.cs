@@ -431,10 +431,17 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			//{
 			//    return RedirectToAction("SignIn", "Common");
 			//}
-			this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
-			GetBotsResponse BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest {Id_lst= bt });
-			ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
-			return View();
+			if (ViewBag.WhichConsole == "uc")
+			{
+				this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
+				GetBotsResponse BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { Id_lst = bt });
+				ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
+				return View();
+			}
+			else
+			{
+				return Redirect("/statuscode/404"); 
+			}
 		}
 
 		//copied to boti - febin

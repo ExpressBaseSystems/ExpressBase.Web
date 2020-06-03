@@ -368,6 +368,7 @@
             TenantId: "ViewBagcid",
             SolutionId: this.Sid,
             Container: "onboarding_logo",
+            MaxSize:1,
             Multiple: false,
             ServerEventUrl: 'https://se.eb-test.xyz',
             EnableTag: false,

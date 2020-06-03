@@ -345,14 +345,15 @@
 }
 
 .filterCont {
+    padding-bottom: 5px;
     left: 0;
     width: 300px;
     position: fixed;
-    height: 100%;
-    overflow: hidden;
+    height: calc(100% - 38px);
+    overflow-y: auto;
     z-index: 4;
     border-radius: 2px;
-    /*box-shadow: 4px 2px 6px 0px rgba(0, 0, 0, 0.23), 14px 14px 16px 8px rgba(0, 0, 0, 0.01), 22px 24px 26px 16px rgba(0, 0, 0, 0.01);*/
+    box-shadow: 4px 2px 6px 0px rgba(0, 0, 0, 0.23), 14px 14px 16px 8px rgba(0, 0, 0, 0.01), 22px 24px 26px 16px rgba(0, 0, 0, 0.01);
     top: 0;
     margin-top: 38px;
 }

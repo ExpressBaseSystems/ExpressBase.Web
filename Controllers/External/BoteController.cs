@@ -35,9 +35,12 @@ namespace ExpressBase.Web.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Bot(string tid, string appid, string themeColor, string botdpURL, string msg)
+		public IActionResult Bot(string tid, string appid, string pgur)
 		{
 			var host = this.HttpContext.Request.Host;
+			////for getting page url in which bot is deployed
+			byte[] Pge = Convert.FromBase64String(pgur);
+			string ExtUrl = System.Text.Encoding.UTF8.GetString(Pge);
 			//EbBotSettings settings = new EbBotSettings() { DpUrl = botdpURL, ThemeColor = themeColor.Replace("HEX", "#"), WelcomeMessage = msg };
 			string cid = this.GetIsolutionId(tid);
 			EbBotSettings settings = this.Redis.Get<EbBotSettings>(string.Format("{0}-{1}_app_settings", cid, appid));
@@ -429,7 +432,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			//    return RedirectToAction("SignIn", "Common");
 			//}
 			this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
-			var BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest {Id_lst= bt });
+			GetBotsResponse BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest {Id_lst= bt });
 			ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
 			return View();
 		}

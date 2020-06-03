@@ -84,6 +84,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".eb-chatBox [name=formcancel]", this.formCancel);
         $("body").on("click", ".eb-chatBox [name=formsubmit_fm]", this.formSubmit_fm);
         $("body").on("click", ".eb-chatBox [name=formcancel_fm]", this.formCancel_fm);
+        $("body").on("click", "[for=loginOptions]", this.loginSelectedOpn);
         $("body").on("click", "[name=contactSubmit]", this.contactSubmit);
         $("body").on("click", "[name=contactSubmitMail]", this.contactSubmitMail);
         $("body").on("click", "[name=contactSubmitPhn]", this.contactSubmitPhn);
@@ -184,12 +185,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.userDtls.name = username;
         this.postmenuClick(e, username);
         this.msgFromBot(`Welcome ${username}`);
-        if (this.botQueue.length > 0) {
-            (this.botQueue.shift())();
+        if (settings.Authoptions.LoginOpnCount > 1) {
+            this.loginList();
         }
         else {
-            this.submitAnonymous();
+            this.LoginOpnDirectly();
         }
+        
     }.bind(this);
 
     this.submitAnonymous = function () {
@@ -266,34 +268,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
 
-    this.FBlogin = function (e) {
-        this.postmenuClick(e);
-        if (this.CurFormIdx === 0)
-            this.login2FB();
-        else {
-            this.collectContacts();
-
-        }
-    }.bind(this);
-
-    this.collectContacts = function () {
-        //this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that I can understand you better.");
-        //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
-    };
-
-    this.continueAsFBUser = function (e) {
-        this.postmenuClick(e, "");
-        if (this.CurFormIdx === 0) {
-            this.sendCtrl("Continue as " + this.userDtls.name);
-            this.authenticate();
-        }
-        else
-            this.FB.logout(function (response) {
-                //this.msgFromBot("You are successfully logout from our App");///////////////////////
-                this.sendCtrl("Not " + this.userDtls.name);
-                this.collectContacts();
-            }.bind(this));
-    }.bind(this);
+    
 
     this.startFormInteraction = function (e) {
         this.curRefid = $(e.target).closest(".btn").attr("refid");
@@ -435,16 +410,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         }
     }.bind(this);
 
-    this.Query = function (msg, OptArr, For, ids) {
+    this.Query = function (msg, OptArr, For, cls,ids) {
         this.msgFromBot(msg);
-        var Options = this.getButtons(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids);
+        var Options = this.getButtons(OptArr.map((item) => { return item.replace(/_/g, " ") }), For, ids, cls);
         this.msgFromBot($('<div class="btn-box" >' + Options + '</div>'));
     };
 
-    this.getButtons = function (OptArr, For, ids) {
+    this.getButtons = function (OptArr, For, ids, cls) {
         var Html = '';
         $.each(OptArr, function (i, opt) {
-            Html += `<button for="${For}" class="btn formname-btn" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
+            Html += `<button for="${For}" class="btn formname-btn ${(cls !== undefined) ? cls[i] : ''}" idx="${i}" refid="${(ids !== undefined) ? ids[i] : i}">${opt} </button>`;
         });
         return Html;
     };
@@ -763,8 +738,13 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 }
                 $msg.find('.msg-wraper-user').html($cartSummary.html()).append(this.getTime());
             }
-            else
-                $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
+            else {
+                let disphtml = $btn.parent().prev().find('.slick-active').css('display', 'block');
+                //var rmv = disphtml.find('.card-selbtn-cont').empty();
+                $msg.find('.msg-wraper-user').html(disphtml.outerHTML()).append(this.getTime());
+              //  $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
+            }
+
             $msg.insertAfter($msgDiv);
             $msgDiv.remove();
             this.CurDataMODEL[this.curCtrl.TableName] = this.curCtrl.getDataModel();
@@ -1421,15 +1401,71 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }.bind(this));
     }.bind(this);
 
+    this.FBlogin = function (e) {
+        this.postmenuClick(e);
+        if (this.CurFormIdx === 0)
+            this.login2FB();
+        else {
+            this.collectContacts();
+
+        }
+    }.bind(this);
+
+    this.login2FB = function () {
+        this.FB.login(function (response) {
+            if (response.authResponse) {
+                // statusChangeCallback(response);
+                if (response.status === 'connected') {
+                    this.FBLogined();
+                } else {
+                    this.FBNotLogined();
+                }
+            } else {
+                //change needed
+                this.collectContacts();
+            }
+        }.bind(this), { scope: 'email' });
+    };
+
     this.FBLogined = function () {
         this.FB.api('/me?fields=id,name,picture,email', function (response) {
-            this.FBResponse = response;
-            this.userDtls.name = this.FBResponse.name;
-            this.userDtls.email = this.FBResponse.email;
-            this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
-            this.hideTypingAnim();
-            this.greetings();
+            if (response.hasOwnProperty('email')) {
+                this.FBResponse = response;
+                this.userDtls.name = this.FBResponse.name;
+                this.userDtls.email = this.FBResponse.email;
+                this.$userMsgBox.find(".bot-icon-user").css('background', `url(${this.FBResponse.picture.data.url})center center no-repeat`);
+                this.hideTypingAnim();
+                this.greetings();
+            }
+            else {
+                console.log("null response from fb");
+                this.login2FB();
+            }
         }.bind(this));
+    }.bind(this);
+
+    this.collectContacts = function () {
+        //this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that I can understand you better.");
+        //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
+    };
+
+    this.continueAsFBUser = function (e) {
+        this.postmenuClick(e, "");
+        if (this.CurFormIdx === 0) {
+            this.sendCtrl("Continue as " + this.userDtls.name);
+            this.authenticate();
+        }
+        else {
+            //this.FB.logout(function (response) {
+            //    //this.msgFromBot("You are successfully logout from our App");///////////////////////
+            //    this.sendCtrl("Not " + this.userDtls.name);
+            //    //this.collectContacts();
+            //    this.FBNotLogined();
+            //}.bind(this));
+            this.FB.logout();
+            this.sendCtrl("Not " + this.userDtls.name);
+            this.login2FB();
+        }
     }.bind(this);
 
     this.FBNotLogined = function () {
@@ -1437,35 +1473,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.isAlreadylogined = false;
         // this.msgFromBot(this.welcomeMessage);
         //  this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook", "I don't have facebook account"], "fblogin");
-        this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook"], "fblogin");
+        this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook"], "fblogin", ["fbbtnstyl"]);
     }.bind(this);
 
-    this.login2FB = function () {
-        this.FB.login(function (response) {
-            if (response.authResponse) {
-                statusChangeCallback(response);
-            } else {
-                this.collectContacts();
-            }
-        }.bind(this), { scope: 'email' });
-    };
-    this.AnonymousUserLogin = function () {
-        this.hideTypingAnim();
-        this.isAlreadylogined = false;
-        if (settings.Authoptions.UserName) {
-            this.botQueue.push(this.userNameFn);
-        }
-        if (settings.Authoptions.EmailAuth) {
-            this.botQueue.push(this.emailauthFn);
-        }
-        if (settings.Authoptions.PhoneAuth) {
-            this.botQueue.push(this.phoneauthFn);
-        }
-        if (this.botQueue.length > 0)
-            (this.botQueue.shift())();
-
-    }.bind(this);
-
+    
     this.sendWrapedCtrl = function (msg, ctrlHtml, id, name, icon) {
         this.msgFromBot(msg);
         let controlHTML = `
@@ -1491,11 +1502,6 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let ctrlHtml = `<input chat-inp type="email" id="anon_mail" placeholder="Enter Email">`;
         this.sendWrapedCtrl(msg, ctrlHtml, "anon_mail", "contactSubmitMail", "envelope");
 
-
-        //setTimeout(function () {
-        //    $("#anon_mail").val("email@valid.com");// test auto
-        //    $("[name=contactSubmitMail]").click();
-        //}.bind(this), this.typeDelay*4);
     }.bind(this);
 
     this.phoneauthFn = function (e) {
@@ -1503,7 +1509,112 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let ctrlHtml = `<input chat-inp type="tel" id="anon_phno" placeholder="Phone Number">`;
         this.sendWrapedCtrl(msg, ctrlHtml, "anon_phno", "contactSubmitPhn", "phone");
     }.bind(this);
+    
 
+    this.AnonymousLoginOptions = function () {
+        this.hideTypingAnim();
+
+        //ASK FOR USER NAME
+        if (settings.Authoptions.UserName) {
+            this.userNameFn();
+        }
+        //use seperate function for else part to replace collectContacts
+        else {
+            if (settings.Authoptions.LoginOpnCount > 1) {
+                this.loginList();
+            }
+            else {
+                this.LoginOpnDirectly();
+            }
+
+        }
+        // this.isAlreadylogined = false;
+
+    }.bind(this);
+
+    this.loginList = function () {
+        this.Query(`Please select a login method`, [`Guest login`, `Login with facebook`], "loginOptions");
+
+    //// this.isAlreadylogined = false;
+        //let btnhtml = `<div class="loginOptnCont">
+        //                <div class="lgnBtnCont" >
+        //                    <button class="ebbtn loginOptnBtn" name="loginOptions" optn="guestlogin" ><i class="fa fa-user" style="padding-right:10px"></i>Guest login</button>
+        //                </div>`;
+       
+        //if (settings.Authoptions.Fblogin) {
+        //    this.FB.getLoginStatus(function (response) {
+        //        if (response.status === 'connected') {
+        //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
+        //        } else {
+        //            btnhtml += '<div class="lgnBtnCont" ><button class="ebbtn loginOptnBtn" name="loginOptions" optn="btnFacebook" ><i class="fa fa-facebook" style="padding-right:10px"></i>Login with facebook</button> </div>'
+        //        }
+        //    });
+
+        //}
+
+        //btnhtml += "</div>";
+        //this.msgFromBot($(btnhtml));
+    }.bind(this);
+
+    this.loginSelectedOpn = function (e) {
+        this.postmenuClick(e)
+        if (this.CurFormIdx === 0)
+            this.AnonymousUserLogin();
+        else {
+            this.login2FB();
+
+        }
+
+        //let optnTxt = $(e.target).closest('button').text();
+        //this.postmenuClick(e, optnTxt);
+        //let optn = $(e.target).closest('button').attr('optn');
+        //if (optn === 'guestlogin') {
+        //    this.AnonymousUserLogin();
+        //}
+        //else if (optn === 'btnFacebook') {
+        //    this.login2FB();
+        //}
+    }.bind(this);
+
+    this.AnonymousUserLogin = function () {
+        this.hideTypingAnim();
+        this.isAlreadylogined = false;
+        if (settings.Authoptions.EmailAuth) {
+            this.botQueue.push(this.emailauthFn);
+        }
+        if (settings.Authoptions.PhoneAuth) {
+            this.botQueue.push(this.phoneauthFn);
+        }
+        if (this.botQueue.length > 0)
+            (this.botQueue.shift())();
+
+    }.bind(this);
+
+    this.LoginOpnDirectly = function () {
+        this.hideTypingAnim();
+        // this.isAlreadylogined = false;
+
+        if (settings.Authoptions.EmailAuth || settings.Authoptions.PhoneAuth) {
+            this.AnonymousUserLogin()
+        }
+        
+        else if (settings.Authoptions.Fblogin) {
+            if (this.FB != null) {
+                this.FB.getLoginStatus(function (response) {
+                    if (response.status === 'connected') {
+                        this.FBLogined();
+                    } else {
+                        this.FBNotLogined();
+                    }
+                }.bind(this));
+            }
+            else {
+                this.FBLogined();
+            }
+
+        }
+
+    }.bind(this);
     this.initConnectionCheck = function () {
         Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
         setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////

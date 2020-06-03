@@ -9,11 +9,17 @@
 
 
     this.init = function () {
-        this.botConfigFn();
+        if (this.AppType === 3) {
+            this.botConfigFn();
+            this.BgImageUpload();
+
+        }
+       
         $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
         $('.resetcss').on('click', this.ResetCssFn.bind(this));
         $('input[name=authtype]').on('click', this.authMethodCheckFn.bind(this));
-        this.BgImageUpload();
+        $('#grdntmodalbtn').on('click', this.gradientValueChangeFn.bind(this));
+       
     }
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
@@ -161,7 +167,8 @@
         }
     }
     //for bot
-    this.botConfigFn = function () {
+    this.botConfigFn = function (grdnttest) {
+        let grdValue ='linear-gradient(10deg,rgba(27,192,27,0.54),rgba(2,13,8,0.23))';
         let fnthtml = "";
         let cssobj = this.AppSettings.CssContent;
         $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
@@ -176,22 +183,32 @@
         $('#ebfont_size').val(this.AppSettings.BotProp.AppFontSize);
        
         if (this.AppSettings.BotProp.Bg_value) {
-            if (this.AppSettings.BotProp.Bg_type === 'bg_clr') {
-                $("#rdo_bg_clr").prop("checked", true);
-                $('#bot_bg_clr').val(`${this.AppSettings.BotProp.Bg_value}`);
-                $('#bg_clr').show();
-            }
-            else if (this.AppSettings.BotProp.Bg_type === 'bg_grdnt') {
+            if (this.AppSettings.BotProp.Bg_type === 'bg_grdnt') {
                 $("#rdo_bg_grdnt").prop("checked", true);
+                var patt = new RegExp("#");
+                if (patt.test(this.AppSettings.BotProp.Bg_value)) {
+                    GradientColorPicker({ Id: "grdnt_txt", Value: grdValue });
+                }
+                else {
+                    GradientColorPicker({ Id: "grdnt_txt", Value: this.AppSettings.BotProp.Bg_value });
+                }
                 $('#bot_bg_grdnt').val(`${this.AppSettings.BotProp.Bg_value}`);
                 $('#bg_grdnt').show();
             }
-            else if (this.AppSettings.BotProp.Bg_type === 'bg_img') {
-                $("#rdo_bg_img").prop("checked", true);
-                $('#bgImgPreview').attr('src', `/images/${this.AppSettings.BotProp.Bg_value}.jpg`);
-                $('#bgImgPreview').attr('imgrefid', `${this.AppSettings.BotProp.Bg_value}`);
-                $("#imgPrvwCont").show();
-                $('#bg_img').show();
+            else {
+                GradientColorPicker({ Id: "grdnt_txt", Value: grdValue });
+                if (this.AppSettings.BotProp.Bg_type === 'bg_clr') {
+                    $("#rdo_bg_clr").prop("checked", true);
+                    $('#bot_bg_clr').val(`${this.AppSettings.BotProp.Bg_value}`);
+                    $('#bg_clr').show();
+                }
+                else if (this.AppSettings.BotProp.Bg_type === 'bg_img') {
+                    $("#rdo_bg_img").prop("checked", true);
+                    $('#bgImgPreview').attr('src', `/images/${this.AppSettings.BotProp.Bg_value}.jpg`);
+                    $('#bgImgPreview').attr('imgrefid', `${this.AppSettings.BotProp.Bg_value}`);
+                    $("#imgPrvwCont").show();
+                    $('#bg_img').show();
+                }
             }
         }
         else {
@@ -234,6 +251,7 @@
         let cssConstObj = {};
         let authOptions = {};
         let botProperties = {};
+        let loginCnt = 0;
         let bgtyp = '';
         let authcheck = $("input[name=authtype]:checked").length;
         if (!authcheck) {
@@ -252,12 +270,16 @@
                 return;
             }
         }
-        authOptions.EmailAuth = $('#email_anony').is(":checked");
         authOptions.UserName = $('#name_anony').is(":checked");
+        authOptions.EmailAuth = $('#email_anony').is(":checked");
         authOptions.PhoneAuth = $('#phone_anony').is(":checked");
         authOptions.Fblogin = $('#fb_anony').is(":checked");
+        if (authOptions.PhoneAuth || authOptions.EmailAuth) loginCnt += 1;
+        if (authOptions.Fblogin) loginCnt += 1;
         authOptions.FbAppID = $('#fbAppidtxt').val().trim();
         authOptions.FbAppVer = $('#fbAppversn').val().trim();
+        authOptions.LoginOpnCount = loginCnt;
+        
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
@@ -379,7 +401,10 @@
         $("div.bg_cont").hide();
         $("#" + bg).show();
     });
-
+    this.gradientValueChangeFn = function () {
+        $('#bot_bg_grdnt').val($('#grdnt_txt_val').val());
+        $('#grdntgenerator').modal('hide');
+    }
     this.start_exe();
     this.init();
 

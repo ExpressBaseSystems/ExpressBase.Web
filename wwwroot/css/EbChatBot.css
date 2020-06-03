@@ -1,11 +1,13 @@
 ﻿
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,600");
+
 body {
     --botbgclr: transparent;
     --bgclrwhite: white;
     --botfilter_btn: opacity(0.7);
     /*--bot_fontfamily: Open Sans;*/
 }
+
 .eb-chat-cont {
     display: block;
     position: fixed;
@@ -83,6 +85,7 @@ body {
 }
 
 .msg-wraper-user {
+    max-width: calc( 100% - 55px ); /*subtract margins*/
     padding: 9px 10px;
     border-radius: 13px 13px 0px 13px;
     margin: 6px 5px 5px 50px;
@@ -107,22 +110,9 @@ body {
 }
 
 
-
-.msg-cont, .req-cont {
-    font-size: 11.2px;
-    position: absolute;
-    /*right: 1px;*/
-    margin-top: 3px;
-    animation-duration: 0.3s;
-    z-index: 1;
-    background-color: var(--botbgclr);
-    /*background-color: rgba(255, 255, 255, 0.8);*/
-    /*box-shadow: 0 2px 3px 0px white;*/
-}
-
 .msg-cont {
-    /*display: inline-block;
-    min-width: 87%;*/
+    width: 100%;
+    background-color: var(--botbgclr);
     position: relative;
 }
 
@@ -298,7 +288,8 @@ body {
 }*/
 .formname-btn {
     border-radius: 4px;
-    color: var(--botThemeColor);
+    border: 1.5px solid var(--botThemeColor);
+    /*color: var(--botThemeColor);*/
     margin: 1px 1px;
     width: 90%;
     margin-bottom: 8px;
@@ -307,16 +298,16 @@ body {
     margin-right: 15px;
     background-color: white;
     outline: none;
-    border: solid 1px;
     padding: 5px;
     font-size: 13px;
     transition-duration: 0.1s;
 }
 
     .formname-btn:hover {
+        cursor: pointer;
         /*filter: hue-rotate(180deg);*/
-        filter: var(--botfilter_btn);
-        color: var(--botThemeColor);
+        /*color: var(--botThemeColor);*/
+        box-shadow: inset 0 0 3px 1px var(--botThemeColor);
     }
 
 .formname-btn_botformlist {
@@ -349,6 +340,7 @@ body {
         filter: var(--botfilter_btn);
         color: var(--botThemeColor);
         box-shadow: 0px 0px 5px 1px #dedfe1;
+        cursor: pointer;
     }
 
 
@@ -413,8 +405,9 @@ body {
 
     .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
         /*filter: hue-rotate(60deg);*/
-        filter:var(--botfilter_btn);
+        filter: var(--botfilter_btn);
         color: white;
+        cursor: pointer;
     }
 
 
@@ -600,7 +593,32 @@ body {
         outline: none;
     }
 
-.btn-box [for=fblogin]:first-child {
+/*.xxxxxbtn-box [for=fblogin]:first-child {
+    border: none !important;
+    background-size: 35px 35px !important;
+    background-repeat: no-repeat !important;
+    border-radius: 4px !important;
+    color: white !important;
+    font-size: 14px !important;
+    border-bottom: 2px solid transparent !important;
+    border-left: 1px solid transparent !important;
+    border-right: 1px solid transparent !important;
+    box-shadow: 0 4px 2px -2px gray !important;
+    text-shadow: rgba(0, 0, 0, .5) -1px -1px 0 !important;
+    border-color: #2d5073 !important;
+    background-color: #3b5998 !important;
+    background-image: url(http://icons.iconarchive.com/icons/danleech/simple/512/facebook-icon.png) !important;
+    margin-bottom: 10px;*/
+    /*..
+    ..
+    ..*/
+    /*font-family: var(--bot_fontfamily)*/
+    /*font-family: "Merriweat!important;er Sans", sans-serif;*/
+    /*background-position: right center !important;*/
+    /*padding-right: 45px !important;*/
+/*}*/
+
+.btn-box .fbbtnstyl {
     /*padding-right: 45px !important;*/
     border: none !important;
     background-size: 35px 35px !important;
@@ -666,6 +684,7 @@ body {
     /* padding: 3px; */
     /* background: #f1f1f1;*/
 }
+
     .ctrl-wraper input[chat-inp] {
         width: 100%;
     }
@@ -1075,9 +1094,34 @@ body {
     z-index: 9999;
 }
 
+
+/*.loginOptnCont .lgnBtnCont {
+    padding: 3px;
+}
+
+    .loginOptnCont .lgnBtnCont .loginOptnBtn {
+        justify-content: flex-start;
+        width: 75%;
+        font-weight: 600;
+        outline: none;
+        border: solid 1px;
+        background: #fff;
+        color: inherit;
+        white-space: normal !important;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+        .loginOptnCont .lgnBtnCont .loginOptnBtn :hover {
+            box-shadow: inset 0px 0px 8px 1px #dedfe1;
+        }*/
+
 .eb-chat-cont .locinp-span {
     line-height: 2;
 }
+
 .card-outer-cont {
     background-color: var(--bgclrwhite);
 }

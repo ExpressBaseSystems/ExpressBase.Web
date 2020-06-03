@@ -165,21 +165,22 @@
             //for creating tag buttons
             if (this.FileFlag.tagflag == true) {
                 let taghtml = "";
-                if (renderFiles[i].Meta.hasOwnProperty('Tags')) {
-                    let filetags = renderFiles[i].Meta.Tags[0].split(',');
-                    $.each(filetags, function (j, tagval) {
+                if (renderFiles[i].Meta != null) {
+                    if (renderFiles[i].Meta.hasOwnProperty('Tags')) {
+                        let filetags = renderFiles[i].Meta.Tags[0].split(',');
+                        $.each(filetags, function (j, tagval) {
+                            if (!this.TagList[tagval]) {
+                                this.TagList[tagval] = [renderFiles[i]];
+                                $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
+                            }
+                            else {
+                                this.TagList[tagval].push(renderFiles[i]);
+                            }
 
-
-                        if (!this.TagList[tagval]) {
-                            this.TagList[tagval] = [renderFiles[i]];
-                            $('.FUP_TagUl').append(`<li class='FUP_TagLi' >${tagval}</li>`)
-                        }
-                        else {
-                            this.TagList[tagval].push(renderFiles[i]);
-                        }
-
-                    }.bind(this));
+                        }.bind(this));
+                    }
                 }
+              
             }
 
             if ($.isEmptyObject(renderFiles[i].Meta)) {

@@ -3,11 +3,15 @@
 
 .meeting-picker-outer {
     padding: 0px !important;
-    width: 30rem;
+    width: 100%;
     border-radius: 5px;
     border: solid 1px #d1d1d1 !important;
     padding-bottom: 10px !important;
 }
+
+    .meeting-picker-outer tr {
+        background-color: none !important;
+    }
 
     .meeting-picker-outer .sub-head {
         padding: 5px 10px;
@@ -109,6 +113,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     background: #ffffff url(images/ui-bg_glass_75_e6e6e6_1x400.png) 50% 50% repeat-x;
     font-weight: 600;
     color: #555555;
+    text-align: center;
 }
 
 
@@ -202,6 +207,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-state-default {
                 text-align: center;
             }
+
             .eb-meeting-bot .hasDatepicker .ui-datepicker-inline .ui-state-active {
                 background: #508bf9;
                 color: white;
@@ -231,7 +237,8 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
                     padding: 0px 10px;
                     text-align: center;
                 }
-    .eb-meeting-bot  button {
+
+    .eb-meeting-bot button {
         height: 3.5rem;
     }
 
@@ -251,3 +258,155 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             .eb-meeting-bot .ui-datepicker-calendar .ui-datepicker-other-month a {
                 display: none;
             }
+
+/*Meeting Request style*/
+.mr {
+    font-size: 16px;
+}
+    .mr .header {
+        font-size: 16px;
+    }
+
+    .mr .mr-title {
+        font-size: 20px;
+        text-align: center;
+        font-weight: 400;
+    }
+
+        .mr .mr-title i {
+            font-size: 20px;
+        }
+
+        .mr .mr-title div {
+            font-size: 20px;
+            text-align: center;
+        }
+
+    .mr .mr-description {
+        padding: 1px;
+        display: flex;
+    }
+
+        .mr .mr-description i {
+            font-size: 19px;
+            padding: 5px 0px 0px 0px;
+        }
+
+        .mr .mr-description div {
+            padding: 5px 10px;
+            border: solid 1px #c0c0c0;
+            border-radius: 4px;
+            width: 100%;
+            margin-left: 1rem;
+            background: #0000000d;
+        }
+
+    .mr .meeting-details {
+        padding: 1px;
+    }
+
+        .mr .meeting-details .mr-venue {
+            padding: 5px 0px;
+            display: flex;
+        }
+
+            .mr .meeting-details .mr-venue i {
+                font-size: 20px;
+                padding: 5px 5px 0px 3px;
+            }
+
+            .mr .meeting-details .mr-venue div {
+                padding: 5px 10px;
+                border: solid 1px #c0c0c0;
+                border-radius: 4px;
+                width: 100%;
+                margin-left: 8px;
+                background: #0000000d;
+            }
+
+        .mr .meeting-details .mr-date {
+            padding: 5px 0px;
+            display: flex;
+        }
+
+            .mr .meeting-details .mr-date i {
+                font-size: 20px;
+                padding: 5px 5px 0px 0px;
+            }
+
+            .mr .meeting-details .mr-date div {
+                padding: 5px 10px;
+                border: solid 1px #c0c0c0;
+                border-radius: 4px;
+                width: 100%;
+                margin-left: 4px;
+                background: #0000000d;
+            }
+
+        .mr .meeting-details .mr-time {
+            padding: 5px 0px;
+            display: flex;
+            padding-left: 2.7rem;
+        }
+
+            .mr .meeting-details .mr-time i {
+                font-size: 20px;
+                padding: 5px 5px 0px 0px;
+            }
+            .mr .meeting-details .mr-time span {
+                font-size: 18px;
+                padding: 5px 5px 0px 0px;
+                margin: 0px 2rem;
+            }
+
+            .mr .meeting-details .mr-time div {
+                padding: 5px 10px;
+                border: solid 1px #c0c0c0;
+                border-radius: 4px;
+                width: 100%;
+                background: #0000000d;
+            }
+
+    .mr .mr-list {
+        display: flex;
+    }
+
+        .mr .mr-list .mr-attendees-list {
+            padding: 5px 0px 15px 0px;
+            width: 50%;
+        }
+
+        .mr .mr-list .mr-hosts-list {
+            padding: 5px 0px 15px 0px;
+            width: 50%;
+        }
+
+.mr-btn-grp {
+    padding: 10px 0px;
+    display:flex;
+}
+
+    .mr-btn-grp .mr-btn {
+        border: 0px;
+        padding: 8px 20px;
+        background: #6fa9d2;
+        color: white;
+        border-radius: 4px;
+        width: 100%;
+        margin-right: 3rem;
+    }
+        .mr-btn-grp .mr-btn:last-child {
+            margin-right: 0rem;
+        }
+
+/*tabs style*/
+.ui-tabs .ui-tabs-nav .ui-tabs-anchor {
+    float: left;
+    padding: .5em 1em;
+    text-decoration: none;
+}
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited {
+    color: #fff;
+    text-decoration: none;
+    background-color:dodgerblue;
+}

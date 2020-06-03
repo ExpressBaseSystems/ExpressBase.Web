@@ -49,6 +49,7 @@
         this.constructObjectModel(this.DataMODEL);// and attach dataModel reff
         this.fixValExpInDataModel();
         this.drawHTMLView();
+        this.callOnRowPaintFns();
         this.updateAggCols(false);
     }.bind(this);
 
@@ -85,7 +86,14 @@
                 if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined)
                     inpCtrl.DataVals.Value = ValueExpr_val;
             }
-            this.onRowPaintFn(["tr"], "check", "e");// --
+            //this.onRowPaintFn(["tr"], "check", "e");// --
+        }.bind(this));
+    };
+
+    this.callOnRowPaintFns = function () {
+        $.each(this.objectMODEL, function (rowId, inpCtrls) {
+            this.setCurRow(rowId);
+            this.onRowPaintFn(["tr"], "check", "e");
         }.bind(this));
     };
 
@@ -169,8 +177,8 @@
         this.setCurRow(rowId);
         if ($tr.attr("is-initialised") === 'false')
             this.rowInit_E($tr, rowId);
-        $td.find(".del-row").hide();
-        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
+        $td.find(".del-row").hide(300);
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide(300);
         //$addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
         this.$addRowBtn.addClass("eb-disablebtn");
@@ -385,7 +393,7 @@
             dspMmbr = this.getBooleanDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
-            dspMmbr = cellObj.F || cellObj.Value || "0.00"; // temporary fix
+            dspMmbr = cellObj.F || cellObj.Value || (ctrl.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(ctrl.DecimalPlaces))); // temporary fix
         }
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)
@@ -680,13 +688,13 @@
     this.getCogsTdHtml = function (isAnyColEditable) {
         return `@cogs@
                 </tr>`
-            .replace("@cogs@", !this.ctrl.IsDisable ? `
+            .replace("@cogs@", `
                 <td class='ctrlstd' mode='${this.mode_s}' style='width:50px;'>
                     @editBtn@
                     <button type='button' class='check-row rowc'><span class='fa fa-check'></span></button>
                     <button type='button' class='cancel-row rowc'><span class='fa fa-times'></span></button>
                     <button type='button' class='del-row rowc @del-c@'><span class='fa fa-trash'></span></button>
-                </td>` : "")
+                </td>`)
             .replace("@editBtn@", isAnyColEditable ? "<button type='button' class='edit-row rowc'><span class='fa fa-pencil'></span></button>" : "")
             .replace("@del-c@", !isAnyColEditable ? "del-c" : "");
     };
@@ -1111,8 +1119,8 @@
 
         let $td = $(`#${this.TableId}>tbody>tr[rowid=${rowId}] td.ctrlstd`);
         let $activeTr = $td.closest("tr");
-        $td.find(".check-row").hide();
-        $td.find(".del-row").show();
+        $td.find(".check-row").hide(300);
+        $td.find(".del-row").show(300);
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
         //if ($activeTr.attr("is-checked") === "true") {
@@ -1135,8 +1143,8 @@
         let rowid = $tr.attr("rowid");
         if (!this.RowRequired_valid_Check(rowid))
             return false;
-        $td.find(".check-row").hide();
-        $td.find(".del-row").show();
+        $td.find(".check-row").hide(300);
+        $td.find(".del-row").show(300);
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
 
@@ -1164,8 +1172,8 @@
         let rowid = $tr.attr("rowid");
         if (!this.RowRequired_valid_Check(rowid))
             return false;
-        $td.find(".check-row").hide();
-        $td.find(".del-row").show();
+        $td.find(".check-row").hide(300);
+        $td.find(".del-row").show(300);
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
 
@@ -1537,6 +1545,19 @@
             console.eb_error(`Row with Serial number '${slno}' not found`);
     };
 
+    this.getValuesOfColumn = function (column) {
+        let vals = [];
+        for (let i = 0, j = 1; i < this.DataMODEL.length; i++) {
+            let row = this.DataMODEL[i];
+            let colObj = getObjByval(row.Columns, "Name", column);
+            if (!colObj) {
+                console.error("no column '" + column + "' found in DataGrid" + this.ctrl.Name);
+                return;
+            }
+            vals.push(colObj.Value);
+        }
+        return vals;
+    }.bind(this);
 
     this.getRowByIndex = function (idx) {
         let rowId = $(`#${this.TableId}>tbody>tr.dgtr:eq(${idx})`).attr("rowid");
@@ -1633,6 +1654,7 @@
             $(`#${this.TableId}>tbody>tr.dgtr:last`).show(300);
         this.$addRowBtn.removeClass("eb-disablebtn");
         $(`#cont_${this.ctrl.EbSid_CtxId}`).attr("eb-readonly", "false");
+        this.ctrl.IsDisable = false;
     };
 
     this.disable = function () {
@@ -1642,6 +1664,7 @@
             $(`#${this.TableId}>tbody>tr.dgtr:last`).hide(300);
         this.$addRowBtn.addClass("eb-disablebtn");
         $(`#cont_${this.ctrl.EbSid_CtxId}`).attr("eb-readonly", "true");
+        this.ctrl.IsDisable = true;
     };
 
     this.defineRowCount = function () {
@@ -1735,6 +1758,10 @@
 
                 getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = (tdWidth / $bodyTbl.outerWidth()) * 100;
                 //getObjByval(this.ctrl.Controls.$values, "Name", $curTd.attr("name")).Width = tdWidth;
+                //if ($curTd.attr("type") === "DGCreatedByColumn" || $curTd.next().attr("type") === "DGCreatedByColumn") {
+                //    let width = $curTd.width() - 34;
+                //    $(`#${this.TableId} [tdcoltype='DGCreatedByColumn']`).css("width", width + "px");                    
+                //}
             }.bind(this)
         });
     };
@@ -1858,6 +1885,7 @@
         this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;
         this.ctrl.sum = this.sumOfCol;
         this.ctrl.getRowByIndex = this.getRowByIndex;
+        this.ctrl.getValuesOfColumn = this.getValuesOfColumn;
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";

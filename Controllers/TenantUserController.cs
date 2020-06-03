@@ -255,6 +255,12 @@ namespace ExpressBase.Web2.Controllers
 
             return Columns;
         }
+
+        [HttpGet("/scan")]
+        public IActionResult SolutionQrScan()
+        {
+            return View();
+        }
     }
 }
 

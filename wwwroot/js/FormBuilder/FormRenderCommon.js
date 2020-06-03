@@ -101,11 +101,12 @@
     this.bindOnChange = function (control) {
         try {
             let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) +
-                `;
-                if(this.DataVals){
-                    this.DataVals.Value = this.getValue();
-                    this.DataVals.D = this.getDisplayMember();
-                }` +
+                `;debugger;
+                //if(this.DataVals){
+                //    this.DataVals.Value = this.getValue();
+                //    this.DataVals.D = this.getDisplayMember();
+                //}
+` +
                 ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? ` ; form.updateDependentControls(${control.__path}, form);` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.__onChangeFn = onChangeFn;
@@ -353,8 +354,10 @@
             }
         }.bind(this));
 
-        if ($notOk1stCtrl)
+        if ($notOk1stCtrl) {
             $notOk1stCtrl.select();
+            $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
+        }
         required_valid_flag = required_valid_flag && this.runFormValidations();
         return required_valid_flag;
     }.bind(this);

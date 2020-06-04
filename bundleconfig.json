@@ -131,8 +131,7 @@
     "inputFiles": [
       "wwwroot/js/MobilePageBuilder/mobile.page.js",
       "wwwroot/js/MobilePageBuilder/mobile.page.controls.js",
-      "wwwroot/js/MobilePageBuilder/mobile.page.controls.extension.js",
-      "wwwroot/js/MobilePageBuilder/mobile.page.js"
+      "wwwroot/js/MobilePageBuilder/mobile.page.controls.extension.js"
     ],
     "minify": {
       "enabled": false

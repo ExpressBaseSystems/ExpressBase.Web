@@ -259,3 +259,6 @@ paket-files/
 *.ps1
 /Views/Dev/dragula.cshtml
 /StaticFiles
+
+wwwroot/js/Bundles/eb-botpage.bundle.js
+wwwroot/css/Bundles/eb-botpage.bundle.css

@@ -2511,8 +2511,8 @@ body {
 }
 
 .active-loc {
-    background-color: #508bf9;
-    color: white;
+    /*background-color: #508bf9;
+    color: white;*/
 }
 
     .active-loc .subtitle {
@@ -2526,6 +2526,9 @@ body {
     overflow-y: auto;
     min-height: 50vh;
 }
+    .loc_switchModal_box .locs_bdy li.active-loc a:first-child {
+        background-color: #e5f5f3;
+    }
 
 .loc_switchModal_box .locs_foot {
     padding: 10px 20px 10px 10px;

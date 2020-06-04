@@ -255,7 +255,7 @@
             $('#' + ctrl.EbSid_CtxId).siblings('.nullable-check').find('input[type=checkbox]').attr('checked', false);
             $input.val("");
             $input.prev(".nullable-check").find("input[type='checkbox']").off('change').on('change', this.toggleNullableCheck.bind(this, ctrl));//created by amal
-            $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
+            $input.prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none').css('color', '#999');
         }
         else if (ctrl.ShowDateAs_ !== 2)
             this.setCurrentDate(ctrl, $input);
@@ -273,11 +273,11 @@
             if ($ctrl.closest(".input-group").find("input[type='text']").val() === "")
                 //$ctrl.closest(".input-group").find("input[type='text']").val(ebcontext.user.Preference.ShortDate);
                 this.setCurrentDate(ctrl, $ctrl.closest(".input-group").find("input[type='text']"));
-            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false).next(".input-group-addon").css('pointer-events', 'auto');
+            $ctrl.closest(".input-group").find("input[type='text']").prop('disabled', false).next(".input-group-addon").css('pointer-events', 'auto').css('color', 'inherit');
             //ctrl.DoNotPersist = false;
         }
         else {
-            $ctrl.closest(".input-group").find("input[type='text']").val("").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none');
+            $ctrl.closest(".input-group").find("input[type='text']").val("").prop('disabled', true).next(".input-group-addon").css('pointer-events', 'none').css('color', '#999');;
             //ctrl.DoNotPersist = true;
         }
     };

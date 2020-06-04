@@ -609,8 +609,14 @@
     };
 
     this.updatePassword = function () {
-        if (this.pwdOld.val().length < 8 || this.pwdNew.val().length < 8 || this.pwdNewConfirm.val().length < 8 || this.pwdNew.val() !== this.pwdNewConfirm.val())
+        if (this.pwdNew.val() !== this.pwdNewConfirm.val()) {
+            EbMessage("show", { Message: 'Password mismach found', AutoHide: true, Background: '#bf1e1e' });
             return;
+        }
+        if (this.pwdOld.val().length < 8 || this.pwdNew.val().length < 8) {
+            EbMessage("show", { Message: 'Password length too short. Minimum length 8 required.', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
         $(this.btnUpdatePwd.children()[0]).show();
         $.ajax({
             type: "POST",
@@ -636,8 +642,12 @@
     };
 
     this.resetPassword = function () {
-        if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val() || this.pwdResetNew.val().length < 8) {
-            EbMessage("show", { Message: 'Password mismach or length too short', AutoHide: true, Background: '#bf1e1e' });
+        if (this.pwdResetNew.val() !== this.pwdResetNewConfirm.val()) {
+            EbMessage("show", { Message: 'Password mismach found', AutoHide: true, Background: '#bf1e1e' });
+            return;
+        }
+        if (this.pwdResetNew.val().length < 8) {
+            EbMessage("show", { Message: 'Password length too short. Minimum length 8 required.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         $(this.btnResetPwd.children()[0]).show();
@@ -671,11 +681,11 @@
             return;
         }
         if (this.pwdPassword.val() !== this.pwdPasswordCon.val() && this.whichMode === 1 && this.itemId < 2) {
-            EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Background: '#bf1e1e' });
+            EbMessage("show", { Message: 'Password mismatch found', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         if (this.pwdPassword.val().length < 8 && this.whichMode === 1 && this.itemId < 2) {
-            EbMessage("show", { Message: 'Password Too Short', AutoHide: true, Background: '#bf1e1e' });
+            EbMessage("show", { Message: 'Password length too short. Minimum length 8 required.', AutoHide: true, Background: '#bf1e1e' });
             return;
         }
         var dateRegex = /^\d{4}[\/\-]\d{2}[\/\-]\d{2}$/;
@@ -812,8 +822,8 @@
 
     this.makeAsShowPwdField = function ($pwdField) {
         let id = $pwdField.attr("id");
-        $pwdField.after(`<span id="${id}_eop" class="form-control-feedback" style="top: 5px; cursor: pointer; color: #555;" title="Click to show password"><i class="fa fa-eye" aria-hidden="true"></i></span>`);
-        $pwdField.after(`<span id="${id}_ecl" class="form-control-feedback" style="top: 5px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>`);
+        $pwdField.after(`<span id="${id}_eop" class="form-control-feedback" style="pointer-events: all; z-index: 3; top: 5px; cursor: pointer; color: #555;" title="Click to show password"><i class="fa fa-eye" aria-hidden="true"></i></span>`);
+        $pwdField.after(`<span id="${id}_ecl" class="form-control-feedback" style="pointer-events: all; z-index: 3; top: 5px; cursor: pointer; color: #555; display: none;"  title="Click to hide password"><i class="fa fa-eye-slash" aria-hidden="true"></i></span>`);
         let $eop = $("#" + id + "_eop");
         let $ecl = $("#" + id + "_ecl");
         $eop.on("click", function (e) {

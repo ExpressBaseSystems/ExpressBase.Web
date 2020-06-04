@@ -101,7 +101,7 @@
     this.bindOnChange = function (control) {
         try {
             let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) +
-                `;debugger;
+                `
                 //if(this.DataVals){
                 //    this.DataVals.Value = this.getValue();
                 //    this.DataVals.D = this.getDisplayMember();

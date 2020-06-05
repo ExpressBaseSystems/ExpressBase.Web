@@ -7,6 +7,7 @@
         $Ctrl.find(".cards-btn-cont .btn").attr("idx", this.Bot.curForm.Controls.$values.indexOf(this.Bot.curCtrl));
         this.SelectedCards = [];
         this.sumFieldsName = [];
+        this.sumFieldsLabel = [];
         this.slickObjOfCards = null;
         this.filterVal = null;
         this.searchTxt = null;
@@ -18,6 +19,7 @@
         $.each(this.Bot.curCtrl.CardFields.$values, function (k, obj) {
             if (obj.Summarize && obj.Sum) {
                 this.sumFieldsName.push(obj.Name);
+                this.sumFieldsLabel.push(obj.Label||obj.Name);
             }
         }.bind(this));
 
@@ -206,12 +208,14 @@
         }.bind(this));
 
         var sumhtml = "<tr style='font-size: 14px;font-weight: 600;'><td style='padding-left:10%;font-size: 13.3px;' colspan=" + tcols + ">";
+        let i = 0;
         $.each(this.sumFieldsName, function (fi, fn) {
             var sum = 0.0;
             $.each(this.SelectedCards, function (k, obj) {
                 sum += parseFloat(obj[fn]);
             }.bind(this));
-            sumhtml += "Total&nbsp" + fn + ":&nbsp&nbsp" + sum.toFixed(2) + "<br/>";
+            sumhtml += "Total&nbsp" + this.sumFieldsLabel[i] + ":&nbsp&nbsp" + sum.toFixed(2) + "<br/>";
+            i++;
         }.bind(this));
         if (this.sumFieldsName.length !== 0)
             $tbody.append(sumhtml + "</tr></td>");

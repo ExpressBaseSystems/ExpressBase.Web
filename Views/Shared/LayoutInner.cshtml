@@ -22,6 +22,7 @@
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
     <link rel="stylesheet" href="~/css/Common/croppie.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/simTree.css" />
 
     <environment include="Development">
         @*COMMON CSS*@
@@ -96,12 +97,14 @@
 
     @*nithin*@
     <script src="~/js/FormBuilder/MeetingPicker.js" asp-append-version=@bApnd></script>
+    <script type="text/javascript" src="~/js/simTree.js"></script>
     <script src="~/js/FormBuilder/MeetingScheduler.js" asp-append-version=@bApnd></script>
     <script src="~/js/EbUserDashBoard/Combodate.js" asp-append-version=@bApnd></script>
 
     @if (ViewBag.wc == "uc")
     {
         <script src="~/js/UserScripts/Eb_locswitch.js" type="text/javascript" asp-append-version=@bApnd></script>
+        <script src="~/js/EbLocationPicker.js" type="text/javascript" asp-append-version=@bApnd></script>
     }
     @if (IsSectionDefined("StyleSheet"))
     {
@@ -226,7 +229,7 @@
     @if (ViewBag.wc == "uc")
     {
         <script>
-            var loc__ = new LocSwitch({
+            var loc__ = new LocationPicker({
                 Location: '@Html.Raw(ViewBag.Locations)',
                 Tid: '@ViewBag.cid',
                 Uid:'@ViewBag.UId',

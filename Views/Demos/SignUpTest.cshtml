@@ -69,14 +69,9 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/objects_by_app",
+                url: "/api/notifications/register",
                 type: "GET",
                 cache: false,
-                data: {
-                    "appid": 170,
-                    "locid": 1,
-                    "pull_data": true
-                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());

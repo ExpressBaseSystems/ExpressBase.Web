@@ -90,9 +90,10 @@
     var objid =$("#objid").val();
     var FBid = "BotForm1";
     var editModeFormObj = null;
+    let BuilderType = '@builderType_S';
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
-    var BotFormBuilderObj = new BotFormBuilder(ToolBoxId, FBid, PGid, @(builderType_S.ToString()), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj), '@ViewBag.ssurl');
+    var BotFormBuilderObj = new BotFormBuilder(ToolBoxId, FBid, PGid, BuilderType, @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj), '@ViewBag.ssurl');
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = BotFormBuilderObj;
 
     // if edit mode

@@ -1166,7 +1166,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                                             <div>${btntxt}</div>
                                         </div>
                                     </div>`;
-            $('#' + this.curCtrl.EbSid).closest('.ctrl-wraper').append(btnhtml)
+            $('#' + this.curCtrl.EbSid).append(btnhtml)
             //this.nxtCtrlIdx++;
             //this.callGetControl();
         }

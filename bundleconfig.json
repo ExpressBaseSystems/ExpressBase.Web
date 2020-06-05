@@ -140,11 +140,8 @@
   {
     "outputFileName": "wwwroot/css/Bundles/eb-botpage.bundle.css",
     "inputFiles": [
-      "wwwroot/css/Bootstrap_JQuery/jquery-ui-1.12.1.min.css",
-      "wwwroot/css/Bootstrap_JQuery/bootstrap.min.css",
       "wwwroot/css/Robotofont.300.400.500.swap.css",
       "wwwroot/css/EbCommonStyles/ObjectDashboard.css",
-      "wwwroot/css/slick-theme.css",
       "wwwroot/css/jquery.datetimepicker.css",
       "wwwroot/css/bootstrap-select.min.css",
       "wwwroot/css/Common/offline-theme-dark.css",
@@ -158,7 +155,6 @@
       "wwwroot/css/yearpicker.css",
       "wwwroot/css/Eb_datatable.css",
       "wwwroot/css/FormBuiderStyles.css",
-      "wwwroot/css/EbChatBot.css",
       "wwwroot/css/EbCommonStyles/eb-style.css",
       "wwwroot/css/DVBuilder.css",
       "wwwroot/css/ChartStyle.css",

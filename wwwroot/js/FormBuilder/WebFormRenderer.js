@@ -449,7 +449,7 @@ const WebFormRender = function (option) {
         }
         let EditModeFormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames();
-        //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
+        //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
             if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
@@ -457,17 +457,17 @@ const WebFormRender = function (option) {
                 DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
                 continue;
             }
-            //let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            //let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
             let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
             DGB.setEditModeRows(DataMODEL);
         }
 
         //if (this.ApprovalCtrl.__ready) {
-        //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+        //let DataMODEL = this.EditModeFormData[this.ApprovalCtrl.TableName];
         //this.ApprovalCtrl.setEditModeRows(DataMODEL);
         //}
 
-        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
+        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(this.EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
         this.isEditModeCtrlsSet = true;
 
@@ -612,8 +612,14 @@ const WebFormRender = function (option) {
             let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
             if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
                 continue;
-            if (cellObj !== undefined)
+            if (cellObj !== undefined) {
+                //if (ctrl.ObjType === "PowerSelect") {
+                //    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
+                //    ctrl.justInit = true;
+                //    ctrl.setDisplayMember(cellObj.Value);
+                //}
                 ctrl.reset(cellObj.Value);
+            }
             else
                 ctrl.clear();
         }

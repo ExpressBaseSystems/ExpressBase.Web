@@ -97,7 +97,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", ".survey-final-btn .btn", this.ctrlSend);
         $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);
         $("body").on("click", ".poweredby", this.poweredbyClick);
-        $("body").on("click", ".ctrlproceedBtn", this.proceedReadCtrl);
+        $("body").on("click", ".ctrlproceedBtn", this.proceedReadCtrl.bind(this));
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         $("body").on("keyup", ".chat-ctrl-cont [ui-inp]", this.inpkeyUp);
         $("body").on("keyup", ".chat-ctrl-cont [chat-inp]", this.chatInpkeyUp);
@@ -1161,11 +1161,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.initControls[this.curCtrl.ObjType](this.curCtrl, {});
         if (this.curCtrl.IsDisable) {
             let btntxt = this.curCtrl.ProceedBtnTxt || "ok";
-            let btnhtml =`<div class="ctrlproceedBtn-wrapper">
+            let btnhtml = `<div class="ctrlproceedBtn-wrapper">
                                         <div class="ctrlproceedBtn">
-                                            <div></div>
+                                            <div>${btntxt}</div>
                                         </div>
-                                    </div>`
+                                    </div>`;
+            $('#' + this.curCtrl.EbSid).append(btnhtml)
             //this.nxtCtrlIdx++;
             //this.callGetControl();
         }

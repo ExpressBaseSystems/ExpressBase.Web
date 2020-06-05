@@ -794,7 +794,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //}
         //else if (this.curCtrl.ObjType === "StaticCardSet" || this.curCtrl.ObjType === "DynamicCardSet") {
         //    if (!this.checkRequired()) { return; }
-        //    if (this.curCtrl.IsReadOnly) {
+        //    if (this.curCtrl.IsDisable) {
         //        $btn.css('display', 'none');
         //        $('#' + this.curCtrl.Name).attr('id', '');
         //    }
@@ -1159,7 +1159,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             return;
         if (this.initControls[this.curCtrl.ObjType] !== undefined)
             this.initControls[this.curCtrl.ObjType](this.curCtrl, {});
-        if (this.curCtrl.IsReadOnly || this.curCtrl.IsDisable) {
+        if (this.curCtrl.IsDisable) {
             let btntxt = this.curCtrl.ProceedBtnTxt || "ok";
             let btnhtml =`<div class="ctrlproceedBtn-wrapper">
                                         <div class="ctrlproceedBtn">

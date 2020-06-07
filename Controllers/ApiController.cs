@@ -663,8 +663,7 @@ namespace ExpressBase.Web.Controllers
                         RefId = RefId,
                         FormData = FormData,
                         RowId = RowId,
-                        CurrentLoc = LocId,
-                        UserObj = this.LoggedInUser
+                        CurrentLoc = LocId
                     });
                 }
                 catch (Exception ex)

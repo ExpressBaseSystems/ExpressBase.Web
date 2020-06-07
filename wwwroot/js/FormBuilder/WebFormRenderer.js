@@ -1087,13 +1087,15 @@ const WebFormRender = function (option) {
 
             $.each(Obj.Tables, function (i, Tbl) {
                 let indx = 0;
-                $.each(Tbl.Columns, function (j, Row) {
+                $.each(Tbl.Columns, function (j, Col) {
                     let temp = `
                         <tr>
-                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Row.Title}</td>
-                            <td class="col-md-4 col-sm-4">${Row.NewValue}</td>                            
+                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Col.Title}</td>
+                            <td class="col-md-4 col-sm-4">${Col.NewValue}</td>                            
                         </tr>
-                        <tr><td class="col-md-4 col-sm-4" style="text-decoration: line-through;">${Row.OldValue}</td></tr>`;
+                        <tr>
+                            <td class="col-md-4 col-sm-4" style="${Col.IsModified ? 'text-decoration: line-through;': ''}">${Col.OldValue}</td>
+                        </tr>`;
                     if (indx++ % 2 === 0)
                         tempHtml += temp;
                     else
@@ -1124,14 +1126,15 @@ const WebFormRender = function (option) {
             tempHtml = ``;
 
             $.each(Obj.GridTables, function (i, Tbl) {
-                tempHtml += `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                let isTrAvail = false;
+                let tableHtml = `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
                                 <thead>
                                     <tr class="table-title-tr">
                                         <th></th>`;
                 $.each(Tbl.ColumnMeta, function (j, cmeta) {
-                    tempHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
+                    tableHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
                 });
-                tempHtml += `     </tr>
+                tableHtml += `     </tr>
                                 </thead><tbody>`;
                 $.each(Tbl.NewRows, function (m, Cols) {
                     let newRow = `<tr><td>Added</td>`;
@@ -1139,7 +1142,8 @@ const WebFormRender = function (option) {
                         newRow += `<td>${Col.NewValue}</td>`;
                     });
                     newRow += `</tr>`;
-                    tempHtml += newRow;
+                    tableHtml += newRow;
+                    isTrAvail = true;
                 });
 
                 $.each(Tbl.DeletedRows, function (m, Cols) {
@@ -1148,16 +1152,19 @@ const WebFormRender = function (option) {
                         oldRow += `<td>${Col.OldValue}</td>`;
                     });
                     oldRow += `</tr>`;
-                    tempHtml += oldRow;
+                    tableHtml += oldRow;
+                    isTrAvail = true;
                 });
 
                 $.each(Tbl.EditedRows, function (m, Cols) {
                     let newRow = `<tr><td rowspan='2' style='vertical-align: middle;'>Edited</td>`;
                     let oldRow = `<tr>`;
+                    let changeFound = false;
                     $.each(Cols.Columns, function (n, Col) {
                         if (Col.IsModified) {
                             newRow += `<td>${Col.NewValue}</td>`;
                             oldRow += `<td style="text-decoration: line-through;">${Col.OldValue}</td>`;
+                            changeFound = true;
                         }
                         else {
                             newRow += `<td>${Col.NewValue}</td>`;
@@ -1166,10 +1173,15 @@ const WebFormRender = function (option) {
                     });
                     newRow += `</tr>`;
                     oldRow += `</tr>`;
-                    tempHtml += newRow + oldRow;
+                    if (changeFound) {
+                        tableHtml += newRow + oldRow;
+                        isTrAvail = true;
+                    }
                 });
 
-                tempHtml += `</tbody></table></div>`;
+                tableHtml += `</tbody></table></div>`;
+                if (isTrAvail)
+                    tempHtml += tableHtml;
             });
             $trans.children(".trans-body").append(tempHtml);
             $transAll.append($trans);

@@ -709,7 +709,7 @@ namespace ExpressBase.Web.Controllers
                         <div class='meeting-details'> 
                         <div class='mr-venue'> <i class='fa fa-map-marker' aria-hidden='true'></i> <div>{Resp.MeetingRequest[0].Venue}</div>  </div>
                         <div class='mr-date'> <i class='fa fa-calendar-o' aria-hidden='true'></i> <div>{Date}</div> </div>
-                        <div class='mr-time'> <div>{TimeTo}</div> <span>to</span> <div>{TimeFrom}</div></div></div>
+                        <div class='mr-time'> <div>{TimeFrom}</div> <span>to</span> <div>{TimeTo}</div></div></div>
                         </div></div>
 					  <div id='tabs-2'>
 							<div class='mr-list'>

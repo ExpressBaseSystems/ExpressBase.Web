@@ -70,8 +70,6 @@
             this.bindOnChange(Obj);
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
-        if (Obj.IsDisable)// should move
-            Obj.disable();
     };
 
     this.bindValidators = function (control) {
@@ -89,6 +87,13 @@
     this.bindFnsToCtrls = function (flatControls) {
         $.each(flatControls, function (k, Obj) {
             this.bindFnsToCtrl(Obj);
+        }.bind(this));
+    };
+
+    this.setDisabledControls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            if (Obj.IsDisable)
+                Obj.disable();
         }.bind(this));
     };
 
@@ -183,8 +188,7 @@
         }
     };
 
-
-    this.setFormObjHelperfns = function myfunction() {
+    this.setFormObjHelperfns = function () {
         this.FO.formObject.__getCtrlByPath = function (path) {
             try {
                 let form = this.FO.formObject;

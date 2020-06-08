@@ -913,11 +913,21 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.msgFromBot(label);
             }
             if (this.curCtrl.ObjType === "Image") {
+                let btntxt = this.curCtrl.ProceedBtnTxt || "ok";
+               
+                let btnhtml = `<div class="chat-ctrl-readonly flxdirctn_col" ebreadonly="${this.curCtrl.IsDisable}">
+                                ${controlHTML} <div class="ctrlproceedBtn-wrapper mrg_tp_10">
+                                        <div class="ctrlproceedBtn">
+                                            <div>${btntxt}</div>
+                                        </div>
+                                    </div>`;
+                $ctrlCont = $(btnhtml);
                 this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
-                this.nxtCtrlIdx++;
-                this.callGetControl();
+                //this.nxtCtrlIdx++;
+                //this.callGetControl();
             }
-            else if (this.curCtrl.ObjType === "Labels") {
+            else
+            if (this.curCtrl.ObjType === "Labels") {
                 this.sendLabels(this.curCtrl);
             }
             else

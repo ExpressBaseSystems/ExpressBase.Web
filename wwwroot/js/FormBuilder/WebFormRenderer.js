@@ -450,7 +450,7 @@ const WebFormRender = function (option) {
         }
         let EditModeFormData = this.EditModeFormData;
         let NCCTblNames = this.getNCCTblNames();
-        //let DGTblNames = this.getSCCTblNames(EditModeFormData, "DataGrid");
+        //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
             if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
@@ -458,17 +458,17 @@ const WebFormRender = function (option) {
                 DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
                 continue;
             }
-            //let DataMODEL = EditModeFormData[DGB.ctrl.TableName];
+            //let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
             let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
             DGB.setEditModeRows(DataMODEL);
         }
 
         //if (this.ApprovalCtrl.__ready) {
-        //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
+        //let DataMODEL = this.EditModeFormData[this.ApprovalCtrl.TableName];
         //this.ApprovalCtrl.setEditModeRows(DataMODEL);
         //}
 
-        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(EditModeFormData, NCCTblNames);
+        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(this.EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
         this.isEditModeCtrlsSet = true;
 
@@ -613,8 +613,14 @@ const WebFormRender = function (option) {
             let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
             if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
                 continue;
-            if (cellObj !== undefined)
+            if (cellObj !== undefined) {
+                //if (ctrl.ObjType === "PowerSelect") {
+                //    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
+                //    ctrl.justInit = true;
+                //    ctrl.setDisplayMember(cellObj.Value);
+                //}
                 ctrl.reset(cellObj.Value);
+            }
             else
                 ctrl.clear();
         }
@@ -1088,13 +1094,15 @@ const WebFormRender = function (option) {
 
             $.each(Obj.Tables, function (i, Tbl) {
                 let indx = 0;
-                $.each(Tbl.Columns, function (j, Row) {
+                $.each(Tbl.Columns, function (j, Col) {
                     let temp = `
                         <tr>
-                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Row.Title}</td>
-                            <td class="col-md-4 col-sm-4">${Row.NewValue}</td>                            
+                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Col.Title}</td>
+                            <td class="col-md-4 col-sm-4">${Col.NewValue}</td>                            
                         </tr>
-                        <tr><td class="col-md-4 col-sm-4" style="text-decoration: line-through;">${Row.OldValue}</td></tr>`;
+                        <tr>
+                            <td class="col-md-4 col-sm-4" style="${Col.IsModified ? 'text-decoration: line-through;': ''}">${Col.OldValue}</td>
+                        </tr>`;
                     if (indx++ % 2 === 0)
                         tempHtml += temp;
                     else
@@ -1125,14 +1133,15 @@ const WebFormRender = function (option) {
             tempHtml = ``;
 
             $.each(Obj.GridTables, function (i, Tbl) {
-                tempHtml += `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                let isTrAvail = false;
+                let tableHtml = `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
                                 <thead>
                                     <tr class="table-title-tr">
                                         <th></th>`;
                 $.each(Tbl.ColumnMeta, function (j, cmeta) {
-                    tempHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
+                    tableHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
                 });
-                tempHtml += `     </tr>
+                tableHtml += `     </tr>
                                 </thead><tbody>`;
                 $.each(Tbl.NewRows, function (m, Cols) {
                     let newRow = `<tr><td>Added</td>`;
@@ -1140,7 +1149,8 @@ const WebFormRender = function (option) {
                         newRow += `<td>${Col.NewValue}</td>`;
                     });
                     newRow += `</tr>`;
-                    tempHtml += newRow;
+                    tableHtml += newRow;
+                    isTrAvail = true;
                 });
 
                 $.each(Tbl.DeletedRows, function (m, Cols) {
@@ -1149,16 +1159,19 @@ const WebFormRender = function (option) {
                         oldRow += `<td>${Col.OldValue}</td>`;
                     });
                     oldRow += `</tr>`;
-                    tempHtml += oldRow;
+                    tableHtml += oldRow;
+                    isTrAvail = true;
                 });
 
                 $.each(Tbl.EditedRows, function (m, Cols) {
                     let newRow = `<tr><td rowspan='2' style='vertical-align: middle;'>Edited</td>`;
                     let oldRow = `<tr>`;
+                    let changeFound = false;
                     $.each(Cols.Columns, function (n, Col) {
                         if (Col.IsModified) {
                             newRow += `<td>${Col.NewValue}</td>`;
                             oldRow += `<td style="text-decoration: line-through;">${Col.OldValue}</td>`;
+                            changeFound = true;
                         }
                         else {
                             newRow += `<td>${Col.NewValue}</td>`;
@@ -1167,10 +1180,15 @@ const WebFormRender = function (option) {
                     });
                     newRow += `</tr>`;
                     oldRow += `</tr>`;
-                    tempHtml += newRow + oldRow;
+                    if (changeFound) {
+                        tableHtml += newRow + oldRow;
+                        isTrAvail = true;
+                    }
                 });
 
-                tempHtml += `</tbody></table></div>`;
+                tableHtml += `</tbody></table></div>`;
+                if (isTrAvail)
+                    tempHtml += tableHtml;
             });
             $trans.children(".trans-body").append(tempHtml);
             $transAll.append($trans);

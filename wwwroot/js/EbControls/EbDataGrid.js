@@ -876,49 +876,49 @@
         EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
     };
 
-    this.setDataInRow = function (SingleRow, rowid, CurRowCtrls) {
+    //this.setDataInRow = function (SingleRow, rowid, CurRowCtrls) {
 
-        $.each(SingleRow.Columns, function (j, SingleColumn) {// loop through column controls
-            if (j === 0)// to skip id column
-                return true;
-            let ctrl = getObjByval(CurRowCtrls, "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
+    //    $.each(SingleRow.Columns, function (j, SingleColumn) {// loop through column controls
+    //        if (j === 0)// to skip id column
+    //            return true;
+    //        let ctrl = getObjByval(CurRowCtrls, "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
 
-            if (ctrl === undefined) {
-                $.each(CurRowCtrls, function (i, obj) {
-                    if (obj.ObjType === "DGUserControlColumn") {
-                        let innerCtrl = getObjByval(obj.Columns.$values, "Name", SingleColumn.Name);
-                        if (innerCtrl) {
-                            let val = SingleColumn.Value;
-                            if (obj.__DGUCC.AllCtrlValues[rowid] === undefined)
-                                obj.__DGUCC.AllCtrlValues[rowid] = {};
-                            obj.__DGUCC.AllCtrlValues[rowid][innerCtrl.EbSid] = val;
-                        }
-                    }
-                }.bind(this));
-            }
+    //        if (ctrl === undefined) {
+    //            $.each(CurRowCtrls, function (i, obj) {
+    //                if (obj.ObjType === "DGUserControlColumn") {
+    //                    let innerCtrl = getObjByval(obj.Columns.$values, "Name", SingleColumn.Name);
+    //                    if (innerCtrl) {
+    //                        let val = SingleColumn.Value;
+    //                        if (obj.__DGUCC.AllCtrlValues[rowid] === undefined)
+    //                            obj.__DGUCC.AllCtrlValues[rowid] = {};
+    //                        obj.__DGUCC.AllCtrlValues[rowid][innerCtrl.EbSid] = val;
+    //                    }
+    //                }
+    //            }.bind(this));
+    //        }
 
-            if (!ctrl) {// to alert if no ctrl for such data
-                if (SingleColumn.Name !== "eb_row_num")
-                    console.warn(" no ctrl for such data");
-                return true;
-            }
+    //        if (!ctrl) {// to alert if no ctrl for such data
+    //            if (SingleColumn.Name !== "eb_row_num")
+    //                console.warn(" no ctrl for such data");
+    //            return true;
+    //        }
 
 
-            let val = SingleColumn.Value;
-            ctrl.__eb_EditMode_val = val;
-            if (val === null)
-                return true;
+    //        let val = SingleColumn.Value;
+    //        ctrl.__eb_EditMode_val = val;
+    //        if (val === null)
+    //            return true;
 
-            if (ctrl.ObjType === "PowerSelect") {
-                //ctrl.setDisplayMember = EBPSSetDisplayMember;///////////
-                if (val)
-                    ctrl.setDisplayMember(val);
-            }
-            else
-                ctrl.setValue(val);
+    //        if (ctrl.ObjType === "PowerSelect") {
+    //            //ctrl.setDisplayMember = EBPSSetDisplayMember;///////////
+    //            if (val)
+    //                ctrl.setDisplayMember(val);
+    //        }
+    //        else
+    //            ctrl.setValue(val);
 
-        }.bind(this));
-    };
+    //    }.bind(this));
+    //};
 
     this.getFormVals = function () {
         return getValsFromForm(this.formObject_Full);

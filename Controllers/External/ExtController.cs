@@ -1217,5 +1217,16 @@ namespace ExpressBase.Web.Controllers
             }
             return Redirect("/StatusCode/401");
         }
+
+        public IActionResult KSUMStartUpIndiaLogin()
+        {
+            return View();
+        }
+
+        public IActionResult StartUpIndiaRedirect()
+        {
+            return View();
+        }
+
     }
 }

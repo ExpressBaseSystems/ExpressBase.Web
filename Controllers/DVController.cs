@@ -315,8 +315,7 @@ namespace ExpressBase.Web.Controllers
                              RefId = RefId,
                              FormData = obj,
                              RowId = RowId,
-                             CurrentLoc = CurrentLoc,
-                             UserObj = this.LoggedInUser
+                             CurrentLoc = CurrentLoc
                          });
                 if (Resp.Status == 200)
                 {

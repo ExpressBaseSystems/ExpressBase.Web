@@ -105,7 +105,11 @@ namespace ExpressBase.Web.Controllers
             {
                 foreach (KeyValuePair<int, EbLocation> entry in _solu.Locations)
                 {
-                    _locs.Add(entry.Value.ShortName + " - " + entry.Value.LongName, entry.Key);
+                    string st = entry.Value.ShortName + " - " + entry.Value.LongName;
+                    if (!_locs.ContainsKey(st))
+                        _locs.Add(st, entry.Key);
+                    else if (!_locs.ContainsKey($"{st}[{entry.Key}]"))
+                        _locs.Add($"{st}[{entry.Key}]", entry.Key);
                 }
             }
             else
@@ -114,7 +118,11 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (_solu.Locations.ContainsKey(id))
                     {
-                        _locs.Add(_solu.Locations[id].ShortName + " - " + _solu.Locations[id].LongName, id);
+                        string st = _solu.Locations[id].ShortName + " - " + _solu.Locations[id].LongName;
+                        if (!_locs.ContainsKey(st))
+                            _locs.Add(st, id);
+                        else if (!_locs.ContainsKey($"{st}[{id}]"))
+                            _locs.Add($"{st}[{id}]", id);
                     }
                 }
             }
@@ -177,7 +185,7 @@ namespace ExpressBase.Web.Controllers
             //Mode - CreateEdit = 1, View = 2, MyProfileView = 3
             ViewBag.Culture = CultureHelper.CulturesAsJson;
             ViewBag.TimeZone = CultureHelper.TimezonesAsJson;
-            ViewBag.MU_Mode = Mode;
+            ViewBag.MU_Mode = Mode == 0 ? 1 : Mode;
 
             //var ip2 = HttpContext.Features.Get<IHttpConnectionFeature>()?.RemoteIpAddress?.ToString();
             //string ip =  this.Request.HttpContext.Connection.RemoteIpAddress.ToString();

@@ -19,18 +19,23 @@ using ServiceStack.Auth;
 using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
 using Microsoft.Net.Http.Headers;
-using ExpressBase.Web.Filters;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.Connections;
-using System.Net.Http;
 using System.Net;
+using ExpressBase.Common.NotificationHubs;
+using Microsoft.Azure.NotificationHubs;
 
 namespace ExpressBase.Web.Controllers
 {
     public class ApiController : EbBaseIntApiController
     {
-        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc) { }
+        private NotificationHubProxy _nfClient;
+
+        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc)
+        {
+            _nfClient = new NotificationHubProxy();
+        }
 
         [HttpGet("/api/{_name}/{_version}/{format?}")]
         public object Api(string _name, string _version, string format = "json")
@@ -493,10 +498,9 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("/api/get_file")]
-        public HttpResponseMessage GetStaticFiles(EbFileCategory category, string filename)
+        public ApiFileResponse GetStaticFiles(EbFileCategory category, string filename)
         {
-            HttpResponseMessage response = new HttpResponseMessage();
-            HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
+            ApiFileResponse response = new ApiFileResponse();
 
             if (ViewBag.IsValid)
             {
@@ -532,18 +536,13 @@ namespace ExpressBase.Web.Controllers
                     if (dfs.StreamWrapper != null)
                     {
                         response.StatusCode = HttpStatusCode.OK;
+
                         //Read the File into a Byte Array.
-                        byte[] bytes = dfs.StreamWrapper.Memorystream.ToArray();
-
-                        response.Content = new ByteArrayContent(bytes);
-
-                        response.Content.Headers.Add("Content-Length", bytes.LongLength.ToString());
-                        response.Content.Headers.Add("Content-Type", this.GetMime(filename));
+                        response.Bytea = dfs.StreamWrapper.Memorystream.ToArray();
+                        response.ContentType = this.GetMime(filename);
                     }
                     else
-                    {
                         response.StatusCode = HttpStatusCode.NotFound;
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -553,7 +552,6 @@ namespace ExpressBase.Web.Controllers
             }
             return response;
         }
-
 
         private string GetMime(string fname)
         {
@@ -669,8 +667,7 @@ namespace ExpressBase.Web.Controllers
                         RefId = RefId,
                         FormData = FormData,
                         RowId = RowId,
-                        CurrentLoc = LocId,
-                        UserObj = this.LoggedInUser
+                        CurrentLoc = LocId
                     });
                 }
                 catch (Exception ex)
@@ -829,6 +826,82 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(ex.StackTrace);
             }
             return new GetMyActionInfoResponse();
+        }
+
+        /// <summary>
+        /// push notification for 
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet("api/notifications/register")]
+        public async Task<IActionResult> CreatePushRegistrationId()
+        {
+            if (Authenticated)
+            {
+                var registrationId = await _nfClient.CreateRegistrationId();
+                return Ok(registrationId);
+            }
+
+            return Unauthorized();
+        }
+
+        [HttpDelete("api/notifications/unregister")]
+        public async Task<IActionResult> UnregisterFromNotifications(string regid)
+        {
+            if (Authenticated)
+            {
+                await _nfClient.DeleteRegistration(regid);
+                return Ok();
+            }
+
+            return Unauthorized();
+        }
+
+        [HttpPut("api/notifications/enable")]
+        [HttpPost("api/notifications/enable")]
+        public async Task<IActionResult> RegisterForPushNotifications(string regid, string device)
+        {
+            if (Authenticated)
+            {
+                DeviceRegistration dr = null;
+
+                if (device != null)
+                {
+                    dr = JsonConvert.DeserializeObject<DeviceRegistration>(device);
+                }
+
+                HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(regid, dr);
+
+                if (registrationResult.CompletedWithSuccess)
+                    return Ok(true);
+
+                return BadRequest("An error occurred while sending push notification: " + registrationResult.FormattedErrorMessages);
+            }
+
+            return Unauthorized();
+        }
+
+        [HttpPost("api/notifications/send")]
+        public async Task<IActionResult> SendNotification(string notification)
+        {
+            if (Authenticated)
+            {
+                Common.NotificationHubs.Notification nf = null;
+
+                if (notification != null)
+                {
+                    nf = JsonConvert.DeserializeObject<Common.NotificationHubs.Notification>(notification);
+                }
+
+                HubResponse<NotificationOutcome> pushDeliveryResult = await _nfClient.SendNotification(nf);
+
+                if (pushDeliveryResult.CompletedWithSuccess)
+                    return Ok();
+
+                return BadRequest("An error occurred while sending push notification: " + pushDeliveryResult.FormattedErrorMessages);
+            }
+
+            return Unauthorized();
         }
     }
 }

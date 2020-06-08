@@ -158,7 +158,6 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
-        this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
         let opts = {
             allTabCtrls: this.TabControls,
             formModel: _formData,
@@ -173,13 +172,13 @@ const WebFormRender = function (option) {
         };
         this.DynamicTabObject = new EbDynamicTab(opts);
 
-        JsonToEbControls(this.FormObj);
+        JsonToEbControls(this.FormObj);// extend eb functions to control object (setValue(), disable()...)
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
-        this.formObject = {};// for passing to user defined functions
+        this.formObject = {};// for passing to developer script functions
         this.SetWatchers();
         this.formObject.__mode = "new";// added a watcher to update form attribute
 
-        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject - purpose ?
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
@@ -408,7 +407,7 @@ const WebFormRender = function (option) {
         this.isInitNCs = true;
     };
 
-    this.getNCCTblNames = function () {
+    this.getNormalTblNames = function () {
         let NCCTblNames = [];
         let FlatContControls = getFlatContControls(this.FormObj);
         $.each(FlatContControls, function (i, CC) {
@@ -448,7 +447,7 @@ const WebFormRender = function (option) {
             return;
         }
         let EditModeFormData = this.EditModeFormData;
-        let NCCTblNames = this.getNCCTblNames();
+        let NCCTblNames = this.getNormalTblNames();
         //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
@@ -613,11 +612,6 @@ const WebFormRender = function (option) {
             if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
                 continue;
             if (cellObj !== undefined) {
-                //if (ctrl.ObjType === "PowerSelect") {
-                //    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
-                //    ctrl.justInit = true;
-                //    ctrl.setDisplayMember(cellObj.Value);
-                //}
                 ctrl.reset(cellObj.Value);
             }
             else
@@ -1221,7 +1215,7 @@ const WebFormRender = function (option) {
     };
 
     this.windowKeyDown = function (event) {
-        if (event.ctrlKey || event.metaKey) {
+        if (event.ctrlKey || event.metaKey) {// ctrl + s - save form
             if (event.which === 83) {
                 event.preventDefault();
                 if (this.Mode.isEdit || this.Mode.isNew)
@@ -1229,7 +1223,7 @@ const WebFormRender = function (option) {
             }
         }
 
-        if (event.altKey || event.metaKey) {
+        if (event.altKey || event.metaKey) {// alt + n - new form
             if (event.which === 78) {
                 event.preventDefault();
                 if ($("#webformnew").css("display") !== "none")
@@ -1487,18 +1481,12 @@ const WebFormRender = function (option) {
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
-        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
+        this.$closeBtn.on("click", function () { window.parent.closeModal(); });// for iframe
         this.$cloneBtn.on("click", this.cloneForm.bind(this));
         //$("body").on("blur", "[ui-inp]", function () {
         //    window.justbluredElement = event.target;
         //});
-        $("body").on("focus", "[ui-inp]", function () {
-            let el = event.target;
-            if (event && event.target &&
-                !(el.getAttribute("type") === "search" &&
-                    ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))
-                $(event.target).select();
-        });
+        $("body").on("focus", "[ui-inp]", this.selectUIinpOnFocus);
 
         //$("body").on("focus", "[ui-inp]", function () {
         //    let el = event.target;
@@ -1508,6 +1496,14 @@ const WebFormRender = function (option) {
         //    }
         //});
         $(window).off("keydown").on("keydown", this.windowKeyDown);
+    };
+
+    this.selectUIinpOnFocus = function () {
+        let el = event.target;
+        if (event && event.target &&
+            !(el.getAttribute("type") === "search" &&
+                ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))
+            $(event.target).select();
     };
 
     this.setMode = function () {
@@ -1590,18 +1586,19 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.init = function () {
+    this.checkRedirection = function () {
         if (this.formDataWrapper.Status !== 200) {
             $("body").empty().html(this.formDataWrapper.Message);
-
-            //if (this.formDataWrapper.Status === 401)
             window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
-
             return;
         }
+    }
 
-        this.TableNames = this.getNCCTblNames();
-        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
+    this.init = function () {
+        this.checkRedirection();
+        this.TableNames = this.getNormalTblNames();
+        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
+        this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();

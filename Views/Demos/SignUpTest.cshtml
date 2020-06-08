@@ -69,9 +69,12 @@
 
         function testAjax() {
             $.ajax({
-                url: "/api/notifications/register",
-                type: "GET",
-                cache: false,
+                url: "/api/notifications/enable",
+                type: "POST",
+                data: {
+                    regid: "7359354768815490895-3807243657050931495-2",
+                    device:"{'Platform':2,'Handle':'eInWD0owpoQ:APA91bGadEXhk0Z50IDVNnvAAhlnZ-20xAX7MxPI0jENAuTI-lP9n0hsBTfc3EQp6f-TGYXvJAESCHQKZTN2uP3tBmbaSeScXXlq_DZXUrYUFN9zc8zv9vsgwUo6-HMn-jpE-4PBuGaY','Tags':['ebdbllz23nkqd620180220120030:binivarghese@gmail.com:mc']}",
+                },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());
                     xhr.setRequestHeader("rToken", getrToken());

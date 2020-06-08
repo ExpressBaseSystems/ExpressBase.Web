@@ -784,7 +784,7 @@ const WebFormRender = function (option) {
             this.DGsB4SaveActions();
 
             this.saveForm_call();
-        }.bind(this), 2);
+        }.bind(this), 4);
     };
 
     this.saveForm_call = function () {
@@ -814,6 +814,7 @@ const WebFormRender = function (option) {
 
     //functions to be executed before save in frontend
     this.BeforeSave = function () {
+        $(":focus").blur();
         if (!this.FormObj.BeforeSaveRoutines)
             return;
         $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {

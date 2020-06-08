@@ -794,7 +794,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //}
         //else if (this.curCtrl.ObjType === "StaticCardSet" || this.curCtrl.ObjType === "DynamicCardSet") {
         //    if (!this.checkRequired()) { return; }
-        //    if (this.curCtrl.IsReadOnly) {
+        //    if (this.curCtrl.IsDisable) {
         //        $btn.css('display', 'none');
         //        $('#' + this.curCtrl.Name).attr('id', '');
         //    }

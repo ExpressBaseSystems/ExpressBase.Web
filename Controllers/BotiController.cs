@@ -237,7 +237,7 @@ namespace ExpressBase.Web.Controllers
             EbBotForm BotForm = this.GetBotForm(refid);
             try
             {
-                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = BotForm.WebFormRefId, RowId = rowid, UserObj = this.LoggedInUser, CurrentLoc = this.LoggedInUser?.Preference?.DefaultLocation ?? 1, RenderMode = WebFormRenderModes.Normal });
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = BotForm.WebFormRefId, RowId = rowid, CurrentLoc = this.LoggedInUser?.Preference?.DefaultLocation ?? 1, RenderMode = WebFormRenderModes.Normal });
                 return DataSet.FormDataWrap;
             }
             catch (Exception ex)
@@ -266,8 +266,7 @@ namespace ExpressBase.Web.Controllers
                         RefId = BotForm.WebFormRefId,
                         FormData = Values,
                         RowId = rowid,
-                        CurrentLoc = this.LoggedInUser?.Preference?.DefaultLocation ?? 1,
-                        UserObj = this.LoggedInUser
+                        CurrentLoc = this.LoggedInUser?.Preference?.DefaultLocation ?? 1
                     });
                 return JsonConvert.SerializeObject(Resp);
             }

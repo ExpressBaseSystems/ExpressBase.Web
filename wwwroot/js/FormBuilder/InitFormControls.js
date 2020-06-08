@@ -791,6 +791,10 @@
         return new meetingPicker(ctrl, ctrlOpts, this.Renderer.rendererName);
     };
 
+    this.MeetingScheduler = function (ctrl, ctrlOpts) {
+        return new meetingScheduler(ctrl, ctrlOpts, this.Renderer.rendererName);
+    };
+
     this.PowerSelect = function (ctrl, ctrlOpts) {
 
         let t0 = performance.now();
@@ -880,8 +884,6 @@
     }.bind(this);
 
     this.SubmitButton = function (ctrl, ctrlOpts) {
-        $('#webform_submit').removeAttr("disabled");
-
         //checksubmitbutton
 
         $('#webformsave-selbtn').hide();

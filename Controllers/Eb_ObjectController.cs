@@ -14,7 +14,6 @@ using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
 using System.Text;
-using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.JsonConverters;
 using ExpressBase.Web.BaseControllers;
@@ -26,8 +25,6 @@ using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Helpers;
-using ExpressBase.Objects;
-
 namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseIntCommonController

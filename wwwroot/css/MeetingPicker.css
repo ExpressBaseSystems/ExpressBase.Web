@@ -467,6 +467,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
         padding: 10px 0px;
         display: flex;
     }
+        .meeting-scheduler-outer .direct-participant .bootstrap-tagsinput {
+            width:100%;
+        }
 
     .meeting-scheduler-outer .meeting-recurance {
         padding: 0px;

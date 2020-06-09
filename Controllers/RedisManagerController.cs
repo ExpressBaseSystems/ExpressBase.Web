@@ -18,7 +18,6 @@ using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Objects;
 using ExpressBase.Common.Data;
 using ExpressBase.Security;
-using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Objects.Objects.SmsRelated;
 using ExpressBase.Common.LocationNSolution;
 using System.Net.Mail;

@@ -2,60 +2,6 @@
 var meetingScheduler = function(ctrl, ctrlOpts, type) {
     this.Ctrl = ctrl;
     this.type = type;
-    this.UsersList = {};
-    this.UsersList= ctrl.UsersList;
-    var _UsrArr = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(this.UsersList, function (name, userid) {
-            return { id: userid, name: name };
-        }.bind(this))
-    });
-    _UsrArr.initialize();
-
-    var temp = $(`#${this.Ctrl.EbSid}_host_list`).tagsinput({
-        typeaheadjs: [
-            {
-                highlight: false
-            },
-            {
-                name: 'usersname',
-                displayKey: 'name',
-                //valueKey: 'id',
-                source: _UsrArr.ttAdapter()
-            }
-        ],
-        itemValue: "id",
-        itemText: "name",
-        freeInput: false
-    });
-    var temp = $(`#${this.Ctrl.EbSid}_attendee_list`).tagsinput({
-        typeaheadjs: [
-            {
-                highlight: false
-            },
-            {
-                name: 'usersname',
-                displayKey: 'name',
-                //valueKey: 'id',
-                source: _UsrArr.ttAdapter()
-            }
-        ],
-        itemValue: "id",
-        itemText: "name",
-        freeInput: false
-    });
-
-    //this.txtLocations.on('itemAdded', function (event) {
-    //    //console.log(event.item);
-    //    if (getKeyByVal(this.LocCntr.curItems, event.item.id)) {
-    //        this.LocCntr.options.deleted.splice(this.LocCntr.options.deleted.indexOf(this.LocCntr.curItems[event.item.id]), 1);
-    //    }
-    //    else {
-    //        this.LocCntr.options.added.push(event.item.id);
-    //    }
-    //}.bind(this));
-
     this.MeetingScheduleObj = {
         Title: '', Description: '', Location: '', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
         TimeFrom: '', TimeTo: '', Duration: '', MaxHost: 1, MinHost: 1, MaxAttendee: 1, MinAttendee: 1,
@@ -92,11 +38,13 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
         $(`#${this.Ctrl.EbSid}_single`).on("change", function(e) {
             this.MeetingScheduleObj.IsSingleMeeting = 'T';
             this.MeetingScheduleObj.IsMultipleMeeting = 'F';
+            $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).hide();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_multiple`).on("change", function(e) {
             this.MeetingScheduleObj.IsSingleMeeting = 'F';
             this.MeetingScheduleObj.IsMultipleMeeting = 'T';
+            $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).show();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_meeting-date`).on("change", function(e) {
@@ -138,10 +86,12 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_host_list`).on("change", function(e) {
             this.MeetingScheduleObj.Host = e.target.value;
+            $(`#${this.Ctrl.EbSid}_max-host`).val(this.MeetingScheduleObj.Host.split(",").length);
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_attendee_list`).on("change", function(e) {
             this.MeetingScheduleObj.Attendee = e.target.value;
+            $(`#${this.Ctrl.EbSid}_max-attendee`).val(this.MeetingScheduleObj.Attendee.split(",").length);
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 

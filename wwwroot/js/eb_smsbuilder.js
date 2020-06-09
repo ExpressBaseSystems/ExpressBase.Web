@@ -16,7 +16,9 @@
 	this.Init = function () {
 
 		if (this.EbObject === null) {
-			this.EbObject = new EbObjects["EbSmsTemplate"]("Sms0");
+			this.EbObject = new EbObjects["EbSmsTemplate"]("SmsTemplate" + "_" + Date.now().toString(36));
+			this.EbObject.DisplayName = this.EbObject.Name;
+			commonO.Current_obj = this.EbObject;
 			this.smspropG.setObject(this.EbObject, AllMetas["EbSmsTemplate"]);
 
 		}
@@ -291,7 +293,6 @@
 		this.EbObject.To = $("#sms_to" + tabNum).val();
 		this.EbObject.Body = window.btoa($('#sms_body' + tabNum).text().trim());
 		commonO.Current_obj = this.EbObject;
-		return true;
 	};
 
 	this.CreateRelationString = function () { };

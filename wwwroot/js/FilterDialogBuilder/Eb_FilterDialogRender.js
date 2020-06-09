@@ -106,7 +106,6 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
             this.FRC.setValueExpValsNC(this.FormObj.Controls.$values);//
             this.FRC.bindFnsToCtrls(this.flatControls);// order 4
-            this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
             this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
             this.SetWatchers();
             $.each(this.PSs, function (i, ps) { this.IsPSsInitComplete[ps.EbSid_CtxId] = false; }.bind(this));

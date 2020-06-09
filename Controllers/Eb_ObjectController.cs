@@ -25,8 +25,6 @@ using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Helpers;
-using ExpressBase.Objects;
-
 namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseIntCommonController

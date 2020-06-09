@@ -667,8 +667,7 @@ namespace ExpressBase.Web.Controllers
                         RefId = RefId,
                         FormData = FormData,
                         RowId = RowId,
-                        CurrentLoc = LocId,
-                        UserObj = this.LoggedInUser
+                        CurrentLoc = LocId
                     });
                 }
                 catch (Exception ex)
@@ -846,7 +845,7 @@ namespace ExpressBase.Web.Controllers
             return Unauthorized();
         }
 
-        [HttpDelete("api/notifications/unregister/{regid}")]
+        [HttpDelete("api/notifications/unregister")]
         public async Task<IActionResult> UnregisterFromNotifications(string regid)
         {
             if (Authenticated)
@@ -858,15 +857,23 @@ namespace ExpressBase.Web.Controllers
             return Unauthorized();
         }
 
-        [HttpPut("api/notifications/enable/{id}")]
-        public async Task<IActionResult> RegisterForPushNotifications(string id, [FromBody] DeviceRegistration deviceUpdate)
+        [HttpPut("api/notifications/enable")]
+        [HttpPost("api/notifications/enable")]
+        public async Task<IActionResult> RegisterForPushNotifications(string regid, string device)
         {
             if (Authenticated)
             {
-                HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(id, deviceUpdate);
+                DeviceRegistration dr = null;
+
+                if (device != null)
+                {
+                    dr = JsonConvert.DeserializeObject<DeviceRegistration>(device);
+                }
+
+                HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(regid, dr);
 
                 if (registrationResult.CompletedWithSuccess)
-                    return Ok();
+                    return Ok(true);
 
                 return BadRequest("An error occurred while sending push notification: " + registrationResult.FormattedErrorMessages);
             }
@@ -875,11 +882,18 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("api/notifications/send")]
-        public async Task<IActionResult> SendNotification([FromBody] Common.NotificationHubs.Notification newNotification)
+        public async Task<IActionResult> SendNotification(string notification)
         {
             if (Authenticated)
             {
-                HubResponse<NotificationOutcome> pushDeliveryResult = await _nfClient.SendNotification(newNotification);
+                Common.NotificationHubs.Notification nf = null;
+
+                if (notification != null)
+                {
+                    nf = JsonConvert.DeserializeObject<Common.NotificationHubs.Notification>(notification);
+                }
+
+                HubResponse<NotificationOutcome> pushDeliveryResult = await _nfClient.SendNotification(nf);
 
                 if (pushDeliveryResult.CompletedWithSuccess)
                     return Ok();

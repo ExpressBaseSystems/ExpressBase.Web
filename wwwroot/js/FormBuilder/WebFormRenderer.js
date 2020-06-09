@@ -86,12 +86,12 @@ const WebFormRender = function (option) {
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
-        this.FRC.setFormObjHelperfns();
+        this.FRC.setFormObjHelperfns();// adds __getCtrlByPath() to formObject
         this.setFormObjectMode();
         //if (this.Mode.isNew)
         //    this.FRC.setValueExpValsNC(this.flatControls); // issue with powerselect 'initializer' not set on load
 
-        this.FRC.setUpdateDependentControlsFn();
+        this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 
 
 
         return this.formObject;
@@ -158,7 +158,6 @@ const WebFormRender = function (option) {
     };
 
     this.initWebFormCtrls = function () {
-        this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
         let opts = {
             allTabCtrls: this.TabControls,
             formModel: _formData,
@@ -173,23 +172,24 @@ const WebFormRender = function (option) {
         };
         this.DynamicTabObject = new EbDynamicTab(opts);
 
-        JsonToEbControls(this.FormObj);
+        JsonToEbControls(this.FormObj);// extend eb functions to control object (setValue(), disable()...)
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
-        this.SetWatchers();
-        this.formObject.__mode = "new";// added a watcher to update form attribute
+        this.SetWatchers();//added a watcher to update form attribute
+        this.formObject.__mode = "new";// default value new
 
-        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject - done for filterdialog default value
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
         //this.addApprovalMockDATAMODEL();
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
-        this.setFormObject();
+        this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
         this.initNCs();// order 1
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3 + disables disabled controls
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3 
+        this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
         this.initDGs();
         this.initReviewCtrl();
 
@@ -408,7 +408,7 @@ const WebFormRender = function (option) {
         this.isInitNCs = true;
     };
 
-    this.getNCCTblNames = function () {
+    this.getNormalTblNames = function () {
         let NCCTblNames = [];
         let FlatContControls = getFlatContControls(this.FormObj);
         $.each(FlatContControls, function (i, CC) {
@@ -448,7 +448,7 @@ const WebFormRender = function (option) {
             return;
         }
         let EditModeFormData = this.EditModeFormData;
-        let NCCTblNames = this.getNCCTblNames();
+        let NCCTblNames = this.getNormalTblNames();
         //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
@@ -613,11 +613,6 @@ const WebFormRender = function (option) {
             if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
                 continue;
             if (cellObj !== undefined) {
-                //if (ctrl.ObjType === "PowerSelect") {
-                //    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
-                //    ctrl.justInit = true;
-                //    ctrl.setDisplayMember(cellObj.Value);
-                //}
                 ctrl.reset(cellObj.Value);
             }
             else
@@ -789,7 +784,7 @@ const WebFormRender = function (option) {
             this.DGsB4SaveActions();
 
             this.saveForm_call();
-        }.bind(this), 2);
+        }.bind(this), 4);
     };
 
     this.saveForm_call = function () {
@@ -819,6 +814,7 @@ const WebFormRender = function (option) {
 
     //functions to be executed before save in frontend
     this.BeforeSave = function () {
+        $(":focus").blur();
         if (!this.FormObj.BeforeSaveRoutines)
             return;
         $.each(this.FormObj.BeforeSaveRoutines.$values, function (k, r) {
@@ -1093,13 +1089,15 @@ const WebFormRender = function (option) {
 
             $.each(Obj.Tables, function (i, Tbl) {
                 let indx = 0;
-                $.each(Tbl.Columns, function (j, Row) {
+                $.each(Tbl.Columns, function (j, Col) {
                     let temp = `
                         <tr>
-                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Row.Title}</td>
-                            <td class="col-md-4 col-sm-4">${Row.NewValue}</td>                            
+                            <td class="col-md-4 col-sm-4" rowspan='2' style='vertical-align: middle;'>${Col.Title}</td>
+                            <td class="col-md-4 col-sm-4">${Col.NewValue}</td>                            
                         </tr>
-                        <tr><td class="col-md-4 col-sm-4" style="text-decoration: line-through;">${Row.OldValue}</td></tr>`;
+                        <tr>
+                            <td class="col-md-4 col-sm-4" style="${Col.IsModified ? 'text-decoration: line-through;': ''}">${Col.OldValue}</td>
+                        </tr>`;
                     if (indx++ % 2 === 0)
                         tempHtml += temp;
                     else
@@ -1130,14 +1128,15 @@ const WebFormRender = function (option) {
             tempHtml = ``;
 
             $.each(Obj.GridTables, function (i, Tbl) {
-                tempHtml += `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
+                let isTrAvail = false;
+                let tableHtml = `<div class="line-table-div"><div>${Tbl.Title}</div><table class="table table-bordered second-table" style="width:100%; margin: 0px;">
                                 <thead>
                                     <tr class="table-title-tr">
                                         <th></th>`;
                 $.each(Tbl.ColumnMeta, function (j, cmeta) {
-                    tempHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
+                    tableHtml += `<th style='font-weight: 400;'>${cmeta}</th>`;
                 });
-                tempHtml += `     </tr>
+                tableHtml += `     </tr>
                                 </thead><tbody>`;
                 $.each(Tbl.NewRows, function (m, Cols) {
                     let newRow = `<tr><td>Added</td>`;
@@ -1145,7 +1144,8 @@ const WebFormRender = function (option) {
                         newRow += `<td>${Col.NewValue}</td>`;
                     });
                     newRow += `</tr>`;
-                    tempHtml += newRow;
+                    tableHtml += newRow;
+                    isTrAvail = true;
                 });
 
                 $.each(Tbl.DeletedRows, function (m, Cols) {
@@ -1154,16 +1154,19 @@ const WebFormRender = function (option) {
                         oldRow += `<td>${Col.OldValue}</td>`;
                     });
                     oldRow += `</tr>`;
-                    tempHtml += oldRow;
+                    tableHtml += oldRow;
+                    isTrAvail = true;
                 });
 
                 $.each(Tbl.EditedRows, function (m, Cols) {
                     let newRow = `<tr><td rowspan='2' style='vertical-align: middle;'>Edited</td>`;
                     let oldRow = `<tr>`;
+                    let changeFound = false;
                     $.each(Cols.Columns, function (n, Col) {
                         if (Col.IsModified) {
                             newRow += `<td>${Col.NewValue}</td>`;
                             oldRow += `<td style="text-decoration: line-through;">${Col.OldValue}</td>`;
+                            changeFound = true;
                         }
                         else {
                             newRow += `<td>${Col.NewValue}</td>`;
@@ -1172,10 +1175,15 @@ const WebFormRender = function (option) {
                     });
                     newRow += `</tr>`;
                     oldRow += `</tr>`;
-                    tempHtml += newRow + oldRow;
+                    if (changeFound) {
+                        tableHtml += newRow + oldRow;
+                        isTrAvail = true;
+                    }
                 });
 
-                tempHtml += `</tbody></table></div>`;
+                tableHtml += `</tbody></table></div>`;
+                if (isTrAvail)
+                    tempHtml += tableHtml;
             });
             $trans.children(".trans-body").append(tempHtml);
             $transAll.append($trans);
@@ -1209,7 +1217,7 @@ const WebFormRender = function (option) {
     };
 
     this.windowKeyDown = function (event) {
-        if (event.ctrlKey || event.metaKey) {
+        if (event.ctrlKey || event.metaKey) {// ctrl + s - save form
             if (event.which === 83) {
                 event.preventDefault();
                 if (this.Mode.isEdit || this.Mode.isNew)
@@ -1217,7 +1225,7 @@ const WebFormRender = function (option) {
             }
         }
 
-        if (event.altKey || event.metaKey) {
+        if (event.altKey || event.metaKey) {// alt + n - new form
             if (event.which === 78) {
                 event.preventDefault();
                 if ($("#webformnew").css("display") !== "none")
@@ -1475,18 +1483,12 @@ const WebFormRender = function (option) {
         this.$cancelBtn.on("click", this.cancelForm.bind(this));
         this.$editBtn.on("click", this.SwitchToEditMode.bind(this));
         this.$auditBtn.on("click", this.GetAuditTrail.bind(this));
-        this.$closeBtn.on("click", function () { window.parent.closeModal(); });
+        this.$closeBtn.on("click", function () { window.parent.closeModal(); });// for iframe
         this.$cloneBtn.on("click", this.cloneForm.bind(this));
         //$("body").on("blur", "[ui-inp]", function () {
         //    window.justbluredElement = event.target;
         //});
-        $("body").on("focus", "[ui-inp]", function () {
-            let el = event.target;
-            if (event && event.target &&
-                !(el.getAttribute("type") === "search" &&
-                    ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))
-                $(event.target).select();
-        });
+        $("body").on("focus", "[ui-inp]", this.selectUIinpOnFocus);
 
         //$("body").on("focus", "[ui-inp]", function () {
         //    let el = event.target;
@@ -1496,6 +1498,14 @@ const WebFormRender = function (option) {
         //    }
         //});
         $(window).off("keydown").on("keydown", this.windowKeyDown);
+    };
+
+    this.selectUIinpOnFocus = function () {
+        let el = event.target;
+        if (event && event.target &&
+            !(el.getAttribute("type") === "search" &&
+                ($(el).closest("[ctype='PowerSelect']").length === 1 || $(el).closest("[tdcoltype='DGPowerSelectColumn']").length === 1)))
+            $(event.target).select();
     };
 
     this.setMode = function () {
@@ -1578,18 +1588,19 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.init = function () {
+    this.checkRedirection = function () {
         if (this.formDataWrapper.Status !== 200) {
             $("body").empty().html(this.formDataWrapper.Message);
-
-            //if (this.formDataWrapper.Status === 401)
             window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
-
             return;
         }
+    }
 
-        this.TableNames = this.getNCCTblNames();
-        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Approval controls in formObject
+    this.init = function () {
+        this.checkRedirection();
+        this.TableNames = this.getNormalTblNames();
+        this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
+        this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
         this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();

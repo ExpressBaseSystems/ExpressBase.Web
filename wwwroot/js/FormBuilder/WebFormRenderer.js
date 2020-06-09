@@ -1588,16 +1588,16 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.checkRedirection = function () {
-        if (this.formDataWrapper.Status !== 200) {
-            $("body").empty().html(this.formDataWrapper.Message);
-            window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
-            return;
-        }
-    }
+    //this.checkRedirection = function () {
+    //    if (this.formDataWrapper.Status !== 200) {
+    //        $("body").empty().html(this.formDataWrapper.Message);
+    //        window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
+    //        return;
+    //    }
+    //}
 
     this.init = function () {
-        this.checkRedirection();
+        //this.checkRedirection();
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject

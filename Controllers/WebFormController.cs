@@ -88,13 +88,12 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
-            else
+            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+            if (wfd.FormData == null)
             {
-                WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-                if (wfd.FormData == null)
-                {
-                    ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-                }
+                TempData["ErrorResp"] = ViewBag.formData;
+                return Redirect("/StatusCode/" + wfd.Status);
+                //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
@@ -151,13 +150,12 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
-            else
+            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+            if (wfd.FormData == null)
             {
-                WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-                if (wfd.FormData == null)
-                {
-                    ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-                }
+                TempData["ErrorResp"] = ViewBag.formData;
+                return Redirect("/StatusCode/" + wfd.Status);
+                //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);

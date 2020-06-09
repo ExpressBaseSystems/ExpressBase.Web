@@ -15,6 +15,7 @@
     this.clipboard = {};
     this.toolContClass = "tool-sec-cont";
     this.botDpURL = 'url(https\:\/\/myaccount.expressbase\.com\/images\/assistant\.png)center center no-repeat';
+    this.builderType = builderType;
 
     this.controlCounters = CtrlCounters;//Global
 
@@ -28,7 +29,8 @@
         id: "pgWraper",
         wc: this.wc,
         cid: this.cid,
-        $extCont: $(".property-grid-cont")
+        $extCont: $(".property-grid-cont"),
+        builderType: this.builderType
     });
 
     this.controlOnFocus = function (e) {

@@ -1,4 +1,5 @@
-﻿@using ExpressBase.Web.Filters;
+﻿
+@using ExpressBase.Web.Filters;
 @{var bApnd = true;
     if (ViewBag.Env == "Development")
     {
@@ -97,6 +98,8 @@
     @*nithin*@
     <script src="~/js/FormBuilder/MeetingPicker.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/simTree.js"></script>
+    <script src="~/js/FormBuilder/MeetingScheduler.js" asp-append-version=@bApnd></script>
+    <script src="~/js/EbUserDashBoard/Combodate.js" asp-append-version=@bApnd></script>
 
     @if (ViewBag.wc == "uc")
     {

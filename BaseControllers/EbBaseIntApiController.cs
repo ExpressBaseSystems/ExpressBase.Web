@@ -1,6 +1,5 @@
 ﻿using ExpressBase.Common;
 using ExpressBase.Common.Constants;
-using ExpressBase.Common.Security;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.ServiceStack.Auth;
 using ExpressBase.Web.Controllers;
@@ -11,15 +10,20 @@ using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Threading.Tasks;
 using ExpressBase.Security;
-using System.Net;
 
 namespace ExpressBase.Web.BaseControllers
 {
     public class EbBaseIntApiController : EbBaseIntController
     {
+        protected string ESolutionId { set; get; }
+
+        protected string SultionId { set; get; }
+
+        protected bool Authenticated { set; get; }
+
+        protected bool IsValidSolution { set; get; }
+
         public EbBaseIntApiController(IServiceClient _ssclient) : base(_ssclient) { }
 
         public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis) : base(_ssclient, _redis) { }
@@ -27,9 +31,6 @@ namespace ExpressBase.Web.BaseControllers
         public EbBaseIntApiController(IServiceClient _ssclient, IEbStaticFileClient _sfc) : base(_ssclient, _sfc) { }
 
         public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
-
-        public string ESolutionId { set; get; }
-        public string SultionId { set; get; }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -48,26 +49,32 @@ namespace ExpressBase.Web.BaseControllers
             }
 
             this.ESolutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
+
             this.SultionId = this.GetIsolutionId(this.ESolutionId);
-            var controller = context.Controller as Controller;
+
+            Controller controller = (Controller)context.Controller;
 
             if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, this.SultionId)) == 0)
             {
                 controller.ViewBag.IsValidSol = false;
+                IsValidSolution = false;
             }
             else
             {
                 controller.ViewBag.IsValidSol = true;
+                IsValidSolution = true;
             }
 
             if ((string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken)) && string.IsNullOrEmpty(sAPIKey))
             {
                 controller.ViewBag.IsValid = false;
+                Authenticated = false;
                 controller.ViewBag.Message = "Authentication token not present in request header";
             }
             else if (!IsTokensValid(sRToken, sBToken, hostParts[0]) && string.IsNullOrEmpty(sAPIKey))
             {
                 controller.ViewBag.IsValid = false;
+                Authenticated = false;
                 controller.ViewBag.Message = "Authentication failed";
             }
             else
@@ -75,13 +82,17 @@ namespace ExpressBase.Web.BaseControllers
                 try
                 {
                     controller.ViewBag.IsValid = true;
+                    Authenticated = true;
                     controller.ViewBag.Message = "Authenticated";
-                    var bToken = new JwtSecurityToken(sBToken);
+
+                    JwtSecurityToken bToken = new JwtSecurityToken(sBToken);
 
                     this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
 
-                    Session = new CustomUserSession();
-                    Session.Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID];
+                    Session = new CustomUserSession
+                    {
+                        Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID]
+                    };
 
                     this.ServiceClient.BearerToken = (string.IsNullOrEmpty(sAPIKey)) ? sBToken : sAPIKey;
                     this.ServiceClient.RefreshToken = sRToken;
@@ -94,7 +105,7 @@ namespace ExpressBase.Web.BaseControllers
                         this.FileClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
                     }
                 }
-                catch(System.ArgumentNullException ane)
+                catch (System.ArgumentNullException ane)
                 {
                     if (ane.ParamName == RoutingConstants.BEARER_TOKEN || ane.ParamName == RoutingConstants.REFRESH_TOKEN)
                     {

@@ -890,8 +890,12 @@
             fltr_collection = getValsForViz(this.FilterDialog.FormObj);
 
         let temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
-        if (temp.length === 0)
-            fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        if (temp.length === 0) {
+            if (this.Source === "Bot")
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", 1)); // hard coding temp for bot
+            else
+                fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        }
         temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
@@ -1223,8 +1227,8 @@
                                         else if (Rtype === 5 || Rtype === 6) {
                                             //val1 = this.changeDateOrder(val1);
                                             //val2 = this.changeDateOrder(val2);
-                                            let d1 = Date.parse( moment(val1, 'DD-MM-YYYY').format('YYYY-MM-DD'));
-                                            let d2 = Date.parse( moment(val2, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+                                            let d1 = Date.parse(moment(val1, 'DD-MM-YYYY').format('YYYY-MM-DD'));
+                                            let d2 = Date.parse(moment(val2, 'DD-MM-YYYY').format('YYYY-MM-DD'));
                                             if (d2 > d1) {
                                                 filter_obj_arr.push(new filter_obj(colum, ">=", val1, type));
                                                 filter_obj_arr.push(new filter_obj(colum, "<=", val2, type));

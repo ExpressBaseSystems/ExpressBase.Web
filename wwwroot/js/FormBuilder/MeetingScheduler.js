@@ -38,11 +38,13 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
         $(`#${this.Ctrl.EbSid}_single`).on("change", function(e) {
             this.MeetingScheduleObj.IsSingleMeeting = 'T';
             this.MeetingScheduleObj.IsMultipleMeeting = 'F';
+            $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).hide();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_multiple`).on("change", function(e) {
             this.MeetingScheduleObj.IsSingleMeeting = 'F';
             this.MeetingScheduleObj.IsMultipleMeeting = 'T';
+            $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).show();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_meeting-date`).on("change", function(e) {
@@ -84,10 +86,12 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_host_list`).on("change", function(e) {
             this.MeetingScheduleObj.Host = e.target.value;
+            $(`#${this.Ctrl.EbSid}_max-host`).val(this.MeetingScheduleObj.Host.split(",").length);
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $(`#${this.Ctrl.EbSid}_attendee_list`).on("change", function(e) {
             this.MeetingScheduleObj.Attendee = e.target.value;
+            $(`#${this.Ctrl.EbSid}_max-attendee`).val(this.MeetingScheduleObj.Attendee.split(",").length);
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 

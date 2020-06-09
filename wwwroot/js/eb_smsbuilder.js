@@ -3,7 +3,7 @@
 	this.EbObject = dsobj;
 	this.smspropG = new Eb_PropertyGrid({
 		id: "PropertyG",
-		wc: "uc",
+		wc: "dc",
 		cid: this.cid,
 		$extCont: $(".smspg")
 	});
@@ -16,7 +16,9 @@
 	this.Init = function () {
 
 		if (this.EbObject === null) {
-			this.EbObject = new EbObjects["EbSmsTemplate"]("Sms0");
+			this.EbObject = new EbObjects["EbSmsTemplate"]("SmsTemplate" + "_" + Date.now().toString(36));
+			this.EbObject.DisplayName = this.EbObject.Name;
+			commonO.Current_obj = this.EbObject;
 			this.smspropG.setObject(this.EbObject, AllMetas["EbSmsTemplate"]);
 
 		}
@@ -285,9 +287,26 @@
 		//console.log($('.note-editable').html());
 		//alert($('.note-editable').html());
 
+
 		this.EbObject.To = $("#sms_to" + tabNum).val();
 		this.EbObject.Body = window.btoa($('#sms_body' + tabNum).text().trim());
 		commonO.Current_obj = this.EbObject;
+
+		
+		return true;
+	};
+
+	this.SetCode = function (e) {
+		try {
+			this.EbObject.Sql = btoa(window["editor" + tabNum].getValue());
+			$('#save').removeClass('disabled');
+			$('#commit_outer').removeClass('disabled');
+		}
+		catch (err) {
+			alert(err.message);
+			$('#save').addClass('disabled');
+			$('#commit_outer').addClass('disabled');
+		}
 	};
 
 	this.CreateRelationString = function () { };

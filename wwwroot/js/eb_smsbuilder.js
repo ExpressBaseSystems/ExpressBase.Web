@@ -269,6 +269,9 @@
 			}
 		});
 	};
+
+	this.GenerateButtons = function () { };
+
 	this.BeforeSave = function () {
 
 		//$('.note-editable').children().find('span').each(function (i, obj) {
@@ -288,6 +291,7 @@
 		this.EbObject.To = $("#sms_to" + tabNum).val();
 		this.EbObject.Body = window.btoa($('#sms_body' + tabNum).text().trim());
 		commonO.Current_obj = this.EbObject;
+		return true;
 	};
 
 	this.CreateRelationString = function () { };

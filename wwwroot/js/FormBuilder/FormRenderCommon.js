@@ -224,8 +224,10 @@
                                 if (valExpFnStr) {
                                     if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                         //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-                                        if (!this.FO.Mode.isView || depCtrl.DoNotPersist)
+                                        if (!this.FO.Mode.isView || depCtrl.DoNotPersist) {
                                             depCtrl.setValue(ValueExpr_val);
+                                            this.isRequiredOK(depCtrl);
+                                        }
                                     }
                                     else {
                                         $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

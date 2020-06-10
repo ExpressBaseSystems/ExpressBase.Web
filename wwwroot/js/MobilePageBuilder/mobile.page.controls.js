@@ -108,12 +108,12 @@
             $.extend(obj, filters[i]);
             $(`#${vis.EbSid} .vis-sort-container`).append(obj.$Control.outerHTML());
             this.Root.refreshControl(obj);
-            obj.blackListProps = Array.from(["TextFormat", "Font", "Required"]);//for pghelper extension
+            obj.blackListProps = Array.from(["TextFormat", "Font", "RowSpan","ColumnSpan"]);//for pghelper extension
         }
     };
 
     this.drawFormControls = function (controls) {
-        //sow tab
+        //show tab
         $(`#eb_mobtree_body_${this.Root.Conf.TabNum} #form_controls_tab`).show();
 
         for (let i = 0; i < controls.length; i++) {

@@ -461,12 +461,13 @@
         if (this.isSecondTime)
             this.MainData = null;
         this.propGrid.ClosePG();
-        if (this.FD)
-            this.stickBtn.minimise();
-        else
-            this.stickBtn.hide();
-        $("#objname").text(this.EbObject.DisplayName);
         if (this.FilterDialog) {
+            if (this.FD)
+                this.stickBtn.minimise();
+            else
+                this.stickBtn.hide();
+            $("#objname").text(this.EbObject.DisplayName);
+
             this.validateFD = this.FilterDialog.IsFDValidationOK;
             if (this.isContextual) {
                 if (this.isSecondTime) {
@@ -787,7 +788,8 @@
                 o.lengthChange = false;
             }
             if (this.login === "uc") {
-                dvcontainerObj.currentObj.Pippedfrom = "";
+                if (dvcontainerObj)
+                    dvcontainerObj.currentObj.Pippedfrom = "";
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
@@ -1301,7 +1303,7 @@
 
                 this.createFilterRowHeader();
             }
-            else if (this.IsTree || this.Source === "Calendar" ||  this.EbObject.IsDataFromApi)
+            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi)
                 this.createFilterforTree();
             //if (this.EbObject.AllowLocalSearch)
             //    this.createFilterforTree();

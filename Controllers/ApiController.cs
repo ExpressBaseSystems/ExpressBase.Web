@@ -473,17 +473,16 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/api/files/{filename}")]
         public IActionResult GetFile(string filename)
         {
-            DownloadFileResponse dfs = null;
             HttpContext.Response.Headers[HeaderNames.CacheControl] = "private, max-age=31536000";
             ActionResult resp = new EmptyResult();
 
             try
             {
-                dfs = this.FileClient.Get<DownloadFileResponse>
-                        (new DownloadFileByIdRequest
-                        {
-                            FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
-                        });
+                DownloadFileResponse dfs = this.FileClient.Get<DownloadFileResponse>(new DownloadFileByIdRequest
+                {
+                    FileDetails = new FileMeta { FileRefId = Convert.ToInt32(filename.SplitOnLast(CharConstants.DOT).First()), FileCategory = EbFileCategory.File }
+                });
+
                 if (dfs.StreamWrapper != null)
                 {
                     dfs.StreamWrapper.Memorystream.Position = 0;
@@ -845,7 +844,7 @@ namespace ExpressBase.Web.Controllers
             return Unauthorized();
         }
 
-        [HttpDelete("api/notifications/unregister/{regid}")]
+        [HttpDelete("api/notifications/unregister")]
         public async Task<IActionResult> UnregisterFromNotifications(string regid)
         {
             if (Authenticated)
@@ -857,19 +856,28 @@ namespace ExpressBase.Web.Controllers
             return Unauthorized();
         }
 
-        [HttpPut("api/notifications/enable/{id}")]
-        public async Task<IActionResult> RegisterForPushNotifications(string id, [FromBody] DeviceRegistration deviceUpdate)
+        [HttpPut("api/notifications/enable")]
+        [HttpPost("api/notifications/enable")]
+        public async Task<IActionResult> RegisterForPushNotifications(string regid, string device)
         {
             if (Authenticated)
             {
-                HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(id, deviceUpdate);
+                if (device != null)
+                {
+                    DeviceRegistration dr = JsonConvert.DeserializeObject<DeviceRegistration>(device);
 
-                if (registrationResult.CompletedWithSuccess)
-                    return Ok();
+                    HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(regid, dr);
 
-                return BadRequest("An error occurred while sending push notification: " + registrationResult.FormattedErrorMessages);
+                    if (registrationResult.CompletedWithSuccess)
+                        return Ok(true);
+
+                    return BadRequest("An error occurred while sending push notification");
+                }
+                else
+                {
+                    Console.WriteLine("Hub registration updation :: device empty");
+                }
             }
-
             return Unauthorized();
         }
 

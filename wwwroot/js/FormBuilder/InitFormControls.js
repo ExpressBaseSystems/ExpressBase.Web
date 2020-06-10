@@ -884,7 +884,6 @@
     }.bind(this);
 
     this.SubmitButton = function (ctrl, ctrlOpts) {
-        $('#webform_submit').removeAttr("disabled");
 
         //checksubmitbutton
 

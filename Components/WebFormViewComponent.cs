@@ -117,6 +117,10 @@ namespace ExpressBase.Web.Components
                     {
                         (control as EbDGStringColumn).InitFromDataBase(this.ServiceClient);
                     }
+                    else if (control is EbMeetingScheduler)
+                    {
+                        (control as EbMeetingScheduler).UsersList = WebForm.SolutionObj.Users;
+                    }
 
                 }
                 foreach (EbControl control in WebForm_L.Controls.FlattenAllEbControls())

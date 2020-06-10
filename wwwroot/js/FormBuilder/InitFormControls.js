@@ -507,7 +507,7 @@
         o.showCheckboxColumn = false;
         o.showFilterRow = false;
         o.IsPaging = false;
-        o.Source = "form";
+        o.Source = this.Renderer.rendererName;
         o.scrollHeight = ctrl.Height - 34.62;
         o.dvObject = JSON.parse(ctrl.TableVisualizationJson);
 
@@ -884,6 +884,8 @@
     }.bind(this);
 
     this.SubmitButton = function (ctrl, ctrlOpts) {
+        $('#webform_submit').removeAttr("disabled");
+
         //checksubmitbutton
 
         $('#webformsave-selbtn').hide();

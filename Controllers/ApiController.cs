@@ -845,7 +845,7 @@ namespace ExpressBase.Web.Controllers
             return Unauthorized();
         }
 
-        [HttpDelete("api/notifications/unregister")]
+        [HttpDelete("api/notifications/unregister/{regid}")]
         public async Task<IActionResult> UnregisterFromNotifications(string regid)
         {
             if (Authenticated)
@@ -857,23 +857,15 @@ namespace ExpressBase.Web.Controllers
             return Unauthorized();
         }
 
-        [HttpPut("api/notifications/enable")]
-        [HttpPost("api/notifications/enable")]
-        public async Task<IActionResult> RegisterForPushNotifications(string regid, string device)
+        [HttpPut("api/notifications/enable/{id}")]
+        public async Task<IActionResult> RegisterForPushNotifications(string id, [FromBody] DeviceRegistration deviceUpdate)
         {
             if (Authenticated)
             {
-                DeviceRegistration dr = null;
-
-                if (device != null)
-                {
-                    dr = JsonConvert.DeserializeObject<DeviceRegistration>(device);
-                }
-
-                HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(regid, dr);
+                HubResponse registrationResult = await _nfClient.RegisterForPushNotifications(id, deviceUpdate);
 
                 if (registrationResult.CompletedWithSuccess)
-                    return Ok(true);
+                    return Ok();
 
                 return BadRequest("An error occurred while sending push notification: " + registrationResult.FormattedErrorMessages);
             }
@@ -882,18 +874,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost("api/notifications/send")]
-        public async Task<IActionResult> SendNotification(string notification)
+        public async Task<IActionResult> SendNotification([FromBody] Common.NotificationHubs.Notification newNotification)
         {
             if (Authenticated)
             {
-                Common.NotificationHubs.Notification nf = null;
-
-                if (notification != null)
-                {
-                    nf = JsonConvert.DeserializeObject<Common.NotificationHubs.Notification>(notification);
-                }
-
-                HubResponse<NotificationOutcome> pushDeliveryResult = await _nfClient.SendNotification(nf);
+                HubResponse<NotificationOutcome> pushDeliveryResult = await _nfClient.SendNotification(newNotification);
 
                 if (pushDeliveryResult.CompletedWithSuccess)
                     return Ok();

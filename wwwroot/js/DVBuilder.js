@@ -75,9 +75,12 @@ class DvBuilder {
             objid = this.EbObject.RefId.split("-")[3];
         $("#obj_icons ").empty();
         $("#obj_icons").append(`<a class='btn' id="preview" data-toggle="tooltip" data-placement="bottom" title="Preview"><i class="fa fa-eye" aria-hidden="true"></i></a>`);
-        $("#obj_icons").append(`<button class='btn' id="refresh" data-toggle="tooltip" data-placement="bottom" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
+        if(this.EbObject.DataSourceRefId)
+            $("#obj_icons").append(`<button class='btn' id="refresh" data-toggle="tooltip" data-placement="bottom" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
         $("#preview").off("click").on("click", this.previewClick.bind(this));
         $("#refresh").off("click").on("click", this.DatasourceModified.bind(this));
+        if (this.EbObject.IsDataFromApi)
+            this.GenerateRunbutton();
     }
 
     previewClick() {
@@ -98,8 +101,12 @@ class DvBuilder {
         else {
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             this.check4Customcolumn();
-            if (this.EbObject.ColumnsCollection.$values.length === 0)
-                this.getColumns();//get Columncollection,parameter list
+            if (this.EbObject.ColumnsCollection.$values.length === 0) {
+                if(this.EbObject.DataSourceRefId)
+                    this.getColumns();//get Columncollection,parameter list
+                else
+                    this.UrlModified();
+            }
             else
                 this.DrawBuilder();
         }
@@ -134,6 +141,30 @@ class DvBuilder {
         }
         else if (pname === "sTitle")
             $("#" + obj.name + "_columntitle").val(newval);
+        else if (pname === "Url") {
+            this.GenerateRunbutton();
+        }
+    }
+
+    GenerateRunbutton() {
+        if ($("#run").length === 0) {
+            $("#obj_icons").append(`<button class='btn' id="run" data-toggle="tooltip" data-placement="bottom" title="Run"><i class="fa fa-play" aria-hidden="true"></i></button>`);
+            $("#run").off("click").on("click", this.UrlModified.bind(this));
+        }
+    }
+
+    UrlModified() {
+        if (this.EbObject.IsDataFromApi && this.EbObject.Url) {
+            $("#eb_common_loader").EbLoader("show");
+            this.RemoveColumnRef();
+            $.ajax({
+                url: "../DV/GetColumnsFromApi",
+                type: "POST",
+                cache: false,
+                data: { dvobjt: JSON.stringify(this.EbObject) },
+                success: this.getcolumnSuccess.bind(this)
+            });
+        }
     }
 
     DatasourceModified() {
@@ -202,21 +233,23 @@ class DvBuilder {
             type: "POST",
             cache: false,
             data: { dvobjt: JSON.stringify(this.EbObject), CustomColumn: isCustom },
-            success: function (result) {
-                this.MisMatchedColumns = [];
-                this.NewlyAddedColumns = [];
-                this.returnobj = JSON.parse(result);
-                if (this.EbObject.Columns.$values.length > 0)
-                    this.checkOldAndNewColumns();
-                this.RemoveDuplicateMismatchedColumns();
-                if (this.MisMatchedColumns.length > 0 || this.NewlyAddedColumns.length > 0) {
-                    this.ShowMessagebox();
-                }
-                else {
-                    this.Columnconfirmation("Yes");
-                }
-            }.bind(this)
+            success: this.getcolumnSuccess.bind(this)
         });
+    }
+
+    getcolumnSuccess(result) {
+        this.MisMatchedColumns = [];
+        this.NewlyAddedColumns = [];
+        this.returnobj = JSON.parse(result);
+        if (this.EbObject.Columns.$values.length > 0)
+            this.checkOldAndNewColumns();
+        this.RemoveDuplicateMismatchedColumns();
+        if (this.MisMatchedColumns.length > 0 || this.NewlyAddedColumns.length > 0) {
+            this.ShowMessagebox();
+        }
+        else {
+            this.Columnconfirmation("Yes");
+        }
     }
 
     checkOldAndNewColumns() {

@@ -70,6 +70,8 @@
             this.bindOnChange(Obj);
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
+        if (Obj.IsDisable)// should move
+            Obj.disable();
     };
 
     this.bindValidators = function (control) {
@@ -87,13 +89,6 @@
     this.bindFnsToCtrls = function (flatControls) {
         $.each(flatControls, function (k, Obj) {
             this.bindFnsToCtrl(Obj);
-        }.bind(this));
-    };
-
-    this.setDisabledControls = function (flatControls) {
-        $.each(flatControls, function (k, Obj) {
-            if (Obj.IsDisable)
-                Obj.disable();
         }.bind(this));
     };
 
@@ -188,7 +183,8 @@
         }
     };
 
-    this.setFormObjHelperfns = function () {
+
+    this.setFormObjHelperfns = function myfunction() {
         this.FO.formObject.__getCtrlByPath = function (path) {
             try {
                 let form = this.FO.formObject;
@@ -228,8 +224,10 @@
                                 if (valExpFnStr) {
                                     if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                         //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-                                        if (!this.FO.Mode.isView || depCtrl.DoNotPersist)
+                                        if (!this.FO.Mode.isView || depCtrl.DoNotPersist) {
                                             depCtrl.setValue(ValueExpr_val);
+                                            this.isRequiredOK(depCtrl);
+                                        }
                                     }
                                     else {
                                         $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

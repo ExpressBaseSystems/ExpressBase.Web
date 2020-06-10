@@ -8,18 +8,6 @@ body {
     /*--bot_fontfamily: Open Sans;*/
 }
 
-.mrg_tp_10 {
-    margin-top: 10px;
-}
-
-.mrg_10 {
-    margin: 10px;
-}
-
-.w-100 {
-    width: 100% !important;
-}
-
 .eb-chat-cont {
     display: flex;
     flex-direction:column;
@@ -193,19 +181,6 @@ body {
 }
 
 .chat-ctrl-cont {
-    position: relative;
-    width: 98%;
-    border: solid 5px #ffffff;
-    background-color: #ffffff;
-    margin-left: 16px;
-    line-height: 0;
-    display: flex;
-    /*vrgs*/
-    padding: 10px;
-    border-radius: 4px;
-}
-
-.chat-ctrl-readonly {
     position: relative;
     width: 98%;
     border: solid 5px #ffffff;
@@ -635,13 +610,13 @@ body {
     background-color: #3b5998 !important;
     background-image: url(http://icons.iconarchive.com/icons/danleech/simple/512/facebook-icon.png) !important;
     margin-bottom: 10px;*/
-/*..
+    /*..
     ..
     ..*/
-/*font-family: var(--bot_fontfamily)*/
-/*font-family: "Merriweat!important;er Sans", sans-serif;*/
-/*background-position: right center !important;*/
-/*padding-right: 45px !important;*/
+    /*font-family: var(--bot_fontfamily)*/
+    /*font-family: "Merriweat!important;er Sans", sans-serif;*/
+    /*background-position: right center !important;*/
+    /*padding-right: 45px !important;*/
 /*}*/
 
 .btn-box .fbbtnstyl {
@@ -1151,29 +1126,21 @@ body {
 .card-outer-cont {
     background-color: var(--bgclrwhite);
 }
-
 .ctrlproceedBtn-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
-    line-height: 1.4;
+    justify-content:center;
+    margin:10px;
 }
-
     .ctrlproceedBtn-wrapper .ctrlproceedBtn {
         border-radius: 30px;
         border: 1px solid var(--botThemeColor);
         padding: 5px 20px;
         font-weight: 600;
+        cursor: pointer;
         word-break: break-word;
         box-shadow: 0 1px 4px 1px #0000003d;
-        transition-duration: 0.1s;
     }
-
-.ctrlproceedBtn:hover {
-    box-shadow: 0px 1px 5px 1px #0000007a;
-    cursor: pointer;
-}
-
-.flxdirctn_col {
-    flex-direction: column;
-}
+        .ctrlproceedBtn-wrapper.ctrlproceedBtn :hover {
+            border: 2px solid var(--botThemeColor);
+        }

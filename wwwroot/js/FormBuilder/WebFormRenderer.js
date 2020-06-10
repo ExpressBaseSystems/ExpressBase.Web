@@ -86,12 +86,12 @@ const WebFormRender = function (option) {
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
-        this.FRC.setFormObjHelperfns();// adds __getCtrlByPath() to formObject
+        this.FRC.setFormObjHelperfns();
         this.setFormObjectMode();
         //if (this.Mode.isNew)
         //    this.FRC.setValueExpValsNC(this.flatControls); // issue with powerselect 'initializer' not set on load
 
-        this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 
+        this.FRC.setUpdateDependentControlsFn();
 
 
         return this.formObject;
@@ -176,21 +176,20 @@ const WebFormRender = function (option) {
         JsonToEbControls(this.FormObj);
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here with functions
         this.formObject = {};// for passing to user defined functions
-        this.SetWatchers();//added a watcher to update form attribute
-        this.formObject.__mode = "new";// default value new
+        this.SetWatchers();
+        this.formObject.__mode = "new";// added a watcher to update form attribute
 
-        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject - done for filterdialog default value
+        this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in formObject
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
         //this.addApprovalMockDATAMODEL();
         this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
-        this.setFormObject();// set helper functions to this.formObject and other...
+        this.setFormObject();
         this.updateCtrlsUI();
         this.initNCs();// order 1
-        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3 
-        this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
+        this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3 + disables disabled controls
         this.initDGs();
         this.initReviewCtrl();
 

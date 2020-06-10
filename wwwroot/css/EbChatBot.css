@@ -1125,3 +1125,21 @@ body {
 .card-outer-cont {
     background-color: var(--bgclrwhite);
 }
+.ctrlproceedBtn-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    margin:10px;
+}
+    .ctrlproceedBtn-wrapper .ctrlproceedBtn {
+        border-radius: 30px;
+        border: 1px solid var(--botThemeColor);
+        padding: 5px 20px;
+        font-weight: 600;
+        cursor: pointer;
+        word-break: break-word;
+        box-shadow: 0 1px 4px 1px #0000003d;
+    }
+        .ctrlproceedBtn-wrapper.ctrlproceedBtn :hover {
+            border: 2px solid var(--botThemeColor);
+        }

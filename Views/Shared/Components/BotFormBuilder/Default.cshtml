@@ -44,6 +44,7 @@
     EbObjectType type = (EbObjectType)Convert.ToInt32(ViewBag.ObjType);
     int typeInt = Convert.ToInt32(ViewBag.ObjType);
 
+     string builderType_S = type.ToString();
     var _builderType = (BuilderType)Enum.Parse(typeof(BuilderType), type.ToString(), true);
     var _toolBox = new EbToolbox(_builderType);
 }
@@ -85,13 +86,21 @@
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
 
+    if (!ebcontext.Roles)
+        ebcontext.Roles = @Html.Raw(ViewBag.RolesList);
+    if (!ebcontext.UserGroups)
+        ebcontext.UserGroups = @Html.Raw(ViewBag.UserGroupsList);
+    if (!ebcontext.UserTypes)
+        ebcontext.UserTypes = @Html.Raw(ViewBag.UserTypesList);
+
     var formBuilderObj = null;
     var objid =$("#objid").val();
     var FBid = "BotForm1";
     var editModeFormObj = null;
+    let BuilderType = '@builderType_S';
     var ToolBoxId = "form-buider-toolBox";
     var PGid = "form-buider-propGrid";
-    var BotFormBuilderObj = new BotFormBuilder(ToolBoxId, FBid, PGid, @((int)_builderType), @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj), '@ViewBag.ssurl');
+    var BotFormBuilderObj = new BotFormBuilder(ToolBoxId, FBid, PGid, BuilderType, @typeInt,  "@ViewBag.wc",  "@ViewBag.cid", @Html.Raw(ViewBag.dsObj), '@ViewBag.ssurl');
     commonO.ObjCollection["#vernav@(ViewBag.tabnum)"] = BotFormBuilderObj;
 
     // if edit mode

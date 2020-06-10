@@ -341,15 +341,14 @@ namespace ExpressBase.Web.Controllers
                 SingleTable ss = new SingleTable();
                 ss.Add(new SingleRow { Columns = singleColumns });
                 obj.MultipleTables.Add("eb_approval_lines", ss);
-                Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
-                        new InsertDataFromWebformRequest
-                        {
-                            RefId = RefId,
-                            FormData = obj,
-                            RowId = RowId,
-                            CurrentLoc = CurrentLoc,
-                            UserObj = this.LoggedInUser
-                        });
+                 Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                         new InsertDataFromWebformRequest
+                         {
+                             RefId = RefId,
+                             FormData = obj,
+                             RowId = RowId,
+                             CurrentLoc = CurrentLoc
+                         });
                 if (Resp.Status == 200)
                 {
                     try

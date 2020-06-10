@@ -14,7 +14,6 @@ using DiffPlex;
 using DiffPlex.DiffBuilder.Model;
 using Newtonsoft.Json;
 using System.Text;
-using ExpressBase.Objects.EmailRelated;
 using ExpressBase.Common.Structures;
 using ExpressBase.Common.JsonConverters;
 using ExpressBase.Web.BaseControllers;
@@ -26,8 +25,6 @@ using ExpressBase.Common.SqlProfiler;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Helpers;
-using ExpressBase.Objects;
-
 namespace ExpressBase.Web.Controllers
 {
     public class Eb_ObjectController : EbBaseIntCommonController
@@ -305,27 +302,33 @@ namespace ExpressBase.Web.Controllers
                     }
                 }
 
-                if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog))
+                if (type.Equals(EbObjectTypes.UserControl) || type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.FilterDialog) || type.Equals(EbObjectTypes.BotForm))
                 {
-                    EbObjAllVerWithoutCircularRefResp result = this.ServiceClient.Get<EbObjAllVerWithoutCircularRefResp>(new EbObjAllVerWithoutCircularRefRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode });
-                    string UserControlsHtml = string.Empty;
-
-                    foreach (KeyValuePair<string, List<EbObjectWrapper>> _obj in result.Data)
+                    GetFormBuilderRelatedDataResp result = null;
+                    if (type.Equals(EbObjectTypes.BotForm))
                     {
-                        EbObjectWrapper _objverL = null;
-                        string versionHtml = "<select style = 'float: right; border: none;'>";
-                        foreach (EbObjectWrapper _objver in _obj.Value)
+                        result = this.ServiceClient.Get(new GetFormBuilderRelatedDataRqst { EbObjectRefId = null, EbObjType = EbObjectTypes.Null.IntCode });
+                    }
+                    else
+                    {
+                        result = this.ServiceClient.Get(new GetFormBuilderRelatedDataRqst { EbObjectRefId = ViewBag.Refid, EbObjType = EbObjectTypes.UserControl.IntCode });
+                        string UserControlsHtml = string.Empty;
+                        foreach (KeyValuePair<string, List<EbObjectWrapper>> _obj in result.Data)
                         {
-                            versionHtml += "<option refid='" + _objver.RefId + "'>" + _objver.VersionNumber + "</option>";
-                            _objverL = _objver;
+                            EbObjectWrapper _objverL = null;
+                            string versionHtml = "<select style = 'float: right; border: none;'>";
+                            foreach (EbObjectWrapper _objver in _obj.Value)
+                            {
+                                versionHtml += "<option refid='" + _objver.RefId + "'>" + _objver.VersionNumber + "</option>";
+                                _objverL = _objver;
+                            }
+                            versionHtml += "</select>";
+                            UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName, versionHtml, "</div>");
                         }
-                        versionHtml += "</select>";
-                        UserControlsHtml += string.Concat("<div eb-type='UserControl' class='tool'>", _objverL.DisplayName, versionHtml, "</div>");
+                        ViewBag.UserControlHtml = string.Concat(HtmlConstants.TOOL_HTML.Replace("@id@", "toolb_user_ctrls").Replace("@label@", "User Controls"), UserControlsHtml, "</div>");
                     }
 
-                    ViewBag.UserControlHtml = string.Concat(HtmlConstants.TOOL_HTML.Replace("@id@", "toolb_user_ctrls").Replace("@label@", "User Controls"), UserControlsHtml, "</div>");
-
-                    if (type.Equals(EbObjectTypes.WebForm))
+                    if (type.Equals(EbObjectTypes.WebForm) || type.Equals(EbObjectTypes.BotForm))
                     {
                         ViewBag.roles = JsonConvert.SerializeObject(result.Roles);
                         ViewBag.userGroups = JsonConvert.SerializeObject(result.UserGroups);

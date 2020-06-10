@@ -540,6 +540,8 @@
             return true;
         else if (this.ObjCollection[getNav].EbObject.$type.indexOf("EbSqlJob") !== -1)
             return true;
+        else if (this.ObjCollection[getNav].EbObject.$type.indexOf("EbSmsTemplate") !== -1)
+            return true;
         else
             return false;
     };

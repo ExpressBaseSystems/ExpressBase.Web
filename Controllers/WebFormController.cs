@@ -52,7 +52,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     try
                     {
-                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
+                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;
                         ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
                     }
@@ -131,7 +131,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     try
                     {
-                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = (WebFormRenderModes)renderMode });
+                        GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = (WebFormRenderModes)renderMode });
                         ViewBag.formData = Resp.FormDataWrap;
                         ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
                     }
@@ -173,7 +173,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, UserObj = this.LoggedInUser, CurrentLoc = currentloc, RenderMode = (WebFormRenderModes)renderMode });
+                GetRowDataResponse DataSet = ServiceClient.Post<GetRowDataResponse>(new GetRowDataRequest { RefId = refid, RowId = rowid, CurrentLoc = currentloc, RenderMode = (WebFormRenderModes)renderMode });
                 return DataSet.FormDataWrap;
             }
             catch (Exception ex)
@@ -296,8 +296,7 @@ namespace ExpressBase.Web.Controllers
                         RefId = RefId,
                         FormData = Values,
                         RowId = RowId,
-                        CurrentLoc = CurrentLoc,
-                        UserObj = this.LoggedInUser
+                        CurrentLoc = CurrentLoc
                     });
                 Console.WriteLine("InsertWebformData execution time : " + (DateTime.Now - dt).TotalMilliseconds);
                 return JsonConvert.SerializeObject(Resp);
@@ -313,7 +312,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (!this.HasPermission(RefId, OperationConstants.DELETE, CurrentLoc))
                 return -2; //Access Denied
-            DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = new List<int> { RowId }, UserObj = this.LoggedInUser });
+            DeleteDataFromWebformResponse Resp = ServiceClient.Post<DeleteDataFromWebformResponse>(new DeleteDataFromWebformRequest { RefId = RefId, RowId = new List<int> { RowId } });
             return Resp.RowAffected;
         }
 
@@ -321,7 +320,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (!this.HasPermission(RefId, OperationConstants.CANCEL, CurrentLoc))
                 return -2; //Access Denied
-            CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId, UserObj = this.LoggedInUser });
+            CancelDataFromWebformResponse Resp = ServiceClient.Post<CancelDataFromWebformResponse>(new CancelDataFromWebformRequest { RefId = RefId, RowId = RowId });
             return Resp.RowAffected;
         }
 
@@ -710,7 +709,7 @@ namespace ExpressBase.Web.Controllers
                         <div class='meeting-details'> 
                         <div class='mr-venue'> <i class='fa fa-map-marker' aria-hidden='true'></i> <div>{Resp.MeetingRequest[0].Venue}</div>  </div>
                         <div class='mr-date'> <i class='fa fa-calendar-o' aria-hidden='true'></i> <div>{Date}</div> </div>
-                        <div class='mr-time'> <div>{TimeTo}</div> <span>to</span> <div>{TimeFrom}</div></div></div>
+                        <div class='mr-time'> <div>{TimeFrom}</div> <span>to</span> <div>{TimeTo}</div></div></div>
                         </div></div>
 					  <div id='tabs-2'>
 							<div class='mr-list'>

@@ -3,6 +3,7 @@
     this.wc = options.wc;
     this.Isdraggable = options.isDraggable;
     this.cid = options.cid;
+    this.builderType = options.builderType;
     this.IsInnerCall = options.IsInnerCall || false;
     this.wraperId = options.id;
     this.$scope = options.$scope || $(document.body);

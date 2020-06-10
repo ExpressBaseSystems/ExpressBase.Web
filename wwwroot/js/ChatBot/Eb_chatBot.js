@@ -899,8 +899,14 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.curCtrl = this.curForm.Controls.$values[idx];
             var name = this.curCtrl.Name;
             //if (!(this.curCtrl && (this.curCtrl.ObjType === "Cards" || this.curCtrl.ObjType === "Locations" || this.curCtrl.ObjType === "InputGeoLocation" || this.curCtrl.ObjType === "Image")))
-            if (!(this.curCtrl && this.curCtrl.IsFullViewContol))
-                $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
+            if (!(this.curCtrl && this.curCtrl.IsFullViewContol)) {
+                if (this.curCtrl.IsReadOnly || this.curCtrl.IsDisable) {
+                    $ctrlCont = $(this.wrapIn_chat_ctrl_readonly(controlHTML));
+                }
+                else {
+                    $ctrlCont = $(this.wrapIn_chat_ctrl_cont(idx, controlHTML));
+                }
+            }
             var label = this.curCtrl.Label;
             if (label) {
                 if (this.curCtrl.HelpText)
@@ -937,6 +943,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
         return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<div class="ctrl-send-wraper"><button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>';
+    };
+    this.wrapIn_chat_ctrl_readonly = function (controlHTML) {
+        return `<div class="chat-ctrl-readonly" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '</div>';
+
     };
 
     this.replyAsImage = function ($prevMsg, input, idx, ctrlname) {

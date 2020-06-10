@@ -564,6 +564,10 @@
             alert(e);
             console.log(e);
         }
+        let newVal = this.PropsObj[this.CurProp];
+        if (newVal === oldVal)
+            return;
+
         this.getvaluesFromPG();
         let objCopy = ($.extend({}, this.PropsObj));
         delete objCopy.__oldValues;
@@ -597,7 +601,6 @@
         if (this.CurProp === 'DataSourceId') {
             this.PGHelper.dataSourceInit();
         }
-        let newVal = this.PropsObj[this.CurProp];
         this.PropertyChanged(this.PropsObj, this.CurProp, newVal, oldVal);
     };
 
@@ -1009,10 +1012,28 @@
         this.AllObjects[this.PropsObj.EbSid] = this.PropsObj;
         this.ImgSlctrs = {};
         this.FontSlctrs = {};
+        this.setDependentpropsList();
         this.InitPG();
         $("#" + this.wraperId + " .propgrid-helpbox").show();
         //console.log("default test :" + JSON.stringify(props));
         setObjectCallBack();
+    };
+
+    this.setDependentpropsList = function () {
+        if (this.CurObj.__isDependentpropsSet)
+            return;
+
+        for (let i = 0; i < this.Metas.length; i++) {
+            let meta = this.Metas[i];
+            if (meta.source && (meta.editor === 8 || meta.editor === 22 || meta.editor === 27)) {
+                let sourceMeta = getObjByval(this.Metas, "name", meta.source);
+                if (sourceMeta.dependentPropsList === undefined)
+                    sourceMeta.dependentPropsList = [];
+                sourceMeta.dependentPropsList.push(meta.name);
+            }
+
+        }
+        this.CurObj.__isDependentpropsSet = true;
     };
 
     this.setOldValues = function () {

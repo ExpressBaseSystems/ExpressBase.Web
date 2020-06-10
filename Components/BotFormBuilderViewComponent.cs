@@ -18,6 +18,9 @@ namespace ExpressBase.Web.Components
                 //ViewBag.Html = botForm.GetHtml();
                 ViewBag.Html = botForm.GetHtml4Bot();
             }
+            ViewBag.RolesList = ViewBag.roles ?? "{}";
+            ViewBag.UserGroupsList = ViewBag.userGroups ?? "{}";
+            ViewBag.UserTypesList = ViewBag.userTypes ?? "{}";
             ViewBag.dsObj = dsobj;
             ViewBag.tabnum = tabnum;
             ViewBag.ObjType = type;

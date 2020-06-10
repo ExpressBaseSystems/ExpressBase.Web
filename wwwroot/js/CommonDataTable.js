@@ -372,8 +372,14 @@
         $("#objname").text(this.EbObject.DisplayName);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
         this.init();
-        this.call2FD();
-        this.EbObject.IsPaging = this.IsPaging;
+        if (this.EbObject.DataSourceRefId) {
+            this.call2FD();
+            this.EbObject.IsPaging = this.IsPaging;
+        }
+        else {
+            this.EbObject.IsPaging = this.IsPaging = false;
+            this.getColumnsSuccess();
+        }
     };
 
     this.start4Other = function () {
@@ -455,23 +461,26 @@
         if (this.isSecondTime)
             this.MainData = null;
         this.propGrid.ClosePG();
-        if (this.FD)
-            this.stickBtn.minimise();
-        else
-            this.stickBtn.hide();
-        $("#objname").text(this.EbObject.DisplayName);
-        this.validateFD = this.FilterDialog.IsFDValidationOK;
-        if (this.isContextual) {
-            if (this.isSecondTime) {
+        if (this.FilterDialog) {
+            if (this.FD)
+                this.stickBtn.minimise();
+            else
+                this.stickBtn.hide();
+            $("#objname").text(this.EbObject.DisplayName);
+
+            this.validateFD = this.FilterDialog.IsFDValidationOK;
+            if (this.isContextual) {
+                if (this.isSecondTime) {
+                    if (this.validateFD && !this.validateFD())
+                        return;
+                    this.filterValues = this.getFilterValues("filter");
+                }
+            }
+            else {
                 if (this.validateFD && !this.validateFD())
                     return;
                 this.filterValues = this.getFilterValues("filter");
             }
-        }
-        else {
-            if (this.validateFD && !this.validateFD())
-                return;
-            this.filterValues = this.getFilterValues("filter");
         }
         this.isSecondTime = false;
         if (this.login === "uc")
@@ -768,7 +777,7 @@
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
-                if (this.IsTree) {
+                if (this.IsTree || this.EbObject.IsDataFromApi) {
                     o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
@@ -779,7 +788,8 @@
                 o.lengthChange = false;
             }
             if (this.login === "uc") {
-                dvcontainerObj.currentObj.Pippedfrom = "";
+                if (dvcontainerObj)
+                    dvcontainerObj.currentObj.Pippedfrom = "";
                 $("#Pipped").text("");
                 this.isPipped = false;
             }
@@ -1289,11 +1299,11 @@
             $("#" + this.tableId + "_wrapper .DTFC_RightFootWrapper").show();
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("padding-top", "100px", "important");
             $("#" + this.tableId + "_wrapper .dataTables_scrollFoot").style("margin-top", "-100px", "important");
-            if (!this.IsTree && this.showFilterRow) {
+            if (!this.IsTree && this.showFilterRow && !this.EbObject.IsDataFromApi) {
 
                 this.createFilterRowHeader();
             }
-            else if (this.IsTree || this.Source === "Calendar")
+            else if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi)
                 this.createFilterforTree();
             //if (this.EbObject.AllowLocalSearch)
             //    this.createFilterforTree();
@@ -1305,7 +1315,7 @@
             this.CreateHeaderTooltip();
             this.addFilterEventListeners();
             this.arrangeFooterWidth();
-            if (this.Source !== "Calendar")
+            if (this.Source !== "Calendar" || this.EbObject.IsDataFromApi)
                 this.placeFilterInText();
 
             $("#eb_common_loader").EbLoader("hide");
@@ -1676,7 +1686,7 @@
     this.arrangeWindowHeight = function () {
         var filterId = "#filterdisplayrowtd_" + this.tableId;
         if (this.login === "uc") {
-            if (this.IsTree || this.Source === "Calendar") {
+            if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi) {
                 $("#" + focusedId + " .dataTables_scroll").style("height", "calc(100vh - 52px)", "important");
             }
             else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging && !this.EbObject.AllowMultilineHeader)
@@ -1722,7 +1732,7 @@
                 }
             }
             else {
-                if (this.IsTree || this.Source === "Calendar")
+                if (this.IsTree || this.Source === "Calendar" || this.EbObject.IsDataFromApi)
                     $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 32px)", "important");
                 else if ($(filterId).children().length === 0 && !this.EbObject.IsPaging)
                     $("#sub_window_" + this.tableId + " .dataTables_scroll").style("height", "calc(100vh - 42px)", "important");
@@ -1782,7 +1792,7 @@
             //if (this.columnSearch.length > 0)
             this.filterDisplay();
             this.addFilterEventListeners();
-            if (this.Source !== "Calendar")
+            if (this.Source !== "Calendar" || this.EbObject.IsDataFromApi)
                 this.placeFilterInText();
             //this.arrangefixedHedaerWidth();
             this.summarize2();
@@ -4043,7 +4053,9 @@
             type: "POST",
             url: "../DV/getdv",
             data: { refid: this.linkDV },
-            success: this.GetData4InlineDv.bind(this, rows, idx, colindex)
+            success: this.GetData4InlineDv.bind(this, rows, idx, colindex),
+            error: function (req, status, xhr) {
+            }
         });
     };
 
@@ -4054,7 +4066,9 @@
             type: "POST",
             url: "../DV/getData",
             data: param,
-            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex)
+            success: this.LoadInlineDv.bind(this, rows, idx, Dvobj, colindex),
+            error: function (req, status, xhr) {
+            }
         });
     };
 

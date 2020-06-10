@@ -3,7 +3,7 @@
 	this.EbObject = dsobj;
 	this.smspropG = new Eb_PropertyGrid({
 		id: "PropertyG",
-		wc: "uc",
+		wc: "dc",
 		cid: this.cid,
 		$extCont: $(".smspg")
 	});
@@ -67,10 +67,10 @@
 		obj.Title = "{{" + tbl + this.col.text() + "}}";
 		this.ObjCollect[id] = obj;
 		this.RefreshControl(obj);
-		if (this.EbObject.DsColumnsCollection.length>0)
+		//if (this.EbObject.DsColumnsCollection.length>0)
 			this.EbObject.DsColumnsCollection.$values.push(obj);
-		else
-			this.EbObject.DsColumnsCollection.push(obj);
+		//else
+			//this.EbObject.DsColumnsCollection.push(obj);
 		//this.EbObject.DsColumnsCollection.$values.push(obj);
 		//this.placeCaretAtEnd(document.getElementById(id));
 		//$('#' + id).attr('contenteditable', 'false');
@@ -293,6 +293,7 @@
 		this.EbObject.To = $("#sms_to" + tabNum).val();
 		this.EbObject.Body = window.btoa($('#sms_body' + tabNum).text().trim());
 		commonO.Current_obj = this.EbObject;
+		return true;
 	};
 
 	this.CreateRelationString = function () { };

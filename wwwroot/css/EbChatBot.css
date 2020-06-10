@@ -21,7 +21,8 @@ body {
 }
 
 .eb-chat-cont {
-    display: block;
+    display: flex;
+    flex-direction:column;
     position: fixed;
     height: 100%;
     width: 100%;

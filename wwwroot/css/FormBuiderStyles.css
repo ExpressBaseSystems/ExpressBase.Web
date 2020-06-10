@@ -1355,6 +1355,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
     background-color: white;
 }
+.location-cont {
+    display: flex;
+    flex-direction: column;
+}
 
 /*location related styles also used in bot======================== begin*/
 .map-div {

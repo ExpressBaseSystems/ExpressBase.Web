@@ -62,7 +62,8 @@ namespace ExpressBase.Web.Controllers
 
             EbObjectWithRelatedDVResponse resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid = null });
             EbDataVisualization dsobj = resultlist.Dsobj;
-            dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
+            if(dsobj.DataSourceRefId != string.Empty) 
+                dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
             ViewBag.dvObject = dsobj;
             ViewBag.DispName = dsobj.DisplayName;
             ViewBag.dvRefId = refid;
@@ -86,15 +87,15 @@ namespace ExpressBase.Web.Controllers
         {
             EbDataVisualization dvObject = EbSerializers.Json_Deserialize(dvobj);
             dvObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            Eb_Solution s_obj = GetSolutionObject( ViewBag.cid); 
+            Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
             return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = s_obj, contextId = contextId, CustomColumn = customcolumn, wc = ViewBag.wc, curloc = _curloc, submitId = submitId });
         }
 
         public string GetColumns(string dvobjt, bool CustomColumn)
         {
             EbDataVisualization dvobj = EbSerializers.Json_Deserialize(dvobjt);
-            dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
             ReturnColumns returnobj = new ReturnColumns();
+            dvobj.AfterRedisGet(this.Redis, this.ServiceClient);
             try
             {
                 DataSourceColumnsResponse columnresp = new DataSourceColumnsResponse();
@@ -114,29 +115,8 @@ namespace ExpressBase.Web.Controllers
                 returnobj.Paramlist = (dvobj.EbDataSource.FilterDialog != null) ? dvobj.EbDataSource.FilterDialog.GetDefaultParams() : null;
                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
                 int _pos = __columns.Count + 100;
-
-                var Columns = new DVColumnCollection();
-                //dvobj.IsPaged = columnresp.IsPaged.ToString();
-
-                var indx = -1;
-                foreach (EbDataColumn column in __columns)
-                {
-                    DVBaseColumn _col = null;
-
-                    if (column.Type == EbDbTypes.String)
-                        _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
-                    else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
-                        _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
-                    else if (column.Type == EbDbTypes.Boolean)
-                        _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
-                    else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
-                        _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px", Pos = _pos };
-                    _col.EbSid = column.Type.ToString() + column.ColumnIndex;
-                    _col.RenderType = _col.Type;
-                    Columns.Add(_col);
-                    indx = column.ColumnIndex;
-                }
-                returnobj.ColumnOrginal = new DVColumnCollection(Columns);
+                DVColumnCollection Columns = GetDVcolumns(__columns);
+                returnobj.ColumnOrginal = new DVColumnCollection();
                 //dvobj.Columns.Add(new DVNumericColumn { Data = ++indx, Name = "RATE_GRAFT", sTitle = "RATE+GRAFT", Type = EbDbTypes.Int32, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right",Formula = "T0.RATE+T0.GRAFT" });
                 if (dvobj.Columns == null || dvobj.Columns.Count == 0)
                     returnobj.Columns = Columns;
@@ -187,6 +167,58 @@ namespace ExpressBase.Web.Controllers
             }
 
             return NewColumns;
+        }
+
+        public string GetColumnsFromApi(string dvobjt)
+        {
+            EbDataVisualization dvobj = EbSerializers.Json_Deserialize(dvobjt);
+            ReturnColumns returnobj = new ReturnColumns();
+            ApiConversionResponse resultlist1 = null;
+            ApiConversionRequest request = new ApiConversionRequest();
+            request.Url = dvobj.Url;
+            request.Headers = dvobj.Headers;
+            request.Parameters = dvobj.Parameters;
+            request.Method = dvobj.Method;
+            try
+            {
+                this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                resultlist1 = this.ServiceClient.Post<ApiConversionResponse>(request);
+                returnobj.ColumnOrginal = GetDVcolumns(resultlist1.dataset.Tables[0].Columns);
+                returnobj.Columns = returnobj.ColumnOrginal;
+                returnobj.DsColumns = returnobj.ColumnOrginal;
+                returnobj.ColumnsCollection = new List<DVColumnCollection>();
+                returnobj.ColumnsCollection.Add(returnobj.Columns);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+            }
+            //return resultlist1;
+            return EbSerializers.Json_Serialize(returnobj);
+        }
+
+        public DVColumnCollection GetDVcolumns(ColumnColletion __columns)
+        {
+            var Columns = new DVColumnCollection();
+            var indx = -1;
+            foreach (EbDataColumn column in __columns)
+            {
+                DVBaseColumn _col = null;
+
+                if (column.Type == EbDbTypes.String)
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px"};
+                else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
+                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px"};
+                else if (column.Type == EbDbTypes.Boolean)
+                    _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px" };
+                else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
+                    _col = new DVDateTimeColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, sType = "date-uk", Type = column.Type, bVisible = true, sWidth = "100px" };
+                _col.EbSid = column.Type.ToString() + column.ColumnIndex;
+                _col.RenderType = _col.Type;
+                Columns.Add(_col);
+                indx = column.ColumnIndex;
+            }
+            return Columns;
         }
 
         public object ExecuteTreeUpdate(string sql)
@@ -249,7 +281,7 @@ namespace ExpressBase.Web.Controllers
         public DataSourceDataResponse getData(TableDataRequest request)
         {
             try
-            { 
+            {
                 request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = true;
                 if (request.DataVizObjString != null)
@@ -309,15 +341,15 @@ namespace ExpressBase.Web.Controllers
                 SingleTable ss = new SingleTable();
                 ss.Add(new SingleRow { Columns = singleColumns });
                 obj.MultipleTables.Add("eb_approval_lines", ss);
-                 Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
-                         new InsertDataFromWebformRequest
-                         {
-                             RefId = RefId,
-                             FormData = obj,
-                             RowId = RowId,
-                             CurrentLoc = CurrentLoc,
-                             UserObj = this.LoggedInUser
-                         });
+                Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                        new InsertDataFromWebformRequest
+                        {
+                            RefId = RefId,
+                            FormData = obj,
+                            RowId = RowId,
+                            CurrentLoc = CurrentLoc,
+                            UserObj = this.LoggedInUser
+                        });
                 if (Resp.Status == 200)
                 {
                     try
@@ -331,7 +363,7 @@ namespace ExpressBase.Web.Controllers
                                      UserObj = this.LoggedInUser
                                  });
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         res.Messaage = "EXCEPTION AT Approval in DV ParticularApprovalColumnResponse ---" + ex.Message;
                         Console.WriteLine("EXCEPTION AT Approval in DV ParticularApprovalColumnResponse" + ex.Message);
@@ -342,7 +374,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception ex)
             {
-                res.Messaage = "EXCEPTION AT Approval in DV ---" + Resp.Message + "----"+ ex.Message;
+                res.Messaage = "EXCEPTION AT Approval in DV ---" + Resp.Message + "----" + ex.Message;
                 Console.WriteLine("EXCEPTION AT Approval in DV" + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
@@ -352,7 +384,7 @@ namespace ExpressBase.Web.Controllers
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)
         {
             InlineTableDataRequest request = new InlineTableDataRequest();
-            request = _request; 
+            request = _request;
             request.eb_solution = GetSolutionObject(ViewBag.cid);
             request.ReplaceEbColumns = true;
             if (request.DataVizObjString != null)
@@ -374,7 +406,7 @@ namespace ExpressBase.Web.Controllers
         public DataSourceDataResponse getData4PowerSelect(TableDataRequest request)
         {
             try
-            { 
+            {
                 request.eb_Solution = GetSolutionObject(ViewBag.cid);
                 request.ReplaceEbColumns = false;
                 if (request.DataVizObjString != null)

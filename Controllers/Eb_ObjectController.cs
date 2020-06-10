@@ -170,8 +170,8 @@ namespace ExpressBase.Web.Controllers
                             }
                         }
                         //-----------------------------------------------------------------------------------------------------------------------
-
-                        _object.AfterRedisGet(Redis, ServiceClient);
+                        if(!(_object as EbDataVisualization).IsDataFromApi)
+                            _object.AfterRedisGet(Redis, ServiceClient);
                         ViewBag.dsObj = _object;
                     }
                 }

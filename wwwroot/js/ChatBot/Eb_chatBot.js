@@ -876,6 +876,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 //this.sendMsg($btn.text());
                 $('.msg-wraper-user [name=ctrledit]').remove();
                 //$btn.closest(".msg-cont").remove();
+                $('.eb-chatBox').empty();
+                this.showDate();
                 this.AskWhatU();
             }
         }

@@ -1262,7 +1262,9 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 /*    vertical-align: initial;*/
 }
 
-.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button {
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button,
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ScriptButton] > .ctrl-cover > button,
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ExportButton] > .ctrl-cover > button {
     pointer-events: none;
 }
 

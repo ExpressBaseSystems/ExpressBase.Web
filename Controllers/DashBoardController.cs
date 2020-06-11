@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
                 RefId = refid
             });
 
-            return Resp.Data[0].Json;
+            return EbSerializers.Json_Serialize(EbSerializers.Json_Deserialize( Resp.Data[0].Json));
         }
         public IActionResult DashBoardView(string refid, string rowData, string filterValues, int tabNum)
         {

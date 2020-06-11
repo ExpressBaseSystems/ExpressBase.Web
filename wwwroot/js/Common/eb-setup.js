@@ -292,13 +292,34 @@ class Setup {
             ebcontext.setup.modal.show();
             $('#accept-meeting').off('click').on('click', function() {
                 let slot = $('#accept-meeting').attr('data-id');
-                $.post("../Webform/AcceptMeeting", { Slot: slot, myactionid: id }, function(data) {
+                $.post("../EbMeeting/AcceptMeeting", { Slot: slot, myactionid: id }, function(data) {
                     let sts = JSON.parse(data);
                     if (sts.ResponseStatus) {
+                        ebcontext.setup.modal.hide();
+                        EbPopBox("show", {
+                            Message: "Success...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
                         $(`#accept-meeting`).attr('disabled', 'disabled');
                     }
                     else {
-                        //
+                        ebcontext.setup.modal.hide();
+                        EbPopBox("show", {
+                            Message: "Failed. Some Error Found...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
                     }
                 });
             });
@@ -308,7 +329,24 @@ class Setup {
 
     haaaa = function (e) {
         let id = $(e).closest("a").attr("data-id");
-        alert(id);
+        //alert(id);
+        $.post("../EbMeeting/GetMeetingsDetails", { meetingid: id }, function (data) {
+            let html = JSON.parse(data);
+            let object = {
+                Title: "Meeting Details",
+                ButtonText: "OK",
+                ButtonColor: "#ffffff",
+                ButtonBackground: "#3876ea",
+                ShowHeader: true,
+                ShowFooter: false
+            };
+            ebcontext.setup.modal.setStyle(object);
+            ebcontext.setup.modal.setHtml(html);
+            $("#tabs").tabs();
+            $("#tab-2").height($('#tabs-1').height());
+            ebcontext.setup.modal.show();
+        });
+
     }
 }
 

@@ -117,7 +117,7 @@ namespace ExpressBase.Web.Controllers
                 string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");
                 string TimeTo = Convert.ToDateTime(Resp.MeetingRequest[0].TimeTo).ToString("hh:mm tt");
                 string Date = Convert.ToDateTime(Resp.MeetingRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
-                htm += $@"   <div class='mr'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
+                htm += $@"   <div class='mr-t'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
                         	<div id='tabs'>
 					  <ul>
 						<li><a href='#tabs-1'>Details</a></li>

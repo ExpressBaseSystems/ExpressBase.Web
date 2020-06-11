@@ -260,6 +260,22 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             }
 
 /*Meeting Request style*/
+
+.mr-t .mr-title {
+    font-size: 20px;
+    text-align: center;
+    font-weight: 400;
+}
+
+    .mr-t .mr-title i {
+        font-size: 20px;
+    }
+
+    .mr-t .mr-title div {
+        font-size: 20px;
+        text-align: center;
+    }
+
 .mr {
     font-size: 14px;
     min-height: 17rem;
@@ -268,21 +284,6 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     .mr .header {
         font-size: 16px;
     }
-
-    .mr .mr-title {
-        font-size: 20px;
-        text-align: center;
-        font-weight: 400;
-    }
-
-        .mr .mr-title i {
-            font-size: 20px;
-        }
-
-        .mr .mr-title div {
-            font-size: 20px;
-            text-align: center;
-        }
 
     .mr .mr-description {
         padding: 1px;

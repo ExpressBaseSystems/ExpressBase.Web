@@ -75,7 +75,7 @@ var EbBasicChart = function (Option) {
         $.ajax({
             type: 'POST',
             url: "../DV/getdata",
-            data: { draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.getFilterValues() },            
+            data: { DataVizObjString : JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.getFilterValues() },            
             success: this.getDataSuccess.bind(this),
             error: function () { }
         });

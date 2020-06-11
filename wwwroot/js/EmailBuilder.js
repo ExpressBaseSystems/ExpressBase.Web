@@ -18,7 +18,8 @@
     this.Init = function () {
 
         if (this.EbObject === null) {
-            this.EbObject = new EbObjects["EbEmailTemplate"]("email");
+            this.EbObject = new EbObjects["EbEmailTemplate"]("EbEmail" + "_" + Date.now().toString(36));
+            this.EbObject.DisplayName = this.EbObject.Name;
             this.emailpropG.setObject(this.EbObject, AllMetas["EbEmailTemplate"]);
         }
         else {
@@ -179,6 +180,8 @@
         });
     };
 
+    this.GenerateButtons = function () { };
+
     this.BeforeSave = function () {
         this.EbObject.To = $("#mail_to" + tabNum).val();
         this.EbObject.Cc = $("#cc_to" + tabNum).val();
@@ -199,6 +202,7 @@
         //alert($('.note-editable').html());
         this.EbObject.Body = window.btoa($('.note-editable').html());
         commonO.Current_obj = this.EbObject;
+        return true;
     };
 
     this.pasteHtmlAtCaret = function (html) {

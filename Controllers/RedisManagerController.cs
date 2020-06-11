@@ -201,7 +201,7 @@ namespace ExpressBase.Web.Controllers
         //    IEnumerable<string> ptn = Redis.GetKeysByPattern(text);
         //    foreach (var m in ptn)
         //        list1.Add(m);
-           
+
         //    return list1;
         //}
 
@@ -471,7 +471,7 @@ namespace ExpressBase.Web.Controllers
                     //}
 
                 }
-                catch (Exception e)
+                catch
                 {
                     val = Redis.Get<string>(key_name);
                 }

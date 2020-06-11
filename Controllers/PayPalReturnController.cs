@@ -20,7 +20,7 @@ namespace ExpressBase.Web.Controllers
 
     public class PaymentReturnController : EbBaseExtController
     {
-        private UserAcceptance accepted = UserAcceptance.WAITING;
+       // private UserAcceptance accepted = UserAcceptance.WAITING;
 
         public PaymentReturnController (IServiceClient _client, IRedisClient _redis) : base(_client, _redis) { }
 
@@ -32,13 +32,13 @@ namespace ExpressBase.Web.Controllers
 
         private void HandleApproval()
         {
-            accepted = UserAcceptance.ACCEPTED;
+           // accepted = UserAcceptance.ACCEPTED;
             Console.WriteLine("Accepted By User");
         }
 
         private void HandleCancelation()
         {
-            accepted = UserAcceptance.CANCELED;
+          //  accepted = UserAcceptance.CANCELED;
             Console.WriteLine("Rejected By User");
         }
 

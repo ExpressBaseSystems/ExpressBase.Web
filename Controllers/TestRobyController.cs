@@ -1,33 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
-using System.Net;
-using System.Net.Http;
-using System.Reflection;
-using System.Runtime.Serialization;
 using ExpressBase.Common;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using ServiceStack;
 using ServiceStack.Redis;
-using System.Threading;
-using Google.Apis.Auth.OAuth2.Flows;
-using System.Threading.Tasks;
-using File = Google.Apis.Drive.v3.Data.File;
-using Google.Apis.Auth.OAuth2.Responses;
-using System.IO;
-using System.Text;
-using Google.Apis.Upload;
-using ExpressBase.Objects.ServiceStack_Artifacts;
-using System.Collections.Generic;
 using ServiceStack.Auth;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using System.DrawingCore;
-using Rectangle = iTextSharp.text.Rectangle;
 //using Unifonic;
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

@@ -88,13 +88,12 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
-            else
+            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+            if (wfd.FormData == null)
             {
-                WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-                if (wfd.FormData == null)
-                {
-                    ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-                }
+                TempData["ErrorResp"] = ViewBag.formData;
+                return Redirect("/StatusCode/" + wfd.Status);
+                //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
@@ -151,13 +150,12 @@ namespace ExpressBase.Web.Controllers
             {
                 ViewBag.Mode = WebFormModes.Preview_Mode.ToString().Replace("_", " ");
             }
-            else
+            WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
+            if (wfd.FormData == null)
             {
-                WebformDataWrapper wfd = JsonConvert.DeserializeObject<WebformDataWrapper>(ViewBag.formData);
-                if (wfd.FormData == null)
-                {
-                    ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
-                }
+                TempData["ErrorResp"] = ViewBag.formData;
+                return Redirect("/StatusCode/" + wfd.Status);
+                //ViewBag.Mode = WebFormModes.Fail_Mode.ToString().Replace("_", " ");
             }
             ViewBag.formRefId = refId;
             ViewBag.userObject = JsonConvert.SerializeObject(this.LoggedInUser);
@@ -330,8 +328,8 @@ namespace ExpressBase.Web.Controllers
             {
                 //if (this.HasPermission(refid, OperationConstants.AUDIT_TRAIL, currentloc))
                 //{
-                    GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
-                    return Resp.Json;
+                GetAuditTrailResponse Resp = ServiceClient.Post<GetAuditTrailResponse>(new GetAuditTrailRequest { FormId = refid, RowId = rowid });
+                return Resp.Json;
                 //}
                 //throw new FormException("GetAuditTrail Access Denied for rowid " + rowid + " , current location " + currentloc);
             }
@@ -691,7 +689,7 @@ namespace ExpressBase.Web.Controllers
                     attendees += $@" <div class='mr-attendees'>{Resp.MeetingRequest[i].fullname}</div>";
                 }
             }
-           
+
             if (Resp.MeetingRequest.Count > 0)
             {
                 string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");

@@ -18,9 +18,7 @@ using ServiceStack.Redis;
 using Microsoft.AspNetCore.Mvc;
 using ExpressBase.Common.ServiceStack.ReqNRes;
 using ExpressBase.Common.Enums;
-using System.Net;
 using System.IO;
-using System.Net.Http;
 using System.Web;
 
 

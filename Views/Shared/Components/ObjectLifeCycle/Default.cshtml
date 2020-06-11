@@ -301,29 +301,7 @@
         box-shadow: 0 1px 6px rgba(0, 0, 0, 0.175);
     }
 </style>
-@{
-    string classname = "";
-    if (cur_stat == "Test")
-    {
-        classname = "info";
-    }
-    if (cur_stat == "UAT")
-    {
-        classname = "primary";
-    }
-    if (cur_stat == "Live")
-    {
-        classname = "success";
-    }
-    if (cur_stat == "Offline")
-    {
-        classname = "warning";
-    }
-    if (cur_stat == "Obsolete")
-    {
-        classname = "danger";
-    }
-}
+
 <div class='container'>
     <div class='row statwindow col-md-12' id="statwindow@(tabNum)">
         <ul class='timeline' id='timeline@(tabNum)'>

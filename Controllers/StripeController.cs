@@ -127,7 +127,6 @@ namespace StripeApp.Controllers
             StripeToken Token = JsonConvert.DeserializeObject<StripeToken>(token);
             string custid = "";
             string planId = "";
-            string invoiceid = "";
 
             if (CheckCustomer(Token.Id, email, sid))
             {

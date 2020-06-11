@@ -728,17 +728,25 @@ input:checked + .proslider:before {
     padding: 10px;
 }
 
-.eb-notification-window .nf-tile {
-    box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
-    padding: 10px;
-    margin-bottom: 9px;
-    border-radius: 4px;
-    background: white;
-}
-
-    .eb-notification-window .nf-tile a {
-        text-decoration: none;
+    .eb-notification-window .nav-tabs {
+        display:flex;
     }
+        .eb-notification-window .nav-tabs .nav-item a {
+            padding: 10px 8px;
+            margin-right:0
+        }
+
+    .eb-notification-window .nf-tile {
+        box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
+        padding: 10px;
+        margin-bottom: 9px;
+        border-radius: 4px;
+        background: white;
+    }
+
+        .eb-notification-window .nf-tile a {
+            text-decoration: none;
+        }
     .eb-notification-window .nf-seemore {
         text-align: center;
         font-size: 13px;

@@ -1262,6 +1262,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 /*    vertical-align: initial;*/
 }
 
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button {
+    pointer-events: none;
+}
+
 .moveBtn {
     font-size: 10px;
     vertical-align: top;

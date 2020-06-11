@@ -70,12 +70,17 @@
             this.bindOnChange(Obj);
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
-        if (Obj.IsDisable)// should move
-            Obj.disable();
     };
 
     this.bindValidators = function (control) {
         $("#" + control.EbSid_CtxId).on("blur", this.isValidationsOK.bind(this, control));
+    };
+
+    this.setDisabledControls = function (flatControls) {
+        $.each(flatControls, function (k, Obj) {
+            if (Obj.IsDisable)
+                Obj.disable();
+        }.bind(this));
     };
 
     this.fireInitOnchangeNC = function (flatControls) {
@@ -184,7 +189,7 @@
     };
 
 
-    this.setFormObjHelperfns = function myfunction() {
+    this.setFormObjHelperfns = function () {
         this.FO.formObject.__getCtrlByPath = function (path) {
             try {
                 let form = this.FO.formObject;

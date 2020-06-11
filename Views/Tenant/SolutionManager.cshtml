@@ -988,8 +988,8 @@
                             <div class="col-md-6">
                                 <input name="DatabaseVendor" value="TextLocal" class="form-control Vendor " type="hidden" readonly />
                                 <div class="form-group">
-                                    <label>Sender Number</label>
-                                    <input id="TextLocalInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" required />
+                                    <label>Sender (Optional)</label>
+                                    <input id="TextLocalInputFrom" name="From" class="form-control Inputclear eb_input-h" type="text" />
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -998,28 +998,7 @@
                                     <input id="TextLocalInputApi" name="ApiKey" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>Username</label>
-                                    <input id="TextLocalInputUsername" name="UserName" class="form-control Inputclear eb_input-h" type="text" required />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <div class="form-group">
-                                    <label>Password</label>
-                                    <div class="input-group eb-inputWicon" style="padding:0;">
-                                        <input id="TextLocalInputPassword" autocomplete="new-password" name="Password" class="form-control Password Inputclear eb_input-h" type="password" required />
-                                        <div class='input-group-addon' id="ShowPasswordd">
-                                            <i class="fa fa-eye " aria-hidden="true"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </div>                        
                         <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="TextLocalInputIntConfId" name="Id" value="0" />
                     </div>

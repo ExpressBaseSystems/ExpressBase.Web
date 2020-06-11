@@ -8,8 +8,21 @@ body {
     /*--bot_fontfamily: Open Sans;*/
 }
 
+.mrg_tp_10 {
+    margin-top: 10px;
+}
+
+.mrg_10 {
+    margin: 10px;
+}
+
+.w-100 {
+    width: 100% !important;
+}
+
 .eb-chat-cont {
-    display: block;
+    display: flex;
+    flex-direction:column;
     position: fixed;
     height: 100%;
     width: 100%;
@@ -180,6 +193,19 @@ body {
 }
 
 .chat-ctrl-cont {
+    position: relative;
+    width: 98%;
+    border: solid 5px #ffffff;
+    background-color: #ffffff;
+    margin-left: 16px;
+    line-height: 0;
+    display: flex;
+    /*vrgs*/
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.chat-ctrl-readonly {
     position: relative;
     width: 98%;
     border: solid 5px #ffffff;
@@ -1128,8 +1154,8 @@ body {
 .ctrlproceedBtn-wrapper {
     display: flex;
     align-items: center;
-    justify-content:center;
-    margin:10px;
+    justify-content: center;
+    line-height: 1.4;
 }
     .ctrlproceedBtn-wrapper .ctrlproceedBtn {
         border-radius: 30px;
@@ -1139,7 +1165,13 @@ body {
         cursor: pointer;
         word-break: break-word;
         box-shadow: 0 1px 4px 1px #0000003d;
+        transition-duration: 0.1s;
     }
-        .ctrlproceedBtn-wrapper.ctrlproceedBtn :hover {
-            border: 2px solid var(--botThemeColor);
-        }
+.ctrlproceedBtn:hover {
+    box-shadow: 0px 1px 5px 1px #0000007a;
+    cursor: pointer;
+}
+
+.flxdirctn_col {
+    flex-direction: column;
+}

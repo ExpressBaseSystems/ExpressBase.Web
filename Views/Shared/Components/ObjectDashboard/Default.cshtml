@@ -124,14 +124,19 @@
                                     </div>
                                 </li>
                                 <li class="drp_item"><a onclick="LoadMyProfile()"><i class="fa fa-cog" aria-hidden="true"></i>Account Settings</a></li>
-                                <li class="drp_item"><a onclick="location.href='@Url.Action("Logout","Tenantuser")'"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
+                                <li class="drp_item"><a onclick="location.href='@Url.Action("Logout", "Tenantuser")'"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a></li>
                             </ul>
                         </div>
                     </div>
-                    <button class="btn notification_menu" id="eb-expand-nfWindow">
-                        <i class="fa fa-bell" aria-expanded="false"></i>
-                        <div class="notification_alert" id="notification-count" style="display:none;"></div>
-                    </button>
+                    @{
+                        if (ViewBag.wc != "tc")
+                        {
+                            <button class="btn notification_menu" id="eb-expand-nfWindow">
+                                <i class="fa fa-bell" aria-expanded="false"></i>
+                                <div class="notification_alert" id="notification-count" style="display:none;"></div>
+                            </button>
+                        }
+                    }
                     <button class='btn' id="minmize" data-toggle="tooltip" title="Dash Board"><i class="fa fa-ellipsis-v" aria-hidden="true" data-placement="bottom"></i></button>
                 </div>
             </div>

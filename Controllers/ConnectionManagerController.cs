@@ -785,10 +785,8 @@ namespace ExpressBase.Web.Controllers
                 var req = this.HttpContext.Request.Form;
 
                 EbTextLocalConfig con = new EbTextLocalConfig
-                {
-                    UserName = req["UserName"],
-                    From = req["From"],
-                    Password = req["Password"],
+                {                  
+                    From = req["From"],                  
                     ApiKey = req["ApiKey"],
                     Id = Convert.ToInt32(req["Id"]),
                     NickName = req["nickname"]

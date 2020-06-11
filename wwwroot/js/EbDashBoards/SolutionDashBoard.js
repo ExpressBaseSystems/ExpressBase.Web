@@ -827,9 +827,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             if (temp[obj].Id == INt_conf_id) {
                 $('#TextLocalInputNickname').val(temp[obj].NickName);
                 $('#TextLocalInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
-                $('#TextLocalInputUsername').val(temp1["UserName"]);
-                $('#TextLocalInputPassword').val(temp1["Password"]);
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);               
                 $('#TextLocalInputApi').val(temp1["ApiKey"]);
                 $('#TextLocalInputFrom').val(temp1["From"]);
                 $('#IsSSL').prop('checked', temp1["IsSSL"]);

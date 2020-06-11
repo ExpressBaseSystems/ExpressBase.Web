@@ -1262,6 +1262,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 /*    vertical-align: initial;*/
 }
 
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button {
+    pointer-events: none;
+}
+
 .moveBtn {
     font-size: 10px;
     vertical-align: top;
@@ -1350,6 +1354,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border-radius: 8px;
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
     background-color: white;
+}
+.location-cont {
+    display: flex;
+    flex-direction: column;
 }
 
 /*location related styles also used in bot======================== begin*/

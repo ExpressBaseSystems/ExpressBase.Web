@@ -86,6 +86,13 @@
     @Html.Raw(_toolBox.TypeRegister);
     @Html.Raw(_toolBox.EbOnChangeUIfns);
 
+    if (!ebcontext.Roles)
+        ebcontext.Roles = @Html.Raw(ViewBag.RolesList);
+    if (!ebcontext.UserGroups)
+        ebcontext.UserGroups = @Html.Raw(ViewBag.UserGroupsList);
+    if (!ebcontext.UserTypes)
+        ebcontext.UserTypes = @Html.Raw(ViewBag.UserTypesList);
+
     var formBuilderObj = null;
     var objid =$("#objid").val();
     var FBid = "BotForm1";

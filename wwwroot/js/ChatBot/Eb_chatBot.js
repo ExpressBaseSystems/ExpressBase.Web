@@ -13,7 +13,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
     this.$poweredby = $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> <span>EXPRESSbase</span></div></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
-    //this.$renderAtBottom = $('<div class="msg-cont"><div class="" style=" background-color:white; WIDTH:100%; padding:5px; z-index:2; " ></div></div>');
+   // this.$renderAtBottom = $('<div class="btmRender" style=" background-color:white; WIDTH:100%; padding:5px; z-index:2;min-height:100px; " ></div>');
     this.$botMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-bot"><div class="msg-wraper-bot"></div></div>'));
     this.$botMsgBox.prepend('<div class="bot-icon"></div>');
     this.$userMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-user"><div class="msg-wraper-user"></div></div>'));
@@ -474,7 +474,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.formFunctions.visibleIfs[control.Name] = new Function("form", atob(control.VisibleExpr.Code));
             if (control.ValueExpression && control.ValueExpression.trim())//if valueExpression is Not empty
                 this.formFunctions.valueExpressions[control.Name] = new Function("form", "user", atob(control.ValueExpression));
-            let $ctrl = $(`<div class='ctrl-wraper'>${control.BareControlHtml4Bot}</div>`);
+            let $ctrl = $(`<div class='ctrl-wraper'  id='cont_${control.EbSid_CtxId}'>${control.BareControlHtml4Bot}</div>`);
             if (control.ObjType === "InputGeoLocation")
                 $ctrl.find(".ctrl-submit-btn").attr("idx", i);
             this.formControls.push($ctrl);
@@ -1101,7 +1101,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             var $msg = this.$userMsgBox.clone();
             $msg.find('.msg-wraper-user').html(msg).append(this.getTime());
             //
-            //$prevMsg = $(".eb-chatBox").find('.msg-cont').last();
+           // $prevMsg = $(".eb-chatBox").find('.msg-cont').last();
             $msg.insertAfter($prevMsg);
             this.scrollToBottom();
         }.bind(this), this.controlHideDelay);
@@ -1130,22 +1130,25 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     if (ctrlname || typeof ctrlname === typeof "")
                         $msg.attr("for", ctrlname);
                     if (this.curCtrl) {
-                        $msg.attr("ctrl-type", this.curCtrl.ObjType); 
+                        $msg.attr("ctrl-type", this.curCtrl.ObjType);
                         //if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
-                        //     //check isreadonly
+                        //    //check isreadonly
                         //    if (this.curCtrl.IsBasicControl) {
                         //        flg = true;
                         //        $msg.find('.bot-icon').remove();
-                        //        $msg.remove();
-                        //        this.$renderAtBottom.html(msg);
-                        //      //  $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
-                        //       // this.$renderAtBottom.show();
+                        //        $msg.hide();
+                        //        $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
+                        //        let detachhtml = $($msg).detach();
+                        //        this.$renderAtBottom.append(detachhtml);
+                        //        //  $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
+                        //        // this.$renderAtBottom.show();
+                        //        $msg.show();
                         //    }
 
                         //}
                     }
                    
-                    //if (flg === false)
+                   //if (flg === false)
                     {
                         $msg.find('.bot-icon').remove();
                         $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);

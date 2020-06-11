@@ -557,6 +557,13 @@
     //fires when a property value changes through PG
     this.OnInputchangedFn = function (e) { ////////// need optimization
         let oldVal = "";
+        let subTypeOf = null;
+        if (e) {
+            let $e = $(e.target);
+            this.CurProp = $e.closest("tr").attr("name").slice(0, -2);
+            subTypeOf = $e.closest("tr").attr("subtype-of");
+        }
+
         try {
             oldVal = this.PropsObj.__oldValues[this.CurProp];
         }
@@ -564,20 +571,14 @@
             alert(e);
             console.log(e);
         }
+        this.getvaluesFromPG();
         let newVal = this.PropsObj[this.CurProp];
         if (newVal === oldVal)
             return;
 
-        this.getvaluesFromPG();
         let objCopy = ($.extend({}, this.PropsObj));
         delete objCopy.__oldValues;
         this.PropsObj.__oldValues = objCopy;
-        let subTypeOf = null;
-        if (e) {
-            let $e = $(e.target);
-            this.CurProp = $e.closest("tr").attr("name").slice(0, -2);
-            subTypeOf = $e.closest("tr").attr("subtype-of");
-        }
         //let res = this.getvaluesFromPG();
         //$('#txtValues').val(JSON.stringify(res) + '\n\n');
 

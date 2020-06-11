@@ -12,11 +12,16 @@
                     Action Required <span id="nf-pendingact-count"></span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link nf-window-tabstyle" data-toggle="tab" role="tab" href="#mymeetings-tab">
+                    My Meetings <span id="nf-mymeeting-count"></span>
+                </a>
+            </li>
         </ul>
         <div class="tab-content" style="flex:1;height:calc(100% - 45px);overflow-y:auto;background: #f2f2f2;">
             <div id="allnotification-tab" class="tab-pane h-100 active">
                 <div class='allnotification-tab-inner h-100' style="display:flex;flex-flow:column nowrap;">
-                    <ul class="new_notifications nf-link-container" id="nf-container">                      
+                    <ul class="new_notifications nf-link-container" id="nf-container">
                     </ul>
                     <div class='nf-seemore'>
                         <a href="/Notifications/GetAllNotifications" target="_blank">See All Notifications</a>
@@ -29,6 +34,15 @@
                     </ul>
                     <div class='nf-seemore'>
                         <a href="/Notifications/GetAllActions" target="_blank">See All Actions</a>
+                    </div>
+                </div>
+            </div>
+            <div id="mymeetings-tab" class="tab-pane h-100">
+                <div class='mymeetings-tab-inner h-100' style="display:flex;flex-flow:column nowrap;">
+                    <ul class="mymeetings nf-link-container" id="meeting_container">
+                    </ul>
+                    <div class='nf-seemore'>
+                        @*<a href="/Notifications/GetAllActions" target="_blank">See All Actions</a>*@
                     </div>
                 </div>
             </div>

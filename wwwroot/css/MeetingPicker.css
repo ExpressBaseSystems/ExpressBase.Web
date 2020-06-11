@@ -261,7 +261,8 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
 
 /*Meeting Request style*/
 .mr {
-    font-size: 16px;
+    font-size: 14px;
+    min-height: 17rem;
 }
 
     .mr .header {
@@ -300,6 +301,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             width: 100%;
             margin-left: 1rem;
             background: #0000000d;
+            height: 30px;
         }
 
     .mr .meeting-details {
@@ -323,6 +325,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
                 width: 100%;
                 margin-left: 8px;
                 background: #0000000d;
+                height: 30px;
             }
 
         .mr .meeting-details .mr-date {
@@ -342,6 +345,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
                 width: 100%;
                 margin-left: 4px;
                 background: #0000000d;
+                height: 30px;
             }
 
         .mr .meeting-details .mr-time {
@@ -367,21 +371,31 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
                 border-radius: 4px;
                 width: 100%;
                 background: #0000000d;
+                height: 30px;
             }
 
-    .mr .mr-list {
-        display: flex;
+.mr-list {
+    display: flex;
+    min-height: 17rem;
+}
+
+    .mr-list .mr-attendees-list {
+        padding: 5px 0px 15px 0px;
+        width: 50%;
+        overflow-y: auto;
+        height: 17rem;
+        overflow-x: hidden;
     }
 
-        .mr .mr-list .mr-attendees-list {
-            padding: 5px 0px 15px 0px;
-            width: 50%;
-        }
+    .mr-list h5 {
+        font-size: 14px;
+        font-weight: 600;
+    }
 
-        .mr .mr-list .mr-hosts-list {
-            padding: 5px 0px 15px 0px;
-            width: 50%;
-        }
+    .mr-list .mr-hosts-list {
+        padding: 5px 0px 15px 0px;
+        width: 50%;
+    }
 
 .mr-btn-grp {
     padding: 10px 0px;
@@ -449,13 +463,14 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     }
 
     .meeting-scheduler-outer .meeting-duration {
-       padding:0px
+        padding: 0px
     }
 
     .meeting-scheduler-outer .meeting-date-time {
         padding: 10px 0px;
         display: flex;
     }
+
         .meeting-scheduler-outer .meeting-date-time input {
             width: 100%;
             height: 30px;

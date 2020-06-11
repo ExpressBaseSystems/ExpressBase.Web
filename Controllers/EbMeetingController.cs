@@ -161,5 +161,58 @@ namespace ExpressBase.Web.Controllers
             MeetingCancelByHostResponse Resp = this.ServiceClient.Post<MeetingCancelByHostResponse>(new MeetingCancelByHostRequest { SlotId = Slot, UserInfo = this.LoggedInUser, MyActionId = myactionid });
             return JsonConvert.SerializeObject(Resp);
         }
+        public string GetMeetingsDetails (int meetingid)
+        {
+            GetMeetingDetailsResponse Resp = this.ServiceClient.Post<GetMeetingDetailsResponse>(new GetMeetingDetailRequest { MeetingId = meetingid });
+
+            string htm = "";
+            string hosts = "";
+            string attendees = "";
+            for (int i = 0; i < Resp.MeetingRequest.Count; i++)
+            {
+                if (Resp.MeetingRequest[i].ParticipantType == 1)
+                {
+                    hosts += $@" <div class='mr-hosts'>{Resp.MeetingRequest[i].fullname}</div>";
+                }
+                else
+                {
+                    attendees += $@" <div class='mr-attendees'>{Resp.MeetingRequest[i].fullname}</div>";
+                }
+            }
+
+            if (Resp.MeetingRequest.Count > 0)
+            {
+                string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");
+                string TimeTo = Convert.ToDateTime(Resp.MeetingRequest[0].TimeTo).ToString("hh:mm tt");
+                string Date = Convert.ToDateTime(Resp.MeetingRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
+                htm += $@"   <div class='mr-t'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
+                        	<div id='tabs'>
+					  <ul>
+						<li><a href='#tabs-1'>Details</a></li>
+						<li><a href='#tabs-2'>Participants</a></li>
+					    </ul>
+						<div id='tabs-1'>
+						<div class='mr'>
+                        <div class='mr-description'> <i class='fa fa-info-circle' aria-hidden='true'></i> <div>{Resp.MeetingRequest[0].Description} </div> </div>
+                        <div class='meeting-details'> 
+                        <div class='mr-venue'> <i class='fa fa-map-marker' aria-hidden='true'></i> <div>{Resp.MeetingRequest[0].Venue}</div>  </div>
+                        <div class='mr-date'> <i class='fa fa-calendar-o' aria-hidden='true'></i> <div>{Date}</div> </div>
+                        <div class='mr-time'> <div>{TimeFrom}</div> <span>to</span> <div>{TimeTo}</div></div></div>
+                        </div></div>
+					  <div id='tabs-2'>
+							<div class='mr-list'>
+                            <div class='mr-attendees-list'><h5>Attendees</h5> {attendees}</div> 
+							<div class='mr-hosts-list'><h5>Hosts</h5> {hosts}</div></div></div>  
+					   </div> 
+					   </div>
+					</div>
+                    ";
+            }
+            else
+            {
+                htm += $@"</div> in valid request </div>";
+            }
+            return JsonConvert.SerializeObject(htm);
+        }
     }
 }

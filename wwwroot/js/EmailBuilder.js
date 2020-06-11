@@ -150,7 +150,7 @@
 
     this.AjaxSuccess = function (result) {
         $("#get-col-loader").hide();
-        this.DrawColumnTree(result)
+        this.DrawColumnTree(result);
         $('.nav-tabs a[href="#data"]').tab('show');
     };
 
@@ -176,7 +176,7 @@
                 $(ui.helper).css({ "background": "white", "border": "1px dotted black", "width": "200px" });
                 $(ui.helper).children(".shape-text").remove();
                 $(ui.helper).children().find('i').css({ "font-size": "50px", "background-color": "transparent" });
-            },
+            }
         });
     };
 

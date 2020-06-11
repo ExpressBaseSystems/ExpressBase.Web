@@ -2,7 +2,7 @@
 var meetingPicker = function (ctrl, ctrlOpts , type) {
 
     this.type = type;
-    this.Url = "../Webform/GetAllMeetingSlots";
+    this.Url = "../EbMeeting/GetAllMeetingSlots";
     if (this.type === "Bot") {
         this.Url = "../Boti/GetAllMeetingSlots";
     }
@@ -77,7 +77,7 @@ var meetingPicker = function (ctrl, ctrlOpts , type) {
     this.addSlot = function () {
         this.SlotDetails = {};
         this.SlotDetails.Date = $(`#${this.ctrl.EbSid}_date`).val();
-        $.post("../Webform/AddMeetingTemp", { obj: this.SlotDetails }, this.addSlotSuccess.bind(this));
+        $.post("../EbMeeting/AddMeetingTemp", { obj: this.SlotDetails }, this.addSlotSuccess.bind(this));
     };
 
     this.addSlotSuccess = function (data) {

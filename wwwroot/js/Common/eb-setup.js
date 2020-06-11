@@ -163,7 +163,7 @@ class Setup {
                         <a ${url} data-id='${Id}'>
                             <div class='mymeeting_inner'>
                                 <h5>${pa[i].description}</h5>
-                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].dateInString}</span></div>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].createdDate}</span></div>
                             </div>
                         </a>
                 </li>`);

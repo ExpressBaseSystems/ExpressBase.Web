@@ -33,7 +33,9 @@ namespace ExpressBase.Web.Controllers
         [HttpGet("/StatusCode/{statusCode}")]
         public IActionResult Index(int statusCode)
         {
-            var reExecute = HttpContext.Features.Get<IStatusCodeReExecuteFeature>();
+            var reExecute = HttpContext.Features.Get<IStatusCodeReExecuteFeature>(); 
+            ViewBag.ErrorResponse = TempData["ErrorResp"] ?? "";// WebForm response object
+            TempData.Remove("ErrorResp");
             return View(statusCode);
         }
     }

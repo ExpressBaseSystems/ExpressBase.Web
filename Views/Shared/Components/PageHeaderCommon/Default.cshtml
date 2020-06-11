@@ -126,10 +126,15 @@
                                 </ul>
                             </div>
                         </div>
-                        <button class="btn notification_menu" id="eb-expand-nfWindow">
-                            <i class="fa fa-bell" aria-expanded="false"></i>
-                            <div class="notification_alert" id="notification-count" style="display:none;"></div>
-                        </button>
+                        @{
+                            if (ViewBag.wc != "tc")
+                            {
+                                <button class="btn notification_menu" id="eb-expand-nfWindow">
+                                    <i class="fa fa-bell" aria-expanded="false"></i>
+                                    <div class="notification_alert" id="notification-count" style="display:none;"></div>
+                                </button>
+                            }
+                        }
                         <button class='btn' style="display:none;" id="minmize"><i class="fa fa-ellipsis-v" aria-hidden="true" data-toggle="tooltip" data-placement="bottom" title="pin"></i></button>
                     </div>
                 }

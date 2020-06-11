@@ -243,7 +243,7 @@ class Setup {
     MeetingRequestView = function(e) {
         let id = $(e).closest("a").attr("data-id");
         //alert(id);
-        $.post("../Webform/GetSlotDetails", { id: id }, function(data) {
+        $.post("../EbMeeting/GetSlotDetails", { id: id }, function(data) {
             let html = JSON.parse(data);     
             let object = {
                 Title: "Meeting Request",

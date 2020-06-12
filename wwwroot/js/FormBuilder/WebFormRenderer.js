@@ -403,7 +403,7 @@ const WebFormRender = function (option) {
                 ctrl.setDisplayMember(val);
             }
             else
-                ctrl.setValue(val);
+                ctrl.setValue(val);//   justSetValue
         }.bind(this));
         this.isInitNCs = true;
     };

@@ -1408,36 +1408,15 @@
 
 
         ctrl.getValueFromDOM = function (p1) {
-            let lk = filePlugin.refidListfn();
-            console.log("getValueFromDOM " + " p1 " + p1 + "  refid:" + lk);
-            return lk;
+            return filePlugin.refidListfn();
         };
         ctrl.bindOnChange = function (p1) {
-            console.log("bindOnChange " + " p1 " + p1);
             $("#" + ctrl.EbSid + "_bindfn").on("change", p1);
         };
-
-
-        ctrl.setValue = function (p1) {
-            console.log("setvalue " + " p1 " + p1);
-            //if (p1 !== null && p1 !== "") {
-            //    let preloaded = [];
-            //    let refidArr = p1.split(',');
-            //    for (var j = 0; j < refidArr.length; j++) {
-
-            //        var src = `/images/small/${refidArr[j]}.jpg`;
-            //        var fileno = j;
-            //        var fltype = "png";
-            //        preloaded.push({ id: refidArr[j], src: src, fileno: fileno, cntype: fltype, refid: refidArr[j] });
-            //    }
-
-            //    filePlugin.createPreloaded(preloaded);
-            //}
+        ctrl.setValue = function (p1) {           
             filePlugin.createPreloaded(p1);
         };
         ctrl.clear = function () {
-
-            console.log("clear ");
             return filePlugin.clearFiles();
         };        
     };

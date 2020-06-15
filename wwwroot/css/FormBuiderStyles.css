@@ -1058,7 +1058,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*width: 100%;*/
     /*vertical-align: top;*/
     padding: 1px;
-    height: 0px;/*to fix drop issue by preventing auto padding in td*/
+    height: 0px; /*to fix drop issue by preventing auto padding in td*/
 }
 
 .Eb-ctrlContainer {
@@ -1259,7 +1259,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-/*    vertical-align: initial;*/
+    /*    vertical-align: initial;*/
 }
 
 .form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button,
@@ -1357,6 +1357,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
     background-color: white;
 }
+
 .location-cont {
     display: flex;
     flex-direction: column;
@@ -2196,6 +2197,10 @@ input.locinp {
             flex-direction: column;
             height: 100%;
         }
+
+            .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file:hover {
+                cursor: pointer;
+            }
 
             .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file img {
                 /*width: 100%;

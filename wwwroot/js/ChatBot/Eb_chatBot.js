@@ -10,7 +10,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     //this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('../images/businessmantest.png')) + ')center center no-repeat';
     this.$chatCont = $(`<div class="eb-chat-cont" eb-form='true'  eb-root-obj-container isrendermode='true'></div>`);
     this.$chatBox = $('<div class="eb-chatBox"></div>');
-    this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
+    this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div>');
     this.$poweredby = $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> <span>EXPRESSbase</span></div></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
     this.$renderAtBottom = $('<div class="renderAtBtm"></div>');
@@ -954,7 +954,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
-        return `<div class="chat-ctrl-cont ctrl-cont-bot" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<div class="ctrl-send-wraper"><button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div></div>';
+        return `<div class="chat-ctrl-cont ctrl-cont-bot" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<div class="ctrl-send-wraper"><button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>';
     };
     this.wrapIn_chat_ctrl_readonly = function (controlHTML) {
         return `<div class="chat-ctrl-readonly ctrl-cont-bot" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '</div>';
@@ -1539,7 +1539,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.collectContacts = function () {
         //this.msgFromBot("OK, No issues. Can you Please provide your contact Details ? so that I can understand you better.");
-        //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-paper-plane" aria-hidden="true"></i></button>'));
+        //this.msgFromBot($('<div class="contct-cont"><div class="contact-inp-wrap"><input id="anon_mail" type="email" placeholder="Email" class="plain-inp"></div><div class="contact-inp-wrap"><input id="anon_phno" type="tel" placeholder="Phone Number" class="plain-inp"></div><button name="contactSubmit" class="contactSubmit">Submit <i class="fa fa-chevron-right" aria-hidden="true"></i></button>'));
     };
 
     this.continueAsFBUser = function (e) {
@@ -1580,7 +1580,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             <span class="input-group-addon" style="padding: 0px;"> <i class="fa  fa-${icon}" aria-hidden="true"></i> </span>
         </div>
     </div>`;
-        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="${name}"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div></div>`);
+        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="${name}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
         this.msgFromBot($ctrlCont, function () { $(`#${id}`).focus(); }, "anon_mail");
     };
 

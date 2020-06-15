@@ -1017,6 +1017,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $btn = $(e.target).closest("span");
         var idx = parseInt($btn.attr('idx'));
         this.curCtrl = this.curForm.Controls.$values[idx];
+        if (this.curCtrl) {
+            if (!(this.curCtrl.IsReadOnly || this.curCtrl.IsDisable)) {
+                if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
+                    if (this.curCtrl.IsBasicControl) {
+                        this.$renderAtBottom.show();
+                    }
+                }
+            }
+
+        }
         var NxtRDpndgCtrlName = this.getNxtRndrdDpndgCtrlName(this.curCtrl.Name);
         if (NxtRDpndgCtrlName) {
             this.__idx = idx; this.__NxtRDpndgCtrlName = NxtRDpndgCtrlName; this.__$btn = $btn;
@@ -1110,10 +1120,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         setTimeout(function () {
             var $msg = this.$userMsgBox.clone();
             $msg.find('.msg-wraper-user').html(msg).append(this.getTime());
-            //
-            //this.$renderAtBottom.hide();
-            // $prevMsg = $(".eb-chatBox").find('.msg-cont').last();
-
+            ////
+            this.$renderAtBottom.hide();       
             $msg.insertAfter($prevMsg);
             this.scrollToBottom();
         }.bind(this), this.controlHideDelay);

@@ -747,7 +747,7 @@ border-radius: 4px;
     z-index: 2;
 }*/
 .poweredby-cont {
-    position: fixed;
+    /*position: fixed;*/
     bottom: 0;
     background-color: #f1f1f1;
     /*text-shadow: 1px 1px 1px rgba(0,0,0,0.51);*/

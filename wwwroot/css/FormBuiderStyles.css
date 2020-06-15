@@ -2294,6 +2294,16 @@ input.locinp {
         color: #5b5959;
         font-size: 1.5rem;
     }
+    /* load spinner */
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner {
+        display: flex;
+        position: absolute;
+    }
+
+        .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner i {
+            font-size: 48px;
+            color: white;
+        }
 
 
     /*for bot*/
@@ -2348,6 +2358,15 @@ input.locinp {
                 right: 0;
             }
 
+    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .load_spinner {
+        display: flex;
+        position: absolute;
+    }
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner i {
+        font-size: 38px;
+        color: white;
+    }
 
     .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image {
         display: none;

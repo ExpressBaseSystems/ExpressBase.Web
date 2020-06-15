@@ -178,8 +178,8 @@
                 $filedtls.append(`<span class="fa fa-check-circle-o success"></span><span class="fa fa-exclamation-circle error"></span>`);
 
                 ///// Create the delete button
-                $button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
-                $i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+                //$button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
+                //$i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
             }
             else {
                 $filethumb = $('<div>', { class: 'filethumb trggrpreview' });
@@ -207,6 +207,9 @@
                 //// Create the delete button
                 $button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
                     $i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+
+                $spinner = $('<div>', { class: 'load_spinner' }).appendTo($inrContainer),
+                    $i = $('<i>', { class: 'fa fa-spinner fa-spin ' }).appendTo($spinner);
             }
 
 
@@ -427,6 +430,7 @@
         let setRefid = function (refid, thumb) {
             refidArr.push(refid);
             thumb.find(".success").show();
+            thumb.find(".load_spinner").remove();
             thumb.find(".error").hide();
             thumb.attr("filref", refid);
             thumb.parent().attr('filrefid', refid);

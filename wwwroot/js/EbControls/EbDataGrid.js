@@ -981,9 +981,12 @@
         }
         else if (ctrl.ObjType === "UserSelect") {
             let val = ctrl.getDisplayMemberFromDOM() || ctrl.getValue();
-            $td.find(".tdtxt span").empty();
-            $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
-            $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
+            if (val != null) {
+                $td.find(".tdtxt span").empty();
+                $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
+                $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
+            }
+            
         }
         else if (ctrl.ObjType === "Numeric") {
             let val = ctrl.getDisplayMemberFromDOM() || "0.00";// temporary fix

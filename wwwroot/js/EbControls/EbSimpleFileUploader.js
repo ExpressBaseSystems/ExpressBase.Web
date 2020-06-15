@@ -244,6 +244,7 @@
                 let del_indx = refidArr.indexOf(f_refid);
                 refidArr.splice(del_indx, 1);
                 filesView.splice(del_indx, 1);
+                $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`).change();
 
             });
 

@@ -178,8 +178,10 @@
                 $filedtls.append(`<span class="fa fa-check-circle-o success"></span><span class="fa fa-exclamation-circle error"></span>`);
 
                 ///// Create the delete button
-                //$button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
-                //$i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+                $button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
+                    $i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+                $spinner = $('<div>', { class: 'load_spinner' }).appendTo($inrContainer),
+                    $i = $('<i>', { class: 'fa fa-spinner fa-spin ' }).appendTo($spinner);
             }
             else {
                 $filethumb = $('<div>', { class: 'filethumb trggrpreview' });
@@ -240,8 +242,17 @@
             $button.on("click", function (e) {
                 // Prevent browser default event and stop propagation
                 prevent(e);
-                let f_refid = $(e.target).closest('.filethumb').attr('filrefid');
-                $(e.target).closest('.filethumb').remove();
+                let f_refid = "";
+                if (plugin.settings.renderer === "Bot") {
+                    f_refid = $(e.target).closest('.botfilethumb').attr('filrefid');
+                    $(e.target).closest('.botfilethumb').remove();
+                } 
+                else {
+                    f_refid = $(e.target).closest('.filethumb').attr('filrefid');
+                    $(e.target).closest('.filethumb').remove();
+
+                }
+               
                                 
                 filedel.push(f_refid);
                 let del_indx = refidArr.indexOf(f_refid);

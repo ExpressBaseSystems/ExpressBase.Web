@@ -656,6 +656,20 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
+.dropdown-menu[role="combobox"] .bs-actionsbox > .btn-block > .actions-btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    padding: 2.5px 5px;
+}
+
+.dropdown-menu[role="combobox"] .bs-searchbox .form-control {
+    padding: 3px 6px;
+    height: 24px;
+    font-size: 12px;
+}
+
 .Eb-ctrlContainer .ctrl-cover input:not([type=radio]):not([type=checkbox]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
     height: auto;

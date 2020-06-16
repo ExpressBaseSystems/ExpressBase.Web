@@ -491,7 +491,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     .meeting-scheduler-outer .eligible-participant {
         padding: 10px 0px;
         display: flex;
-        display: none;
+        /*display: none;*/
     }
 
     .meeting-scheduler-outer .direct-participant {
@@ -499,7 +499,7 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
         display: flex;
     }
 
-        .meeting-scheduler-outer .direct-participant .bootstrap-tagsinput {
+        .meeting-scheduler-outer  .bootstrap-tagsinput {
             width: 100%;
         }
 

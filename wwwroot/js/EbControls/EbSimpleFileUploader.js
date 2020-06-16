@@ -1,6 +1,4 @@
-﻿/*! Image Uploader - v1.0.0 - 15/07/2019
- * Copyright (c) 2019 Christian Bayer; Licensed MIT */
-
+﻿
 (function ($) {
 
     $.fn.fileUploader = function (options) {
@@ -16,7 +14,7 @@
         // Get instance
         let plugin = this;
         let $inrContainer;
-        let filearray = [];
+        let newfilearray = [];
         let filedel = [];
         let preloadedfile = 0;
         let refidArr = [];
@@ -180,8 +178,10 @@
                 $filedtls.append(`<span class="fa fa-check-circle-o success"></span><span class="fa fa-exclamation-circle error"></span>`);
 
                 ///// Create the delete button
-                //$button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
-                //$i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+                $button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
+                    $i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+                $spinner = $('<div>', { class: 'load_spinner' }).appendTo($inrContainer),
+                    $i = $('<i>', { class: 'fa fa-spinner fa-spin ' }).appendTo($spinner);
             }
             else {
                 $filethumb = $('<div>', { class: 'filethumb trggrpreview' });
@@ -207,8 +207,11 @@
                 $filedtls.append(`<span class="fa fa-check-circle-o success"></span><span class="fa fa-exclamation-circle error"></span>`);
 
                 //// Create the delete button
-                //$button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
-                //    $i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+                $button = $('<span>', { class: 'delete-image' }).appendTo($inrContainer),
+                    $i = $('<i>', { class: 'fa fa-times-circle  ' }).appendTo($button);
+
+                $spinner = $('<div>', { class: 'load_spinner' }).appendTo($inrContainer),
+                    $i = $('<i>', { class: 'fa fa-spinner fa-spin ' }).appendTo($spinner);
             }
 
 
@@ -235,53 +238,29 @@
 
             //});
 
-            // Set delete action
-            //$button.on("click", function (e) {
-            //    // Prevent browser default event and stop propagation
-            //    prevent(e);
+            //// Set delete action
+            $button.on("click", function (e) {
+                // Prevent browser default event and stop propagation
+                prevent(e);
+                let f_refid = "";
+                if (plugin.settings.renderer === "Bot") {
+                    f_refid = $(e.target).closest('.botfilethumb').attr('filrefid');
+                    $(e.target).closest('.botfilethumb').remove();
+                } 
+                else {
+                    f_refid = $(e.target).closest('.filethumb').attr('filrefid');
+                    $(e.target).closest('.filethumb').remove();
 
+                }
+               
+                                
+                filedel.push(f_refid);
+                let del_indx = refidArr.indexOf(f_refid);
+                refidArr.splice(del_indx, 1);
+                filesView.splice(del_indx, 1);
+                $(`#${plugin.settings.fileCtrl.EbSid}_bindfn`).change();
 
-            //    let flno = parseInt($inrContainer.data('fileno'));
-
-            //    // If is not a preloaded image
-            //    if (($inrContainer.data('index')) >= 0) {
-
-            //        // Get the image index
-            //        let index = parseInt($inrContainer.data('index'));
-
-            //        // Update other indexes
-            //        $inrContainer.parent().find('.uploaded-file[data-index]').each(function (i, cont) {
-            //            if (i > index) {
-            //                $(cont).attr('data-index', i - 1);
-            //            }
-            //        });
-
-            //        //remove from file array
-            //    filearray.splice(index, 1);
-
-            //        // Remove the file from input
-            //        //  dataTransfer.items.remove(index);
-            //    }
-            //    if (flno > 0) {
-            //        filedel.push(flno);
-            //    }
-
-            //    let $contParent = $inrContainer.parent().parent();
-            //    // Remove this image from the container
-            //    $inrContainer.parent().remove();
-            //    //$inrContainer.remove();
-
-            //    var nm = (((preloadedfile - filedel.length) + filearray.length) < 10);
-
-            //    // If there is no more uploaded files
-            //    if (!$contParent.find('.uploaded-file').length) {
-
-            //        // Remove the 'has-files' class
-            //        $contParent.parent().removeClass('has-files');
-
-            //    }
-
-            //});
+            });
 
             return $filethumb;
         };
@@ -312,15 +291,23 @@
 
             // Get the files
             let files = e.target.files || e.originalEvent.dataTransfer.files;
-            fileArr = []
+            let fileArr = []
             $.each(files, function (i, n) {
                 fileArr.push(n);
             });
-            if (fileArr.length > plugin.settings.maxFiles) {
-                fileArr = fileArr.slice(0, plugin.settings.maxFiles);
+            let totfile = ((preloadedfile + newfilearray.length) - filedel.length);
+            if (totfile + fileArr.length > plugin.settings.maxFiles) {
+
+                fileArr = fileArr.slice(0, (plugin.settings.maxFiles - totfile));
             }
-            // Makes the upload
-            setPreview($container, fileArr);
+            if (totfile === plugin.settings.maxFiles) {
+                EbMessage("show", { Message: "Maximum number of files reached ", Background: 'red' });
+            }
+            else {
+                // Makes the upload
+                setPreview($container, fileArr);
+            }
+           
         };
 
         let setPreview = function ($container, files) {
@@ -339,8 +326,9 @@
                 let url = "";
                 // if ((files[i].type == "image/jpeg") || (files[i].type == "image/jpg") || (files[i].type == "application/pdf") || (files[i].type == "image/png")) {
                 if ((files[i].size) < (plugin.settings.maxSize * 1024 * 1024)) {
-                   // if (((preloadedfile - filedel.length) + filearray.length) < plugin.settings.maxFiles) {
-                    if ( filearray.length< plugin.settings.maxFiles) {
+                    //if (((preloadedfile - filedel.length) + newfilearray.length) < plugin.settings.maxFiles) {
+                    if (((preloadedfile + newfilearray.length)  - filedel.length) < plugin.settings.maxFiles) {
+                  //  if (newfilearray.length< plugin.settings.maxFiles) {
 
 
 
@@ -356,7 +344,7 @@
                         //else
                         let type = getFileType(file);
                         {
-                            $uploadedContainer.append(createImg(file, filearray.length, type), false);
+                            $uploadedContainer.append(createImg(file, newfilearray.length, type), false);
                            // $(".trggrpreview").on("click", viewFilesFn);
                             // let createImg = function (file, id, cntype, prelod, fileno, refid) {
                         }
@@ -440,7 +428,7 @@
                 fileobj["UploadTime"] = "";
                 fileobj["FileCategory"] = getFileType(file);
                 filesView.push(fileobj);
-                filearray.push(file);
+                newfilearray.push(file);
                 plugin.ebFilesview.addToImagelist(fileobj);
                 setRefid(refid, thumb);
             }
@@ -453,6 +441,7 @@
         let setRefid = function (refid, thumb) {
             refidArr.push(refid);
             thumb.find(".success").show();
+            thumb.find(".load_spinner").remove();
             thumb.find(".error").hide();
             thumb.attr("filref", refid);
             thumb.parent().attr('filrefid', refid);

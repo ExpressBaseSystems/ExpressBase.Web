@@ -10,10 +10,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     //this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('../images/businessmantest.png')) + ')center center no-repeat';
     this.$chatCont = $(`<div class="eb-chat-cont" eb-form='true'  eb-root-obj-container isrendermode='true'></div>`);
     this.$chatBox = $('<div class="eb-chatBox"></div>');
-    this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-paper-plane" aria-hidden="true"></i></button></div>');
+    this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div>');
     this.$poweredby = $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> <span>EXPRESSbase</span></div></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
-   // this.$renderAtBottom = $('<div class="btmRender" style=" background-color:white; WIDTH:100%; padding:5px; z-index:2;min-height:100px; " ></div>');
+    this.$renderAtBottom = $('<div class="renderAtBtm"></div>');
     this.$botMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-bot"><div class="msg-wraper-bot"></div></div>'));
     this.$botMsgBox.prepend('<div class="bot-icon"></div>');
     this.$userMsgBox = this.$msgCont.clone().wrapInner($('<div class="msg-cont-user"><div class="msg-wraper-user"></div></div>'));
@@ -53,9 +53,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.init = function () {
         $("body").append(this.$chatCont);
+        this.$renderAtBottom.hide();
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
-        //this.$chatCont.append(this.$renderAtBottom);
+        this.$chatCont.append(this.$renderAtBottom);
         if (settings.BotProp.EbTag) {
             this.$chatCont.append(this.$poweredby);
         }
@@ -759,7 +760,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.curVal = this.curCtrl.getValue();
                 this.tryOnChangeDuties(this.curCtrl);
             }
-            this.sendCtrlAfter($msgDiv.fadeOut(this.controlHideDelay), this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+            $msgDiv.fadeOut(200);
+            let $prevMsg = $(".eb-chatBox").find('[lbl_for = "' + this.curCtrl.Name + '"]').last();
+            this.sendCtrlAfter($prevMsg, this.curCtrl.DataVals.F + '&nbsp; <span class="img-edit" idx=' + (next_idx - 1) + ' name="ctrledit"> <i class="fa fa-pencil" aria-hidden="true"></i></span>');
+
+
 
             this.formValues[id] = this.curVal;
             this.formValuesWithType[id] = [this.formValues[id], this.curCtrl.EbDbType];
@@ -869,8 +874,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
         }
         else {  //if last control
-            if (this.curForm.HaveInputControls && !this.curForm.IsReadOnly)
+            if (this.curForm.HaveInputControls && !this.curForm.IsReadOnly) {
                 this.showSubmit();
+            }
             else {
                 //var $btn = $(event.target).closest(".btn");
                 //this.sendMsg($btn.text());
@@ -886,8 +892,12 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.showSubmit = function () {
         if ($("[name=formsubmit]").length === 0) {
-            this.msgFromBot('Are you sure? Can I submit?');
-            this.msgFromBot($('<div class="btn-box" saveprompt><button name="formsubmit" class="btn formname-btn">Sure</button><button name="formcancel" class="btn formname-btn">Cancel</button></div>'));
+            setTimeout(function () {
+                this.curCtrl = null;
+                this.msgFromBot('Are you sure? Can I submit?');
+                this.msgFromBot($('<div class="btn-box" saveprompt><button name="formsubmit" class="btn formname-btn">Sure</button><button name="formcancel" class="btn formname-btn">Cancel</button></div>'));
+            }.bind(this), this.controlHideDelay);
+            
         }
     };
 
@@ -944,10 +954,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     };
 
     this.wrapIn_chat_ctrl_cont = function (idx, controlHTML) {
-        return `<div class="chat-ctrl-cont" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<div class="ctrl-send-wraper"><button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>';
+        return `<div class="chat-ctrl-cont ctrl-cont-bot" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '<div class="ctrl-send-wraper"><button class="btn" idx=' + idx + ' name="ctrlsend"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>';
     };
     this.wrapIn_chat_ctrl_readonly = function (controlHTML) {
-        return `<div class="chat-ctrl-readonly" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '</div>';
+        return `<div class="chat-ctrl-readonly ctrl-cont-bot" ebreadonly="${this.curCtrl.IsDisable}">` + controlHTML + '</div>';
 
     };
 
@@ -1007,6 +1017,16 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         var $btn = $(e.target).closest("span");
         var idx = parseInt($btn.attr('idx'));
         this.curCtrl = this.curForm.Controls.$values[idx];
+        if (this.curCtrl) {
+            if (!(this.curCtrl.IsReadOnly || this.curCtrl.IsDisable)) {
+                if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
+                    if (this.curCtrl.IsBasicControl) {
+                        this.$renderAtBottom.show();
+                    }
+                }
+            }
+
+        }
         var NxtRDpndgCtrlName = this.getNxtRndrdDpndgCtrlName(this.curCtrl.Name);
         if (NxtRDpndgCtrlName) {
             this.__idx = idx; this.__NxtRDpndgCtrlName = NxtRDpndgCtrlName; this.__$btn = $btn;
@@ -1042,7 +1062,18 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.IsEdtMode = true;
         $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont').show(200);
         $("#" + this.curCtrl.Name).click().select();
-        $btn.closest('.msg-cont').remove();
+        ////
+        if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
+            if (this.curCtrl.IsBasicControl) {
+                $btn.closest('.msg-cont').addClass('editctrl_typing');
+                $btn.closest('.msg-wraper-user').html(this.$TypeAnim.clone());
+            }
+        }
+        else {
+            $btn.closest('.msg-cont').remove();
+        }
+        
+        
     };
 
     this.editDpndCtrl = function () {
@@ -1100,8 +1131,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         setTimeout(function () {
             var $msg = this.$userMsgBox.clone();
             $msg.find('.msg-wraper-user').html(msg).append(this.getTime());
-            //
-           // $prevMsg = $(".eb-chatBox").find('.msg-cont').last();
+            ////
+            $('.editctrl_typing').remove();
+            this.enableCtrledit();
+            this.$renderAtBottom.hide();       
             $msg.insertAfter($prevMsg);
             this.scrollToBottom();
         }.bind(this), this.controlHideDelay);
@@ -1120,36 +1153,43 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.msgFromBot = function (msg, callbackFn, ctrlname) {
-        var $msg = this.$botMsgBox.clone();       
+        var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
         if (this.ready) {
             setTimeout(function () {
                 if (msg instanceof jQuery) {
                     var flg = false;
-                    if (ctrlname || typeof ctrlname === typeof "")
+                    if (ctrlname || typeof ctrlname === typeof "") {
                         $msg.attr("for", ctrlname);
+                        $(".eb-chatBox").find('.msg-cont').last().prev().attr({ "lbl_for": ctrlname, "lbl_idx": this.formControls.length })
+                    }
+
                     if (this.curCtrl) {
                         $msg.attr("ctrl-type", this.curCtrl.ObjType);
-                        //if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
-                        //    //check isreadonly
-                        //    if (this.curCtrl.IsBasicControl) {
-                        //        flg = true;
-                        //        $msg.find('.bot-icon').remove();
-                        //        $msg.hide();
-                        //        $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
-                        //        let detachhtml = $($msg).detach();
-                        //        this.$renderAtBottom.append(detachhtml);
-                        //        //  $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
-                        //        // this.$renderAtBottom.show();
-                        //        $msg.show();
-                        //    }
+                        if (!(this.curCtrl.IsReadOnly || this.curCtrl.IsDisable)) {
+                            if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
+                                //check isreadonly
+                                if (this.curCtrl.IsBasicControl) {
+                                    this.disableCtrledit();
+                                    flg = true;
+                                    $msg.remove();
+                                    this.$renderAtBottom.append($msg);
+                                    this.$renderAtBottom.show();
+                                    $msg.find('.bot-icon').remove();
+                                    let $msgInner = $msg.find('.msg-wraper-bot').html(msg);
+                                    $($msgInner.find('.ctrl-cont-bot')).removeClass('ctrl-cont-bot');
+                                    //  $($msgInner.find('.ctrl-wraper')).css('width','100%');
+                                    $($msgInner).removeClass('msg-wraper-bot');
+                                    $($msgInner).addClass('msg-wraper-renderAtbottom');
 
-                        //}
+                                }
+
+                            }
+                        }
                     }
-                   
-                   //if (flg === false)
-                    {
+
+                    if (flg === false) {
                         $msg.find('.bot-icon').remove();
                         $msg.find('.msg-wraper-bot').css("border", "none").css("background-color", "transparent").css("width", "99%").html(msg);
                         $msg.find(".msg-wraper-bot").css("padding-right", "3px");
@@ -1204,11 +1244,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         if (this.curCtrl.IsReadOnly || this.curCtrl.IsDisable) {
             // move code to getcontrol           
             if ($(".chat-ctrl-readonly").length === 0) {
-                let btnhtml= this.proceedBtnHtml('mrg_10');                
+                let btnhtml = this.proceedBtnHtml('mrg_10');
                 $('#' + this.curCtrl.EbSid).append(btnhtml);
             }
             else {
-                let btnhtml= this.proceedBtnHtml('mrg_tp_10');                
+                let btnhtml = this.proceedBtnHtml('mrg_tp_10');
                 //remove from getcontrols itself
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').find('.ctrl-wraper').addClass('w-100');
                 $('#' + this.curCtrl.EbSid).closest('.chat-ctrl-readonly').addClass('flxdirctn_col');
@@ -1217,7 +1257,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             if (!this.curCtrl.IsFullViewContol) {
                 this.curCtrl.disable();
             }
-            
+
             //this.nxtCtrlIdx++;
             //this.callGetControl();
         }
@@ -1230,7 +1270,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }
 
     this.proceedBtnHtml = function (margin) {
-        let btntxt = this.curCtrl.ProceedBtnTxt || "ok";             
+        let btntxt = this.curCtrl.ProceedBtnTxt || "ok";
         let btnhtml = `<div class="ctrlproceedBtn-wrapper ${margin}">
                                         <div class="ctrlproceedBtn">
                                             <div>${btntxt}</div>
@@ -1559,10 +1599,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         <div class="input-group" style="width:100%;">
             
            ${ctrlHtml}
-            <span class="input-group-addon" style="padding: 0px;"> <i id="Date1TglBtn" class="fa  fa-${icon}" aria-hidden="true"></i> </span>
+            <span class="input-group-addon" style="padding: 0px;"> <i class="fa  fa-${icon}" aria-hidden="true"></i> </span>
         </div>
     </div>`;
-        let $ctrlCont = $(`<div class="chat-ctrl-cont">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="${name}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="${name}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
         this.msgFromBot($ctrlCont, function () { $(`#${id}`).focus(); }, "anon_mail");
     };
 

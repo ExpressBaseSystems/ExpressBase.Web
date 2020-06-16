@@ -187,12 +187,12 @@ body {
     box-shadow: 0px 1px 0px 0px #d0d0d0;
 }
 
-.chat-ctrl-cont .Eb-ctrlContainer {
+.ctrl-cont-bot .Eb-ctrlContainer {
     width: 197px;
     display: inline-block;
 }
 
-.chat-ctrl-cont {
+.ctrl-cont-bot {
     position: relative;
     width: 98%;
     border: solid 5px #ffffff;
@@ -200,12 +200,13 @@ body {
     margin-left: 16px;
     line-height: 0;
     display: flex;
-    /*vrgs*/
     padding: 10px;
     border-radius: 4px;
 }
-
-.chat-ctrl-readonly {
+.chat-ctrl-cont{
+    display:flex;
+}
+/*.chat-ctrl-readonly {
     position: relative;
     width: 98%;
     border: solid 5px #ffffff;
@@ -213,10 +214,9 @@ body {
     margin-left: 16px;
     line-height: 0;
     display: flex;
-    /*vrgs*/
-    padding: 10px;
-    border-radius: 4px;
-}
+padding: 10px;
+border-radius: 4px;
+}*/
 
 .bot-icon {
     background: var(--botdpURL) !important;
@@ -291,7 +291,7 @@ body {
     /* background: red;*/
 }
 
-.chat-ctrl-cont select, .chat-ctrl-cont textarea {
+.ctrl-cont-bot select, .ctrl-cont-bot textarea {
     width: 100%;
     min-height: 28px;
     min-width: inherit;
@@ -402,7 +402,7 @@ body {
     font-size: 14px;
 }
 
-/*.chat-ctrl-cont [name=ctrlsend] {
+/*.ctrl-cont-bot [name=ctrlsend] {
     font-size: 13px;
     margin-left: 0px;
     padding: 6px 0px;
@@ -416,7 +416,7 @@ body {
 }*/
 
 
-.chat-ctrl-cont [name=ctrlsend], .cntct_btn {
+.chat-ctrl-cont [name=ctrlsend], ctrl-cont-bot [name=ctrlsend], .cntct_btn {
     position: absolute;
     vertical-align: middle;
     font-size: 17px;
@@ -429,7 +429,7 @@ body {
     box-shadow: -2px 2px 4px 0 #00000073
 }
 
-    .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
+    .ctrl-cont-bot [name=ctrlsend]:hover, .cntct_btn:hover {
         /*filter: hue-rotate(60deg);*/
         filter: var(--botfilter_btn);
         color: white;
@@ -448,7 +448,7 @@ body {
     padding: 11px 14px;
 }*/
 
-.chat-ctrl-cont[ebreadonly="true"] [name=ctrlsend] {
+.ctrl-cont-bot[ebreadonly="true"] [name=ctrlsend] {
     display: none;
 }
 /*.eb-chat-cont .cntct_sec .cntct_btn {
@@ -747,7 +747,7 @@ body {
     z-index: 2;
 }*/
 .poweredby-cont {
-    position: fixed;
+    /*position: fixed;*/
     bottom: 0;
     background-color: #f1f1f1;
     /*text-shadow: 1px 1px 1px rgba(0,0,0,0.51);*/
@@ -1174,4 +1174,16 @@ body {
 
 .flxdirctn_col {
     flex-direction: column;
+}
+.renderAtBtm {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    width: 100%;
+    padding: 10px;
+    z-index: 2;
+    min-height: 60px;
+}
+.msg-wraper-renderAtbottom {
+    width:100%;
 }

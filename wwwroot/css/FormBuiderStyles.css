@@ -656,6 +656,20 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     width: 100% !important;
 }
 
+.dropdown-menu[role="combobox"] .bs-actionsbox > .btn-block > .actions-btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    padding: 2.5px 5px;
+}
+
+.dropdown-menu[role="combobox"] .bs-searchbox .form-control {
+    padding: 3px 6px;
+    height: 24px;
+    font-size: 12px;
+}
+
 .Eb-ctrlContainer .ctrl-cover input:not([type=radio]):not([type=checkbox]), .Eb-ctrlContainer select {
     /*height: auto !important;*/
     height: auto;
@@ -1058,7 +1072,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     /*width: 100%;*/
     /*vertical-align: top;*/
     padding: 1px;
-    height: 0px;/*to fix drop issue by preventing auto padding in td*/
+    height: 0px; /*to fix drop issue by preventing auto padding in td*/
 }
 
 .Eb-ctrlContainer {
@@ -1259,10 +1273,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     border: 1px dashed #cccccc;
     padding: 0px;
     /*background: #eee;*/
-/*    vertical-align: initial;*/
+    /*    vertical-align: initial;*/
 }
 
-.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button {
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=SubmitButton] > .ctrl-cover > button,
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ScriptButton] > .ctrl-cover > button,
+.form-buider-form[isrendermode="false"] .Eb-ctrlContainer[ctype=ExportButton] > .ctrl-cover > button {
     pointer-events: none;
 }
 
@@ -1355,6 +1371,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.08058823529411765), 0 0 1px 0px rgba(0, 0, 0, 0.170784);
     background-color: white;
 }
+
 .location-cont {
     display: flex;
     flex-direction: column;
@@ -2195,6 +2212,10 @@ input.locinp {
             height: 100%;
         }
 
+            .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file:hover {
+                cursor: pointer;
+            }
+
             .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file img {
                 /*width: 100%;
                 height: 100%;
@@ -2273,6 +2294,16 @@ input.locinp {
         color: #5b5959;
         font-size: 1.5rem;
     }
+    /* load spinner */
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner {
+        display: flex;
+        position: absolute;
+    }
+
+        .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner i {
+            font-size: 48px;
+            color: white;
+        }
 
 
     /*for bot*/
@@ -2327,6 +2358,15 @@ input.locinp {
                 right: 0;
             }
 
+    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .load_spinner {
+        display: flex;
+        position: absolute;
+    }
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner i {
+        font-size: 38px;
+        color: white;
+    }
 
     .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image {
         display: none;

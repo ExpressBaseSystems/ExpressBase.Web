@@ -470,7 +470,7 @@ var DashBoardWrapper = function (options) {
         }
     };
     this.LabelDrop = function (component, column, controlname, tileid) {
-        if (component !== "" && column !== "") {
+        if (component !== "" && column !== "" && getObjByval(this.Procs[component].Columns.$values, "name", column) !== undefined) {
             let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
             let _data = this.Rowdata[component + "Row"][index];
             this.Procs[controlname].DynamicLabel = _data;

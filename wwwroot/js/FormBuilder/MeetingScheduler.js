@@ -1,11 +1,11 @@
 ﻿var DatePick;
-var meetingScheduler = function(ctrl, ctrlOpts, type) {
+var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.Ctrl = ctrl;
     this.type = type;
     this.MeetingScheduleObj = {
         Title: '', Description: '', Location: '', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
         TimeFrom: '', TimeTo: '', Duration: '', MaxHost: 1, MinHost: 1, MaxAttendee: 1, MinAttendee: 1,
-        EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0,
+        EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingOpts : 1,
     };
     this.UsersList = {};
     this.UsersList = ctrl.UsersList;
@@ -34,7 +34,39 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
         itemText: "name",
         freeInput: false
     });
-    var temp = $(`#${this.Ctrl.EbSid}_attendee_list`).tagsinput({
+    var temp2 = $(`#${this.Ctrl.EbSid}_attendee_list`).tagsinput({
+        typeaheadjs: [
+            {
+                highlight: false
+            },
+            {
+                name: 'usersname',
+                displayKey: 'name',
+                //valueKey: 'id',
+                source: _UsrArr.ttAdapter()
+            }
+        ],
+        itemValue: "id",
+        itemText: "name",
+        freeInput: false
+    });
+    var temp3 = $(`#${this.Ctrl.EbSid}_eligible_host_list`).tagsinput({
+        typeaheadjs: [
+            {
+                highlight: false
+            },
+            {
+                name: 'usersname',
+                displayKey: 'name',
+                //valueKey: 'id',
+                source: _UsrArr.ttAdapter()
+            }
+        ],
+        itemValue: "id",
+        itemText: "name",
+        freeInput: false
+    });
+    var temp4 = $(`#${this.Ctrl.EbSid}_eligible_attendee_list`).tagsinput({
         typeaheadjs: [
             {
                 highlight: false
@@ -63,7 +95,7 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
 
     var jsonStr = $(`#${this.Ctrl.EbSid}_MeetingJson`);
     jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-    this.InitDatePicker = function() {
+    this.InitDatePicker = function () {
         DatePick = $(`#${this.Ctrl.EbSid}_meeting-date`).datepicker({
             dateFormat: "yy-mm-dd",
             showOtherMonths: true,
@@ -72,7 +104,7 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
             selectOtherMonths: true,
         });
     }
-    this.initSpinner = function() {
+    this.initSpinner = function () {
         //$(`#${this.Ctrl.EbSid}_max-host`).spinner();
         //$(`#${this.Ctrl.EbSid}_min-host`).spinner();
         //$(`#${this.Ctrl.EbSid}_max-attendee`).spinner();
@@ -80,77 +112,99 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
         $(`.meeting-spinner`).spinner();
 
     }
-    this.OnChangeUpdate = function() {
-        $(`#${this.Ctrl.EbSid}_meeting-title`).off('change').on("change", function(e) {
+    this.OnChangeUpdate = function () {
+        this.Title = $(`#${this.Ctrl.EbSid}_meeting-title`);
+        this.Description = $(`#${this.Ctrl.EbSid}_description`);
+        this.IsSingleMeeting = $(`#${this.Ctrl.EbSid}_single`);
+        this.IsMultipleMeeting = $(`#${this.Ctrl.EbSid}_multiple`);
+        this.MeetingDate = $(`#${this.Ctrl.EbSid}_meeting-date`);
+        this.TimeFrom = $(`#${this.Ctrl.EbSid}_time-from`);
+        this.TimeTo = $(`#${this.Ctrl.EbSid}_time-to`);
+        this.MaxHost = $(`#${this.Ctrl.EbSid}_max-host`);
+        this.MinHost = $(`#${this.Ctrl.EbSid}_min-host`);
+        this.MaxAttendee = $(`#${this.Ctrl.EbSid}_max-attendee`);
+        this.MinAttendee = $(`#${this.Ctrl.EbSid}_min-attendee`);
+        this.EligibleHosts = $(`#${this.Ctrl.EbSid}_eligible_host_list`);
+        this.FixedHost = $(`#${this.Ctrl.EbSid}_host_list`);
+        this.EligibleAttendees = $(`#${this.Ctrl.EbSid}_eligible_attendee_list`);
+        this.FixedAttendee = $(`#${this.Ctrl.EbSid}_attendee_list`);
+
+        this.Title.off('change').on("change", function (e) {
             this.MeetingScheduleObj.Title = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_description`).on("change", function(e) {
+
+        this.Description.on("change", function (e) {
             this.MeetingScheduleObj.Description = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_single`).on("change", function(e) {
+
+        this.IsSingleMeeting.on("change", function (e) {
             this.MeetingScheduleObj.IsSingleMeeting = 'T';
             this.MeetingScheduleObj.IsMultipleMeeting = 'F';
             $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).hide();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_multiple`).on("change", function(e) {
+        this.IsMultipleMeeting.on("change", function (e) {
             this.MeetingScheduleObj.IsSingleMeeting = 'F';
             this.MeetingScheduleObj.IsMultipleMeeting = 'T';
             $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).show();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_meeting-date`).on("change", function(e) {
+        this.MeetingDate.on("change", function (e) {
             this.MeetingScheduleObj.Date = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_time-from`).on("change", function(e) {
+        this.TimeFrom.on("change", function (e) {
             this.MeetingScheduleObj.TimeFrom = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj));
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_time-to`).on("change", function(e) {
+        this.TimeTo.on("change", function (e) {
             this.MeetingScheduleObj.TimeTo = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_max-host`).on("change", function(e) {
+        this.MaxHost.on("change", function (e) {
             this.MeetingScheduleObj.MaxHost = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_min-host`).on("change", function(e) {
+        this.MinHost.on("change", function (e) {
             this.MeetingScheduleObj.MinHost = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_max-attendee`).on("change", function(e) {
+        this.MaxAttendee.on("change", function (e) {
             this.MeetingScheduleObj.MaxAttendee = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_min-attendee`).on("change", function(e) {
+        this.MinAttendee.on("change", function (e) {
             this.MeetingScheduleObj.MinAttendee = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
-        $(`#${this.Ctrl.EbSid}_eligible_host_list`).on("change", function(e) {
+        this.EligibleHosts.on("change", function (e) {
             this.MeetingScheduleObj.EligibleHosts = e.target.value;
+            this.SetMeetingOption();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_eligible-attendee_list`).on("change", function(e) {
+        this.EligibleAttendees.on("change", function (e) {
             this.MeetingScheduleObj.EligibleAttendees = e.target.value;
+            this.SetMeetingOption();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_host_list`).on("change", function(e) {
+        this.FixedHost.on("change", function (e) {
             this.MeetingScheduleObj.Host = e.target.value;
             $(`#${this.Ctrl.EbSid}_max-host`).val(this.MeetingScheduleObj.Host.split(",").length);
+            this.SetMeetingOption();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        $(`#${this.Ctrl.EbSid}_attendee_list`).on("change", function(e) {
+        this.FixedAttendee.on("change", function (e) {
             this.MeetingScheduleObj.Attendee = e.target.value;
             $(`#${this.Ctrl.EbSid}_max-attendee`).val(this.MeetingScheduleObj.Attendee.split(",").length);
+            this.SetMeetingOption();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
-        $(`#${this.Ctrl.EbSid}_recuring-days .checkbox-inline`).on("change", function(e) {
-            let $chkd = $(`#${this.Ctrl.EbSid}_recuring-days input:checkbox:checked`);  
+        $(`#${this.Ctrl.EbSid}_recuring-days .checkbox-inline`).on("change", function (e) {
+            let $chkd = $(`#${this.Ctrl.EbSid}_recuring-days input:checkbox:checked`);
             let _daysCode = 0;
             for (let i = 0; i < $chkd.length; i++) {
                 _daysCode += Math.pow(2, $($chkd[i]).attr('data-code'));
@@ -158,9 +212,24 @@ var meetingScheduler = function(ctrl, ctrlOpts, type) {
             }
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        
+
     }
-    this.init = function() {
+    this.SetMeetingOption = function () {
+        if (this.FixedAttendee.val() !== '' && this.FixedHost.val() !== '') {
+            this.MeetingScheduleObj.MeetingOpts = 1;
+        }
+        else if (this.FixedHost.val() != '' && this.FixedAttendee.val() === '' ) {
+            this.MeetingScheduleObj.MeetingOpts = 2;
+        }
+        else if (this.FixedHost.val() === '' && this.FixedAttendee.val() !== '') {
+            this.MeetingScheduleObj.MeetingOpts = 3;
+        }
+        else if (this.FixedHost.val() === '' && this.FixedAttendee.val() === '') {
+            this.MeetingScheduleObj.MeetingOpts = 4;
+        }
+    };
+
+    this.init = function () {
         this.InitDatePicker();
         this.OnChangeUpdate();
         //this.initSpinner();

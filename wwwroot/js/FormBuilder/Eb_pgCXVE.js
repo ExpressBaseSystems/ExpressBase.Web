@@ -84,6 +84,7 @@
         $(this.modalBg_Slctr).hide(500);
         this.PGobj.isModalOpen = false;
         this.reDrawRelatedPGrows();
+        $(this.pgCXE_Cont_Slctr + " .modal-body").empty();
     };
 
     this.reDrawRelatedPGrows = function () {

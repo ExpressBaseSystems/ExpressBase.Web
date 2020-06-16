@@ -149,7 +149,7 @@
             $(".str64E-texarea").focus();
         }
         else if (this.editor === 13) { //ose
-            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").scrollTo($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont > .Otile-active"), { offset: -($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").height() / 2) + 14});
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").scrollTo($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont > .Otile-active"), { offset: -($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").height() / 2) + 14 });
         }
     };
 
@@ -676,8 +676,11 @@
                 success: this.biuldObjList
             });
         }
-        else
+        else {
+            if (this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType])
+                this.OSEList = this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]
             this.biuldObjList(this.OSEList);
+        }
     }.bind(this);
 
     this.biuldObjList = function (data) {
@@ -721,9 +724,9 @@
         if (CurRefId) {
             let $objTile = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile[name=" + objName + "]");
             if ($objTile.length > 0) {
-                //setTimeout(function () {
-                $objTile.focus()[0].click();
-                //}, 1);
+                setTimeout(function () {
+                    $objTile.focus()[0].click();
+                }, 1);
             }
             else
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();

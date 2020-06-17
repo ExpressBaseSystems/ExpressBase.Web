@@ -41,6 +41,8 @@ namespace ExpressBase.Web.Controllers
 
         private ActionResult ExcelFileResult { get; set; }
 
+        private ResponseStatus _Responsestatus = new ResponseStatus();
+
         [HttpGet]
         [HttpPost]
         public IActionResult dv(string refid, string rowData, string filterValues, int tabNum)
@@ -127,6 +129,8 @@ namespace ExpressBase.Web.Controllers
             catch (Exception e)
             {
                 Console.WriteLine("Exception (GetdvObject): " + e.StackTrace);
+                returnobj.Message = e.Message;
+                this._Responsestatus.Message = e.Message;
             }
             return EbSerializers.Json_Serialize(returnobj);
         }
@@ -192,6 +196,13 @@ namespace ExpressBase.Web.Controllers
             catch (Exception e)
             {
                 Console.WriteLine("Exception: " + e.ToString());
+                if (resultlist1 != null)
+                {
+                    this._Responsestatus.Message = resultlist1.Message;
+                    returnobj.Message = resultlist1.Message;
+                }
+                else
+                    returnobj.Message = e.ToString();
             }
             //return resultlist1;
             return EbSerializers.Json_Serialize(returnobj);
@@ -524,6 +535,8 @@ namespace ExpressBase.Web.Controllers
         public DVColumnCollection DsColumns { get; set; }
 
         public DVColumnCollection ColumnOrginal { get; set; }
+
+        public string Message { get; set; }
     }
 }
 

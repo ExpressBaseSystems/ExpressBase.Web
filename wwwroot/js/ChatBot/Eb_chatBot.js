@@ -1062,7 +1062,18 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.IsEdtMode = true;
         $('.msg-cont-bot [idx=' + idx + ']').closest('.msg-cont').show(200);
         $("#" + this.curCtrl.Name).click().select();
-        $btn.closest('.msg-cont').remove();
+        ////
+        if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
+            if (this.curCtrl.IsBasicControl) {
+                $btn.closest('.msg-cont').addClass('editctrl_typing');
+                $btn.closest('.msg-wraper-user').html(this.$TypeAnim.clone());
+            }
+        }
+        else {
+            $btn.closest('.msg-cont').remove();
+        }
+        
+        
     };
 
     this.editDpndCtrl = function () {
@@ -1121,6 +1132,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             var $msg = this.$userMsgBox.clone();
             $msg.find('.msg-wraper-user').html(msg).append(this.getTime());
             ////
+            $('.editctrl_typing').remove();
+            this.enableCtrledit();
             this.$renderAtBottom.hide();       
             $msg.insertAfter($prevMsg);
             this.scrollToBottom();
@@ -1158,6 +1171,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                             if (this.curCtrl.hasOwnProperty('IsBasicControl')) {
                                 //check isreadonly
                                 if (this.curCtrl.IsBasicControl) {
+                                    this.disableCtrledit();
                                     flg = true;
                                     $msg.remove();
                                     this.$renderAtBottom.append($msg);

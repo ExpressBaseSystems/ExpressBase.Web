@@ -1078,27 +1078,37 @@
     };
 
     this.TextBox = function (ctrl, ctrlopts) {
-        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.AutoSuggestion === true) {
-            $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
+        if (ctrl.TextMode === 0) {
+            //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
+            if (ctrl.AutoSuggestion === true) {
+                $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
+            }
+            //if (ctrl.TextTransform === 1)
+            //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
+            //else if (ctrl.TextTransform === 2)
+            //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
+
+            //$ctrl.keydown(function (event) {
+            //    textTransform(this, ctrl.TextTransform);
+            //});
+
+            $ctrl.on('paste keydown', function (event) {
+                textTransform(this, ctrl.TextTransform);
+            });
+
+            $ctrl.on('change', function (event) {
+                textTransform(this, ctrl.TextTransform, true);
+            });
         }
-        //if (ctrl.TextTransform === 1)
-        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "lowercase");
-        //else if (ctrl.TextTransform === 2)
-        //    $("#" + ctrl.EbSid_CtxId).css("text-transform", "uppercase");
-
-        //$ctrl.keydown(function (event) {
-        //    textTransform(this, ctrl.TextTransform);
-        //});
-
-        $ctrl.on('paste keydown', function (event) {
-            textTransform(this, ctrl.TextTransform);
-        });
-
-        $ctrl.on('change', function (event) {
-            textTransform(this, ctrl.TextTransform, true);
-        });
+        else if (ctrl.TextMode === 2) {
+            $ctrl.on('change', function (event) {
+                if (EbvalidateEmail(event.target.value))
+                    ctrl.removeInvalidStyle();
+                else
+                    ctrl.addInvalidStyle( "Invalid email");
+            });
+        }
     };
 
     this.initNumeric = function (ctrl, $input) {

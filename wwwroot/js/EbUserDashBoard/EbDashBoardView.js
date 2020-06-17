@@ -426,6 +426,7 @@
 
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
+        this.GetFilterValuesForDataSource();
         //$.LoadingOverlay('show');
         $.ajax({
             type: "POST",
@@ -580,6 +581,23 @@
         Eb_Tiles_StyleFn(this.TileCollection[id], id, this.TabNum);
     }.bind(this);
 
+
+    this.GetFilterValuesForDataSource = function () {
+        this.filtervalues = [];
+        if (this.filterDialog)
+            this.filtervalues = getValsForViz(this.filterDialog.FormObj);
+
+        let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
+        if (temp.length === 0) {
+            let abc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", abc ? abc : 1));
+        }
+        temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
+        if (this.stickBtn) { this.stickBtn.minimise(); }
+    };
+
     this.GetFilterValues = function () {
         this.filtervalues = [];
 
@@ -592,8 +610,11 @@
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.filterDialogRefid !== "") {
+        if (this.EbObject.Filter_Dialogue !== "") {
             grid.removeAll();
+            this.Procs = {};
+            CtrlCounters.DataLabelCounter = 0;
+            CtrlCounters.DataObjectCounter = 0;
             this.DrawTiles();
         }
         if (this.stickBtn) { this.stickBtn.minimise(); }

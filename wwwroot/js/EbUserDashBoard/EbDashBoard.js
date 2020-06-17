@@ -301,9 +301,9 @@ var DashBoardWrapper = function (options) {
                         data: { refid: this.VisRefid },
                         success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                     });
-            }      
+            }
             //add links
-            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls" && this.eb_type  === "Links") {
+            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls" && this.eb_type === "Links") {
                 let drop_id = this.AddNewTile(6, 3);
                 let tileId = drop_id.split("_")[1];
                 this.makeElement(el);
@@ -314,7 +314,7 @@ var DashBoardWrapper = function (options) {
                 this.TileCollection[tileId].LinksColl.$values.push(this.Procs[this.currentId]);
             }
             //Add new Gauge
-            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls" && this.eb_type  !== "Links") {
+            else if ($(target).attr("id") === "grid-cont" && $(source).attr("id") === "toolb_basic_ctrls" && this.eb_type !== "Links") {
                 let eb_type = $(this.currentGaugeSrc).attr("eb-type");
                 let drop_id = this.AddNewTile(10, 5);
                 this.makeElement(el);
@@ -429,7 +429,7 @@ var DashBoardWrapper = function (options) {
                 this.TileCollection[tileId].ComponentsColl.$values.push(this.Procs[component]);
                 this.GaugeDrop(component, column, controlname, "speedometer");
             }
-             $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
+            $("#component_cont .Eb-ctrlContainer").off("click").on("click", this.FocusOnControlObject.bind(this));
         }
 
     };
@@ -511,16 +511,16 @@ var DashBoardWrapper = function (options) {
         return a;
     };
 
-  
+
 
     this.ComponentDrop = function (target, o) {
         $(target).append(o.$Control[0]);
-        $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}" rel="popover" data-content="" data-original-title="A Title">
+        $(`#${o.$Control[0].id} .Dt-Rdr-col-cont`).empty().append(`<div  id="Inner_Btn_${o.EbSid}" class="inner_col_up" target-id="${o.EbSid}" rel="popover" data-content="" data-original-title="A Title">
                   <i class="fa fa-angle-up" aria-hidden="true"></i> </div>`);
         //$("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" style="display:none" class="component_col_div"> 
         //    <ul id="Inner_tree_${o.EbSid}" class="inner_com_col_cont"> </ul> 
         //    </div></div>`);
-        $("#component_columns_cont").append(`<div id="Inner_Cont_${o.EbSid}" style="display:none" class="component_colomn_div">
+        $("#component_columns_cont").empty().append(`<div id="Inner_Cont_${o.EbSid}" style="display:none" class="component_colomn_div">
               <div class="inner_component_colomn_div"><ul id="Inner_tree_${o.EbSid}" class="inner_tree_structure"> </ul></div>
               <div id="tailShadow"></div>
               <div id="tail1"></div>
@@ -877,7 +877,7 @@ var DashBoardWrapper = function (options) {
     //focus Ebobjects
     this.TileSelectorJs = function (e) {
         let procId;
-      
+
         if ($(event.target).closest(".guage").attr("id")) {
             this.JqObj = $(event.target).closest(".guage");
             procId = this.JqObj.attr("id");
@@ -1188,7 +1188,10 @@ var DashBoardWrapper = function (options) {
             // Update the count
         });
     };
-
+    //{
+    //    let filter_id = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+    //    this.filtervalues.push(new fltr_obj(11, "eb_loc_id", filter_id ? filter_id : 1));
+    //}
 
     this.GetFilterValuesForDataSource = function () {
         this.filtervalues = [];
@@ -1196,8 +1199,10 @@ var DashBoardWrapper = function (options) {
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
 
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        if (temp.length === 0) {
+            let abc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", abc ? abc : 1));
+        }
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
@@ -1211,13 +1216,18 @@ var DashBoardWrapper = function (options) {
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
 
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
-        if (temp.length === 0)
-            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        if (temp.length === 0) {
+            let abc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", abc ? abc : 1));
+        }
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.filterDialogRefid !== "") {
+        if (this.EbObject.FilterDialog !== "") {
             grid.removeAll();
+            this.Procs = {};
+            CtrlCounters.DataLabelCounter = 0;
+            CtrlCounters.DataObjectCounter = 0;
             this.DrawTiles();
         }
         if (this.stickBtn) { this.stickBtn.minimise(); }

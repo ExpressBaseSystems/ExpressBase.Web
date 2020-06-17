@@ -233,7 +233,7 @@ const EbSelect = function (ctrl, options) {
         let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         let $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
         let colObj = getObjByval(this.ComboObj.DisplayMembers.$values, "name", mapedField);
-        let searchByExp = this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);
+        let searchByExp = "x*";//this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
         if (mapedFieldType !== "string")
             searchByExp = " = ";
         if (!this.IsDatatableInit) {

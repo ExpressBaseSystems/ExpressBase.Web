@@ -87,6 +87,7 @@
         $('#paramdiv' + this.TabNum).append(result);
         $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
         $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
+        $("#btnGo").empty().append("Apply");
         if (typeof FilterDialog !== "undefined") {
             $(".param-div-cont").show();
             this.stickBtn = new EbStickButton({

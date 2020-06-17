@@ -872,11 +872,22 @@
         display: block;
         background: white;
         height: 100%;
+        border-right: solid 1px #b2b2b2;
     }
+        .db-user-filter .param-div .filter-run {
+            width: 100%;
+            height: 3rem;
+            margin-top: 10px;
+        }
+        .db-user-filter .param-div .Eb-ctrlContainer {
+            padding:0px;
+        }
 
     .db-user-filter #filterBox {
-        padding: 15px;
+        padding: 0px 10px;
     }
+
+
 
 #dashbord-user-view .stickBtn {
     display: none;

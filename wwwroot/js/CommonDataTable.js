@@ -646,7 +646,8 @@
         //});
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-            alert("ajax erpttt......");
+            console.log("ajax erpttt......" + message);
+            EbPopBox("show", { Message: message, Title: "Error" });
         };
 
 

@@ -241,14 +241,34 @@ class DvBuilder {
         this.MisMatchedColumns = [];
         this.NewlyAddedColumns = [];
         this.returnobj = JSON.parse(result);
-        if (this.EbObject.Columns.$values.length > 0)
-            this.checkOldAndNewColumns();
-        this.RemoveDuplicateMismatchedColumns();
-        if (this.MisMatchedColumns.length > 0 || this.NewlyAddedColumns.length > 0) {
-            this.ShowMessagebox();
+        if (this.returnobj.Columns === null && this.returnobj.Message) {
+            console.log("Get Column Exception" + this.returnobj.Message);
+            $("#eb_common_loader").EbLoader("hide");
+            EbPopBox("show", { Message: this.returnobj.Message, Title: "Error" });
+            return;
         }
-        else {
-            this.Columnconfirmation("Yes");
+        else if (this.returnobj.Columns === null) {
+            console.log("Column null");
+            $("#eb_common_loader").EbLoader("hide");
+            EbPopBox("show", { Message: "Column null", Title: "Error" });
+            return;
+        }
+        else if (this.returnobj.Message) {
+            console.log("Get Column Exception" + this.returnobj.Message);
+            $("#eb_common_loader").EbLoader("hide");
+            EbPopBox("show", { Message: this.returnobj.Message, Title: "Error" });
+            return;
+        }
+        else if (this.returnobj.Columns !== null) {
+            if (this.EbObject.Columns.$values.length > 0)
+                this.checkOldAndNewColumns();
+            this.RemoveDuplicateMismatchedColumns();
+            if (this.MisMatchedColumns.length > 0 || this.NewlyAddedColumns.length > 0) {
+                this.ShowMessagebox();
+            }
+            else {
+                this.Columnconfirmation("Yes");
+            }
         }
     }
 
@@ -1223,26 +1243,33 @@ class DvBuilder {
     }
 
     setCalcFieldType = function (ValueExpression, result) {
-        let name = $("#calcF_name").val().trim();
-        let type = this.getType(result.Type);
-        let objid = type + this.calcfieldCounter++;
-        let obj = new EbObjects[type](objid);
-        obj.Type = result.Type;
-        obj.RenderType = result.Type;
-        this.objCollection[name] = obj;
-        obj.name = name;
-        obj.Title = obj.name;
-        obj._Formula.Code = btoa(ValueExpression);
-        obj._Formula.Lang = 1;
-        obj.IsCustomColumn = true;
-        obj.bVisible = true;
-        obj.data = this.EbObject.Columns.$values.length;
-        $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" 
+        if (result.IsValid) {
+            let name = $("#calcF_name").val().trim();
+            let type = this.getType(result.Type);
+            let objid = type + this.calcfieldCounter++;
+            let obj = new EbObjects[type](objid);
+            obj.Type = result.Type;
+            obj.RenderType = result.Type;
+            this.objCollection[name] = obj;
+            obj.name = name;
+            obj.Title = obj.name;
+            obj._Formula.Code = btoa(ValueExpression);
+            obj._Formula.Lang = 1;
+            obj.IsCustomColumn = true;
+            obj.bVisible = true;
+            obj.data = this.EbObject.Columns.$values.length;
+            $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" 
             class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
-        this.addCalcFieldToColumnlist(obj);
-        $('#calcFields').killTree();
-        $('#calcFields').treed();
-        this.SetContextmenu4CalcField();
+            this.addCalcFieldToColumnlist(obj);
+            $('#calcFields').killTree();
+            $('#calcFields').treed();
+            this.SetContextmenu4CalcField();
+        }
+        else {
+            EbPopBox("show", { Message: "Error in Calc Field--" + result.ExceptionMessage, Title: "Error" });
+            console.log("Error in Calc Field--" + result.ExceptionMessage);
+            return;
+        }
     }
 
     addCalcFieldToColumnlist(obj) {

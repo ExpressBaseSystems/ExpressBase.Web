@@ -860,7 +860,7 @@
 .db-user-filter {
     top: 0px;
     left: 0px;
-    width: 350px;
+    width: 32rem;
     position: fixed;
     display: block;
     margin-top: 37px;
@@ -880,7 +880,17 @@
             margin-top: 10px;
         }
         .db-user-filter .param-div .Eb-ctrlContainer {
-            padding:0px;
+            padding: 0px;
+            margin: 5px 0px !important;
+        }
+        .db-user-filter .param-div .eb-ctrl-label {
+            font-size: 11.5px;
+            font-weight: 500;
+            font-family: Roboto;
+            letter-spacing: 0.3PX;
+            border: none;
+            margin: 0px 0;
+            padding: 2px 2px;
         }
 
     .db-user-filter #filterBox {

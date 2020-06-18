@@ -591,8 +591,8 @@ var DashBoardWrapper = function (options) {
     };
 
     this.init = function () {
+        $(".dash-loader").show();
         this.AppendToolBox();
-        $.LoadingOverlay("show");
         if (this.EbObject === null) {
             this.edit = false;
             this.EbObject = new EbObjects.EbDashBoard(`EbDashBoar${Date.now()}`);
@@ -612,11 +612,10 @@ var DashBoardWrapper = function (options) {
         commonO.Current_obj = this.EbObject;
         this.propGrid.ClosePG();
         if (this.filterDialogRefid == "") {
-            $.LoadingOverlay("hide");
             this.DrawTiles();
         }
         else {
-            $.LoadingOverlay("hide");
+            $(".dash-loader").hide();
             this.getColumns();
         }
 
@@ -964,7 +963,6 @@ var DashBoardWrapper = function (options) {
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
         this.GetFilterValuesForDataSource();
-        $.LoadingOverlay('show');
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
@@ -973,10 +971,9 @@ var DashBoardWrapper = function (options) {
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
-                $.LoadingOverlay('hide');
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
-                $.LoadingOverlay("hide");
+                $(".dash-loader").hide();
             }.bind(this)
         });
     };
@@ -1018,7 +1015,7 @@ var DashBoardWrapper = function (options) {
     this.TileRefidChangesuccess = function (id, data) {
         $(`#${id}`).attr("eb-type", "view");
         if (this.filtervalues.length === 0) {
-            this.GetFilterValues();
+            this.GetFilterValuesForDataSource();
         }
         let obj = JSON.parse(data);
         $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
@@ -1090,6 +1087,7 @@ var DashBoardWrapper = function (options) {
             $(`[data-id="${id}"]`).parent().removeAttr("style");
             $(`#${id}`).addClass("box-shadow-style");
         }
+        $(".dash-loader").hide();
     }
 
     this.drawCallBack = function (id) {
@@ -1214,8 +1212,8 @@ var DashBoardWrapper = function (options) {
 
 
     this.GetFilterValues = function () {
+        $(".dash-loader").show();
         this.filtervalues = [];
-        $.LoadingOverlay("show");
         if (this.stickBtn) { this.stickBtn.minimise(); }
 
         if (this.filterDialog)

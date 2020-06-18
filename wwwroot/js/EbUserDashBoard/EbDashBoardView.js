@@ -169,7 +169,7 @@
     }
 
     this.init = function () {
-        $.LoadingOverlay("show");
+        $(".dash-loader").show();
         $(".grid-stack").removeAttr("style");
         if (this.DashBoardList) {
             this.DashboardDropdown();
@@ -184,7 +184,6 @@
             $('.db-user-filter').remove();
             if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             grid.removeAll();
-            $.LoadingOverlay("hide");
             this.DrawTiles();
         }
         else {
@@ -432,7 +431,6 @@
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
         //this.GetFilterValuesForDataSource();
-        //$.LoadingOverlay('show');
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
@@ -441,10 +439,9 @@
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
-                //$.LoadingOverlay('hide');
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
-                $.LoadingOverlay("hide");
+                $(".dash-loader").hide();
             }.bind(this)
         });
     };
@@ -578,6 +575,7 @@
             $(`[data-id="${id}"]`).parent().removeAttr("style");
             $(`#${id}`).addClass("box-shadow-style");
         }
+        $(".dash-loader").hide();
     }
 
     this.drawCallBack = function (id) {
@@ -605,10 +603,9 @@
     };
 
 
-    this.GetFilterValues = function () {     
+    this.GetFilterValues = function () {  
+        $(".dash-loader").show();
         this.filtervalues = [];
-        $.LoadingOverlay("hide");
-        $.LoadingOverlay("show"); 
         if (this.stickBtn) { this.stickBtn.minimise(); }
 
         if (this.filterDialog)

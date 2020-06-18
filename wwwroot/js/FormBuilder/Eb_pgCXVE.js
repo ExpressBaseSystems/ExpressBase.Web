@@ -392,7 +392,7 @@
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").empty().prepend(`<div class='CE-controls-head'>${this.CurMeta.Dprop2}</div><div id="${this.CE_mapper_ctrlsContId}" class="CE-mapper-ctrlsCont"></div>`);
                 let metaOfControlsSource = getObjByval(this.PGobj.Metas, "name", mapListSrc);
 
-                if (metaOfControlsSource.editor === 13)
+                if (metaOfControlsSource && metaOfControlsSource.editor === 13)
                     this.setCEMaplistFromSrc(mapListSrc);
                 else {
                     if (!this.CE_mapList) {

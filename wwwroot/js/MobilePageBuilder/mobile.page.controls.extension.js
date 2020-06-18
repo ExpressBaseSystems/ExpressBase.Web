@@ -8,6 +8,22 @@
         return creator.EbObject;
     };
 
+    window.dataColToMobileCol = function (datacols) {
+        datacols = datacols || [];
+        var mobcols = [];
+
+        for (let i = 0; i < datacols.length; i++) {
+            let mcol = new EbObjects.EbMobileDataColumn("colref_mobilecols" + i);
+            mcol.Name = datacols[i].columnName;
+            mcol.ColumnIndex = datacols[i].columnIndex;
+            mcol.ColumnName = datacols[i].columnName;
+            mcol.Type = datacols[i].type;
+
+            mobcols.push(mcol);
+        }
+        return mobcols;
+    };
+
     window.expand = function (o) {
         let constructor = o.constructor.name;
         let common = {

@@ -94,27 +94,32 @@
                         <div class="newObjectContainer" id="ebm-newobject" slider='true'>
                             <div class="backbtn"><i class="fa fa-long-arrow-left"></i></div>
                             <div class="newObjectContainer-inner">
-                                @foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
-                                {
-                                    List<int> cs = new List<int> { 18, 23, 7, 25 };
-                                    string url = string.Empty, _class = string.Empty;
-                                    if (cs.Contains(objectType.IntCode))
-                                    {
-                                        url = "#";
-                                        _class = "eb-newobj-comingsoon-frmenu";
-                                    }
-                                    else
-                                    {
-                                        url = "../Eb_Object/Index?objid=null&objtype=" + objectType.IntCode;
-                                    }
 
-                                    <div class="ebm_newob @_class" klink='true'>
-                                        <a role="menuitem" tabindex="-1" href="@url">
-                                            <div class="ebm-newob-icon"><i class="fa @objectType.Icon"></i></div>
-                                            <div class="ebm-newob-text">@objectType.Alias</div>
-                                        </a>
-                                    </div>
+                                @{
+                                    List<int> cs = new List<int> { 23, 7, 25 };
+
+                                    foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
+                                    {
+                                        string url = string.Empty, _class = string.Empty;
+                                        if (cs.Contains(objectType.IntCode))
+                                        {
+                                            url = "#";
+                                            _class = "eb-newobj-comingsoon-frmenu";
+                                        }
+                                        else
+                                        {
+                                            url = "../Eb_Object/Index?objid=null&objtype=" + objectType.IntCode;
+                                        }
+
+                                        <div class="ebm_newob @_class" klink='true'>
+                                            <a role="menuitem" tabindex="-1" href="@url">
+                                                <div class="ebm-newob-icon"><i class="fa @objectType.Icon"></i></div>
+                                                <div class="ebm-newob-text">@objectType.Alias</div>
+                                            </a>
+                                        </div>
+                                    }
                                 }
+
                             </div>
                         </div>
                     }

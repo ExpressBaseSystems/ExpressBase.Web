@@ -32,8 +32,9 @@
             this.setSortColumns(o);
 
             this.getLinkFormControls(o, function (json) {
-                var controls = (json === null || json === undefined) ? [] : JSON.parse(json).$values;
+                var controls = json === null || json === undefined ? [] : JSON.parse(json).$values;
                 this.FilterControls = controls;//store controls in vis object
+                o.MobileFormControls.$values = controls;
                 if (controls.length > 0)
                     this.drawFormControls(controls);
             }.bind(this));
@@ -76,7 +77,7 @@
                 obj.ColumnIndex = dragged.attr("index");
                 obj.TableIndex = dragged.attr("tableIndex");
                 $(event.target).append(obj.$Control.outerHTML());
-                obj.blackListProps = Array.from(["TextFormat","Font","Required"]);//for pghelper extension
+                obj.blackListProps = ["TextFormat", "Font", "Required", "RowSpan", "ColumnSpan"];//for pghelper extension
                 this.Root.refreshControl(obj);
             }.bind(this)
         });
@@ -108,7 +109,7 @@
             $.extend(obj, filters[i]);
             $(`#${vis.EbSid} .vis-sort-container`).append(obj.$Control.outerHTML());
             this.Root.refreshControl(obj);
-            obj.blackListProps = Array.from(["TextFormat", "Font", "RowSpan","ColumnSpan"]);//for pghelper extension
+            obj.blackListProps = Array.from(["TextFormat", "Font", "RowSpan", "ColumnSpan"]);//for pghelper extension
         }
     };
 

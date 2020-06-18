@@ -592,7 +592,7 @@ var DashBoardWrapper = function (options) {
 
     this.init = function () {
         this.AppendToolBox();
-
+        $.LoadingOverlay("show");
         if (this.EbObject === null) {
             this.edit = false;
             this.EbObject = new EbObjects.EbDashBoard(`EbDashBoar${Date.now()}`);
@@ -612,9 +612,11 @@ var DashBoardWrapper = function (options) {
         commonO.Current_obj = this.EbObject;
         this.propGrid.ClosePG();
         if (this.filterDialogRefid == "") {
+            $.LoadingOverlay("hide");
             this.DrawTiles();
         }
         else {
+            $.LoadingOverlay("hide");
             this.getColumns();
         }
 
@@ -974,6 +976,7 @@ var DashBoardWrapper = function (options) {
                 $.LoadingOverlay('hide');
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
+                $.LoadingOverlay("hide");
             }.bind(this)
         });
     };
@@ -1212,25 +1215,27 @@ var DashBoardWrapper = function (options) {
 
     this.GetFilterValues = function () {
         this.filtervalues = [];
+        $.LoadingOverlay("show");
+        if (this.stickBtn) { this.stickBtn.minimise(); }
+
         if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
 
         let temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_loc_id"; });
-        if (temp.length === 0) {
-            let abc = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
-            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", abc ? abc : 1));
-        }
+        if (temp.length === 0)
+            this.filtervalues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.EbObject.FilterDialog !== "") {
-            grid.removeAll();
+        if (this.EbObject.Filter_Dialogue !== "") {
             this.Procs = {};
             CtrlCounters.DataLabelCounter = 0;
             CtrlCounters.DataObjectCounter = 0;
-            this.DrawTiles();
+            //this.DrawTiles();
+            grid.removeAll();
+            setTimeout(this.DrawTiles.bind(this), 500);
         }
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+
     };
 
     //this.RemoveColumnRef = function () {

@@ -1106,6 +1106,10 @@
             obj = new EbObjects.ObjectBasicReport(ObjName + "ppty");
             type = "ObjectBasicReport";
         }
+        else if (parseInt(refId.split("-")[2]) === EbObjectTypes.SmsBuilder) {
+            obj = new EbObjects.ObjectBasicSMS(ObjName + "ppty");
+            type = "ObjectBasicSMS";
+        }
         else
             obj = new EbObjects.ObjectBasicVis(ObjName + "ppty");
         let versionNumber = $e.find(".selectpicker option:selected").attr("ver-no");

@@ -306,6 +306,11 @@ function EbMobStudio(config) {
     this.getColums4ListView = function (obj) {
         this.dataSourceColumn(obj.DataSourceRefId, function (vis, result) {
             vis.DataSourceParams.$values = result.paramsList || [];
+
+            if (result.columns && result.columns.length > 0) {
+                vis.ColumnsRef.$values = window.dataColToMobileCol(result.columns[0]);
+            }
+
             this.Controls.drawDsColTree(result.columns);
             $(".branch").click();
             if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
@@ -390,6 +395,10 @@ function EbMobStudio(config) {
         $("#eb_emulater_title" + this.Conf.TabNum).text(value);
     };
 
+    this.setRoot = function () {
+        this.pg.setObject(this.EbObject, AllMetas["EbMobilePage"]);
+    };
+
     this.exe = function () {
         this.Controls = new MobileControls(this);
         if (this.EditObj === null || this.EditObj === undefined)
@@ -406,6 +415,7 @@ function EbMobStudio(config) {
         });
         this.Menu = new MobileMenu(this);
         $("body").on("dblclick", ".ctrl_label", this.labelOnDoubleClick.bind(this));
+        $(".eb_mobpage_pane_layout").on("focus", this.setRoot.bind(this));
         this.refreshEmulator();
         this.setEmulatorTitle(this.EbObject.DisplayName || "Untitled");
         $(window).resize(function () { this.refreshEmulator(); }.bind(this));

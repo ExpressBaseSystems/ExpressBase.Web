@@ -650,9 +650,10 @@
                 <div class="modal-body" style="flex:1;overflow-y:auto;">
                     <div class="eb-newobj-mdlbdy">
                         @{
+                            List<int> cs = new List<int> { 23, 7, 25 };
+
                             foreach (EbObjectType objectType in EbObjectTypes.Enumerator)
                             {
-                                List<int> cs = new List<int> { 23, 7, 25 };
                                 if (objectType.IsAvailableIn(apptype))
                                 {
                                     string url = string.Empty, _class = string.Empty;

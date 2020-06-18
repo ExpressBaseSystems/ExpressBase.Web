@@ -123,6 +123,7 @@ class DvBuilder {
         $("#add_calcfield").on("click", this.newCalcFieldSum.bind(this));
         $("#add_approvalColumn").on("click", this.DropApprovalColumn.bind(this));
         $("#add_actionColumn").on("click", this.DropActionColumn.bind(this));
+        $("#add_phoneColumn").on("click", this.DropPhoneColumn.bind(this));
         document.onkeydown = this.ColumnKeyMove.bind(this);
         $("#Rowgroup_submit").off("click").on("click", this.ShowRowgroupDiv.bind(this));
         $(".resized").resizable({
@@ -241,14 +242,34 @@ class DvBuilder {
         this.MisMatchedColumns = [];
         this.NewlyAddedColumns = [];
         this.returnobj = JSON.parse(result);
-        if (this.EbObject.Columns.$values.length > 0)
-            this.checkOldAndNewColumns();
-        this.RemoveDuplicateMismatchedColumns();
-        if (this.MisMatchedColumns.length > 0 || this.NewlyAddedColumns.length > 0) {
-            this.ShowMessagebox();
+        if (this.returnobj.Columns === null && this.returnobj.Message) {
+            console.log("Get Column Exception" + this.returnobj.Message);
+            $("#eb_common_loader").EbLoader("hide");
+            EbPopBox("show", { Message: this.returnobj.Message, Title: "Error" });
+            return;
         }
-        else {
-            this.Columnconfirmation("Yes");
+        else if (this.returnobj.Columns === null) {
+            console.log("Column null");
+            $("#eb_common_loader").EbLoader("hide");
+            EbPopBox("show", { Message: "Column null", Title: "Error" });
+            return;
+        }
+        else if (this.returnobj.Message) {
+            console.log("Get Column Exception" + this.returnobj.Message);
+            $("#eb_common_loader").EbLoader("hide");
+            EbPopBox("show", { Message: this.returnobj.Message, Title: "Error" });
+            return;
+        }
+        else if (this.returnobj.Columns !== null) {
+            if (this.EbObject.Columns.$values.length > 0)
+                this.checkOldAndNewColumns();
+            this.RemoveDuplicateMismatchedColumns();
+            if (this.MisMatchedColumns.length > 0 || this.NewlyAddedColumns.length > 0) {
+                this.ShowMessagebox();
+            }
+            else {
+                this.Columnconfirmation("Yes");
+            }
         }
     }
 
@@ -490,6 +511,9 @@ class DvBuilder {
                 else if (obj.$type.indexOf("DVActionColumn") > -1)
                     $("#ActionColumns ul[id='ActionColumns-childul']").append(`<li eb-type='DVActionColumn'  eb-name="${obj.name}" 
                         class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
+                else if (obj.$type.indexOf("DVPhoneColumn") > -1)
+                    $("#PhoneColumns ul[id='PhoneColumns-childul']").append(`<li eb-type='DVPhoneColumn'  eb-name="${obj.name}" 
+                        class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
                 else
                     $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${this.getType(obj.RenderType)}' DbType='${obj.Type}'  eb-name="${obj.name}" 
                         class='calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></li>`);
@@ -504,6 +528,8 @@ class DvBuilder {
         $('#ApprovalColumns').treed();
         $('#ActionColumns').killTree();
         $('#ActionColumns').treed();
+        $('#PhoneColumns').killTree();
+        $('#PhoneColumns').treed();
         this.SetContextmenu4CalcField();
         this.SetColumnRef();
         this.initializeDragula();
@@ -727,6 +753,8 @@ class DvBuilder {
                     type = "DVApprovalColumn";
                 else if (obj.$type.indexOf("DVActionColumn") > -1)
                     type = "DVActionColumn";
+                else if (obj.$type.indexOf("DVPhoneColumn") > -1)
+                    type = "DVPhoneColumn";
                 let element = $(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" eb-keyname="${obj.name}" class='column' style='font-size: 13px;'><div id="${obj.name}_elemsCont" class="columnelemsCont"><div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.RenderType)}'></i> ${obj.name}</span></div><input class="columntitle" type="text" id="${obj.name}_columntitle"/></div></li>`);
                 this.ColumnDropRelated(element);
                 $("#columns-list-body").append(element);
@@ -1195,6 +1223,27 @@ class DvBuilder {
         //this.SetContextmenu4CalcField();
     }
 
+    DropPhoneColumn = function () {
+        let name = "eb_phone" + this.calcfieldCounter++;
+        let type = "DVPhoneColumn";
+        let obj = new EbObjects[type](name);
+        obj.Type = 16;
+        obj.RenderType = 16;
+        obj.ColumnsRef = this.EbObject.Columns.$values[0].ColumnsRef;
+        this.objCollection[name] = obj;
+        obj.name = name;
+        obj.Title = obj.name;
+        obj.bVisible = true;
+        obj.IsCustomColumn = true;
+        obj.data = this.EbObject.Columns.$values.length;
+        $("#PhoneColumns ul[id='PhoneColumns-childul']").append(`<li eb-type='${type}'  eb-name="${obj.name}" 
+            class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
+        this.addPhoneFieldToColumnlist(obj);
+        $('#PhoneColumns').killTree();
+        $('#PhoneColumns').treed();
+        //this.SetContextmenu4CalcField();
+    }
+
     newCalcFieldSum = function () {
         $("#eb_calcF_summarry").modal("toggle");
         $("#calcF_submit").off("click").on("click", this.addCalcField.bind(this));
@@ -1223,26 +1272,33 @@ class DvBuilder {
     }
 
     setCalcFieldType = function (ValueExpression, result) {
-        let name = $("#calcF_name").val().trim();
-        let type = this.getType(result.Type);
-        let objid = type + this.calcfieldCounter++;
-        let obj = new EbObjects[type](objid);
-        obj.Type = result.Type;
-        obj.RenderType = result.Type;
-        this.objCollection[name] = obj;
-        obj.name = name;
-        obj.Title = obj.name;
-        obj._Formula.Code = btoa(ValueExpression);
-        obj._Formula.Lang = 1;
-        obj.IsCustomColumn = true;
-        obj.bVisible = true;
-        obj.data = this.EbObject.Columns.$values.length;
-        $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" 
+        if (result.IsValid) {
+            let name = $("#calcF_name").val().trim();
+            let type = this.getType(result.Type);
+            let objid = type + this.calcfieldCounter++;
+            let obj = new EbObjects[type](objid);
+            obj.Type = result.Type;
+            obj.RenderType = result.Type;
+            this.objCollection[name] = obj;
+            obj.name = name;
+            obj.Title = obj.name;
+            obj._Formula.Code = btoa(ValueExpression);
+            obj._Formula.Lang = 1;
+            obj.IsCustomColumn = true;
+            obj.bVisible = true;
+            obj.data = this.EbObject.Columns.$values.length;
+            $("#calcFields ul[id='calcfields-childul']").append(`<li eb-type='${type}' DbType='${obj.Type}'  eb-name="${obj.name}" 
             class='columns textval calcfield' style='font-size: 13px;'><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></li>`);
-        this.addCalcFieldToColumnlist(obj);
-        $('#calcFields').killTree();
-        $('#calcFields').treed();
-        this.SetContextmenu4CalcField();
+            this.addCalcFieldToColumnlist(obj);
+            $('#calcFields').killTree();
+            $('#calcFields').treed();
+            this.SetContextmenu4CalcField();
+        }
+        else {
+            EbPopBox("show", { Message: "Error in Calc Field--" + result.ExceptionMessage, Title: "Error" });
+            console.log("Error in Calc Field--" + result.ExceptionMessage);
+            return;
+        }
     }
 
     addCalcFieldToColumnlist(obj) {
@@ -1273,6 +1329,18 @@ class DvBuilder {
         this.EbObject.Columns.$values.push(obj);
         obj.sTitle = obj.name;
         let element = $(`<li eb-type='DVActionColumn' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
+            <div id="${obj.name}_elemsCont" class="columnelemsCont">
+                <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>
+                <input class="columntitle" type="text" id="${obj.name}_columntitle"/>
+            </div></li>`);
+        this.ColumnDropRelated(element);
+        this.DropeventHandlers(element, obj);
+    }
+
+    addPhoneFieldToColumnlist(obj) {
+        this.EbObject.Columns.$values.push(obj);
+        obj.sTitle = obj.name;
+        let element = $(`<li eb-type='DVPhoneColumn' eb-name="${obj.name}" eb-keyname="${obj.name}" class='columns' style='font-size: 13px;'>
             <div id="${obj.name}_elemsCont" class="columnelemsCont">
                 <div id="${obj.name}_spanCont" class="columnspanCont"><span><i class='fa ${this.getIcon(obj.Type)}'></i> ${obj.name}</span></div>
                 <input class="columntitle" type="text" id="${obj.name}_columntitle"/>

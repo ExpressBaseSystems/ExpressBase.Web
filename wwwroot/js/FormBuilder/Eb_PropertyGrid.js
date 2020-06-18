@@ -617,18 +617,21 @@
         let $MainCtrlsDDCont = $(("#" + this.wraperId).replace(/_InnerPG/g, "")).children(".controls-dd-cont");
         let ebsid = obj.EbSid;
         let _name = obj.Name || obj.name;
+        let objTypeName = obj.ObjType ? (` (${obj.ObjType})`) : "";
+        let optText = _name + objTypeName;
+        let optHtml = "<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + optText + "</option>";
         if (this.ParentPG && this.ParentPG.isModalOpen) {
             if ($(".pgCXEditor-Cont #SelOpt_" + obj.EbSid + "_" + this.wraperId).length === 0) { // need rework
-                $(this.ctrlsDDCont_Slctr + " select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
+                $(this.ctrlsDDCont_Slctr + " select").append(optHtml);
                 $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('refresh');
             }
         }
         else
             if ($MainCtrlsDDCont.find("[data-name=" + obj.EbSid + "]").length === 0) {
-                $MainCtrlsDDCont.find("select").append("<option data-name = '" + ebsid + "'id='SelOpt_" + ebsid + "_" + this.wraperId + "'>" + _name + "</option>");
+                $MainCtrlsDDCont.find("select").append(optHtml);
                 $MainCtrlsDDCont.find(".selectpicker").selectpicker('refresh');
             }
-        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', _name);
+        $(this.ctrlsDDCont_Slctr + " .selectpicker").selectpicker('val', optText);
     };
 
     //Add a control name to Control DD

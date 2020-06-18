@@ -916,6 +916,12 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     min-height: 30px;
 }
 
+.list-ctrl-box {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
 .radiog-cont {
     border: dashed 1px #ddd;
     padding: 3px;

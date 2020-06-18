@@ -646,7 +646,8 @@
         //});
 
         $.fn.dataTable.ext.errMode = function (settings, helpPage, message) {
-            alert("ajax erpttt......");
+            console.log("ajax erpttt......" + message);
+            EbPopBox("show", { Message: message, Title: "Error" });
         };
 
 
@@ -4637,16 +4638,16 @@ function imgError(image) {
         // DOM node
         var node = this.get(0);
         // Ensure we have a DOM node
-        if (typeof node == 'undefined') {
+        if (typeof node === 'undefined') {
             return this;
         }
         // CSSStyleDeclaration
         var style = this.get(0).style;
         // Getter/Setter
-        if (typeof styleName != 'undefined') {
-            if (typeof value != 'undefined') {
+        if (typeof styleName !== 'undefined') {
+            if (typeof value !== 'undefined') {
                 // Set style property
-                priority = typeof priority != 'undefined' ? priority : '';
+                priority = typeof priority !== 'undefined' ? priority : '';
                 style.setProperty(styleName, value, priority);
                 return this;
             } else {

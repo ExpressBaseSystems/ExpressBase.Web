@@ -84,6 +84,7 @@
         $(this.modalBg_Slctr).hide(500);
         this.PGobj.isModalOpen = false;
         this.reDrawRelatedPGrows();
+        $(this.pgCXE_Cont_Slctr + " .modal-body").empty();
     };
 
     this.reDrawRelatedPGrows = function () {
@@ -148,7 +149,7 @@
             $(".str64E-texarea").focus();
         }
         else if (this.editor === 13) { //ose
-            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").scrollTo($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont > .Otile-active"), { offset: -($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").height() / 2) + 14});
+            $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").scrollTo($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont > .Otile-active"), { offset: -($(this.pgCXE_Cont_Slctr + " .OSEctrlsCont").height() / 2) + 14 });
         }
     };
 
@@ -372,7 +373,7 @@
     };
 
     this.CEHelper = function (sourceProp) {
-        this.Dprop = this.CurMeta.Dprop;
+        let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
 
@@ -387,10 +388,19 @@
             if (this.editor === 8)
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
             if (this.editor === 35) {
-                let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
+                
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").empty().prepend(`<div class='CE-controls-head'>${this.CurMeta.Dprop2}</div><div id="${this.CE_mapper_ctrlsContId}" class="CE-mapper-ctrlsCont"></div>`);
+                let metaOfControlsSource = getObjByval(this.PGobj.Metas, "name", mapListSrc);
 
-                this.setCEMaplistFromSrc(mapListSrc);
+                if (metaOfControlsSource && metaOfControlsSource.editor === 13)
+                    this.setCEMaplistFromSrc(mapListSrc);
+                else {
+                    if (!this.CE_mapList) {
+                        let mapListVariable = this.PGobj.PropsObj[mapListSrc];
+                        this.CE_mapList = (Array.isArray(mapListVariable) ? mapListVariable : mapListVariable.$values);
+                    }
+                    this.buildMapObjList();
+                }
             }
         }
         else if (this.editor === 10) {
@@ -675,8 +685,11 @@
                 success: this.biuldObjList
             });
         }
-        else
+        else {
+            if (this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType])
+                this.OSEList = this.PGobj.PropsObj.__OSElist[this.PGobj.CurProp][ObjType]
             this.biuldObjList(this.OSEList);
+        }
     }.bind(this);
 
     this.biuldObjList = function (data) {
@@ -720,9 +733,9 @@
         if (CurRefId) {
             let $objTile = $(this.pgCXE_Cont_Slctr + " .OSEctrlsCont .colTile[name=" + objName + "]");
             if ($objTile.length > 0) {
-                //setTimeout(function () {
-                $objTile.focus()[0].click();
-                //}, 1);
+                setTimeout(function () {
+                    $objTile.focus()[0].click();
+                }, 1);
             }
             else
                 $(this.pgCXE_Cont_Slctr + " .OSE-verTile-Cont").empty();
@@ -1101,6 +1114,10 @@
         else if (parseInt(refId.split("-")[2]) === EbObjectTypes.Report) {
             obj = new EbObjects.ObjectBasicReport(ObjName + "ppty");
             type = "ObjectBasicReport";
+        }
+        else if (parseInt(refId.split("-")[2]) === EbObjectTypes.SmsBuilder) {
+            obj = new EbObjects.ObjectBasicSMS(ObjName + "ppty");
+            type = "ObjectBasicSMS";
         }
         else
             obj = new EbObjects.ObjectBasicVis(ObjName + "ppty");

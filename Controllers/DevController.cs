@@ -890,11 +890,25 @@ namespace ExpressBase.Web.Controllers
                 {
                     List<EbMobileControl> ctrlcoll = new List<EbMobileControl>();
 
-                    foreach(var ctrl in (mPage.Container as EbMobileForm).ChildControls)
+                    foreach(EbMobileControl ctrl in (mPage.Container as EbMobileForm).ChildControls)
                     {
-                        if (ctrl is INonPersistControl || ctrl is ILinesEnabled || ctrl is ILayoutControl)
+                        if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
                             continue;
-                        ctrlcoll.Add(ctrl);
+                        else if(ctrl is EbMobileTableLayout)
+                        {
+                            foreach(EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
+                            {
+                                cell.ControlCollection.ForEach(item =>
+                                {
+                                    item.EbSid = "EB_FP_" + item.Name;
+                                });
+                            }
+                        }
+                        else
+                        {
+                            ctrlcoll.Add(ctrl);
+                            ctrl.EbSid = "EB_FP_" + ctrl.Name;
+                        }
                     }
                     controls = EbSerializers.Json_Serialize(ctrlcoll);
                 }

@@ -171,6 +171,45 @@ const EbSelect = function (ctrl, options) {
         EbHideCtrlMsg(`#${_name}Container`, `#${_name}Wraper`);
     }.bind(this);
 
+    this.getSearchByExp = function (DefOp, mapedFieldType) {
+        let op = String.empty;
+        if (mapedFieldType === "string") {
+            if (DefOp === 0)// Equals
+                op = " = ";
+            else if (DefOp === 1)// Startwith
+                op = "x*";
+            else if (DefOp === 2)//EndsWith
+                op = "*x";
+            else if (DefOp === 3)// Between
+                op = "*x*";
+            else if (DefOp === 3)// Contains
+                op = "*x*";
+        }
+        else if (mapedField === "numeric") {
+            switch (DefOp.toString()) {
+                case EbEnums.NumericOperators.Equals: op = '='; break;
+                case EbEnums.NumericOperators.LessThan: op = '<'; break;
+                case EbEnums.NumericOperators.GreaterThan: op = '>'; break;
+                case EbEnums.NumericOperators.LessThanOrEqual: op = '<='; break;
+                case EbEnums.NumericOperators.GreaterThanOrEqual: op = '>='; break;
+                case EbEnums.NumericOperators.Between: op = 'B'; break;
+                default: op = '=';
+            }
+        }
+        else if (mapedField === "date") {
+            switch (DefOp.toString()) {
+                case EbEnums.NumericOperators.Equals: op = '='; break;
+                case EbEnums.NumericOperators.LessThan: op = '<'; break;
+                case EbEnums.NumericOperators.GreaterThan: op = '>'; break;
+                case EbEnums.NumericOperators.LessThanOrEqual: op = '<='; break;
+                case EbEnums.NumericOperators.GreaterThanOrEqual: op = '>='; break;
+                case EbEnums.NumericOperators.Between: op = 'B'; break;
+                default: op = '=';
+            }
+        }
+        return op;
+    }
+
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
         let $e = $(e.target);
@@ -193,13 +232,14 @@ const EbSelect = function (ctrl, options) {
         let mapedField = $e.closest(".searchable").attr("maped-column");
         let mapedFieldType = this.getTypeForDT($e.closest(".searchable").attr("column-type"));
         let $filterInp = $(`#${this.name}tbl_${mapedField}_hdr_txt1`);
-        let searchBy = " = ";
-        if (mapedFieldType === "string")
-            searchBy = "x*";
+        let colObj = getObjByval(this.ComboObj.DisplayMembers.$values, "name", mapedField);
+        let searchByExp = "x*";//this.getSearchByExp(colObj.DefaultOperator, mapedFieldType);// 4 roby
+        if (mapedFieldType !== "string")
+            searchByExp = " = ";
         if (!this.IsDatatableInit) {
             if (this.ComboObj.MinSeachLength > searchVal.length)
                 return;
-            let filterObj = new filter_obj(mapedField, searchBy, searchVal, mapedFieldType);
+            let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
             this.InitDT();
             this.V_showDD();
@@ -219,7 +259,7 @@ const EbSelect = function (ctrl, options) {
 
 
             this.datatable.columnSearch = [];
-            this.datatable.columnSearch.push(new filter_obj(mapedField, searchBy, searchVal, mapedFieldType));
+            this.datatable.columnSearch.push(new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType));
             this.datatable.Api.ajax.reload();
         }
     };

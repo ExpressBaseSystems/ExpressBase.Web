@@ -78,7 +78,7 @@
                 <div id='paramdiv-Cont${this.TabNum}' class='db-user-filter'>
                 <div id='paramdiv${this.TabNum}' class='param-div fd'>
                     <div class='pgHead'>
-                        <h6 class='smallfont' style='font-size: 12px;display:inline'>Filter Dialogue</h6>
+                        <h6 class='smallfont' style='font-size: 12px;display:inline'>Filter</h6>
                         <div class="icon-cont  pull-right" id='close_paramdiv${this.TabNum}'><i class="fa fa-times" aria-hidden="true"></i></div>
                     </div>
                     </div>
@@ -96,7 +96,8 @@
                 icon: "fa-filter",
                 dir: "left",
                 label: "Parameters",
-                style: { top: "85px" }
+                style: { top: "85px" },
+                delay:1
             });
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
@@ -168,6 +169,7 @@
     }
 
     this.init = function () {
+        $.LoadingOverlay("show");
         $(".grid-stack").removeAttr("style");
         if (this.DashBoardList) {
             this.DashboardDropdown();
@@ -182,6 +184,7 @@
             $('.db-user-filter').remove();
             if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             grid.removeAll();
+            $.LoadingOverlay("hide");
             this.DrawTiles();
         }
         else {
@@ -331,12 +334,13 @@
             this.Tilecontext();
         }
         else {
-            this.GridStackInit
+            //this.GridStackInit
         }
-
         grid.movable('.grid-stack-item', false);
         grid.resizable('.grid-stack-item', false);
     }
+
+ 
 
     this.labelstyleApply = function (tileId) {
         $(`[data-id="${tileId}"]`).parent().css("background", "transparent");
@@ -427,7 +431,7 @@
 
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
-        this.GetFilterValuesForDataSource();
+        //this.GetFilterValuesForDataSource();
         //$.LoadingOverlay('show');
         $.ajax({
             type: "POST",
@@ -440,6 +444,7 @@
                 //$.LoadingOverlay('hide');
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
+                $.LoadingOverlay("hide");
             }.bind(this)
         });
     };
@@ -599,8 +604,12 @@
         if (this.stickBtn) { this.stickBtn.minimise(); }
     };
 
-    this.GetFilterValues = function () {
+
+    this.GetFilterValues = function () {     
         this.filtervalues = [];
+        $.LoadingOverlay("hide");
+        $.LoadingOverlay("show"); 
+        if (this.stickBtn) { this.stickBtn.minimise(); }
 
         if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);
@@ -612,13 +621,14 @@
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
         if (this.EbObject.Filter_Dialogue !== "") {
-            grid.removeAll();
             this.Procs = {};
             CtrlCounters.DataLabelCounter = 0;
             CtrlCounters.DataObjectCounter = 0;
-            this.DrawTiles();
+            //this.DrawTiles();
+            grid.removeAll();
+            setTimeout(this.DrawTiles.bind(this), 500);
         }
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+       
     };
     this.init();
 }

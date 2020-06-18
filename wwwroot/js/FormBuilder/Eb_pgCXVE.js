@@ -373,7 +373,7 @@
     };
 
     this.CEHelper = function (sourceProp) {
-        this.Dprop = this.CurMeta.Dprop;
+        let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
 
@@ -388,10 +388,19 @@
             if (this.editor === 8)
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
             if (this.editor === 35) {
-                let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
+                
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").empty().prepend(`<div class='CE-controls-head'>${this.CurMeta.Dprop2}</div><div id="${this.CE_mapper_ctrlsContId}" class="CE-mapper-ctrlsCont"></div>`);
+                let metaOfControlsSource = getObjByval(this.PGobj.Metas, "name", mapListSrc);
 
-                this.setCEMaplistFromSrc(mapListSrc);
+                if (metaOfControlsSource.editor === 13)
+                    this.setCEMaplistFromSrc(mapListSrc);
+                else {
+                    if (!this.CE_mapList) {
+                        let mapListVariable = this.PGobj.PropsObj[mapListSrc];
+                        this.CE_mapList = (Array.isArray(mapListVariable) ? mapListVariable : mapListVariable.$values);
+                    }
+                    this.buildMapObjList();
+                }
             }
         }
         else if (this.editor === 10) {

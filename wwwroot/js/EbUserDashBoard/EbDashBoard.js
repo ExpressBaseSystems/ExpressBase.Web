@@ -448,7 +448,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
-        if (component !== "" && column !== "") {
+        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null) {
             let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
             let _data = this.Rowdata[component + "Row"][index];
 
@@ -470,8 +470,9 @@ var DashBoardWrapper = function (options) {
         }
     };
     this.LabelDrop = function (component, column, controlname, tileid) {
-        if (component !== "" && column !== "" && getObjByval(this.Procs[component].Columns.$values, "name", column) !== undefined) {
-            let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+        let val = getObjByval(this.Procs[component].Columns.$values, "name", column);
+        if (component !== "" && column !== "" && val !== undefined && this.Rowdata[component + "Row"] !== null) {
+            let index = val.data;
             let _data = this.Rowdata[component + "Row"][index];
             this.Procs[controlname].DynamicLabel = _data;
             if (this.Procs[controlname].StaticLabel == "") {
@@ -963,11 +964,27 @@ var DashBoardWrapper = function (options) {
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
         this.GetFilterValuesForDataSource();
+        this.Rowdata[obj.EbSid + "Row"] = null;
+        //this.GetFilterValuesForDataSource();
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
             data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
+            error: function (request, error) {
+                $(".dash-loader").hide();
+                EbPopBox("show", {
+                    Message: "Failed to get data from DataSourse",
+                    ButtonStyle: {
+                        Text: "Ok",
+                        Color: "white",
+                        Background: "#508bf9",
+                        Callback: function () {
+                            //$(".dash-loader").hide();
+                        }
+                    }
+                });
+            },
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 this.propGrid.setObject(obj, AllMetas["EbDataObject"]);

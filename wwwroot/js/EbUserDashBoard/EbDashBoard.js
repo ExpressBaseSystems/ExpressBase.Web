@@ -15,7 +15,7 @@ var DashBoardWrapper = function (options) {
     this.Cid = options.Cid;
     this.TileCollection = {};
     this.CurrentTile;
-    this.CurrentRefid;
+    this.CurrentRefid;  
     this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
@@ -721,6 +721,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.DrawTiles = function () {
+        grid.removeAll();
         //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         //$(".component_cont .nav").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         Eb_Dashboard_Bg(this.EbObject);
@@ -1295,7 +1296,6 @@ var DashBoardWrapper = function (options) {
             CtrlCounters.DataLabelCounter = 0;
             CtrlCounters.DataObjectCounter = 0;
             //this.DrawTiles();
-            grid.removeAll();
             setTimeout(this.DrawTiles.bind(this), 500);
         }
 

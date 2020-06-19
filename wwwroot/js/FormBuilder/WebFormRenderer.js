@@ -833,7 +833,7 @@ const WebFormRender = function (option) {
         this.setHeader("View Mode");
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        this.setEditModeCtrls();
+        //this.setEditModeCtrls();
 
         if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
             let DataMODEL = this.DataMODEL[this.ReviewCtrl.TableName];
@@ -865,7 +865,7 @@ const WebFormRender = function (option) {
             if (!this.ReviewCtrl._Builder.isFormDataEditable)
                 return;
         }
-        this.setEditModeCtrls();
+        //this.setEditModeCtrls();
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
@@ -1607,11 +1607,13 @@ const WebFormRender = function (option) {
         this.afterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.afterSaveAction = this.getAfterSaveActionFn(this.afterSavemodeS);
         this.setMode();
+        this.setEditModeCtrls();
 
-        if (this.Mode.isPrefill)
-            this.setEditModeCtrls();
+        //if (this.Mode.isPrefill)
+        //    this.setEditModeCtrls();
 
-        else if (this.Mode.isNew) {
+        //else
+        if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
@@ -1620,7 +1622,7 @@ const WebFormRender = function (option) {
         }
 
         if (this.Mode.isView) {
-            this.setEditModeCtrls();// should remove ?
+            //this.setEditModeCtrls();// should remove ?
             this.SwitchToViewMode();
             this.locInit4viewMode();
         }

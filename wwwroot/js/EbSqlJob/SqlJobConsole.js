@@ -4,11 +4,11 @@
     this.DrawJobSelectBox = function () {
         let $Opt = $("<select class='form-control' id='select-sql-job'> </select>");
         $.each(this.AllObj, function (key, value) {
-            if (ebcontext.user.Roles.indexOf("SolutionOwner") === 0) {
+            if (ebcontext.user.Roles.includes("SolutionOwner")) {
                 $Opt.append(`<option value=${value[0].RefId}> ${value[0].DisplayName} </option>`);
             }
             else {
-                if (ebcontext.user.EbObjectIds.indexOf(value[0].Id) === 0) {
+                if (ebcontext.user.EbObjectIds.includes(value[0].Id)) {
                     $Opt.append(`<option value=${value[0].RefId}> ${value[0].DisplayName} </option>`);
                 }
             }

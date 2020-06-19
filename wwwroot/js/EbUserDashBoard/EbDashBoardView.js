@@ -220,6 +220,7 @@
         }
     };
     this.DrawTiles = function () {
+        grid.removeAll();
         //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         Eb_Dashboard_Bg(this.EbObject);
         if (this.EbObject.Tiles.$values.length > 0) {

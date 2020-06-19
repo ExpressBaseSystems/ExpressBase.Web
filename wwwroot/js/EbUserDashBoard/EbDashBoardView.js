@@ -12,6 +12,7 @@
     this.DashBoardList = options.AllDashBoards || null;
     this.stickBtn;
     this.filtervalues = [];
+    //this.TabNum = options.tabNum;
     this.rowData = options.rowData ? JSON.parse(decodeURIComponent(escape(window.atob(options.rowData)))) : null;
     this.filtervalues = options.filterValues ? JSON.parse(decodeURIComponent(escape(window.atob(options.filterValues)))) : [];
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
@@ -176,21 +177,25 @@
             this.DashboardDropdown();
         }
         else if (this.EbObject !== null) {
-            $(".dash-loader").show();
+                $(".dash-loader").show();
             ebcontext.header.setName(this.EbObject.DisplayName);
         }
         $(`[Value=${this.EbObject.RefId}]`).attr("disabled", true);
         $("title").empty().append(this.EbObject.DisplayName);
         //
-        if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "") {
+        if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
             $('.db-user-filter').remove();
             if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             grid.removeAll();
             this.DrawTiles();
         }
-        else {
+        else if (this.EbObject.Tiles.$values.length !== 0) {
             this.getColumns();
-        }  
+        }
+        else {
+            $(".dash-loader").hide();
+            $("#dashbord-user-view").empty().append("<h4 styele='text-align: center; margin-top: 5em;'>No data Available</h4>")
+        }
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
         $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
         $(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
@@ -248,6 +253,20 @@
                             url: '../DashBoard/DashBoardGetObj',
                             type: 'POST',
                             data: { refid: refid },
+                            error: function (request, error) {
+                                $(".dash-loader").hide();
+                                EbPopBox("show", {
+                                    Message: "Failed to get data from DataSourse",
+                                    ButtonStyle: {
+                                        Text: "Ok",
+                                        Color: "white",
+                                        Background: "#508bf9",
+                                        Callback: function () {
+                                            //$(".dash-loader").hide();
+                                        }
+                                    }
+                                });
+                            },
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
 
@@ -482,6 +501,20 @@
                     url: '../DashBoard/DashBoardGetObj',
                     type: 'POST',
                     data: { refid: refid },
+                    error: function (request, error) {
+                        $(".dash-loader").hide();
+                        EbPopBox("show", {
+                            Message: "Failed to get data from DataSourse",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                    //$(".dash-loader").hide();
+                                }
+                            }
+                        });
+                    },
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }

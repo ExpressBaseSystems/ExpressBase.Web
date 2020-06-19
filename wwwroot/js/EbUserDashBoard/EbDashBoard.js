@@ -148,6 +148,7 @@ var DashBoardWrapper = function (options) {
                 style: { top: "230px" }
             });
             this.filterDialog = FilterDialog;
+            $("#btnGo").trigger("click");
         }
         else {
             $(".param-div-cont").hide();
@@ -299,6 +300,20 @@ var DashBoardWrapper = function (options) {
                         url: '../DashBoard/DashBoardGetObj',
                         type: 'POST',
                         data: { refid: this.VisRefid },
+                        error: function (request, error) {
+                            $(".dash-loader").hide();
+                            EbPopBox("show", {
+                                Message: "Failed to get data from DataSourse",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                        //$(".dash-loader").hide();
+                                    }
+                                }
+                            });
+                        },
                         success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                     });
             }
@@ -612,13 +627,18 @@ var DashBoardWrapper = function (options) {
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
         commonO.Current_obj = this.EbObject;
         this.propGrid.ClosePG();
-        if (this.filterDialogRefid == "") {
+        if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
+            $('.db-user-filter').remove();
+            if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            grid.removeAll();
             this.DrawTiles();
         }
         else {
-            $(".dash-loader").hide();
             this.getColumns();
+            if (this.EbObject.Tiles.$values.length == 0)
+                $(".dash-loader").hide();
         }
+        
 
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
@@ -681,6 +701,20 @@ var DashBoardWrapper = function (options) {
                     url: '../DashBoard/DashBoardGetObj',
                     type: 'POST',
                     data: { refid: refid },
+                    error: function (request, error) {
+                        $(".dash-loader").hide();
+                        EbPopBox("show", {
+                            Message: "Failed to get data from DataSourse",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                    //$(".dash-loader").hide();
+                                }
+                            }
+                        });
+                    },
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
@@ -724,6 +758,20 @@ var DashBoardWrapper = function (options) {
                             url: '../DashBoard/DashBoardGetObj',
                             type: 'POST',
                             data: { refid: refid },
+                            error: function (request, error) {
+                                $(".dash-loader").hide();
+                                EbPopBox("show", {
+                                    Message: "Failed to get data from DataSourse",
+                                    ButtonStyle: {
+                                        Text: "Ok",
+                                        Color: "white",
+                                        Background: "#508bf9",
+                                        Callback: function () {
+                                            //$(".dash-loader").hide();
+                                        }
+                                    }
+                                });
+                            },
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
 

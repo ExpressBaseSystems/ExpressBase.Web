@@ -148,6 +148,7 @@ var DashBoardWrapper = function (options) {
                 style: { top: "230px" }
             });
             this.filterDialog = FilterDialog;
+            $("#btnGo").trigger("click");
         }
         else {
             $(".param-div-cont").hide();
@@ -299,6 +300,20 @@ var DashBoardWrapper = function (options) {
                         url: '../DashBoard/DashBoardGetObj',
                         type: 'POST',
                         data: { refid: this.VisRefid },
+                        error: function (request, error) {
+                            $(".dash-loader").hide();
+                            EbPopBox("show", {
+                                Message: "Failed to get data from DataSourse",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                        //$(".dash-loader").hide();
+                                    }
+                                }
+                            });
+                        },
                         success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                     });
             }
@@ -448,7 +463,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
-        if (component !== "" && column !== "") {
+        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null) {
             let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
             let _data = this.Rowdata[component + "Row"][index];
 
@@ -470,8 +485,9 @@ var DashBoardWrapper = function (options) {
         }
     };
     this.LabelDrop = function (component, column, controlname, tileid) {
-        if (component !== "" && column !== "" && getObjByval(this.Procs[component].Columns.$values, "name", column) !== undefined) {
-            let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+        let val = getObjByval(this.Procs[component].Columns.$values, "name", column);
+        if (component !== "" && column !== "" && val !== undefined && this.Rowdata[component + "Row"] !== null) {
+            let index = val.data;
             let _data = this.Rowdata[component + "Row"][index];
             this.Procs[controlname].DynamicLabel = _data;
             if (this.Procs[controlname].StaticLabel == "") {
@@ -611,13 +627,18 @@ var DashBoardWrapper = function (options) {
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
         commonO.Current_obj = this.EbObject;
         this.propGrid.ClosePG();
-        if (this.filterDialogRefid == "") {
+        if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
+            $('.db-user-filter').remove();
+            if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            grid.removeAll();
             this.DrawTiles();
         }
         else {
-            $(".dash-loader").hide();
             this.getColumns();
+            if (this.EbObject.Tiles.$values.length == 0)
+                $(".dash-loader").hide();
         }
+        
 
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
@@ -680,6 +701,20 @@ var DashBoardWrapper = function (options) {
                     url: '../DashBoard/DashBoardGetObj',
                     type: 'POST',
                     data: { refid: refid },
+                    error: function (request, error) {
+                        $(".dash-loader").hide();
+                        EbPopBox("show", {
+                            Message: "Failed to get data from DataSourse",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                    //$(".dash-loader").hide();
+                                }
+                            }
+                        });
+                    },
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
@@ -723,6 +758,20 @@ var DashBoardWrapper = function (options) {
                             url: '../DashBoard/DashBoardGetObj',
                             type: 'POST',
                             data: { refid: refid },
+                            error: function (request, error) {
+                                $(".dash-loader").hide();
+                                EbPopBox("show", {
+                                    Message: "Failed to get data from DataSourse",
+                                    ButtonStyle: {
+                                        Text: "Ok",
+                                        Color: "white",
+                                        Background: "#508bf9",
+                                        Callback: function () {
+                                            //$(".dash-loader").hide();
+                                        }
+                                    }
+                                });
+                            },
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
 
@@ -963,11 +1012,27 @@ var DashBoardWrapper = function (options) {
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
         this.GetFilterValuesForDataSource();
+        this.Rowdata[obj.EbSid + "Row"] = null;
+        //this.GetFilterValuesForDataSource();
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
             data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
+            error: function (request, error) {
+                $(".dash-loader").hide();
+                EbPopBox("show", {
+                    Message: "Failed to get data from DataSourse",
+                    ButtonStyle: {
+                        Text: "Ok",
+                        Color: "white",
+                        Background: "#508bf9",
+                        Callback: function () {
+                            //$(".dash-loader").hide();
+                        }
+                    }
+                });
+            },
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 this.propGrid.setObject(obj, AllMetas["EbDataObject"]);

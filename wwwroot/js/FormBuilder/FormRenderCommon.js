@@ -361,7 +361,7 @@
             }
         }.bind(this));
 
-        if ($notOk1stCtrl) {
+        if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
             $notOk1stCtrl.select();
             $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
         }

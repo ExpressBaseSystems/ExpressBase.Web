@@ -1182,6 +1182,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                                     this.$renderAtBottom.append($msg);
                                     this.$renderAtBottom.show();
                                     $msg.find('.bot-icon').remove();
+                                    $msg.find('.msg-cont-bot').addClass('msg-cont-w100');
                                     let $msgInner = $msg.find('.msg-wraper-bot').html(msg);
                                     $($msgInner.find('.ctrl-cont-bot')).removeClass('ctrl-cont-bot');
                                     //  $($msgInner.find('.ctrl-wraper')).css('width','100%');

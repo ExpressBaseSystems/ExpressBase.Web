@@ -1172,8 +1172,8 @@ border-radius: 4px;
 .renderAtBtm {
     display: flex;
     align-items: center;
-    /*background-color: white;*/
-    background-color: var(--botThemeColor);
+    background-color: white;
+    /*background-color: var(--botThemeColor);*/
     width: 100%;
     padding: 10px 20px;
     z-index: 2;

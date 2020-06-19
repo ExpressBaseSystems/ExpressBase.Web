@@ -2191,7 +2191,7 @@ input.locinp {
 /* Uploaded images container */
 .simpleFUPdiv .SFUPcontainer .uploaded {
     padding: .5rem;
-    line-height: 0;
+    /*line-height: 0;*/
 }
 
     .simpleFUPdiv .SFUPcontainer .uploaded .filethumb {
@@ -2266,12 +2266,12 @@ input.locinp {
                 }
 
                 .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .filename {
-                    /*margin-top: 5px;
                     margin-bottom: 0;
                     font-weight: 500;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    white-space: nowrap;*/
+                    white-space: nowrap;
+                    max-width: 200px;
                 }
 
     .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file iframe {

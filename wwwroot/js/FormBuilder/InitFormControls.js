@@ -779,9 +779,9 @@
         }.bind(this);
     };
 
-    this.Approval = function (ctrl, ctrlOpts) {
-        return new EbApproval(ctrl, ctrlOpts);
-    };
+    //this.Approval = function (ctrl, ctrlOpts) {
+    //    return new EbApproval(ctrl, ctrlOpts);
+    //};
 
     this.Review = function (ctrl, ctrlOpts) {
         return new EbReview(ctrl, ctrlOpts);

@@ -104,6 +104,16 @@
                         $('.close-ebfileview_Cont').on('click', this.CloseFileviewFn.bind(this));
                         console.log("need pdf viewer");
                     }
+                    else {
+                        let url = `${src}.${exten}`;    
+                        if (confirm(`Download ${this.pgSettings[indx].FileName} ?`)) {
+                            let link = document.createElement('a');
+                            link.download = this.pgSettings[indx].FileName;
+                            link.href = `${src}.${exten}`;
+                            link.click();
+                        } 
+                        
+                    }
                 }
                 //pdf viewer
 

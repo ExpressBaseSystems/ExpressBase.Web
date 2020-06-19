@@ -144,14 +144,28 @@
                 if (cntype == 1) {
                     filelurl = `/images/small/${refid}.jpg`;
                 } else {
-                    filelurl = '/images/pdf-image.png';
+                    let arr = file.name.split('.');
+                    let exten = arr[arr.length - 1];
+                    if (exten === 'pdf') {
+                        filelurl = '/images/pdf-image.png';
+                    } else {
+                        filelurl = '/images/file-image.png';
+                    }
+                   
                 }
                 file.name = file.name;
             } else {
                 if (cntype == 1) {
                     filelurl = URL.createObjectURL(file);
-                } else {
-                    filelurl = '/images/pdf-image.png';
+                } else  {
+                    let arr = file.name.split('.');
+                    let exten = arr[arr.length - 1];
+                    if (exten === 'pdf') {
+                        filelurl = '/images/pdf-image.png';
+                    } else {
+                        filelurl = '/images/file-image.png';
+                    }
+
                 }
 
 

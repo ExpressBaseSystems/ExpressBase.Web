@@ -2104,10 +2104,13 @@ input.locinp {
 /*EbSimpleFileUploader*/
 
 .simpleFUPdiv {
-    /*position: relative;
-    display: flex;*/
+    border: 1.5px dashed #a4a4a4;
+    border-radius: 4px;
+    min-height: 100px;
 }
-
+.Eb-ctrlContainer[ctype="SimpleFileUploader"] .ctrl-cover {
+    border: none;
+}
     .simpleFUPdiv .SFUPcontainer .SFUPcontent {
         line-height: 2;
         position: absolute;
@@ -2131,7 +2134,7 @@ input.locinp {
         min-height: 175px;
         /*max-height: 175px;*/
         overflow: auto;
-        border: 1px solid #d9d9d9;
+        /*border: 1px solid #d9d9d9;*/
         position: relative;
     }
 

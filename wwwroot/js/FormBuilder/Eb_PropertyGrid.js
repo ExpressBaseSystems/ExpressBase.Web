@@ -1031,6 +1031,7 @@
             let meta = this.Metas[i];
             if (meta.source && (meta.editor === 8 || meta.editor === 22 || meta.editor === 27)) {
                 let sourceMeta = getObjByval(this.Metas, "name", meta.source);
+                sourceMeta = sourceMeta ? sourceMeta : getObjByval(this.Metas, "Name", meta.source);
                 if (sourceMeta.dependentPropsList === undefined)
                     sourceMeta.dependentPropsList = [];
                 sourceMeta.dependentPropsList.push(meta.name);

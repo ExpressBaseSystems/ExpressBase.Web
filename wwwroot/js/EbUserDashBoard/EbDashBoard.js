@@ -633,10 +633,13 @@ var DashBoardWrapper = function (options) {
             grid.removeAll();
             this.DrawTiles();
         }
-        else {
+        else if (this.EbObject.Filter_Dialogue !== "") {
             this.getColumns();
             if (this.EbObject.Tiles.$values.length == 0)
                 $(".dash-loader").hide();
+        }
+        else {
+            $(".dash-loader").hide();
         }
         
 
@@ -778,6 +781,7 @@ var DashBoardWrapper = function (options) {
 
                 }
                 else {
+                    $(".dash-loader").hide();
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
                     $(`#${t_id}`).attr("eb-type", "gauge");
@@ -1278,7 +1282,9 @@ var DashBoardWrapper = function (options) {
 
 
     this.GetFilterValues = function () {
-        $(".dash-loader").show();
+        if (this.EbObject.Tiles.$values.length !== 0) {
+            $(".dash-loader").show();
+        }        
         this.filtervalues = [];
         if (this.stickBtn) { this.stickBtn.minimise(); }
 

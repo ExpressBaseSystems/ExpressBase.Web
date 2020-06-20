@@ -170,15 +170,17 @@
     }
 
     this.init = function () {
-        $(".dash-loader").hide();
         $(".grid-stack").removeAttr("style");
         if (this.DashBoardList) {
             $(".dash-loader").show();
             this.DashboardDropdown();
         }
         else if (this.EbObject !== null) {
-                $(".dash-loader").show();
+            $(".dash-loader").show();
             ebcontext.header.setName(this.EbObject.DisplayName);
+        }
+        else {
+            $(".dash-loader").hide();
         }
         $(`[Value=${this.EbObject.RefId}]`).attr("disabled", true);
         $("title").empty().append(this.EbObject.DisplayName);
@@ -194,7 +196,6 @@
         }
         else {
             $(".dash-loader").hide();
-            $("#dashbord-user-view").empty().append("<h4 styele='text-align: center; margin-top: 5em;'>No data Available</h4>")
         }
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
         $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));

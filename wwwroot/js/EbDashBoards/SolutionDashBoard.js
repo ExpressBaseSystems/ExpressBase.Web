@@ -28,8 +28,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         "DropBox": "<img class='img- responsive image-vender' src='../images/dropbox_logo.png' style='width:100%' />",
         "Slack": "<img class='img- responsive image-vender' src='../images/slack.png' style='width:100%' />",
         "Facebook": "<img class='img- responsive image-vender' src='../images/fb_logo.png' style='width:46%' />",
-        "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"        
-    }
+        "Unifonic": "<img class='img- responsive image-vender' src='../images/unifonic.png' style='width:65%' />"
+    };
     var venderdec = {
         "PGSQL": `<img class='img-responsive' src='../images/postgre.png' align='middle' style='height: 100px;margin:auto;margin-top: 15px;margin-bottom: 15px;' />
                         <div class="connection-vender-desp">
@@ -43,7 +43,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         <div class="connection-vender-desp">
                             <span>Microsoft SQL Server is a relational database management system developed by Microsoft. As a database server, it is a software product with the primary function of storing and retrieving data as requested by other software applications—which may run either on the same computer or on another computer across a network.</span>
                         </div>`
-    }
+    };
 
     this.customElementLoader = $("<div>", {
         id: "connecting",
@@ -67,7 +67,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     this.editconnection = function (i, obj) {
         var input = $(obj).attr("field");
         $("#" + this.whichModal + " [name='" + input + "']").val($(obj).text());
-    }
+    };
 
     this.IntegrationSubmit = function (e) {
         //e.preventDefault();
@@ -100,11 +100,11 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             }
                         },
                         CallBack: function (name) {
-                            if (name == "Confirm") {
+                            if (name === "Confirm") {
                                 $.ajax({
                                     type: "POST",
                                     url: "../ConnectionManager/Integrate",
-                                    data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: true },
+                                    data: { preferancetype: JSON.stringify(postData), deploy: e, sid, drop: true }
                                 }).done(function (data) {
                                     preventContextMenu = 0;
                                     //$("#Integration_loder").EbLoader("hide");
@@ -113,7 +113,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                         EbMessage("show", { Message: "Integreation Changed Successfully" });
                                     }
                                 }.bind(this));
-                            } else if (name == "Cancel") {
+                            } else if (name === "Cancel") {
                                 preventContextMenu = 0;
                                 EbMessage("show", { Message: "Integreation Failed", Background: "red" });
                             }
@@ -223,12 +223,12 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }).done(function (data) {
             preventContextMenu = 0;
             if (data) {
-                if (JSON.parse(data).ResponseStatus == null) {
-                    if (dt == "PGSQL" || dt == "MYSQL" || dt == "MSSQL" || dt == "ORACLE")
+                if (JSON.parse(data).ResponseStatus === null) {
+                    if (dt === "PGSQL" || dt === "MYSQL" || dt === "MSSQL" || dt === "ORACLE")
                         this.DBinteConfEditr(data, CId, dt);
                     else {
                         var name = dt.concat("inteConfEditr");
-                        this[name](data, CId, dt)
+                        this[name](data, CId, dt);
                     }
                 }
                 else {
@@ -376,7 +376,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $("#IntegrationsCall").trigger("click");
             $("#MyIntegration").trigger("click");
         }.bind(this));
-    };    
+    };
 
     this.CloudnaryConSubmit = function (e) {
         e.preventDefault();
@@ -462,15 +462,15 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         e.preventDefault();
         postDataGoogleDrive = $(e.target).serializeArray();
         var uri = "";
-        if (GoogleRedirecturi == "Staging")
+        if (GoogleRedirecturi === "Staging")
             uri = "https://myaccount.eb-test.xyz";
-        else if (GoogleRedirecturi == "Production")
+        else if (GoogleRedirecturi === "Production")
             uri = "https://myaccount.expressbase.com";
         auth2 = gapi.auth2.init({
             client_id: postDataGoogleDrive[3].value,
             access_type: 'offline',
             redirect_uri: uri,
-            scope: 'https://www.googleapis.com/auth/drive',
+            scope: 'https://www.googleapis.com/auth/drive'
             // Scopes to request in addition to 'profile' and 'email'
             //scope: 'additional_scope'
         });
@@ -597,7 +597,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             $('#exampleTextarea').val(resp.target.result);
         };
         reader.readAsText(files);
-    }
+    };
 
     this.testConnection = function (e) {
         var form = this.objectifyForm($("#" + $(e.target).attr("whichform")).serializeArray());
@@ -650,7 +650,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
             returnArray[formArray[i]['name']] = formArray[i]['value'];
         }
         return returnArray;
-    }
+    };
     this.showAdvanced = function (e) {
         if ($(e.target).prop("checked"))
             $(".advanced-tr").show();
@@ -676,14 +676,14 @@ var SolutionDashBoard = function (connections, sid, versioning) {
 
         logoCrp.uploadSuccess = function (fileid) {
             EbMessage("show", { Message: "Profile Image Uploaded Successfully" });
-        }
+        };
         logoCrp.windowClose = function () {
             //EbMessage("show", { Message: "window closed", Background: "red" });
-        }
+        };
     };
 
     this.ShowPassword = function () {
-        if ($(".Password").attr("type") == "password") {
+        if ($(".Password").attr("type") === "password") {
             $(".Password").attr('type', 'text');
         } else {
             $(".Password").attr('type', 'password');
@@ -699,7 +699,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     this.DBinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#dbConnectionEdit').modal('toggle');
                 $('#dbvendorInput').val(temp[obj].Type);
@@ -725,7 +725,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#filesDbConnectEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 //$('#dbvendorInput').val(temp[obj].DatabaseVendor);
                 $('#FilesInputNickname').val(temp[obj].NickName);
                 $('#FilesInputIntConfId').val(temp[obj].Id);
@@ -744,7 +744,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#cldnry_conEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#CloudnaryInputNickname').val(temp[obj].NickName);
                 $('#CloudnaryInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -760,7 +760,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#EmailconnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#EmailInputNickname').val(temp[obj].NickName);
                 $('#SMTPInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -778,7 +778,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#UnifonicConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#UnifonicInputNickname').val(temp[obj].NickName);
                 $('#UnifonicInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -793,7 +793,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TwilioConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#TwilioInputNickname').val(temp[obj].NickName);
                 $('#TwilioInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -808,7 +808,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#ExpertTextingConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#ExpertInputNickname').val(temp[obj].NickName);
                 $('#ExpertInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -824,10 +824,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TextLocalConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#TextLocalInputNickname').val(temp[obj].NickName);
                 $('#TextLocalInputIntConfId').val(temp[obj].Id);
-                var temp1 = JSON.parse(JSON.parse(data).ConnObj);               
+                var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#TextLocalInputApi').val(temp1["ApiKey"]);
                 $('#TextLocalInputFrom').val(temp1["From"]);
                 $('#IsSSL').prop('checked', temp1["IsSSL"]);
@@ -838,7 +838,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#MapConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#MapInputNickname').val(temp[obj].NickName);
                 $('#MapInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -850,7 +850,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#DropBoxConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#DropBoxInputNickname').val(temp[obj].NickName);
                 $('#DropBoxInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -862,7 +862,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#AWSS3ConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#AWSS3InputNickname').val(temp[obj].NickName);
                 $('#AWSS3InputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -877,7 +877,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SentGridConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#SendGridInputNickname').val(temp[obj].NickName);
                 $('#SendGridInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -891,7 +891,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#GoogleDriveConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#GoogleDriveInputNickname').val(temp[obj].NickName);
                 $('#GoogleDriveInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -905,7 +905,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SlackConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#SlackInputNickname').val(temp[obj].NickName);
                 $('#SlackInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -918,7 +918,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#facebookConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id == INt_conf_id) {
+            if (temp[obj].Id === INt_conf_id) {
                 $('#facebookInputNickname').val(temp[obj].NickName);
                 $('#facebookInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -929,8 +929,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.VerticalTab = function (evt, cityName) {
-        var button = $(evt.currentTarget)
-        var datatype = button.text()
+        var button = $(evt.currentTarget);
+        var datatype = button.text();
         var i, tabcontent, tablinks;
         tabcontent = $(".tabcontent");
         for (i = 0; i < tabcontent.length; i++) {
@@ -945,8 +945,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     };
 
     this.AllInputClear = function (e) {
-        $(".Inputclear").val("")
-        $(".IntConfId").val("0")
+        $(".Inputclear").val("");
+        $(".IntConfId").val("0");
         //$(".InputclearIsSSL").attr('checked', false);
     };
 
@@ -1093,8 +1093,8 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                           <h6>${temp[i].CreatedOn}</h6>
                                      </div>
                                  </div>
-                             </div >`)
-            $(`#All_IntreationConfig_bodyflex`).append($html)
+                             </div >`);
+            $(`#All_IntreationConfig_bodyflex`).append($html);
         }
         $(`#All_IntreationConfig_footer`).empty();
         let $html1 = $(`<button data-name="${which}" class="ebbtn eb_btngreen eb_btn-sm pull-right EditorModalcaller">
@@ -1106,25 +1106,25 @@ var SolutionDashBoard = function (connections, sid, versioning) {
 
     this.getType = function (type) {
         let html = [];
-        if (type == "PGSQL") {
+        if (type === "PGSQL") {
             html.push('<img class="img-responsive" src="../images/postgres.png" align="middle" style="height:50px" />');
-        } else if (type == "MYSQL") {
+        } else if (type === "MYSQL") {
             html.push('<img class="img-responsive" src="../images/mysql.png" align="middle" style="height: 50px;" />');
-        } else if (type == "ORACLE") {
+        } else if (type === "ORACLE") {
             html.push('<img class="img-responsive" src="../images/oracle.png" style="height: 50px;" />');
-        } else if (type == "MSSQL") {
+        } else if (type === "MSSQL") {
             html.push('<img class="img-responsive" src="../images/sqlserver.png" style="height: 50px;" />');
-        } else if (type == "MongoDB") {
+        } else if (type === "MongoDB") {
             html.push('<img class="img-responsive" src="../images/mongodb.png" style="height: 50px;" />');
-        } else if (type == "Cloudinary") {
+        } else if (type === "Cloudinary") {
             html.push('<img class="img-responsive" src="../images/cloudnary.png" style="height: 25px;" />');
-        } else if (type == "SMTP") {
+        } else if (type === "SMTP") {
             html.push('<img class="img-responsive" src="../images/svg/email.svg" style="height:50px" />');
-        } else if (type == "Twilio") {
+        } else if (type === "Twilio") {
             html.push('<img class="img-responsive" src="../images/twilio.png" style="height: 50px;" />');
-        } else if (type == "ExpertTexting"){
+        } else if (type === "ExpertTexting") {
             html.push('<img class="img-responsive" src="../images/expert_exting.png" style="height: 35px;" />');
-        } else if (type == "TextLocal"){
+        } else if (type === "TextLocal") {
             html.push('<img class="img-responsive" src="../images/textlocal_logo.png" style="height: 35px;" />');
         }
         return html.join("");
@@ -1133,19 +1133,19 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     this.AllEditorOpen = function (e) {
         let temp = e;
         let which = $(temp.currentTarget).attr("data-name");
-        if (which == "PGSQL" || which == "MYSQL" || which == "MSSQL" || which == "ORACLE") {
+        if (which === "PGSQL" || which === "MYSQL" || which === "MSSQL" || which === "ORACLE") {
             $('#dbConnectionEdit').modal('toggle');
-        } else if (which == "MongoDb") {
+        } else if (which === "MongoDb") {
             $('#filesDbConnectEdit').modal('toggle');
-        } else if (which == "Cloudinary") {
+        } else if (which === "Cloudinary") {
             $('#cldnry_conEdit').modal('toggle');
-        } else if (which == "SMTP") {
+        } else if (which === "SMTP") {
             $('#EmailconnectionEdit').modal('toggle');
-        } else if (which == "Twilio") {
+        } else if (which === "Twilio") {
             $('#TwilioConnectionEdit').modal('toggle');
-        } else if (which == "ExpertTexting") {
+        } else if (which === "ExpertTexting") {
             $('#ExpertTextingConnectionEdit').modal('toggle');
-        } else if (which == "TextLocal") {
+        } else if (which === "TextLocal") {
             $('#TextLocalConnectionEdit').modal('toggle');
         }
     };
@@ -1162,10 +1162,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         var id = $(options.$trigger).attr("id");
                         var dt = $(options.$trigger).attr("data-whatever");
                         conf_NN = $(options.$trigger).attr("conf_NN");
-                        if (key == "Edit") {
+                        if (key === "Edit") {
                             this.credientialBot(id, dt);
                         }
-                        else if (key == "Delete") {
+                        else if (key === "Delete") {
                             EbDialog("show",
                                 {
                                     Message: "The " + conf_NN + " info will be permanently removed ",
@@ -1182,7 +1182,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                         }
                                     },
                                     CallBack: function (name) {
-                                        if (name == "Confirm")
+                                        if (name === "Confirm")
                                             this.IntergrationConfigDelete(posData = { "Id": id });
                                     }.bind(this)
                                 });
@@ -1190,13 +1190,13 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         else {
                             var flag = 0;
                             $.each(temp, function (i) {
-                                if (temp[i].ConfId == id) {
+                                if (temp[i].ConfId === id) {
                                     flag = 1;
                                 }
                             }.bind(this));
-                            if (flag == 0) {
-                                postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id }
-                                if (key == "EbDATA" && temp == undefined) {
+                            if (flag === 0) {
+                                postData = { "SolutionId": this.Sid, "Preference": "PRIMARY", "Id": 0, "Type": key, "ConfigId": id };
+                                if (key === "EbDATA" && temp === undefined) {
                                     EbDialog("show",
                                         {
                                             Message: "Do you wanna deploy in " + conf_NN,
@@ -1213,7 +1213,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                                 }
                                             },
                                             CallBack: function (name) {
-                                                if (name == "Confirm")
+                                                if (name === "Confirm")
                                                     this.IntegrationSubmit(true);
                                                 else {
                                                     this.IntegrationSubmit(false);
@@ -1221,34 +1221,34 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                             }.bind(this)
                                         });
                                 }
-                                else if (temp == undefined) {
+                                else if (temp === undefined) {
                                     this.IntegrationSubmit(false);
                                 }
-                                else if (key == "SMS" || key == "SMTP") {
-                                    if (temp.length == 1) {
+                                else if (key === "SMS" || key === "SMTP") {
+                                    if (temp.length === 1) {
                                         $.each(temp, function (i) {
-                                            if (temp[i].Preference == 1) {
+                                            if (temp[i].Preference === 1) {
                                                 postData.Preference = "FALLBACK";
                                             }
                                         }.bind(this));
                                         this.IntegrationSubmit();
                                     }
-                                    else if (temp.length == 0) {
+                                    else if (temp.length === 0) {
                                         this.IntegrationSubmit();
                                     }
                                     else {
                                         EbMessage("show", { Message: "Please delete existing account and try again", Background: "red" });
                                     }
                                 }
-                                else if (key == "EbFILES" || key == "MAPS" || key == "Chat") {
+                                else if (key === "EbFILES" || key === "MAPS" || key === "Chat") {
                                     $.each(temp, function (i) {
-                                        if (temp[i].Preference == 1) {
+                                        if (temp[i].Preference === 1) {
                                             postData.Preference = "OTHER";
                                         }
                                     }.bind(this));
                                     this.IntegrationSubmit();
                                 }
-                                else if (key == "AUTHENTICATION") {
+                                else if (key === "AUTHENTICATION") {
                                     postData.Preference = "MULTIPLE";
                                     this.IntegrationSubmit();
                                 }
@@ -1365,13 +1365,13 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
-                if (preventContextMenu == 0)
+                if (preventContextMenu === 0)
                     return options;
             }.bind(this)
         });
         $('.context-menu-one').on('click', function (e) {
             console.log('clicked', this);
-        })
+        });
 
         $.contextMenu({
             selector: '.integrationContainer',
@@ -1385,7 +1385,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         var id = $(options.$trigger).attr("id");
                         var confid = $(options.$trigger).attr("dataConffId");
                         conf_NN = $(options.$trigger).attr("conf_NN");
-                        if (key == "Remove") {
+                        if (key === "Remove") {
                             EbDialog("show", {
                                 Message: "The " + conf_NN + " will be removed !!!",
                                 Buttons: {
@@ -1401,53 +1401,53 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                     }
                                 },
                                 CallBack: function (name) {
-                                    if (name == "Confirm") {
+                                    if (name === "Confirm") {
                                         this.IntergrationDelete(posData = { "Id": id });
                                     }
 
                                 }.bind(this)
                             });
                         }
-                        else if (key == "PRIMARY") {
+                        else if (key === "PRIMARY") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
-                                if (temp[i].Preference == "2") {
+                                if (temp[i].Preference === "2") {
                                     postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: confid };
                                 }
                                 else {
                                     postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
-                                preferancetype.push(postData)
+                                preferancetype.push(postData);
                             }
                             this.PreferencesChange();
                         }
-                        else if (key == "FALLBACK") {
+                        else if (key === "FALLBACK") {
                             preferancetype = [];
-                            for (var i = 0, n = temp.length; i < n; i++) {
-                                if (temp[i].Preference == "1") {
+                            for (let i = 0, n = temp.length; i < n; i++) {
+                                if (temp[i].Preference === "1") {
                                     postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: id, Type: dt, ConfigId: confid };
                                 }
                                 else {
                                     postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
-                                preferancetype.push(postData)
+                                preferancetype.push(postData);
                             }
                             this.PreferencesChange();
                         }
-                        else if (key == "RemoveDefault") {
+                        else if (key === "RemoveDefault") {
                             preferancetype = [];
-                            for (var i = 0, n = temp.length; i < n; i++) {
-                                if (temp[i].Id == id) {
+                            for (let i = 0, n = temp.length; i < n; i++) {
+                                if (temp[i].Id === id) {
                                     postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
-                                else if (temp[i].Preference == "1") {
+                                else if (temp[i].Preference === "1") {
                                     postData = { SolutionId: this.Sid, Preference: "OTHER", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
-                                preferancetype.push(postData)
+                                preferancetype.push(postData);
                             }
                             this.PreferencesChange();
                         }
-                        else if (key == "RemoveP") {
+                        else if (key === "RemoveP") {
                             EbDialog("show", {
                                 Message: "The " + conf_NN + " will be removed. Fallback will be set as PRIMARY !!! ",
                                 Buttons: {
@@ -1463,13 +1463,13 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                     }
                                 },
                                 CallBack: function (name) {
-                                    if (name == "Confirm") {
+                                    if (name === "Confirm") {
                                         for (var i = 0, n = temp.length; i < n; i++) {
-                                            if (temp[i].Preference == "2" || temp[i].Preference == "3") {
+                                            if (temp[i].Preference === "2" || temp[i].Preference === "3") {
                                                 postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                             }
                                             else {
-                                                postData = {}
+                                                postData = {};
                                                 Deleteid = id;
                                             }
                                         }
@@ -1483,11 +1483,11 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 };
 
                 if ($trigger.hasClass('EbDATAedit')) {
-                    options.items.Remove = { name: "Unset" }
+                    options.items.Remove = { name: "Unset" };
 
                 } else if ($trigger.hasClass('EbFILESedit 3')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.RemoveDefault = { name: "Set as Default" }
+                        options.items.RemoveDefault = { name: "Set as Default" };
 
                 } else if ($trigger.hasClass('EbFILESedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
@@ -1496,10 +1496,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 // this references the trigger element
                                 return !this.data('cutDisabled');
                             }
-                        }
+                        };
                 } else if ($trigger.hasClass('Chatedit 3')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.RemoveDefault = { name: "Set as Default" }
+                        options.items.RemoveDefault = { name: "Set as Default" };
 
                 } else if ($trigger.hasClass('Chatedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
@@ -1508,32 +1508,32 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 // this references the trigger element
                                 return !this.data('cutDisabled');
                             }
-                        }
+                        };
 
                 } else if ($trigger.hasClass('SMTPedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
-                        options.items.FALLBACK = { name: "Set as FALLBACK" }
+                        options.items.FALLBACK = { name: "Set as FALLBACK" };
 
                 } else if ($trigger.hasClass('SMTPedit 2')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.PRIMARY = { name: "Set as PRIMARY" }
+                        options.items.PRIMARY = { name: "Set as PRIMARY" };
 
                 } else if ($trigger.hasClass('Cloudinaryedit')) {
-                    options.items.Remove = { name: "Unset" }
+                    options.items.Remove = { name: "Unset" };
 
                 } else if ($trigger.hasClass('Cloudinaryedit')) {
-                    options.items.Remove = { name: "Unset" }
+                    options.items.Remove = { name: "Unset" };
 
                 } else if ($trigger.hasClass('SMSedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
-                        options.items.FALLBACK = { name: "Set as FALLBACK" }
+                        options.items.FALLBACK = { name: "Set as FALLBACK" };
 
                 } else if ($trigger.hasClass('SMSedit 2')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.PRIMARY = { name: "Set as PRIMARY" }
+                        options.items.PRIMARY = { name: "Set as PRIMARY" };
                 } else if ($trigger.hasClass('MAPSedit 3')) {
                     options.items.Remove = { name: "Unset" },
-                        options.items.RemoveDefault = { name: "Set as Default" }
+                        options.items.RemoveDefault = { name: "Set as Default" };
 
                 } else if ($trigger.hasClass('MAPSedit 1')) {
                     options.items.RemoveP = { name: "Unset" },
@@ -1542,18 +1542,18 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 // this references the trigger element
                                 return !this.data('cutDisabled');
                             }
-                        }
+                        };
 
                 } else if ($trigger.hasClass('AUTHENTICATIONedit 1')) {
-                    options.items.Remove = {name: "Unset"}
+                    options.items.Remove = { name: "Unset" };
                 }
-                if (preventContextMenu == 0)
+                if (preventContextMenu === 0)
                     return options;
             }.bind(this)
         });
         $('.context-menu-one').on('click', function (e) {
             console.log('clicked', this);
-        })
+        });
     };
 
     this.integration_EbData_all = function () {
@@ -1562,7 +1562,6 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         Integrations = this.Connections.Integrations["EbDATA"];
         $("#EbDATA-All").empty();
         $.each(Integrations, function (i, rows) {
-            //$.each(rows, function (j, rowss) {
             html.push(`<div class="integrationContainer ${rows.Type.concat("edit")}" conf_NN="${rows.NickName}" data-whatever="${rows.Type}" id="${rows.Id}">
                                 <div class="integrationContainer_Image">
                                     ${Imageurl[rows.Ctype]}
@@ -1573,7 +1572,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 <div id="nm" class="integrationContainer_caret-down">
                                     <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </div>
-                            </div>`)
+                            </div>`);
             html.join("");
             count += 1;
         }.bind(this));
@@ -1594,14 +1593,14 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
-            if (rows.Preference == "1") {
+            if (rows.Preference === "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
             html.push(`</div>
                                     <div id="nm" class="inteConfContainer_caret-down ">
                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </div>
-                          </div>`)
+                          </div>`);
             count += 1;
         }.bind(this));
         $('#EbFILES-All').empty().append(html.join(''));
@@ -1621,7 +1620,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
-            if (rows.Preference == "1") {
+            if (rows.Preference === "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
             else {
@@ -1631,7 +1630,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                     <div id="nm" class="inteConfContainer_caret-down ">
                                         <i class="fa fa-caret-down" aria-hidden="true"></i>
                                     </div>
-                          </div>`)
+                          </div>`);
             count += 1;
         }.bind(this));
         $('#SMTP-All').empty().append(html.join(''));
@@ -1655,7 +1654,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="inteConfContainer_caret-down ">
                                 <i class="fa fa-caret-down" aria-hidden="true"></i>
                             </div>
-                        </div>`)
+                        </div>`);
             count += 1;
         }.bind(this));
         $('#Cloudinary-all').empty().append(html.join(''));
@@ -1675,7 +1674,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference == "1") {
+            if (rows.Preference === "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
             else {
@@ -1686,7 +1685,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="inteConfContainer_caret-down ">
                                 <i class="fa fa-caret-down" aria-hidden="true"></i>
                             </div>
-                        </div>`)
+                        </div>`);
             count += 1;
         }.bind(this));
         $('#SMS-all').empty().append(html.join(''));
@@ -1706,7 +1705,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference == "1") {
+            if (rows.Preference === "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
 
@@ -1715,7 +1714,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="inteConfContainer_caret-down ">
                                 <i class="fa fa-caret-down" aria-hidden="true"></i>
                             </div>
-                        </div>`)
+                        </div>`);
             count += 1;
         }.bind(this));
         $('#MAP-all').empty().append(html.join(''));
@@ -1735,7 +1734,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference == "1") {
+            if (rows.Preference === "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
 
@@ -1744,7 +1743,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="inteConfContainer_caret-down ">
                                 <i class="fa fa-caret-down" aria-hidden="true"></i>
                             </div>
-                        </div>`)
+                        </div>`);
             count += 1;
         }.bind(this));
         $('#ICHAT-all').empty().append(html.join(''));
@@ -1764,7 +1763,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference == "1") {
+            if (rows.Preference === "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
 
@@ -1773,7 +1772,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="inteConfContainer_caret-down ">
                                 <i class="fa fa-caret-down" aria-hidden="true"></i>
                             </div>
-                        </div>`)
+                        </div>`);
             count += 1;
         }.bind(this));
         $('#AUTHENTICATION-all').empty().append(html.join(''));
@@ -1796,7 +1795,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 <div id="nm" class="inteConfContainer_caret-down ">
                                     <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </div>
-                             </div > `)
+                             </div > `);
                 html.join("");
                 count += 1;
             }.bind(this));
@@ -1831,11 +1830,11 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         $("#dbvendorInput").val(DatabaseName);
         $("#dbConnectionheader").text(DatabaseName + " DataBase Connection");
         $("#vender-data-holder").empty().append(venderdec[DatabaseName]);
-    }
+    };
 
     this.VersioningSwitch = function (e) {
         postData = e.target.checked;
-        SolutionId = e.target.attributes.solutionid.nodeValue;
+        SolutionId = this.Sid;
         if (this.Connections.SolutionInfo.IsVersioningEnabled) {
             if (!$('#VersioningSwitch').is(':checked')) {
                 $("#VersioningSwitch").bootstrapToggle('on');
@@ -1850,7 +1849,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             }
                         }
                     });
-            }                
+            }
         }
         else {
             EbDialog("show",
@@ -1869,7 +1868,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         }
                     },
                     CallBack: function (name) {
-                        if (name == "Confirm") {
+                        if (name === "Confirm") {
                             $.ajax({
                                 type: 'POST',
                                 url: "../Tenant/VersioningSwitch",
@@ -1882,12 +1881,12 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 if (data) {
                                     this.Connections.SolutionInfo.IsVersioningEnabled = 'True';
                                     EbMessage("show", { Message: "Versioning : On" });
-                                }                                    
+                                }
 
                             }.bind(this));
 
                         }
-                        else if (name == "Cancel" || name == "close") {
+                        else if (name === "Cancel" || name === "close") {
                             $("#VersioningSwitch").bootstrapToggle('off');
                         }
                     }
@@ -1895,22 +1894,81 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
     };
 
+    this.TwoFASwitch = function (e) {
+        var postData = e.target.checked;
+        let msg = "Are you sure you want to turn ON Two Factor Authentication?"; 
+        SolutionId = this.Sid;
+
+        if (this.Connections.SolutionInfo.Is2faEnabled)  
+            msg = "Are you sure you want to turn OFF Two Factor Authentication?"; 
+        EbDialog("show",
+            {
+                Message: msg,
+                Buttons: {
+                    "Confirm": {
+                        Background: "green",
+                        Align: "right",
+                        FontColor: "white;"
+                    },
+                    "Cancel": {
+                        Background: "red",
+                        Align: "left",
+                        FontColor: "white;"
+                    }
+                },
+                CallBack: function (name) {
+                    if (name === "Confirm") {
+                        $.ajax({
+                            type: 'POST',
+                            url: "../Tenant/Switch2FA",
+                            data: { data: postData, SolnId: SolutionId }
+
+                        }).done(function (data) {
+                            let _data = JSON.parse(data);
+                            if (_data.res) {
+                                this.Connections.SolutionInfo.Is2faEnabled = postData;
+                                if (postData)
+                                    EbMessage("show", { Message: "Two factor authentication turned ON" });
+                                else
+                                    EbMessage("show", { Message: "Two factor authentication turned OFF" });
+                            } else {//error case
+                                //if (postData)
+                                //    $("#2faSwitch").bootstrapToggle('off');
+                                //else
+                                //    $("#2faSwitch").bootstrapToggle('on');
+                                EbMessage("show", {
+                                    Message: "Something went wrong. Please try again", Background: "red"
+                                });
+                            }
+                        }.bind(this));
+                    }
+                    else if (name === "Cancel" || name === "close") {
+                        $("#2faSwitch").bootstrapToggle('off');
+                    }
+                }.bind(this)
+            }); 
+    };
+
     this.SMTPautoFill = function (e) {
         var target = e.target.options.selectedIndex;
-        if (target == 0) {
+        if (target === 0) {
             $('#EmailInputSMTP').val("smtp.gmail.com");
-        } else if (target == 1) {
+        } else if (target === 1) {
             $('#EmailInputSMTP').val("smtp.mail.yahoo.com");
         }
         $('#EmailInputPort').val("587");
     }.bind(this);
 
-    this.init = function () {        
+    this.init = function () {
         if (this.versioning === 'True') {
-            $("#VersioningSwitch").bootstrapToggle('on');            
+            $("#VersioningSwitch").bootstrapToggle('on');
+        }
+        if (this.Connections.SolutionInfo.Is2faEnabled) {
+            $("#2faSwitch").bootstrapToggle('on');
         }
         $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
+        $("#2faSwitch").change(this.TwoFASwitch.bind(this));
         $("#GoogleDriveInputJSONUpload").change(this.getgoogledrivefile.bind(this));
         $("#IntegrationSubmit").on("submit", this.IntegrationSubmit.bind(this));
         $("#dbConnectionSubmit").on("submit", this.dbconnectionsubmit.bind(this));
@@ -1941,7 +1999,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 $(e.target).val(false);
         });
         $('.db-type-set').on("click", function (e) {
-            var DatabaseName = $(e.currentTarget).attr("data-whatever")
+            var DatabaseName = $(e.currentTarget).attr("data-whatever");
             this.db_modal_show_append(DatabaseName);
         }.bind(this));
         $('.input-clear ').on('show.bs.modal', function (event) {

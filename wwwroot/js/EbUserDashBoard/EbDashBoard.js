@@ -15,7 +15,7 @@ var DashBoardWrapper = function (options) {
     this.Cid = options.Cid;
     this.TileCollection = {};
     this.CurrentTile;
-    this.CurrentRefid;
+    this.CurrentRefid;  
     this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
@@ -633,10 +633,13 @@ var DashBoardWrapper = function (options) {
             grid.removeAll();
             this.DrawTiles();
         }
-        else {
+        else if (this.EbObject.Filter_Dialogue !== "") {
             this.getColumns();
             if (this.EbObject.Tiles.$values.length == 0)
                 $(".dash-loader").hide();
+        }
+        else {
+            $(".dash-loader").hide();
         }
         
 
@@ -721,6 +724,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.DrawTiles = function () {
+        grid.removeAll();
         //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         //$(".component_cont .nav").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         Eb_Dashboard_Bg(this.EbObject);
@@ -777,6 +781,7 @@ var DashBoardWrapper = function (options) {
 
                 }
                 else {
+                    $(".dash-loader").hide();
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
                     $(`#${t_id}`).attr("eb-type", "gauge");
@@ -1277,7 +1282,9 @@ var DashBoardWrapper = function (options) {
 
 
     this.GetFilterValues = function () {
-        $(".dash-loader").show();
+        if (this.EbObject.Tiles.$values.length !== 0) {
+            $(".dash-loader").show();
+        }        
         this.filtervalues = [];
         if (this.stickBtn) { this.stickBtn.minimise(); }
 
@@ -1295,7 +1302,6 @@ var DashBoardWrapper = function (options) {
             CtrlCounters.DataLabelCounter = 0;
             CtrlCounters.DataObjectCounter = 0;
             //this.DrawTiles();
-            grid.removeAll();
             setTimeout(this.DrawTiles.bind(this), 500);
         }
 

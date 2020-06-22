@@ -1148,6 +1148,8 @@
             type = "ObjectBasicForm";
         else if (parseInt(type) === EbObjectTypes.Report)
             type = "ObjectBasicReport";
+        else if (parseInt(type) === EbObjectTypes.SmsBuilder)
+            type = "ObjectBasicSMS";
         else
             type = "ObjectBasicVis";
         //this.loadPG($e, name);

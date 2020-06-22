@@ -699,7 +699,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
     this.DBinteConfEditr = function (data, INt_conf_id, dt) {
         var temp = this.Connections.IntegrationsConfig[dt];
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
                 $('#dbConnectionEdit').modal('toggle');
                 $('#dbvendorInput').val(temp[obj].Type);
@@ -725,7 +725,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#filesDbConnectEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 //$('#dbvendorInput').val(temp[obj].DatabaseVendor);
                 $('#FilesInputNickname').val(temp[obj].NickName);
                 $('#FilesInputIntConfId').val(temp[obj].Id);
@@ -744,7 +744,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#cldnry_conEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#CloudnaryInputNickname').val(temp[obj].NickName);
                 $('#CloudnaryInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -760,7 +760,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#EmailconnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#EmailInputNickname').val(temp[obj].NickName);
                 $('#SMTPInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -778,7 +778,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#UnifonicConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#UnifonicInputNickname').val(temp[obj].NickName);
                 $('#UnifonicInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -793,7 +793,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TwilioConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#TwilioInputNickname').val(temp[obj].NickName);
                 $('#TwilioInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -808,7 +808,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#ExpertTextingConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#ExpertInputNickname').val(temp[obj].NickName);
                 $('#ExpertInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -824,7 +824,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#TextLocalConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#TextLocalInputNickname').val(temp[obj].NickName);
                 $('#TextLocalInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -838,7 +838,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#MapConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#MapInputNickname').val(temp[obj].NickName);
                 $('#MapInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -850,7 +850,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#DropBoxConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#DropBoxInputNickname').val(temp[obj].NickName);
                 $('#DropBoxInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -862,7 +862,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#AWSS3ConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#AWSS3InputNickname').val(temp[obj].NickName);
                 $('#AWSS3InputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -877,7 +877,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SentGridConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#SendGridInputNickname').val(temp[obj].NickName);
                 $('#SendGridInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -891,7 +891,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#GoogleDriveConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#GoogleDriveInputNickname').val(temp[obj].NickName);
                 $('#GoogleDriveInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -905,7 +905,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#SlackConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#SlackInputNickname').val(temp[obj].NickName);
                 $('#SlackInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -918,7 +918,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         var temp = this.Connections.IntegrationsConfig[dt];
         $('#facebookConnectionEdit').modal('toggle');
         for (var obj in temp) {
-            if (temp[obj].Id === INt_conf_id) {
+            if (temp[obj].Id == INt_conf_id) {
                 $('#facebookInputNickname').val(temp[obj].NickName);
                 $('#facebookInputIntConfId').val(temp[obj].Id);
                 var temp1 = JSON.parse(JSON.parse(data).ConnObj);
@@ -1227,7 +1227,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 else if (key === "SMS" || key === "SMTP") {
                                     if (temp.length === 1) {
                                         $.each(temp, function (i) {
-                                            if (temp[i].Preference === 1) {
+                                            if (temp[i].Preference == 1) {
                                                 postData.Preference = "FALLBACK";
                                             }
                                         }.bind(this));
@@ -1242,7 +1242,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                                 }
                                 else if (key === "EbFILES" || key === "MAPS" || key === "Chat") {
                                     $.each(temp, function (i) {
-                                        if (temp[i].Preference === 1) {
+                                        if (temp[i].Preference == 1) {
                                             postData.Preference = "OTHER";
                                         }
                                     }.bind(this));
@@ -1365,7 +1365,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         options.items.Delete = { name: "Remove" },
                         options.items.Edit = { name: "Edit" };
                 }
-                if (preventContextMenu === 0)
+                if (preventContextMenu == 0)
                     return options;
             }.bind(this)
         });
@@ -1411,7 +1411,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         else if (key === "PRIMARY") {
                             preferancetype = [];
                             for (var i = 0, n = temp.length; i < n; i++) {
-                                if (temp[i].Preference === "2") {
+                                if (temp[i].Preference == "2") {
                                     postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: confid };
                                 }
                                 else {
@@ -1424,7 +1424,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         else if (key === "FALLBACK") {
                             preferancetype = [];
                             for (let i = 0, n = temp.length; i < n; i++) {
-                                if (temp[i].Preference === "1") {
+                                if (temp[i].Preference == "1") {
                                     postData = { SolutionId: this.Sid, Preference: "FALLBACK", Id: id, Type: dt, ConfigId: confid };
                                 }
                                 else {
@@ -1437,10 +1437,10 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         else if (key === "RemoveDefault") {
                             preferancetype = [];
                             for (let i = 0, n = temp.length; i < n; i++) {
-                                if (temp[i].Id === id) {
+                                if (temp[i].Id == id) {
                                     postData = { SolutionId: this.Sid, Preference: "PRIMARY", Id: id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
-                                else if (temp[i].Preference === "1") {
+                                else if (temp[i].Preference == "1") {
                                     postData = { SolutionId: this.Sid, Preference: "OTHER", Id: temp[i].Id, Type: dt, ConfigId: temp[i].ConfId };
                                 }
                                 preferancetype.push(postData);
@@ -1593,7 +1593,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
-            if (rows.Preference === "1") {
+            if (rows.Preference == "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
             html.push(`</div>
@@ -1620,7 +1620,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                             `);
-            if (rows.Preference === "1") {
+            if (rows.Preference == "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
             else {
@@ -1674,7 +1674,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference === "1") {
+            if (rows.Preference == "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
             else {
@@ -1705,7 +1705,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference === "1") {
+            if (rows.Preference == "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
 
@@ -1734,7 +1734,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference === "1") {
+            if (rows.Preference == "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
 
@@ -1763,7 +1763,7 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                             <div id="nm" class="integrationContainer_NN" data-toggle="tooltip" data-placement="top" title="NickName: ${rows.NickName} \nUpdated on: ${rows.CreatedOn}">
                                 <span>${rows.NickName}</span>
                                 `);
-            if (rows.Preference === "1") {
+            if (rows.Preference == "1") {
                 html.push(`<span  class="PF_span">PRIMARY</span>`);
             }
 

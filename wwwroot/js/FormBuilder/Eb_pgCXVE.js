@@ -373,6 +373,7 @@
     };
 
     this.CEHelper = function (sourceProp) {
+        this.Dprop = this.CurMeta.Dprop;
         let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };

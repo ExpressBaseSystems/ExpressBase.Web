@@ -127,7 +127,7 @@
 /*.tenant_sidebar {
     width: 100px;
 }*/
-    /*.tenant_sidebar .t-container {
+/*.tenant_sidebar .t-container {
         padding-top: 0 !important;
     }*/
 
@@ -188,6 +188,7 @@
     position: relative;
     /*width: 50%;*/
 }
+
 .eb-sdash-team-container {
     margin-top: 100px;
     font-size: 25px;
@@ -214,15 +215,16 @@
     justify-content: center;
     align-items: center;
 }
-    .image-add img{
-        width:35px;
-        height:35px;
+
+    .image-add img {
+        width: 35px;
+        height: 35px;
     }
 
-    .connection_wrap_outer:hover .image-add {
-        opacity: .75;
-        z-index: 100;
-    }
+.connection_wrap_outer:hover .image-add {
+    opacity: .75;
+    z-index: 100;
+}
 /*.connection_wrap_outer:hover .image-vender {
         opacity: 1;
     }*/
@@ -272,7 +274,7 @@
         display: flex;
         margin: auto;
         min-height: 110px;
-        position:relative;
+        position: relative;
     }
 
 .vend_img {
@@ -293,24 +295,29 @@
 
 .connection-vender-desp {
     padding: 15px;
-    text-align:center;
+    text-align: center;
 }
+
 .eb-db-cred-sec {
     background: #ffffff;
     border-radius: 4px;
     border: 1px solid #ccc;
     padding: 5px;
 }
+
 .eb-inputWicon {
     padding-left: 15px;
     padding-bottom: 5px;
 }
-.eb-inputWicon input{
-    border-right:none !important;
-}
+
+    .eb-inputWicon input {
+        border-right: none !important;
+    }
+
     .eb-inputWicon .input-group-addon {
         background: white;
     }
+
 .connection-data-holder {
     width: 75%;
     padding: 15px;
@@ -318,9 +325,10 @@
     border-radius: 6px;
     border: 1px solid #ccc;
 }
-.connection-data-holder label{
-    font-weight:500;
-}
+
+    .connection-data-holder label {
+        font-weight: 500;
+    }
 
 .table-boarder-remover tr, .table-boarder-remover td, .table-boarder-remover th {
     border-style: none !important;
@@ -331,6 +339,7 @@
     border-radius: 4px;
     -o-transition: none;
 }
+
 .inteConfContainer {
     width: 23%;
     height: 73px;
@@ -347,6 +356,7 @@
     background-color: white;
     border-radius: 4px;
 }
+
     .inteConfContainer:hover {
         background-color: #f2f2f299;
     }
@@ -377,6 +387,7 @@
     transform: scale(2);
     transition: all .75s;
 }
+
 .integrationbody {
     font-size: 14px;
 }
@@ -428,6 +439,7 @@
     width: 4%;
     margin: auto;
 }
+
 .eb-sdash-general-container .eb-sdash-longdivcontainer {
     border: 1px solid #ccc;
     border-radius: 6px;
@@ -509,24 +521,29 @@
 
 .icon-random-1 {
     background: #eaf7f9;
-    color:#3bb1cd;
+    color: #3bb1cd;
 }
+
 .icon-random-2 {
     background: #fef0f2;
     color: #ef7c93;
 }
+
 .icon-random-3 {
     background: #fcf4ec;
     color: #e0a14e;
 }
+
 .icon-random-4 {
     background: #fdf0fb;
     color: #e364d0;
 }
+
 .icon-random-5 {
     background: #f2f4f6;
     color: #8da2b2;
 }
+
 .icon-random-6 {
     background: #eef2fe;
     color: #5a8ff4;
@@ -602,6 +619,7 @@
     height: 100%;
     z-index: 1000;
 }
+
     .loc_switchModal .cls_locmdl {
         position: absolute;
         top: 10px;
@@ -609,9 +627,10 @@
         font-size: 20px;
         cursor: pointer;
     }
-    .display-flex {
-        display: flex;
-    }
+
+.display-flex {
+    display: flex;
+}
 
 .loc_switchModal_box {
     background: white;
@@ -637,7 +656,7 @@
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     border-bottom: 1px solid #e2e0e0;
-    position:relative;
+    position: relative;
 }
     /*new loc window styles*/
     .loc_switchModal_box .locs_head .loc_searchInput {
@@ -728,6 +747,7 @@
     overflow-y: auto;
     min-height: 50vh;
 }
+
     .loc_switchModal_box .locs_bdy li.active-loc a:first-child {
         background-color: #e5f5f3;
     }
@@ -874,7 +894,7 @@ pd-10 {
     list-style: none;
 }*/
 
-    /*.eb-dashbord-sidebar .outer_li {
+/*.eb-dashbord-sidebar .outer_li {
         border-radius: 0 !important;
         border: none !important;
         font-weight: 400;
@@ -895,61 +915,74 @@ pd-10 {
     display: flex;
     padding: 0 3px;
 }
-.raw-objectTypeWrprBlk{
-    display:none;
+
+.raw-objectTypeWrprBlk {
+    display: none;
 }
-.raw-objectTypeWrprBlk:first-child {
-    display: block;
-}
+
+    .raw-objectTypeWrprBlk:first-child {
+        display: block;
+    }
+
 .raw-obj-container .sidebar-objtypes {
     padding-right: 10px;
 }
+
 .raw-objectTypeWrpr {
     display: flex;
     flex-flow: row wrap;
 }
+
 .raw-object-pane {
     border: 1px solid #ccc;
     padding: 0;
     border-radius: 4px;
     background: #f2f2f2;
 }
+
 .active_type {
     background: #4987fb;
 }
+
     .active_type a {
         color: white !important;
     }
+
         .active_type a:after {
             font-family: FontAwesome;
             content: "\f178";
             float: right;
         }
-    .obj_linkthumb {
-        width: 33.3%;
-        position: relative;
-    }
+
+.obj_linkthumb {
+    width: 33.3%;
+    position: relative;
+}
+
     .obj_linkthumb .obj_link {
-       
     }
+
 .sidebar-objtypes-listitem {
     padding: 5px 5px;
     font-size: 15px;
     border-radius: 4px;
 }
+
     .sidebar-objtypes-listitem .raw-obj-type {
         color: #333;
-        text-decoration:none;
-        cursor:pointer;
+        text-decoration: none;
+        cursor: pointer;
     }
+
         .sidebar-objtypes-listitem .raw-obj-type .raw-obj-type-icon {
-            width:25px;
+            width: 25px;
         }
+
 .raw-object-pane .empty-objects {
-    position:absolute;
-    width:100%;
-    top:20%;
-    text-align:center;
+    position: absolute;
+    width: 100%;
+    top: 20%;
+    text-align: center;
 }
 
 .appdash_obj_container .label_container {
@@ -991,6 +1024,7 @@ pd-10 {
         border-radius: 2px;
         border: 1px solid #e8e6e6;
     }
+
         .appdash_obj_container .objitems .object_container:hover {
             background-color: #eef9fe;
         }
@@ -1000,17 +1034,21 @@ pd-10 {
     width: 100%;
     color: white;
 }
-.appdash_typedmob_readerWraper{
-    width:50%;
+
+.appdash_typedmob_readerWraper {
+    width: 50%;
 }
+
     .appdash_typedmob_readerWraper .appdash_readerinner {
         border: 1px solid #ccc;
-        padding: 5px;
+        padding: 5px 10px;
         border-radius: 4px;
     }
+
         .appdash_typedmob_readerWraper .appdash_readerinner .import_reftable td {
             padding: 10px 0;
         }
+
         .appdash_typedmob_readerWraper .appdash_readerinner .import_reftable_input {
             width: 80%;
             height: 30px;
@@ -1018,31 +1056,37 @@ pd-10 {
             border: 1px solid #ccc;
             padding: 5px;
         }
+
         .appdash_typedmob_readerWraper .appdash_readerinner .import_reftable .rm_refbtn {
             border-style: none;
             background: transparent;
             font-size: 15px;
         }
+
 .import_data_mdl_mdlbdy {
     display: flex;
     height: 100%;
 }
+
     .import_data_mdl_mdlbdy .import_data_cols_inner {
         border: 1px solid #ccc;
         flex: 1;
         padding: 5px;
     }
-.import_data_mdl_mdlbdy .import_data_cols {
-    height: 100%;
-    display: flex;
-    flex-flow: column;
-}
+
+    .import_data_mdl_mdlbdy .import_data_cols {
+        height: 100%;
+        display: flex;
+        flex-flow: column;
+    }
+
         .import_data_mdl_mdlbdy .import_data_cols .import_obj_expand_objlinks {
             padding: 5px;
             cursor: auto;
             display: flex;
             align-items: center;
         }
+
             .import_data_mdl_mdlbdy .import_data_cols .import_obj_expand_objlinks input[type="checkbox"] {
                 margin: 0;
                 margin-right: 10px;
@@ -1050,6 +1094,41 @@ pd-10 {
                 height: 15px;
                 border-radius: 0;
             }
+
+.import_obj_expand_objlinks:hover {
+    background: #3876ea;
+    color: white;
+    cursor:pointer;
+}
+.import_obj_expand_objlinks.selected {
+    background: #3876ea;
+    color: white;
+}
+/*mobile menu validator api selector*/
+.obj-selector-btn {
+    width: 25px;
+    height: 25px;
+    border: 1px solid #ccc;
+    text-align: center;
+    background: #d6d4d4;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.appdash-mobile-menuvalidator {
+    margin-top: 2em;
+}
+
+    .appdash-mobile-menuvalidator .menuvalidator-inner {
+        border: solid 1px #ccc;
+        padding: 10px;
+        border-radius: 4px;
+        width: 50%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+/*end*/
 /*app dashboard new object modal*/
 .newObjectmdl .eb-newobj-mdlbdy {
     display: flex;
@@ -1077,6 +1156,7 @@ pd-10 {
             background-color: #508bf9;
             color: white;
         }
+
             .newObjectmdl .eb-newobj-mdlbdy .eb-newobjtile-inner:hover.eb-newobj-comingsoon:after {
                 content: "Coming Soon";
                 background: #508bf9;
@@ -1097,6 +1177,7 @@ pd-10 {
             flex-flow: row wrap;
             justify-content: center;
         }
+
     .newObjectmdl .eb-newobj-mdlbdy .eb-newobj-comingsoon:after {
         content: "";
         position: absolute;
@@ -1111,16 +1192,16 @@ pd-10 {
         font-weight: 300;
         pointer-events: none;
     }
-    /*app dashboard new object modal*/
-    /*marker for export*/
-    .ExportMark {
-        position: absolute;
-        right: 15px;
-        top: 15px;
-        border-radius: 0;
-        margin: 0;
-        display: none;
-    }
+/*app dashboard new object modal*/
+/*marker for export*/
+.ExportMark {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    border-radius: 0;
+    margin: 0;
+    display: none;
+}
 
 .appdash_obj_container .objitems .object_container:hover .ExportMark {
     display: block;
@@ -1168,12 +1249,15 @@ pd-10 {
     .appcontainer {
         width: 100%;
     }
+
     .raw-objectTypeWrpr .obj_linkthumb {
-        width:100%;
+        width: 100%;
     }
+
     .appdash_obj_container .raw {
-      flex-direction:column;
+        flex-direction: column;
     }
+
         .appdash_obj_container .raw button, .appdash_obj_container .raw .eb-search-box {
             margin-right: 0 !important;
             margin-bottom: 10px;

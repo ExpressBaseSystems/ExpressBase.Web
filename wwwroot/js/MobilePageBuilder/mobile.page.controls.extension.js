@@ -33,7 +33,8 @@
             },
             setObject: function () { return null; },
             propertyChanged: function (propname) { },
-            blackListProps: []
+            blackListProps: [],
+            refresh: function () { }
         };
 
         $.extend(o, common, window.expandable[constructor] || {});
@@ -216,6 +217,18 @@
                         $(`#${this.EbSid} .eb_mob_numericbox`).show();
                         $(`#${this.EbSid} .eb_mob_numericbox-btntype`).hide();
                     }
+                }
+            }
+        },
+        "EbMobileVisualization": {
+            refresh: function (root) {
+                if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
+                    root.pg.ShowProperty('FormMode');
+                    root.pg.ShowProperty('LinkFormParameters');
+                }
+                else {
+                    root.pg.HideProperty('FormMode');
+                    root.pg.HideProperty('LinkFormParameters');
                 }
             }
         }

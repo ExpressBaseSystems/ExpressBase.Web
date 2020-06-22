@@ -888,6 +888,8 @@ namespace ExpressBase.Web.Controllers
 
                 if (mPage.Container is EbMobileForm)
                 {
+                    info.IsForm = true;
+
                     foreach (EbMobileControl ctrl in (mPage.Container as EbMobileForm).ChildControls)
                     {
                         if (ctrl is INonPersistControl || ctrl is ILinesEnabled)

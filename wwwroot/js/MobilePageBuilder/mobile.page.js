@@ -167,7 +167,9 @@ function EbMobStudio(config) {
     this.ContainerOnClick = function (evt) {
         let div = $(evt.target).closest(".mob_container");
         let type = div.attr("eb-type");
-        this.pg.setObject(this.Procs[div.attr("id")], AllMetas[type]);
+        let o = this.Procs[div.attr("id")];
+        this.pg.setObject(o, AllMetas[type]);
+        o.refresh(this);
     };
 
     this.makeSortable = function (ebsid) {
@@ -218,6 +220,8 @@ function EbMobStudio(config) {
                     console.error("undefined container");
             }
             $(`#${o.EbSid}`).off("click").on("click", this.ContainerOnClick.bind(this));
+            this.pg.setObject(o, AllMetas[ebtype]);
+            o.refresh(this);
         }
     };
 

@@ -83,7 +83,8 @@
 
             this.FilterControls = controlInfo.Controls.$values;
             o.FormControlMetas.$values = controlInfo.ControlMetas.$values;
-
+            o.LinkTypeForm = controlInfo.IsForm;
+            o.refresh(this.Root);
             this.drawFormControls(this.FilterControls);
         }.bind(this));
     };

@@ -7,20 +7,18 @@
     this.AppInfo = appinfo;
     this.EbFontLst = font_lst;
 
-
     this.init = function () {
         if (this.AppType === 3) {
             this.botConfigFn();
             this.BgImageUpload();
-
         }
-       
+
         $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
         $('.resetcss').on('click', this.ResetCssFn.bind(this));
         $('input[name=authtype]').on('click', this.authMethodCheckFn.bind(this));
         $('#grdntmodalbtn').on('click', this.gradientValueChangeFn.bind(this));
-       
-    }
+    };
+
     this.searchObjects = function (e) {
         var srchBody = $(".raw-objectTypeWrprBlk:visible");
         var srch = $(e.target).val().toLowerCase();
@@ -42,7 +40,7 @@
         $(".active_type").removeClass("active_type");
         $(e.target).closest(".sidebar-objtypes-listitem").addClass("active_type");
         $(`#${trigger}`).fadeIn();
-    }
+    };
 
     this.export = function (e) {
         this.ExportCollection.length = 0;
@@ -72,14 +70,39 @@
         form.submit();
     };
 
+    //mobile app
     this.setUpImport4Mob = function () {
         $(".import_obj_link").off("click").on("click", this.objTypeClick.bind(this));
         $("#import_refsave").off("click").on("click", this.getSelRef.bind(this));
-        $("#save_importref").off("click").on("click", this.saveAppSettingsMob.bind(this));
         $("#import_reftable_body").on("click", ".rm_refbtn", this.removeImportRef.bind(this));
         this.setRef();
     };
 
+    //mobile app
+    this.menuApiOnSelect = function (evt) {
+
+        this.AppSettings.MenuApi.RefId = $(evt.target).attr("refid");
+        this.AppSettings.MenuApi.Name = $(evt.target).attr("name");
+        this.AppSettings.MenuApi.DisplayName = $(evt.target).attr("display-name");
+        this.AppSettings.MenuApi.Version = $(evt.target).attr("version");
+
+        var text = `${this.AppSettings.MenuApi.DisplayName} (../${this.AppSettings.MenuApi.Name}/${this.AppSettings.MenuApi.Version}/json)`;
+        $("#menuload-api-meta").text(text);
+        $("#mobile-preloadmenu_mdl").modal("hide");
+    };
+
+    //mobile app
+    this.resetMenuApi = function () {
+        this.AppSettings.MenuApi.RefId = null;
+        this.AppSettings.MenuApi.Name = null;
+        this.AppSettings.MenuApi.DisplayName = null;
+        this.AppSettings.MenuApi.Version = null;
+        $("#menuload-api-meta").text("");
+        $("#mobile-preloadmenu_mdl").modal("hide");
+        $("#mobile-preloadmenu_mdl .import_obj_expand_objlinks").removeClass("selected");
+    };
+
+    //mobile app
     this.objTypeClick = function (evt) {
         let div = $(evt.target).closest(".import_obj_link");
         let target = div.attr("exp-target");
@@ -87,19 +110,22 @@
         $(target).show();
     };
 
+    //mobile app
     this.refExist = function (ref) {
         let coll = this.AppSettings.DataImport.find(e => e.RefId === ref);
         if (coll === undefined || coll === null)
             return false;
         else return true;
-    }
+    };
 
+    //mobile app
     this.getSelRef = function () {
         $(`.import_data_objects`).find(`input[name="importcheckbox"]`).each(function (i, o) {
             if ($(o).is(":checked")) {
                 let ref = $(o).attr("refid");
+                let name = $(o).attr("display-name");
                 if (!this.refExist(ref)) {
-                    let di = { TableName: "", RefId: ref };
+                    let di = { TableName: "", RefId: ref, DisplayName: name };
                     this.AppSettings.DataImport.push(di);
                     this.addRef(di);
                 }
@@ -108,23 +134,17 @@
         $("#import_data_mdl").modal("toggle");
     };
 
+    //mobile app
     this.addRef = function (o) {
         $("#import_reftable_body .empty_tr").hide();
         $("#import_reftable_body").append(`<tr>
                                     <td><input type="text" class="import_reftable_input" value="${o.TableName}" name="${o.RefId}_input"/></td>
-                                    <td>${o.RefId}</td>
+                                    <td>${o.DisplayName}</td>
                                     <td class="text-center"><button class="rm_refbtn" ref="${o.RefId}"><i class="fa fa-close"></i></button></td>
                                 </tr>`);
     };
 
-    this.saveAppSettingsMob = function () {
-        for (let i = 0; i < this.AppSettings.DataImport.length; i++) {
-            this.AppSettings.DataImport[i].TableName = $(`input[name="${this.AppSettings.DataImport[i].RefId}_input"]`).val();
-        }
-        if (this.AppSettings.DataImport.length > 0)
-            this.updateAppsettings();
-    };
-
+    //mobile app
     this.removeImportRef = function (evt) {
         let div = $(evt.target).closest("button");
         let refid = div.attr("ref");
@@ -137,38 +157,58 @@
         $(`input[refid="${refid}"]`).prop("checked", false);
     };
 
+    //common
     this.updateAppsettings = function () {
         $.ajax({
             url: "../Dev/UpdateAppSettingsMob",
             type: 'POST',
+            beforeSend: function () { $("#eb_common_loader").EbLoader("show"); },
             data: {
                 "settings": JSON.stringify(this.AppSettings),
                 "appid": this.AppId,
                 "type": this.AppType
             },
             success: function (result) {
+                $("#eb_common_loader").EbLoader("hide");
                 EbMessage("show", { Message: result.message });
-            }.bind(this)
-        })
+            }.bind(this),
+            error: function () {
+                $("#eb_common_loader").EbLoader("hide");
+            }
+        });
     };
 
+    //mobile app
     this.setRef = function () {
         for (let i = 0; i < this.AppSettings.DataImport.length; i++) {
             $(`input[refid="${this.AppSettings.DataImport[i].RefId}"]`).prop("checked", true);
         }
     };
 
+    ////mobile app
+    this.saveAppSettings = function () {
+        for (let i = 0; i < this.AppSettings.DataImport.length; i++) {
+            this.AppSettings.DataImport[i].TableName = $(`input[name="${this.AppSettings.DataImport[i].RefId}_input"]`).val();
+        }
+        this.updateAppsettings();
+    };
+
     this.start_exe = function () {
         $(".appdash_obj_container").off("keyup").on("keyup", "#obj_search_input", this.searchObjects.bind(this));
         $("#ExportBtn").off("click").on("click", this.export.bind(this));
         $(".sidebar-objtypes-listitem").off("click").on("click", this.expand.bind(this));
+
         if (this.AppType === 2) {
             this.setUpImport4Mob();
+            $("#mobile-preloadmenu_mdl .import_obj_expand_objlinks").on("click", this.menuApiOnSelect.bind(this));
+            $("#save-appsettings-btn").on("click", this.saveAppSettings.bind(this));
+            $("#mobile-preloadmenu_mdl #menu-api-reset").on("click", this.resetMenuApi.bind(this));
         }
-    }
+    };
+
     //for bot
     this.botConfigFn = function (grdnttest) {
-        let grdValue ='linear-gradient(10deg,rgba(27,192,27,0.54),rgba(2,13,8,0.23))';
+        let grdValue = 'linear-gradient(10deg,rgba(27,192,27,0.54),rgba(2,13,8,0.23))';
         let fnthtml = "";
         let cssobj = this.AppSettings.CssContent;
         $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
@@ -181,7 +221,7 @@
         $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
         $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
         $('#ebfont_size').val(this.AppSettings.BotProp.AppFontSize);
-       
+
         if (this.AppSettings.BotProp.Bg_value) {
             if (this.AppSettings.BotProp.Bg_type === 'bg_grdnt') {
                 $("#rdo_bg_grdnt").prop("checked", true);
@@ -215,7 +255,7 @@
             $("#rdo_bg_clr").prop("checked", true);
             $('#bg_clr').show();
         }
-        if (this.EbFontLst.length>0) {
+        if (this.EbFontLst.length > 0) {
             for (let i = 0; i < this.EbFontLst.length; i++) {
                 if (this.AppSettings.BotProp.AppFont === this.EbFontLst[i].CSSFontName) {
                     $('#ebfont_lst :selected').removeAttr('selected');
@@ -224,11 +264,10 @@
                 else {
                     fnthtml += `<option value="${this.EbFontLst[i].CSSFontName}">${this.EbFontLst[i].SystemFontName}</option>`;
                 }
-               
+
             }
             $('#ebfont_lst').append(fnthtml);
         }
-        
 
         for (let property in cssobj) {
 
@@ -245,7 +284,8 @@
                     </div>`;
             $(`#configcssTabContent #${property}`).append(html);
         }
-    }
+    };
+
     this.UpdateBotSettingsFn = function () {
         var appSettings = {};
         let cssConstObj = {};
@@ -279,7 +319,7 @@
         authOptions.FbAppID = $('#fbAppidtxt').val().trim();
         authOptions.FbAppVer = $('#fbAppversn').val().trim();
         authOptions.LoginOpnCount = loginCnt;
-        
+
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
@@ -295,7 +335,7 @@
         } else if (bgtyp === 'bg_img') {
             botProperties.Bg_value = $('#bgImgPreview').attr('imgrefid');
         }
-    
+
         let cssobj = this.AppSettings.CssContent;
         for (let property in cssobj) {
             //let tempobj = {};
@@ -329,7 +369,8 @@
                     EbMessage("show", { Background: "red", Message: "Something went wrong" });
             }
         });
-    }
+    };
+
     this.authMethodCheckFn = function () {
         let authcheck = $("input[name=authtype]:checked").length;
         if (!authcheck) {
@@ -347,7 +388,8 @@
                 return;
             }
         }
-    }
+    };
+
     this.ResetCssFn = function (e) {
         let cssConst = $(e.target).attr('obname');
         $.ajax({
@@ -360,6 +402,7 @@
             }
         });
     };
+
     this.BgImageUpload = function () {
 
         var bgimg = new EbFileUpload({
@@ -368,7 +411,7 @@
             TenantId: "ViewBagcid",
             SolutionId: this.Sid,
             Container: "onboarding_logo",
-            MaxSize:1,
+            MaxSize: 1,
             Multiple: false,
             ServerEventUrl: 'https://se.eb-test.xyz',
             EnableTag: false,
@@ -384,29 +427,29 @@
                 reader.onload = function (e) {
                     $('#bgImgPreview').attr('src', e.target.result);
                     $('#bgImgPreview').attr('imgrefid', fileid);
-                }
-
+                };
                 reader.readAsDataURL(this.Files[0]); // convert to base64 string
             }
             $("#imgPrvwCont").show();
-          //  $('#bgImgPreview').attr('src', URL.createObjectURL(`${this.Files[0]}`));
+            //  $('#bgImgPreview').attr('src', URL.createObjectURL(`${this.Files[0]}`));
             //const img = document.createElement("img");
             //img.src = URL.createObjectURL(this.files[i]);
             //img.height = 60;
-        }
-
+        };
     };
+
     $("input[name='bgradio']").click(function () {
         var bg = $(this).val();
 
         $("div.bg_cont").hide();
         $("#" + bg).show();
     });
+
     this.gradientValueChangeFn = function () {
         $('#bot_bg_grdnt').val($('#grdnt_txt_val').val());
         $('#grdntgenerator').modal('hide');
-    }
+    };
+
     this.start_exe();
     this.init();
-
-}
+};

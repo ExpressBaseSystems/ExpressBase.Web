@@ -603,9 +603,9 @@
                                         <thead>
                                             <tr>
                                                 <th>Table Name</th>
-                                                <th>Refid</th>
+                                                <th>Name</th>
                                                 <th style="width:50px;">
-                                                    <button class="ebbtn eb_btn-sm" id="add_readers" data-target="#import_data_mdl" data-toggle="modal" style="margin-left:auto;background:#d6d4d4">Add</button>
+                                                    <a class="obj-selector-btn pull-right" id="add_readers" data-target="#import_data_mdl" data-toggle="modal">...</a>
                                                 </th>
                                             </tr>
                                         </thead>
@@ -617,8 +617,8 @@
                                                     {
                                                         <tr>
                                                             <td><input type="text" class="import_reftable_input" value="@di.TableName" name="@(di.RefId + "_input")" /></td>
-                                                            <td>@di.RefId</td>
-                                                            <td class="text-center"><button class="rm_refbtn" ref="@di.RefId"><i class="fa fa-close"></i></button></td>
+                                                            <td>@di.DisplayName</td>
+                                                            <td class="text-center"><button class="rm_refbtn pull-right" ref="@di.RefId"><i class="fa fa-close"></i></button></td>
                                                         </tr>
                                                     }
                                                 }
@@ -631,9 +631,33 @@
                                             }
                                         </tbody>
                                     </table>
-                                    <button class="ebbtn eb_btn-sm eb_btnblue" id="save_importref" style="margin-left:auto;"><i class="fa fa-floppy-o" style="margin-right:5px;"></i> Save</button>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="appdash-mobile-menuvalidator">
+                            <h4>Menu Before Render</h4>
+                            <div class="menuvalidator-inner">
+                                <div class="meta" id="menuload-api-meta">
+                                    @{
+                                        string apiText = "Not selected";
+                                        if (!string.IsNullOrEmpty(MobSettings.MenuApi.RefId))
+                                        {
+                                            apiText = $"{MobSettings.MenuApi.DisplayName} (../{MobSettings.MenuApi.Name}/{MobSettings.MenuApi.Version}/json)";
+                                        }
+                                        <span>@apiText</span>
+                                    }
+                                </div>
+                                <a class="obj-selector-btn" data-target="#mobile-preloadmenu_mdl" data-toggle="modal">
+                                    ...
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="appseting-footer" style="margin-top:2em;width:50%">
+                            <button class="ebbtn eb_btn-sm eb_btnblue pull-right" id="save-appsettings-btn">
+                                <i class="fa fa-floppy-o" style="margin-right:5px;"></i> Save App Settings
+                            </button>
                         </div>
                     }
                 </div>
@@ -703,30 +727,27 @@
                                     <label>DataReader</label>
                                     <div class="import_data_cols_inner">
                                         @{
-                                            foreach (KeyValuePair<int, TypeWrap> kvp in list)
+                                            if (list.ContainsKey(2))
                                             {
-                                                if (kvp.Key == 2)
-                                                {
-                                                    <div class="import_obj_expand" id="import_expand_@kvp.Key">
-                                                        @if (!kvp.Value.Objects.Any())
-                                                        {
-                                                            <div class="empty_list">empty</div>
-                                                        }
+                                                <div class="import_obj_expand" id="import_expand_2">
+                                                    @if (!list[2].Objects.Any())
+                                                    {
+                                                        <div class="empty_list">empty</div>
+                                                    }
 
-                                                        @foreach (ObjWrap oball in kvp.Value.Objects)
+                                                    @foreach (ObjWrap oball in list[2].Objects)
+                                                    {
+                                                        if (oball.IsCommitted)
                                                         {
-                                                            if (oball.IsCommitted)
-                                                            {
-                                                                <div class="import_obj_expand_objlinks">
-                                                                    <input type="checkbox" name="importcheckbox" refid="@oball.Refid" />
-                                                                    <div class="">
-                                                                        @oball.DisplayName
-                                                                    </div>
+                                                            <div class="import_obj_expand_objlinks">
+                                                                <input type="checkbox" name="importcheckbox" display-name="@oball.DisplayName" refid="@oball.Refid" />
+                                                                <div class="">
+                                                                    @oball.DisplayName
                                                                 </div>
-                                                            }
+                                                            </div>
                                                         }
-                                                    </div>
-                                                }
+                                                    }
+                                                </div>
                                             }
                                         }
                                     </div>
@@ -741,15 +762,67 @@
             </div>
         </div>
     </div>
+
+    <div id="mobile-preloadmenu_mdl" class="modal fade import_data_mdl" role="dialog">
+        <div class="modal-dialog h-100 w-100" style="margin:0;display: flex;justify-content: center;align-items: center;">
+            <div class="modal-content" style="min-width:40%;height:70%;display: flex;flex-direction: column;">
+                <div class="modal-header" style="border-style:none">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Mobile Menu Preload</h4>
+                </div>
+                <div class="modal-body" style="flex:1;overflow-y:auto;">
+                    @{
+                        if (appinfo.AppType == 2)
+                        {
+                            <div class="import_data_mdl_mdlbdy">
+                                <div class="import_data_cols import_data_objects w-100">
+                                    <div style="display:flex;justify-content:space-between;">
+                                        <label>Api</label> <a id="menu-api-reset">Clear Selection</a>
+                                    </div>
+                                    <div class="import_data_cols_inner">
+                                        @{
+                                            if (list.ContainsKey(20))
+                                            {
+                                                <div class="import_obj_expand" id="preloadmenu_20">
+                                                    @if (!list[20].Objects.Any())
+                                                    {
+                                                        <div class="empty_list">empty</div>
+                                                    }
+
+                                                    @foreach (ObjWrap oball in list[20].Objects)
+                                                    {
+                                                        if (oball.IsCommitted)
+                                                        {
+                                                            string selected = (ViewBag.AppSettings as EbMobileSettings).MenuApi.RefId == oball.Refid ? "selected" : string.Empty;
+
+                                                            <div class="import_obj_expand_objlinks @selected" version="@oball.VersionNumber" display-name="@oball.DisplayName" refid="@oball.Refid" name="@oball.ObjName">
+                                                                @oball.DisplayName
+                                                            </div>
+                                                        }
+                                                    }
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 @section JsCode{
     <script>
-        let appsetting = @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppSettings));
+       let appsetting = @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppSettings));
        let appinfo= @Html.Raw(JsonConvert.SerializeObject(ViewBag.AppInfo));
-       let ebfont_lst= @Html.Raw(JsonConvert.SerializeObject(ViewBag.EbfontLst));
-    var adash = new AppDashBoard(@appinfo.Id,@appinfo.AppType, appsetting,appinfo,ebfont_lst);
+       let ebfont_lst = @Html.Raw(JsonConvert.SerializeObject(ViewBag.EbfontLst));
 
-        $('#bgImgPreview').attr('onerror',`this.onerror=null;this.src='/images/imageplaceholder.png'`);
+       var adash = new AppDashBoard(@appinfo.Id,@appinfo.AppType, appsetting,appinfo,ebfont_lst);
+       $('#bgImgPreview').attr('onerror', `this.onerror=null;this.src='/images/imageplaceholder.png'`);
+
     function clickOnDemoDp(path) {
         $('#AppDB_BotDemoDp').modal('hide');
         $('#bot_dp_url').val(path);

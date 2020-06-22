@@ -18,6 +18,7 @@
     this.filterDialogRefid = this.EbObject.Filter_Dialogue ? this.EbObject.Filter_Dialogue : "";
     this.Procs = {};
     this.Rowdata = {};
+    this.loader = $(".dash-loader");
 
     this.GridStackInit = function () {
         grid = GridStack.init({ resizable: { handles: 'e, se, s, sw, w' }, column: 40 });
@@ -70,10 +71,12 @@
 
     //Filter Dialogue
     this.getColumns = function () {
+        this.loader.show();
         $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
     };
 
     this.AppendFD = function (result) {
+        this.loader.hide();
         $('.db-user-filter').remove();
         $("#dashbord-user-view").prepend(`
                 <div id='paramdiv-Cont${this.TabNum}' class='db-user-filter'>
@@ -172,15 +175,13 @@
     this.init = function () {
         $(".grid-stack").removeAttr("style");
         if (this.DashBoardList) {
-            $(".dash-loader").show();
             this.DashboardDropdown();
         }
         else if (this.EbObject !== null) {
-            $(".dash-loader").show();
             ebcontext.header.setName(this.EbObject.DisplayName);
         }
         else {
-            $(".dash-loader").hide();
+            this.loader.hide();
         }
         $(`[Value=${this.EbObject.RefId}]`).attr("disabled", true);
         $("title").empty().append(this.EbObject.DisplayName);
@@ -195,7 +196,7 @@
             this.getColumns();
         }
         else {
-            $(".dash-loader").hide();
+            this.loader.hide();
         }
         $("#dashbord-user-view").off("click").on("click", ".tile-opt", this.TileOptions.bind(this));
         $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
@@ -225,7 +226,6 @@
         //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         Eb_Dashboard_Bg(this.EbObject);
         if (this.EbObject.Tiles.$values.length > 0) {
-
             for (let i = 0; i < this.EbObject.Tiles.$values.length; i++) {
                 let currentobj = this.EbObject.Tiles.$values[i];
                 let tile_id = "t" + i;
@@ -249,6 +249,7 @@
                 let refid = this.EbObject.Tiles.$values[i].RefId;
                 Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                 if (refid !== "") {
+                    this.loader.show();
                     $(`[data-id = ${this.CurrentTile}]`).css("display", "block");
                     $.ajax(
                         {
@@ -256,7 +257,7 @@
                             type: 'POST',
                             data: { refid: refid },
                             error: function (request, error) {
-                                $(".dash-loader").hide();
+                                this.loader.hide();
                                 EbPopBox("show", {
                                     Message: "Failed to get data from DataSourse",
                                     ButtonStyle: {
@@ -271,9 +272,9 @@
                             },
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
-
                 }
                 else {
+                    this.loader.show();
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
                     $(`#${t_id}`).attr("eb-type", "gauge");
@@ -305,6 +306,7 @@
                         else if (eb_type === "SpeedoMeter") {
                             if (object.DataObjCtrlName === "" || object.DataObjColName === "") {
                                 let xx = SpeedoMeterWrapper(obj, { isEdit: false });
+                                this.loader.hide();
                             }
                             this.GaugeDrop(object.DataObjCtrlName, object.DataObjColName, object.EbSid, "speedometer");
                         }
@@ -331,6 +333,7 @@
                     }.bind(this));
                     if (currentobj.LinksColl) {
                         $.each(currentobj.LinksColl.$values, function (i, obj) {
+                            this.loader.show();
                             var eb_type = obj.$type.split('.').join(",").split(',')[2].split("Eb")[1];
                             this.makeElement(eb_type, obj);
                             let object = this.Procs[this.currentId];
@@ -343,12 +346,14 @@
                             this.labelstyleApply(this.CurrentTile);
                             LinkStyle(obj, this.CurrentTile, this.TabNum);
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
+                            this.loader.hide();
                         }.bind(this));
                     }
                     if (currentobj.Transparent) {
                         this.labelstyleApply(this.CurrentTile);
                     }
                     this.RedrwFnHelper(this.CurrentTile);
+                    this.loader.hide();
                 }
                
             }
@@ -360,6 +365,7 @@
         }
         grid.movable('.grid-stack-item', false);
         grid.resizable('.grid-stack-item', false);
+        this.loader.hide();
     }
 
  
@@ -375,25 +381,28 @@
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
-        let abc = getObjByval(this.Procs[component].Columns.$values, "name", column);
-        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null && abc !== undefined) {
-            let index = abc.data;
-            let _data = this.Rowdata[component + "Row"][index];
+        
+        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null) {
+            let abc = getObjByval(this.Procs[component].Columns.$values, "name", column);
+            if (abc !== undefined) {
+                let index = abc.data;
+                let _data = this.Rowdata[component + "Row"][index];
 
-            if (type === "ProgressGauge") {
-                this.Procs[controlname].GaugeValue = _data;
-                this.Procs[controlname].GaugeContainer = controlname;
-                ProgressGaugeWrapper(this.Procs[controlname], { isEdit: false });
-            }
-            else if (type === "Gauge") {
-                this.Procs[controlname].GaugeConfig.GaugeValue = _data;
-                this.Procs[controlname].GaugeConfig.GaugeContainer = controlname;
-                let xx = EbGaugeWrapper(this.Procs[controlname], { isEdit: true });
-            }
-            else if (type === "speedometer") {
-                this.Procs[controlname].GaugeValue = _data;
-                this.Procs[controlname].GaugeContainer = controlname;
-                SpeedoMeterWrapper(this.Procs[controlname], { isEdit: false });
+                if (type === "ProgressGauge") {
+                    this.Procs[controlname].GaugeValue = _data;
+                    this.Procs[controlname].GaugeContainer = controlname;
+                    ProgressGaugeWrapper(this.Procs[controlname], { isEdit: false });
+                }
+                else if (type === "Gauge") {
+                    this.Procs[controlname].GaugeConfig.GaugeValue = _data;
+                    this.Procs[controlname].GaugeConfig.GaugeContainer = controlname;
+                    let xx = EbGaugeWrapper(this.Procs[controlname], { isEdit: true });
+                }
+                else if (type === "speedometer") {
+                    this.Procs[controlname].GaugeValue = _data;
+                    this.Procs[controlname].GaugeContainer = controlname;
+                    SpeedoMeterWrapper(this.Procs[controlname], { isEdit: false });
+                }
             }
         }
     };
@@ -457,13 +466,14 @@
         let Refid = obj["DataSource"];
         this.Rowdata[obj.EbSid + "Row"] = null;
         //this.GetFilterValuesForDataSource();
+        this.loader.show();
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
             data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
             error: function (request, error) {
-                $(".dash-loader").hide();
+                this.loader.hide();
                 EbPopBox("show", {
                     Message: "Failed to get data from DataSourse",
                     ButtonStyle: {
@@ -481,7 +491,7 @@
                 //this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
-                $(".dash-loader").hide();
+                this.loader.hide();
             }.bind(this)
         });
     };
@@ -497,6 +507,7 @@
 
 
     this.Ajax4fetchVisualization = function (refid) {
+        this.loader.show();
         if (refid !== "") {
             $.ajax(
                 {
@@ -504,7 +515,7 @@
                     type: 'POST',
                     data: { refid: refid },
                     error: function (request, error) {
-                        $(".dash-loader").hide();
+                        this.loader.hide();
                         EbPopBox("show", {
                             Message: "Failed to get data from DataSourse",
                             ButtonStyle: {
@@ -629,7 +640,7 @@
             $(`[data-id="${id}"]`).parent().removeAttr("style");
             $(`#${id}`).addClass("box-shadow-style");
         }
-        $(".dash-loader").hide();
+        this.loader.hide();
     }
 
     this.drawCallBack = function (id) {
@@ -657,8 +668,8 @@
     };
 
 
-    this.GetFilterValues = function () {  
-        $(".dash-loader").show();
+    this.GetFilterValues = function () {
+        this.loader.show();
         this.filtervalues = [];
         if (this.stickBtn) { this.stickBtn.minimise(); }
 
@@ -678,8 +689,8 @@
             //this.DrawTiles();
             grid.removeAll();
             setTimeout(this.DrawTiles.bind(this), 500);
+            setTimeout(this.loader.show, 1);
         }
-       
     };
     this.init();
 }

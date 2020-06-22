@@ -474,15 +474,15 @@
                 <div class="tab-pane" id="home" role="tabpanel">
                     <div class="eb-sdash-general-container flex-center">
                         @*<div class="eb-sdash-longdiv w-100" style="margin-bottom:20px;">
-                            <div class="eb-sdash-upgradecont">
-                                <div class="col-md-8">
-                                    <p>Change your solution info</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
-                                </div>
-                            </div>
-                        </div>*@
+            <div class="eb-sdash-upgradecont">
+                <div class="col-md-8">
+                    <p>Change your solution info</p>
+                </div>
+                <div class="col-md-4">
+                    <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
+                </div>
+            </div>
+        </div>*@
                         <div class="eb-sdash-longdiv" style="margin-bottom:20px;">
                             <div class="eb-sdash-longdivhead">
                                 <label>Solution Logo</label>
@@ -525,11 +525,30 @@
                                     <div class="uname-advanced-sec">
                                         @*<label>Switch Versioning</label>*@
                                         @*<label class="switch">
-                                                <input type="checkbox" id="VersioningSwitch" style="display:inline">
-                                                <span class="slider round"></span>
-                                            </label>*@
+                            <input type="checkbox" id="VersioningSwitch" style="display:inline">
+                            <span class="slider round"></span>
+                        </label>*@
                                         <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>
                                         <input id="VersioningSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" data-on="Versioning On" data-off="Versioning Off">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="eb-sdash-longdiv">
+                            <div class="eb-sdash-longdivhead">
+                                <label>Two Factor Authentication</label>
+                            </div>
+                            <div class="eb-sdash-longdivcontainer">
+                                <div class="left-sec">
+                                    <p>
+                                       Two-factor authentication (2FA), sometimes referred to as two-step verification or dual-factor authentication, is a security process in which users provide two different authentication factors to verify themselves. This process is done to better protect both the user's credentials and the resources the user can access.
+                                    </p>
+                                </div>
+                                <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
+                                    <div class="uname-advanced-sec">                                     
+                                        <label class="label-custom-style" style="display:inline-block">Switch 2FA</label>
+                                        <input id="2faSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" data-on="2FA On" data-off="2FA Off">
                                     </div>
                                 </div>
                             </div>
@@ -1629,15 +1648,6 @@
 </div>
 
 <div class="eb-cropie" id="cropsection"></div>
-@{
-    @*if (ViewBag.Connections.SolutionInfo.IsVersioningEnabled)
-    {
-        <script>
-            $("#VersioningSwitch").bootstrapToggle('on');
-            $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));
-        </script>
-    }*@
-}
 @section JsCode{
     <script>
         let Connection = @Html.Raw(JsonConvert.SerializeObject(ViewBag.Connections));

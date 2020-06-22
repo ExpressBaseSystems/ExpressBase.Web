@@ -25,8 +25,8 @@
 
     ////////////
     this.setDefaultValues = function (Obj) {
-        if (Obj.DefaultValue)
-            Obj.setValue(Obj.DefaultValue);
+        //if (Obj.DefaultValue)
+        //    Obj.setValue(Obj.DefaultValue);
         if (Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
             let fun = new Function("form", "user", `event`, atob(Obj.DefaultValueExpression.Code)).bind(Obj, this.FO.formObject, this.FO.userObject);
             let val = fun();
@@ -146,21 +146,21 @@
         }
     };
 
-    this.populateSysLocCtrlsWithInitialVal = function (formObj) {
-        let allTypeSLCtrls = getFlatObjOfTypes(formObj, ["SysLocation"]);
-        for (let i = 0; i < allTypeSLCtrls.length; i++) {
-            let ctrl = allTypeSLCtrls[i];
-            ctrl.setValue(ebcontext.locations.CurrentLocObj.LocId);
-        }
-    };
+    //this.populateSysLocCtrlsWithInitialVal = function (formObj) {
+    //    let allTypeSLCtrls = getFlatObjOfTypes(formObj, ["SysLocation"]);
+    //    for (let i = 0; i < allTypeSLCtrls.length; i++) {
+    //        let ctrl = allTypeSLCtrls[i];
+    //        ctrl.setValue(ebcontext.locations.CurrentLocObj.LocId);
+    //    }
+    //};
 
-    this.populateCheckBoxCtrlsWithInitialVal = function (formObj) {
-        let allTypeCBCtrls = getFlatObjOfTypes(formObj, ["RadioButton"]);
-        for (let i = 0; i < allTypeCBCtrls.length; i++) {
-            let ctrl = allTypeCBCtrls[i];
-            ctrl.setValue("false");
-        }
-    };
+    //this.populateCheckBoxCtrlsWithInitialVal = function (formObj) {
+    //    let allTypeCBCtrls = getFlatObjOfTypes(formObj, ["RadioButton"]);
+    //    for (let i = 0; i < allTypeCBCtrls.length; i++) {
+    //        let ctrl = allTypeCBCtrls[i];
+    //        ctrl.setValue("false");
+    //    }
+    //};
 
     this.populateSSCtrlsWithInitialVal = function (formObj) {
         let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect", "PowerSelect"]);
@@ -361,32 +361,13 @@
             }
         }.bind(this));
 
-        if ($notOk1stCtrl) {
+        if ($notOk1stCtrl && $notOk1stCtrl.length !== 0) {
             $notOk1stCtrl.select();
             $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
         return required_valid_flag;
     }.bind(this);
-
-    //this.AllUnique_Check = function () {
-    //    let unique_flag = true;
-    //    let $notOk1stCtrl = null;
-    //    $.each(this.FO.flatControlsWithDG, function (i, control) {
-    //        let $ctrl = $("#" + control.EbSid_CtxId);
-    //        if (!this.FO.checkUnique(control)) {
-    //            unique_flag = false;
-    //            if (!$notOk1stCtrl)
-    //                $notOk1stCtrl = $ctrl;
-    //        }
-    //    }.bind(this));
-
-    //    if ($notOk1stCtrl)
-    //        $notOk1stCtrl.select();
-    //    return unique_flag;
-    //};
-
-    // check all validations in a control
 
     this.runFormValidations = function () {
         let ctrl = this.FO.FormObj;

@@ -30,13 +30,7 @@
             this.Root.setCtrls($(`#${o.EbSid} .eb_mob_container_inner .vis-filter-container`), filterControls);
             this.Root.getColums4ListView(o);
             this.setSortColumns(o);
-
-            this.getLinkFormControls(o, function (json) {
-                var controls = (json === null || json === undefined) ? [] : JSON.parse(json).$values;
-                this.FilterControls = controls;//store controls in vis object
-                if (controls.length > 0)
-                    this.drawFormControls(controls);
-            }.bind(this));
+            this.setLinkFormControls(o);
         }
     };
 
@@ -76,10 +70,23 @@
                 obj.ColumnIndex = dragged.attr("index");
                 obj.TableIndex = dragged.attr("tableIndex");
                 $(event.target).append(obj.$Control.outerHTML());
-                obj.blackListProps = Array.from(["TextFormat","Font","Required"]);//for pghelper extension
+                obj.blackListProps = ["TextFormat", "Font", "Required", "RowSpan", "ColumnSpan"];//for pghelper extension
                 this.Root.refreshControl(obj);
             }.bind(this)
         });
+    };
+
+    this.setLinkFormControls = function (o) {
+        this.getLinkFormControls(o, function (json) {
+
+            var controlInfo = JSON.parse(json);
+
+            this.FilterControls = controlInfo.Controls.$values;
+            o.FormControlMetas.$values = controlInfo.ControlMetas.$values;
+            o.LinkTypeForm = controlInfo.IsForm;
+            o.refresh(this.Root);
+            this.drawFormControls(this.FilterControls);
+        }.bind(this));
     };
 
     this.getLinkFormControls = function (vis, callback) {
@@ -108,7 +115,7 @@
             $.extend(obj, filters[i]);
             $(`#${vis.EbSid} .vis-sort-container`).append(obj.$Control.outerHTML());
             this.Root.refreshControl(obj);
-            obj.blackListProps = Array.from(["TextFormat", "Font", "RowSpan","ColumnSpan"]);//for pghelper extension
+            obj.blackListProps = Array.from(["TextFormat", "Font", "RowSpan", "ColumnSpan"]);//for pghelper extension
         }
     };
 

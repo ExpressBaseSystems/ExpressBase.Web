@@ -301,7 +301,7 @@
             var arr = o.FileName.split('.');
             var exten = arr[arr.length - 1];
             if (exten !== 'pdf') {
-                return `<img src="${this.SpinImage}" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/nulldp.png'>`;
+                return `<img src="/images/file-image.png" data-src="${src}.jpg" class="EbFupThumbLzy" style="display: block;" alt='' onerror=this.onerror=null;this.src='/images/file-image.png'>`;
             }
             else
                 return `<iframe src="${src}.${exten}" class="gallerythumbfile"></iframe>`;

@@ -109,7 +109,7 @@ const WebFormRender = function (option) {
     this.initReviewCtrl = function () {
         if (this.ReviewCtrl) {
             let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRenderer: this };
-            this.ApprovalCtrlBuilder = this.initControls.init(this.ReviewCtrl, opt);
+            this.ReviewCtrlBuilder = this.initControls.init(this.ReviewCtrl, opt);
         }
     };
 
@@ -883,6 +883,8 @@ const WebFormRender = function (option) {
     this.BeforeModeSwitch = function (newMode) {
         if (newMode === "View Mode") {
             this.flatControls = getFlatCtrlObjs(this.FormObj);
+
+            // if eb_default control is true disable some operations on form entry
             $.each(this.flatControls, function (k, ctrl) {
                 if (ctrl.ObjType === "RadioButton" && ctrl.Name === "eb_default") {
                     let c = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", "eb_default");
@@ -898,17 +900,21 @@ const WebFormRender = function (option) {
                     return;
                 }
             }.bind(this));
-            $.each(this.FormObj.DisableDelete.$values, function (k, v) {
-                if (!v.IsDisabled && !v.IsWarningOnly) {
-                    if (this.DisableDeleteData[v.Name]) {
+
+            // EbSQLValidator conditions for form entry delete permission
+            $.each(this.FormObj.DisableDelete.$values, function (k, EbSQLValidator) {
+                if (!EbSQLValidator.IsDisabled && !EbSQLValidator.IsWarningOnly) {
+                    if (this.DisableDeleteData[EbSQLValidator.Name]) {
                         this.$deleteBtn.prop("disabled", true);
                         return;
                     }
                 }
             }.bind(this));
-            $.each(this.FormObj.DisableCancel.$values, function (k, v) {
-                if (!v.IsDisabled && !v.IsWarningOnly) {
-                    if (this.DisableCancelData[v.Name]) {
+
+            // EbSQLValidator conditions for form entry Disable permission
+            $.each(this.FormObj.DisableCancel.$values, function (k, EbSQLValidator) {
+                if (!EbSQLValidator.IsDisabled && !EbSQLValidator.IsWarningOnly) {
+                    if (this.DisableCancelData[EbSQLValidator.Name]) {
                         this.$cancelBtn.prop("disabled", true);
                         return;
                     }
@@ -1588,16 +1594,7 @@ const WebFormRender = function (option) {
         });
     };
 
-    //this.checkRedirection = function () {
-    //    if (this.formDataWrapper.Status !== 200) {
-    //        $("body").empty().html(this.formDataWrapper.Message);
-    //        window.location.replace(`../statuscode/${this.formDataWrapper.Status}`);
-    //        return;
-    //    }
-    //}
-
     this.init = function () {
-        //this.checkRedirection();
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
@@ -1611,37 +1608,23 @@ const WebFormRender = function (option) {
         this.afterSaveAction = this.getAfterSaveActionFn(this.afterSavemodeS);
         this.setMode();
 
-
-        //if (this.Mode.isNew && this.EditModeFormData)
-        //    this.setEditModeCtrls();
         if (this.Mode.isPrefill)
             this.setEditModeCtrls();
 
         else if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
             if (this.ReviewCtrl)
-                this.ApprovalCtrlBuilder.hide();
+                this.ReviewCtrlBuilder.hide();
             if (this.cloneRowId)
                 this.fillCloneData(this.cloneRowId);
         }
-        //else {
-        //    this.DataMODEL = this.EditModeFormData;
-        //}
 
         if (this.Mode.isView) {
-            this.setEditModeCtrls();// should remove
+            this.setEditModeCtrls();// should remove ?
             this.SwitchToViewMode();
             this.locInit4viewMode();
         }
         this.LocationInit();
-
-        //if (this.Mode.isNew) {
-        //    this.FRC.populateDateCtrlsWithInitialVal(this.FormObj);
-        //    this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);
-        //    this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);
-        //    this.FRC.populateSysLocCtrlsWithInitialVal(this.FormObj);
-        //    this.FRC.populateCheckBoxCtrlsWithInitialVal(this.FormObj);
-        //}
     };
 
     let t0 = performance.now();

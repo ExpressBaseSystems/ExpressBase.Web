@@ -136,7 +136,7 @@ namespace ExpressBase.Web.Controllers
         {
             EditSolutionResponse resp = null;
             IFormCollection form = this.HttpContext.Request.Form;
-            Eb_Solution slno = GetSolutionObject(form["isid"]); 
+            Eb_Solution slno = GetSolutionObject(form["isid"]);
 
             if (slno.SolutionName != form["sname"] || slno.Description != form["desc"] || (form["newesid"] != form["oldesid"]))
             {
@@ -222,7 +222,26 @@ namespace ExpressBase.Web.Controllers
             GetVersioning resp = new GetVersioning();
             try
             {
-                resp = this.ServiceClient.Post<GetVersioning>(new SetVersioning { Versioning = data, solution_id = SolnId });
+                resp = this.ServiceClient.Post<GetVersioning>(new SolutionEditRequest { Value = data, solution_id = SolnId, ChangeColumn = solutionChangeColumn.version });
+                this.MqClient.Post<RefreshSolutionConnectionsAsyncResponse>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+                {
+                    SolutionId = SolnId
+                });
+
+            }
+            catch (Exception e)
+            {
+                resp.status = new ResponseStatus { Message = e.Message };
+            }
+            return JsonConvert.SerializeObject(resp);
+        }
+
+        public string Switch2FA(bool data, string SolnId)
+        {
+            GetVersioning resp = new GetVersioning();
+            try
+            {
+                resp = this.ServiceClient.Post<GetVersioning>(new SolutionEditRequest { Value = data, solution_id = SolnId, ChangeColumn = solutionChangeColumn.TwoFa });
                 this.MqClient.Post<RefreshSolutionConnectionsAsyncResponse>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
                 {
                     SolutionId = SolnId

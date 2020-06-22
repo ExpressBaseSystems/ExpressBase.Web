@@ -8,6 +8,22 @@
         return creator.EbObject;
     };
 
+    window.dataColToMobileCol = function (datacols) {
+        datacols = datacols || [];
+        var mobcols = [];
+
+        for (let i = 0; i < datacols.length; i++) {
+            let mcol = new EbObjects.EbMobileDataColToControlMap("colref_mobilecols" + i);
+
+            mcol.Name = datacols[i].columnName;
+            mcol.ColumnName = datacols[i].columnName;
+            mcol.Type = datacols[i].type;
+
+            mobcols.push(mcol);
+        }
+        return mobcols;
+    };
+
     window.expand = function (o) {
         let constructor = o.constructor.name;
         let common = {
@@ -17,7 +33,8 @@
             },
             setObject: function () { return null; },
             propertyChanged: function (propname) { },
-            blackListProps: []
+            blackListProps: [],
+            refresh: function () { }
         };
 
         $.extend(o, common, window.expandable[constructor] || {});
@@ -57,6 +74,11 @@
                 }
                 else {
                     $(`#${this.EbSid} .eb_mob_textbox`).show();
+                }
+            },
+            propertyChanged: function (propname) {
+                if (propname === "HideSearchBox") {
+                    this._toggleSearchBar();
                 }
             }
         },
@@ -174,6 +196,11 @@
                 $(`#${this.EbSid} .control_container`).find(".mob_control").each(function (k, obj) {
                     root.findFormContainerItems(k, obj, this.ChildControls);
                 }.bind(this));
+            },
+            propertyChanged: function (propname) {
+                if (propname === "Label") {
+                    $(`#${this.EbSid}`).children(".ctrl_label").text(this.Label);
+                }
             }
         },
         "EbMobileNumericBox": {
@@ -190,6 +217,18 @@
                         $(`#${this.EbSid} .eb_mob_numericbox`).show();
                         $(`#${this.EbSid} .eb_mob_numericbox-btntype`).hide();
                     }
+                }
+            }
+        },
+        "EbMobileVisualization": {
+            refresh: function (root) {
+                if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
+                    root.pg.ShowProperty('FormMode');
+                    root.pg.ShowProperty('LinkFormParameters');
+                }
+                else {
+                    root.pg.HideProperty('FormMode');
+                    root.pg.HideProperty('LinkFormParameters');
                 }
             }
         }

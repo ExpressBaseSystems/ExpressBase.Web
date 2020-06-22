@@ -2104,10 +2104,13 @@ input.locinp {
 /*EbSimpleFileUploader*/
 
 .simpleFUPdiv {
-    /*position: relative;
-    display: flex;*/
+    border: 1.5px dashed #a4a4a4;
+    border-radius: 4px;
+    min-height: 100px;
 }
-
+.Eb-ctrlContainer[ctype="SimpleFileUploader"] .ctrl-cover {
+    border: none;
+}
     .simpleFUPdiv .SFUPcontainer .SFUPcontent {
         line-height: 2;
         position: absolute;
@@ -2131,7 +2134,7 @@ input.locinp {
         min-height: 175px;
         /*max-height: 175px;*/
         overflow: auto;
-        border: 1px solid #d9d9d9;
+        /*border: 1px solid #d9d9d9;*/
         position: relative;
     }
 
@@ -2188,7 +2191,7 @@ input.locinp {
 /* Uploaded images container */
 .simpleFUPdiv .SFUPcontainer .uploaded {
     padding: .5rem;
-    line-height: 0;
+    /*line-height: 0;*/
 }
 
     .simpleFUPdiv .SFUPcontainer .uploaded .filethumb {
@@ -2263,12 +2266,12 @@ input.locinp {
                 }
 
                 .simpleFUPdiv .SFUPcontainer .uploaded .filethumb .uploaded-file .filedtls .filename {
-                    /*margin-top: 5px;
                     margin-bottom: 0;
                     font-weight: 500;
                     overflow: hidden;
                     text-overflow: ellipsis;
-                    white-space: nowrap;*/
+                    white-space: nowrap;
+                    max-width: 200px;
                 }
 
     .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file iframe {
@@ -2313,6 +2316,14 @@ input.locinp {
 
 
     /*for bot*/
+.simpleFUPdiv .emtySFUP {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-weight: 600;
+    padding: 10px;
+}
     .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb {
         border-radius: 4px;
         float: left;

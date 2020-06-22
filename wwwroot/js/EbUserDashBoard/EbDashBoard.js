@@ -15,7 +15,7 @@ var DashBoardWrapper = function (options) {
     this.Cid = options.Cid;
     this.TileCollection = {};
     this.CurrentTile;
-    this.CurrentRefid;
+    this.CurrentRefid;  
     this.googlekey = options.googlekey || null;
     this.NewTileCount = (options.dvObj !== null) ? options.dvObj.TileCount : 2;
     this.ebObjList = options.EbObjList;
@@ -148,6 +148,7 @@ var DashBoardWrapper = function (options) {
                 style: { top: "230px" }
             });
             this.filterDialog = FilterDialog;
+            $("#btnGo").trigger("click");
         }
         else {
             $(".param-div-cont").hide();
@@ -299,6 +300,20 @@ var DashBoardWrapper = function (options) {
                         url: '../DashBoard/DashBoardGetObj',
                         type: 'POST',
                         data: { refid: this.VisRefid },
+                        error: function (request, error) {
+                            $(".dash-loader").hide();
+                            EbPopBox("show", {
+                                Message: "Failed to get data from DataSourse",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                        //$(".dash-loader").hide();
+                                    }
+                                }
+                            });
+                        },
                         success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                     });
             }
@@ -448,7 +463,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.GaugeDrop = function (component, column, controlname, type) {
-        if (component !== "" && column !== "") {
+        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null) {
             let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
             let _data = this.Rowdata[component + "Row"][index];
 
@@ -470,8 +485,9 @@ var DashBoardWrapper = function (options) {
         }
     };
     this.LabelDrop = function (component, column, controlname, tileid) {
-        if (component !== "" && column !== "" && getObjByval(this.Procs[component].Columns.$values, "name", column) !== undefined) {
-            let index = getObjByval(this.Procs[component].Columns.$values, "name", column).data;
+        let val = getObjByval(this.Procs[component].Columns.$values, "name", column);
+        if (component !== "" && column !== "" && val !== undefined && this.Rowdata[component + "Row"] !== null) {
+            let index = val.data;
             let _data = this.Rowdata[component + "Row"][index];
             this.Procs[controlname].DynamicLabel = _data;
             if (this.Procs[controlname].StaticLabel == "") {
@@ -591,8 +607,8 @@ var DashBoardWrapper = function (options) {
     };
 
     this.init = function () {
+        $(".dash-loader").show();
         this.AppendToolBox();
-        $.LoadingOverlay("show");
         if (this.EbObject === null) {
             this.edit = false;
             this.EbObject = new EbObjects.EbDashBoard(`EbDashBoar${Date.now()}`);
@@ -611,14 +627,21 @@ var DashBoardWrapper = function (options) {
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
         commonO.Current_obj = this.EbObject;
         this.propGrid.ClosePG();
-        if (this.filterDialogRefid == "") {
-            $.LoadingOverlay("hide");
+        if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
+            $('.db-user-filter').remove();
+            if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            grid.removeAll();
             this.DrawTiles();
         }
-        else {
-            $.LoadingOverlay("hide");
+        else if (this.EbObject.Filter_Dialogue !== "") {
             this.getColumns();
+            if (this.EbObject.Tiles.$values.length == 0)
+                $(".dash-loader").hide();
         }
+        else {
+            $(".dash-loader").hide();
+        }
+        
 
         $("#dashbord-view").on("click", ".tile-opt", this.TileOptions.bind(this));
         $("#mySidenav").on("click", ".sidebar-head", this.sideBarHeadToggle.bind(this));
@@ -681,12 +704,27 @@ var DashBoardWrapper = function (options) {
                     url: '../DashBoard/DashBoardGetObj',
                     type: 'POST',
                     data: { refid: refid },
+                    error: function (request, error) {
+                        $(".dash-loader").hide();
+                        EbPopBox("show", {
+                            Message: "Failed to get data from DataSourse",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                    //$(".dash-loader").hide();
+                                }
+                            }
+                        });
+                    },
                     success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                 });
         }
     }
 
     this.DrawTiles = function () {
+        grid.removeAll();
         //$("#layout_div").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         //$(".component_cont .nav").css("background-color", "").css("background-color", this.EbObject.BackgroundColor);
         Eb_Dashboard_Bg(this.EbObject);
@@ -724,11 +762,26 @@ var DashBoardWrapper = function (options) {
                             url: '../DashBoard/DashBoardGetObj',
                             type: 'POST',
                             data: { refid: refid },
+                            error: function (request, error) {
+                                $(".dash-loader").hide();
+                                EbPopBox("show", {
+                                    Message: "Failed to get data from DataSourse",
+                                    ButtonStyle: {
+                                        Text: "Ok",
+                                        Color: "white",
+                                        Background: "#508bf9",
+                                        Callback: function () {
+                                            //$(".dash-loader").hide();
+                                        }
+                                    }
+                                });
+                            },
                             success: this.TileRefidChangesuccess.bind(this, this.CurrentTile)
                         });
 
                 }
                 else {
+                    $(".dash-loader").hide();
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
                     $(`#${t_id}`).attr("eb-type", "gauge");
@@ -964,19 +1017,33 @@ var DashBoardWrapper = function (options) {
     this.GetComponentColumns = function (obj) {
         let Refid = obj["DataSource"];
         this.GetFilterValuesForDataSource();
-        $.LoadingOverlay('show');
+        this.Rowdata[obj.EbSid + "Row"] = null;
+        //this.GetFilterValuesForDataSource();
         $.ajax({
             type: "POST",
             url: "../DS/GetData4DashboardControl",
             data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
+            error: function (request, error) {
+                $(".dash-loader").hide();
+                EbPopBox("show", {
+                    Message: "Failed to get data from DataSourse",
+                    ButtonStyle: {
+                        Text: "Ok",
+                        Color: "white",
+                        Background: "#508bf9",
+                        Callback: function () {
+                            //$(".dash-loader").hide();
+                        }
+                    }
+                });
+            },
             success: function (resp) {
                 obj["Columns"] = JSON.parse(resp.columns);
                 this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
-                $.LoadingOverlay('hide');
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
-                $.LoadingOverlay("hide");
+                $(".dash-loader").hide();
             }.bind(this)
         });
     };
@@ -1018,7 +1085,7 @@ var DashBoardWrapper = function (options) {
     this.TileRefidChangesuccess = function (id, data) {
         $(`#${id}`).attr("eb-type", "view");
         if (this.filtervalues.length === 0) {
-            this.GetFilterValues();
+            this.GetFilterValuesForDataSource();
         }
         let obj = JSON.parse(data);
         $(`[name-id="${id}"]`).empty().append(obj.DisplayName);
@@ -1090,6 +1157,7 @@ var DashBoardWrapper = function (options) {
             $(`[data-id="${id}"]`).parent().removeAttr("style");
             $(`#${id}`).addClass("box-shadow-style");
         }
+        $(".dash-loader").hide();
     }
 
     this.drawCallBack = function (id) {
@@ -1214,8 +1282,10 @@ var DashBoardWrapper = function (options) {
 
 
     this.GetFilterValues = function () {
+        if (this.EbObject.Tiles.$values.length !== 0) {
+            $(".dash-loader").show();
+        }        
         this.filtervalues = [];
-        $.LoadingOverlay("show");
         if (this.stickBtn) { this.stickBtn.minimise(); }
 
         if (this.filterDialog)
@@ -1232,7 +1302,6 @@ var DashBoardWrapper = function (options) {
             CtrlCounters.DataLabelCounter = 0;
             CtrlCounters.DataObjectCounter = 0;
             //this.DrawTiles();
-            grid.removeAll();
             setTimeout(this.DrawTiles.bind(this), 500);
         }
 

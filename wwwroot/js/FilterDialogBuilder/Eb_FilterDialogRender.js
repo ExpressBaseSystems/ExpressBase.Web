@@ -114,9 +114,9 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.FRC.fireInitOnchangeNC(this.flatControls);
             this._all_OctrlsInit = true;
             //this.bindFuncsToDom();
-            this.FRC.populateDateCtrlsWithInitialVal(this.FormObj);
-            this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);
-            this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);
+            this.FRC.populateDateCtrlsWithInitialVal(this.FormObj); // ?
+            this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);// ?
+            this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);// ?
         };
 
         this.initFilterDialogCtrls = function () {

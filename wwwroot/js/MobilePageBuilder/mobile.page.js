@@ -167,7 +167,9 @@ function EbMobStudio(config) {
     this.ContainerOnClick = function (evt) {
         let div = $(evt.target).closest(".mob_container");
         let type = div.attr("eb-type");
-        this.pg.setObject(this.Procs[div.attr("id")], AllMetas[type]);
+        let o = this.Procs[div.attr("id")];
+        this.pg.setObject(o, AllMetas[type]);
+        o.refresh(this);
     };
 
     this.makeSortable = function (ebsid) {
@@ -218,6 +220,8 @@ function EbMobStudio(config) {
                     console.error("undefined container");
             }
             $(`#${o.EbSid}`).off("click").on("click", this.ContainerOnClick.bind(this));
+            this.pg.setObject(o, AllMetas[ebtype]);
+            o.refresh(this);
         }
     };
 
@@ -306,6 +310,11 @@ function EbMobStudio(config) {
     this.getColums4ListView = function (obj) {
         this.dataSourceColumn(obj.DataSourceRefId, function (vis, result) {
             vis.DataSourceParams.$values = result.paramsList || [];
+
+            if (result.columns && result.columns.length > 0) {
+                vis.DataColumns.$values = window.dataColToMobileCol(result.columns[0]);
+            }
+
             this.Controls.drawDsColTree(result.columns);
             $(".branch").click();
             if (!$(`#eb_mobtree_body_${this.Conf.TabNum}`).is(":visible"))
@@ -337,22 +346,24 @@ function EbMobStudio(config) {
 
     //pg onchange
     this.pg.PropertyChanged = function (obj, pname) {
-        if (pname === "Label" && obj.constructor.name !== "EbMobileDataGrid") {
+
+        let constructor = obj.constructor.name;
+
+        if (pname === "Label" && constructor !== "EbMobileDataGrid") {
             this.refreshControl(obj);
         }
-        else if (pname === "Label" && obj.constructor.name === "EbMobileDataGrid") {
-            $(`#${obj.EbSid}`).children(".ctrl_label").text(obj.Label);
-        }
-        else if (obj.constructor.name === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
+        else if (constructor === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
             obj.getColumns(obj.DataSourceRefId, this);
         }
-        else if (obj.constructor.name === "EbMobileVisualization" && pname === "DataSourceRefId") {
-            this.getColums4ListView(obj);
+        else if (constructor === "EbMobileVisualization") {
+            if (pname === "DataSourceRefId") {
+                this.getColums4ListView(obj);
+            }
+            else if (pname === "LinkRefId") {
+                this.Controls.setLinkFormControls(obj);
+            }
         }
-        else if (obj.constructor.name === "EbMobileGeoLocation" && pname === "HideSearchBox") {
-            obj._toggleSearchBar();
-        }
-        else if (pname === "DisplayName" && obj.constructor.name === "EbMobilePage") {
+        else if (pname === "DisplayName" && constructor === "EbMobilePage") {
             this.setEmulatorTitle(obj[pname]);
         }
         else {
@@ -390,6 +401,10 @@ function EbMobStudio(config) {
         $("#eb_emulater_title" + this.Conf.TabNum).text(value);
     };
 
+    this.setRoot = function () {
+        this.pg.setObject(this.EbObject, AllMetas["EbMobilePage"]);
+    };
+
     this.exe = function () {
         this.Controls = new MobileControls(this);
         if (this.EditObj === null || this.EditObj === undefined)
@@ -406,6 +421,7 @@ function EbMobStudio(config) {
         });
         this.Menu = new MobileMenu(this);
         $("body").on("dblclick", ".ctrl_label", this.labelOnDoubleClick.bind(this));
+        $(".eb_mobpage_pane_layout").on("focus", this.setRoot.bind(this));
         this.refreshEmulator();
         this.setEmulatorTitle(this.EbObject.DisplayName || "Untitled");
         $(window).resize(function () { this.refreshEmulator(); }.bind(this));

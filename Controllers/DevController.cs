@@ -58,96 +58,96 @@ namespace ExpressBase.Web.Controllers
             ViewBag.ObjectCollection = _objects.Data;
             ViewBag.AppInfo = _objects.AppInfo;
 
-			if (Type == EbApplicationTypes.Web)
-				ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
-			else if (Type == EbApplicationTypes.Mobile)
-				ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
-			else if (Type == EbApplicationTypes.Bot)
-			{
-				EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
-				if (settings != null)
-				{
-					 if (settings.CssContent == null || settings.CssContent.Count < 9)
-					{
+            if (Type == EbApplicationTypes.Web)
+                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbWebSettings>(_objects.AppInfo.AppSettings) ?? new EbWebSettings();
+            else if (Type == EbApplicationTypes.Mobile)
+                ViewBag.AppSettings = JsonConvert.DeserializeObject<EbMobileSettings>(_objects.AppInfo.AppSettings) ?? new EbMobileSettings();
+            else if (Type == EbApplicationTypes.Bot)
+            {
+                EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
+                if (settings != null)
+                {
+                    if (settings.CssContent == null || settings.CssContent.Count < 9)
+                    {
 
-						settings.CssContent = CssContent(settings.CssContent);
-					}
-					
-				}
-				ViewBag.AppSettings = settings ?? new EbBotSettings() { };
-				ViewBag.EbfontLst = EbFont.FontFamilies;
-			}
+                        settings.CssContent = CssContent(settings.CssContent);
+                    }
 
-			this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
-			ViewBag.Title = _objects.AppInfo.Name;
-			ViewBag.ObjectsCount = _objects.ObjectsCount;
-			return View();
-		}
+                }
+                ViewBag.AppSettings = settings ?? new EbBotSettings() { };
+                ViewBag.EbfontLst = EbFont.FontFamilies;
+            }
 
-		public Dictionary<string, string> CssContent(Dictionary<string, string> btCss)
-		{
-			//public Dictionary<string, Dictionary<string, string>> CssContent()
-			var CssDict = new Dictionary<string, string>();
-			var Cssconst = new Dictionary<string, string>();
-			Cssconst = new EbBotSettings().CssContent;
-			int i = 0;
-			List<string> CssList = new List<string>();
-			List<string> NameArr = new List<string>();
-			//if any changes change in bote too
-			foreach (var item in Cssconst)
-			{
-				NameArr.Add(item.Key);
-				CssList.Add(item.Value);
-			}
-			
-			if (btCss.Count == 0)
-			{
-				foreach (string CssConst in CssList)
-				{
-					CssDict.Add(NameArr[i], CssConst);
-					i++;
-				}
-			}
-			else if (btCss.Count < NameArr.Count)
-			{
-				for(int j = 0; j < NameArr.Count; j++)
-				{
-					if (btCss.ContainsKey(NameArr[j]))
-					{
-						CssDict.Add(NameArr[j], btCss[NameArr[j]]);
-					}
-					else
-					{
-						CssDict.Add(NameArr[j], CssList[j]);
-					}
-				}
-				
-			}
-			return CssDict;
-		}
-		public string ResetCssContent(string cssConst)
-		{
-			if (cssConst.Equals("BOT_HEADER_PART"))
-				return BotConstants.BOT_HEADER_PART;
-			if (cssConst.Equals("BOT_HEADER_ICON_CONT"))
-				return BotConstants.BOT_HEADER_ICON_CONT;
-			if (cssConst.Equals("BOT_HEADER_IMAGE"))
-				return BotConstants.BOT_HEADER_IMAGE;
-			if (cssConst.Equals("BOT_APP_NAME"))
-				return BotConstants.BOT_APP_NAME;
-			if (cssConst.Equals("BOT_HEADERSUBTEXT"))
-				return BotConstants.BOT_HEADERSUBTEXT;
-			if (cssConst.Equals("BOT_IFRAME_CSS"))
-				return BotConstants.BOT_IFRAME_CSS;
-			if (cssConst.Equals("BOT_CHAT_BUTTON"))
-				return BotConstants.BOT_CHAT_BUTTON;
-			if (cssConst.Equals("BOT_IMAGE_CONT"))
-				return BotConstants.BOT_IMAGE_CONT;
-			if (cssConst.Equals("BOT_BUTTON_IMAGE"))
-				return BotConstants.BOT_BUTTON_IMAGE;
-			else
-				return "";
-		}
+            this.HttpContext.Items["AppName"] = _objects.AppInfo.Name;
+            ViewBag.Title = _objects.AppInfo.Name;
+            ViewBag.ObjectsCount = _objects.ObjectsCount;
+            return View();
+        }
+
+        public Dictionary<string, string> CssContent(Dictionary<string, string> btCss)
+        {
+            //public Dictionary<string, Dictionary<string, string>> CssContent()
+            var CssDict = new Dictionary<string, string>();
+            var Cssconst = new Dictionary<string, string>();
+            Cssconst = new EbBotSettings().CssContent;
+            int i = 0;
+            List<string> CssList = new List<string>();
+            List<string> NameArr = new List<string>();
+            //if any changes change in bote too
+            foreach (var item in Cssconst)
+            {
+                NameArr.Add(item.Key);
+                CssList.Add(item.Value);
+            }
+
+            if (btCss.Count == 0)
+            {
+                foreach (string CssConst in CssList)
+                {
+                    CssDict.Add(NameArr[i], CssConst);
+                    i++;
+                }
+            }
+            else if (btCss.Count < NameArr.Count)
+            {
+                for (int j = 0; j < NameArr.Count; j++)
+                {
+                    if (btCss.ContainsKey(NameArr[j]))
+                    {
+                        CssDict.Add(NameArr[j], btCss[NameArr[j]]);
+                    }
+                    else
+                    {
+                        CssDict.Add(NameArr[j], CssList[j]);
+                    }
+                }
+
+            }
+            return CssDict;
+        }
+        public string ResetCssContent(string cssConst)
+        {
+            if (cssConst.Equals("BOT_HEADER_PART"))
+                return BotConstants.BOT_HEADER_PART;
+            if (cssConst.Equals("BOT_HEADER_ICON_CONT"))
+                return BotConstants.BOT_HEADER_ICON_CONT;
+            if (cssConst.Equals("BOT_HEADER_IMAGE"))
+                return BotConstants.BOT_HEADER_IMAGE;
+            if (cssConst.Equals("BOT_APP_NAME"))
+                return BotConstants.BOT_APP_NAME;
+            if (cssConst.Equals("BOT_HEADERSUBTEXT"))
+                return BotConstants.BOT_HEADERSUBTEXT;
+            if (cssConst.Equals("BOT_IFRAME_CSS"))
+                return BotConstants.BOT_IFRAME_CSS;
+            if (cssConst.Equals("BOT_CHAT_BUTTON"))
+                return BotConstants.BOT_CHAT_BUTTON;
+            if (cssConst.Equals("BOT_IMAGE_CONT"))
+                return BotConstants.BOT_IMAGE_CONT;
+            if (cssConst.Equals("BOT_BUTTON_IMAGE"))
+                return BotConstants.BOT_BUTTON_IMAGE;
+            else
+                return "";
+        }
 
         [HttpPost]
         public UpdateAppSettingsResponse UpdateAppSettingsMob(string settings, int appid, EbApplicationTypes type)
@@ -873,7 +873,7 @@ namespace ExpressBase.Web.Controllers
         [HttpGet]
         public string GetMobileFormControls(string refid)
         {
-            string controls = null;
+            MobileFormControlInfo info = new MobileFormControlInfo();
             try
             {
                 EbMobilePage mPage = this.Redis.Get<EbMobilePage>(refid);
@@ -886,38 +886,44 @@ namespace ExpressBase.Web.Controllers
                     mPage = EbSerializers.Json_Deserialize<EbMobilePage>(obj.Data[0].Json);
                 }
 
-                if(mPage.Container is EbMobileForm)
+                if (mPage.Container is EbMobileForm)
                 {
-                    List<EbMobileControl> ctrlcoll = new List<EbMobileControl>();
-
-                    foreach(EbMobileControl ctrl in (mPage.Container as EbMobileForm).ChildControls)
+                    foreach (EbMobileControl ctrl in (mPage.Container as EbMobileForm).ChildControls)
                     {
                         if (ctrl is INonPersistControl || ctrl is ILinesEnabled)
                             continue;
-                        else if(ctrl is EbMobileTableLayout)
+                        else if (ctrl is EbMobileTableLayout)
                         {
-                            foreach(EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
+                            foreach (EbMobileTableCell cell in (ctrl as EbMobileTableLayout).CellCollection)
                             {
-                                cell.ControlCollection.ForEach(item =>
-                                {
-                                    item.EbSid = "EB_FP_" + item.Name;
-                                });
+                                cell.ControlCollection.ForEach(item => AddControl(info, item));
                             }
                         }
                         else
                         {
-                            ctrlcoll.Add(ctrl);
-                            ctrl.EbSid = "EB_FP_" + ctrl.Name;
+                            AddControl(info, ctrl);
                         }
                     }
-                    controls = EbSerializers.Json_Serialize(ctrlcoll);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            return controls;
+            return EbSerializers.Json_Serialize(info);
+        }
+
+        private void AddControl(MobileFormControlInfo info, EbMobileControl ctrl)
+        {
+            ctrl.EbSid = "EB_FP_" + ctrl.Name;
+            info.Controls.Add(ctrl);
+            info.ControlMetas.Add(new EbMobileControlMeta
+            {
+                EbSid = ctrl.EbSid,
+                Name = ctrl.Name,
+                ControlName = ctrl.Name,
+                ControlType = ctrl.GetType().Name
+            });
         }
     }
 }

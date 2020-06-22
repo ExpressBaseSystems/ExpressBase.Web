@@ -308,7 +308,7 @@ function EbMobStudio(config) {
             vis.DataSourceParams.$values = result.paramsList || [];
 
             if (result.columns && result.columns.length > 0) {
-                vis.ColumnsRef.$values = window.dataColToMobileCol(result.columns[0]);
+                vis.DataColumns.$values = window.dataColToMobileCol(result.columns[0]);
             }
 
             this.Controls.drawDsColTree(result.columns);
@@ -342,22 +342,24 @@ function EbMobStudio(config) {
 
     //pg onchange
     this.pg.PropertyChanged = function (obj, pname) {
-        if (pname === "Label" && obj.constructor.name !== "EbMobileDataGrid") {
+
+        let constructor = obj.constructor.name;
+
+        if (pname === "Label" && constructor !== "EbMobileDataGrid") {
             this.refreshControl(obj);
         }
-        else if (pname === "Label" && obj.constructor.name === "EbMobileDataGrid") {
-            $(`#${obj.EbSid}`).children(".ctrl_label").text(obj.Label);
-        }
-        else if (obj.constructor.name === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
+        else if (constructor === "EbMobileSimpleSelect" && pname === "DataSourceRefId") {
             obj.getColumns(obj.DataSourceRefId, this);
         }
-        else if (obj.constructor.name === "EbMobileVisualization" && pname === "DataSourceRefId") {
-            this.getColums4ListView(obj);
+        else if (constructor === "EbMobileVisualization") {
+            if (pname === "DataSourceRefId") {
+                this.getColums4ListView(obj);
+            }
+            else if (pname === "LinkRefId") {
+                this.Controls.setLinkFormControls(obj);
+            }
         }
-        else if (obj.constructor.name === "EbMobileGeoLocation" && pname === "HideSearchBox") {
-            obj._toggleSearchBar();
-        }
-        else if (pname === "DisplayName" && obj.constructor.name === "EbMobilePage") {
+        else if (pname === "DisplayName" && constructor === "EbMobilePage") {
             this.setEmulatorTitle(obj[pname]);
         }
         else {

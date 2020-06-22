@@ -30,14 +30,7 @@
             this.Root.setCtrls($(`#${o.EbSid} .eb_mob_container_inner .vis-filter-container`), filterControls);
             this.Root.getColums4ListView(o);
             this.setSortColumns(o);
-
-            this.getLinkFormControls(o, function (json) {
-                var controls = json === null || json === undefined ? [] : JSON.parse(json).$values;
-                this.FilterControls = controls;//store controls in vis object
-                o.MobileFormControls.$values = controls;
-                if (controls.length > 0)
-                    this.drawFormControls(controls);
-            }.bind(this));
+            this.setLinkFormControls(o);
         }
     };
 
@@ -81,6 +74,18 @@
                 this.Root.refreshControl(obj);
             }.bind(this)
         });
+    };
+
+    this.setLinkFormControls = function (o) {
+        this.getLinkFormControls(o, function (json) {
+
+            var controlInfo = JSON.parse(json);
+
+            this.FilterControls = controlInfo.Controls.$values;
+            o.FormControlMetas.$values = controlInfo.ControlMetas.$values;
+
+            this.drawFormControls(this.FilterControls);
+        }.bind(this));
     };
 
     this.getLinkFormControls = function (vis, callback) {

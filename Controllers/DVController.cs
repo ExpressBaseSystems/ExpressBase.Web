@@ -64,7 +64,7 @@ namespace ExpressBase.Web.Controllers
 
             EbObjectWithRelatedDVResponse resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid = null });
             EbDataVisualization dsobj = resultlist.Dsobj;
-            if(dsobj.DataSourceRefId != string.Empty) 
+            if (dsobj.DataSourceRefId != string.Empty)
                 dsobj.AfterRedisGet(this.Redis, this.ServiceClient);
             ViewBag.dvObject = dsobj;
             ViewBag.DispName = dsobj.DisplayName;
@@ -217,9 +217,9 @@ namespace ExpressBase.Web.Controllers
                 DVBaseColumn _col = null;
 
                 if (column.Type == EbDbTypes.String)
-                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px"};
+                    _col = new DVStringColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px" };
                 else if (column.Type == EbDbTypes.Int16 || column.Type == EbDbTypes.Int32 || column.Type == EbDbTypes.Int64 || column.Type == EbDbTypes.Double || column.Type == EbDbTypes.Decimal || column.Type == EbDbTypes.VarNumeric)
-                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px"};
+                    _col = new DVNumericColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px" };
                 else if (column.Type == EbDbTypes.Boolean)
                     _col = new DVBooleanColumn { Data = column.ColumnIndex, Name = column.ColumnName, sTitle = column.ColumnName, Type = column.Type, bVisible = true, sWidth = "100px" };
                 else if (column.Type == EbDbTypes.DateTime || column.Type == EbDbTypes.Date || column.Type == EbDbTypes.Time)
@@ -352,14 +352,14 @@ namespace ExpressBase.Web.Controllers
                 SingleTable ss = new SingleTable();
                 ss.Add(new SingleRow { Columns = singleColumns });
                 obj.MultipleTables.Add("eb_approval_lines", ss);
-                 Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
-                         new InsertDataFromWebformRequest
-                         {
-                             RefId = RefId,
-                             FormData = obj,
-                             RowId = RowId,
-                             CurrentLoc = CurrentLoc
-                         });
+                Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
+                        new InsertDataFromWebformRequest
+                        {
+                            RefId = RefId,
+                            FormData = obj,
+                            RowId = RowId,
+                            CurrentLoc = CurrentLoc
+                        });
                 if (Resp.Status == 200)
                 {
                     try
@@ -389,6 +389,15 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine(ex.StackTrace);
             }
             return res;
+        }
+
+        public void SendSMS(SMSInitialRequest request)
+        {
+            Eb_Solution sol = GetSolutionObject(this.LoggedInUser.CId);
+            request.SolnId = sol.SolutionID;
+            request.UserAuthId = this.LoggedInUser.AuthId;
+            request.UserId = this.LoggedInUser.UserId;
+            var xx = this.ServiceClient.Post(request);
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)

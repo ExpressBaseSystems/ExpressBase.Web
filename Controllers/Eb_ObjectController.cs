@@ -152,7 +152,7 @@ namespace ExpressBase.Web.Controllers
                 else if (type.Equals(EbObjectTypes.TableVisualization) || type.Equals(EbObjectTypes.ChartVisualization) || type.Equals(EbObjectTypes.MapView))
                 {
                     Type[] typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
-                    _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
+                    _c2js = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject),typeof(EbObject));
                     if (_object != null)
                     {
                         //---------------------temp fix to copy old prop value (string) to new prop value (EbScript)-------------------------------

@@ -58,7 +58,7 @@
 </script>
 <div class="container-fluid" style="margin-top:60px;background: transparent;">
     <div class="row" style="background: transparent;">
-        <div class="dash-loader" hidden>
+        <div class="dash-loader">
 
         </div>
         <div class="col-sm-12" style="background: transparent;width: 99%">
@@ -87,11 +87,9 @@
     }
     else
     {
-        @*<script>
-                  $(document).ready(function () {
-                $('#quik_menu').click();
-            });
-            </script>*@
+        <script>
+            $(".dash-loader").hide();
+            </script>
     }
 }
 <script type="text/javascript">

@@ -27,6 +27,7 @@ var DashBoardWrapper = function (options) {
     this.Procs = {};
     this.Rowdata = {};
     this.currentGaugeSrc;
+    this.loader = $(".dash-loader");
     this.EbParams = {
         Icons: {
             "Numeric": "fa-sort-numeric-asc",
@@ -118,11 +119,13 @@ var DashBoardWrapper = function (options) {
     this.GridStackInit();
 
     this.getColumns = function () {
+        this.loader.show();
         $.post("../DashBoard/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" }, this.AppendFD.bind(this));
     };
 
     this.AppendFD = function (result) {
         $('.param-div-cont').remove();
+        this.loader.hide();
         $("#dashbord-view").prepend(`
                 <div id='paramdiv-Cont${this.TabNum}' class='param-div-cont'>
                 <div id='paramdiv${this.TabNum}' class='param-div fd'>
@@ -295,6 +298,7 @@ var DashBoardWrapper = function (options) {
             if ($(target).attr("id") === "grid-cont" && $(source).hasClass("views_cont")) {
                 let a = this.AddNewTile();
                 this.TileCollection[this.CurrentTile].RefId = this.VisRefid;
+                this.loader.show();
                 $.ajax(
                     {
                         url: '../DashBoard/DashBoardGetObj',
@@ -485,16 +489,18 @@ var DashBoardWrapper = function (options) {
         }
     };
     this.LabelDrop = function (component, column, controlname, tileid) {
-        let val = getObjByval(this.Procs[component].Columns.$values, "name", column);
-        if (component !== "" && column !== "" && val !== undefined && this.Rowdata[component + "Row"] !== null) {
-            let index = val.data;
-            let _data = this.Rowdata[component + "Row"][index];
-            this.Procs[controlname].DynamicLabel = _data;
-            if (this.Procs[controlname].StaticLabel == "") {
-                this.Procs[controlname].StaticLabel = column;
+        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null) {
+            let val = getObjByval(this.Procs[component].Columns.$values, "name", column);
+            if (val !== undefined) {
+                let index = val.data;
+                let _data = this.Rowdata[component + "Row"][index];
+                this.Procs[controlname].DynamicLabel = _data;
+                if (this.Procs[controlname].StaticLabel == "") {
+                    this.Procs[controlname].StaticLabel = column;
+                }
+                this.Procs[controlname].DataObjCtrlName = component;
+                this.Procs[controlname].DataObjColName = column;
             }
-            this.Procs[controlname].DataObjCtrlName = component;
-            this.Procs[controlname].DataObjColName = column;
         }
     };
 
@@ -526,8 +532,6 @@ var DashBoardWrapper = function (options) {
         </div>`;
         return a;
     };
-
-
 
     this.ComponentDrop = function (target, o) {
         $(target).append(o.$Control[0]);
@@ -633,10 +637,13 @@ var DashBoardWrapper = function (options) {
             grid.removeAll();
             this.DrawTiles();
         }
-        else {
+        else if (this.EbObject.Filter_Dialogue !== "") {
             this.getColumns();
             if (this.EbObject.Tiles.$values.length == 0)
                 $(".dash-loader").hide();
+        }
+        else {
+            $(".dash-loader").hide();
         }
         
 
@@ -695,6 +702,7 @@ var DashBoardWrapper = function (options) {
     }
 
     this.Ajax4fetchVisualization = function (refid) {
+        this.loader.show();
         if (refid !== "") {
             $.ajax(
                 {
@@ -702,7 +710,7 @@ var DashBoardWrapper = function (options) {
                     type: 'POST',
                     data: { refid: refid },
                     error: function (request, error) {
-                        $(".dash-loader").hide();
+                        this.loader.hide();
                         EbPopBox("show", {
                             Message: "Failed to get data from DataSourse",
                             ButtonStyle: {
@@ -753,6 +761,7 @@ var DashBoardWrapper = function (options) {
                 let refid = this.EbObject.Tiles.$values[i].RefId;
                 Eb_Tiles_StyleFn(this.TileCollection[this.CurrentTile], this.CurrentTile, this.TabNum);
                 if (refid !== "") {
+                    this.loader.show();
                     $(`[data-id = ${this.CurrentTile}]`).css("display", "block");
                     $.ajax(
                         {
@@ -778,6 +787,7 @@ var DashBoardWrapper = function (options) {
 
                 }
                 else {
+                    this.loader.show();
                     $(`#${this.TabNum}_restart_${t_id}`).remove();
                     $(`#${this.TabNum}_link_${t_id}`).remove();
                     $(`#${t_id}`).attr("eb-type", "gauge");
@@ -863,6 +873,7 @@ var DashBoardWrapper = function (options) {
                         $(`#${this.CurrentTile} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
                     }
                     this.RedrwFnHelper(this.CurrentTile);
+                    this.loader.hide();
                 }
 
             }
@@ -966,6 +977,7 @@ var DashBoardWrapper = function (options) {
 
     this.popChanged = function (obj, pname, newval, oldval) {
         if (pname === "TileRefId") {
+            this.loader.show();
             $(`[name-id="${this.CurrentTile}"]`).empty();
             $(`[data-id="${this.CurrentTile}"]`).empty();
             $(`.eb-loader-prcbar`).remove();
@@ -1011,6 +1023,7 @@ var DashBoardWrapper = function (options) {
     };
 
     this.GetComponentColumns = function (obj) {
+        this.loader.show();
         let Refid = obj["DataSource"];
         this.GetFilterValuesForDataSource();
         this.Rowdata[obj.EbSid + "Row"] = null;
@@ -1021,7 +1034,7 @@ var DashBoardWrapper = function (options) {
             data: { DataSourceRefId: Refid, param: this.filtervalues },
             async: false,
             error: function (request, error) {
-                $(".dash-loader").hide();
+                this.loader.hide();
                 EbPopBox("show", {
                     Message: "Failed to get data from DataSourse",
                     ButtonStyle: {
@@ -1039,7 +1052,7 @@ var DashBoardWrapper = function (options) {
                 this.propGrid.setObject(obj, AllMetas["EbDataObject"]);
                 this.DisplayColumns(obj);
                 this.Rowdata[obj.EbSid + "Row"] = resp.row;
-                $(".dash-loader").hide();
+                this.loader.hide();
             }.bind(this)
         });
     };
@@ -1278,7 +1291,7 @@ var DashBoardWrapper = function (options) {
 
 
     this.GetFilterValues = function () {
-        $(".dash-loader").show();
+        this.loader.show();
         this.filtervalues = [];
         if (this.stickBtn) { this.stickBtn.minimise(); }
 
@@ -1297,6 +1310,7 @@ var DashBoardWrapper = function (options) {
             CtrlCounters.DataObjectCounter = 0;
             //this.DrawTiles();
             setTimeout(this.DrawTiles.bind(this), 500);
+            setTimeout(this.loader.hide, 1);
         }
 
     };

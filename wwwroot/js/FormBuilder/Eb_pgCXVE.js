@@ -373,6 +373,7 @@
     };
 
     this.CEHelper = function (sourceProp) {
+        this.Dprop = this.CurMeta.Dprop;
         let mapListSrc = this.CurMeta.Dprop; // Dprop meta as head
         this.CurCEOnSelectFn = this.CurMeta.CEOnSelectFn || function () { };
         this.CurCEOndeselectFn = this.CurMeta.CEOnDeselectFn || function () { };
@@ -1148,6 +1149,8 @@
             type = "ObjectBasicForm";
         else if (parseInt(type) === EbObjectTypes.Report)
             type = "ObjectBasicReport";
+        else if (parseInt(type) === EbObjectTypes.SmsBuilder)
+            type = "ObjectBasicSMS";
         else
             type = "ObjectBasicVis";
         //this.loadPG($e, name);

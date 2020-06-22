@@ -10,60 +10,56 @@ const WebFormRender = function (option) {
 
     //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
-    this.setMasterVariables = function (option) {
-        ebcontext.renderContext = "WebForm";
-        this.FormObj = option.formObj;
-        this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
-        this.$saveBtn = $('#' + option.headerBtns['Save']);
-        this.$deleteBtn = $('#' + option.headerBtns['Delete']);
-        this.$editBtn = $('#' + option.headerBtns['Edit']);
-        this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
-        this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
-        this.$closeBtn = $('#' + option.headerBtns['Close']);
-        this.$cloneBtn = $('#webformclone');
-        this.Env = option.env;
-        this.Cid = option.cid;
-        this.rendererName = 'WebForm';
-        this.initControls = new InitControls(this);
-        //this.editModeObj = option.editModeObj;
-        this.formRefId = option.formRefId || "";
-        this.rowId = option.rowId;
-        this.mode = option.mode;
-        this.userObject = option.userObject;
-        this.cloneRowId = option.cloneRowId;
-        this.isOpenedInCloneMode = !!option.cloneRowId;
-        this.isPartial = option.isPartial;//value is true if form is rendering in iframe
-        this.headerObj = option.headerObj;//EbHeader
-        this.formPermissions = option.formPermissions;
-        this.formDataWrapper = option.formData;
-        this.formData = option.formData === null ? null : option.formData.FormData;
-        this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
-        this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;
-        this.TableNames;
-        this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
-        this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
-        this.FormDataExtdObj = { val: this.FormDataExtended };
-        this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
-        this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
-        this.FlatContControls = getInnerFlatContControls(this.FormObj);
-        this.DataMODEL = this.EditModeFormData;
-        this.MasterTable = this.FormObj.TableName;
-        this.formValues = {};
-        this.IsPSsInitComplete = {};
-        this.formValidationflag = true;
-        this.isEditModeCtrlsSet = false;
-        this.DGBuilderObjs = {};
-        this.uniqCtrlsInitialVals = {};
-        this.PSsIsInit = {};
-        this.isInitNCs = false;
-        this.DynamicTabObject = null;
-        this.TabControls = null;
-        this.FRC = new FormRenderCommon({
-            FO: this
-        });
-    };
-
-    this.setMasterVariables(option);
+    ebcontext.renderContext = "WebForm";
+    this.FormObj = option.formObj;
+    this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
+    this.$saveBtn = $('#' + option.headerBtns['Save']);
+    this.$deleteBtn = $('#' + option.headerBtns['Delete']);
+    this.$editBtn = $('#' + option.headerBtns['Edit']);
+    this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
+    this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
+    this.$closeBtn = $('#' + option.headerBtns['Close']);
+    this.$cloneBtn = $('#webformclone');
+    this.Env = option.env;
+    this.Cid = option.cid;
+    this.rendererName = 'WebForm';
+    this.initControls = new InitControls(this);
+    //this.editModeObj = option.editModeObj;
+    this.formRefId = option.formRefId || "";
+    this.rowId = option.rowId;
+    this.mode = option.mode;
+    this.userObject = option.userObject;
+    this.cloneRowId = option.cloneRowId;
+    this.isOpenedInCloneMode = !!option.cloneRowId;
+    this.isPartial = option.isPartial;//value is true if form is rendering in iframe
+    this.headerObj = option.headerObj;//EbHeader
+    this.formPermissions = option.formPermissions;
+    this.formDataWrapper = option.formData;
+    this.formData = option.formData === null ? null : option.formData.FormData;
+    this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
+    this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;
+    this.TableNames;
+    this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
+    this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
+    this.FormDataExtdObj = { val: this.FormDataExtended };
+    this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
+    this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
+    this.FlatContControls = getInnerFlatContControls(this.FormObj);
+    this.DataMODEL = this.EditModeFormData;
+    this.MasterTable = this.FormObj.TableName;
+    this.formValues = {};
+    this.IsPSsInitComplete = {};
+    this.formValidationflag = true;
+    this.isEditModeCtrlsSet = false;
+    this.DGBuilderObjs = {};
+    this.uniqCtrlsInitialVals = {};
+    this.PSsIsInit = {};
+    this.isInitNCs = false;
+    this.DynamicTabObject = null;
+    this.TabControls = null;
+    this.FRC = new FormRenderCommon({
+        FO: this
+    });
 
     this.updateCtrlUI = function (cObj) {
         $.each(cObj, function (prop, val) {
@@ -837,7 +833,7 @@ const WebFormRender = function (option) {
         this.setHeader("View Mode");
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        //this.setEditModeCtrls();
+        this.setEditModeCtrls();
 
         if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
             let DataMODEL = this.DataMODEL[this.ReviewCtrl.TableName];
@@ -869,7 +865,7 @@ const WebFormRender = function (option) {
             if (!this.ReviewCtrl._Builder.isFormDataEditable)
                 return;
         }
-        //this.setEditModeCtrls();
+        this.setEditModeCtrls();
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
@@ -1602,7 +1598,7 @@ const WebFormRender = function (option) {
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        this.setHeader(this.mode);// contains a hack for preview mode(set as newmode)
+        this.setHeader(this.mode);
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
@@ -1611,13 +1607,11 @@ const WebFormRender = function (option) {
         this.afterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.afterSaveAction = this.getAfterSaveActionFn(this.afterSavemodeS);
         this.setMode();
-        this.setEditModeCtrls();
 
-        //if (this.Mode.isPrefill)
-        //    this.setEditModeCtrls();
+        if (this.Mode.isPrefill)
+            this.setEditModeCtrls();
 
-        //else
-        if (this.Mode.isNew) {
+        else if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
@@ -1626,24 +1620,11 @@ const WebFormRender = function (option) {
         }
 
         if (this.Mode.isView) {
-            //this.setEditModeCtrls();// should remove ?
+            this.setEditModeCtrls();// should remove ?
             this.SwitchToViewMode();
             this.locInit4viewMode();
         }
         this.LocationInit();
-        //this.FORCERELOAD();
-    };
-
-    this.FORCERELOAD = function () {
-        debugger;
-        let keys = Object.keys(this);
-        for (let i = 0; i < keys.length; i++) {
-            let key = keys[i];
-            if (typeof this[key] !== typeof function () { })
-                delete this[key];
-        }
-
-        this.setMasterVariables(option);
     };
 
     let t0 = performance.now();

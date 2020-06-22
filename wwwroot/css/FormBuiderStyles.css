@@ -2316,6 +2316,14 @@ input.locinp {
 
 
     /*for bot*/
+.simpleFUPdiv .emtySFUP {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-weight: 600;
+    padding: 10px;
+}
     .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb {
         border-radius: 4px;
         float: left;

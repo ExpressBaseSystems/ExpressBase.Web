@@ -602,6 +602,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
             }
             else {
+                tempCtrl.find(`#${ctrl.EbSid}_SFUP`).addClass('emtySFUP');
                 tempCtrl.find('.SFUPcontainer').empty().append('<span>No file uploaded</span>');
             }
             text = tempCtrl[0].outerHTML;

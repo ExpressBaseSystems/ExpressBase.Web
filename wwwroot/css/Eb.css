@@ -542,8 +542,7 @@ span[iblock] .selected-tag:empty::before {
     content: '--';
 }
 
-.req-cont {
-    position: relative;
+.req-cont, .msg-cont {
     font-size: 11.3px;
     margin-top: 3px;
     animation-duration: 0.3s;
@@ -557,7 +556,7 @@ span[iblock] .selected-tag:empty::before {
         color: #ee0000cc;
     }
 
-    .req-cont > label {
+    .req-cont > label, .msg-cont > label {
         position: absolute;
         font-weight: 500;
         top: 1px;

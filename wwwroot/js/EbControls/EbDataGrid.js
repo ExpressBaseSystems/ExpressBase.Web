@@ -393,7 +393,7 @@
             dspMmbr = this.getBooleanDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
-            dspMmbr = cellObj.F || cellObj.Value || (ctrl.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(ctrl.DecimalPlaces))); // temporary fix
+            dspMmbr = cellObj.F || cellObj.Value.toFixed(col.DecimalPlaces);// || (col.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(col.DecimalPlaces))); // temporary fix
         }
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)

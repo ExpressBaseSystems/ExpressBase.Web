@@ -1230,3 +1230,25 @@ function EbvalidateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
+
+//function EbfixTrailingZeros(val, decLen) {
+//    //val = val.toString();
+//    //if (decLen <= 0)
+//    //    return val;
+//    //let res;
+//    ////dec
+//    ////val.padEnd(2)
+
+//    //if (!val.trim().includes(".")) {
+//    //    res = val + "." + "0".repeat(decLen);
+//    //}
+//    //else {
+//    //    let p1 = val.split(".")[0];
+//    //    let p2 = val.split(".")[1];
+//    //    zerolen = decLen - p2.length;
+//    //    res = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
+//    //}
+//    res = val.toFixed(decLen);
+
+//    return res;
+//}

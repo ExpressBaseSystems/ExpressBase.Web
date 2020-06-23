@@ -438,7 +438,7 @@
     // checks a control value is emptyString
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.ObjType === "DataGrid" && !ctrl.RowRequired_valid_Check()) {
+        if (ctrl.ObjType === "DataGrid" && !ctrl.rowRequired_valid_Check()) {
             this.addInvalidStyle(ctrl);
             return false;
         }

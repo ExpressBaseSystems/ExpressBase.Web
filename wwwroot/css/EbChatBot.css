@@ -29,6 +29,15 @@ body {
     border-radius: 3px;
 }
 
+    .eb-chat-cont .eb-textarea{
+        border: none;
+        resize: none;
+        outline:none;
+    }
+
+    .eb-chat-cont [ctrl-type="SimpleFileUploader"] .SFUPcontent span{
+        font-size:12px !important;
+    }
 /*.eb-chatBox, .eb-chatBox-dev {
     overflow-y: auto;
     height: 100%;
@@ -419,7 +428,7 @@ border-radius: 4px;
 .chat-ctrl-cont [name=ctrlsend], ctrl-cont-bot [name=ctrlsend], .cntct_btn {
     position: absolute;
     vertical-align: middle;
-    font-size: 17px;
+    font-size: 18px;
     height: 40px;
     margin-left: 25px;
     border-radius: 10em;
@@ -429,11 +438,11 @@ border-radius: 4px;
     box-shadow: -2px 2px 4px 0 #00000073
 }
 
-    .ctrl-cont-bot [name=ctrlsend]:hover, .cntct_btn:hover {
+    .chat-ctrl-cont [name=ctrlsend]:hover, .cntct_btn:hover {
         /*filter: hue-rotate(60deg);*/
         filter: var(--botfilter_btn);
         color: white;
-        cursor: pointer;
+        cursor: pointer !important;
     }
 
 
@@ -1172,8 +1181,8 @@ border-radius: 4px;
 .renderAtBtm {
     display: flex;
     align-items: center;
-    background-color: white;
-    /*background-color: var(--botThemeColor);*/
+    /*background-color: white;*/
+    background-color: var(--botThemeColor);
     width: 100%;
     padding: 10px 20px;
     z-index: 2;

@@ -1727,7 +1727,7 @@
 
     this.addUtilityFnsForUDF = function () {
         this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;// return false if any column has value
-        this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;// checks row validations and returns bool
+        this.ctrl.rowRequired_valid_Check = this.RowRequired_valid_Check;// checks row validations and returns bool
         this.ctrl.sum = this.sumOfCol;// returns sum of a numeric column
         this.ctrl.getRowByIndex = this.getRowByIndex;// get row by index (0,1...)
         this.ctrl.getValuesOfColumn = this.getValuesOfColumn;// returns value array of particular column

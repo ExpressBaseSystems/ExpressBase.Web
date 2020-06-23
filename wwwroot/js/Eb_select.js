@@ -210,23 +210,30 @@ const EbSelect = function (ctrl, options) {
         return op;
     }
 
+    this.showCtrlMsg = function () {
+        EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+    }.bind(this);
+
+    this.hideCtrlMsg = function () {
+        EbHideCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+    }.bind(this);
+
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
         let $e = $(e.target);
         let searchVal = $e.val();
-        let _name = this.ComboObj.EbSid_CtxId;
         let MaxSearchVal = this.getMaxLenVal();
 
         if (!isPrintable(e) && e.which !== 8)
             return;
 
         if (this.ComboObj.MinSeachLength > MaxSearchVal.length) {
-            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+            this.showCtrlMsg();
             this.V_hideDD();
             return;
         }
         else {
-            EbHideCtrlMsg(`#${_name}Container`, `#${_name}Wraper`);
+            this.hideCtrlMsg();
         }
 
         let mapedField = $e.closest(".searchable").attr("maped-column");
@@ -858,10 +865,15 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.V_showDD = function (e) {
+        if (this.Vobj.DDstate)
+            return;
         let searchVal = this.getMaxLenVal();
         if (this.ComboObj.MinSeachLength > searchVal.length) {
+            this.showCtrlMsg();
             return;
         }
+        else
+            this.hideCtrlMsg();
 
         this.Vobj.DDstate = true;
         if (!this.IsDatatableInit)
@@ -885,10 +897,12 @@ const EbSelect = function (ctrl, options) {
 
         this.V_updateCk();
         //setTimeout(function(){ $('#' + this.name + 'container table:eq(0)').css('width', $( '#' + this.name + 'container table:eq(1)').css('width') ); },520);
-        //setTimeout(this.colAdjust, 520);
+        this.colAdjust();
     };
 
-    //this.colAdjust = function () { $('#' + this.name + 'tbl').DataTable().columns.adjust().draw(); }
+    this.colAdjust = function () {
+        $('#' + this.name + 'tbl').DataTable().columns.adjust().draw();
+    }.bind(this);
 
     this.V_updateCk = function () {// API..............
         $("#" + this.ComboObj.EbSid_CtxId + 'DDdiv table:eq(1) tbody [type=checkbox]').each(function (i, chkbx) {
@@ -956,9 +970,14 @@ const EbSelect = function (ctrl, options) {
         this.filterArray = [];
         if (this.datatable) {
             this.datatable.columnSearch = [];
-            this.datatable.Api.ajax.reload();
+            //this.datatable.Api.ajax.reload();
+            this.reloadDT();
         }
     };
+
+    this.reloadDT = function () {
+        this.datatable.Api.ajax.reload(this.colAdjust);
+    }.bind(this);
 
     this.checkBxClickEventHand = function (e) {
         this.$curEventTarget = $(e.target);

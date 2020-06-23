@@ -1302,7 +1302,7 @@
 
     this.sumOfCol = function (colName) {
         return parseFloat(this.getAggOfCol(colName));
-    };
+    }.bind(this);
 
 
 
@@ -1485,6 +1485,7 @@
         if (!this.isPSInDG)
             setTimeout(this.PScallBFn.bind(this, addedRowCols), 1);// call checkRow_click() pass event.target directly
     };
+
     this.resetRowSlNo = function (slno) {
         let rowCount = $(`#${this.TableId}>tbody>tr`).length;
         for (let i = slno; i < rowCount; i++) {

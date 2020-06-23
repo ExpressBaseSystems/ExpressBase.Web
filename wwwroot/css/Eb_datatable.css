@@ -990,7 +990,13 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     color: white;
 }
 
-#sendbtn[disabled] {
+#sendbtn[disabled]{
+    background-color: #efefef;
+    border: transparent;
+    color: black;
+    cursor: not-allowed;
+}
+.smsbutton[disabled] {
     background-color: #efefef;
     border: transparent;
     color: black;

@@ -10,56 +10,60 @@ const WebFormRender = function (option) {
 
     //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
-    ebcontext.renderContext = "WebForm";
-    this.FormObj = option.formObj;
-    this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
-    this.$saveBtn = $('#' + option.headerBtns['Save']);
-    this.$deleteBtn = $('#' + option.headerBtns['Delete']);
-    this.$editBtn = $('#' + option.headerBtns['Edit']);
-    this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
-    this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
-    this.$closeBtn = $('#' + option.headerBtns['Close']);
-    this.$cloneBtn = $('#webformclone');
-    this.Env = option.env;
-    this.Cid = option.cid;
-    this.rendererName = 'WebForm';
-    this.initControls = new InitControls(this);
-    //this.editModeObj = option.editModeObj;
-    this.formRefId = option.formRefId || "";
-    this.rowId = option.rowId;
-    this.mode = option.mode;
-    this.userObject = option.userObject;
-    this.cloneRowId = option.cloneRowId;
-    this.isOpenedInCloneMode = !!option.cloneRowId;
-    this.isPartial = option.isPartial;//value is true if form is rendering in iframe
-    this.headerObj = option.headerObj;//EbHeader
-    this.formPermissions = option.formPermissions;
-    this.formDataWrapper = option.formData;
-    this.formData = option.formData === null ? null : option.formData.FormData;
-    this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
-    this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;
-    this.TableNames;
-    this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
-    this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
-    this.FormDataExtdObj = { val: this.FormDataExtended };
-    this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
-    this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
-    this.FlatContControls = getInnerFlatContControls(this.FormObj);
-    this.DataMODEL = this.EditModeFormData;
-    this.MasterTable = this.FormObj.TableName;
-    this.formValues = {};
-    this.IsPSsInitComplete = {};
-    this.formValidationflag = true;
-    this.isEditModeCtrlsSet = false;
-    this.DGBuilderObjs = {};
-    this.uniqCtrlsInitialVals = {};
-    this.PSsIsInit = {};
-    this.isInitNCs = false;
-    this.DynamicTabObject = null;
-    this.TabControls = null;
-    this.FRC = new FormRenderCommon({
-        FO: this
-    });
+    this.setMasterVariables = function (option) {
+        ebcontext.renderContext = "WebForm";
+        this.FormObj = option.formObj;
+        this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
+        this.$saveBtn = $('#' + option.headerBtns['Save']);
+        this.$deleteBtn = $('#' + option.headerBtns['Delete']);
+        this.$editBtn = $('#' + option.headerBtns['Edit']);
+        this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
+        this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
+        this.$closeBtn = $('#' + option.headerBtns['Close']);
+        this.$cloneBtn = $('#webformclone');
+        this.Env = option.env;
+        this.Cid = option.cid;
+        this.rendererName = 'WebForm';
+        this.initControls = new InitControls(this);
+        //this.editModeObj = option.editModeObj;
+        this.formRefId = option.formRefId || "";
+        this.rowId = option.rowId;
+        this.mode = option.mode;
+        this.userObject = option.userObject;
+        this.cloneRowId = option.cloneRowId;
+        this.isOpenedInCloneMode = !!option.cloneRowId;
+        this.isPartial = option.isPartial;//value is true if form is rendering in iframe
+        this.headerObj = option.headerObj;//EbHeader
+        this.formPermissions = option.formPermissions;
+        this.formDataWrapper = option.formData;
+        this.formData = option.formData === null ? null : option.formData.FormData;
+        this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
+        this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;
+        this.TableNames;
+        this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
+        this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
+        this.FormDataExtdObj = { val: this.FormDataExtended };
+        this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
+        this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
+        this.FlatContControls = getInnerFlatContControls(this.FormObj);
+        this.DataMODEL = this.EditModeFormData;
+        this.MasterTable = this.FormObj.TableName;
+        this.formValues = {};
+        this.IsPSsInitComplete = {};
+        this.formValidationflag = true;
+        this.isEditModeCtrlsSet = false;
+        this.DGBuilderObjs = {};
+        this.uniqCtrlsInitialVals = {};
+        this.PSsIsInit = {};
+        this.isInitNCs = false;
+        this.DynamicTabObject = null;
+        this.TabControls = null;
+        this.FRC = new FormRenderCommon({
+            FO: this
+        });
+    };
+
+    this.setMasterVariables(option);
 
     this.updateCtrlUI = function (cObj) {
         $.each(cObj, function (prop, val) {
@@ -440,38 +444,61 @@ const WebFormRender = function (option) {
         });
     };
 
+    //this.setEditModeCtrls = function () {
+    //    if (this.isEditModeCtrlsSet) {// if already set while mode switching
+    //        $.each(this.DGs, function (k, DG) {
+    //            this.DGBuilderObjs[DG.Name].SwitchToEditMode();
+    //        }.bind(this));
+    //        return;
+    //    }
+    //    let EditModeFormData = this.EditModeFormData;
+    //    let NCCTblNames = this.getNormalTblNames();
+    //    //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
+    //    for (let DGName in this.DGBuilderObjs) {
+    //        let DGB = this.DGBuilderObjs[DGName];
+    //        if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
+    //            this.DataMODEL[DGB.ctrl.TableName] = [];
+    //            DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
+    //            continue;
+    //        }
+    //        //let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
+    //        let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
+    //        DGB.setEditModeRows(DataMODEL);
+    //    }
+
+    //    //if (this.ApprovalCtrl.__ready) {
+    //    //let DataMODEL = this.EditModeFormData[this.ApprovalCtrl.TableName];
+    //    //this.ApprovalCtrl.setEditModeRows(DataMODEL);
+    //    //}
+
+    //    let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(this.EditModeFormData, NCCTblNames);
+    //    this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
+    //    this.isEditModeCtrlsSet = true;
+
+    //    this.FRC.setValueExpValsNC(this.flatControls);
+    //};
+
+    // populateControlsWithDataModel
     this.setEditModeCtrls = function () {
-        if (this.isEditModeCtrlsSet) {// if already set while mode switching
-            $.each(this.DGs, function (k, DG) {
-                this.DGBuilderObjs[DG.Name].SwitchToEditMode();
-            }.bind(this));
-            return;
-        }
-        let EditModeFormData = this.EditModeFormData;
+
         let NCCTblNames = this.getNormalTblNames();
-        //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
-            if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
+            if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {// if no Table in datamodel add empty array
                 this.DataMODEL[DGB.ctrl.TableName] = [];
                 DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
                 continue;
             }
-            //let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
+
             let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
             DGB.setEditModeRows(DataMODEL);
         }
 
-        //if (this.ApprovalCtrl.__ready) {
-        //let DataMODEL = this.EditModeFormData[this.ApprovalCtrl.TableName];
-        //this.ApprovalCtrl.setEditModeRows(DataMODEL);
-        //}
-
         let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(this.EditModeFormData, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
-        this.isEditModeCtrlsSet = true;
 
-        this.FRC.setValueExpValsNC(this.flatControls);
+        if (!(this.Mode.isPrefill || this.Mode.isNew))
+            this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
     };
 
     //this.getEditModeFormData = function (rowId) {
@@ -676,7 +703,8 @@ const WebFormRender = function (option) {
             this.FormDataExtended = respObj.FormData.ExtendedTables;
             this.DynamicTabObject.disposeDynamicTab();
             this.reSetMode(this.afterSavemodeS);
-            this.RefreshFormControlValues(this.EditModeFormData);
+            this.setEditModeCtrls();
+            //this.RefreshFormControlValues(this.EditModeFormData);
             this.afterSaveAction();
             //window.parent.closeModal();
         }
@@ -833,7 +861,7 @@ const WebFormRender = function (option) {
         this.setHeader("View Mode");
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        this.setEditModeCtrls();
+        //this.setEditModeCtrls();
 
         if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
             let DataMODEL = this.DataMODEL[this.ReviewCtrl.TableName];
@@ -854,29 +882,61 @@ const WebFormRender = function (option) {
         this.DynamicTabObject.switchToViewMode();
     };
 
+    this.S2EmodeReviewCtrl = function () {
+        if (this.ReviewCtrl) {
+            this.ReviewCtrl._Builder.switch2editMode();
+            if (!this.ReviewCtrl._Builder.isFormDataEditable)
+                return false;
+        }
+        return true;
+    }.bind(this);
+
+    this.S2EmodeDGCtrls = function () {
+        $.each(this.DGs, function (k, DG) {
+            this.DGBuilderObjs[DG.Name].SwitchToEditMode();
+        }.bind(this));
+    }.bind(this);
+
+    this.enableFlatControls = function () {
+        $.each(this.flatControls, function (i, ctrl) {
+            if (!ctrl.IsDisable)
+                ctrl.enable();
+        }.bind(this));
+    };
+
+    this.setUniqCtrlsInitialVals = function () {
+        $.each(this.flatControls, function (i, ctrl) {
+            if (ctrl.Unique)
+                this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
+        }.bind(this));
+    };
+
     this.SwitchToEditMode = function () {
         this.$cloneBtn.hide(200);
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;
         this.Mode.isNew = false;
-        if (this.ReviewCtrl) {
-            this.ReviewCtrl._Builder.switch2editMode();
-            if (!this.ReviewCtrl._Builder.isFormDataEditable)
-                return;
-        }
-        this.setEditModeCtrls();
+
+        if (!this.S2EmodeReviewCtrl()) // switch to Edit mode  - ReviewCtrl
+            return;
+
+        this.S2EmodeDGCtrls();// switch to Edit mode  - all DG controls
+
+        //this.setEditModeCtrls();
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        $.each(this.flatControls, function (k, ctrl) {
-            if (!ctrl.IsDisable)
-                ctrl.enable();
-            if (ctrl.Unique)
-                this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
+        this.enableFlatControls();
+        this.setUniqCtrlsInitialVals();
+        //$.each(this.flatControls, function (k, ctrl) {
+        //    if (!ctrl.IsDisable)
+        //        ctrl.enable();
+        //    if (ctrl.Unique)
+        //        this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
-        }.bind(this));
+        //}.bind(this));
         this.DynamicTabObject.switchToEditMode();
     };
 
@@ -1598,7 +1658,7 @@ const WebFormRender = function (option) {
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        this.setHeader(this.mode);
+        this.setHeader(this.mode);// contains a hack for preview mode(set as newmode)
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
@@ -1607,11 +1667,13 @@ const WebFormRender = function (option) {
         this.afterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.afterSaveAction = this.getAfterSaveActionFn(this.afterSavemodeS);
         this.setMode();
+        this.setEditModeCtrls();
 
-        if (this.Mode.isPrefill)
-            this.setEditModeCtrls();
+        //if (this.Mode.isPrefill)
+        //    this.setEditModeCtrls();
 
-        else if (this.Mode.isNew) {
+        //else
+        if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
@@ -1620,11 +1682,24 @@ const WebFormRender = function (option) {
         }
 
         if (this.Mode.isView) {
-            this.setEditModeCtrls();// should remove ?
+            //this.setEditModeCtrls();// should remove ?
             this.SwitchToViewMode();
             this.locInit4viewMode();
         }
         this.LocationInit();
+        //this.FORCERELOAD();
+    };
+
+    this.FORCERELOAD = function () {
+        debugger;
+        let keys = Object.keys(this);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            if (typeof this[key] !== typeof function () { })
+                delete this[key];
+        }
+
+        this.setMasterVariables(option);
     };
 
     let t0 = performance.now();

@@ -291,7 +291,7 @@
 		//alert($('.note-editable').html());
 
 		this.EbObject.To = $("#sms_to" + tabNum).val();
-		this.EbObject.Body = window.btoa($('#sms_body' + tabNum).text().trim());
+		this.EbObject.Body = window.btoa($('#sms_body' + tabNum).text());
 		commonO.Current_obj = this.EbObject;
 		return true;
 	};

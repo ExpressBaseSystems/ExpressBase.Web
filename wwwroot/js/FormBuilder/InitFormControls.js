@@ -1431,8 +1431,47 @@
         };        
     };
 
-    this.ScriptButton = function (ctrl) {
+    this.Phone = function (ctrl) {
+        var phninput = document.querySelector(`#${ctrl.EbSid}_Phnctrl`);
+        var iti = window.intlTelInput(phninput, {
+            allowDropdown: true,
+            // autoHideDialCode: false,
+            // autoPlaceholder: "off",
+            // dropdownContainer: "body",
+            //defaultCountry: "auto",
+            formatOnDisplay: true,
+            geoIpLookup: function (callback) {
+                $.get("https://ipinfo.io", function () { }, "jsonp").always(function (resp) {
+                    var countryCode = (resp && resp.country) ? resp.country : "";
+                    callback(countryCode);
+                });
+            },
+            initialCountry: "auto",
+            // nationalMode: false,
+            //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            //placeholderNumberType: "MOBILE",
+            preferredCountries: [],
+            separateDialCode: true,
+            dropdown_maxheight: (ctrl.DropdownHeight||'100')+"px",
+            utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
+        });
+        ctrl.getValueFromDOM = function (p1) {
+            //to get numer only without country code===>$((`#${ctrl.EbSid}_Phnctrl`)),val();           
+            return iti.getNumber();;
+        };
+        ctrl.getDisplayMemberFromDOM = function () {
+           return ctrl.getValueFromDOM();
+        };
+        ctrl.bindOnChange = function (p1) {
+            $(phninput).on("change", p1);
+            $(phninput).on('countrychange ', p1);
+        };
 
+
+        
+        ctrl.setValue = function (p1) {
+            iti.setNumber(p1);
+        };
     };
 
 

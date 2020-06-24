@@ -81,15 +81,16 @@
 
     this.controlOnFocus = function (e) {
         e.stopPropagation();
+        let $e = $(e.target);
         if (this.curControl && this.curControl.attr("ebsid") === $(e.target).attr("ebsid"))
             return;
-        if (e.target.id === this.formId) {
-            this.curControl = $(e.target);
+        if ($e.attr("id") === this.formId) {
+            this.curControl = $e;
             this.CreatePG(this.rootContainerObj);
             return;
         }
         else
-            this.curControl = $(e.target).closest(".Eb-ctrlContainer");
+            this.curControl = $e.closest(".Eb-ctrlContainer");
         let ebsid = this.curControl.attr("ebsid");
         this.CreatePG(this.rootContainerObj.Controls.GetByName(ebsid));
         //  this.PGobj.ReadOnly();

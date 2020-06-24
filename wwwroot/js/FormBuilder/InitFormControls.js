@@ -1102,7 +1102,7 @@
             });
         }
         else if (ctrl.TextMode === 2) {
-            $ctrl.on('change', function (event) {
+            $ctrl.on('input', function (event) {
                 if (EbvalidateEmail(event.target.value))
                     ctrl.removeInvalidStyle();
                 else

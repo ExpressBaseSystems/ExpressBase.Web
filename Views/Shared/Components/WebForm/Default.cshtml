@@ -245,8 +245,7 @@
 </style>
 
 <div id='WebForm-cont' class="webform-cont">
-    @Html.Raw(ViewBag.WebFormHtml)
-    <div class="save-cont"></div>
+
 </div>
 
 <script>
@@ -373,6 +372,7 @@
     let _ispartial = "@ViewBag.IsPartial";
     let _formPermissions = @Html.Raw(ViewBag.FormPermissions);
     let _renderMode = @ViewBag.renderMode;
+    let _formHTML = `@Html.Raw(ViewBag.WebFormHtml)`;
 
     let isFromClone = getUrlParameter("mode") === "clone";
     let cloneRowId;
@@ -394,6 +394,7 @@
     @<script>
          const renderer = new WebFormRender({
              formObj: _formObj,
+             $formCont: $("#WebForm-cont"),
              headerBtns: { New: "webformnew", Edit: "webformedit", Save: "webformsave", Delete: "webformdelete", Cancel: "webformcancel", AuditTrail: "webformaudittrail", Close: "webformclose" },
              formRefId: _formRefId,
              mode: _mode,
@@ -405,6 +406,7 @@
              isPartial: _ispartial,
              formPermissions: _formPermissions,
              headerObj: header,
+             formHTML: _formHTML,
              cloneRowId: cloneRowId
          });
 

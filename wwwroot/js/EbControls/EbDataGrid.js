@@ -310,10 +310,10 @@
         }
     };
 
-    this.resetControlValues = function (dataModel) {
-        console.log(dataModel);
-        this.setEditModeRows(dataModel);
-    };
+    //this.resetControlValues = function (dataModel) {
+    //    console.log(dataModel);
+    //    this.setEditModeRows(dataModel);
+    //};
 
 
     this.getPSDispMembrs = function (inpCtrl) { // need to rework
@@ -986,7 +986,7 @@
                 $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
                 $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
             }
-            
+
         }
         else if (ctrl.ObjType === "Numeric") {
             let val = ctrl.getDisplayMemberFromDOM() || "0.00";// temporary fix
@@ -1014,9 +1014,9 @@
         if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true') ||//in edit mode or clone mode untouched DG row skip for 4 checking
             (this.Mode.isEdit || this.cloneMode) && $tr.attr("is-added") === "true")// avoid newly added rows from first check
         {
-            $.each(this.objectMODEL[rowid], function (i, Col) {
-                let $ctrl = $("#" + Col.EbSid_CtxId);
-                if (!this.isRequiredOK(Col)) {
+            $.each(this.objectMODEL[rowid], function (i, ctrl) {
+                let $ctrl = $("#" + ctrl.EbSid_CtxId);
+                if (!this.isRequiredOK(ctrl) || !this.formRenderer.FRC.sysValidationsOK(ctrl)) {
                     required_valid_flag = false;
                     if (!$notOk1stCtrl)
                         $notOk1stCtrl = $ctrl;

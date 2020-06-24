@@ -599,6 +599,17 @@ namespace ExpressBase.Web.Controllers
             return resp;
         }
 
+        [HttpGet("api/get_solution_data")]
+        public EbMobileSolutionData GetSolutionDataForMobile()
+        {
+            if (Authenticated)
+            {
+                return this.ServiceClient.Get(new MobileSolutionDataRequest());
+            }
+            return null;
+        }
+
+
         [HttpGet("api/menu")]
         public GetMobMenuResonse GetAppData4Mob(int locid = 1)
         {

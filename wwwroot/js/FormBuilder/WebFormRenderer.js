@@ -708,10 +708,10 @@ const WebFormRender = function (option) {
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
             this.DynamicTabObject.disposeDynamicTab();
-            this.reSetMode(this.afterSavemodeS);
-            this.setEditModeCtrls(this.DataMODEL);
+            this.reSetMode(this.curAfterSavemodeS);
             //this.RefreshFormControlValues(this.EditModeFormData);
-            this.afterSaveAction();
+            this.getAfterSaveActionFn(this.curAfterSavemodeS)();
+            this.curAfterSavemodeS = this.defaultAfterSavemodeS;
             //window.parent.closeModal();
         }
         else if (respObj.Status === 403) {
@@ -1398,10 +1398,15 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.continueAfterSave = function () {
+        this.isInitialEditModeDataSet = true;
+        this.setEditModeCtrls(this.DataMODEL);
+        this.isInitialEditModeDataSet = false;
+
         this.SwitchToEditMode();
     }.bind(this);
 
     this.viewAfterSave = function () {
+        this.setEditModeCtrls(this.DataMODEL);
         this.SwitchToViewMode();
     }.bind(this);
 
@@ -1413,7 +1418,7 @@ const WebFormRender = function (option) {
     this.saveSelectChange = function () {
         this.saveForm();
         let val = $("#webformsave-selbtn .selectpicker").find("option:selected").attr("data-token");
-        this.afterSaveAction = this.getAfterSaveActionFn(val);
+        this.curAfterSavemodeS = val;
     }.bind(this);
 
     this.getAfterSaveActionFn = function (mode) {
@@ -1670,8 +1675,9 @@ const WebFormRender = function (option) {
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
-        this.afterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
-        this.afterSaveAction = this.getAfterSaveActionFn(this.afterSavemodeS);
+        this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
+        this.curAfterSavemodeS = this.defaultAfterSavemodeS;
+        this.afterSaveAction = this.getAfterSaveActionFn(this.curAfterSavemodeS);
         this.setMode();
         this.setEditModeCtrls(this.DataMODEL);
 

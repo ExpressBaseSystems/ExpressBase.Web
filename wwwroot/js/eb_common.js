@@ -302,17 +302,17 @@ function EbMakeValid(contSel, _ctrlCont) {
 
 
 function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
-    if ($(`${contSel} .msg-cont`).length !== 0)
+    if ($(`${contSel} .ctrl-info-msg-cont`).length !== 0)
         return;
     //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
     let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
-    $ctrlCont.after(`<div class="msg-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
+    $ctrlCont.after(`<div class="ctrl-info-msg-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
     $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
 
 function EbHideCtrlMsg(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel} .msg-cont:first`).animate({ opacity: "0" }, 300).remove();
+    $(`${contSel} .ctrl-info-msg-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
 

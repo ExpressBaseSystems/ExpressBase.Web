@@ -1106,7 +1106,7 @@
                 if (EbvalidateEmail(event.target.value))
                     ctrl.removeInvalidStyle();
                 else
-                    ctrl.addInvalidStyle( "Invalid email");
+                    ctrl.addInvalidStyle("Invalid email");
             });
         }
     };
@@ -1423,16 +1423,16 @@
         ctrl.bindOnChange = function (p1) {
             $("#" + ctrl.EbSid + "_bindfn").on("change", p1);
         };
-        ctrl.setValue = function (p1) {           
+        ctrl.setValue = function (p1) {
             filePlugin.createPreloaded(p1);
         };
         ctrl.clear = function () {
             return filePlugin.clearFiles();
-        };        
+        };
     };
 
     this.Phone = function (ctrl) {
-        var phninput = document.querySelector(`#${ctrl.EbSid}_Phnctrl`);
+        var phninput = document.querySelector(`#${ctrl.EbSid}`);
         var iti = window.intlTelInput(phninput, {
             allowDropdown: true,
             // autoHideDialCode: false,
@@ -1452,28 +1452,21 @@
             //placeholderNumberType: "MOBILE",
             preferredCountries: [],
             separateDialCode: true,
-            dropdown_maxheight: (ctrl.DropdownHeight||'100')+"px",
+            dropdown_maxheight: (ctrl.DropdownHeight || '100') + "px",
             utilsScript: "../js/EbControls/EbPhoneControl_Utils.js"
         });
         ctrl.getValueFromDOM = function (p1) {
-            //to get numer only without country code===>$((`#${ctrl.EbSid}_Phnctrl`)),val();           
+            //to get numer only without country code===>$((`#${ctrl.EbSid}`),val();           
             return iti.getNumber();;
-        };
-        ctrl.getDisplayMemberFromDOM = function () {
-           return ctrl.getValueFromDOM();
         };
         ctrl.bindOnChange = function (p1) {
             $(phninput).on("change", p1);
             $(phninput).on('countrychange ', p1);
         };
-
-
-        
         ctrl.setValue = function (p1) {
             iti.setNumber(p1);
         };
     };
-
 
 
 

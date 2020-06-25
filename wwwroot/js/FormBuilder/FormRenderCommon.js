@@ -229,9 +229,9 @@
                                 if (valExpFnStr) {
                                     if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                         //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-                                        if (!this.FO.Mode.isView || depCtrl.DoNotPersist) {
+                                        if ((!this.FO.Mode.isView && !this.FO.isInitialEditModeDataSet) || depCtrl.DoNotPersist) {
                                             depCtrl.setValue(ValueExpr_val);
-                                            this.isRequiredOK(depCtrl);
+                                            //this.isRequiredOK(depCtrl);
                                         }
                                     }
                                     else {
@@ -348,13 +348,33 @@
         let val = ctrl.getValue();
         return val === this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
     };
+
+
+    // checks a control value is emptyString
+    this.sysValidationsOK = function (ctrl) {
+
+        // email validation
+        if (ctrl.ObjType === "TextBox" && ctrl.TextMode === 2) {
+            if (EbvalidateEmail(ctrl.getValueFromDOM())) {
+                ctrl.removeInvalidStyle();
+                return true;
+            }
+            else {
+                ctrl.addInvalidStyle("Invalid email");
+                return false;
+            }
+        }
+
+        return true;
+    };
+
     /////////////
     this.AllRequired_valid_Check = function () {
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
-        $.each(this.FO.flatControlsWithDG, function (i, control) {
-            let $ctrl = $("#" + control.EbSid_CtxId);
-            if (!this.isRequiredOK(control) || !this.isValidationsOK(control)) {
+        $.each(this.FO.flatControlsWithDG, function (i, ctrl) {
+            let $ctrl = $("#" + ctrl.EbSid_CtxId);
+            if (!this.isRequiredOK(ctrl) || !this.isValidationsOK(ctrl) || !this.sysValidationsOK(ctrl)) {
                 required_valid_flag = false;
                 if (!$notOk1stCtrl)
                     $notOk1stCtrl = $ctrl;
@@ -438,7 +458,7 @@
     // checks a control value is emptyString
     this.isRequiredOK = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        if (ctrl.ObjType === "DataGrid" && !ctrl.RowRequired_valid_Check()) {
+        if (ctrl.ObjType === "DataGrid" && !ctrl.rowRequired_valid_Check()) {
             this.addInvalidStyle(ctrl);
             return false;
         }

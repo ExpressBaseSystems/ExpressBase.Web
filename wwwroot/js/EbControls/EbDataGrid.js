@@ -310,10 +310,10 @@
         }
     };
 
-    this.resetControlValues = function (dataModel) {
-        console.log(dataModel);
-        this.setEditModeRows(dataModel);
-    };
+    //this.resetControlValues = function (dataModel) {
+    //    console.log(dataModel);
+    //    this.setEditModeRows(dataModel);
+    //};
 
 
     this.getPSDispMembrs = function (inpCtrl) { // need to rework
@@ -393,7 +393,7 @@
             dspMmbr = this.getBooleanDispMembrs(cellObj, rowId, col);
         }
         else if (col.ObjType === "DGNumericColumn") {
-            dspMmbr = cellObj.F || cellObj.Value || (ctrl.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(ctrl.DecimalPlaces))); // temporary fix
+            dspMmbr = cellObj.F || cellObj.Value.toFixed(col.DecimalPlaces);// || (col.DecimalPlaces === 0 ? '0' : ('0.' + '0'.repeat(col.DecimalPlaces))); // temporary fix
         }
         else if ((col.ObjType === "DGDateColumn") || (col.ObjType === "DGCreatedAtColumn") || (col.ObjType === "DGModifiedAtColumn")) {
             if (cellObj.Value === null)
@@ -986,7 +986,7 @@
                 $td.find(".tdtxt span").append(`<img class='ulstc-disp-img-c' src='/images/dp/${val['img']}.png' alt='' onerror=this.onerror=null;this.src='/images/nulldp.png';>`);
                 $td.find(".tdtxt span").append(`<span class='ulstc-disp-txt' > ${val['dm1']}</span>`);
             }
-            
+
         }
         else if (ctrl.ObjType === "Numeric") {
             let val = ctrl.getDisplayMemberFromDOM() || "0.00";// temporary fix
@@ -1014,9 +1014,9 @@
         if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true') ||//in edit mode or clone mode untouched DG row skip for 4 checking
             (this.Mode.isEdit || this.cloneMode) && $tr.attr("is-added") === "true")// avoid newly added rows from first check
         {
-            $.each(this.objectMODEL[rowid], function (i, Col) {
-                let $ctrl = $("#" + Col.EbSid_CtxId);
-                if (!this.isRequiredOK(Col)) {
+            $.each(this.objectMODEL[rowid], function (i, ctrl) {
+                let $ctrl = $("#" + ctrl.EbSid_CtxId);
+                if (!this.isRequiredOK(ctrl) || !this.formRenderer.FRC.sysValidationsOK(ctrl)) {
                     required_valid_flag = false;
                     if (!$notOk1stCtrl)
                         $notOk1stCtrl = $ctrl;
@@ -1059,7 +1059,6 @@
         this.updateAggCols(false);
         let td = $td[0];
         this.checkRow_click({ target: td }, true, true);
-        //this.lastEditedRowDMvalues = {};
     }.bind(this);
 
     this.setOldVals2RowDOMobjs = function () {
@@ -1068,7 +1067,6 @@
             let name = Names[i];
             let inpCtrl = this.curRowObjectMODEL[name];
             let OldVal = inpCtrl.DataVals.Value;
-            //let OldDMVal = this.lastEditedRowDMvalues[name];
             if (!(inpCtrl.ObjType === "PowerSelect" && OldVal === "") && OldVal !== inpCtrl.getValueFromDOM())
                 inpCtrl.setValue(OldVal);
             //    if (ctrl.ObjType === "PowerSelect" && OldDMVal)
@@ -1728,6 +1726,12 @@
     //isCurRowEmpty = this.isCurRowEmpty;
 
     this.addUtilityFnsForUDF = function () {
+        this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;// return false if any column has value
+        this.ctrl.rowRequired_valid_Check = this.RowRequired_valid_Check;// checks row validations and returns bool
+        this.ctrl.sum = this.sumOfCol;// returns sum of a numeric column
+        this.ctrl.getRowByIndex = this.getRowByIndex;// get row by index (0,1...)
+        this.ctrl.getValuesOfColumn = this.getValuesOfColumn;// returns value array of particular column
+
         this.ctrl.addRow = this.AddRowWithData.bind(this);
         this.ctrl.clear = this.clearDG.bind(this);
 
@@ -1738,8 +1742,8 @@
         this.ctrl.disableRow = this.disableRow.bind(this);
         this.ctrl.enableRow = this.enableRow.bind(this);
 
-        this.ctrl.disable = this.disable.bind(this);
-        this.ctrl.enable = this.enable.bind(this);
+        this.ctrl.disable = this.disable.bind(this);// disable DG
+        this.ctrl.enable = this.enable.bind(this);// enable DG
 
         this.ctrl.showRow = this.showRow.bind(this);//  + showRows
         this.ctrl.hideRow = this.hideRow.bind(this);
@@ -1884,12 +1888,9 @@
         });
 
         this.colNames = this.ctrl.Controls.$values.map(function (obj) { return obj["Name"]; }.bind(this));
-        //this.lastEditedRowDMvalues = {};
-        this.ctrl.currentRow.isEmpty = this.isCurRowEmpty;
-        this.ctrl.RowRequired_valid_Check = this.RowRequired_valid_Check;
-        this.ctrl.sum = this.sumOfCol;
-        this.ctrl.getRowByIndex = this.getRowByIndex;
-        this.ctrl.getValuesOfColumn = this.getValuesOfColumn;
+
+        this.addUtilityFnsForUDF();
+
         this.isAggragateInDG = false;
         this.isPSInDG = false;
         this.S_cogsTdHtml = "";
@@ -1914,7 +1915,6 @@
         if (this.ctrl.IsColumnsResizable)
             this.makeColsResizable();
 
-        this.addUtilityFnsForUDF();
         //this.tryAddRow();
         if (this.isAggragateInDG) {
             this.initAgg();

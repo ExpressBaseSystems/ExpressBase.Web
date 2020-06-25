@@ -4,7 +4,14 @@
 @using ExpressBase.Security;
 @{
     string Logourl = "/images/logo/" + ViewBag.cid + ".png";
-    string DpUrl = "/images/dp/" + ViewBag.UId + ".png";
+
+    string DpUrl = "/images/proimg.jpg";
+
+    if(ViewBag.wc != "tc")
+    {
+        DpUrl = "/images/dp/" + ViewBag.UId + ".png";
+    }
+    
     string ml = "0px";
 }
 <script>

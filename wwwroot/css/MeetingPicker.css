@@ -285,6 +285,11 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
         font-size: 16px;
     }
 
+    .mr .mr-title {
+        text-align: center;
+        font-size: 18px;
+    }
+
     .mr .mr-description {
         padding: 1px;
         display: flex;
@@ -417,6 +422,41 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             margin-right: 0rem;
         }
 
+.mr .slots {
+}
+
+    .mr .slots .tm-h {
+        text-align: center;
+    }
+
+    .mr .slots .slots-div {
+        padding: 5px 11px;
+        border: solid 1px #c1c1c1;
+        border-radius: 3px;
+    }
+
+        .mr .slots .slots-div i {
+            padding-right: 10px;
+        }
+
+    .mr .slots .unblocked-slot:hover {
+        background-color: #00e0ea;
+        cursor: pointer;
+        border: solid 1px #00e0ea;
+    }
+
+    .mr .slots .blocked-slot {
+        background-color: #8b8b8b1f;
+        color: #c7c7c7;
+    }
+
+    .mr .slots .selected {
+        background-color: #6fa9d2;
+        cursor: pointer;
+        border: solid 1px #6fa9d2;
+        color: white;
+    }
+
 /*tabs style*/
 .ui-tabs .ui-tabs-nav .ui-tabs-anchor {
     float: left;
@@ -499,9 +539,9 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
         display: flex;
     }
 
-        .meeting-scheduler-outer  .bootstrap-tagsinput {
-            width: 100%;
-        }
+    .meeting-scheduler-outer .bootstrap-tagsinput {
+        width: 100%;
+    }
 
     .meeting-scheduler-outer .meeting-recurance {
         padding: 0px;
@@ -518,6 +558,18 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
             display: flex;
         }
 
+    .meeting-scheduler-outer .meeting-slots {
+        padding: 10px 0px;
+        padding-left: 15px;
+    }
+
+        .meeting-scheduler-outer .meeting-slots .slot {
+            padding: 5px;
+            border: solid 1px #dadada;
+            border-radius: 4px;
+        }
+
+}
 
 /*combodate*/
 .combodate {

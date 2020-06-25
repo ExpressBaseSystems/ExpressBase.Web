@@ -2,10 +2,12 @@
 var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.Ctrl = ctrl;
     this.type = type;
+    this.SlotList = [];
     this.MeetingScheduleObj = {
         Title: '', Description: '', Location: '', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
         TimeFrom: '', TimeTo: '', Duration: '', MaxHost: 1, MinHost: 1, MaxAttendee: 1, MinAttendee: 1,
-        EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingOpts : 1,
+        EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingOpts: 1,
+        SlotList: this.SlotList ,
     };
     this.UsersList = {};
     this.UsersList = ctrl.UsersList;
@@ -157,10 +159,12 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         }.bind(this));
         this.TimeFrom.on("change", function (e) {
             this.MeetingScheduleObj.TimeFrom = e.target.value;
+            this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj));
         }.bind(this));
         this.TimeTo.on("change", function (e) {
             this.MeetingScheduleObj.TimeTo = e.target.value;
+            this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         this.MaxHost.on("change", function (e) {
@@ -183,23 +187,27 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         this.EligibleHosts.on("change", function (e) {
             this.MeetingScheduleObj.EligibleHosts = e.target.value;
             this.SetMeetingOption();
+            this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         this.EligibleAttendees.on("change", function (e) {
             this.MeetingScheduleObj.EligibleAttendees = e.target.value;
             this.SetMeetingOption();
+            this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         this.FixedHost.on("change", function (e) {
             this.MeetingScheduleObj.Host = e.target.value;
             $(`#${this.Ctrl.EbSid}_max-host`).val(this.MeetingScheduleObj.Host.split(",").length);
             this.SetMeetingOption();
+            this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         this.FixedAttendee.on("change", function (e) {
             this.MeetingScheduleObj.Attendee = e.target.value;
             $(`#${this.Ctrl.EbSid}_max-attendee`).val(this.MeetingScheduleObj.Attendee.split(",").length);
             this.SetMeetingOption();
+            this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
@@ -212,8 +220,32 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             }
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-
     }
+    this.drawSlots = function () {
+        this.SlotList = [];
+        html = '';
+        if (this.MeetingScheduleObj.IsSingleMeeting == 'T' && this.MeetingScheduleObj.TimeFrom != '' && this.MeetingScheduleObj.TimeTo !== '') {
+            let timefr = this.TimeFormat(this.MeetingScheduleObj.TimeFrom);
+            let timeto = this.TimeFormat(this.MeetingScheduleObj.TimeTo);
+            html += `<div id="1" m-id="1" class="slot"> 
+                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timefr} to ${timeto} </div>`;
+            $(`#${this.Ctrl.EbSid}_meeting_slots`).empty().append(html);
+            var Obj = {
+                Position: 1,TimeFrom: `${this.MeetingScheduleObj.TimeFrom}`, TimeTo: `${this.MeetingScheduleObj.TimeTo}`,
+                FixedHost: '', FixedAttendee: '', EligibleHosts: '', EligibleAttendees: ''
+            }
+            Obj.EligibleAttendees = this.EligibleAttendees.val();
+            Obj.EligibleHosts = this.EligibleHosts.val();
+            Obj.FixedAttendee = this.FixedAttendee.val();
+            Obj.FixedHost = this.FixedHost.val();
+            this.SlotList.push(Obj);
+            this.MeetingScheduleObj.SlotList = this.SlotList;
+        }
+        else if (this.MeetingScheduleObj.IsSingleMeeting == 'F') {
+
+        }
+    };
+
     this.SetMeetingOption = function () {
         if (this.FixedAttendee.val() !== '' && this.FixedHost.val() !== '') {
             this.MeetingScheduleObj.MeetingOpts = 1;
@@ -237,4 +269,19 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
 
     };
     this.init();
+
+    this.TimeFormat = function (time) {
+        let Timestr = "";
+        if (parseInt(time.split(":")[0]) < 12) {
+            Timestr += time.split(":")[0] + ":" + time.split(":")[1] + " AM";
+        }
+        else if (parseInt(time.split(":")[0]) > 12) {
+            Timestr += "0";
+            Timestr += time.split(":")[0] - 12 + ":" + time.split(":")[1] + " PM";
+        }
+        else {
+            Timestr += time.split(":")[0] + ":" + time.split(":")[1] + " PM";
+        }
+        return Timestr;
+    };
 }

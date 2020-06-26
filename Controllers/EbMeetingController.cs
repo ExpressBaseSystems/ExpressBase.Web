@@ -96,28 +96,31 @@ namespace ExpressBase.Web.Controllers
         }
         public string GetSlotDetails(int id)
         {
-            SlotDetailsResponse Resp = this.ServiceClient.Post<SlotDetailsResponse>(new SlotDetailsRequest { Id = id });
+            GetMeetingsDetailsResponse Resp = this.ServiceClient.Post<GetMeetingsDetailsResponse>(new GetMeetingsDetailsRequest { MyActionId = id });
             string htm = "";
             string hosts = "";
             string attendees = "";
-            for (int i = 0; i < Resp.MeetingRequest.Count; i++)
+            if(Resp.MyActionDetails.MeetingScheduleId == 0)
             {
-                if (Resp.MeetingRequest[i].ParticipantType == 1)
-                {
-                    hosts += $@" <div class='mr-hosts'>{Resp.MeetingRequest[i].fullname}</div>";
-                }
-                else
-                {
-                    attendees += $@" <div class='mr-attendees'>{Resp.MeetingRequest[i].fullname}</div>";
-                }
-            }
 
-            if (Resp.MeetingRequest.Count > 0)
-            {
-                string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");
-                string TimeTo = Convert.ToDateTime(Resp.MeetingRequest[0].TimeTo).ToString("hh:mm tt");
-                string Date = Convert.ToDateTime(Resp.MeetingRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
-                htm += $@"   <div class='mr-t'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
+                for (int i = 0; i < Resp.MeetingRequest.Count; i++)
+                {
+                    if (Resp.MeetingRequest[i].ParticipantType == 1)
+                    {
+                        hosts += $@" <div class='mr-hosts'>{Resp.MeetingRequest[i].fullname}</div>";
+                    }
+                    else
+                    {
+                        attendees += $@" <div class='mr-attendees'>{Resp.MeetingRequest[i].fullname}</div>";
+                    }
+                }
+
+                if (Resp.MeetingRequest.Count > 0)
+                {
+                    string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");
+                    string TimeTo = Convert.ToDateTime(Resp.MeetingRequest[0].TimeTo).ToString("hh:mm tt");
+                    string Date = Convert.ToDateTime(Resp.MeetingRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
+                    htm += $@"   <div class='mr-t'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
                         	<div id='tabs'>
 					  <ul>
 						<li><a href='#tabs-1'>Details</a></li>
@@ -144,10 +147,50 @@ namespace ExpressBase.Web.Controllers
                     <button id='accept-meeting' data-id='{Resp.MeetingRequest[0].Slotid}' class='mr-btn'> Accept Meeting</button>
                     </div>
                     ";
+                }
+                else
+                {
+                    htm += $@"</div> in valid request </div>";
+                }
             }
-            else
+            else if(Resp.MyActionDetails.MeetingScheduleId > 0 && Resp.SlotsRequest.Count > 0)
             {
-                htm += $@"</div> in valid request </div>";
+
+                string Date = Convert.ToDateTime(Resp.SlotsRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
+                string Slots = "";
+                for(int i=0;i< Resp.SlotsRequest.Count; i++)
+                {
+                    string TimeTo = Convert.ToDateTime(Resp.SlotsRequest[i].TimeTo).ToString("hh:mm tt");
+                    string TimeFrom = Convert.ToDateTime(Resp.SlotsRequest[0].TimeFrom).ToString("hh:mm tt");
+                    if(Resp.SlotsRequest[i].IsApproved == "F")
+                    {
+                        Slots += $@"<div id='{Resp.SlotsRequest[i].SlotId}' m-id='{Resp.SlotsRequest[i].MeetingScheduleId}' is-approved='{Resp.SlotsRequest[i].IsApproved}'
+                    class='slots-div unblocked-slot'> <i class='fa fa-dot-circle-o' aria-hidden='true'></i>{TimeFrom} to {TimeTo}</div>";
+                    }
+                    else
+                    {
+                    Slots += $@"<div id='{Resp.SlotsRequest[i].SlotId}' m-id='{Resp.SlotsRequest[i].MeetingScheduleId}' is-approved='{Resp.SlotsRequest[i].IsApproved}'
+                    class='solts-div blocked-slot'> <i class='fa fa-dot-circle-o' aria-hidden='true'></i> {TimeFrom} to {TimeTo}</div>";
+                    }
+
+                }
+                htm += $@"<div class='mr'>
+                        <div class='mr-title'> {Resp.SlotsRequest[0].Title} </div>
+                        <div class='mr-description'> <i class='fa fa-info-circle' aria-hidden='true'></i> <div>{Resp.SlotsRequest[0].Description} </div> </div>
+                        <div class='meeting-details'> 
+                        <div class='mr-venue'> <i class='fa fa-map-marker' aria-hidden='true'></i> <div>{Resp.SlotsRequest[0].Venue}</div>  </div>
+                        <div class='mr-date'> <i class='fa fa-calendar-o' aria-hidden='true'></i> <div>{Date}</div> </div>
+                        <div class='slots'> <div class='tm-h'>Pick a time slot </div><div style='display:flex;'>{Slots}</div> </div>
+                        </div></div>
+                    <div class='mr-btn-grp'>
+                    <button id='pick-slot' data-id='{Resp.SlotsRequest[0].SlotId}' class='mr-btn'> Pick Selected Slot</button>
+                    </div>
+                    ";
+                htm += $@"<div></div>";
+            }
+            else if (Resp.MyActionDetails.MeetingScheduleId > 0 && Resp.SlotsRequest.Count > 1)
+            {
+
             }
             return JsonConvert.SerializeObject(htm);
         }
@@ -185,7 +228,7 @@ namespace ExpressBase.Web.Controllers
                 string TimeFrom = Convert.ToDateTime(Resp.MeetingRequest[0].TimeFrom).ToString("hh:mm tt");
                 string TimeTo = Convert.ToDateTime(Resp.MeetingRequest[0].TimeTo).ToString("hh:mm tt");
                 string Date = Convert.ToDateTime(Resp.MeetingRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
-                htm += $@"   <div class='mr-t'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
+                htm += $@" <div class='mr-t'><div class='mr-title'> {Resp.MeetingRequest[0].Title} </div></div>
                         	<div id='tabs'>
 					  <ul>
 						<li><a href='#tabs-1'>Details</a></li>
@@ -213,6 +256,12 @@ namespace ExpressBase.Web.Controllers
                 htm += $@"</div> in valid request </div>";
             }
             return JsonConvert.SerializeObject(htm);
+        }
+
+        public string PickSlot(int Slot , int myactionid)
+        {
+            PickMeetingSLotResponse Resp = this.ServiceClient.Post<PickMeetingSLotResponse>(new PickMeetingSLotRequest { MyActionId = myactionid, SlotId = Slot , UserInfo = this.LoggedInUser });
+            return JsonConvert.SerializeObject(Resp);
         }
     }
 }

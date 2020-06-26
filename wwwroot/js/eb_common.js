@@ -302,17 +302,17 @@ function EbMakeValid(contSel, _ctrlCont) {
 
 
 function EbShowCtrlMsg(contSel, _ctrlCont, msg = "This field is required", type = "danger") {
-    if ($(`${contSel} .msg-cont`).length !== 0)
+    if ($(`${contSel} .ctrl-info-msg-cont`).length !== 0)
         return;
     //var $ctrlCont = (this.curForm.renderAsForm) ? $(`${contSel}  .ctrl-wraper`) : $(`${contSel} .chat-ctrl-cont`);
     let $ctrlCont = $(`${contSel}  ${_ctrlCont}:first`);
-    $ctrlCont.after(`<div class="msg-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
+    $ctrlCont.after(`<div class="ctrl-info-msg-cont"><label id='@name@errormsg' class='text-${type}'></label></div>`);
     $(`${contSel}  .text-${type}`).text(msg).hide().slideDown(100);
 }
 
 function EbHideCtrlMsg(contSel, _ctrlCont) {
     //setTimeout(function () {
-    $(`${contSel} .msg-cont:first`).animate({ opacity: "0" }, 300).remove();
+    $(`${contSel} .ctrl-info-msg-cont:first`).animate({ opacity: "0" }, 300).remove();
     //},400);
 }
 
@@ -1226,7 +1226,35 @@ const formatData4webform = function (_multipleTables) {
     return multipleTables;
 };
 
-function EbvalidateEmail(email) {
+function EbIsEmailOK(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(String(email).toLowerCase());
 }
+
+function EbvalidateEmail(email) {
+    if (email === "")
+        return true;
+    return EbIsEmailOK(email);
+}
+
+//function EbfixTrailingZeros(val, decLen) {
+//    //val = val.toString();
+//    //if (decLen <= 0)
+//    //    return val;
+//    //let res;
+//    ////dec
+//    ////val.padEnd(2)
+
+//    //if (!val.trim().includes(".")) {
+//    //    res = val + "." + "0".repeat(decLen);
+//    //}
+//    //else {
+//    //    let p1 = val.split(".")[0];
+//    //    let p2 = val.split(".")[1];
+//    //    zerolen = decLen - p2.length;
+//    //    res = p1 + "." + p2 + "0".repeat(zerolen > 0 ? zerolen : 0);
+//    //}
+//    res = val.toFixed(decLen);
+
+//    return res;
+//}

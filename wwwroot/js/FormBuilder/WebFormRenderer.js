@@ -10,56 +10,66 @@ const WebFormRender = function (option) {
 
     //let AllMetas = AllMetasRoot["EbObject"];// newly added line to declare a local variable named "AllMetas"  which contains contextaul metas
 
-    ebcontext.renderContext = "WebForm";
-    this.FormObj = option.formObj;
-    this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
-    this.$saveBtn = $('#' + option.headerBtns['Save']);
-    this.$deleteBtn = $('#' + option.headerBtns['Delete']);
-    this.$editBtn = $('#' + option.headerBtns['Edit']);
-    this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
-    this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
-    this.$closeBtn = $('#' + option.headerBtns['Close']);
-    this.$cloneBtn = $('#webformclone');
-    this.Env = option.env;
-    this.Cid = option.cid;
-    this.rendererName = 'WebForm';
-    this.initControls = new InitControls(this);
-    //this.editModeObj = option.editModeObj;
-    this.formRefId = option.formRefId || "";
-    this.rowId = option.rowId;
-    this.mode = option.mode;
-    this.userObject = option.userObject;
-    this.cloneRowId = option.cloneRowId;
-    this.isOpenedInCloneMode = !!option.cloneRowId;
-    this.isPartial = option.isPartial;//value is true if form is rendering in iframe
-    this.headerObj = option.headerObj;//EbHeader
-    this.formPermissions = option.formPermissions;
-    this.formDataWrapper = option.formData;
-    this.formData = option.formData === null ? null : option.formData.FormData;
-    this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
-    this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;
-    this.TableNames;
-    this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
-    this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
-    this.FormDataExtdObj = { val: this.FormDataExtended };
-    this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
-    this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
-    this.FlatContControls = getInnerFlatContControls(this.FormObj);
-    this.DataMODEL = this.EditModeFormData;
-    this.MasterTable = this.FormObj.TableName;
-    this.formValues = {};
-    this.IsPSsInitComplete = {};
-    this.formValidationflag = true;
-    this.isEditModeCtrlsSet = false;
-    this.DGBuilderObjs = {};
-    this.uniqCtrlsInitialVals = {};
-    this.PSsIsInit = {};
-    this.isInitNCs = false;
-    this.DynamicTabObject = null;
-    this.TabControls = null;
-    this.FRC = new FormRenderCommon({
-        FO: this
-    });
+    this.setMasterVariables = function (option) {
+        this.$formCont = option.$formCont;
+        this.formHTML = option.formHTML;
+        this.$formCont.append(this.formHTML);
+        ebcontext.renderContext = "WebForm";
+        this.FormObj = option.formObj;
+        this.$form = $(`#${this.FormObj.EbSid_CtxId}`);
+        this.$saveBtn = $('#' + option.headerBtns['Save']);
+        this.$deleteBtn = $('#' + option.headerBtns['Delete']);
+        this.$editBtn = $('#' + option.headerBtns['Edit']);
+        this.$cancelBtn = $('#' + option.headerBtns['Cancel']);
+        this.$auditBtn = $('#' + option.headerBtns['AuditTrail']);
+        this.$closeBtn = $('#' + option.headerBtns['Close']);
+        this.$cloneBtn = $('#webformclone');
+        this.Env = option.env;
+        this.Cid = option.cid;
+        this.rendererName = 'WebForm';
+        this.initControls = new InitControls(this);
+        //this.editModeObj = option.editModeObj;
+        this.formRefId = option.formRefId || "";
+        this.rowId = option.rowId;//==========
+        this.mode = option.mode;// ==========
+        this.userObject = option.userObject;
+        this.cloneRowId = option.cloneRowId;
+        this.isOpenedInCloneMode = !!option.cloneRowId;
+        this.isPartial = option.isPartial;//value is true if form is rendering in iframe
+        this.headerObj = option.headerObj;//EbHeader
+        this.formPermissions = option.formPermissions;
+
+        this.formDataWrapper = option.formData;//==========
+        this.formData = option.formData === null ? null : option.formData.FormData;//==========
+        //this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
+        this.DataMODEL = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
+        this.FormDataExtended = this.formData === null ? null : this.formData.ExtendedTables;//==========
+        this.FormDataExtdObj = { val: this.FormDataExtended };
+
+        this.DisableDeleteData = this.formData === null ? {} : this.formData.DisableDelete;
+        this.DisableCancelData = this.formData === null ? {} : this.formData.DisableCancel;
+        this.TableNames;
+        this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
+        this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
+        this.FlatContControls = getInnerFlatContControls(this.FormObj);
+        //this.DataMODEL = this.EditModeFormData;
+        this.MasterTable = this.FormObj.TableName;
+        this.formValues = {};
+        this.IsPSsInitComplete = {};
+        this.formValidationflag = true;
+        this.isEditModeCtrlsSet = false;
+        this.DGBuilderObjs = {};
+        this.uniqCtrlsInitialVals = {};
+        this.PSsIsInit = {};
+        this.isInitNCs = false;
+        this.DynamicTabObject = null;
+        this.TabControls = null;
+        this.FRC = new FormRenderCommon({
+            FO: this
+        });
+    };
+
+    this.setMasterVariables(option);
 
     this.updateCtrlUI = function (cObj) {
         $.each(cObj, function (prop, val) {
@@ -309,69 +319,69 @@ const WebFormRender = function (option) {
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
             //}.bind(this),
-            success: this.reloadForm.bind(this)
+            success: this.reloadForm.bind(this)// divert to force_reload flow
         });
 
     };
 
-    // to add fetched values to data model 
-    // parameter - _respObj : data model of imported data
-    this.modifyFormData4Import = function (_respObj) {
+    //// to add fetched values to data model 
+    //// parameter - _respObj : data model of imported data
+    //this.modifyFormData4Import = function (_respObj) {
 
-        this.EditModeFormData = _respObj.FormData.MultipleTables;
-        let editModeFormData = _respObj.FormData.MultipleTables;
+    //    this.EditModeFormData = _respObj.FormData.MultipleTables;
+    //    let editModeFormData = _respObj.FormData.MultipleTables;
 
-        let SourceEditModeFormDataExceptDG = editModeFormData[this.FormObj.Name];
+    //    let SourceEditModeFormDataExceptDG = editModeFormData[this.FormObj.Name];
 
-        for (let i = 0; i < this.flatControls.length; i++) {
-            let ctrl = this.flatControls[i];
-            let dataObj = getObjByval(SourceEditModeFormDataExceptDG[0].Columns, "Name", ctrl.Name);
-            if (dataObj) {
-                let val = dataObj.Value;
-                ctrl.DataVals.Value = val;
-            }
-        }
+    //    for (let i = 0; i < this.flatControls.length; i++) {
+    //        let ctrl = this.flatControls[i];
+    //        let dataObj = getObjByval(SourceEditModeFormDataExceptDG[0].Columns, "Name", ctrl.Name);
+    //        if (dataObj) {
+    //            let val = dataObj.Value;
+    //            ctrl.DataVals.Value = val;
+    //        }
+    //    }
 
-    };
+    //};
 
-    this.reloadForm = function (_respObjStr) {// need cleanup
-        this.hideLoader();
-        let _respObj = JSON.parse(_respObjStr);
-        console.log(_respObj);
-        if (_respObj.Status === 200) {
-            //this.modifyFormData4Import(_respObj);
-            this.resetDataMODEL(_respObj);
+    //this.reloadForm = function (_respObjStr) {// need cleanup
+    //    this.hideLoader();
+    //    let _respObj = JSON.parse(_respObjStr);
+    //    console.log(_respObj);
+    //    if (_respObj.Status === 200) {
+    //        //this.modifyFormData4Import(_respObj);
+    //        this.resetDataMODEL(_respObj);
 
-            this.isEditModeCtrlsSet = false;
-            this.setEditModeCtrls();
-        }
-        else
-            console.error(_respObj.MessageInt);
+    //        this.isEditModeCtrlsSet = false;
+    //        this.setEditModeCtrls();
+    //    }
+    //    else
+    //        console.error(_respObj.MessageInt);
 
-    }.bind(this);
+    //}.bind(this);
 
-    this.resetDataMODEL = function (_respObj) {
-        let editModeFormData = _respObj.FormData.MultipleTables;
+    //this.resetDataMODEL = function (_respObj) {
+    //    let editModeFormData = _respObj.FormData.MultipleTables;
 
-        // DG = replace DG dataModel with  new one
-        $.each(editModeFormData, function (tblName, Data) {
-            if (tblName !== this.FormObj.TableName) {
-                let DG = getObjByval(this.DGs, "TableName", tblName);
-                if (!DG)
-                    return true;
-                let DGTblName = DG.TableName;
-                delete this.EditModeFormData[tblName];
-                this.EditModeFormData[DGTblName] = Data;
-                this.DataMODEL[DGTblName] = Data;
-            }
-        }.bind(this));
-
-
+    //    // DG = replace DG dataModel with  new one
+    //    $.each(editModeFormData, function (tblName, Data) {
+    //        if (tblName !== this.FormObj.TableName) {
+    //            let DG = getObjByval(this.DGs, "TableName", tblName);
+    //            if (!DG)
+    //                return true;
+    //            let DGTblName = DG.TableName;
+    //            delete this.EditModeFormData[tblName];
+    //            this.EditModeFormData[DGTblName] = Data;
+    //            this.DataMODEL[DGTblName] = Data;
+    //        }
+    //    }.bind(this));
 
 
-        //this.EditModeFormData = _respObj.FormData.MultipleTables;
-        //this.DataMODEL = this.EditModeFormData;
-    };
+
+
+    //    //this.EditModeFormData = _respObj.FormData.MultipleTables;
+    //    //this.DataMODEL = this.EditModeFormData;
+    //};
 
     //this.removeRowIds = function () {
 
@@ -440,38 +450,61 @@ const WebFormRender = function (option) {
         });
     };
 
-    this.setEditModeCtrls = function () {
-        if (this.isEditModeCtrlsSet) {// if already set while mode switching
-            $.each(this.DGs, function (k, DG) {
-                this.DGBuilderObjs[DG.Name].SwitchToEditMode();
-            }.bind(this));
-            return;
-        }
-        let EditModeFormData = this.EditModeFormData;
+    //this.setEditModeCtrls = function () {
+    //    if (this.isEditModeCtrlsSet) {// if already set while mode switching
+    //        $.each(this.DGs, function (k, DG) {
+    //            this.DGBuilderObjs[DG.Name].SwitchToEditMode();
+    //        }.bind(this));
+    //        return;
+    //    }
+    //    let EditModeFormData = this.EditModeFormData;
+    //    let NCCTblNames = this.getNormalTblNames();
+    //    //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
+    //    for (let DGName in this.DGBuilderObjs) {
+    //        let DGB = this.DGBuilderObjs[DGName];
+    //        if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
+    //            this.DataMODEL[DGB.ctrl.TableName] = [];
+    //            DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
+    //            continue;
+    //        }
+    //        //let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
+    //        let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
+    //        DGB.setEditModeRows(DataMODEL);
+    //    }
+
+    //    //if (this.ApprovalCtrl.__ready) {
+    //    //let DataMODEL = this.EditModeFormData[this.ApprovalCtrl.TableName];
+    //    //this.ApprovalCtrl.setEditModeRows(DataMODEL);
+    //    //}
+
+    //    let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(this.EditModeFormData, NCCTblNames);
+    //    this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
+    //    this.isEditModeCtrlsSet = true;
+
+    //    this.FRC.setValueExpValsNC(this.flatControls);
+    //};
+
+    // populateControlsWithDataModel
+    this.setEditModeCtrls = function (DataMODEL) {
+
         let NCCTblNames = this.getNormalTblNames();
-        //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
-            if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
-                this.DataMODEL[DGB.ctrl.TableName] = [];
-                DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
+            if (!DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {// if no Table in datamodel add empty array
+                DataMODEL[DGB.ctrl.TableName] = [];
+                DGB.DataMODEL = DataMODEL[DGB.ctrl.TableName];
                 continue;
             }
-            //let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
-            let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
-            DGB.setEditModeRows(DataMODEL);
+
+            let DGDataMODEL = DataMODEL[DGB.ctrl.TableName];
+            DGB.setEditModeRows(DGDataMODEL);
         }
 
-        //if (this.ApprovalCtrl.__ready) {
-        //let DataMODEL = this.EditModeFormData[this.ApprovalCtrl.TableName];
-        //this.ApprovalCtrl.setEditModeRows(DataMODEL);
-        //}
-
-        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(this.EditModeFormData, NCCTblNames);
+        let NCCSingleColumns_flat_editmode_data = this.getNCCSingleColumns_flat(DataMODEL, NCCTblNames);
         this.setNCCSingleColumns(NCCSingleColumns_flat_editmode_data);
-        this.isEditModeCtrlsSet = true;
 
-        this.FRC.setValueExpValsNC(this.flatControls);
+        if (!(this.Mode.isPrefill || this.Mode.isNew))
+            this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
     };
 
     //this.getEditModeFormData = function (rowId) {
@@ -606,35 +639,35 @@ const WebFormRender = function (option) {
         return CellObj;
     };
 
-    this.RefreshOuterFormControls = function (formData) {
-        for (let i = 0; i < this.flatControls.length; i++) {
-            let ctrl = this.flatControls[i];
-            let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
-            if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
-                continue;
-            if (cellObj !== undefined) {
-                ctrl.reset(cellObj.Value);
-            }
-            else
-                ctrl.clear();
-        }
-    };
+    //this.RefreshOuterFormControls = function (formData) {
+    //    for (let i = 0; i < this.flatControls.length; i++) {
+    //        let ctrl = this.flatControls[i];
+    //        let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
+    //        if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
+    //            continue;
+    //        if (cellObj !== undefined) {
+    //            ctrl.reset(cellObj.Value);
+    //        }
+    //        else
+    //            ctrl.clear();
+    //    }
+    //};
 
-    this.RefreshDGControlValues = function (formData) {
-        for (let DGName in this.DGBuilderObjs) {
-            let DGB = this.DGBuilderObjs[DGName];
-            let DataMODEL = formData[DGB.ctrl.TableName];
-            if (DataMODEL)
-                DGB.resetControlValues(DataMODEL);
-            else
-                DGB.clearDG();
-        }
-    };
+    //this.RefreshDGControlValues = function (formData) {
+    //    for (let DGName in this.DGBuilderObjs) {
+    //        let DGB = this.DGBuilderObjs[DGName];
+    //        let DataMODEL = formData[DGB.ctrl.TableName];
+    //        if (DataMODEL)
+    //            DGB.resetControlValues(DataMODEL);
+    //        else
+    //            DGB.clearDG();
+    //    }
+    //};
 
-    this.RefreshFormControlValues = function (formData) {
-        this.RefreshOuterFormControls(formData);
-        this.RefreshDGControlValues(formData);
-    };
+    //this.RefreshFormControlValues = function (formData) {
+    //    this.RefreshOuterFormControls(formData);
+    //    this.RefreshDGControlValues(formData);
+    //};
 
     this.saveSuccess = function (_respObj) {
         this.hideLoader();
@@ -667,17 +700,18 @@ const WebFormRender = function (option) {
                     EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
             }
             this.rowId = respObj.RowId;
-            this.EditModeFormData = respObj.FormData.MultipleTables;
-            this.DataMODEL = this.EditModeFormData;
+            //this.EditModeFormData = respObj.FormData.MultipleTables;
+            this.DataMODEL = respObj.FormData.MultipleTables;
             a___MT = this.DataMODEL;
             attachModalCellRef_form(this.FormObj, this.DataMODEL);
 
             this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
             this.FormDataExtended = respObj.FormData.ExtendedTables;
             this.DynamicTabObject.disposeDynamicTab();
-            this.reSetMode(this.afterSavemodeS);
-            this.RefreshFormControlValues(this.EditModeFormData);
-            this.afterSaveAction();
+            this.reSetMode(this.curAfterSavemodeS);
+            //this.RefreshFormControlValues(this.EditModeFormData);
+            this.getAfterSaveActionFn(this.curAfterSavemodeS)();
+            this.curAfterSavemodeS = this.defaultAfterSavemodeS;
             //window.parent.closeModal();
         }
         else if (respObj.Status === 403) {
@@ -833,7 +867,7 @@ const WebFormRender = function (option) {
         this.setHeader("View Mode");
         this.BeforeModeSwitch("View Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        this.setEditModeCtrls();
+        //this.setEditModeCtrls();
 
         if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
             let DataMODEL = this.DataMODEL[this.ReviewCtrl.TableName];
@@ -854,29 +888,61 @@ const WebFormRender = function (option) {
         this.DynamicTabObject.switchToViewMode();
     };
 
+    this.S2EmodeReviewCtrl = function () {
+        if (this.ReviewCtrl) {
+            this.ReviewCtrl._Builder.switch2editMode();
+            if (!this.ReviewCtrl._Builder.isFormDataEditable)
+                return false;
+        }
+        return true;
+    }.bind(this);
+
+    this.S2EmodeDGCtrls = function () {
+        $.each(this.DGs, function (k, DG) {
+            this.DGBuilderObjs[DG.Name].SwitchToEditMode();
+        }.bind(this));
+    }.bind(this);
+
+    this.enableFlatControls = function () {
+        $.each(this.flatControls, function (i, ctrl) {
+            if (!ctrl.IsDisable)
+                ctrl.enable();
+        }.bind(this));
+    };
+
+    this.setUniqCtrlsInitialVals = function () {
+        $.each(this.flatControls, function (i, ctrl) {
+            if (ctrl.Unique)
+                this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
+        }.bind(this));
+    };
+
     this.SwitchToEditMode = function () {
         this.$cloneBtn.hide(200);
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;
         this.Mode.isNew = false;
-        if (this.ReviewCtrl) {
-            this.ReviewCtrl._Builder.switch2editMode();
-            if (!this.ReviewCtrl._Builder.isFormDataEditable)
-                return;
-        }
-        this.setEditModeCtrls();
+
+        if (!this.S2EmodeReviewCtrl()) // switch to Edit mode  - ReviewCtrl
+            return;
+
+        this.S2EmodeDGCtrls();// switch to Edit mode  - all DG controls
+
+        //this.setEditModeCtrls();
         //    this.ApprovalCtrl.enableAccessibleRow(this.DataMODEL[this.ApprovalCtrl.TableName]);
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        $.each(this.flatControls, function (k, ctrl) {
-            if (!ctrl.IsDisable)
-                ctrl.enable();
-            if (ctrl.Unique)
-                this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
+        this.enableFlatControls();
+        this.setUniqCtrlsInitialVals();
+        //$.each(this.flatControls, function (k, ctrl) {
+        //    if (!ctrl.IsDisable)
+        //        ctrl.enable();
+        //    if (ctrl.Unique)
+        //        this.uniqCtrlsInitialVals[ctrl.EbSid] = ctrl.getValue();
 
-        }.bind(this));
+        //}.bind(this));
         this.DynamicTabObject.switchToEditMode();
     };
 
@@ -887,7 +953,7 @@ const WebFormRender = function (option) {
             // if eb_default control is true disable some operations on form entry
             $.each(this.flatControls, function (k, ctrl) {
                 if (ctrl.ObjType === "RadioButton" && ctrl.Name === "eb_default") {
-                    let c = getObjByval(this.EditModeFormData[this.FormObj.TableName][0].Columns, "Name", "eb_default");
+                    let c = getObjByval(this.DataMODEL[this.FormObj.TableName][0].Columns, "Name", "eb_default");
                     if (c !== undefined && c.Value === "T") {
                         if (this.userObject.Roles.contains("SolutionOwner") || this.userObject.Roles.contains("SolutionAdmin") || this.userObject.Roles.contains("SolutionPM"))
                             return;
@@ -1332,10 +1398,15 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.continueAfterSave = function () {
+        this.isInitialEditModeDataSet = true;
+        this.setEditModeCtrls(this.DataMODEL);
+        this.isInitialEditModeDataSet = false;
+
         this.SwitchToEditMode();
     }.bind(this);
 
     this.viewAfterSave = function () {
+        this.setEditModeCtrls(this.DataMODEL);
         this.SwitchToViewMode();
     }.bind(this);
 
@@ -1347,7 +1418,7 @@ const WebFormRender = function (option) {
     this.saveSelectChange = function () {
         this.saveForm();
         let val = $("#webformsave-selbtn .selectpicker").find("option:selected").attr("data-token");
-        this.afterSaveAction = this.getAfterSaveActionFn(val);
+        this.curAfterSavemodeS = val;
     }.bind(this);
 
     this.getAfterSaveActionFn = function (mode) {
@@ -1567,7 +1638,7 @@ const WebFormRender = function (option) {
 
     };
 
-    this.fillCloneData = function (rowId) {
+    this.fillCloneData = function (rowId) {// divert to clone mode( datamodel prefilled)
         this.showLoader();
         $.ajax({
             type: "POST",
@@ -1598,20 +1669,23 @@ const WebFormRender = function (option) {
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
-        this.setHeader(this.mode);
+        this.setHeader(this.mode);// contains a hack for preview mode(set as newmode)
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
-        this.afterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
-        this.afterSaveAction = this.getAfterSaveActionFn(this.afterSavemodeS);
+        this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
+        this.curAfterSavemodeS = this.defaultAfterSavemodeS;
+        this.afterSaveAction = this.getAfterSaveActionFn(this.curAfterSavemodeS);
         this.setMode();
+        this.setEditModeCtrls(this.DataMODEL);
 
-        if (this.Mode.isPrefill)
-            this.setEditModeCtrls();
+        //if (this.Mode.isPrefill)
+        //    this.setEditModeCtrls();
 
-        else if (this.Mode.isNew) {
+        //else
+        if (this.Mode.isNew) {
             this.FRC.setDefaultvalsNC(this.flatControls);
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
@@ -1620,11 +1694,34 @@ const WebFormRender = function (option) {
         }
 
         if (this.Mode.isView) {
-            this.setEditModeCtrls();// should remove ?
+            //this.setEditModeCtrls();// should remove ?
             this.SwitchToViewMode();
             this.locInit4viewMode();
         }
         this.LocationInit();
+        //this.FORCE_RELOAD();
+    };
+
+    this.resetBuldervariables = function () {
+        let keys = Object.keys(this);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            if (typeof this[key] !== typeof function () { }) {
+                //if()
+                delete this[key];
+            }
+        }
+    }.bind(this);
+
+    this.FORCE_RELOAD = function () {
+        let t0 = performance.now();
+        debugger;
+        this.resetBuldervariables();
+
+        this.$formCont.empty();
+        this.setMasterVariables(option);
+
+        console.dev_log("WebFormRender : FORCE_RELOAD took " + (performance.now() - t0) + " milliseconds.");
     };
 
     let t0 = performance.now();
@@ -1646,5 +1743,5 @@ const WebFormRender = function (option) {
 
     a___builder = this;
     a___MT = this.DataMODEL;
-    a___EO = this.EditModeFormData;
+    //a___EO = this.EditModeFormData;
 };

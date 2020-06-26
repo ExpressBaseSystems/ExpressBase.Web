@@ -134,8 +134,8 @@ function ExecQuery(refId, ctrlName, params, ctrl) {
         //beforeSend: function (xhr) {
         //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
         //}.bind(this),
-        success: function (_respObjStr) {
-            valueExpHelper(_respObjStr, _ctrl);
+        success: function (val) {
+            valueExpHelper(val, _ctrl);
             hideLoader4webform();
         }
     });

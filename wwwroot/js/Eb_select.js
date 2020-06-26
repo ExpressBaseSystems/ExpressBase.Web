@@ -595,7 +595,7 @@ const EbSelect = function (ctrl, options) {
         //if (!this.ComboObj.MultiSelect)
         vmValue = parseInt(vmValue);
 
-        if (this.columnVals[this.vmName].contains(vmValue)) {
+        if (this.curAction = "remove") {
             this.removeColVals(vmValue);
         }
         else {
@@ -631,6 +631,8 @@ const EbSelect = function (ctrl, options) {
 
     this.removeColVals = function (vmValue) {
         let idx = this.columnVals[this.vmName].indexOf(vmValue);
+        if (idx < 0)// to handle special case of setting values which are not in DV
+            return;
         $.each(this.ColNames, function (i, name) {
             this.columnVals[name].splice(idx, 1);
         }.bind(this));
@@ -727,10 +729,14 @@ const EbSelect = function (ctrl, options) {
     };
 
     this.setLastmodfiedVal = function () {
-        if (this.Vobj.valueMembers.length > this.Values.length)
+        if (this.Vobj.valueMembers.length > this.Values.length) {
             this.lastAddedOrDeletedVal = this.Vobj.valueMembers.filter(x => !this.Values.includes(x))[0];
-        else
+            this.curAction = "add";
+        }
+        else {
             this.lastAddedOrDeletedVal = this.Values.filter(x => !this.Vobj.valueMembers.includes(x))[0];
+            this.curAction = "remove";
+        }
     };
 
     //single select & max limit

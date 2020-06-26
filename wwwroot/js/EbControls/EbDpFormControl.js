@@ -50,7 +50,7 @@
     initDpImages() {
         let $img = $(`#cont_${this.control.EbSid_CtxId} .ebimg-cont img`);
         $img.attr('onerror', "this.style.opacity='0.5'; this.src='/images/image.png';");
-        $img.css('height', $img.css('height'));
+        //$img.css('height', $img.css('height'));
         $(`#cont_${this.control.EbSid_CtxId}`).hover(function (e) { $img.parent().next().css('visibility', 'visible'); }, function (e) { $img.parent().next().css('visibility', 'hidden'); });
         if (this.control.EnableFullScreen === true) {
             this.$FullScreen = this.appendFSHtml();

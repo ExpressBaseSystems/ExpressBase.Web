@@ -352,9 +352,8 @@
 
     // checks a control value is emptyString
     this.sysValidationsOK = function (ctrl) {
-
         // email validation
-        if (ctrl.ObjType === "TextBox" && ctrl.TextMode === 2) {
+        if ((ctrl.ObjType === "TextBox" && ctrl.TextMode === 2) || ctrl.ObjType === "Email") {
             if (EbvalidateEmail(ctrl.getValueFromDOM())) {
                 ctrl.removeInvalidStyle();
                 return true;

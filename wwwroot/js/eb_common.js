@@ -774,7 +774,7 @@ var EbTags = function (settings) {
         this.id.empty();
         var filter = "";
         $.each(this.displayFilterDialogArr, function (i, ctrl) {
-            filter = ctrl.name + " " + ctrl.operator + " " + ctrl.value;
+            filter = ctrl.title + " " + ctrl.operator + " " + ctrl.value;
             this.id.append(`<div class="tagstyle priorfilter">${filter}</div>`);
             if (ctrl.logicOp !== "")
                 this.id.append(`<div class="tagstyle priorfilter">${ctrl.logicOp}</div>`);
@@ -784,7 +784,7 @@ var EbTags = function (settings) {
             this.id.append(`<div class="tagstyle op">AND</div>`);
 
         $.each(this.displayColumnSearchArr, function (i, search) {
-            filter = search.name + " " + returnOperator(search.operator.trim());
+            filter = search.title + " " + returnOperator(search.operator.trim());
             filter += " " + search.value;
             this.id.append(`<div class="tagstyle" data-col="${search.name}" data-val="${search.value}">${filter} <i class="fa fa-close"></i></div>`);
             if (search.logicOp !== "")

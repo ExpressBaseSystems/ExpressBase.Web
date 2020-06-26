@@ -16,7 +16,7 @@ class DvBuilder {
         this.type = option.ObjType || null;
         this.EbObject = option.dvObj || null;
         this.OldEbObject = null;
-        this.tabNum = option.TabNum || null;
+        this.tabNum = option.TabNum || 1;
         this.ssurl = option.ServiceUrl || null;
         this.wc = option.Wc;
         this.Tenantid = option.Cid;
@@ -38,6 +38,7 @@ class DvBuilder {
         this.returnobj = null;
         this.__OSElist = [];
         this.__oldValues = [];
+        this.filterDialog = null;
 
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
@@ -75,7 +76,7 @@ class DvBuilder {
             objid = this.EbObject.RefId.split("-")[3];
         $("#obj_icons ").empty();
         $("#obj_icons").append(`<a class='btn' id="preview" data-toggle="tooltip" data-placement="bottom" title="Preview"><i class="fa fa-eye" aria-hidden="true"></i></a>`);
-        if(this.EbObject.DataSourceRefId)
+        if (this.EbObject.DataSourceRefId)
             $("#obj_icons").append(`<button class='btn' id="refresh" data-toggle="tooltip" data-placement="bottom" title="Refresh"><i class="fa fa-refresh" aria-hidden="true"></i></button>`);
         $("#preview").off("click").on("click", this.previewClick.bind(this));
         $("#refresh").off("click").on("click", this.DatasourceModified.bind(this));
@@ -102,13 +103,20 @@ class DvBuilder {
             this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
             this.check4Customcolumn();
             if (this.EbObject.ColumnsCollection.$values.length === 0) {
-                if(this.EbObject.DataSourceRefId)
+                if (this.EbObject.DataSourceRefId)
                     this.getColumns();//get Columncollection,parameter list
+                else if (this.EbObject.FilterDialogRefId) {
+                    this.GetFD();
+                }
                 else
                     this.UrlModified();
             }
-            else
+            else {
                 this.DrawBuilder();
+                if (this.EbObject.FilterDialogRefId) {
+                    this.GetFD();
+                }
+            }
         }
         this.propGrid.PropertyChanged = this.PropertyChanged.bind(this);
         this.propGrid.setObject(this.EbObject, AllMetas["EbTableVisualization"]);
@@ -145,6 +153,8 @@ class DvBuilder {
         else if (pname === "Url") {
             this.GenerateRunbutton();
         }
+        else if (pname === "FilterDialogRefId")
+            this.GetFD();
     }
 
     GenerateRunbutton() {
@@ -154,7 +164,60 @@ class DvBuilder {
         }
     }
 
+    GetFD() {
+        $("#eb_common_loader").EbLoader("show");
+        this.RemoveColumnRef();
+        this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
+        if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
+            $.post("../dv/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + this.tabNum }, this.AppendFD.bind(this));
+    }
+
+    AppendFD(result) {
+        $('#paramdiv' + this.tabNum).remove();
+        $('#eb-rpt-container').prepend(`
+                    <div id='paramdiv-Cont${this.tabNum}' class='param-div-cont'>
+                    <div id='paramdiv${this.tabNum}' class='param-div fd'>
+                        <div class='pgHead'>
+                            <h6 class='smallfont' style='font-size: 12px;display:inline'>Parameter Div</h6>
+                            <div class="icon-cont  pull-right" id='close_paramdiv${this.tabNum}'><i class="fa fa-times" aria-hidden="true"></i></div>
+                        </div>
+                        </div>
+                        </div>
+                    `);
+
+        $('#paramdiv' + this.tabNum).append(result);
+        $('#close_paramdiv' + this.tabNum).off('click').on('click', this.CloseParamDiv.bind(this));
+        $("#btnGo").off("click").on("click", this.Run.bind(this));
+        this.stickBtn = new EbStickButton({
+            $wraper: $(".param-div"),
+            $extCont: $(".param-div-cont"),
+            icon: "fa-filter",
+            dir: "left",
+            label: "Parameters",
+            btnTop: 300
+        });
+
+        if (this.isNew)
+            this.stickBtn.maximise();
+        else
+            this.stickBtn.minimise();
+        this.filterDialog = FilterDialog;
+        $("#eb_common_loader").EbLoader("hide");
+    }
+
+    CloseParamDiv() {
+        this.stickBtn.minimise();
+    }
+
+    Run() {
+        $("#run").trigger("click");
+    }
+
     UrlModified() {
+        if (this.filterDialog) {
+            this.stickBtn.minimise();
+            this.Getfiltervalues();
+        }
         if (this.EbObject.IsDataFromApi && this.EbObject.Url) {
             $("#eb_common_loader").EbLoader("show");
             this.RemoveColumnRef();
@@ -166,7 +229,21 @@ class DvBuilder {
                 success: this.getcolumnSuccess.bind(this)
             });
         }
-    }
+    };
+
+    Getfiltervalues() {
+        var fltr_collection = [];
+        if (this.filterDialog)
+            fltr_collection = getValsForViz(this.filterDialog.FormObj);
+        this.ModifyToRequestParams(fltr_collection);
+    };
+
+    ModifyToRequestParams(fltr_collection) {//need to modified 
+        this.EbObject.Parameters.$values = fltr_collection.map(function (row) {
+            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
+        });
+    };
+
 
     DatasourceModified() {
         this.check4Customcolumn();
@@ -1181,7 +1258,7 @@ class DvBuilder {
     }
 
     DropApprovalColumn = function () {
-        let name = "eb_approval"+this.calcfieldCounter++;
+        let name = "eb_approval" + this.calcfieldCounter++;
         let type = "DVApprovalColumn";
         let obj = new EbObjects[type](name);
         obj.Type = 16;

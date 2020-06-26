@@ -93,6 +93,17 @@ namespace ExpressBase.Web.Controllers
             return ViewComponent("DataVisualization", new { dvobjt = dvobj, dvRefId = dvRefId, flag = _flag, _user = this.LoggedInUser, _sol = s_obj, contextId = contextId, CustomColumn = customcolumn, wc = ViewBag.wc, curloc = _curloc, submitId = submitId });
         }
 
+        public IActionResult GetFilterBody(string dvobj, string contextId)
+        {
+            EbDataVisualization dsObject = EbSerializers.Json_Deserialize(dvobj);
+            dsObject.AfterRedisGetforFilter(this.Redis, this.ServiceClient);
+
+            Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+            if (dsObject.EbFilterDialog != null)
+                EbControlContainer.SetContextId(dsObject.EbFilterDialog, contextId);
+            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.EbFilterDialog, _user = this.LoggedInUser, _sol = s_obj, wc = ViewBag.wc });
+        }
+
         public string GetColumns(string dvobjt, bool CustomColumn)
         {
             EbDataVisualization dvobj = EbSerializers.Json_Deserialize(dvobjt);

@@ -599,7 +599,7 @@
         if (this.CurMeta && typeof EbOnChangeUIfns !== "undefined" && this.CurMeta.UIChangefn) {
             this.execUiChangeFn(this.CurMeta.UIChangefn, this.PropsObj);
         }
-        if (this.CurProp === 'DataSourceId') {
+        if (this.CurProp === 'DataSourceId' && this.PropsObj.ObjType !== "DataGrid") {
             this.PGHelper.dataSourceInit();
         }
         this.PropertyChanged(this.PropsObj, this.CurProp, newVal, oldVal);

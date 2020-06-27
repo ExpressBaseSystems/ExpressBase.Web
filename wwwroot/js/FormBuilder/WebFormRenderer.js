@@ -344,44 +344,45 @@ const WebFormRender = function (option) {
 
     //};
 
-    //this.reloadForm = function (_respObjStr) {// need cleanup
-    //    this.hideLoader();
-    //    let _respObj = JSON.parse(_respObjStr);
-    //    console.log(_respObj);
-    //    if (_respObj.Status === 200) {
-    //        //this.modifyFormData4Import(_respObj);
-    //        this.resetDataMODEL(_respObj);
+    this.reloadForm = function (_respObjStr) {// need cleanup
+        this.hideLoader();
+        let _respObj = JSON.parse(_respObjStr);
+        console.log(_respObj);
+        if (_respObj.Status === 200) {
+            //this.modifyFormData4Import(_respObj);
+            //this.resetDataMODEL(_respObj);
+            this.DataMODEL = _respObj.FormData.MultipleTables;
 
-    //        this.isEditModeCtrlsSet = false;
-    //        this.setEditModeCtrls();
-    //    }
-    //    else
-    //        console.error(_respObj.MessageInt);
+            this.isEditModeCtrlsSet = false;
+            this.setEditModeCtrls(this.DataMODEL);
+        }
+        else
+            console.error(_respObj.MessageInt);
 
-    //}.bind(this);
+    }.bind(this);
 
-    //this.resetDataMODEL = function (_respObj) {
-    //    let editModeFormData = _respObj.FormData.MultipleTables;
+    this.resetDataMODEL = function (_respObj) {
+        let editModeFormData = _respObj.FormData.MultipleTables;
 
-    //    // DG = replace DG dataModel with  new one
-    //    $.each(editModeFormData, function (tblName, Data) {
-    //        if (tblName !== this.FormObj.TableName) {
-    //            let DG = getObjByval(this.DGs, "TableName", tblName);
-    //            if (!DG)
-    //                return true;
-    //            let DGTblName = DG.TableName;
-    //            delete this.EditModeFormData[tblName];
-    //            this.EditModeFormData[DGTblName] = Data;
-    //            this.DataMODEL[DGTblName] = Data;
-    //        }
-    //    }.bind(this));
-
-
+        // DG = replace DG dataModel with  new one
+        $.each(editModeFormData, function (tblName, Data) {
+            if (tblName !== this.FormObj.TableName) {
+                let DG = getObjByval(this.DGs, "TableName", tblName);
+                if (!DG)
+                    return true;
+                let DGTblName = DG.TableName;
+                delete this.EditModeFormData[tblName];
+                this.EditModeFormData[DGTblName] = Data;
+                this.DataMODEL[DGTblName] = Data;
+            }
+        }.bind(this));
 
 
-    //    //this.EditModeFormData = _respObj.FormData.MultipleTables;
-    //    //this.DataMODEL = this.EditModeFormData;
-    //};
+
+
+        //this.EditModeFormData = _respObj.FormData.MultipleTables;
+        //this.DataMODEL = this.EditModeFormData;
+    };
 
     //this.removeRowIds = function () {
 

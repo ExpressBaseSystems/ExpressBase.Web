@@ -608,11 +608,11 @@ namespace ExpressBase.Web.Controllers
                 {
                     Export = export
                 });
-                data.StatusCode = HttpStatusCodes.OK;
+                data.StatusCode = HttpStatusCode.OK;
                 return data;
             }
 
-            return new EbMobileSolutionData { StatusCode = HttpStatusCodes.UNAUTHORIZED };
+            return new EbMobileSolutionData { StatusCode = HttpStatusCode.Unauthorized };
         }
 
         [HttpGet("api/menu")]

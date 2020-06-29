@@ -600,15 +600,20 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpGet("api/get_solution_data")]
-        public EbMobileSolutionData GetSolutionDataForMobile()
+        public EbMobileSolutionData GetSolutionDataForMobile(bool export = true)
         {
             if (Authenticated)
             {
-                return this.ServiceClient.Get(new MobileSolutionDataRequest());
+                EbMobileSolutionData data = this.ServiceClient.Get(new MobileSolutionDataRequest()
+                {
+                    Export = export
+                });
+                data.StatusCode = HttpStatusCodes.OK;
+                return data;
             }
-            return null;
-        }
 
+            return new EbMobileSolutionData { StatusCode = HttpStatusCodes.UNAUTHORIZED };
+        }
 
         [HttpGet("api/menu")]
         public GetMobMenuResonse GetAppData4Mob(int locid = 1)

@@ -1244,7 +1244,7 @@
                 if (colobj.$type && colobj.$type.indexOf("DVPhoneColumn") !== -1)
                     paracolum = colobj.MappingColumn.name;
 
-                if (paracolum !== 'checkbox' && paracolum !== 'serial') {
+                if (paracolum !== 'checkbox' && paracolum !== 'serial' && colobj.bVisible) {
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colobj.name + '_hdr_txt1';
@@ -1629,7 +1629,7 @@
         $('.' + this.tableId + '_htext').val("");
         for (let i = 0; i < this.columnSearch.length; i++) {
             let param1 = this.columnSearch[i];
-            let param2 = this.columnSearch[i+1];
+            let param2 = this.columnSearch[i + 1];
             var colum = param1.Column;
             let phonecolumns = this.EbObject.Columns.$values.filter(obj => obj.$type.indexOf("DVPhoneColumn") !== -1);
             phonecolumns.forEach(function (obj) {
@@ -4351,7 +4351,7 @@
     this.updateRenderFunc_Inner = function (i, col) {
         //this.EbObject.Columns.$values[i].sClass = "";
         //this.EbObject.Columns.$values[i].className = "";
-        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1 && col.$type.indexOf("DVPhoneColumn") === -1) {
+        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1) {
             if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType === parseInt(gettypefromString("Decimal")) || col.RenderType === parseInt(gettypefromString("Int64")) || col.RenderType === parseInt(gettypefromString("Numeric"))) {
 
                 if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
@@ -4682,7 +4682,7 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-var displayFilter = function (col, title,oper, val, Loper) {
+var displayFilter = function (col, title, oper, val, Loper) {
     this.name = col;
     this.title = title;
     this.operator = oper;

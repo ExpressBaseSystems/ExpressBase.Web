@@ -455,7 +455,7 @@
                         var appindex = $("#selectApp").find(":selected").attr("data-index");
                         for (y = 0; y < value.Operations.$values.length; y++) {
                             var permissionString = this.appCollection[appindex].Id.toString().padStart(3, "0") + "-" + value.Op_Id.toString().padStart(2, "0") + "-" + b.Obj_Id.toString().padStart(5, "0") + "-" + y.toString().padStart(2, "0");
-                            obt["x" + (y + 1)] = permissionString + b.Obj_Name + " -> " + value.Operations.$values[y];
+                            obt["x" + (y + 1)] = permissionString + b.Obj_Name.replace(/[^\w\s]/gi, '') + " -> " + value.Operations.$values[y];
                         }
                         tblData.push(obt);
                     }.bind(this));

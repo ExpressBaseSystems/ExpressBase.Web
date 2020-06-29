@@ -1796,8 +1796,24 @@
         let params = [];
         let lastCtrlName;
         $.each(dependantCtrls, function (i, ctrlName) {
+            let val;
+
+            if (ctrlName === "eb_currentuser_id") {
+                val = ebcontext.user.UserId;
+                let obj = { Name: ctrlName, Value: val };
+                params.push(obj);
+                return;
+            }
+            else if (ctrlName === "eb_loc_id") {
+                val = store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId);
+                let obj = { Name: ctrlName, Value: val };
+                params.push(obj);
+                return;
+            }
+
+
             let ctrl = this.ctrl.formObject[ctrlName];
-            let val = ctrl.getValue();
+            val = ctrl.getValue();
             let obj = { Name: ctrlName, Value: val };
             //let obj = { Name: ctrlName, Value: "2026" };
             lastCtrlName = ctrlName;

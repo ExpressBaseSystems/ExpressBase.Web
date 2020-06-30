@@ -228,7 +228,7 @@
             //    continue;
             //}
             let DataMODEL = dataModel.FormData.MultipleTables[DGB.ctrl.TableName];
-            DGB.setEditModeRows(DataMODEL);
+            DGB.populateDGWithDataModel(DataMODEL);
         }
     };
 

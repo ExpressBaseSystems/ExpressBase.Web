@@ -17,6 +17,7 @@ using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Constants;
 using System.IO;
 using ExpressBase.Common.Enums;
+using System.Net;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -246,7 +247,7 @@ namespace ExpressBase.Web.Controllers
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+                    Status = (int)HttpStatusCode.InternalServerError,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 });
@@ -272,7 +273,7 @@ namespace ExpressBase.Web.Controllers
             }
             catch (Exception ex)
             {
-                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
             }
         }
 

@@ -146,8 +146,6 @@ const WebFormRender = function (option) {
         //if (this.Mode.isNew)
         //    this.initDataMODEL();
 
-        this.FRC.fireInitOnchangeNC(this.flatControls);
-
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
@@ -336,25 +334,47 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.populateFormOuterCtrlsWithDataModel = function (NCCSingleColumns_flat_editmode_data) {
-        $.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
+
+        for (let i = 0; i < NCCSingleColumns_flat_editmode_data.length; i++) {
+            let SingleColumn = NCCSingleColumns_flat_editmode_data[i];
             let val = SingleColumn.Value;
 
             if (SingleColumn.Name === "id")
-                return true;
+                continue;
             if (val === null)
-                return true;
+                continue;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
             if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
-                return true;
+                continue;
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
                 //ctrl.setDisplayMember = EBPSSetDisplayMember;
                 ctrl.setDisplayMember(val);
             }
             else
-                ctrl.setValue(val);//   justSetValue
-        }.bind(this));
+                ctrl.justSetValue(val);
+        }
+
+        //$.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
+        //    let val = SingleColumn.Value;
+
+        //    if (SingleColumn.Name === "id")
+        //        return true;
+        //    if (val === null)
+        //        return true;
+
+        //    let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
+        //    if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
+        //        return true;
+        //    ctrl.__eb_EditMode_val = val;
+        //    if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
+        //        //ctrl.setDisplayMember = EBPSSetDisplayMember;
+        //        ctrl.setDisplayMember(val);
+        //    }
+        //    else
+        //        ctrl.setValue(val);
+        //}.bind(this));
         this.isInitNCs = true;
     };
 
@@ -426,7 +446,6 @@ const WebFormRender = function (option) {
 
     // populateControlsWithDataModel
     this.populateControlsWithDataModel = function (DataMODEL) {
-
         let OuterCtrlsTblNames = this.getNormalTblNames();
         for (let DGName in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[DGName];
@@ -440,11 +459,11 @@ const WebFormRender = function (option) {
             DGB.populateDGWithDataModel(DGDataMODEL);
         }
 
-        let NCCSingleColumns_flat_editmode_data = this.getOuterCtrlsSingleColumns_flat(DataMODEL, OuterCtrlsTblNames);
-        this.populateFormOuterCtrlsWithDataModel(NCCSingleColumns_flat_editmode_data);
+        let outerCtrlsSingleColumns_flat = this.getOuterCtrlsSingleColumns_flat(DataMODEL, OuterCtrlsTblNames);
+        this.populateFormOuterCtrlsWithDataModel(outerCtrlsSingleColumns_flat);
 
-        if (!(this.Mode.isPrefill || this.Mode.isNew))
-            this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
+        //if (!(this.Mode.isPrefill || this.Mode.isNew))
+        //    this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
     };
 
     //this.getEditModeFormData = function (rowId) {
@@ -885,11 +904,7 @@ const WebFormRender = function (option) {
         }
 
         //    this.ApprovalCtrl.disableAllCtrls();
-        $.each(this.flatControls, function (k, ctrl) {
-            if (ctrl.ObjType === "ExportButton")
-                return true;
-            ctrl.disable();
-        }.bind(this));
+        this.disbleFlatControls();
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
@@ -915,6 +930,14 @@ const WebFormRender = function (option) {
         $.each(this.flatControls, function (i, ctrl) {
             if (!ctrl.IsDisable)
                 ctrl.enable();
+        }.bind(this));
+    };
+
+    this.disbleFlatControls = function () {
+        $.each(this.flatControls, function (k, ctrl) {
+            if (ctrl.ObjType === "ExportButton")
+                return true;
+            ctrl.disable();
         }.bind(this));
     };
 
@@ -1763,10 +1786,15 @@ const WebFormRender = function (option) {
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         this.setMode();
-        this.populateControlsWithDataModel(this.DataMODEL);
+        this.isInitialProgramaticOnchange = true;
+
+        console.log("================== populateDataModel          1");
+        this.populateControlsWithDataModel(this.DataMODEL);// 1st
 
         if (this.Mode.isNew) {
-            this.FRC.setDefaultvalsNC(this.flatControls);
+            console.log("================== exec default Value Expression   2");
+            //this.FRC.setDefaultvalsNC(this.flatControls);// 2nd
+            this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);// 2nd
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
             if (this.cloneRowId)
@@ -1779,6 +1807,16 @@ const WebFormRender = function (option) {
         else if (this.Mode.isEdit) {
             this.SwitchToEditMode();
         }
+
+        console.log("================== exec Value Expression   3");
+        if (!(this.Mode.isPrefill || this.Mode.isNew))// 3rd
+            this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
+
+
+        //console.log("================== trigger Initial onchange   4");
+        //this.FRC.fireInitOnchangeNC(this.flatControls); //4rth
+        this.isInitialProgramaticOnchange = false;
+
         this.LocationInit();
 
         window.onbeforeunload = function (e) {
@@ -1790,6 +1828,19 @@ const WebFormRender = function (option) {
         }.bind(this);
 
         console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
+    };
+
+
+    this.fixValExpInDataModel = function () { ////////////////////////// cleanup
+        $.each(this.flatControls, function (idx, ctrl) {
+            for (let i = 0; i < ctrl.length; i++) {
+                let inpCtrl = ctrl[i];
+                let ValueExpr_val = getValueExprValue(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full);
+                if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined)
+                    inpCtrl.DataVals.Value = ValueExpr_val;
+            }
+            //this.onRowPaintFn(["tr"], "check", "e");// --
+        }.bind(this));
     };
 
     this.init(option);

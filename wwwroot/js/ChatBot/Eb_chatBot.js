@@ -53,6 +53,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.init = function () {
         $("body").append(this.$chatCont);
+        ////code review
+        ////window.parent.$("#loderdiv" + this.EXPRESSbase_APP_ID).css('background', 'none');
         this.$renderAtBottom.hide();
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);

@@ -1169,6 +1169,7 @@ border-radius: 4px;
         word-break: break-word;
         box-shadow: 0 1px 4px 1px #0000003d;
         transition-duration: 0.1s;
+        z-index:10;
     }
 .ctrlproceedBtn:hover {
     box-shadow: 0px 1px 5px 1px #0000007a;

@@ -548,7 +548,7 @@ span[iblock] .selected-tag:empty::before {
     animation-duration: 0.3s;
     letter-spacing: 0.1px;
     z-index: 1;
-    position: relative;
+    position: absolute;
     width: 100%;
 }
 

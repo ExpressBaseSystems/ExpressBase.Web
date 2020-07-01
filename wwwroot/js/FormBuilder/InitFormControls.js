@@ -1102,14 +1102,21 @@
             });
         }
         else if (ctrl.TextMode === 2) {
-            $ctrl.on('input', function (event) {
-                if (EbvalidateEmail(event.target.value))
-                    ctrl.removeInvalidStyle();
-                else
-                    ctrl.addInvalidStyle("Invalid email");
-            });
+            $ctrl.on('input', this.checkEmail.bind(this, ctrl));
         }
     };
+
+    this.EmailControl = function (ctrl) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        $ctrl.on('input', this.checkEmail.bind(this, ctrl));
+    };
+
+    this.checkEmail = function (ctrl) {
+        if (EbvalidateEmail(event.target.value))
+            ctrl.removeInvalidStyle();
+        else
+            ctrl.addInvalidStyle("Invalid email");
+    }
 
     this.initNumeric = function (ctrl, $input) {
         let initValue = "0";

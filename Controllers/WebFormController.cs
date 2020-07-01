@@ -20,6 +20,7 @@ using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.Constants;
 using ExpressBase.Objects.Objects;
 using System.IO;
+using System.Net;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -58,7 +59,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
                         Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
                     }
                 }
@@ -74,7 +75,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
                         Console.WriteLine("Exception in GetExportFormData. Message: " + ex.Message);
                     }
                 }
@@ -136,7 +137,7 @@ namespace ExpressBase.Web.Controllers
                     }
                     catch (Exception ex)
                     {
-                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                        ViewBag.formData = JsonConvert.SerializeObject(new WebformDataWrapper { Message = "Something went wrong", Status = (int)HttpStatusCode.InternalServerError, MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
                         Console.WriteLine("Exception in getPrefillData. Message: " + ex.Message);
                     }
                 }
@@ -180,7 +181,7 @@ namespace ExpressBase.Web.Controllers
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+                    Status = (int)HttpStatusCode.InternalServerError,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 });
@@ -235,7 +236,7 @@ namespace ExpressBase.Web.Controllers
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+                    Status = (int)HttpStatusCode.InternalServerError,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 });
@@ -257,7 +258,7 @@ namespace ExpressBase.Web.Controllers
                 return JsonConvert.SerializeObject(new WebformDataWrapper()
                 {
                     Message = "Error in loading data...",
-                    Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR,
+                    Status = (int)HttpStatusCode.InternalServerError,
                     MessageInt = ex.Message,
                     StackTraceInt = ex.StackTrace
                 });
@@ -302,7 +303,7 @@ namespace ExpressBase.Web.Controllers
             catch (Exception ex)
             {
                 Console.WriteLine("Exception : " + ex.Message + "\n" + ex.StackTrace);
-                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCodes.INTERNAL_SERVER_ERROR, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
+                return JsonConvert.SerializeObject(new InsertDataFromWebformResponse { Status = (int)HttpStatusCode.InternalServerError, Message = "Something went wrong", MessageInt = ex.Message, StackTraceInt = ex.StackTrace });
             }
         }
 

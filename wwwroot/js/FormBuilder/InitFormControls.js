@@ -1106,7 +1106,7 @@
         }
     };
 
-    this.Email = function (ctrl) {
+    this.EmailControl = function (ctrl) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl.on('input', this.checkEmail.bind(this, ctrl));
     };

@@ -1579,6 +1579,11 @@ const WebFormRender = function (option) {
         $("#webformsave-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.saveSelectChange);
         $("#webformsave-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
 
+        $("#webformexcel-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.excelExportImport.bind(this));
+        $("#webformexcel-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+        //$("#webformexcel-selbtn").on('click', this.excelExportImport.bind(this));
+        $("#excelfile").off('change').on('change', this.excelUpload.bind(this));
+
         this.$saveBtn.off("click").on("click", this.saveForm.bind(this));
         this.$deleteBtn.off("click").on("click", this.deleteForm.bind(this));
         this.$cancelBtn.off("click").on("click", this.cancelForm.bind(this));

@@ -404,11 +404,19 @@ namespace ExpressBase.Web.Controllers
 
         public void SendSMS(SMSInitialRequest request)
         {
-            Eb_Solution sol = GetSolutionObject(this.LoggedInUser.CId);
-            request.SolnId = sol.SolutionID;
-            request.UserAuthId = this.LoggedInUser.AuthId;
-            request.UserId = this.LoggedInUser.UserId;
-            var xx = this.ServiceClient.Post(request);
+            if (request.RefId != null)
+            {
+                Eb_Solution sol = GetSolutionObject(this.LoggedInUser.CId);
+                request.SolnId = sol.SolutionID;
+                request.UserAuthId = this.LoggedInUser.AuthId;
+                request.UserId = this.LoggedInUser.UserId;
+                var xx = this.ServiceClient.Post(request);
+            }
+        }
+
+        public object GetSMSPreview(string refid)
+        {
+            return new { Text = "hhhhhhhhhh", Ph = "123456789"};
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)

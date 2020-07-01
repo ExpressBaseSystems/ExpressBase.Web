@@ -1244,7 +1244,7 @@
                 if (colobj.$type && colobj.$type.indexOf("DVPhoneColumn") !== -1)
                     paracolum = colobj.MappingColumn.name;
 
-                if (paracolum !== 'checkbox' && paracolum !== 'serial') {
+                if (paracolum !== 'checkbox' && paracolum !== 'serial' && colobj.bVisible) {
                     var oper;
                     var val1, val2;
                     var textid = '#' + table + '_' + colobj.name + '_hdr_txt1';
@@ -1629,7 +1629,7 @@
         $('.' + this.tableId + '_htext').val("");
         for (let i = 0; i < this.columnSearch.length; i++) {
             let param1 = this.columnSearch[i];
-            let param2 = this.columnSearch[i+1];
+            let param2 = this.columnSearch[i + 1];
             var colum = param1.Column;
             let phonecolumns = this.EbObject.Columns.$values.filter(obj => obj.$type.indexOf("DVPhoneColumn") !== -1);
             phonecolumns.forEach(function (obj) {
@@ -2828,7 +2828,7 @@
         let colname = $(opt.$trigger).attr("data-colname");
         this.phonecolumn = this.EbObject.Columns.$values.filter(obj => obj.name === colname)[0];
         this.AppendSMSModal($(opt.$trigger));
-        this.AppendSMSTemplates();
+        this.AppendSMSTemplates($(opt.$trigger));
         $("#smsmodal").modal("show");
     };
 
@@ -2838,55 +2838,99 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Select Template</h5>
+        <h5 class="modal-title">SMS Template</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body" id='sms-modal-body'>
+        <table class='table'>
+            <tbody>
+                <tr><td><div class='smslabel'>Template :</div></td><td class='smstemplate-select-cont'></td>
+                    <td><div class='smslabel'>To :</div></td>
+                    <td class='sms-number-cont'>
+                        <input class="form-control" type='text' id='sms-number' placeholder='phone number here..'>
+                    </td>
+                </tr>
+                <tr><td colspan='4' class='sms-textarea-cont'><textarea id='sms-textarea' class="form-control" placeholder='SMS text here..'></textarea></td></tr>
+            </tbody>
+        </table>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" id='sendbtn'>Send</button>
+        <button class="btn btn-primary" id='sendbtn'><i class="fa fa-paper-plane" aria-hidden="true"></i><span id='sendbtn-text'>Send</span></button>
       </div>
     </div>
   </div>
 </div>`;
 
         $("body").prepend(modal1);
-        $("#sendbtn").prop('disabled', true);
+        $("#sendbtn").prop("disabled", true);
         $("#sendbtn").off("click").on("click", this.SendSMS.bind(this, $elem));
     };
 
-    this.AppendSMSTemplates = function () {
-        let template = ``;
+    this.AppendSMSTemplates = function ($elem) {
+        let template = `<select class="selectpicker smstemplate-select">`;
+        //template += `<option value=''>--- Select SMS Template ---</option>`;
         $.each(this.phonecolumn.Templates.$values, function (i, obj) {
-            template += `<div class='template-cont' data-refid='${obj.ObjRefId}'>
-                <div class='template-inner-cont'>${obj.ObjDisplayName}</div>
-            </div>`;
+            template += `<option value='${obj.ObjRefId}'>${obj.ObjDisplayName}</option>`;
         });
-        $("#sms-modal-body").append(template);
-        $("#sms-modal-body .template-cont").off("click").on("click", this.ClickOnTemplate.bind(this));
+        template += `<option value=''>Custom Template</option>`;
+        template += `</select>`;
+        $(".smstemplate-select-cont").append(template);
+        $(".smstemplate-select").selectpicker();
+        $('#sms-modal-body .selectpicker').on('changed.bs.select', this.ClickOnTemplate.bind(this));
+        $('#sms-modal-body .selectpicker').val(this.phonecolumn.Templates.$values[0].ObjRefId).change();
     };
 
-    this.ClickOnTemplate = function () {
-        $("#sendbtn").prop('disabled', false);
-        $("#sms-modal-body .template-cont").removeClass("active-template");
-        $(event.target).closest(".template-cont").addClass("active-template");
+    this.ClickOnTemplate = function (e, clickedIndex, isSelected, previousValue) {
+        let refid = $(".smstemplate-select option:selected").val();
+        $("#sendbtn").prop("disabled", false);
+        if (refid) {
+            $.ajax({
+                type: "POST",
+                url: "../DV/GetSMSPreview",
+                data: { RefId: refid },
+                success: this.AppendSMSPreview.bind(this)
+            });
+        }
+        else
+            this.AppendSMSPreview();
+    };
+    this.AppendSMSPreview = function (result) {
+        if (result) {
+            $("#sms-number").val(result.ph).prop("disabled", true);
+            $("#sms-textarea").val(result.text).prop("disabled", true);
+        }
+        else {
+            $("#sms-number").val("").prop("disabled", false);
+            $("#sms-textarea").val("").prop("disabled", false);
+        }
     };
 
     this.SendSMS = function ($elem) {
-        $("#smsmodal").modal("hide");
-        $("#eb_common_loader").EbLoader("show");
-        let refid = $(".active-template").attr("data-refid");
-        var idx = this.Api.row($elem.parents().closest("td")).index();
-        this.rowData = this.unformatedData[idx];
-        let filters = this.getFilterValues().concat(this.FilterfromRow());
-        $.ajax({
-            type: "POST",
-            url: "../DV/SendSMS",
-            data: { RefId: refid, Params: filters },
-            success: this.SendSMSSuccess.bind(this)
-        });
+        if (this.MakeSMSValidation()) {
+            $("#smsmodal").modal("hide");
+            $("#eb_common_loader").EbLoader("show");
+            let refid = $(".smstemplate-select option:selected").val();
+            var idx = this.Api.row($elem.parents().closest("td")).index();
+            this.rowData = this.unformatedData[idx];
+            let filters = this.getFilterValues().concat(this.FilterfromRow());
+            $.ajax({
+                type: "POST",
+                url: "../DV/SendSMS",
+                data: { RefId: refid, Params: filters },
+                success: this.SendSMSSuccess.bind(this)
+            });
+        }
+    };
+
+    this.MakeSMSValidation = function () {
+        if ($("#sms-number").val() && $("#sms-textarea").val())
+            return true;
+        else {
+            EbMessage("show", { Message: "Phone number or text is Empty", Background: "#e40707" });
+            return false;
+        }
     };
 
     this.SendSMSSuccess = function () {
@@ -4351,7 +4395,7 @@
     this.updateRenderFunc_Inner = function (i, col) {
         //this.EbObject.Columns.$values[i].sClass = "";
         //this.EbObject.Columns.$values[i].className = "";
-        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1 && col.$type.indexOf("DVPhoneColumn") === -1) {
+        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1) {
             if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType === parseInt(gettypefromString("Decimal")) || col.RenderType === parseInt(gettypefromString("Int64")) || col.RenderType === parseInt(gettypefromString("Numeric"))) {
 
                 if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
@@ -4682,7 +4726,7 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-var displayFilter = function (col, title,oper, val, Loper) {
+var displayFilter = function (col, title, oper, val, Loper) {
     this.name = col;
     this.title = title;
     this.operator = oper;

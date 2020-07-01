@@ -159,7 +159,8 @@
         chatHead.style.visibility = 'visible';
     }
     //???
-    iframe.onload = function (e) {
+    iframe.onload = function (e) {        
+            console.log("iframe:" + (window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount]));
         iframe.style.visibility = 'visible';
         //loaderDiv.style.background = 'none';
     };

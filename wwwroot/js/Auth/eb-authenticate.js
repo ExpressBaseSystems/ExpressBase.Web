@@ -108,7 +108,15 @@
                 },
                 success: function (auth) {
                     if (auth.authStatus) {
-                        location.replace(auth.redirectUrl);
+                        if (auth.is2fa) {
+                            $("#log_form").hide();
+                            $("#2fauth_form").show();
+                            $("#lastDigit").text(auth.otpTo);
+                            $("#loader_profile").EbLoader("hide");
+                            StartOtpTimer();
+                        }
+                        else
+                            location.replace(auth.redirectUrl);
                     }
                     else {
                         $(`[validator="submit"]`).prop("disabled", false);
@@ -122,7 +130,7 @@
                 }
             });
         }
-    }
+    };
 
     $(`[validator="submit"]`).on("click", function (e) {
         if (!validate())
@@ -147,4 +155,75 @@
         }
     });
 
-})(window)
+    $("#otpvalidate").on("click", function () {
+        $("#loader_profile").EbLoader("show");
+        $.post("../Ext/ValidateOtp",
+            {
+                otp: $("#partitioned").val()
+            },
+            function (auth) {
+                if (auth.authStatus) {
+                    location.replace(auth.redirectUrl);
+                }
+                else {
+                    EbMessage("show", { Background: "red", Message: auth.errorMessage });
+                    if (auth.errorMessage.includes("with token")) { window.location.reload(); }
+                }
+                $("#loader_profile").EbLoader("hide");
+            }
+        );
+    });
+
+    //otp timer
+    var resend = false;
+    function StartOtpTimer() {
+        resend = false;
+        document.getElementById('timer').innerHTML = 005 + ":" + 00;
+        startTimer();
+    };
+    function startTimer() {
+        if (resend)
+            return;
+        var presentTime = document.getElementById('timer').innerHTML;
+        var timeArray = presentTime.split(/[:]+/);
+        var m = timeArray[0];
+        var s = checkSecond((timeArray[1] - 1));
+        if (s == 59) { m = m - 1 }
+        if (m < 0) {
+            OtpTimeOut();
+            return;
+        }
+
+        document.getElementById('timer').innerHTML =
+            m + ":" + s;
+        console.log(m);
+        setTimeout(startTimer, 1000);
+    };
+
+    function OtpTimeOut() {
+        EbMessage("show", { Background: "red", Message: "Time out" });
+        window.location.reload();
+    };
+
+    function checkSecond(sec) {
+        if (sec < 10 && sec >= 0) { sec = "0" + sec; } // add zero in front of numbers < 10
+        if (sec < 0) { sec = "59"; }
+        return sec;
+    }
+    $("#resend").on("click", function () {
+        $("#loader_profile").EbLoader("show");
+        resend = true;
+        $.post("Ext/ResendOtp", function (auth) {
+            if (auth.authStatus) {
+                StartOtpTimer();
+                $("#loader_profile").EbLoader("hide");
+                $(".otp_warnings").empty();
+                $(".otp_warnings").text("OTP has been sent again");
+            }
+            else {
+                $("#loader_profile").EbLoader("hide");
+                EbMessage("show", { Background: "red", Message: auth.errorMessage });
+            }
+        });
+    });
+})(window);

@@ -16,9 +16,9 @@
     this.nextRole = this.stages[0].ApproverRole + "";
     this.$curActiveRow = null;
 
-    ctrl.setEditModeRows = function (SingleTable) {/////////// need change
-        return this.setEditModeRows(SingleTable);
-    }.bind(this);
+    //ctrl.populateReviewCtrlWithDataModel = function (SingleTable) {/////////// need change
+    //    return this.populateReviewCtrlWithDataModel(SingleTable);
+    //}.bind(this);
 
     ctrl.disableAllCtrls = function () {
         this.disableAllCtrls();

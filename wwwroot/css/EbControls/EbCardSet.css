@@ -240,17 +240,21 @@
 
 .card-cont .cart-inp {
     text-align: center;
-    border-radius: 52px;
+    border-radius: 2px;
     padding: 7px 0px;
     font-size: 13px;
     height: auto;
     width: auto;
     padding-bottom: 0;
+    border:none;
 }
-
-.card-cont .cart-inp-wraper {
-    display: inline-block;
+.msg-wraper-user .card-cont .inp-wrap, .cart-inp, .msg-wraper-user .card-cont .card-txt {
+    border: none;
 }
+    #abbcd21a
+    .card-cont .cart-inp-wraper {
+        display: inline-block;
+    }
 
 .card-cont .card-txt {
     width: 100%;

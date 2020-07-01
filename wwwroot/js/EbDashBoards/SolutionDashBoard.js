@@ -1896,11 +1896,21 @@ var SolutionDashBoard = function (connections, sid, versioning) {
 
     this.TwoFASwitch = function (e) {
         var postData = e.target.checked;
-        let msg = "Are you sure you want to turn ON Two Factor Authentication?"; 
+        let msg = "Are you sure you want to turn ON Two Factor Authentication?";
         SolutionId = this.Sid;
 
-        if (this.Connections.SolutionInfo.Is2faEnabled)  
-            msg = "Are you sure you want to turn OFF Two Factor Authentication?"; 
+
+        if (this.Connections.SolutionInfo.Is2faEnabled) {
+            msg = "Are you sure you want to turn OFF Two Factor Authentication?";
+        }
+        else if ($('div.checkbox-group :checkbox:checked').length < 1) {
+            if (postData)
+            $("#2faSwitch").bootstrapToggle('off');
+            EbMessage("show", {
+                Message: "Please select OTP delivery method", Background: "red"
+            });
+            return;
+        }
         EbDialog("show",
             {
                 Message: msg,
@@ -1918,19 +1928,35 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                 },
                 CallBack: function (name) {
                     if (name === "Confirm") {
+                        let _2fadeliveryMethod = [];
+                        if ($("input[id='emailcheckbox']:checked").length === 1)
+                            _2fadeliveryMethod.push("email");
+                        if ($("input[id='smscheckbox']:checked").length === 1)
+                            _2fadeliveryMethod.push("sms");
+
                         $.ajax({
                             type: 'POST',
                             url: "../Tenant/Switch2FA",
-                            data: { data: postData, SolnId: SolutionId }
+                            data: { data: postData, SolnId: SolutionId, deliveryMethod: _2fadeliveryMethod.toString() }
 
                         }).done(function (data) {
                             let _data = JSON.parse(data);
                             if (_data.res) {
                                 this.Connections.SolutionInfo.Is2faEnabled = postData;
-                                if (postData)
+                                if (postData) {
                                     EbMessage("show", { Message: "Two factor authentication turned ON" });
-                                else
+                                    $("#emailcheckbox").prop("disabled", true);
+                                    $("#smscheckbox").prop("disabled", true);
+                                }
+                                else {
                                     EbMessage("show", { Message: "Two factor authentication turned OFF" });
+                                    if (this.Connections.IsEmailIntegrated) {
+                                        $("#emailcheckbox").prop("disabled", false);
+                                    }
+                                    if (this.Connections.IsSmsIntegrated) {
+                                        $("#smscheckbox").prop("disabled", false);
+                                    }
+                                }
                             } else {//error case
                                 //if (postData)
                                 //    $("#2faSwitch").bootstrapToggle('off');
@@ -1946,9 +1972,9 @@ var SolutionDashBoard = function (connections, sid, versioning) {
                         $("#2faSwitch").bootstrapToggle('off');
                     }
                 }.bind(this)
-            }); 
+            });
     };
-
+    
     this.SMTPautoFill = function (e) {
         var target = e.target.options.selectedIndex;
         if (target === 0) {
@@ -1965,6 +1991,28 @@ var SolutionDashBoard = function (connections, sid, versioning) {
         }
         if (this.Connections.SolutionInfo.Is2faEnabled) {
             $("#2faSwitch").bootstrapToggle('on');
+            if (this.Connections.SolutionInfo.OtpDelivery !== undefined) {
+                let p = this.Connections.SolutionInfo.OtpDelivery.split(",");
+                for (i = 0; i < p.length; i++) {
+                    if (p[i] === "email") {
+                        $("#emailcheckbox").prop("checked", true);
+                    }
+                    else if (p[i] === "sms") {
+                        $("#smscheckbox").prop("checked", true);
+                    }
+                }
+            }
+
+            $("#emailcheckbox").prop("disabled", true);
+            $("#smscheckbox").prop("disabled", true);
+        }
+        else {
+            if (!this.Connections.IsEmailIntegrated) {
+                $("#emailcheckbox").prop("disabled", true);
+            }
+            if (!this.Connections.IsSmsIntegrated) {
+                $("#smscheckbox").prop("disabled", true);
+            }
         }
         $("#InputEmailvendor").change(this.SMTPautoFill.bind(this));
         $("#VersioningSwitch").change(this.VersioningSwitch.bind(this));

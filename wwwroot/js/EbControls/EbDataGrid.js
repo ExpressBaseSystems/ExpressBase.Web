@@ -39,7 +39,7 @@
     }.bind(this);
     this.resetBuffers();
 
-    this.setEditModeRows = function (dataModel) {
+    this.populateDGWithDataModel = function (dataModel) {
         this.DataMODEL = dataModel;
         ////{ last change
         //this.DataMODEL.clear();
@@ -312,7 +312,7 @@
 
     //this.resetControlValues = function (dataModel) {
     //    console.log(dataModel);
-    //    this.setEditModeRows(dataModel);
+    //    this.populateDGWithDataModel(dataModel);
     //};
 
 
@@ -1869,7 +1869,7 @@
 
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
-        this.setEditModeRows(dataModel);
+        this.populateDGWithDataModel(dataModel);
     };
 
     this.getDGIterable = function () {

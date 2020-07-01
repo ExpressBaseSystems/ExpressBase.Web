@@ -1607,6 +1607,7 @@ const WebFormRender = function (option) {
     };
 
     this.excelUpload = function () {
+        this.showLoader();
         var fileUpload = $("#excelfile").get(0);
         //var fileUpload = document.getElementById("excelfile");
         var files = fileUpload.files;
@@ -1633,13 +1634,13 @@ const WebFormRender = function (option) {
                     processData: false,
                     contentType: false,
                     data: data1,
-                    success: function (message) {
-                       
-                            EbMessage("show", { Message: 'Successfully Imported', AutoHide: true, Background: '#00aa00' });
-                        
+                    success: function (message) {    
+                        EbMessage("show", { Message: 'Successfully Imported', AutoHide: true, Background: '#00aa00' });
+                        this.hideLoader(); 
                     },
                     error: function () {
                         EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                        this.hideLoader();
                     }
                 });
             }
@@ -1649,6 +1650,7 @@ const WebFormRender = function (option) {
     this.excelExportImport = function (e) {
         let val = $("#webformexcel-selbtn .selectpicker").find("option:selected").attr("data-token");
         if (val === "template-export") {
+            this.showLoader();
             $.ajax({
                 type: "POST",
                 url: "/Excel/download",
@@ -1662,11 +1664,13 @@ const WebFormRender = function (option) {
                     link.download = this.FormObj.Name + ".xlsx";
                     document.body.append(link);
                     link.click();
-                }.bind(this)
-                //error: function (e) {
-                //    console.log(e);
-                //    $("#alert").text("Error");
-                //}
+                    this.hideLoader();
+                }.bind(this),
+                error: function (e) {
+                    console.log(e);
+                    this.hideLoader();
+                    $("#alert").text("Error");
+                }
 
             });
         }

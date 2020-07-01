@@ -16,5 +16,9 @@ namespace ExpressBase.Web.Models
         public string CaptchaError { set; get; }
 
         public bool AuthStatus { set; get; }
+
+        public bool Is2fa { get; set; } 
+
+        public string OtpTo { get; set; }
     }
 }

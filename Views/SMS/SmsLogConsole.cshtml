@@ -1,0 +1,93 @@
+﻿@using ExpressBase.Objects.ServiceStack_Artifacts;
+@using ExpressBase.Common;
+@{
+    Layout = "~/Views/Shared/LayoutBuilders.cshtml";
+    @await Component.InvokeAsync("PageHeaderCommon")
+}
+
+@{
+    var bApnd = true;
+    if (ViewBag.Env == "Development")
+    {
+        bApnd = false;
+    }
+}
+
+<script src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
+<script src="~/js/EbControls/EbProgressBar.js" asp-append-version=@bApnd></script>
+<script src="~/js/SmsLogConsole.js" asp-append-version=@bApnd></script>
+<link rel="stylesheet" href="~/css/EbSqlJob/SqlJobConsole.css" asp-append-version=@bApnd />
+<link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
+
+<script>
+    $(function () {
+        $("#date").datepicker({
+            dateFormat: "dd-mm-yy"
+        });
+    });
+
+</script>
+
+<div id="show-scheduler"></div>
+<div class="container-fluid" style="margin-top:50px">
+    <div class="row">
+
+
+        <div class="col-sm-12">
+            <div> View SMS Logs</div>           
+            <div class="dropdown view-log-pane" id="sms-objs" style="width:20%"> </div>
+            <div id="menu1">
+                <div class="row">
+                    <div class="col-sm-12" style="display:flex">
+                        <div class="view-log-pane">
+                            <input type="text" class="form-control" id="date" placeholder="MM/DD/YY">
+                        </div>
+                        <div class="view-log-pane"><button id="show-sms-logs" class="btn btn-primary"> Show SMS</button></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="list-of-sms"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    tbody {
+        padding: 10px;
+        border: solid 1px #2b2b2b;
+        background-color: #ffff;
+    }
+
+    thead {
+        padding: 10px;
+        border: solid 1px #2b2b2b;
+        background-color: #ffff;
+    }
+
+    dataTables_scroll {
+        height: 550px;
+    }
+
+    .selected {
+        background-color: #fff !important;
+        color: black !important;
+    }
+</style>
+
+<script>
+    @Html.Raw(ViewBag.Meta);
+    @Html.Raw(ViewBag.JsObjects);
+    @Html.Raw(ViewBag.EbObjectTypes);
+    @Html.Raw(ViewBag.ControlOperations);
+    if (@Html.Raw(ViewBag.SMSLogObject) != null) {
+        var obj = new smslogconsole({
+            AllObj: @Html.Raw(ViewBag.SMSLogObject),
+        });
+    }
+</script>

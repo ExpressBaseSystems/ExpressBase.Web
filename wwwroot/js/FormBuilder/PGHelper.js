@@ -2,6 +2,9 @@
     this.PGobj = pgObj;
 
     this.dataSourceInit = function () {
+        if (getObjByval(this.PGobj.Metas, "name", "Columns") === undefined)
+            return;
+
         $.LoadingOverlay('show');
         $.ajax({
             type: "POST",

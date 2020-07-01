@@ -53,6 +53,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.init = function () {
         $("body").append(this.$chatCont);
+        ////code review
+        ////window.parent.$("#loderdiv" + this.EXPRESSbase_APP_ID).css('background', 'none');
         this.$renderAtBottom.hide();
         this.$chatCont.append(this.$chatBox);
         this.$chatCont.append(this.$inputCont);
@@ -745,6 +747,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
             else {
                 let disphtml = $btn.parent().prev().find('.slick-active').css('display', 'block');
+                if ($(disphtml).find('.card-pls-mns').length > 0) {
+                    $(disphtml).find('.card-pls-mns').remove();
+                }
+                $(disphtml).css('pointer-events','none');
                 //var rmv = disphtml.find('.card-selbtn-cont').empty();
                 $msg.find('.msg-wraper-user').html(disphtml.outerHTML()).append(this.getTime());
                 //  $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
@@ -921,7 +927,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 }
             }
             else {
-                if (this.curCtrl.ObjType === "TVcontrol") {
+               if (this.curCtrl.ObjType === ("TVcontrol") || this.curCtrl.ObjType === ("Video")){
                     $ctrlCont = $(this.wrapIn_chat_ctrl_readonly(controlHTML));
                 }                
             }

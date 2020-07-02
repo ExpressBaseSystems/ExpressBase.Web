@@ -641,7 +641,7 @@
                                 <div class="meta" id="menuload-api-meta">
                                     @{
                                         string apiText = "Not selected";
-                                        if (!string.IsNullOrEmpty(MobSettings.MenuApi.RefId))
+                                        if (MobSettings.MenuApi != null)
                                         {
                                             apiText = $"{MobSettings.MenuApi.DisplayName} (../{MobSettings.MenuApi.Name}/{MobSettings.MenuApi.Version}/json)";
                                         }
@@ -793,7 +793,14 @@
                                                     {
                                                         if (oball.IsCommitted)
                                                         {
-                                                            string selected = (ViewBag.AppSettings as EbMobileSettings).MenuApi.RefId == oball.Refid ? "selected" : string.Empty;
+                                                            string selected = string.Empty;
+
+                                                            EbMobileSettings settings = (EbMobileSettings)ViewBag.AppSettings;
+
+                                                            if (settings.MenuApi != null && settings.MenuApi.RefId == oball.Refid)
+                                                            {
+                                                                selected = "selected";
+                                                            }
 
                                                             <div class="import_obj_expand_objlinks @selected" version="@oball.VersionNumber" display-name="@oball.DisplayName" refid="@oball.Refid" name="@oball.ObjName">
                                                                 @oball.DisplayName

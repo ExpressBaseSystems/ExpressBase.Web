@@ -83,12 +83,11 @@
 
         function testAjax1() {
             $.ajax({
-                url: "/api/get_file",
+                url: "/api/get_solution_data",
                 type: "GET",
                 cache: false,
                 data: {
-                    category: 1,
-                    filename: '9493.jpg'
+                    export: false,
                 },
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader("bToken", getTok());

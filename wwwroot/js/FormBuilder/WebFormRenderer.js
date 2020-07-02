@@ -1637,11 +1637,11 @@ const WebFormRender = function (option) {
                     success: function (message) {    
                         EbMessage("show", { Message: 'Successfully Imported', AutoHide: true, Background: '#00aa00' });
                         this.hideLoader(); 
-                    },
+                    }.bind(this),
                     error: function () {
                         EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
                         this.hideLoader();
-                    }
+                    }.bind(this)
                 });
             }
         }
@@ -1670,7 +1670,7 @@ const WebFormRender = function (option) {
                     console.log(e);
                     this.hideLoader();
                     $("#alert").text("Error");
-                }
+                }.bind(this)
 
             });
         }

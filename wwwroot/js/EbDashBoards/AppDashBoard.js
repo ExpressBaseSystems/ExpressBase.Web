@@ -78,25 +78,35 @@
         this.setRef();
     };
 
+    this.getNew = function () {
+        return {
+            RefId: null,
+            Name: null,
+            DisplayName: null,
+            Version: null
+        };
+    };
+
     //mobile app
     this.menuApiOnSelect = function (evt) {
 
-        this.AppSettings.MenuApi.RefId = $(evt.target).attr("refid");
-        this.AppSettings.MenuApi.Name = $(evt.target).attr("name");
-        this.AppSettings.MenuApi.DisplayName = $(evt.target).attr("display-name");
-        this.AppSettings.MenuApi.Version = $(evt.target).attr("version");
+        var o = this.getNew();
 
-        var text = `${this.AppSettings.MenuApi.DisplayName} (../${this.AppSettings.MenuApi.Name}/${this.AppSettings.MenuApi.Version}/json)`;
+        o.RefId = $(evt.target).attr("refid");
+        o.Name = $(evt.target).attr("name");
+        o.DisplayName = $(evt.target).attr("display-name");
+        o.Version = $(evt.target).attr("version");
+
+        this.AppSettings.MenuApi = o;
+
+        var text = `${o.DisplayName} (../${o.Name}/${o.Version}/json)`;
         $("#menuload-api-meta").text(text);
         $("#mobile-preloadmenu_mdl").modal("hide");
     };
 
     //mobile app
     this.resetMenuApi = function () {
-        this.AppSettings.MenuApi.RefId = null;
-        this.AppSettings.MenuApi.Name = null;
-        this.AppSettings.MenuApi.DisplayName = null;
-        this.AppSettings.MenuApi.Version = null;
+        this.AppSettings.MenuApi = null;
         $("#menuload-api-meta").text("");
         $("#mobile-preloadmenu_mdl").modal("hide");
         $("#mobile-preloadmenu_mdl .import_obj_expand_objlinks").removeClass("selected");

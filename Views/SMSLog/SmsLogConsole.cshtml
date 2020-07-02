@@ -16,18 +16,26 @@
 <script src="~/js/CommonDataTable.js" asp-append-version=@bApnd></script>
 <script src="~/js/EbControls/EbProgressBar.js" asp-append-version=@bApnd></script>
 <script src="~/js/SmsLogConsole.js" asp-append-version=@bApnd></script>
-<link rel="stylesheet" href="~/css/EbSqlJob/SqlJobConsole.css" asp-append-version=@bApnd />
+<link rel="stylesheet" href="~/css/SmsLog/SMSLogConsole.css" asp-append-version=@bApnd />
 <link rel="stylesheet" href="~/css/Eb_datatable.css" asp-append-version=@bApnd />
 
 <script>
     $(function () {
-        $("#date").datepicker({
+        $("#from-date").datepicker({
             dateFormat: "dd-mm-yy"
         });
     });
 
 </script>
 
+<script>
+    $(function () {
+        $("#to-date").datepicker({
+            dateFormat: "dd-mm-yy"
+        });
+    });
+
+</script>
 <div id="show-scheduler"></div>
 <div class="container-fluid" style="margin-top:50px">
     <div class="row">
@@ -40,8 +48,14 @@
                 <div class="row">
                     <div class="col-sm-12" style="display:flex">
                         <div class="view-log-pane">
-                            <input type="text" class="form-control" id="date" placeholder="MM/DD/YY">
+                            <div> Date From </div>
+                            <input type="text" class="form-control" id="from-date" placeholder="MM/DD/YY">
                         </div>
+                        <div class="view-log-pane">
+                            <div> Date To </div>
+                            <input type="text" class="form-control" id="to-date" placeholder="MM/DD/YY">
+                        </div>
+                        <div></div>
                         <div class="view-log-pane"><button id="show-sms-logs" class="btn btn-primary"> Show SMS</button></div>
                     </div>
                 </div>

@@ -419,9 +419,10 @@ namespace ExpressBase.Web.Controllers
             var xx = this.ServiceClient.Post(request);
         }
 
-        public object GetSMSPreview(string refid)
+        public GetFilledSmsTemplateResponse GetSMSPreview(GetFilledSmsTemplateRequest request)
         {
-            return new { Text = "hhhhhhhhhh", Ph = "123456789"};
+            GetFilledSmsTemplateResponse resp = this.ServiceClient.Get(request);
+            return resp;
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)

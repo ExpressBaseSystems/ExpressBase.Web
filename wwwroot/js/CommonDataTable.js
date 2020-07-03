@@ -2878,18 +2878,21 @@
         template += `</select>`;
         $(".smstemplate-select-cont").append(template);
         $(".smstemplate-select").selectpicker();
-        $('#sms-modal-body .selectpicker').on('changed.bs.select', this.ClickOnTemplate.bind(this));
+        $('#sms-modal-body .selectpicker').on('changed.bs.select', this.ClickOnTemplate.bind(this, $elem));
         $('#sms-modal-body .selectpicker').val(this.phonecolumn.Templates.$values[0].ObjRefId).change();
     };
 
-    this.ClickOnTemplate = function (e, clickedIndex, isSelected, previousValue) {
+    this.ClickOnTemplate = function ($elem,e, clickedIndex, isSelected, previousValue) {
         let refid = $(".smstemplate-select option:selected").val();
+        var idx = this.Api.row($elem.parents().closest("td")).index();
+        this.rowData = this.unformatedData[idx];
+        let filters = this.getFilterValues().concat(this.FilterfromRow());
         $("#sendbtn").prop("disabled", false);
         if (refid) {
             $.ajax({
                 type: "POST",
                 url: "../DV/GetSMSPreview",
-                data: { RefId: refid },
+                data: { RefId: refid, Params: filters },
                 success: this.AppendSMSPreview.bind(this)
             });
         }
@@ -2898,8 +2901,8 @@
     };
     this.AppendSMSPreview = function (result) {
         if (result) {
-            $("#sms-number").val(result.ph).prop("disabled", true);
-            $("#sms-textarea").val(result.text).prop("disabled", true);
+            $("#sms-number").val(result.filledSmsTemplate.smsTo).prop("disabled", true);
+            $("#sms-textarea").val(result.filledSmsTemplate.smsTemplate.body).prop("disabled", true);
         }
         else {
             $("#sms-number").val("").prop("disabled", false);

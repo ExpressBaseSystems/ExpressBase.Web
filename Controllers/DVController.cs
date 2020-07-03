@@ -414,6 +414,11 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
+        public void SendCustomSMS(SmsDirectRequest request)
+        {
+            var xx = this.ServiceClient.Post(request);
+        }
+
         public object GetSMSPreview(string refid)
         {
             return new { Text = "hhhhhhhhhh", Ph = "123456789"};

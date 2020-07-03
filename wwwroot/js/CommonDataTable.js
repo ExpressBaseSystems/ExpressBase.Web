@@ -2912,15 +2912,25 @@
             $("#smsmodal").modal("hide");
             $("#eb_common_loader").EbLoader("show");
             let refid = $(".smstemplate-select option:selected").val();
-            var idx = this.Api.row($elem.parents().closest("td")).index();
-            this.rowData = this.unformatedData[idx];
-            let filters = this.getFilterValues().concat(this.FilterfromRow());
-            $.ajax({
-                type: "POST",
-                url: "../DV/SendSMS",
-                data: { RefId: refid, Params: filters },
-                success: this.SendSMSSuccess.bind(this)
-            });
+            if (refid) {
+                var idx = this.Api.row($elem.parents().closest("td")).index();
+                this.rowData = this.unformatedData[idx];
+                let filters = this.getFilterValues().concat(this.FilterfromRow());
+                $.ajax({
+                    type: "POST",
+                    url: "../DV/SendSMS",
+                    data: { RefId: refid, Params: filters },
+                    success: this.SendSMSSuccess.bind(this)
+                });
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "../DV/SendCustomSMS",
+                    data: { To: $("#sms-number").val(), Body: $("#sms-textarea").val() },
+                    success: this.SendSMSSuccess.bind(this)
+                });
+            }
         }
     };
 

@@ -2901,8 +2901,9 @@
     };
     this.AppendSMSPreview = function (result) {
         if (result) {
-            $("#sms-number").val(result.filledSmsTemplate.smsTo).prop("disabled", true);
-            $("#sms-textarea").val(result.filledSmsTemplate.smsTemplate.body).prop("disabled", true);
+            result = JSON.parse(result);
+            $("#sms-number").val(result.FilledSmsTemplate.SmsTo).prop("disabled", true);
+            $("#sms-textarea").val(atob(result.FilledSmsTemplate.SmsTemplate.Body)).prop("disabled", true);
         }
         else {
             $("#sms-number").val("").prop("disabled", false);

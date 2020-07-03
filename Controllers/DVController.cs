@@ -419,10 +419,10 @@ namespace ExpressBase.Web.Controllers
             var xx = this.ServiceClient.Post(request);
         }
 
-        public GetFilledSmsTemplateResponse GetSMSPreview(GetFilledSmsTemplateRequest request)
+        public string GetSMSPreview(GetFilledSmsTemplateRequest request)
         {
             GetFilledSmsTemplateResponse resp = this.ServiceClient.Get(request);
-            return resp;
+            return EbSerializers.Json_Serialize(resp);
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)

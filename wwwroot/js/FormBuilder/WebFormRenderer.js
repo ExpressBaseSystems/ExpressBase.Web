@@ -41,6 +41,7 @@ const WebFormRender = function (option) {
         //    this.FRC.setValueExpValsNC(this.flatControls); // issue with powerselect 'initializer' not set on load
 
         this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 
+        this.FRC.setUpdateDependentControlsBehaviorFns();// adds updateDependentControlsBehaviorFns() to formObject 
 
 
         return this.formObject;
@@ -150,7 +151,7 @@ const WebFormRender = function (option) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
-            this.FRC.bindOnChange(_DG);
+            this.FRC.bindValueUpdateFns_OnChange(_DG);
         }.bind(this));
     };
 
@@ -350,6 +351,7 @@ const WebFormRender = function (option) {
             ctrl.__eb_EditMode_val = val;
             if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
                 //ctrl.setDisplayMember = EBPSSetDisplayMember;
+                ctrl.justInit = true;
                 ctrl.setDisplayMember(val);
             }
             else

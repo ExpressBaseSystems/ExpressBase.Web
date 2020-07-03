@@ -1262,8 +1262,6 @@
     };
 
     this.Numeric = function (ctrl) {
-        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
-        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.InputMode === 0) {

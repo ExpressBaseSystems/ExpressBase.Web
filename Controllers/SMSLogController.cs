@@ -13,6 +13,7 @@ using ServiceStack.Auth;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -55,9 +56,10 @@ namespace ExpressBase.Web.Controllers
 	                    ORDER BY 
 		                    l.id DESC, status ASC;";
             List<Param> _params = new List<Param>();
-            
-            _params.Add(new Param { Name = "from_date", Type = ((int)EbDbTypes.Date).ToString(), Value = FromDate });
-            _params.Add(new Param { Name = "to_date", Type = ((int)EbDbTypes.Date).ToString(), Value = ToDate });
+            DateTime Fdate = DateTime.ParseExact(FromDate,"dd-MM-yyyy", null);
+            DateTime Tdate = DateTime.ParseExact(ToDate, "dd-MM-yyyy", null);
+            _params.Add(new Param { Name = "from_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Fdate.ToString()});
+            _params.Add(new Param { Name = "to_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Tdate.ToString() });
             _params.Add(new Param { Name = "refid", Type = ((int)EbDbTypes.String).ToString(), Value = Refid });
             string[] arrayy = new string[] { "From", "To", "Message", "Executed By", "Executed At", "Status", "id" };
             DVColumnCollection DVColumnCollection = GetColumnsForSMSLog(arrayy);

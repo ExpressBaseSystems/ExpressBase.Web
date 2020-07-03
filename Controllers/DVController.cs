@@ -414,9 +414,15 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public object GetSMSPreview(string refid)
+        public void SendCustomSMS(SmsDirectRequest request)
         {
-            return new { Text = "hhhhhhhhhh", Ph = "123456789"};
+            var xx = this.ServiceClient.Post(request);
+        }
+
+        public string GetSMSPreview(GetFilledSmsTemplateRequest request)
+        {
+            GetFilledSmsTemplateResponse resp = this.ServiceClient.Get(request);
+            return EbSerializers.Json_Serialize(resp);
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)

@@ -25,9 +25,6 @@ using System.Text;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 using ExpressBase.Security;
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Security.Principal;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -859,8 +856,6 @@ namespace ExpressBase.Web.Controllers
             }
             return authresp;
         }
-
-
 
         public EbAuthResponse ValidateOtp(string otp)
         {

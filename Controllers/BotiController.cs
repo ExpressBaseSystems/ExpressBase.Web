@@ -16,8 +16,11 @@ using ExpressBase.Common.EbServiceStack.ReqNRes;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Constants;
 using System.IO;
+using ExpressBase.Security;
 using ExpressBase.Common.Enums;
 using System.Net;
+using System.IdentityModel.Tokens.Jwt;
+using ExpressBase.Common.Security;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -289,9 +292,36 @@ namespace ExpressBase.Web.Controllers
             return BotForm;
         }
 
-        //======================================================= NEW CODE END ================================================================
+		//======================================================= NEW CODE END ================================================================
+		
+		public List<object> GetBotformlist(string cid, string appid, string wc = TokenConstants.BC)
+		{
+			//string btoken_aid = HelperFunction.GetDecriptedString_Aes(HttpContext.Request.Cookies[RoutingConstants.BEARER_TOKEN]);
+			//string BearerToken = btoken_aid.Substring(0, btoken_aid.LastIndexOf(CharConstants.DOT));
+			//var tokenS = (new JwtSecurityTokenHandler()).ReadToken(BearerToken) as JwtSecurityToken;
+			//string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+			//User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, cid, email, wc));
+			var Ids = String.Join(",", this.LoggedInUser.EbObjectIds);
+			
+			GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
+			List<object> returnlist = new List<object>();
+			List<object> objpro = new List<object>();
+			returnlist.Add(formlist.BotForms);
+			if (this.LoggedInUser.UserId == 1)
+				this.LoggedInUser.Preference.Locale = "en-IN";
+			returnlist.Add(JsonConvert.SerializeObject(this.LoggedInUser));
+			returnlist.Add(formlist.BotFormsDisp);
 
-        public dynamic GetCurForm(string refid)
+			foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
+			{
+				string rfid = rfidlst.Key;
+				EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
+				objpro.Add(BtFrm?.IconPicker);
+			}
+			returnlist.Add(objpro);
+			return returnlist;
+		}
+			public dynamic GetCurForm(string refid)
         {
             var formObj = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
             var Obj = EbSerializers.Json_Deserialize(formObj.Data[0].Json);

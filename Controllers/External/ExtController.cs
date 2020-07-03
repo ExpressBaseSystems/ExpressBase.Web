@@ -4,13 +4,11 @@ using ExpressBase.Common.Extensions;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Structures;
-using ExpressBase.Objects.Helpers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Models;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
@@ -23,8 +21,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
@@ -40,7 +36,6 @@ namespace ExpressBase.Web.Controllers
     {
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
-        public const string OtpMessage = "One-Time Password for log in to {0} is {1}. Do not share with anyone. This OTP is valid for 5 minutes.";
         public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_client, _redis, _cxtacc, _mqc, _auth) { }
 
         [HttpPost]
@@ -783,10 +778,10 @@ namespace ExpressBase.Web.Controllers
             else//captcha is ok
             {
                 string tenantid = ViewBag.cid;
-                MyAuthenticateResponse authResponse = null;
+                MyAuthenticateResponse myAuthResponse = null;
                 try
                 {
-                    authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+                    myAuthResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],
@@ -815,7 +810,7 @@ namespace ExpressBase.Web.Controllers
                     authresp.ErrorMessage = wse.Message;
                 }
 
-                if (authResponse != null) // authenticated
+                if (myAuthResponse != null) // authenticated
                 {
                     bool is2fa = false;
                     Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
@@ -824,18 +819,22 @@ namespace ExpressBase.Web.Controllers
 
                     if (is2fa && ViewBag.WhichConsole == "uc") //if 2fa enabled
                     {
-                        authresp.Is2fa = true;
-                        authresp.AuthStatus = true;
-                        string otp = GenerateOTP();
-                        string Token = GenerateToken(authResponse);
-                        User _usr = SetUserObj(authResponse, otp); // updating otp and tokens in redis userobj
-                        SendOtp(authresp, sol_Obj, _usr);
+                        this.ServiceClient.BearerToken = myAuthResponse.BearerToken;
+                        this.ServiceClient.RefreshToken = myAuthResponse.RefreshToken;
+                        Authenticate2FAResponse resp = this.ServiceClient.Post(new Authenticate2FARequest
+                        {
+                            MyAuthenticateResponse = myAuthResponse,
+                            SolnId = ViewBag.SolutionId,
+                        });
+                        authresp.AuthStatus = resp.AuthStatus;
+                        authresp.ErrorMessage = resp.ErrorMessage;
+                        authresp.Is2fa = resp.Is2fa;
+                        authresp.OtpTo = resp.OtpTo;
 
-                        
                         CookieOptions options = new CookieOptions();
-                        Response.Cookies.Append(RoutingConstants.TWOFATOKEN, Token, options);
-                        Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-                        Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+                        Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
+                        Response.Cookies.Append(TokenConstants.USERAUTHID, myAuthResponse.User.AuthId, options);
+                        Response.Cookies.Append("UserDisplayName", myAuthResponse.User.FullName, options);
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
                     }
@@ -844,10 +843,10 @@ namespace ExpressBase.Web.Controllers
                     {
                         authresp.AuthStatus = true;
                         CookieOptions options = new CookieOptions();
-                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                        Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-                        Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, myAuthResponse.BearerToken, options);
+                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, myAuthResponse.RefreshToken, options);
+                        Response.Cookies.Append(TokenConstants.USERAUTHID, myAuthResponse.User.AuthId, options);
+                        Response.Cookies.Append("UserDisplayName", myAuthResponse.User.FullName, options);
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
 
@@ -861,214 +860,52 @@ namespace ExpressBase.Web.Controllers
             return authresp;
         }
 
-        public void SendOtp(EbAuthResponse authresp, Eb_Solution sol_Obj, User _usr)
-        {
-            if (sol_Obj.OtpDelivery != null)
-            {
-                try
-                {
-                    string[] _otpmethod = sol_Obj.OtpDelivery.Split(",");
-                    if (_otpmethod[0] == "email")
-                    {
-                        if (!string.IsNullOrEmpty(_usr.Email))
-                        {
-                            SendOtpEmail(_usr, sol_Obj);
-                            authresp.OtpTo = _usr.Email;
-                        }
-                        else
-                        {
-                            authresp.AuthStatus = false;
-                            authresp.ErrorMessage = "Email id not set for the user. Please contact your admin";
-                            // return authresp;
-                        }
-                    }
-                    else if (_otpmethod[0] == "sms")
-                    {
-                        if (!string.IsNullOrEmpty(_usr.PhoneNumber))
-                        {
-                            string lastDigit = _usr.PhoneNumber.Substring((_usr.PhoneNumber.Length - 4), 4);
-                            SendOtpSms(_usr, sol_Obj);
-                            authresp.OtpTo = "******"+lastDigit;
-                        }
-                        else
-                        {
-                            authresp.AuthStatus = false;
-                            authresp.ErrorMessage = "Phone number not set for the user. Please contact your admin";
-                            // return authresp;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    authresp.AuthStatus = false;
-                    authresp.ErrorMessage = e.Message;
-                }
-            }
-            else
-            {
-                authresp.AuthStatus = false;
-                authresp.ErrorMessage = "Otp delivery method not set.";
-            }
-        }
 
-        public void SendOtpEmail(User _usr, Eb_Solution soln)
-        {
-            string message = string.Format(OtpMessage, soln.ExtSolutionID, _usr.Otp);
-            this.ServiceClient.BearerToken = _usr.BearerToken;
-            this.ServiceClient.RefreshToken = _usr.RefreshToken;
-            this.ServiceClient.Post(new EmailDirectRequest
-            {
-                To = _usr.Email,
-                Subject = "OTP Verification",
-                Message = message,
-                SolnId = soln.SolutionID,
-                UserId = _usr.UserId,
-                WhichConsole = TokenConstants.UC,
-                UserAuthId = _usr.AuthId
-            });
-        }
-
-        public void SendOtpSms(User _usr, Eb_Solution soln)
-        {
-            string message = string.Format(OtpMessage, soln.ExtSolutionID, _usr.Otp);
-            this.ServiceClient.BearerToken = _usr.BearerToken;
-            this.ServiceClient.RefreshToken = _usr.RefreshToken;
-            this.ServiceClient.Post(new SmsDirectRequest
-            {
-                To = _usr.PhoneNumber,
-                Body = message,
-                SolnId = soln.SolutionID,
-                UserId = _usr.UserId,
-                WhichConsole = TokenConstants.UC,
-                UserAuthId = _usr.AuthId
-            });
-        }
-
-        private User SetUserObj(MyAuthenticateResponse authResponse, string otp)
-        {
-            User u = this.Redis.Get<User>(authResponse.User.AuthId);
-            u.Otp = otp;
-            u.BearerToken = authResponse.BearerToken;
-            u.RefreshToken = authResponse.RefreshToken;
-            this.Redis.Set<IUserAuth>(authResponse.User.AuthId, u);// must set as IUserAuth
-            return u;
-        }
-
-        public string GenerateToken(MyAuthenticateResponse authResponse)
-        {
-            try
-            {
-                JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-                byte[] key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_JWT_PRIVATE_KEY_XML));
-                SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new System.Security.Claims.ClaimsIdentity(
-                        new Claim[] {
-                        new Claim("Email", authResponse.User.Email),
-                        }),
-                    Expires = DateTime.UtcNow.AddMinutes(5),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-                };
-                SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
-                return tokenHandler.WriteToken(token);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
-            }
-            return null;
-        }
 
         public EbAuthResponse ValidateOtp(string otp)
         {
             EbAuthResponse authresp = new EbAuthResponse();
             string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
             string authid = Request.Cookies[TokenConstants.USERAUTHID];
-            bool status = ValidateToken(token);
-            if (status)
+            User _u = this.Redis.Get<User>(authid);
+            if (_u != null)
             {
-                authresp.RedirectUrl = this.RouteToDashboard(RoutingConstants.UC);
-                User _u = this.Redis.Get<User>(authid);
-                if (_u != null)
+                this.ServiceClient.BearerToken = _u.BearerToken;
+                this.ServiceClient.RefreshToken = _u.RefreshToken;
+                Authenticate2FAResponse response = this.ServiceClient.Post(new Validate2FARequest { Token = token });
+                authresp.AuthStatus = response.AuthStatus;
+                authresp.ErrorMessage = response.ErrorMessage;
+            }
+            if (authresp.AuthStatus)
+            {
+                if (otp == _u.Otp)
                 {
-                    if (otp == _u.Otp)
-                    {
-                        CookieOptions options = new CookieOptions();
-                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, _u.BearerToken, options);
-                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, _u.RefreshToken, options);
-                        authresp.AuthStatus = true;
-                    }
-                    else
-                    {
-                        authresp.AuthStatus = false;
-                        authresp.ErrorMessage = "The OTP you've entered is incorrect. Please try again.";
-                    }
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, _u.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, _u.RefreshToken, options);
+                    authresp.RedirectUrl = this.RouteToDashboard(RoutingConstants.UC);
+                }
+                else
+                {
+                    authresp.AuthStatus = false;
+                    authresp.ErrorMessage = "The OTP you've entered is incorrect. Please try again.";
                 }
             }
-            else
-            {
-                authresp.AuthStatus = false;
-
-                authresp.ErrorMessage = "Something went wrong with token";
-            }
             return authresp;
-        }
-
-        public bool ValidateToken(string authToken)
-        {
-            JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
-            TokenValidationParameters validationParameters = GetValidationParameters();
-            try
-            {
-                IPrincipal principal = tokenHandler.ValidateToken(authToken, validationParameters, out SecurityToken validatedToken);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Token validation failed :: invalid token");
-                return false;
-            }
-            return true;
-        }
-
-        private string GenerateOTP()
-        {
-            string sOTP = String.Empty;
-            string sTempChars = String.Empty;
-            int iOTPLength = 6;
-            string[] saAllowedCharacters = { "1", "2", "3", "4", "5", "6", "7", "8", "9", "0" };
-            Random rand = new Random();
-            for (int i = 0; i < iOTPLength; i++)
-            {
-                int p = rand.Next(0, saAllowedCharacters.Length);
-                sTempChars = saAllowedCharacters[rand.Next(0, saAllowedCharacters.Length)];
-                sOTP += sTempChars;
-            }
-            return sOTP;
         }
 
         public EbAuthResponse ResendOtp()
         {
             EbAuthResponse authresp = new EbAuthResponse();
-            Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
-            User _usr = this.Redis.Get<User>(Request.Cookies[TokenConstants.USERAUTHID]);
-            SendOtp(authresp, sol_Obj, _usr);
-            authresp.AuthStatus = true;
+            string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
+            string authid = Request.Cookies[TokenConstants.USERAUTHID];
+            User _u = this.Redis.Get<User>(authid);
+            this.ServiceClient.BearerToken = _u.BearerToken;
+            this.ServiceClient.RefreshToken = _u.RefreshToken;
+            Authenticate2FAResponse response = this.ServiceClient.Post(new ResendOTP2FARequest { Token = token });
+            authresp.AuthStatus = response.AuthStatus;
+            authresp.ErrorMessage = response.ErrorMessage;
             return authresp;
-        }
-
-        private TokenValidationParameters GetValidationParameters()
-        {
-            return new TokenValidationParameters()
-            {
-                ValidateIssuerSigningKey = true,
-                ValidateAudience = false,
-                ValidateActor = false,
-                ValidateIssuer = false,
-                ValidateLifetime = true,
-                ClockSkew = TimeSpan.Zero,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable(EnvironmentConstants.EB_JWT_PRIVATE_KEY_XML))) // The same key as the one that generate the token
-            };
         }
 
         private void DecideConsole(string subDomain, out string whichconsole)

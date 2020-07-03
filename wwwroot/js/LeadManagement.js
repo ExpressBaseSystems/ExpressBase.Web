@@ -217,16 +217,19 @@
         this.$SrgyImplantBy.children().remove();
         this.$SrgyConsentBy.children().remove();
         this.$SrgyAnasthBy.children().remove();
+        this.$SrgyPostBrfBy.children().remove();
         this.$SrgyExtrDnBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyImplantBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyConsentBy.append(`<option value='0'>- Select -</option>`);
         this.$SrgyAnasthBy.append(`<option value='0'>- Select -</option>`);
+        this.$SrgyPostBrfBy.append(`<option value='0'>- Select -</option>`);
         $.each(this.DoctorInfo, function (key, val) {
             this.$Doctor.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyExtrDnBy.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyImplantBy.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyConsentBy.append(`<option value='${val}'>${key}</option>`);
             this.$SrgyAnasthBy.append(`<option value='${val}'>${key}</option>`);
+            this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
 
         //this.$SrgyExtrDnBy.multiselect({
@@ -240,10 +243,8 @@
             this.$LeadOwner.append(`<option value='${val}'>${key}</option>`);
             this.$Closing.append(`<option value='${val}'>${key}</option>`);
         }.bind(this));
-
-        this.$SrgyPostBrfBy.children().remove();
-        this.$SrgyNurse.children().remove();
-        this.$SrgyPostBrfBy.append(`<option value='0'>- Select -</option>`);
+                
+        this.$SrgyNurse.children().remove();        
         this.$SrgyNurse.append(`<option value='0'>- Select -</option>`);
         $.each(this.NurseInfo, function (key, val) {
             this.$SrgyPostBrfBy.append(`<option value='${val}'>${key}</option>`);

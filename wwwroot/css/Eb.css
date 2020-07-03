@@ -358,6 +358,7 @@
     flex: 0 0 27px;
     display: flex;
     align-items: center;
+    background: #eee !important;
 }
 
 .filter-box .input-group-addon.ps-srch > i, .form-buider-form .input-group-addon.ps-srch > i, [eb-type="BotForm"] .input-group-addon.ps-srch > i {
@@ -484,9 +485,18 @@
     padding-right: 30px !important;
     transition-duration: 0.2s;
     outline: none;
+    max-width: calc(100% - 13px);
     cursor: default;
 }
+.tdtxt .selected-tag {
+    display: inline-block;
+    max-width: 100%;
+}
 
+.tdtxt [iblock] {
+    width: auto;
+    display: inline-flex;
+}
     .v-select .selected-tag .close {
         color: #fff;
         text-shadow: 0px 1px 0px #000000d4;
@@ -538,7 +548,7 @@
     }
 
 
-span[iblock] .selected-tag:empty::before {
+div[iblock] .selected-tag:empty::before {
     content: '--';
 }
 

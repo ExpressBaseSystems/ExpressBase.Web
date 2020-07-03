@@ -268,7 +268,7 @@
             let _DG = new ControlOps[dObj.DGs[i].ObjType](dObj.DGs[i]);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
-            dObj.FRC.bindOnChange(_DG);
+            dObj.FRC.bindValueUpdateFns_OnChange(_DG);
         }
 
         if (this.mode.isNew) {
@@ -307,6 +307,7 @@
         dObj.FRC.setFormObjHelperfns();
         dObj.ctrlObj.Mode = this.mode;
         dObj.FRC.setUpdateDependentControlsFn();
+        dObj.FRC.setUpdateDependentControlsBehaviorFns();
 
         return dObj.ctrlObj.formObject;
     };

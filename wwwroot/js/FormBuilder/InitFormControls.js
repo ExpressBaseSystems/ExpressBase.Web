@@ -685,7 +685,7 @@
                     }
                 }
                 else
-                    ctrl.__isJustSetValue = false;
+                    ctrl.__isJustSetValue = false;////////////////////////////////////////////????????????????????????????
             }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Renderer.chooseClick);

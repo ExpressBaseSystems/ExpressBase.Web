@@ -1330,7 +1330,7 @@ const WebFormRender = function (option) {
 
     this.setHeader = function (reqstMode) {
         let currentLoc = store.get("Eb_Loc-" + this.userObject.CId + this.userObject.UserId);
-        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone"]);
+        this.headerObj.hideElement(["webformsave-selbtn", "webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformclose", "webformprint-selbtn", "webformclone", "webformexcel-selbtn"]);
 
         if (this.isPartial === "True") {
             if ($(".objectDashB-toolbar").find(".pd-0:first-child").children("#switch_loc").length > 0) {
@@ -1348,7 +1348,7 @@ const WebFormRender = function (option) {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
         else if (reqstMode === "New Mode" || reqstMode === "Prefill Mode") {
-            this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn"], currentLoc, reqstMode));
+            this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn"], currentLoc, reqstMode));
@@ -1407,10 +1407,12 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
+                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
+                    r.push(btns[i]);
                 if (mode === 'View Mode')
                     r.push('webformclone');
             }
-        }
+        } 
         return r;
     };
 
@@ -1577,6 +1579,11 @@ const WebFormRender = function (option) {
         $("#webformsave-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.saveSelectChange);
         $("#webformsave-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
 
+        $("#webformexcel-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.excelExportImport.bind(this));
+        $("#webformexcel-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
+        //$("#webformexcel-selbtn").on('click', this.excelExportImport.bind(this));
+        $("#excelfile").off('change').on('change', this.excelUpload.bind(this));
+
         this.$saveBtn.off("click").on("click", this.saveForm.bind(this));
         this.$deleteBtn.off("click").on("click", this.deleteForm.bind(this));
         this.$cancelBtn.off("click").on("click", this.cancelForm.bind(this));
@@ -1598,6 +1605,81 @@ const WebFormRender = function (option) {
         //});
         $(window).off("keydown").on("keydown", this.windowKeyDown);
     };
+
+    this.excelUpload = function () {
+        this.showLoader();
+        var fileUpload = $("#excelfile").get(0);
+        //var fileUpload = document.getElementById("excelfile");
+        var files = fileUpload.files;
+        var data1 = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            data1.append(files[i].name, files[i]);
+        }
+        fileName = this.FormObj.Name + ".xlsx";
+        //fileName = files[0].name;
+        if (fileName === '') {
+            $("#alert").show();
+            $("#alert").text("Please upload excel file");
+            $("#alert").append(`<a href = "#" class = "close" data-dismiss = "alert">&times;</a>`);
+        }
+
+        data1.append("RefId", this.formRefId);
+
+        if (fileName !== '') {
+            var Extension = fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
+            if (Extension === "xls" || Extension === "xlsx") {
+                $.ajax({
+                    type: "POST",
+                    url: "/Excel/UploadExcelAsync",
+                    processData: false,
+                    contentType: false,
+                    data: data1,
+                    success: function (message) {    
+                        EbMessage("show", { Message: 'Successfully Imported', AutoHide: true, Background: '#00aa00' });
+                        this.hideLoader(); 
+                    }.bind(this),
+                    error: function () {
+                        EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
+                        this.hideLoader();
+                    }.bind(this)
+                });
+            }
+        }
+    };
+
+    this.excelExportImport = function (e) {
+        let val = $("#webformexcel-selbtn .selectpicker").find("option:selected").attr("data-token");
+        if (val === "template-export") {
+            this.showLoader();
+            $.ajax({
+                type: "POST",
+                url: "/Excel/download",
+                data: {
+                    refid: this.formRefId
+                },
+                xhrFields: { responseType: 'blob' },
+                success: function (data, textStatus, jqXHR) {
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(data);
+                    link.download = this.FormObj.Name + ".xlsx";
+                    document.body.append(link);
+                    link.click();
+                    this.hideLoader();
+                }.bind(this),
+                error: function (e) {
+                    console.log(e);
+                    this.hideLoader();
+                    $("#alert").text("Error");
+                }.bind(this)
+
+            });
+        }
+        if (val === "import") {
+            $("#excelfile").trigger('click');
+        }
+    };
+
+   
 
     this.selectUIinpOnFocus = function () {
         let el = event.target;

@@ -976,6 +976,28 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
 #smsmodal .modal-header {
     background-color: #efefef;
 }
+#smsmodal .modal-body {
+    position: relative;
+    padding: 15px;
+    padding-bottom: 0;
+}
+#smsmodal .modal-footer {
+    border-top: 0;
+    padding-top: 0;
+}
+#smsmodal td {
+    border: 0 !important;
+}
+.smslabel {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+#sendbtn-text {
+    margin-left: 4px;
+}
+
 #smsmodal .template-cont {
     box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
     padding: 10px;
@@ -983,7 +1005,7 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     border-radius: 4px;
     background: white;
     width: max-content;
-    cursor:pointer;
+    cursor: pointer;
 }
 #smsmodal .active-template {
     background-color: #337ab7;

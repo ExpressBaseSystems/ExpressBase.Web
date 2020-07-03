@@ -37,9 +37,11 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async void UploadExcelAsync()
+        public async void UploadExcelAsync()  
         {
+            InsertBatchDataResponse response = null;
             IFormFileCollection files = Request.Form.Files;
+            string _refid = Request.Form["RefId"];
             Stream stream = (files[0].OpenReadStream()); 
 
             using (ExcelEngine excelEngine = new ExcelEngine())
@@ -52,108 +54,124 @@ namespace ExpressBase.Web.Controllers
                     EbDataTable _ebtbl = new EbDataTable();
                     DataTable tbl = worksheet.ExportDataTable(worksheet.UsedRange, ExcelExportDataTableOptions.ColumnNames); 
 
-                    //....set ebdatacolumns....
-                    char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-                     
-                    for (int i = 1; i <= tbl.Columns.Count; i++)
+                    if(tbl.Rows.Count > 0)
                     {
-                        string s = worksheet.Range[1, i].Comment.Text;
-                        ExcelColumns colInfo = (ExcelColumns)JsonConvert.DeserializeObject(s, typeof(ExcelColumns));
-                        EbDataColumn dc = new EbDataColumn { ColumnName = colInfo.Name, Type = colInfo.DbType, ColumnIndex = (i - 1), TableName = colInfo.TableName };
-                        _ebtbl.Columns.Add(dc);
-                    }
+                        //....set ebdatacolumns....
+                        char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
-                    foreach (DataRow row in tbl.Rows)
-                    {
-                        EbDataRow rr = _ebtbl.NewDataRow2();
-                        bool isNonEmpty = false;
-
-                        for (int i = 0; i < tbl.Columns.Count; i++)
+                        for (int i = 1; i <= tbl.Columns.Count; i++)
                         {
-                            if (row[i] != null && row[i].ToString() != string.Empty)
+                            string s = worksheet.Range[1, i].Comment.Text;
+                            ExcelColumns colInfo = (ExcelColumns)JsonConvert.DeserializeObject(s, typeof(ExcelColumns));
+                            EbDataColumn dc = new EbDataColumn { ColumnName = colInfo.Name, Type = colInfo.DbType, ColumnIndex = (i - 1), TableName = colInfo.TableName };
+                            _ebtbl.Columns.Add(dc);
+                        }
+
+                        foreach (DataRow row in tbl.Rows)
+                        {
+                            EbDataRow rr = _ebtbl.NewDataRow2();
+                            bool isNonEmpty = false;
+
+                            for (int i = 0; i < tbl.Columns.Count; i++)
                             {
-                                isNonEmpty = true;
-                                rr[i] = row[i];
+                                if (row[i] != null && row[i].ToString() != string.Empty)
+                                {
+                                    isNonEmpty = true;
+                                    rr[i] = row[i];
+                                }
+                            }
+                            if (isNonEmpty)
+                                _ebtbl.Rows.Add(rr);
+
+                        }
+
+                        foreach (EbDataColumn dc in _ebtbl.Columns)
+                        {
+                            if (dc.Type == EbDbTypes.Date)
+                            {
+                                for (int i = 0; i < _ebtbl.Rows.Count; i++)
+                                {
+                                    _ebtbl.Rows[i][dc.ColumnName] = Convert.ToDateTime(_ebtbl.Rows[i][dc.ColumnName]).ToString("yyyy-MM-dd");
+                                }
                             }
                         }
-                        if (isNonEmpty)
-                            _ebtbl.Rows.Add(rr);
 
-                    }
+                        //string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
 
-                    foreach (EbDataColumn dc in _ebtbl.Columns)
-                    {
-                        if (dc.Type == EbDbTypes.Date)
+                        if (_ebtbl.Columns.Contains(new EbDataColumn("eb_loc_id", EbDbTypes.Int32)))
                         {
-                            for (int i = 0; i < _ebtbl.Rows.Count; i++)
-                            {
-                                _ebtbl.Rows[i][dc.ColumnName] = Convert.ToDateTime(_ebtbl.Rows[i][dc.ColumnName]).ToString("yyyy-MM-dd");
-                            }
+                            response = ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, RefId = _refid });
                         }
-                    }
+                        else
+                        {
+                            response =  ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, LocId = 1, RefId = _refid });
+                        }
 
-                    string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
-
-                    if (_ebtbl.Columns.Contains(new EbDataColumn("eb_loc_id", EbDbTypes.Int32)))
-                    {
-                        InsertBatchDataResponse response = ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, RefId = _refid });
                     }
-                    else
-                    {
-                        InsertBatchDataResponse response = ServiceClient.Post<InsertBatchDataResponse>(new InsertBatchDataRequest { Data = _ebtbl, LocId = 1, RefId = _refid });
-                    }                    
+                                     
                 }
             }
-        } 
+ 
+        }
 
-        public FileStreamResult download()
+        public FileStreamResult download(string refid)
         {
-            char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-            string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
-            ExcelDownloadResponse response = this.ServiceClient.Get<ExcelDownloadResponse>(new ExcelDownloadRequest { _refid = _refid });
-
-            string _excelName = response.formName + ".xlsx";
-
-            using (ExcelEngine excelEngine = new ExcelEngine())
+            FileStreamResult fileStreamResult = null;
+            if (refid != null && refid != string.Empty)
             {
-                IApplication application = excelEngine.Excel;
-                application.DefaultVersion = ExcelVersion.Excel2016;
-                IWorkbook workbook = application.Workbooks.Create(1);
-                IWorksheet worksheet = workbook.Worksheets[0];
-                int colIndex = 1;
-                foreach (ColumnsInfo _col in response.colsInfo)
+                char[] excel = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+                //string _refid = "hairocraft_stagging-hairocraft_stagging-0-1193-1361-1193-1361";
+                ExcelDownloadResponse response = this.ServiceClient.Get<ExcelDownloadResponse>(new ExcelDownloadRequest { _refid = refid });
+
+                string _excelName = response.formName + ".xlsx";
+
+                using (ExcelEngine excelEngine = new ExcelEngine())
                 {
-                    string colId = excel[colIndex - 1].ToString() + 1;
-                    worksheet.Range[1, colIndex].Text = _col.Label;
-                    worksheet.Range[1, colIndex].AddComment().Text = JsonConvert.SerializeObject(new ExcelColumns { Name = _col.Name, DbType = _col.DbType, TableName = _col.TableName, Label = _col.Label });
-                    IDataValidation _colValidation = worksheet.Range[colId].EntireColumn.DataValidation;
-                    if (_col.DbType.ToString() == "String")
-                        _colValidation.AllowType = ExcelDataType.Any;
-                    if (_col.DbType.ToString() == "Date")
+                    IApplication application = excelEngine.Excel;
+                    application.DefaultVersion = ExcelVersion.Excel2016;
+                    IWorkbook workbook = application.Workbooks.Create(1);
+                    IWorksheet worksheet = workbook.Worksheets[0];
+                    int colIndex = 1;
+                    foreach (ColumnsInfo _col in response.colsInfo)
                     {
-                        _colValidation.AllowType = ExcelDataType.Date;
-                        worksheet.Range[colId].EntireColumn.NumberFormat = "YYYY-MM-DD";
-
+                        string colId = excel[colIndex - 1].ToString() + 1;
+                        worksheet.Range[1, colIndex].Text = _col.Label;
+                        worksheet.Range[1, colIndex].AddComment().Text = JsonConvert.SerializeObject(new ExcelColumns { Name = _col.Name, DbType = _col.DbType, TableName = _col.TableName, Label = _col.Label });
+                        IDataValidation _colValidation = worksheet.Range[colId].EntireColumn.DataValidation;
+                        if (_col.DbType.ToString() == "String")
+                            _colValidation.AllowType = ExcelDataType.Any;
+                        else if (_col.DbType.ToString() == "Decimal")
+                            _colValidation.AllowType = ExcelDataType.Decimal;
+                        else if (_col.DbType.ToString() == "Date")
+                        {
+                            _colValidation.AllowType = ExcelDataType.Date;
+                            worksheet.Range[colId].EntireColumn.NumberFormat = "YYYY-MM-DD";
+                        }
+                        else { }
+                        //
+                        //if (_col.DbType.ToString() == "Int16" || _col.DbType.ToString() == "Int32" || _col.DbType.ToString() == "Int64")
+                        //    _colValidation.AllowType = ExcelDataType.Integer;
+                        //if (_col.DbType.ToString() == "Time")
+                        //    _colValidation.AllowType = ExcelDataType.Time;
+                        colIndex++;
                     }
-                    if (_col.DbType.ToString() == "Decimal")
-                        _colValidation.AllowType = ExcelDataType.Decimal;
-                    if (_col.DbType.ToString() == "Int16" || _col.DbType.ToString() == "Int32" || _col.DbType.ToString() == "Int64")
-                        _colValidation.AllowType = ExcelDataType.Integer;
-                    if (_col.DbType.ToString() == "Time")
-                        _colValidation.AllowType = ExcelDataType.Time;
-                    colIndex++;
+
+                    MemoryStream stream = new MemoryStream();
+                    workbook.SaveAs(stream);
+                    stream.Position = 0;
+                    //Download the Excel file in the browser
+                    fileStreamResult = new FileStreamResult(stream, "application/excel");
+
+                    fileStreamResult.FileDownloadName = _excelName;
+
+                    //return fileStreamResult;
                 }
-                
-                MemoryStream stream = new MemoryStream();
-                workbook.SaveAs(stream);
-                stream.Position = 0;
-                //Download the Excel file in the browser
-                FileStreamResult fileStreamResult = new FileStreamResult(stream, "application/excel");
 
-                fileStreamResult.FileDownloadName = _excelName;
-
-                return fileStreamResult;
             }
+            else
+                return null;
+            return fileStreamResult;
+            //return _excelName;
         }
        
     }

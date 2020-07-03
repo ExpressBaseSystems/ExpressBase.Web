@@ -288,6 +288,24 @@ namespace ExpressBase.Web.Controllers
                     {
                         Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
 
+                        if (authResponse.User.IsAdmin())
+                        {
+                            response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                        }
+                        else if (s_obj != null && authResponse.User.LocationIds != null)
+                        {
+                            if (authResponse.User.LocationIds.Contains(-1))
+                                response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                            else
+                            {
+                                foreach (int _locid in authResponse.User.LocationIds)
+                                {
+                                    if (s_obj.Locations.ContainsKey(_locid))
+                                        response.Locations.Add(s_obj.Locations[_locid]);
+                                }
+                            }
+                        }
+
                         if (s_obj != null && s_obj.Is2faEnabled)
                         {
                             response.Is2FEnabled = s_obj.Is2faEnabled;

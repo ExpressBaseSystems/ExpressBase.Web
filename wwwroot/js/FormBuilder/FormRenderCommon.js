@@ -86,8 +86,8 @@
             this.bindValueUpdateFns_OnChange(Obj);
 
         if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") ||
-            Obj.HiddenExpr && Obj.HiddenExpr.Code && Obj.HiddenExpr.Code.trim() !== "" ||
-            Obj.DisableExpr && Obj.DisableExpr.Code && Obj.DisableExpr.Code.trim() !== "")
+            Obj.HiddenExpDependants && Obj.HiddenExpDependants.$values.length > 0 ||
+            Obj.DisableExpDependants && Obj.DisableExpDependants.$values.length > 0)
             this.bindBehaviorFns_OnChange(Obj);
 
         if (Obj.Validators && Obj.Validators.$values.length > 0)

@@ -369,9 +369,12 @@
                 let disableExpVal = new Function("form", "user", `event`, disableExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
                 if (disableExpVal) {
                     depCtrl.disable();
+                    depCtrl.__IsDisableByExp = true;
                 }
-                else
+                else {
                     depCtrl.enable();
+                    depCtrl.__IsDisableByExp = false;;
+                }
             }
         }
     }.bind(this);
@@ -560,20 +563,6 @@
 
     this.removeInvalidStyle = function (ctrl) {
         EbMakeValid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
-    };
-
-    this.EbDisableCtrl = function (ctrl) {
-        if (!ctrl.__IsDisable) {
-            ctrl.disable();
-            ctrl.__IsEbDisable = true;
-        }
-    };
-
-    this.EbEnableCtrl = function (ctrl) {
-        if (ctrl.__IsDisable && ctrl.__IsDisable) {
-            ctrl.enable();
-            ctrl.__IsEbDisable = false;
-        }
     };
 
     // checks a control value is emptyString

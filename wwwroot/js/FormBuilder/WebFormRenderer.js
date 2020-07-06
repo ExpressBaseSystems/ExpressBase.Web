@@ -138,8 +138,8 @@ const WebFormRender = function (option) {
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3 
-        this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.FRC.setDisabledControls(this.flatControls);// disables disabled controls 
         this.initDGs();
         this.initReviewCtrl();
 
@@ -357,7 +357,7 @@ const WebFormRender = function (option) {
             //else
             ctrl.___DoNotUpdateDataVals = true;
             ctrl.justSetValue(val);
-            this.___DoNotUpdateDataVals = false;
+            ctrl.___DoNotUpdateDataVals = false;
         }
 
         //$.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
@@ -908,7 +908,7 @@ const WebFormRender = function (option) {
         }
 
         //    this.ApprovalCtrl.disableAllCtrls();
-        this.disbleFlatControls();
+        this.disbleControlsInViewMode();
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
@@ -930,17 +930,21 @@ const WebFormRender = function (option) {
         }.bind(this));
     }.bind(this);
 
-    this.enableFlatControls = function () {
+    this.enableControlsInEditMode = function () {
         $.each(this.flatControls, function (i, ctrl) {
-            this.FRC.EbEnableCtrl(ctrl);
+            if ((ctrl.IsDisable && ctrl.__IsDisableByExp === undefined) || ctrl.__IsDisableByExp === true)
+                return;
+            ctrl.enable();
         }.bind(this));
     };
 
-    this.disbleFlatControls = function () {
+    this.disbleControlsInViewMode = function () {
         $.each(this.flatControls, function (k, ctrl) {
             if (ctrl.ObjType === "ExportButton")
                 return true;
-            this.FRC.EbDisableCtrl(ctrl);
+            if (!ctrl.__IsDisable) {
+                ctrl.disable();
+            }
         }.bind(this));
     };
 
@@ -966,7 +970,7 @@ const WebFormRender = function (option) {
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        this.enableFlatControls();
+        this.enableControlsInEditMode();
         this.setUniqCtrlsInitialVals();
         this.DynamicTabObject.switchToEditMode();
     };
@@ -1880,9 +1884,11 @@ const WebFormRender = function (option) {
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
 
         if (this.Mode.isNew) {
+
             console.log("================== exec default Value Expression   2");
             //this.FRC.setDefaultvalsNC(this.flatControls);// 2nd
             this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);// 2nd
+
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
             if (this.cloneRowId)

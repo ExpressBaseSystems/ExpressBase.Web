@@ -41,6 +41,7 @@ const WebFormRender = function (option) {
         //    this.FRC.setValueExpValsNC(this.flatControls); // issue with powerselect 'initializer' not set on load
 
         this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 
+        this.FRC.setUpdateDependentControlsBehaviorFns();// adds updateDependentControlsBehaviorFns() to formObject 
 
 
         return this.formObject;
@@ -150,7 +151,7 @@ const WebFormRender = function (option) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
-            this.FRC.bindOnChange(_DG);
+            this.FRC.bindValueUpdateFns_OnChange(_DG);
         }.bind(this));
     };
 
@@ -348,12 +349,15 @@ const WebFormRender = function (option) {
             if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
                 continue;
             ctrl.__eb_EditMode_val = val;
-            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                //ctrl.setDisplayMember = EBPSSetDisplayMember;
-                ctrl.setDisplayMember(val);
-            }
-            else
-                ctrl.justSetValue(val);
+            //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
+            //    //ctrl.setDisplayMember = EBPSSetDisplayMember;
+            //    ctrl.justInit = true;
+            //    ctrl.setDisplayMember(val);
+            //}
+            //else
+            ctrl.___DoNotUpdateDataVals = true;
+            ctrl.justSetValue(val);
+            this.___DoNotUpdateDataVals = false;
         }
 
         //$.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
@@ -928,8 +932,7 @@ const WebFormRender = function (option) {
 
     this.enableFlatControls = function () {
         $.each(this.flatControls, function (i, ctrl) {
-            if (!ctrl.IsDisable)
-                ctrl.enable();
+            this.FRC.EbEnableCtrl(ctrl);
         }.bind(this));
     };
 
@@ -937,7 +940,7 @@ const WebFormRender = function (option) {
         $.each(this.flatControls, function (k, ctrl) {
             if (ctrl.ObjType === "ExportButton")
                 return true;
-            ctrl.disable();
+            this.FRC.EbDisableCtrl(ctrl);
         }.bind(this));
     };
 
@@ -1412,7 +1415,7 @@ const WebFormRender = function (option) {
                 if (mode === 'View Mode')
                     r.push('webformclone');
             }
-        } 
+        }
         return r;
     };
 
@@ -1634,9 +1637,9 @@ const WebFormRender = function (option) {
                     processData: false,
                     contentType: false,
                     data: data1,
-                    success: function (message) {    
+                    success: function (message) {
                         EbMessage("show", { Message: 'Successfully Imported', AutoHide: true, Background: '#00aa00' });
-                        this.hideLoader(); 
+                        this.hideLoader();
                     }.bind(this),
                     error: function () {
                         EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
@@ -1679,7 +1682,7 @@ const WebFormRender = function (option) {
         }
     };
 
-   
+
 
     this.selectUIinpOnFocus = function () {
         let el = event.target;
@@ -1862,6 +1865,9 @@ const WebFormRender = function (option) {
         this.setHeader(this.mode);// contains a hack for preview mode(set as newmode)
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
+
+        a___MT = this.DataMODEL; // debugg helper
+
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
@@ -1927,6 +1933,5 @@ const WebFormRender = function (option) {
 
     this.init(option);
     a___builder = this;
-    a___MT = this.DataMODEL;
     //a___EO = this.EditModeFormData;
 };

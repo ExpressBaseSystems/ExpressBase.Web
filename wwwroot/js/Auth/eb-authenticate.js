@@ -178,7 +178,7 @@
     var resend = false;
     function StartOtpTimer() {
         resend = false;
-        document.getElementById('timer').innerHTML = 005 + ":" + 00;
+        document.getElementById('timer').innerHTML = 003 + ":" + 00;
         startTimer();
     };
     function startTimer() {

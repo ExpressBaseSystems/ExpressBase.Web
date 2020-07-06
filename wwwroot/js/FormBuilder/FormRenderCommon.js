@@ -81,9 +81,15 @@
             this.bindRequired(Obj);
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
-        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0
-            || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId)
-            this.bindOnChange(Obj);
+
+        if (Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId)
+            this.bindValueUpdateFns_OnChange(Obj);
+
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") ||
+            Obj.HiddenExpDependants && Obj.HiddenExpDependants.$values.length > 0 ||
+            Obj.DisableExpDependants && Obj.DisableExpDependants.$values.length > 0)
+            this.bindBehaviorFns_OnChange(Obj);
+
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
     };
@@ -125,13 +131,34 @@
         }.bind(this));
     };
 
-    this.bindOnChange = function (control) {
+    this.wrapInFn = function (fn) {
+        return `(function(){${fn}})();`
+    };
+
+    this.bindValueUpdateFns_OnChange = function (control) {//2nd onchange Fn bind
         try {
-            let FnString = atob(control.OnChangeFn.Code) +
-                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? ` ; form.updateDependentControls(${control.__path}, form);` : "");
+            let FnString =
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? `
+                if(!this.___isNotUpdateValExpDepCtrls){
+                    form.updateDependentControls(${control.__path}, form);
+                }
+                this.___isNotUpdateValExpDepCtrls = false;` : "");/// cleanup, return if no ...
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
-            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////developer  return statement prevent form.updateDependentControls calling
-            control.__onChangeFn = onChangeFn;
+            control.bindOnChange(onChangeFn);
+        } catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+        }
+    };
+
+    this.bindBehaviorFns_OnChange = function (control) {// 3rd onchange Fn bind
+        try {
+            let FnString =
+                this.wrapInFn(atob(control.OnChangeFn.Code)) +
+                ((control.HiddenExpDependants && control.HiddenExpDependants.$values.length !== 0 || control.DisableExpDependants && control.DisableExpDependants.$values.length !== 0) ? ` ;
+                    form.updateDependentControlsBehavior(${control.__path}, form);` : "");
+            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.bindOnChange(onChangeFn);
         } catch (e) {
             console.eb_log("eb error :");
@@ -188,16 +215,19 @@
         }
     };
 
-    this.bindEbFnOnChange = function (control) {
+    this.DataValsUpdate = function (form, user, event) {
+        if (!this.___DoNotUpdateDataVals) {
+            if (this.DataVals) {
+                this.DataVals.Value = this.getValueFromDOM();
+                this.DataVals.D = this.getDisplayMemberFromDOM();
+            }
+        }
+    };
+
+    this.bindEbFnOnChange = function (control) {//1st onchange Fn bind
         try {
-            let onChangeFn = function (form, user, event) {
-                if (this.DataVals) {
-                    this.DataVals.Value = this.getValueFromDOM();
-                    this.DataVals.D = this.getDisplayMemberFromDOM();
-                }
-            }.bind(control, this.FO.formObject, this.FO.userObject);
-            control.__onChangeFn = onChangeFn;
-            control.bindOnChange(onChangeFn);
+            control.__onChangeFn = this.DataValsUpdate.bind(control, this.FO.formObject, this.FO.userObject); // takes a copy
+            control.bindOnChange(control.__onChangeFn);// binding to onchange
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
@@ -228,7 +258,7 @@
         }.bind(this);
     }.bind(this);
 
-    this.DependedValExpUpdates = function (curCtrl) {
+    this.UpdateValExpDepCtrls = function (curCtrl) {
         $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
             if (depCtrl === "not found")
@@ -248,7 +278,10 @@
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
                                 //if ((!this.FO.Mode.isView && !this.FO.isInitialEditModeDataSet) || depCtrl.DoNotPersist) {
                                 if ((!this.FO.isInitialProgramaticOnchange) || depCtrl.DoNotPersist) {
-                                    depCtrl.setValue(ValueExpr_val);
+                                    //depCtrl.setValue(ValueExpr_val);
+                                    //depCtrl.___isNotUpdateValExpDepCtrls = true;
+                                    //depCtrl.setValue(ValueExpr_val);
+                                    depCtrl.justSetValue(ValueExpr_val);
                                     //this.isRequiredOK(depCtrl);
                                 }
                             }
@@ -309,16 +342,61 @@
         this.FO.psDataImport(curCtrl);
     }.bind(this);
 
+    this.UpdateHideExpDepCtrls = function (curCtrl) {
+        let depCtrls_SArr = curCtrl.HiddenExpDependants.$values;
+
+        for (let i = 0; i < depCtrls_SArr.length; i++) {
+            let depCtrl_s = depCtrls_SArr[i];
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl.HiddenExpr) {
+                let hideExpFnStr = atob(depCtrl.HiddenExpr.Code);
+                let hideExpVal = new Function("form", "user", `event`, hideExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (hideExpVal)
+                    depCtrl.hide();
+                else
+                    depCtrl.show();
+            }
+        }
+    }.bind(this);
+
+    this.UpdateDisableExpDepCtrls = function (curCtrl) {
+        let depCtrls_SArr = curCtrl.DisableExpDependants.$values;
+        for (let i = 0; i < depCtrls_SArr.length; i++) {
+            let depCtrl_s = depCtrls_SArr[i];
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl.DisableExpr) {
+                let disableExpFnStr = atob(depCtrl.DisableExpr.Code);
+                let disableExpVal = new Function("form", "user", `event`, disableExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (disableExpVal) {
+                    depCtrl.disable();
+                }
+                else
+                    depCtrl.enable();
+            }
+        }
+    }.bind(this);
+
     this.setUpdateDependentControlsFn = function () {
         this.FO.formObject.updateDependentControls = function (curCtrl) { //calls in onchange
-            if (curCtrl.DependedValExp) {
-                this.DependedValExpUpdates(curCtrl);
+            if (curCtrl.DependedValExp && curCtrl.DependedValExp.$values.length !== 0) {
+                this.UpdateValExpDepCtrls(curCtrl);
             }
             if (curCtrl.DependedDG) {
                 this.importDGRelatedUpdates(curCtrl);
             }
             if (curCtrl.DataImportId && this.FO.Mode.isNew) {
                 this.PSImportRelatedUpdates(curCtrl);
+            }
+        }.bind(this);
+    };
+
+    this.setUpdateDependentControlsBehaviorFns = function () {
+        this.FO.formObject.updateDependentControlsBehavior = function (curCtrl) { //calls in onchange
+            if (curCtrl.HiddenExpDependants && curCtrl.HiddenExpDependants.$values.length !== 0) {
+                this.UpdateHideExpDepCtrls(curCtrl);
+            }
+            if (curCtrl.DisableExpDependants && curCtrl.DisableExpDependants.$values.length !== 0) {
+                this.UpdateDisableExpDepCtrls(curCtrl);
             }
         }.bind(this);
     };
@@ -482,6 +560,20 @@
 
     this.removeInvalidStyle = function (ctrl) {
         EbMakeValid(`#cont_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
+    };
+
+    this.EbDisableCtrl = function (ctrl) {
+        if (!ctrl.__IsDisable) {
+            ctrl.disable();
+            ctrl.__IsEbDisable = true;
+        }
+    };
+
+    this.EbEnableCtrl = function (ctrl) {
+        if (ctrl.__IsDisable && ctrl.__IsDisable) {
+            ctrl.enable();
+            ctrl.__IsEbDisable = false;
+        }
     };
 
     // checks a control value is emptyString

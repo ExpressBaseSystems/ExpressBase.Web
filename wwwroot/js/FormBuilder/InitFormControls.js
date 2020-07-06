@@ -685,7 +685,7 @@
                     }
                 }
                 else
-                    ctrl.__isJustSetValue = false;
+                    ctrl.__isJustSetValue = false;////////////////////////////////////////////????????????????????????????
             }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Renderer.chooseClick);
@@ -1262,8 +1262,6 @@
     };
 
     this.Numeric = function (ctrl) {
-        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
-        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.InputMode === 0) {

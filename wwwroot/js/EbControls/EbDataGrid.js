@@ -119,8 +119,8 @@
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
-        if (this.cloneMode && this.formRenderer.notSavedOnce)
-            this.newRowCounter = -i;
+        //if (this.cloneMode && this.formRenderer.notSavedOnce)
+        //    this.newRowCounter = -i;
         return TrsHTML.join();
     };
 
@@ -1024,8 +1024,8 @@
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let $tr = this.get$RowByRowId(rowid);
-        if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true') ||//in edit mode or clone mode untouched DG row skip for 4 checking
-            (this.Mode.isEdit || this.cloneMode) && $tr.attr("is-added") === "true")// avoid newly added rows from first check
+        if (!(this.Mode.isEdit && $tr.attr('is-initialised') !== 'true') ||//in edit mode or clone mode untouched DG row skip for 4 checking
+            this.Mode.isEdit && $tr.attr("is-added") === "true")// avoid newly added rows from first check
         {
             $.each(this.objectMODEL[rowid], function (i, ctrl) {
                 let $ctrl = $("#" + ctrl.EbSid_CtxId);

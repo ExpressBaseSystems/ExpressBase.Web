@@ -2915,26 +2915,12 @@
         if (this.MakeSMSValidation()) {
             $("#smsmodal").modal("hide");
             $("#eb_common_loader").EbLoader("show");
-            let refid = $(".smstemplate-select option:selected").val();
-            if (refid) {
-                var idx = this.Api.row($elem.parents().closest("td")).index();
-                this.rowData = this.unformatedData[idx];
-                let filters = this.getFilterValues().concat(this.FilterfromRow());
-                $.ajax({
-                    type: "POST",
-                    url: "../DV/SendSMS",
-                    data: { RefId: refid, Params: filters },
-                    success: this.SendSMSSuccess.bind(this)
-                });
-            }
-            else {
-                $.ajax({
-                    type: "POST",
-                    url: "../DV/SendCustomSMS",
-                    data: { To: $("#sms-number").val(), Body: $("#sms-textarea").val() },
-                    success: this.SendSMSSuccess.bind(this)
-                });
-            }
+            $.ajax({
+                type: "POST",
+                url: "../DV/SendSMS",
+                data: { To: $("#sms-number").val(), Body: $("#sms-textarea").val() },
+                success: this.SendSMSSuccess.bind(this)
+            });
         }
     };
 
@@ -4345,20 +4331,21 @@
 
 
     this.ExportToExcel = function (e) {
-        $('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
-        //var ob = new Object();
-        //ob.DataVizObjString = JSON.stringify(this.EbObject);
-        //ob.Params = this.filterValues;
-        //ob.TFilters = this.columnSearch;
-        //this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.cloud', Channels: ["ExportToExcel"] });
-        //this.ss.onExcelExportSuccess = function (url) {
-        //    window.location.href = url;
-        //};
-        //$.ajax({
-        //    type: "POST",
-        //    url: "../DV/exportToexcel",
-        //    data: { req: ob }
-        //});
+        //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        this.RemoveColumnRef();
+        var ob = new Object();
+        ob.DataVizObjString = JSON.stringify(this.EbObject);
+        ob.Params = this.filterValues;
+        ob.TFilters = this.columnSearch;
+        this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.cloud', Channels: ["ExportToExcel"] });
+        this.ss.onExcelExportSuccess = function (url) {
+            window.location.href = url;
+        };
+        $.ajax({
+            type: "POST",
+            url: "../DV/exportToexcel",
+            data: { req: ob }
+        });
 
     };
 

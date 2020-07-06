@@ -1791,6 +1791,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     this.botStartoverfn = function () {
         if (this.botflg.loadFormlist === false) {
+            this.ClearFormVariables();
             $('.eb-chatBox').empty();
             this.showDate();
             this.botUserLogin();

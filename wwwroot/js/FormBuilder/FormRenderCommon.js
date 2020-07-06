@@ -159,6 +159,7 @@
                 ((control.HiddenExpDependants && control.HiddenExpDependants.$values.length !== 0 || control.DisableExpDependants && control.DisableExpDependants.$values.length !== 0) ? ` ;
                     form.updateDependentControlsBehavior(${control.__path}, form);` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+            control.__onChangeFn = onChangeFn;// for FD only need clenup
             control.bindOnChange(onChangeFn);
         } catch (e) {
             console.eb_log("eb error :");

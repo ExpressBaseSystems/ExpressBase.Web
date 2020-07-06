@@ -834,7 +834,12 @@ const WebFormRender = function (option) {
     };
 
     this.cloneForm = function () {
-        window.open("index?refid=" + this.formRefId + "&mode=clone&rowid=" + this.rowId);
+        let params = [];
+        //params.push(new fltr_obj(16, "srcRefId", this.formRefId));
+        params.push(new fltr_obj(11, "srcRowId", this.rowId));
+        let url = `../WebForm/Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify(params))}&_mode=7`;
+        window.open(url, '_blank');
+        //window.open("index?refid=" + this.formRefId + "&mode=clone&rowid=" + this.rowId);
     };
 
     this.saveForm = function () {
@@ -891,7 +896,6 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
-        this.$cloneBtn.show(200);
         this.formObject.__mode = "view";
         this.Mode.isView = true;
         this.Mode.isEdit = false;
@@ -956,7 +960,6 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToEditMode = function () {
-        this.$cloneBtn.hide(200);
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;

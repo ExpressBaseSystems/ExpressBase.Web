@@ -363,24 +363,46 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
-        [HttpPost("/api/verify_2fa")]
-        public ApiTwoFactorResponse Verify2FA(string token, string otp)
+        [HttpPost("/api/verify_or_resend_otp")]
+        public ApiTwoFactorResponse Verify2FA(string token, string otp, bool resend)
         {
             ApiTwoFactorResponse resp = new ApiTwoFactorResponse();
 
             if (Authenticated)
             {
-                Authenticate2FAResponse response = this.ServiceClient.Post(new Validate2FARequest
-                {
-                    Token = token
-                });
+                Authenticate2FAResponse response;
 
-                if (response != null && response.AuthStatus)
+                if (resend)
                 {
-                    if (otp == this.LoggedInUser.Otp)
+                    resp.IsVerification = false;
+
+                    response = this.ServiceClient.Post(new ResendOTP2FARequest
                     {
-                        resp.StatusCode = HttpStatusCode.OK;
+                        Token = token
+                    });
+
+                    if (response != null && response.AuthStatus)
+                    {
                         resp.IsValid = true;
+                        resp.StatusCode = HttpStatusCode.OK;
+                    } 
+                }
+                else
+                {
+                    resp.IsVerification = true;
+
+                    response = this.ServiceClient.Post(new Validate2FARequest
+                    {
+                        Token = token
+                    });
+
+                    if (response != null && response.AuthStatus)
+                    {
+                        if (otp == this.LoggedInUser.Otp)
+                        {
+                            resp.StatusCode = HttpStatusCode.OK;
+                            resp.IsValid = true;
+                        }
                     }
                 }
             }

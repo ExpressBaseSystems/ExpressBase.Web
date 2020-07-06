@@ -322,6 +322,7 @@ namespace ExpressBase.Web.Controllers
                             {
                                 response.TwoFAToken = resp.TwoFAToken;
                                 response.TwoFAStatus = resp.AuthStatus;
+                                response.TwoFAToAddress = resp.OtpTo;
                             }
                         }
                     }

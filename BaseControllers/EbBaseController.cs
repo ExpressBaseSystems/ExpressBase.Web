@@ -57,7 +57,15 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
             this.httpContextAccessor = _cxtacc as HttpContextAccessor;
         }
-        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc)
+		public EbBaseController(IServiceClient _ssclient, IRedisClient _redis,  IEbStaticFileClient _sfc, IEbAuthClient _auth)
+		{
+			this.ServiceClient = _ssclient as JsonServiceClient;
+			this.Redis = _redis as RedisClient;
+			this.FileClient = _sfc as EbStaticFileClient;
+			this.AuthClient = _auth as EbAuthClient;
+		}
+
+		public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;
@@ -125,8 +133,8 @@ namespace ExpressBase.Web.BaseControllers
             this.MqClient = _mqc as EbMqClient;
             this.FileClient = _sfc as EbStaticFileClient;
         }
-
-        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth)
+		
+		public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
             this.Redis = _redis as RedisClient;

@@ -26,6 +26,8 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
 
+		public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_ssclient, _redis, _sfc, _auth) { }
+
         public EbBaseExtController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_ssclient, _redis, _cxtacc, _mqc, _auth) { }
 
         public override void OnActionExecuting(ActionExecutingContext context)

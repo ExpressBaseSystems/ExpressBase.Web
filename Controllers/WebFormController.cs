@@ -67,7 +67,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     try
                     {
-                        string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? string.Empty;
+                        string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? refId;
                         int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
                         GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;

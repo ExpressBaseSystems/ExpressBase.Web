@@ -55,7 +55,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
+                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)
                     {
@@ -67,11 +67,11 @@ namespace ExpressBase.Web.Controllers
                 {
                     try
                     {
-                        string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? string.Empty;
+                        string sRefId = ob.Find(e => e.Name == "srcRefId")?.ValueTo ?? refId;
                         int sRowId = Convert.ToInt32(ob.Find(e => e.Name == "srcRowId")?.ValueTo ?? 0);
                         GetExportFormDataResponse Resp = ServiceClient.Post<GetExportFormDataResponse>(new GetExportFormDataRequest { DestRefId = refId, SourceRefId = sRefId, SourceRowId = sRowId, UserObj = this.LoggedInUser, CurrentLoc = _locId, RenderMode = WebFormRenderModes.Normal });
                         ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
+                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)
                     {
@@ -133,7 +133,7 @@ namespace ExpressBase.Web.Controllers
                     {
                         GetPrefillDataResponse Resp = ServiceClient.Post<GetPrefillDataResponse>(new GetPrefillDataRequest { RefId = refId, Params = ob, CurrentLoc = _locId, RenderMode = (WebFormRenderModes)renderMode });
                         ViewBag.formData = Resp.FormDataWrap;
-                        ViewBag.Mode = WebFormModes.Prefill_Mode.ToString().Replace("_", " ");
+                        ViewBag.Mode = WebFormModes.New_Mode.ToString().Replace("_", " ");
                     }
                     catch (Exception ex)
                     {

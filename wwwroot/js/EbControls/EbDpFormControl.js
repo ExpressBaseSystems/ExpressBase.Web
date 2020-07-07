@@ -44,7 +44,7 @@
         $(`#${this.Options.Container}-upl-ok`).off("click").on("click", this.ok.bind(this));
         $(`#${this.Options.Container}-file-input`).off("change").on("change", this.browse.bind(this));
         $(`#${this.Options.Container}-upload-lin`).off("click").on("click", this.upload.bind(this));
-        this.Modal.on("show.bs.modal", function () { if (this.Options.ServerEventUrl) this.startSE();}.bind(this));
+        this.Modal.on("show.bs.modal", function () { if (this.Options.ServerEventUrl) this.startSE(); }.bind(this));
     }
 
     initDpImages() {
@@ -215,7 +215,7 @@
         this.comUpload();
     }
 
-     comUpload() {
+    comUpload() {
 
         for (let k = 0; k < this.Files.length; k++) {
             let formData = new FormData();
@@ -279,6 +279,10 @@
     }
 
     outerHtml() {
+        let $existingCont = $(`#${this.Options.Container}-upl-container`);
+        if ($existingCont.length > 0)
+            $existingCont.remove();
+
         $("body").append(`<div id="${this.Options.Container}-upl-container-outer" class="upl-container-outer">
                             <div id="${this.Options.Container}-upl-container" class="modal fade upl-container" role="dialog">
                               <div class="modal-dialog">
@@ -328,13 +332,14 @@
     }
 
     appendFSHtml() {
-        $("body").append(`<div class="ebDpFullscreen_wraper-fade"></div>
-                        <div class="ebDpFullscreen_wraper" style='padding: 20px 60px 20px 60px;'>
-                            <button class="FsClse" onclick="$('.ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade').hide();"><i class="fa fa-close"></i></button>
-                            <div class="ebDpFullscreen_inner">
-                                <img src="/images/web.png" class="FupimgIcon" />                                
-                            </div>
-                        </div>`);
+        if ($(".ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade").length === 0)
+            $("body").append(`<div class="ebDpFullscreen_wraper-fade"></div>
+                            <div class="ebDpFullscreen_wraper" style='padding: 20px 60px 20px 60px;'>
+                                <button class="FsClse" onclick="$('.ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade').hide();"><i class="fa fa-close"></i></button>
+                                <div class="ebDpFullscreen_inner">
+                                    <img src="/images/web.png" class="FupimgIcon" />                                
+                                </div>
+                            </div>`);
         return $(".ebDpFullscreen_wraper,.ebDpFullscreen_wraper-fade");
     }
 
@@ -363,7 +368,7 @@
                 $img.css('opacity', `1`);
                 for (let j = 0; j < this._onChangeFunctions.length; j++)
                     this._onChangeFunctions[j]();
-            }     
+            }
         }
     }
     Refresh() {

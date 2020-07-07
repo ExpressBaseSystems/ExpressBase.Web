@@ -71,11 +71,15 @@ var EbBasicChart = function (Option) {
     this.init = function () {
         this.EbObject = this.EbObject;
         this.type = this.EbObject.Type;
-        this.filterValues = this.getFilterValues();
+        if (Option.filtervalues.length != 0)
+            this.filterValues = Option.filtervalues;
+        else
+            this.filterValues = this.getFilterValues();
+        
         $.ajax({
             type: 'POST',
             url: "../DV/getdata",
-            data: { DataVizObjString : JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.getFilterValues() },            
+            data: { DataVizObjString: JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues },            
             success: this.getDataSuccess.bind(this),
             error: function () { }
         });

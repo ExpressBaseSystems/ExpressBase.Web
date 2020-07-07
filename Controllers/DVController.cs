@@ -401,21 +401,14 @@ namespace ExpressBase.Web.Controllers
             }
             return res;
         }
+        
 
-        public void SendSMS(SMSInitialRequest request)
+        public void SendSMS(SmsDirectRequest request)
         {
-            if (request.RefId != null)
-            {
-                Eb_Solution sol = GetSolutionObject(this.LoggedInUser.CId);
-                request.SolnId = sol.SolutionID;
-                request.UserAuthId = this.LoggedInUser.AuthId;
-                request.UserId = this.LoggedInUser.UserId;
-                var xx = this.ServiceClient.Post(request);
-            }
-        }
-
-        public void SendCustomSMS(SmsDirectRequest request)
-        {
+            Eb_Solution sol = GetSolutionObject(this.LoggedInUser.CId);
+            request.SolnId = sol.SolutionID;
+            request.UserAuthId = this.LoggedInUser.AuthId;
+            request.UserId = this.LoggedInUser.UserId;
             var xx = this.ServiceClient.Post(request);
         }
 
@@ -526,6 +519,8 @@ namespace ExpressBase.Web.Controllers
                 request.RefId = ebobject.DataSourceRefId;
                 request.IsExcel = true;
                 request.Params = req.Params;
+                Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+                request.eb_Solution = s_obj;
                 this.ServiceClient.Post(request);
             }
 

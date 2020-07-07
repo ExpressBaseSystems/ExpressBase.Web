@@ -299,12 +299,12 @@
             let ctrl = curRowCtrls[i];
             let Value = ctrl.DataVals.Value;
             if (Value !== null) {
-                if (ctrl.ObjType === "PowerSelect") {
-                    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
-                    ctrl.justInit = true;
-                    ctrl.setDisplayMember(Value);
-                }
-                else
+                //if (ctrl.ObjType === "PowerSelect") {
+                //    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
+                //    ctrl.justInit = true;
+                //    ctrl.setDisplayMember(Value);
+                //}
+                //else
                     ctrl.justSetValue(Value);// should remove
             }
         }

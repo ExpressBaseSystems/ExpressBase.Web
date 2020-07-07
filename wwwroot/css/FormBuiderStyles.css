@@ -2453,3 +2453,18 @@ input.locinp {
 [ctype=SubmitButton] > #captcha {
     pointer-events: none;
 }
+
+/*ebphone control*/
+.phnctrl {
+    padding-left: 80px !important;
+}
+.phnContextBtn {
+    border: 0;
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    padding: 7px;
+}
+    .phnContextBtn i {
+        display: inline-block;
+    }

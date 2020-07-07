@@ -1357,7 +1357,7 @@ const WebFormRender = function (option) {
         if (reqstMode === "Edit Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
-        else if (reqstMode === "New Mode" || reqstMode === "Prefill Mode") {
+        else if (reqstMode === "New Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
@@ -1381,10 +1381,9 @@ const WebFormRender = function (option) {
         }
         catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
-        let rMode = reqstMode === 'Prefill Mode' ? 'New Mode' : reqstMode;
         if (_renderMode !== 3 && _renderMode !== 5)
-            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${rMode}</span>`);
-        $('title').text(this.FormObj.DisplayName + title_val + `(${rMode})`);
+            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
+        $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);
 
         if (this.isPartial === "True") {
             this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);
@@ -1401,7 +1400,7 @@ const WebFormRender = function (option) {
         }
         else {
             for (let i = 0; i < btns.length; i++) {
-                if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
+                if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode'))
                     r.push(btns[i]);
                 else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
                     r.push(btns[i]);
@@ -1417,7 +1416,7 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
-                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
+                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
                     r.push(btns[i]);
                 if (mode === 'View Mode')
                     r.push('webformclone');
@@ -1703,7 +1702,6 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        this.Mode.isPrefill = false;
         this.Mode.isFail = false;
         this.Mode.isPreview = false;
 
@@ -1715,8 +1713,6 @@ const WebFormRender = function (option) {
         //    this.Mode.isFail = true;
         else if (this.mode === "Edit Mode")
             this.Mode.isEdit = true;
-        else if (this.mode === "Prefill Mode")
-            this.Mode.isPrefill = true;
         else if (this.mode === "Preview Mode")
             this.Mode.isPreview = true;
     };
@@ -1725,7 +1721,6 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        this.Mode.isPrefill = false;
         this.Mode.isFail = false;
         this.Mode.isPreview = false;
 
@@ -1906,7 +1901,7 @@ const WebFormRender = function (option) {
         }
 
         console.log("================== exec Value Expression   3");
-        if (!(this.Mode.isPrefill || this.Mode.isNew))// 3rd
+        if (!(this.Mode.isNew))// 3rd
             this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
 
 

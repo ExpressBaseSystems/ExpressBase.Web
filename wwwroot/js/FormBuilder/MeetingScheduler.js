@@ -2,88 +2,111 @@
 var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.Ctrl = ctrl;
     this.type = type;
+   
     this.SlotList = [];
     this.MeetingScheduleObj = {
         Title: '', Description: '', Location: '', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
         TimeFrom: '', TimeTo: '', Duration: '', MaxHost: 1, MinHost: 1, MaxAttendee: 1, MinAttendee: 1,
-        EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingOpts: 1,
-        SlotList: this.SlotList ,
+        EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingType: this.Ctrl.MeetingType,
+        SlotList: this.SlotList
     };
-    this.UsersList = {};
-    this.UsersList = ctrl.UsersList;
+    this.ParticipantsList = {}
+    this.ParticipantsList = JSON.parse(ctrl.ParticipantsList);
     var _UsrArr = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(this.UsersList, function (name, userid) {
-            return { id: userid, name: name };
+        local: $.map(this.ParticipantsList, function (obj, index) {
+            return { id: obj.Id, name: obj.Name, type: obj.Type };
         }.bind(this))
     });
     _UsrArr.initialize();
 
-    var temp = $(`#${this.Ctrl.EbSid}_host_list`).tagsinput({
-        typeaheadjs: [
-            {
-                highlight: false
-            },
-            {
-                name: 'usersname',
-                displayKey: 'name',
-                //valueKey: 'id',
-                source: _UsrArr.ttAdapter()
-            }
-        ],
-        itemValue: "id",
-        itemText: "name",
-        freeInput: false
-    });
-    var temp2 = $(`#${this.Ctrl.EbSid}_attendee_list`).tagsinput({
-        typeaheadjs: [
-            {
-                highlight: false
-            },
-            {
-                name: 'usersname',
-                displayKey: 'name',
-                //valueKey: 'id',
-                source: _UsrArr.ttAdapter()
-            }
-        ],
-        itemValue: "id",
-        itemText: "name",
-        freeInput: false
-    });
-    var temp3 = $(`#${this.Ctrl.EbSid}_eligible_host_list`).tagsinput({
-        typeaheadjs: [
-            {
-                highlight: false
-            },
-            {
-                name: 'usersname',
-                displayKey: 'name',
-                //valueKey: 'id',
-                source: _UsrArr.ttAdapter()
-            }
-        ],
-        itemValue: "id",
-        itemText: "name",
-        freeInput: false
-    });
-    var temp4 = $(`#${this.Ctrl.EbSid}_eligible_attendee_list`).tagsinput({
-        typeaheadjs: [
-            {
-                highlight: false
-            },
-            {
-                name: 'usersname',
-                displayKey: 'name',
-                //valueKey: 'id',
-                source: _UsrArr.ttAdapter()
-            }
-        ],
-        itemValue: "id",
-        itemText: "name",
-        freeInput: false
-    });
+    this.tagsinputFn = function () {
+        var temp = $(`.tb-host`).tagsinput({
+            typeaheadjs: [
+                {
+                    highlight: false
+                },
+                {
+                    name: 'usersname',
+                    displayKey: 'name',
+                    //valueKey: 1,
+                    source: _UsrArr.ttAdapter()
+                }
+            ],
+            itemValue: "id",
+            itemText: function (item) {
+                return item.name;
+            }.bind(this),
+            freeInput: false
+        });
+        var temp2 = $(`.tb-attendee`).tagsinput({
+            typeaheadjs: [
+                {
+                    highlight: false
+                },
+                {
+                    name: 'usersname',
+                    displayKey: 'name',
+                    //valueKey: 1,
+                    source: _UsrArr.ttAdapter()
+                }
+            ],
+            itemValue: "id",
+            itemText: function (item) {
+                return item.name;
+            }.bind(this),
+            freeInput: false
+        });
+    };
+    $('.tb-host').on('itemAdded', function (event) {
+        let pos = event.target.getAttribute("data-id");
+        this.SlotList[pos].Hosts.push(event.item);
+        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+    }.bind(this));
+    $('.tb-attendee').on('itemAdded', function (event) {
+        let pos = event.target.getAttribute("data-id");
+        this.SlotList[pos].Attendees.push(event.item);
+        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+    }.bind(this));
+    $('.tb-attendee').on('itemRemoved', function (event) {
+        // event.item: contains the item
+        let pos = event.target.getAttribute("data-id");
+        const index = this.SlotList[pos].Attendees.indexOf(event.item);
+        if (index > -1) {
+            this.SlotList[pos].attendees.splice(index, 1);
+        }
+        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+    }.bind(this));
+
+    $('.tb-host').on('itemRemoved', function (event) {
+        // event.item: contains the item
+        let pos = event.target.getAttribute("data-id");
+        const index = this.SlotList[pos].Hosts.indexOf(event.item);
+        if (index > -1) {
+            this.SlotList[pos].Hosts.splice(index, 1);
+        }
+        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+    }.bind(this));
+
+    this.tagsinputFn();
+
+    //var temp3 = $(`.eligible-userids`).tagsinput({
+    //    typeaheadjs: [
+    //        {
+    //            highlight: false
+    //        },
+    //        {
+    //            name: 'usersname',
+    //            displayKey: 'name',
+    //            //valueKey: 'id',
+    //            source: _UsrArr.ttAdapter()
+    //        }
+    //    ],
+    //    itemValue: "id",
+    //    itemText: "name",
+    //    freeInput: false
+    //});
 
     //this.txtLocations.on('itemAdded', function (event) {
     //    //console.log(event.item);
@@ -95,6 +118,36 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     //    }
     //}.bind(this));
 
+    this.AddParticipantList = function (obj) {
+        
+        if (obj == null) {
+            var Obj = {};
+            this.SlotList.push(Obj);
+        }
+        else {
+
+        }
+    };
+
+        //public int Position { get; set; }
+       // public string TimeFrom { get; set; }
+       // public string TimeTo { get; set; }
+       // public string EligibleHosts { get; set; }
+       // public string EligibleAttendees { get; set; }
+       // public string FixedHost { get; set; }
+       // public string FixedAttendee { get; set; }
+       // public List < Participants > Hosts { get; set; }
+       // public List < Participants > Attendees { get; set; }
+    this.AddSlotList = function () {
+        SlotObj = {};
+        SlotObj.Position = 0;
+        SlotObj.TimeFrom = '';
+        SlotObj.TimeTo = '';
+        SlotObj.Hosts = [];
+        SlotObj.Attendees = [];
+        this.SlotList.push(SlotObj);
+    };
+    this.AddSlotList();
     var jsonStr = $(`#${this.Ctrl.EbSid}_MeetingJson`);
     jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
     this.InitDatePicker = function () {
@@ -117,19 +170,19 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.OnChangeUpdate = function () {
         this.Title = $(`#${this.Ctrl.EbSid}_meeting-title`);
         this.Description = $(`#${this.Ctrl.EbSid}_description`);
-        this.IsSingleMeeting = $(`#${this.Ctrl.EbSid}_single`);
-        this.IsMultipleMeeting = $(`#${this.Ctrl.EbSid}_multiple`);
+        //this.IsSingleMeeting = $(`#${this.Ctrl.EbSid}_single`);
+        //this.IsMultipleMeeting = $(`#${this.Ctrl.EbSid}_multiple`);
         this.MeetingDate = $(`#${this.Ctrl.EbSid}_meeting-date`);
-        this.TimeFrom = $(`#${this.Ctrl.EbSid}_time-from`);
-        this.TimeTo = $(`#${this.Ctrl.EbSid}_time-to`);
+        this.TimeFrom = $(`.time-from`);
+        this.TimeTo = $(`.time-to`);
         this.MaxHost = $(`#${this.Ctrl.EbSid}_max-host`);
         this.MinHost = $(`#${this.Ctrl.EbSid}_min-host`);
         this.MaxAttendee = $(`#${this.Ctrl.EbSid}_max-attendee`);
         this.MinAttendee = $(`#${this.Ctrl.EbSid}_min-attendee`);
-        this.EligibleHosts = $(`#${this.Ctrl.EbSid}_eligible_host_list`);
-        this.FixedHost = $(`#${this.Ctrl.EbSid}_host_list`);
-        this.EligibleAttendees = $(`#${this.Ctrl.EbSid}_eligible_attendee_list`);
-        this.FixedAttendee = $(`#${this.Ctrl.EbSid}_attendee_list`);
+
+        this.Host = $(`.tb-host`);
+        this.Attendee = $(`.tb-attendee`);
+        this.Duration = $(`#${this.Ctrl.EbSid}_duration`);
 
         this.Title.off('change').on("change", function (e) {
             this.MeetingScheduleObj.Title = e.target.value;
@@ -141,30 +194,34 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
-        this.IsSingleMeeting.on("change", function (e) {
-            this.MeetingScheduleObj.IsSingleMeeting = 'T';
-            this.MeetingScheduleObj.IsMultipleMeeting = 'F';
-            $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).hide();
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
-        this.IsMultipleMeeting.on("change", function (e) {
-            this.MeetingScheduleObj.IsSingleMeeting = 'F';
-            this.MeetingScheduleObj.IsMultipleMeeting = 'T';
-            $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).show();
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
+        //this.IsSingleMeeting.on("change", function (e) {
+        //    this.MeetingScheduleObj.IsSingleMeeting = 'T';
+        //    this.MeetingScheduleObj.IsMultipleMeeting = 'F';
+        //    $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).hide();
+        //    //this.drawSlots();
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        //this.IsMultipleMeeting.on("change", function (e) {
+        //    this.MeetingScheduleObj.IsSingleMeeting = 'F';
+        //    this.MeetingScheduleObj.IsMultipleMeeting = 'T';
+        //    $(`#cont_${this.Ctrl.EbSid} .meeting-duration`).show();
+        //    //this.drawSlots();
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
         this.MeetingDate.on("change", function (e) {
             this.MeetingScheduleObj.Date = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         this.TimeFrom.on("change", function (e) {
-            this.MeetingScheduleObj.TimeFrom = e.target.value;
-            this.drawSlots();
+            let pos = e.target.getAttribute("data-id");
+            this.SlotList[pos].TimeFrom = e.target.value;
+            //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj));
         }.bind(this));
         this.TimeTo.on("change", function (e) {
-            this.MeetingScheduleObj.TimeTo = e.target.value;
-            this.drawSlots();
+            let pos = e.target.getAttribute("data-id");
+            this.SlotList[pos].TimeTo = e.target.value;
+            //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         this.MaxHost.on("change", function (e) {
@@ -184,30 +241,34 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
-        this.EligibleHosts.on("change", function (e) {
-            this.MeetingScheduleObj.EligibleHosts = e.target.value;
-            this.SetMeetingOption();
-            this.drawSlots();
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
-        this.EligibleAttendees.on("change", function (e) {
-            this.MeetingScheduleObj.EligibleAttendees = e.target.value;
-            this.SetMeetingOption();
-            this.drawSlots();
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
-        this.FixedHost.on("change", function (e) {
-            this.MeetingScheduleObj.Host = e.target.value;
-            $(`#${this.Ctrl.EbSid}_max-host`).val(this.MeetingScheduleObj.Host.split(",").length);
-            this.SetMeetingOption();
-            this.drawSlots();
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
-        this.FixedAttendee.on("change", function (e) {
-            this.MeetingScheduleObj.Attendee = e.target.value;
-            $(`#${this.Ctrl.EbSid}_max-attendee`).val(this.MeetingScheduleObj.Attendee.split(",").length);
-            this.SetMeetingOption();
-            this.drawSlots();
+        //this.Host.on("change", function (e) {
+        //    this.MeetingScheduleObj.Host = e.target.value;
+        //    //this.SetMeetingOption();
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        //this.Attendee.on("change", function (e) {
+        //    this.MeetingScheduleObj.EligibleAttendees = e.target.value;
+        //    //this.SetMeetingOption();
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        //this.FixedHost.on("change", function (e) {
+        //    this.MeetingScheduleObj.Host = e.target.value;
+        //    $(`#${this.Ctrl.EbSid}_max-host`).val(this.MeetingScheduleObj.Host.split(",").length);
+        //    this.SetMeetingOption();
+        //    this.slotValChange();
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        //this.FixedAttendee.on("change", function (e) {
+        //    this.MeetingScheduleObj.Attendee = e.target.value;
+        //    $(`#${this.Ctrl.EbSid}_max-attendee`).val(this.MeetingScheduleObj.Attendee.split(",").length);
+        //    this.SetMeetingOption();
+        //    this.slotValChange();
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        this.Duration.on("change", function (e) {
+            this.MeetingScheduleObj.Duration = e.target.value;
+            //this.SetMeetingOption();
+            //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
@@ -221,17 +282,33 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
     }
+
+    this.slotValChange = function () {
+        if (this.MeetingScheduleObj.IsSingleMeeting == 'T' && this.MeetingScheduleObj.TimeFrom != '' && this.MeetingScheduleObj.TimeTo !== '') {
+
+        }
+        else {
+
+        }
+    };
+
     this.drawSlots = function () {
         this.SlotList = [];
+        this.CurrentSlotId = 0;
         html = '';
         if (this.MeetingScheduleObj.IsSingleMeeting == 'T' && this.MeetingScheduleObj.TimeFrom != '' && this.MeetingScheduleObj.TimeTo !== '') {
             let timefr = this.TimeFormat(this.MeetingScheduleObj.TimeFrom);
             let timeto = this.TimeFormat(this.MeetingScheduleObj.TimeTo);
-            html += `<div id="1" m-id="1" class="slot"> 
-                <i class="fa fa-dot-circle-o" aria-hidden="true"></i> ${timefr} to ${timeto} </div>`;
-            $(`#${this.Ctrl.EbSid}_meeting_slots`).empty().append(html);
+            html += `<tr><td>1</td>
+                    <td>${timefr}</td>
+                    <td>${timeto}</td>
+                    <td><input type='text' id='${this.Ctrl.EbSid}_host_0' class='mc-input tb-slots'/></td>
+                    <td><input type='text'  id='${this.Ctrl.EbSid}_attendee_0' class='mc-input tb-slots'/></td>
+                    </tr>
+                `;
+            $(`#${this.Ctrl.EbSid}_slots tbody`).empty().append(html);
             var Obj = {
-                Position: 1,TimeFrom: `${this.MeetingScheduleObj.TimeFrom}`, TimeTo: `${this.MeetingScheduleObj.TimeTo}`,
+                Position: 1, TimeFrom: `${this.MeetingScheduleObj.TimeFrom}`, TimeTo: `${this.MeetingScheduleObj.TimeTo}`,
                 FixedHost: '', FixedAttendee: '', EligibleHosts: '', EligibleAttendees: ''
             }
             Obj.EligibleAttendees = this.EligibleAttendees.val();
@@ -241,25 +318,75 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             this.SlotList.push(Obj);
             this.MeetingScheduleObj.SlotList = this.SlotList;
         }
-        else if (this.MeetingScheduleObj.IsSingleMeeting == 'F') {
-
+        else if (this.MeetingScheduleObj.IsSingleMeeting == 'F' && this.MeetingScheduleObj.TimeFrom != '' && this.MeetingScheduleObj.TimeTo !== '') {
+            let slotNum = 60;
+            let timefr = this.TimeFormat(this.MeetingScheduleObj.TimeFrom);
+            let timeto = this.TimeFormat(this.MeetingScheduleObj.TimeTo);
+            let hr = (parseInt(this.MeetingScheduleObj.TimeTo.split(":")[0]) - parseInt(this.MeetingScheduleObj.TimeFrom.split(":")[0])) * 60;
+            let min = parseInt(this.MeetingScheduleObj.TimeTo.split(":")[1]) - parseInt(this.MeetingScheduleObj.TimeFrom.split(":")[1]);
+            let dur_time = parseInt(this.MeetingScheduleObj.Duration.split(":")[0]) * 60 + parseInt(this.MeetingScheduleObj.Duration.split(":")[1]);
+            if (dur_time !== 0) slotNum = (hr + min) / dur_time;
+            let t1 = this.MeetingScheduleObj.TimeFrom;
+            for (let i = 0; i < slotNum; i++) {
+                //let t1 = moment.utc(this.MeetingScheduleObj.TimeFrom, 'hh:mm').add((dur_time * i), 'minutes').format('hh:mm A');
+                let t1 = moment(this.MeetingScheduleObj.TimeFrom, 'HH:mm').add((dur_time * i), 'minutes').format('HH:mm');
+                //let t2 = moment.utc(this.MeetingScheduleObj.TimeFrom, 'hh:mm').add((dur_time * (i + 1)), 'minutes').format('hh:mm A');
+                let t2 = moment(this.MeetingScheduleObj.TimeFrom, 'HH:mm').add((dur_time * (i + 1)), 'minutes').format('HH:mm');
+                var Obj = {
+                    Position: 1, TimeFrom: `${t1}`, TimeTo: `${t2}`,
+                    FixedHost: '', FixedAttendee: '', EligibleHosts: '', EligibleAttendees: ''
+                }
+                Obj.EligibleAttendees = this.EligibleAttendees.val();
+                Obj.EligibleHosts = this.EligibleHosts.val();
+                Obj.FixedAttendee = this.FixedAttendee.val();
+                Obj.FixedHost = this.FixedHost.val();
+                this.SlotList.push(Obj);
+                html += `<tr><td> ${i + 1}</td>
+                    <td>${moment.utc(t1, 'hh:mm').format('hh:mm A')}</td>
+                    <td>${moment.utc(t2, 'hh:mm').format('hh:mm A')}</td>
+                    <td><input type='text' id='${this.Ctrl.EbSid}_host_0' class='mc-input tb-slots tb-host'/></td>
+                    <td><input type='text'  id='${this.Ctrl.EbSid}_attendee_0' class='mc-input tb-slots tb-attendee'/></td>
+                    </tr>`;
+            }
+            this.MeetingScheduleObj.SlotList = this.SlotList;
+            $(`#${this.Ctrl.EbSid}_slots tbody`).empty().append(html);
         }
+        this.tagsinputFn();
+        //$(".tb-host").off("change").on("change", this.HostListUpdate.bind(this));
+        //$(".tb-attendee").off("change").on("change", this.AttendeeListUpdate.bind(this));
     };
 
-    this.SetMeetingOption = function () {
-        if (this.FixedAttendee.val() !== '' && this.FixedHost.val() !== '') {
-            this.MeetingScheduleObj.MeetingOpts = 1;
-        }
-        else if (this.FixedHost.val() != '' && this.FixedAttendee.val() === '' ) {
-            this.MeetingScheduleObj.MeetingOpts = 2;
-        }
-        else if (this.FixedHost.val() === '' && this.FixedAttendee.val() !== '') {
-            this.MeetingScheduleObj.MeetingOpts = 3;
-        }
-        else if (this.FixedHost.val() === '' && this.FixedAttendee.val() === '') {
-            this.MeetingScheduleObj.MeetingOpts = 4;
-        }
-    };
+    //this.HostListUpdate = function (e) {
+    //    let val = e.target.getAttribute("id").split("_")[2];
+    //    this.SlotList[val].FixedHost = e.target.value;
+
+    //};
+    //this.AttendeeListUpdate = function (e) {
+    //    let val = e.target.getAttribute("id").split("_")[2];
+    //    this.SlotList[val].FixedAttendee = e.target.value;
+    //};
+
+    this.SlotIdChange = function (e) {
+        alert(e.target.id);
+    }
+    //this.Convert12to24 = function (a) {
+    //    let abc = a.trim().split(" ");
+    //    if(abc = )
+    //}
+    //this.SetMeetingOption = function () {
+    //    if (this.FixedAttendee.val() !== '' && this.FixedHost.val() !== '') {
+    //        this.MeetingScheduleObj.MeetingOpts = 1;
+    //    }
+    //    else if (this.FixedHost.val() != '' && this.FixedAttendee.val() === '') {
+    //        this.MeetingScheduleObj.MeetingOpts = 2;
+    //    }
+    //    else if (this.FixedHost.val() === '' && this.FixedAttendee.val() !== '') {
+    //        this.MeetingScheduleObj.MeetingOpts = 3;
+    //    }
+    //    else if (this.FixedHost.val() === '' && this.FixedAttendee.val() === '') {
+    //        this.MeetingScheduleObj.MeetingOpts = 4;
+    //    }
+    //};
 
     this.init = function () {
         this.InitDatePicker();

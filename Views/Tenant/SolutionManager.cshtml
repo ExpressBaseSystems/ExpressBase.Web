@@ -154,7 +154,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit"  data-whatever="MSSQL">
+                                    <div id="mssql" class="connection_wrap_outer  db-type-set" data-toggle="modal" data-target="#dbConnectionEdit" data-whatever="MSSQL">
                                         <div class="connection_wrap w-100">
                                             <div class="connection_wrap_header w-100 image-hover" id="DbConnection_config">
                                                 <img class="img-responsive image-vender" src="~/images/sqlserver.png" style="width:62%" />
@@ -474,15 +474,15 @@
                 <div class="tab-pane" id="home" role="tabpanel">
                     <div class="eb-sdash-general-container flex-center">
                         @*<div class="eb-sdash-longdiv w-100" style="margin-bottom:20px;">
-            <div class="eb-sdash-upgradecont">
-                <div class="col-md-8">
-                    <p>Change your solution info</p>
-                </div>
-                <div class="col-md-4">
-                    <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
-                </div>
-            </div>
-        </div>*@
+                                <div class="eb-sdash-upgradecont">
+                                    <div class="col-md-8">
+                                        <p>Change your solution info</p>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <button class="ebbtn eb_btnblue pull-right">Edit Solution</button>
+                                    </div>
+                                </div>
+                            </div>*@
                         <div class="eb-sdash-longdiv" style="margin-bottom:20px;">
                             <div class="eb-sdash-longdivhead">
                                 <label>Solution Logo</label>
@@ -525,9 +525,9 @@
                                     <div class="uname-advanced-sec">
                                         @*<label>Switch Versioning</label>*@
                                         @*<label class="switch">
-                            <input type="checkbox" id="VersioningSwitch" style="display:inline">
-                            <span class="slider round"></span>
-                        </label>*@
+                                                <input type="checkbox" id="VersioningSwitch" style="display:inline">
+                                                <span class="slider round"></span>
+                                            </label>*@
                                         <label class="label-custom-style" style="display:inline-block">Switch Versioning</label>
                                         <input id="VersioningSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" data-on="Versioning On" data-off="Versioning Off">
                                     </div>
@@ -542,13 +542,31 @@
                             <div class="eb-sdash-longdivcontainer">
                                 <div class="left-sec">
                                     <p>
-                                       Two-factor authentication (2FA), sometimes referred to as two-step verification or dual-factor authentication, is a security process in which users provide two different authentication factors to verify themselves. This process is done to better protect both the user's credentials and the resources the user can access.
+                                        Two-factor authentication (2FA), sometimes referred to as two-step verification or dual-factor authentication, is a security process in which users provide two different authentication factors to verify themselves. This process is done to better protect both the user's credentials and the resources the user can access.
                                     </p>
                                 </div>
                                 <div class="right-sec" style="display:flex;justify-content:center;min-width:25%;">
-                                    <div class="uname-advanced-sec">                                     
-                                        <label class="label-custom-style" style="display:inline-block">Switch 2FA</label>
-                                        <input id="2faSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" data-on="2FA On" data-off="2FA Off">
+                                    <div class="uname-advanced-sec">
+                                        @{ if (ViewBag.Connections.IsSmsIntegrated || ViewBag.Connections.IsEmailIntegrated)
+                                            {
+                                                <label class="label-custom-style" style="display:inline-block">Select OTP delivery method</label>
+
+                                                <div class="form-check form-check-inline checkbox-group">
+                                                    <input class="form-check-input" name="s" type="checkbox" id="emailcheckbox" value="email">
+                                                    <label class="form-check-label" for="emailcheckbox">Email</label>
+                                                    <input class="form-check-input" name="s" type="checkbox" id="smscheckbox" value="sms">
+                                                    <label class="form-check-label" for="smscheckbox">Sms</label>
+                                                </div>
+
+                                                <div class="form-check form-check-inline">
+                                                </div>
+                                                <input id="2faSwitch" type="checkbox" solutionid="@ViewBag.Connections.SolutionInfo.EsolutionId" data-toggle="toggle" data-on="2FA On" data-off="2FA Off">
+                                            }
+                                            else
+                                            {
+                                                <div style="color:red">Please integrate sms or email</div>
+                                            }
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -1017,7 +1035,7 @@
                                     <input id="TextLocalInputApi" name="ApiKey" class="form-control Inputclear eb_input-h" type="text" required />
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
                         <input type="hidden" name="SolutionId" value="@ViewBag.Connections.SolutionInfo.IsolutionId" />
                         <input type="hidden" class="Inputclear IntConfId" id="TextLocalInputIntConfId" name="Id" value="0" />
                     </div>

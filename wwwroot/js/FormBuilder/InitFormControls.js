@@ -685,7 +685,7 @@
                     }
                 }
                 else
-                    ctrl.__isJustSetValue = false;
+                    ctrl.__isJustSetValue = false;////////////////////////////////////////////????????????????????????????
             }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Renderer.chooseClick);
@@ -1102,14 +1102,21 @@
             });
         }
         else if (ctrl.TextMode === 2) {
-            $ctrl.on('input', function (event) {
-                if (EbvalidateEmail(event.target.value))
-                    ctrl.removeInvalidStyle();
-                else
-                    ctrl.addInvalidStyle("Invalid email");
-            });
+            $ctrl.on('input', this.checkEmail.bind(this, ctrl));
         }
     };
+
+    this.EmailControl = function (ctrl) {
+        let $ctrl = $("#" + ctrl.EbSid_CtxId);
+        $ctrl.on('input', this.checkEmail.bind(this, ctrl));
+    };
+
+    this.checkEmail = function (ctrl) {
+        if (EbvalidateEmail(event.target.value))
+            ctrl.removeInvalidStyle();
+        else
+            ctrl.addInvalidStyle("Invalid email");
+    }
 
     this.initNumeric = function (ctrl, $input) {
         let initValue = "0";
@@ -1255,8 +1262,6 @@
     };
 
     this.Numeric = function (ctrl) {
-        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
-        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.InputMode === 0) {

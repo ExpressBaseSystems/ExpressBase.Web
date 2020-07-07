@@ -103,7 +103,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.initDataModel();
             this.initFilterDialogCtrls();// order 1
             this.FRC.bindEbOnChange2Ctrls(this.FormObj.Controls.$values);// order 2
-            this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2
+            this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2 // replace with 'execDefaultvalsNC'
             this.FRC.setValueExpValsNC(this.FormObj.Controls.$values);//
             this.FRC.bindFnsToCtrls(this.flatControls);// order 4
             this.FRC.setDisabledControls(this.flatControls);// disables disabled controls

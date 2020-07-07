@@ -4,13 +4,11 @@ using ExpressBase.Common.Extensions;
 using ExpressBase.Common.LocationNSolution;
 using ExpressBase.Common.ServiceClients;
 using ExpressBase.Common.Structures;
-using ExpressBase.Objects.Helpers;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
 using ExpressBase.Web.Models;
 using ExpressBase.Web2.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
@@ -23,8 +21,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
@@ -37,7 +33,6 @@ namespace ExpressBase.Web.Controllers
     {
         public const string RequestEmail = "reqEmail";
         //public const string Email = "email";
-
         public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_client, _redis, _cxtacc, _mqc, _auth) { }
 
         [HttpPost]
@@ -66,6 +61,7 @@ namespace ExpressBase.Web.Controllers
         {
             return View();
         }
+
         public IActionResult MailAlreadyVerified()
         {
             return View();
@@ -302,6 +298,7 @@ namespace ExpressBase.Web.Controllers
                 return 0;
             }
         }
+
         private bool isAvailSolution()
         {
             bool IsAvail = false;
@@ -745,13 +742,14 @@ namespace ExpressBase.Web.Controllers
 
             Console.WriteLine("ENVIRONMENT-------->" + ViewBag.Env);
 
-            if (!data.Success && ViewBag.Env == "Production")
+            if (!data.Success && ViewBag.Env == "Production")//captcha error
             {
                 authresp.AuthStatus = false;
                 if (data.ErrorCodes.Count <= 0)
                 {
                     authresp.ErrorMessage = "The captcha input is invalid or malformed.";
                 }
+
                 var error = data.ErrorCodes[0].ToLower();
                 switch (error)
                 {
@@ -774,13 +772,13 @@ namespace ExpressBase.Web.Controllers
                         break;
                 }
             }
-            else
+            else//captcha is ok
             {
-                MyAuthenticateResponse authResponse = null;
+                string tenantid = ViewBag.cid;
+                MyAuthenticateResponse myAuthResponse = null;
                 try
                 {
-                    string tenantid = ViewBag.cid;
-                    authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+                    myAuthResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = req["uname"],
@@ -809,23 +807,99 @@ namespace ExpressBase.Web.Controllers
                     authresp.ErrorMessage = wse.Message;
                 }
 
-                if (authResponse != null)
+                if (myAuthResponse != null) // authenticated
                 {
-                    authresp.AuthStatus = true;
-                    CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                    Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
-                    Response.Cookies.Append("UserDisplayName", authResponse.User.FullName, options);
-                    if (req.ContainsKey("remember"))
-                        Response.Cookies.Append("UserName", req["uname"], options);
+                    bool is2fa = false;
+                    Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
+                    if (sol_Obj != null && sol_Obj.Is2faEnabled)
+                        is2fa = true;
 
-                    if (string.IsNullOrEmpty(redirect_url))
-                        authresp.RedirectUrl = this.RouteToDashboard(whichconsole);
-                    else
-                        authresp.RedirectUrl = redirect_url;
+                    if (is2fa && ViewBag.WhichConsole == "uc") //if 2fa enabled
+                    {
+                        this.ServiceClient.BearerToken = myAuthResponse.BearerToken;
+                        this.ServiceClient.RefreshToken = myAuthResponse.RefreshToken;
+                        Authenticate2FAResponse resp = this.ServiceClient.Post(new Authenticate2FARequest
+                        {
+                            MyAuthenticateResponse = myAuthResponse,
+                            SolnId = ViewBag.SolutionId,
+                        });
+                        authresp.AuthStatus = resp.AuthStatus;
+                        authresp.ErrorMessage = resp.ErrorMessage;
+                        authresp.Is2fa = resp.Is2fa;
+                        authresp.OtpTo = resp.OtpTo;
+
+                        CookieOptions options = new CookieOptions();
+                        Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
+                        Response.Cookies.Append(TokenConstants.USERAUTHID, myAuthResponse.User.AuthId, options);
+                        Response.Cookies.Append("UserDisplayName", myAuthResponse.User.FullName, options);
+                        if (req.ContainsKey("remember"))
+                            Response.Cookies.Append("UserName", req["uname"], options);
+                    }
+
+                    else//2fa NOT enabled
+                    {
+                        authresp.AuthStatus = true;
+                        CookieOptions options = new CookieOptions();
+                        Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, myAuthResponse.BearerToken, options);
+                        Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, myAuthResponse.RefreshToken, options);
+                        Response.Cookies.Append(TokenConstants.USERAUTHID, myAuthResponse.User.AuthId, options);
+                        Response.Cookies.Append("UserDisplayName", myAuthResponse.User.FullName, options);
+                        if (req.ContainsKey("remember"))
+                            Response.Cookies.Append("UserName", req["uname"], options);
+
+                        if (string.IsNullOrEmpty(redirect_url))
+                            authresp.RedirectUrl = this.RouteToDashboard(whichconsole);
+                        else
+                            authresp.RedirectUrl = redirect_url;
+                    }
                 }
             }
+            return authresp;
+        }
+
+        public EbAuthResponse ValidateOtp(string otp)
+        {
+            EbAuthResponse authresp = new EbAuthResponse();
+            string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
+            string authid = Request.Cookies[TokenConstants.USERAUTHID];
+            User _u = this.Redis.Get<User>(authid);
+            if (_u != null)
+            {
+                this.ServiceClient.BearerToken = _u.BearerToken;
+                this.ServiceClient.RefreshToken = _u.RefreshToken;
+                Authenticate2FAResponse response = this.ServiceClient.Post(new Validate2FARequest { Token = token });
+                authresp.AuthStatus = response.AuthStatus;
+                authresp.ErrorMessage = response.ErrorMessage;
+            }
+            if (authresp.AuthStatus)
+            {
+                if (otp == _u.Otp)
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, _u.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, _u.RefreshToken, options);
+                    authresp.RedirectUrl = this.RouteToDashboard(RoutingConstants.UC);
+                }
+                else
+                {
+                    authresp.AuthStatus = false;
+                    authresp.ErrorMessage = "The OTP you've entered is incorrect. Please try again.";
+                }
+            }
+            return authresp;
+        }
+
+        public EbAuthResponse ResendOtp()
+        {
+            EbAuthResponse authresp = new EbAuthResponse();
+            string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
+            string authid = Request.Cookies[TokenConstants.USERAUTHID];
+            User _u = this.Redis.Get<User>(authid);
+            this.ServiceClient.BearerToken = _u.BearerToken;
+            this.ServiceClient.RefreshToken = _u.RefreshToken;
+            Authenticate2FAResponse response = this.ServiceClient.Post(new ResendOTP2FARequest { Token = token });
+            authresp.AuthStatus = response.AuthStatus;
+            authresp.ErrorMessage = response.ErrorMessage;
             return authresp;
         }
 

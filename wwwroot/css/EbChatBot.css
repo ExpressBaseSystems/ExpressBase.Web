@@ -22,21 +22,51 @@ body {
 
 .eb-chat-cont {
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     position: fixed;
     height: 100%;
     width: 100%;
     border-radius: 3px;
 }
 
-    .eb-chat-cont .eb-textarea{
+    .eb-chat-cont .eb-FrameHeader {
+        text-align: center;
+        padding:5px;
+    }
+        .eb-chat-cont .eb-FrameHeader .chat-date {
+            display: inline-block;
+        }
+            .eb-chat-cont .eb-FrameHeader .chat-date span {
+                border-radius: 15px;
+                opacity: .8;
+                padding: 2px 8px;
+                font-size: 11px;
+            }
+        .eb-chat-cont .eb-FrameHeader .startOvercont {
+            display: inline-block;
+            float:right;
+        }
+            .eb-chat-cont .eb-FrameHeader .startOvercont button {
+                border-radius: 50%;
+                background-color: var(--botThemeColor);
+                padding: 4px;
+                cursor:pointer;
+            }
+                .eb-chat-cont .eb-FrameHeader .startOvercont button i {
+                    font-size: 10px;
+                    color: white;
+                    font-weight: 600;
+                }
+       
+
+    .eb-chat-cont .eb-textarea {
         border: none;
         resize: none;
-        outline:none;
+        outline: none;
     }
 
-    .eb-chat-cont [ctrl-type="SimpleFileUploader"] .SFUPcontent span{
-        font-size:12px !important;
+    .eb-chat-cont [ctrl-type="SimpleFileUploader"] .SFUPcontent span {
+        font-size: 12px !important;
     }
 /*.eb-chatBox, .eb-chatBox-dev {
     overflow-y: auto;
@@ -212,8 +242,9 @@ body {
     padding: 10px;
     border-radius: 4px;
 }
-.chat-ctrl-cont{
-    display:flex;
+
+.chat-ctrl-cont {
+    display: flex;
 }
 /*.chat-ctrl-readonly {
     position: relative;
@@ -261,16 +292,7 @@ border-radius: 4px;
     margin-right: -40px;
 }
 
-.chat-date {
-    text-align: center;
-}
 
-    .chat-date span {
-        border-radius: 15px;
-        opacity: .8;
-        padding: 2px 8px;
-        font-size: 11px;
-    }
 
 .inline-block {
     display: inline-block;
@@ -644,13 +666,13 @@ border-radius: 4px;
     background-color: #3b5998 !important;
     background-image: url(http://icons.iconarchive.com/icons/danleech/simple/512/facebook-icon.png) !important;
     margin-bottom: 10px;*/
-    /*..
+/*..
     ..
     ..*/
-    /*font-family: var(--bot_fontfamily)*/
-    /*font-family: "Merriweat!important;er Sans", sans-serif;*/
-    /*background-position: right center !important;*/
-    /*padding-right: 45px !important;*/
+/*font-family: var(--bot_fontfamily)*/
+/*font-family: "Merriweat!important;er Sans", sans-serif;*/
+/*background-position: right center !important;*/
+/*padding-right: 45px !important;*/
 /*}*/
 
 .btn-box .fbbtnstyl {
@@ -714,25 +736,25 @@ border-radius: 4px;
     padding: 6px 10px;
 }
 
-    .ctrl-wraper input[chat-inp] {
-        width: 100%;
+.ctrl-wraper input[chat-inp] {
+    width: 100%;
+}
+
+.ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
+    height: 34px;
+    border: none;
+    outline: none;
+    padding: 7px 4px;
+}
+
+    .ctrl-wraper input[type=radio], .ctrl-wraper .bot-checkbox {
+        height: inherit;
+        margin: 5px;
     }
 
-    .ctrl-wraper input, .ctrl-wraper select .ctrl-wraper textarea {
-        height: 34px;
-        border: none;
-        outline: none;
-        padding: 7px 4px;
-    }
-
-        .ctrl-wraper input[type=radio], .ctrl-wraper .bot-checkbox {
-            height: inherit;
-            margin: 5px;
-        }
-
-    .ctrl-wraper span {
-        /*padding-right:5px;*/
-    }
+.ctrl-wraper span {
+    /*padding-right:5px;*/
+}
 
 [name=ctrlsend] .fa, .cntct_btn .fa {
     margin-left: -5.5px;
@@ -1154,12 +1176,14 @@ border-radius: 4px;
 .card-outer-cont {
     background-color: var(--bgclrwhite);
 }
+
 .ctrlproceedBtn-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     line-height: 1.4;
 }
+
     .ctrlproceedBtn-wrapper .ctrlproceedBtn {
         border-radius: 30px;
         border: 1px solid var(--botThemeColor);
@@ -1169,7 +1193,9 @@ border-radius: 4px;
         word-break: break-word;
         box-shadow: 0 1px 4px 1px #0000003d;
         transition-duration: 0.1s;
+        z-index: 10;
     }
+
 .ctrlproceedBtn:hover {
     box-shadow: 0px 1px 5px 1px #0000007a;
     cursor: pointer;
@@ -1178,6 +1204,7 @@ border-radius: 4px;
 .flxdirctn_col {
     flex-direction: column;
 }
+
 .renderAtBtm {
     display: flex;
     align-items: center;
@@ -1191,8 +1218,9 @@ border-radius: 4px;
 }
 
 .msg-wraper-renderAtbottom {
-    width:100%;
+    width: 100%;
 }
-.msg-cont-w100{
-    width:100% !important;
+
+.msg-cont-w100 {
+    width: 100% !important;
 }

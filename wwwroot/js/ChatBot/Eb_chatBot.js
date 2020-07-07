@@ -10,6 +10,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     //this.botdpURL = 'url(' + window.atob(settings.DpUrl || window.btoa('../images/businessmantest.png')) + ')center center no-repeat';
     this.$chatCont = $(`<div class="eb-chat-cont" eb-form='true'  eb-root-obj-container isrendermode='true'></div>`);
     this.$chatBox = $('<div class="eb-chatBox"></div>');
+    this.$frameHeader = $('<div class="eb-FrameHeader"></div>');
     this.$inputCont = $('<div class="eb-chat-inp-cont"><input type="text" class="msg-inp"/><button class="btn btn-info msg-send"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div>');
     this.$poweredby = $('<div class="poweredby-cont"><div class="poweredby"><i>powered by</i> <span>EXPRESSbase</span></div></div>');
     this.$msgCont = $('<div class="msg-cont"></div>');
@@ -20,8 +21,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.$userMsgBox.append('<div class="bot-icon-user"></div>');
     this.ready = true;
     this.isAlreadylogined = true;
-    this.bearerToken = null;
-    this.refreshToken = null;
+    //this.bearerToken = null;
+    //this.refreshToken = null;
     this.initControls = new InitControls(this);
     this.rendererName = "Bot";
     this.typeDelay = 600;
@@ -47,7 +48,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.ssurl = ssurl;
     this.userLoc = {};
     this.botQueue = [];
-
+    this.botflg = {};
+    this.botflg.loadFormlist = false;
     this.formObject = {};// for passing to user defined functions
     this.CurFormflatControls = [];// for passing to user defined functions
 
@@ -101,6 +103,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);
         $("body").on("click", ".poweredby", this.poweredbyClick);
         $("body").on("click", ".ctrlproceedBtn", this.proceedReadonlyCtrl.bind(this));
+        $("body").on("click", "#eb_botStartover", this.botStartoverfn.bind(this));
+        //$("#eb_botStartover").on("click", this.botStartoverfn.bind(this));
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         $("body").on("keyup", ".chat-ctrl-cont [ui-inp]", this.inpkeyUp);
         $("body").on("keyup", ".chat-ctrl-cont [chat-inp]", this.chatInpkeyUp);
@@ -115,7 +119,6 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     this.poweredbyClick = function () {
         window.open('https://expressbase.com/Products/Bots/', '_blank');
     }.bind(this);
-
 
     //if anonimous user /not loggegin using fb
     this.contactSubmit = function (e) {
@@ -212,10 +215,11 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
     //check user is valid / is user authenticated
     this.ajaxSetup4Future = function () {
-        $.ajaxSetup({
-            beforeSend: function (xhr) { xhr.setRequestHeader('bToken', this.bearerToken); xhr.setRequestHeader('rToken', this.refreshToken); }.bind(this),
-            complete: function (resp) { this.bearerToken = resp.getResponseHeader("btoken"); }.bind(this)
-        });
+        //$.ajaxSetup({
+        //    //beforeSend: function (xhr) { xhr.setRequestHeader('bToken', this.bearerToken); xhr.setRequestHeader('rToken', this.refreshToken); }.bind(this),
+        //    //complete: function (resp) { this.bearerToken = resp.getResponseHeader("btoken"); }.bind(this)
+        
+        //});
     };
 
     this.authenticateAnon = function (email, phno, name) {
@@ -236,8 +240,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.hideTypingAnim();
                 if (result === null)
                     this.authFailed();
-                this.bearerToken = result[0];
-                this.refreshToken = result[1];
+                //this.bearerToken = result[0];
+                //this.refreshToken = result[1];
                 this.formsDict = result[2];
                 window.ebcontext.user = JSON.parse(result[3]);
                 //this.formNames = Object.values(this.formsDict);
@@ -246,7 +250,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 $('.eb-chatBox').empty();
                 this.showDate();
                 this.AskWhatU();
-                this.ajaxSetup4Future();
+               // this.ajaxSetup4Future();
 
                 /////////////////////////////////////////////////
 
@@ -258,6 +262,39 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }.bind(this));
 
     }.bind(this);
+
+    this.getBotformList = function () {
+        if (this.botflg.loadFormlist === false) {
+            setTimeout(function () {
+                this.showTypingAnim();
+            }.bind(this), this.typeDelay);
+            this.botflg.loadFormlist = true;
+            $.ajax({
+                type: "POST",
+                url: "../Boti/GetBotformlist",
+                data: {
+                    cid: this.EXPRESSbase_SOLUTION_ID, appid: this.EXPRESSbase_APP_ID
+                },
+                success: function (result) {
+                    this.botflg.loadFormlist = false;
+                    this.hideTypingAnim();
+                    if (result === null)
+                        this.authFailed();
+                    this.formsDict = result[0];
+                    window.ebcontext.user = JSON.parse(result[1]);
+                    this.formNames = Object.values(result[2]);
+                    this.formIcons = result[3];
+                    this.AskWhatU();
+
+                }.bind(this)
+            })
+        }
+        
+    }.bind(this);
+
+
+
+
 
 
     this.postmenuClick = function (e, reply) {
@@ -745,6 +782,10 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             }
             else {
                 let disphtml = $btn.parent().prev().find('.slick-active').css('display', 'block');
+                if ($(disphtml).find('.card-pls-mns').length > 0) {
+                    $(disphtml).find('.card-pls-mns').remove();
+                }
+                $(disphtml).css('pointer-events', 'none');
                 //var rmv = disphtml.find('.card-selbtn-cont').empty();
                 $msg.find('.msg-wraper-user').html(disphtml.outerHTML()).append(this.getTime());
                 //  $msg.find('.msg-wraper-user').html($btn.parent().prev().find('.slick-active').html()).append(this.getTime());
@@ -921,9 +962,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 }
             }
             else {
-                if (this.curCtrl.ObjType === "TVcontrol") {
+                if ((this.curCtrl.ObjType === "TVcontrol") || (this.curCtrl.ObjType === "Video") || (this.curCtrl.ObjType === "Image")) {
                     $ctrlCont = $(this.wrapIn_chat_ctrl_readonly(controlHTML));
-                }                
+                }
             }
             var label = this.curCtrl.Label;
             if (label) {
@@ -931,17 +972,18 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                     label += ` (${this.curCtrl.HelpText})`;
                 this.msgFromBot(label);
             }
-            if (this.curCtrl.ObjType === "Image") {
-                let btnhtml = this.proceedBtnHtml('mrg_tp_10');
-                let readonlywraperhtml = `<div class="chat-ctrl-readonly ctrl-cont-bot flxdirctn_col" ebreadonly="${this.curCtrl.IsDisable}">
-                                              ${controlHTML}  ${btnhtml} 
-                                         </div>`;
-                $ctrlCont = $(readonlywraperhtml);
-                this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
-                //this.nxtCtrlIdx++;
-                //this.callGetControl();
-            }
-            else if (this.curCtrl.ObjType === "Labels") {
+            //if (this.curCtrl.ObjType === "Image") {
+            //    let btnhtml = this.proceedBtnHtml('mrg_tp_10');
+            //    let readonlywraperhtml = `<div class="chat-ctrl-readonly ctrl-cont-bot flxdirctn_col" ebreadonly="${this.curCtrl.IsDisable}">
+            //                                  ${controlHTML}  ${btnhtml} 
+            //                             </div>`;
+            //    $ctrlCont = $(readonlywraperhtml);
+            //    this.msgFromBot($ctrlCont, function () { $(`#${name}`).select(); }, name);
+            //    //this.nxtCtrlIdx++;
+            //    //this.callGetControl();
+            //}
+            //else
+            if (this.curCtrl.ObjType === "Labels") {
                 this.sendLabels(this.curCtrl);
             }
             else
@@ -1159,6 +1201,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
     }.bind(this);
 
     this.msgFromBot = function (msg, callbackFn, ctrlname) {
+        this.hideTypingAnim();
         var $msg = this.$botMsgBox.clone();
         this.$chatBox.append($msg);
         this.startTypingAnim($msg);
@@ -1450,9 +1493,17 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             dd = '0' + dd;
         }
         today = dd + '-' + mmm + '-' + yyyy;
-        this.$chatBox.append(`<div class="chat-date"><span>${today}</span></div>`);
+        this.$frameHeader.empty();
+        this.$frameHeader.append(`<div class="chat-date"><span>${today}</span></div>`);
+        this.setStartOver();
     };
 
+    this.setStartOver = function () {
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" title="Start Over"> <button type="button" id="eb_botStartover" class="btn btn-default btn-sm">
+         <i class="fa fa-repeat"></i>
+        </button></div>`));
+    };
+   
     this.getTime = function () {
         let hour = new Date().getHours();
         let am_pm = "am";
@@ -1505,8 +1556,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 this.hideTypingAnim();
                 if (result === null)
                     this.authFailed();
-                this.bearerToken = result[0];
-                this.refreshToken = result[1];
+                //this.bearerToken = result[0];
+                //this.refreshToken = result[1];
                 this.formsDict = result[2];
                 window.ebcontext.user = JSON.parse(result[3]);
                 //this.formNames = Object.values(this.formsDict););
@@ -1736,7 +1787,83 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
         }
 
+    }.bind(this);   
+
+    this.botStartoverfn = function () {
+        if (this.botflg.loadFormlist === false) {
+            this.ClearFormVariables();
+            $('.eb-chatBox').empty();
+            this.showDate();
+            this.botUserLogin();
+        }
+       
+    }; 
+
+    this.botUserLogin = function() {
+        this.msgFromBot(this.welcomeMessage);
+
+        if (settings.Authoptions.Fblogin) {
+            // This is called with the results from from FB.getLoginStatus().
+
+            window.fbAsyncInit = function () {
+                console.log("bot" + settings.Authoptions.FbAppVer);
+                FB.init({
+                    appId: settings.Authoptions.FbAppID,
+                    //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
+                    cookie: true,  // enable cookies to allow the server to access
+                    // the session
+                    xfbml: true,  // parse social plugins on this page
+                    version: settings.Authoptions.FbAppVer
+                    //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
+                });
+
+                FB.getLoginStatus(function (response) {
+                    statusChangeCallback(response);
+                });
+
+            };
+
+            // Load the SDK asynchronously
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/sdk.js";
+                fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+
+
+            function statusChangeCallback(response) {
+                console.log('statusChangeCallback');
+                this.FB = FB;
+                //if (response.status === 'connected') {
+                //    this.FBLogined();
+                //} else {
+                //    this.FBNotLogined();
+                //}
+            }
+
+            // This function is called when someone finishes with the Login
+            function checkLoginState() {
+                FB.getLoginStatus(function (response) {
+                    statusChangeCallback(response);
+                });
+            };
+
+
+
+        }
+        if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {
+            this.getBotformList();
+        }
+        else {
+            this.AnonymousLoginOptions();
+        }
+
     }.bind(this);
+
+
+
     this.initConnectionCheck = function () {
         Offline.options = { checkOnLoad: true, checks: { image: { url: 'https://expressbase.com/images/logos/EB_Logo.png?' + Date.now() }, active: 'image' } };
         setInterval(this.connectionPing, 500000);///////////////////////////////////////////////////////////////
@@ -1968,5 +2095,11 @@ var datasetObj = function (label, data, backgroundColor, borderColor, fill) {
 
 function getToken() {
     var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
+    return b ? b.pop() : '';
+}
+
+function getTokenFromCookie(name) {
+   // var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
+    var b = document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
     return b ? b.pop() : '';
 }

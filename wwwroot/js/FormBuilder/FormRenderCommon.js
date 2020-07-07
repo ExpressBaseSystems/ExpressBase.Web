@@ -24,31 +24,47 @@
     };
 
     ////////////
-    this.setDefaultValues = function (Obj) {
-        //if (Obj.DefaultValue)
-        //    Obj.setValue(Obj.DefaultValue);
-        if (Obj.DefaultValueExpression && Obj.DefaultValueExpression.Code) {
-            let fun = new Function("form", "user", `event`, atob(Obj.DefaultValueExpression.Code)).bind(Obj, this.FO.formObject, this.FO.userObject);
-            let val = fun();
+    this.setDefaultValue = function (ctrl) {
+        if (ctrl.DefaultValueExpression && ctrl.DefaultValueExpression.Code) {
+            try {
+                let val = new Function("form", "user", `event`, atob(ctrl.DefaultValueExpression.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject)();
 
-            let PSInitCompleteCallBFn = function (select) {
-                this.FO.IsPSsInitComplete[select.EbSid_CtxId] = true;
-                if (isAllValuesTrue(this.FO.IsPSsInitComplete))
-                    this.FO._allPSsInit = true;
-                select.initializer.V_hideDD();
-            }.bind(this);
+                let PSInitCompleteCallBFn = function (select) {
+                    this.FO.IsPSsInitComplete[select.EbSid_CtxId] = true;
+                    if (isAllValuesTrue(this.FO.IsPSsInitComplete))
+                        this.FO._allPSsInit = true;
+                    select.initializer.V_hideDD();
+                }.bind(this);
 
-            if (Obj.ObjType === "PowerSelect" && !Obj.RenderAsSimpleSelect)
-                Obj.setValue(val, PSInitCompleteCallBFn.bind(this));
-            else
-                Obj.setValue(val);
+                if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
+                    ctrl.setValue(val, PSInitCompleteCallBFn.bind(this));
+                else
+                    ctrl.justSetValue(val);
+            } catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'DefaultValueExpression' of : " + ctrl.Name + " - " + e.message);
+            }
         }
     };
 
     this.setDefaultvalsNC = function (flatControls) {
         $.each(flatControls, function (k, Obj) {
-            this.setDefaultValues(Obj);
+            this.setDefaultValue(Obj);
         }.bind(this));
+    };
+
+    this.execDefaultvalsNC = function (defaultValsExecOrder) {
+        if (!defaultValsExecOrder) {//for old forms
+            console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        defaultValsExecOrderArr = defaultValsExecOrder.$values;
+        for (let i = 0; i < defaultValsExecOrderArr.length; i++) {
+            let ctrlPath = defaultValsExecOrderArr[i];
+            let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
+            this.setDefaultValue(ctrl);
+        }
     };
 
     this.setValueExpValsNC = function (flatControls) {
@@ -65,9 +81,15 @@
             this.bindRequired(Obj);
         if (Obj.Unique)
             this.bindUniqueCheck(Obj);
-        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") || Obj.DependedValExp.$values.length > 0
-            || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId)
-            this.bindOnChange(Obj);
+
+        if (Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId)
+            this.bindValueUpdateFns_OnChange(Obj);
+
+        if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") ||
+            Obj.HiddenExpDependants && Obj.HiddenExpDependants.$values.length > 0 ||
+            Obj.DisableExpDependants && Obj.DisableExpDependants.$values.length > 0)
+            this.bindBehaviorFns_OnChange(Obj);
+
         if (Obj.Validators && Obj.Validators.$values.length > 0)
             this.bindValidators(Obj);
     };
@@ -84,11 +106,17 @@
     };
 
     this.fireInitOnchangeNC = function (flatControls) {
-        $.each(flatControls, function (k, Obj) {
+        for (let i = 0; i < flatControls.length; i++) {
+            let Obj = flatControls[i];
             if (Obj.ObjType === "ScriptButton")
-                return true;
+                continue;
             this.fireInitOnchange(Obj);
-        }.bind(this));
+        }
+        //$.each(flatControls, function (k, Obj) {
+        //    if (Obj.ObjType === "ScriptButton")
+        //        return true;
+        //    this.fireInitOnchange(Obj);
+        //}.bind(this));
     };
 
     this.bindFnsToCtrls = function (flatControls) {
@@ -103,18 +131,35 @@
         }.bind(this));
     };
 
-    this.bindOnChange = function (control) {
+    this.wrapInFn = function (fn) {
+        return `(function(){${fn}})();`
+    };
+
+    this.bindValueUpdateFns_OnChange = function (control) {//2nd onchange Fn bind
         try {
-            let FnString = `/*console.log('${control.__path || control.Name}');*/` + atob(control.OnChangeFn.Code) +
-                `
-                //if(this.DataVals){
-                //    this.DataVals.Value = this.getValue();
-                //    this.DataVals.D = this.getDisplayMember();
-                //}
-` +
-                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? ` ; form.updateDependentControls(${control.__path}, form);` : "");
+            let FnString =
+                ((control.DependedValExp && control.DependedValExp.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? `
+                if(!this.___isNotUpdateValExpDepCtrls){
+                    form.updateDependentControls(${control.__path}, form);
+                }
+                this.___isNotUpdateValExpDepCtrls = false;` : "");/// cleanup, return if no ...
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
-            control.__onChangeFn = onChangeFn;
+            control.bindOnChange(onChangeFn);
+        } catch (e) {
+            console.eb_log("eb error :");
+            console.eb_log(e);
+            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+        }
+    };
+
+    this.bindBehaviorFns_OnChange = function (control) {// 3rd onchange Fn bind
+        try {
+            let FnString =
+                this.wrapInFn(atob(control.OnChangeFn.Code)) +
+                ((control.HiddenExpDependants && control.HiddenExpDependants.$values.length !== 0 || control.DisableExpDependants && control.DisableExpDependants.$values.length !== 0) ? ` ;
+                    form.updateDependentControlsBehavior(${control.__path}, form);` : "");
+            let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+            control.__onChangeFn = onChangeFn;// for FD only need clenup
             control.bindOnChange(onChangeFn);
         } catch (e) {
             console.eb_log("eb error :");
@@ -171,16 +216,19 @@
         }
     };
 
-    this.bindEbFnOnChange = function (control) {
+    this.DataValsUpdate = function (form, user, event) {
+        if (!this.___DoNotUpdateDataVals) {
+            if (this.DataVals) {
+                this.DataVals.Value = this.getValueFromDOM();
+                this.DataVals.D = this.getDisplayMemberFromDOM();
+            }
+        }
+    };
+
+    this.bindEbFnOnChange = function (control) {//1st onchange Fn bind
         try {
-            let onChangeFn = function (form, user, event) {
-                if (this.DataVals) {
-                    this.DataVals.Value = this.getValueFromDOM();
-                    this.DataVals.D = this.getDisplayMemberFromDOM();
-                }
-            }.bind(control, this.FO.formObject, this.FO.userObject);
-            control.__onChangeFn = onChangeFn;
-            control.bindOnChange(onChangeFn);
+            control.__onChangeFn = this.DataValsUpdate.bind(control, this.FO.formObject, this.FO.userObject); // takes a copy
+            control.bindOnChange(control.__onChangeFn);// binding to onchange
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
@@ -211,84 +259,148 @@
         }.bind(this);
     }.bind(this);
 
-    this.setUpdateDependentControlsFn = function () {
-        this.FO.formObject.updateDependentControls = function (curCtrl) {
-            if (curCtrl.DependedValExp) {
-                $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
-                    let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                    if (depCtrl === "not found")
-                        return;
-                    try {
-                        if (depCtrl.ObjType === "TVcontrol") {
-                            depCtrl.reloadWithParam(curCtrl);
-                        }
-                        else {
-                            if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
-                                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
-                                let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
-                                if (valExpFnStr) {
-                                    if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                                        //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-                                        if ((!this.FO.Mode.isView && !this.FO.isInitialEditModeDataSet) || depCtrl.DoNotPersist) {
-                                            depCtrl.setValue(ValueExpr_val);
-                                            //this.isRequiredOK(depCtrl);
-                                        }
-                                    }
-                                    else {
-                                        $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
-                                            row[depCtrl.Name].setValue(ValueExpr_val);
-                                        }.bind(this));
-                                    }
-                                    //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
-                                    //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
+    this.UpdateValExpDepCtrls = function (curCtrl) {
+        $.each(curCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl === "not found")
+                return;
+            try {
+                if (depCtrl.ObjType === "TVcontrol") {
+                    depCtrl.reloadWithParam(curCtrl);
+                }
+                else {
+                    if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0) {
+                        let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                        let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                        if (valExpFnStr) {
+                            if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
+                                //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
+
+                                // if persist - manual onchange only setValue. DoNotPersist always setValue
+                                //if ((!this.FO.Mode.isView && !this.FO.isInitialEditModeDataSet) || depCtrl.DoNotPersist) {
+                                if ((!this.FO.isInitialProgramaticOnchange) || depCtrl.DoNotPersist) {
+                                    //depCtrl.setValue(ValueExpr_val);
+                                    //depCtrl.___isNotUpdateValExpDepCtrls = true;
+                                    //depCtrl.setValue(ValueExpr_val);
+                                    depCtrl.justSetValue(ValueExpr_val);
+                                    //this.isRequiredOK(depCtrl);
                                 }
                             }
-                            else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
-                                let params = [];
-
-                                $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
-                                    try {
-                                        let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
-                                        let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
-                                        let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
-                                        params.push(param);
-                                    }
-                                    catch (e) {
-                                        console.eb_log("eb error :");
-                                        console.eb_log(e);
-                                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                                    }
+                            else {
+                                $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {
+                                    row[depCtrl.Name].setValue(ValueExpr_val);
                                 }.bind(this));
-
-                                ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
                             }
+                            //if (depCtrl.IsDGCtrl && depCtrl.__Col.IsAggragate)
+                            //    depCtrl.__Col.__updateAggCol({ target: $(`#${depCtrl.EbSid_CtxId}`)[0] });
                         }
                     }
-                    catch (e) {
-                        console.eb_log("eb error :");
-                        console.eb_log(e);
-                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                    }
-                }.bind(this));
-            }
+                    else if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 2) {
+                        let params = [];
 
+                        $.each(depCtrl.ValExpParams.$values, function (i, depCtrl_s) {// duplicate code in eb_utility.js
+                            try {
+                                let paramCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+                                let valExpFnStr = atob(paramCtrl.ValueExpr.Code);
+                                let param = { Name: paramCtrl.Name, Value: paramCtrl.getValue(), Type: "11" };
+                                params.push(param);
+                            }
+                            catch (e) {
+                                console.eb_log("eb error :");
+                                console.eb_log(e);
+                                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+                            }
+                        }.bind(this));
+
+                        ExecQuery(this.FO.FormObj.RefId, depCtrl.Name, params, depCtrl);
+                    }
+                }
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+            }
+        }.bind(this));
+    }.bind(this);
+
+    this.importDGRelatedUpdates = function (curCtrl) {
+        $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
+            try {
+                let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
+                depCtrl.__setSuggestionVals();
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+            }
+        }.bind(this));
+    }.bind(this);
+
+    this.PSImportRelatedUpdates = function (curCtrl) {
+        curCtrl.isDataImportCtrl = true;
+        this.FO.psDataImport(curCtrl);
+    }.bind(this);
+
+    this.UpdateHideExpDepCtrls = function (curCtrl) {
+        let depCtrls_SArr = curCtrl.HiddenExpDependants.$values;
+
+        for (let i = 0; i < depCtrls_SArr.length; i++) {
+            let depCtrl_s = depCtrls_SArr[i];
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl.HiddenExpr) {
+                let hideExpFnStr = atob(depCtrl.HiddenExpr.Code);
+                let hideExpVal = new Function("form", "user", `event`, hideExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (hideExpVal)
+                    depCtrl.hide();
+                else
+                    depCtrl.show();
+            }
+        }
+    }.bind(this);
+
+    this.UpdateDisableExpDepCtrls = function (curCtrl) {
+        let depCtrls_SArr = curCtrl.DisableExpDependants.$values;
+        for (let i = 0; i < depCtrls_SArr.length; i++) {
+            let depCtrl_s = depCtrls_SArr[i];
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl.DisableExpr) {
+                let disableExpFnStr = atob(depCtrl.DisableExpr.Code);
+                let disableExpVal = new Function("form", "user", `event`, disableExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
+                if (disableExpVal) {
+                    depCtrl.disable();
+                    depCtrl.__IsDisableByExp = true;
+                }
+                else {
+                    depCtrl.enable();
+                    depCtrl.__IsDisableByExp = false;;
+                }
+            }
+        }
+    }.bind(this);
+
+    this.setUpdateDependentControlsFn = function () {
+        this.FO.formObject.updateDependentControls = function (curCtrl) { //calls in onchange
+            if (curCtrl.DependedValExp && curCtrl.DependedValExp.$values.length !== 0) {
+                this.UpdateValExpDepCtrls(curCtrl);
+            }
             if (curCtrl.DependedDG) {
-                $.each(curCtrl.DependedDG.$values, function (i, depCtrl_s) {
-                    try {
-                        let depCtrl = this.FO.formObject.__getCtrlByPath('form.' + depCtrl_s);
-                        depCtrl.__setSuggestionVals();
-                    }
-                    catch (e) {
-                        console.eb_log("eb error :");
-                        console.eb_log(e);
-                        alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
-                    }
-                }.bind(this));
+                this.importDGRelatedUpdates(curCtrl);
             }
-
             if (curCtrl.DataImportId && this.FO.Mode.isNew) {
-                curCtrl.isDataImportCtrl = true;
-                this.FO.psDataImport(curCtrl);
+                this.PSImportRelatedUpdates(curCtrl);
+            }
+        }.bind(this);
+    };
+
+    this.setUpdateDependentControlsBehaviorFns = function () {
+        this.FO.formObject.updateDependentControlsBehavior = function (curCtrl) { //calls in onchange
+            if (curCtrl.HiddenExpDependants && curCtrl.HiddenExpDependants.$values.length !== 0) {
+                this.UpdateHideExpDepCtrls(curCtrl);
+            }
+            if (curCtrl.DisableExpDependants && curCtrl.DisableExpDependants.$values.length !== 0) {
+                this.UpdateDisableExpDepCtrls(curCtrl);
             }
         }.bind(this);
     };
@@ -352,9 +464,8 @@
 
     // checks a control value is emptyString
     this.sysValidationsOK = function (ctrl) {
-
         // email validation
-        if (ctrl.ObjType === "TextBox" && ctrl.TextMode === 2) {
+        if ((ctrl.ObjType === "TextBox" && ctrl.TextMode === 2) || ctrl.ObjType === "Email") {
             if (EbvalidateEmail(ctrl.getValueFromDOM())) {
                 ctrl.removeInvalidStyle();
                 return true;

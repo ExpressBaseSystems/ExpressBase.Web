@@ -774,7 +774,7 @@ var EbTags = function (settings) {
         this.id.empty();
         var filter = "";
         $.each(this.displayFilterDialogArr, function (i, ctrl) {
-            filter = ctrl.name + " " + ctrl.operator + " " + ctrl.value;
+            filter = ctrl.title + " " + ctrl.operator + " " + ctrl.value;
             this.id.append(`<div class="tagstyle priorfilter">${filter}</div>`);
             if (ctrl.logicOp !== "")
                 this.id.append(`<div class="tagstyle priorfilter">${ctrl.logicOp}</div>`);
@@ -784,7 +784,7 @@ var EbTags = function (settings) {
             this.id.append(`<div class="tagstyle op">AND</div>`);
 
         $.each(this.displayColumnSearchArr, function (i, search) {
-            filter = search.name + " " + returnOperator(search.operator.trim());
+            filter = search.title + " " + returnOperator(search.operator.trim());
             filter += " " + search.value;
             this.id.append(`<div class="tagstyle" data-col="${search.name}" data-val="${search.value}">${filter} <i class="fa fa-close"></i></div>`);
             if (search.logicOp !== "")
@@ -1078,21 +1078,6 @@ function EBPSSetDisplayMember(p1, p2) {
             }
         }
     }
-
-    //if (this.initializer.datatable === null) {//for aftersave actions
-    //    for (let i = 0; i < this.DataVals.R.length; i++) {
-    //        let row = this.DataVals.R[i];
-    //        $.each(row.Columns, function (k, column) {
-    //            if (!columnVals[column.Name]) {
-    //                console.warn('Found mismatch in Columns from datasource and Colums in object');
-    //                return true;
-    //            }
-    //            let val = EbConvertValue(column.Value, column.Type);
-    //            columnVals[column.Name].push(val);
-    //        }.bind(this));
-
-    //    }
-    //}
 
     $("#" + this.EbSid_CtxId).val(p1);
 }

@@ -52,15 +52,15 @@
 //        this.enableRow(this.$currentTr);
 //    }.bind(this);
 
-//    ctrl.setEditModeRows = function (SingleTable) {/////////// need change
-//        return this.setEditModeRows(SingleTable);
+//    ctrl.populateDGWithDataModel = function (SingleTable) {/////////// need change
+//        return this.populateDGWithDataModel(SingleTable);
 //    }.bind(this);
 
 //    ctrl.disableAllCtrls = function () {
 //        this.disableAllCtrls();
 //    }.bind(this);
 
-//    this.setEditModeRows = function (SingleTable) {
+//    this.populateDGWithDataModel = function (SingleTable) {
 //        if (SingleTable.length === 0) {
 //            this.$currentTr = this.$table.find(`tr[name='${this.stages[0].Name}']`);
 //            return;

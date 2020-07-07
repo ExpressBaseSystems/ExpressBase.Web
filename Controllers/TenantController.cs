@@ -236,15 +236,15 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(resp);
         }
 
-        public string Switch2FA(bool data, string SolnId)
+        public string Switch2FA(bool data, string SolnId, string deliveryMethod)
         {
             GetVersioning resp = new GetVersioning();
             try
             {
-                resp = this.ServiceClient.Post<GetVersioning>(new SolutionEditRequest { Value = data, solution_id = SolnId, ChangeColumn = solutionChangeColumn.TwoFa });
-                this.MqClient.Post<RefreshSolutionConnectionsAsyncResponse>(new RefreshSolutionConnectionsBySolutionIdAsyncRequest()
+                resp = this.ServiceClient.Post<GetVersioning>(new SolutionEditRequest { Value = data, solution_id = SolnId, ChangeColumn = solutionChangeColumn.TwoFa, DeliveryMethod = deliveryMethod });
+                this.ServiceClient.Post<UpdateSolutionObjectResponse>(new UpdateSolutionObjectRequest()
                 {
-                    SolutionId = SolnId
+                    SolnId = SolnId
                 });
 
             }

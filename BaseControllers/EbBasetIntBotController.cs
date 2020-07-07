@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using ExpressBase.Security;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -33,11 +34,11 @@ namespace ExpressBase.Web.BaseControllers
             string host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);
             string[] hostParts = host.Split(CharConstants.DOT);
 
-            //string path = context.HttpContext.Request.Path.Value.ToLower();
+			////string path = context.HttpContext.Request.Path.Value.ToLower();		
 
-			string btoken_aid = HelperFunction.GetDecriptedString_Aes(context.HttpContext.Request.Headers[RoutingConstants.BEARER_TOKEN]);
+			string btoken_aid = HelperFunction.GetDecriptedString_Aes(context.HttpContext.Request.Cookies[RoutingConstants.BOT_BEARER_TOKEN]);
 			string sBToken = btoken_aid.Substring(0, btoken_aid.LastIndexOf(CharConstants.DOT));
-            string sRToken = context.HttpContext.Request.Headers[RoutingConstants.REFRESH_TOKEN];
+			string sRToken = context.HttpContext.Request.Cookies[RoutingConstants.BOT_REFRESH_TOKEN];
 			this.AnonUserId = Convert.ToInt32(btoken_aid.Substring(btoken_aid.LastIndexOf(CharConstants.DOT) + 1));
 
 			if (string.IsNullOrEmpty(sBToken) || string.IsNullOrEmpty(sRToken))
@@ -52,7 +53,6 @@ namespace ExpressBase.Web.BaseControllers
                 try
                 {
                     var bToken = new JwtSecurityToken(sBToken);
-
 
                     Session = new CustomUserSession();
                     Session.Id = context.HttpContext.Request.Cookies[CacheConstants.X_SS_PID];
@@ -75,8 +75,9 @@ namespace ExpressBase.Web.BaseControllers
                         this.FileClient.RefreshToken = sRToken;
                         this.FileClient.Headers.Add(CacheConstants.RTOKEN, sRToken);
                     }
+					this.LoggedInUser = this.Redis.Get<User>(bToken.Payload[TokenConstants.SUB].ToString());
 
-                    var controller = context.Controller as Controller;
+					var controller = context.Controller as Controller;
                     controller.ViewBag.tier = context.HttpContext.Request.Query["tier"];
                     controller.ViewBag.tenantid = context.HttpContext.Request.Query["id"];
                     controller.ViewBag.UId = Convert.ToInt32(bToken.Payload[TokenConstants.UID]);
@@ -94,7 +95,7 @@ namespace ExpressBase.Web.BaseControllers
 
                 catch (System.ArgumentNullException ane)
                 {
-                    if (ane.ParamName == RoutingConstants.BEARER_TOKEN || ane.ParamName == RoutingConstants.REFRESH_TOKEN)
+                    if (ane.ParamName == RoutingConstants.BOT_BEARER_TOKEN || ane.ParamName == RoutingConstants.BOT_REFRESH_TOKEN)
                     {
                         context.Result = new RedirectResult("/");
                         return;
@@ -104,7 +105,7 @@ namespace ExpressBase.Web.BaseControllers
 
             base.OnActionExecuting(context);
 
-			Response.Headers.Add(RoutingConstants.BEARER_TOKEN, HelperFunction.GetEncriptedString_Aes(this.ServiceClient.BearerToken + CharConstants.DOT + this.AnonUserId.ToString()));
+			Response.Headers.Add(RoutingConstants.BOT_BEARER_TOKEN, HelperFunction.GetEncriptedString_Aes(this.ServiceClient.BearerToken + CharConstants.DOT + this.AnonUserId.ToString()));
         }
 
     }

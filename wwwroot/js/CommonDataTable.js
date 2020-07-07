@@ -128,7 +128,6 @@
                     icon: "fa-filter",
                     dir: "left",
                     label: "Parameters",
-                    //btnTop: 42,
                     style: { top: "78px" }
                 });
             }
@@ -255,6 +254,14 @@
         }
     }.bind(this);
 
+    this.GetFD = function () {
+        $("#eb_common_loader").EbLoader("show");
+        this.RemoveColumnRef();
+        this.FilterDialogRefId = this.EbObject.FilterDialogRefId;
+        if (this.FilterDialogRefId !== "" && this.FilterDialogRefId)
+            $.post("../dv/GetFilterBody", { dvobj: JSON.stringify(this.EbObject), contextId: "paramdiv" + this.tabNum }, this.ajaxSucc.bind(this));
+    };
+
     this.SetColumnRef = function () {
         $.each(this.EbObject.Columns.$values, function (i, obj) {
             obj.ColumnsRef = this.EbObject.Columns;
@@ -378,7 +385,10 @@
         }
         else {
             this.EbObject.IsPaging = this.IsPaging = false;
-            this.getColumnsSuccess();
+            if (this.EbObject.IsDataFromApi && this.EbObject.FilterDialogRefId)
+                this.GetFD();
+            else
+                this.getColumnsSuccess();
         }
     };
 
@@ -497,9 +507,11 @@
             this.isCustomColumnExist = false;
         else {
             this.isCustomColumnExist = true;
-            temp.map(function (x) {
-                x.orderable = false;
-                return x;
+            temp.forEach(function (x) {
+                if (x.$type.indexOf("DVPhoneColumn") !== -1)
+                    x.orderable = true;
+                else
+                    x.orderable = false;
             });
         }
     };
@@ -840,7 +852,10 @@
         dq.TFilters = this.columnSearch;
         if (this.filterValues.length === 0)
             this.filterValues = this.getFilterValues();
-        dq.Params = this.filterValues;
+        if (this.EbObject.IsDataFromApi)
+            this.ModifyToRequestParams();
+        else
+            dq.Params = this.filterValues;
 
         dq.OrderBy = this.getOrderByInfo();
         if (this.columnSearch.length > 0) {
@@ -856,6 +871,12 @@
         dq.dvRefId = this.Refid;
         dq.TableId = this.tableId;
         return dq;
+    };
+
+    this.ModifyToRequestParams = function () {
+        this.EbObject.Parameters.$values = this.filterValues.map(function (row) {
+            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
+        });
     };
 
     this.getOrderByInfo = function () {
@@ -1012,6 +1033,7 @@
                 var o = new displayFilter();
                 var ctype = $(ctrl).attr("ctype");
                 o.name = $($(ctrl).children()[0]).text();
+                o.title = $($(ctrl).children()[0]).text();
                 o.operator = "=";
                 if (ctype === "PowerSelect")
                     o.value = $(ctrl).find("input").attr("display-members");
@@ -1045,7 +1067,8 @@
                 search = this.columnSearch[i];
                 var o = new displayFilter();
                 let colObj = getObjByval(this.EbObject.Columns.$values, "name", search.Column);
-                o.name = colObj.sTitle;
+                o.title = colObj.sTitle;
+                o.name = colObj.name;
                 o.operator = search.Operator;
                 var searchobj = $.grep(this.columnSearch, function (ob) { return ob.Column === search.Column; });
                 if (searchobj.length === 1) {
@@ -1053,7 +1076,8 @@
                         $.each(search.Value.split("|"), function (j, val) {
                             if (val.trim() !== "") {
                                 var o = new displayFilter();
-                                o.name = colObj.sTitle;
+                                o.title = colObj.sTitle;
+                                o.name = colObj.name;
                                 o.operator = search.Operator;
                                 o.value = val;
                                 if (typeof search.Value.split("|")[j + 1] !== "undefined" && search.Value.split("|")[j + 1].trim() !== "")
@@ -1092,8 +1116,8 @@
     };
 
     this.closeTag = function (e, obj) {
-        var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column === obj.name; });
-        var index = this.columnSearch.findIndex(x => x.Column === obj.name);
+        var searchObj = $.grep(this.columnSearch, function (ob) { return ob.Column.toLowerCase() === obj.name.toLowerCase(); });
+        var index = this.columnSearch.findIndex(x => x.Column.toLowerCase() === obj.name.toLowerCase());
         if (searchObj.length === 1) {
             if (searchObj[0].Value.includes("|")) {
                 var val = "";
@@ -1215,22 +1239,26 @@
         var api = this.Api;
         if (api !== null) {
             this.Api.columns().every(function (i) {
-                var colum = api.settings().init().aoColumns[i].name;
-                if (colum !== 'checkbox' && colum !== 'serial') {
+                let colobj = api.settings().init().aoColumns[i];
+                let paracolum = colobj.name;
+                if (colobj.$type && colobj.$type.indexOf("DVPhoneColumn") !== -1)
+                    paracolum = colobj.MappingColumn.name;
+
+                if (paracolum !== 'checkbox' && paracolum !== 'serial' && colobj.bVisible) {
                     var oper;
                     var val1, val2;
-                    var textid = '#' + table + '_' + colum + '_hdr_txt1';
+                    var textid = '#' + table + '_' + colobj.name + '_hdr_txt1';
                     //var type = $(textid).attr('data-coltyp');
-                    var type = api.settings().init().aoColumns[i].Type;
-                    var Rtype = api.settings().init().aoColumns[i].RenderType;
+                    var type = colobj.Type;
+                    var Rtype = colobj.RenderType;
                     if (Rtype === 3) {
-                        var obj = this.EbObject.Columns.$values.find(x => x.name === colum);
+                        var obj = this.EbObject.Columns.$values.find(x => x.name === paracolum);
                         val1 = ($(textid).is(':checked')) ? obj.TrueValue : obj.FalseValue;
                         if (!($(textid).is(':indeterminate')))
-                            filter_obj_arr.push(new filter_obj(colum, "=", val1, type));
+                            filter_obj_arr.push(new filter_obj(paracolum, "=", val1, type));
                     }
                     else {
-                        oper = $('#' + table + '_' + colum + '_hdr_sel').text().trim();
+                        oper = $('#' + table + '_' + colobj.name + '_hdr_sel').text().trim();
                         if (api.columns(i).visible()[0]) {
                             if (oper !== '' && $(textid).val() !== '') {
                                 if (oper === 'B') {
@@ -1238,28 +1266,26 @@
                                     val2 = $(textid).siblings('input').val();
                                     if (oper === 'B' && val1 !== '' && val2 !== '') {
                                         if (Rtype === 8 || Rtype === 7 || Rtype === 11 || Rtype === 12) {
-                                            filter_obj_arr.push(new filter_obj(colum, ">=", Math.min(val1, val2)));
-                                            filter_obj_arr.push(new filter_obj(colum, "<=", Math.max(val1, val2), type));
+                                            filter_obj_arr.push(new filter_obj(paracolum, ">=", Math.min(val1, val2)));
+                                            filter_obj_arr.push(new filter_obj(paracolum, "<=", Math.max(val1, val2), type));
                                         }
                                         else if (Rtype === 5 || Rtype === 6) {
-                                            //val1 = this.changeDateOrder(val1);
-                                            //val2 = this.changeDateOrder(val2);
                                             let d1 = Date.parse(moment(val1, 'DD-MM-YYYY').format('YYYY-MM-DD'));
                                             let d2 = Date.parse(moment(val2, 'DD-MM-YYYY').format('YYYY-MM-DD'));
                                             if (d2 > d1) {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val1, type));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val2, type));
+                                                filter_obj_arr.push(new filter_obj(paracolum, ">=", val1, type));
+                                                filter_obj_arr.push(new filter_obj(paracolum, "<=", val2, type));
                                             }
                                             else {
-                                                filter_obj_arr.push(new filter_obj(colum, ">=", val2, type));
-                                                filter_obj_arr.push(new filter_obj(colum, "<=", val1, type));
+                                                filter_obj_arr.push(new filter_obj(paracolum, ">=", val2, type));
+                                                filter_obj_arr.push(new filter_obj(paracolum, "<=", val1, type));
                                             }
                                         }
                                     }
                                 }
                                 else {
                                     var data = $(textid).val();
-                                    filter_obj_arr.push(new filter_obj(colum, oper, data, type));
+                                    filter_obj_arr.push(new filter_obj(paracolum, oper, data, type));
                                 }
                             }
                         }
@@ -1600,61 +1626,43 @@
             if ($('#clearfilterbtn_' + this.tableId).children("i").hasClass("fa-times"))
                 $('#clearfilterbtn_' + this.tableId).children("i").removeClass("fa-times").addClass("fa-filter");
         }
-
-        this.Api.columns().every(function (i) {
-            var colum = this.Api.settings().init().aoColumns[i].name;
-            var colObj = $.grep(this.columnSearch, function (obj) { return obj.Column === colum; });
-
-            var textid = '#' + this.tableId + '_' + colum + '_hdr_txt1';
-            if (colum !== 'checkbox' && colum !== 'serial' && colObj.length > 0) {
-                var oper;
-                var val1, val2;
-                var type = $(textid).attr('data-coltyp');
-                if (type === 'boolean') {
-                    if (colObj.Value === "true")
-                        $(textid).attr("checked", true);
-                    else if (colObj.Value === "false")
-                        $(textid).attr("checked", false);
-                    else
-                        $(textid).attr("indeterminate", true);
+        $('.' + this.tableId + '_htext').val("");
+        for (let i = 0; i < this.columnSearch.length; i++) {
+            let param1 = this.columnSearch[i];
+            let param2 = this.columnSearch[i + 1];
+            var colum = param1.Column;
+            let phonecolumns = this.EbObject.Columns.$values.filter(obj => obj.$type.indexOf("DVPhoneColumn") !== -1);
+            phonecolumns.forEach(function (obj) {
+                if (obj.MappingColumn.name === colum) {
+                    colum = obj.name;
+                    return false;
                 }
-                else {
-                    if (this.Api.columns(i).visible()[0]) {
-                        if (colObj[0].Operator !== '' && colObj[0].Value !== '') {
-                            if (colObj.length === 2) {
-                                //$('#' + this.tableId + '_' + colum + '_hdr_sel').text("B");
-                                //if (type === "date")
-                                //    $(textid).val(this.retainDateOrder(colObj[0].Value));
-                                //else
-                                $(textid).val(colObj[0].Value);
-                                $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
-                                //if (type === "date")
-                                //    $(textid).siblings('input').val(this.retainDateOrder(colObj[1].Value));
-                                //else
-                                $(textid).siblings('input').val(colObj[1].Value);
-                            }
-                            else {
-                                //if (type === "date")
-                                //    $(textid).val(this.retainDateOrder(colObj[0].Value));
-                                //else
-                                $(textid).val(colObj[0].Value);
-                                $('#' + this.tableId + '_' + colum + '_hdr_sel').text(colObj[0].Operator);
-                            }
-                        }
+            });
+            let textid = '#' + this.tableId + '_' + colum + '_hdr_txt1';
+            let type = $(textid).attr('data-coltyp');
+            if (type === 'boolean') {
+                if (param1.Value === "true")
+                    $(textid).attr("checked", true);
+                else if (param1.Value === "false")
+                    $(textid).attr("checked", false);
+                else
+                    $(textid).attr("indeterminate", true);
+            }
+            else {
+                if (param1.Operator !== '' && param1.Value !== '') {
+                    if (param2 && param2.Column === param1.Column) {
+                        $(textid).val(param1.Value);
+                        $(".eb_fsel" + this.tableId + "[data-colum=" + colum + "]").trigger("click");
+                        $(textid).siblings('input').val(param2.Value);
+                        i++;
+                    }
+                    else {
+                        $(textid).val(param1.Value);
+                        $('#' + this.tableId + '_' + colum + '_hdr_sel').text(param1.Operator);
                     }
                 }
             }
-            else {
-                if ($(textid).attr("type") === "checkbox")
-                    $(textid).prop('indeterminate', true);
-                else {
-                    $(textid).val("");
-                    if ($(textid).next().length === 1)
-                        $(textid).next().val("");
-                }
-            }
-        }.bind(this));
-        //}
+        }
     };
 
     this.CreateHeaderTooltip = function () {
@@ -2820,7 +2828,7 @@
         let colname = $(opt.$trigger).attr("data-colname");
         this.phonecolumn = this.EbObject.Columns.$values.filter(obj => obj.name === colname)[0];
         this.AppendSMSModal($(opt.$trigger));
-        this.AppendSMSTemplates();
+        this.AppendSMSTemplates($(opt.$trigger));
         $("#smsmodal").modal("show");
     };
 
@@ -2830,55 +2838,99 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Select Template</h5>
+        <h5 class="modal-title">SMS Template</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body" id='sms-modal-body'>
+        <table class='table'>
+            <tbody>
+                <tr><td><div class='smslabel'>Template :</div></td><td class='smstemplate-select-cont'></td>
+                    <td><div class='smslabel'>To :</div></td>
+                    <td class='sms-number-cont'>
+                        <input class="form-control" type='text' id='sms-number' placeholder='phone number here..'>
+                    </td>
+                </tr>
+                <tr><td colspan='4' class='sms-textarea-cont'><textarea id='sms-textarea' class="form-control" placeholder='SMS text here..'></textarea></td></tr>
+            </tbody>
+        </table>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" id='sendbtn'>Send</button>
+        <button class="btn btn-primary" id='sendbtn'><i class="fa fa-paper-plane" aria-hidden="true"></i><span id='sendbtn-text'>Send</span></button>
       </div>
     </div>
   </div>
 </div>`;
 
         $("body").prepend(modal1);
-        $("#sendbtn").prop('disabled', true);
+        $("#sendbtn").prop("disabled", true);
         $("#sendbtn").off("click").on("click", this.SendSMS.bind(this, $elem));
     };
 
-    this.AppendSMSTemplates = function(){
-        let template = ``;
+    this.AppendSMSTemplates = function ($elem) {
+        let template = `<select class="selectpicker smstemplate-select">`;
+        //template += `<option value=''>--- Select SMS Template ---</option>`;
         $.each(this.phonecolumn.Templates.$values, function (i, obj) {
-            template += `<div class='template-cont' data-refid='${obj.ObjRefId}'>
-                <div class='template-inner-cont'>${obj.ObjDisplayName}</div>
-            </div>`;
+            template += `<option value='${obj.ObjRefId}'>${obj.ObjDisplayName}</option>`;
         });
-        $("#sms-modal-body").append(template);
-        $("#sms-modal-body .template-cont").off("click").on("click", this.ClickOnTemplate.bind(this));
+        template += `<option value=''>Custom Template</option>`;
+        template += `</select>`;
+        $(".smstemplate-select-cont").append(template);
+        $(".smstemplate-select").selectpicker();
+        $('#sms-modal-body .selectpicker').on('changed.bs.select', this.ClickOnTemplate.bind(this, $elem));
+        $('#sms-modal-body .selectpicker').val(this.phonecolumn.Templates.$values[0].ObjRefId).change();
     };
 
-    this.ClickOnTemplate = function () {
-        $("#sendbtn").prop('disabled', false);
-        $("#sms-modal-body .template-cont").removeClass("active-template");
-        $(event.target).closest(".template-cont").addClass("active-template");
-    };
-
-    this.SendSMS = function ($elem) {
-        $("#smsmodal").modal("hide");
-        $("#eb_common_loader").EbLoader("show");
-        let refid = $(".active-template").attr("data-refid");
+    this.ClickOnTemplate = function ($elem,e, clickedIndex, isSelected, previousValue) {
+        let refid = $(".smstemplate-select option:selected").val();
         var idx = this.Api.row($elem.parents().closest("td")).index();
         this.rowData = this.unformatedData[idx];
         let filters = this.getFilterValues().concat(this.FilterfromRow());
-        $.ajax({
-            type: "POST",
-            url: "../DV/SendSMS",
-            data: { RefId: refid, Params: filters },
-            success: this.SendSMSSuccess.bind(this)
-        });
+        $("#sendbtn").prop("disabled", false);
+        if (refid) {
+            $.ajax({
+                type: "POST",
+                url: "../DV/GetSMSPreview",
+                data: { RefId: refid, Params: filters },
+                success: this.AppendSMSPreview.bind(this)
+            });
+        }
+        else
+            this.AppendSMSPreview();
+    };
+    this.AppendSMSPreview = function (result) {
+        if (result) {
+            result = JSON.parse(result);
+            $("#sms-number").val(result.FilledSmsTemplate.SmsTo).prop("disabled", true);
+            $("#sms-textarea").val(atob(result.FilledSmsTemplate.SmsTemplate.Body)).prop("disabled", true);
+        }
+        else {
+            $("#sms-number").val("").prop("disabled", false);
+            $("#sms-textarea").val("").prop("disabled", false);
+        }
+    };
+
+    this.SendSMS = function ($elem) {
+        if (this.MakeSMSValidation()) {
+            $("#smsmodal").modal("hide");
+            $("#eb_common_loader").EbLoader("show");
+            $.ajax({
+                type: "POST",
+                url: "../DV/SendSMS",
+                data: { To: $("#sms-number").val(), Body: $("#sms-textarea").val() },
+                success: this.SendSMSSuccess.bind(this)
+            });
+        }
+    };
+
+    this.MakeSMSValidation = function () {
+        if ($("#sms-number").val() && $("#sms-textarea").val())
+            return true;
+        else {
+            EbMessage("show", { Message: "Phone number or text is Empty", Background: "#e40707" });
+            return false;
+        }
     };
 
     this.SendSMSSuccess = function () {
@@ -3472,8 +3524,11 @@
         });
         var name = $(obj).children('span').text();
         var tempobj = $.grep(this.EbObject.Columns.$values, function (col) { return col.name === name; });
-        if (tempobj.length > 0)
+        if (tempobj.length > 0) {
             var idx = tempobj[0].data;
+            if (tempobj[0].$type && tempobj[0].$type.indexOf("DVPhoneColumn") !== -1)
+                idx = tempobj[0].MappingColumn.data;
+        }
         var data = arrayColumn(this.unformatedData, idx);
         data = data.filter(val => val !== null && val !== undefined);
         data = data.filter(function (elem, pos) {
@@ -3546,10 +3601,13 @@
     this.orderingEvent = function (e) {
         //var col = $(e.target).children('span').text();
         var col = $(e.target).text();
-        var tempobj = $.grep(this.Api.settings().init().aoColumns, function (obj) { return obj.sTitle === col });
+        var tempobj = $.grep(this.Api.settings().init().aoColumns, function (obj) { return obj.sTitle === col; });
         var cls = $(e.target).attr('class');
         if (col !== '' && col !== "#") {
-            this.order_info.col = tempobj[0].name;
+            if (tempobj[0].$type.indexOf("DVPhoneColumn") !== -1)
+                this.order_info.col = tempobj[0].MappingColumn.name;
+            else
+                this.order_info.col = tempobj[0].name;
             this.order_info.dir = (cls.indexOf('sorting_asc') > -1) ? 1 : 0;
             //this.orderColl = $.grep(this.orderColl, function (obj) { return obj.Column !== this.order_info.col }.bind(this));
             //if (this.EbObject.rowGrouping.$values.length === 0)
@@ -3589,6 +3647,10 @@
             _ls += "<th>";
             if (col.name === "serial") {
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:black'></i></a>");
+            }
+            else if (col.$type && col.$type.indexOf("DVPhoneColumn") !== -1) {
+                data_colum = "data-colum='" + col.MappingColumn.name + "'";
+                _ls += (span + this.getFilterForString(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex, col.DefaultOperator));
             }
             else if (col.IsCustomColumn) {
                 _ls += span;
@@ -4269,20 +4331,21 @@
 
 
     this.ExportToExcel = function (e) {
-        $('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
-        //var ob = new Object();
-        //ob.DataVizObjString = JSON.stringify(this.EbObject);
-        //ob.Params = this.filterValues;
-        //ob.TFilters = this.columnSearch;
-        //this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.cloud', Channels: ["ExportToExcel"] });
-        //this.ss.onExcelExportSuccess = function (url) {
-        //    window.location.href = url;
-        //};
-        //$.ajax({
-        //    type: "POST",
-        //    url: "../DV/exportToexcel",
-        //    data: { req: ob }
-        //});
+        //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        this.RemoveColumnRef();
+        var ob = new Object();
+        ob.DataVizObjString = JSON.stringify(this.EbObject);
+        ob.Params = this.filterValues;
+        ob.TFilters = this.columnSearch;
+        this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.cloud', Channels: ["ExportToExcel"] });
+        this.ss.onExcelExportSuccess = function (url) {
+            window.location.href = url;
+        };
+        $.ajax({
+            type: "POST",
+            url: "../DV/exportToexcel",
+            data: { req: ob }
+        });
 
     };
 
@@ -4333,7 +4396,7 @@
     this.updateRenderFunc_Inner = function (i, col) {
         //this.EbObject.Columns.$values[i].sClass = "";
         //this.EbObject.Columns.$values[i].className = "";
-        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1 && col.$type.indexOf("DVPhoneColumn") === -1) {
+        if (col.$type.indexOf("DVButtonColumn") === -1 && col.$type.indexOf("DVApprovalColumn") === -1 && col.$type.indexOf("DVActionColumn") === -1) {
             if (col.RenderType === parseInt(gettypefromString("Int32")) || col.RenderType === parseInt(gettypefromString("Decimal")) || col.RenderType === parseInt(gettypefromString("Int64")) || col.RenderType === parseInt(gettypefromString("Numeric"))) {
 
                 if (this.EbObject.Columns.$values[i].Align.toString() === EbEnums.Align.Auto)
@@ -4664,8 +4727,9 @@ Array.prototype.min = function () {
     return Math.min.apply(null, this);
 };
 
-var displayFilter = function (col, oper, val, Loper) {
+var displayFilter = function (col, title, oper, val, Loper) {
     this.name = col;
+    this.title = title;
     this.operator = oper;
     this.value = val;
     this.logicOp = Loper;

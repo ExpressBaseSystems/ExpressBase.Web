@@ -519,6 +519,9 @@ namespace ExpressBase.Web.Controllers
                 request.RefId = ebobject.DataSourceRefId;
                 request.IsExcel = true;
                 request.Params = req.Params;
+                request.TFilters = req.TFilters;
+                Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+                request.eb_Solution = s_obj;
                 this.ServiceClient.Post(request);
             }
 

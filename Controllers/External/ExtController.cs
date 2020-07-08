@@ -35,14 +35,14 @@ namespace ExpressBase.Web.Controllers
         //public const string Email = "email";
         public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_client, _redis, _cxtacc, _mqc, _auth) { }
 
-        [HttpPost]
-        [EnableCors("AllowSpecificOrigin")]
-        public bool JoinBeta()
-        {
-            string Email = this.HttpContext.Request.Form["Email"];
-            JoinbetaResponse f = this.ServiceClient.Post<JoinbetaResponse>(new JoinbetaReq { Email = Email });
-            return f.Status;
-        }
+        //[HttpPost]
+        //[EnableCors("AllowSpecificOrigin")]
+        //public bool JoinBeta()
+        //{
+        //    string Email = this.HttpContext.Request.Form["Email"];
+        //    JoinbetaResponse f = this.ServiceClient.Post<JoinbetaResponse>(new JoinbetaReq { Email = Email });
+        //    return f.Status;
+        //}
 
         [HttpGet]
         public IActionResult QuestionNaire(int id)
@@ -305,11 +305,11 @@ namespace ExpressBase.Web.Controllers
             if (ViewBag.SolutionId != String.Empty && ViewBag.SolutionId != null)
             {
                 IsAvail = isAvailInRedis();
-                if (!IsAvail)
-                {
-                    RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
-                    IsAvail = isAvailInRedis();
-                }
+                //if (!IsAvail)
+                //{
+                //    RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
+                //    IsAvail = isAvailInRedis();
+                //}
             }
             return IsAvail;
         }
@@ -772,8 +772,7 @@ namespace ExpressBase.Web.Controllers
                         break;
                 }
             }
-            else//captcha is ok
-            {
+             
                 string tenantid = ViewBag.cid;
                 MyAuthenticateResponse myAuthResponse = null;
                 try
@@ -851,8 +850,7 @@ namespace ExpressBase.Web.Controllers
                             authresp.RedirectUrl = this.RouteToDashboard(whichconsole);
                         else
                             authresp.RedirectUrl = redirect_url;
-                    }
-                }
+                    } 
             }
             return authresp;
         }

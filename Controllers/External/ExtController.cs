@@ -772,8 +772,7 @@ namespace ExpressBase.Web.Controllers
                         break;
                 }
             }
-            else//captcha is ok
-            {
+             
                 string tenantid = ViewBag.cid;
                 MyAuthenticateResponse myAuthResponse = null;
                 try
@@ -851,8 +850,7 @@ namespace ExpressBase.Web.Controllers
                             authresp.RedirectUrl = this.RouteToDashboard(whichconsole);
                         else
                             authresp.RedirectUrl = redirect_url;
-                    }
-                }
+                    } 
             }
             return authresp;
         }

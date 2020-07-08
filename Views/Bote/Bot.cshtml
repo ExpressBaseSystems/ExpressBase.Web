@@ -165,7 +165,6 @@
         console.log("bot loaded");
         var html = document.getElementsByTagName('html')[0];
         html.style.setProperty("--botThemeColor", (settings.ThemeColor || "#055c9b"));
-
         if (settings.BotProp.AppFont) {
              $("head").append("<link href='https://fonts.googleapis.com/css?family=" + settings.BotProp.AppFont + "' rel='stylesheet' type='text/css'>");
         html.style.setProperty("--bot_fontfamily", settings.BotProp.AppFont);
@@ -174,30 +173,27 @@
         html.style.setProperty("--bot_fontsize", settings.BotProp.AppFontSize+"px");
         }
         if (settings.BotProp.Bg_value) {
-           let bgtyp=settings.BotProp.Bg_type ;
+            let bgtyp = settings.BotProp.Bg_type;
             if (bgtyp === 'bg_clr') {
               html.style.setProperty("--eb-bot-bg-color", settings.BotProp.Bg_value);
             }
             else if (bgtyp === 'bg_grdnt') {
               html.style.setProperty("--eb-bot-bg-color", settings.BotProp.Bg_value);
             } else if (bgtyp === 'bg_img') {
-                html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
+               html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);      
             }
         }
-
         chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.ServiceUrl', ServerEventUrl);
-
         $.get("https://ipinfo.io", function (response) {
             chatBotObj.userDtls.ip = response.ip;
             chatBotObj.userDtls.browser = getBrowserName();
         }, "jsonp");
-
-
-        botUserLogin();
+           
+         chatBotObj.botUserLogin();
     });
-    function botUserLogin() {
+    @*function botUserLogin() {
         chatBotObj.msgFromBot(chatBotObj.welcomeMessage);
-
+       
         if (settings.Authoptions.Fblogin) {
             // This is called with the results from from FB.getLoginStatus().
 
@@ -249,12 +245,17 @@
 
 
         }
+        if (( getTokenFromCookie("bot_bToken")!= "")&&(getTokenFromCookie("bot_rToken")!="")) {
+                chatBotObj.getBotformList();
+            }
+            else {
+                chatBotObj.AnonymousLoginOptions();
+            }
+       
 
-        chatBotObj.AnonymousLoginOptions();
 
 
-
-        }
+        }*@
 
 
 

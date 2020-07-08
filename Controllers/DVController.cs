@@ -401,22 +401,21 @@ namespace ExpressBase.Web.Controllers
             }
             return res;
         }
+        
 
-        public void SendSMS(SMSInitialRequest request)
+        public void SendSMS(SmsDirectRequest request)
         {
-            if (request.RefId != null)
-            {
-                Eb_Solution sol = GetSolutionObject(this.LoggedInUser.CId);
-                request.SolnId = sol.SolutionID;
-                request.UserAuthId = this.LoggedInUser.AuthId;
-                request.UserId = this.LoggedInUser.UserId;
-                var xx = this.ServiceClient.Post(request);
-            }
+            Eb_Solution sol = GetSolutionObject(this.LoggedInUser.CId);
+            request.SolnId = sol.SolutionID;
+            request.UserAuthId = this.LoggedInUser.AuthId;
+            request.UserId = this.LoggedInUser.UserId;
+            var xx = this.ServiceClient.Post(request);
         }
 
-        public object GetSMSPreview(string refid)
+        public string GetSMSPreview(GetFilledSmsTemplateRequest request)
         {
-            return new { Text = "hhhhhhhhhh", Ph = "123456789"};
+            GetFilledSmsTemplateResponse resp = this.ServiceClient.Get(request);
+            return EbSerializers.Json_Serialize(resp);
         }
 
         public DataSourceDataResponse getData4Inline(InlineTableDataRequest _request)
@@ -520,6 +519,8 @@ namespace ExpressBase.Web.Controllers
                 request.RefId = ebobject.DataSourceRefId;
                 request.IsExcel = true;
                 request.Params = req.Params;
+                Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+                request.eb_Solution = s_obj;
                 this.ServiceClient.Post(request);
             }
 

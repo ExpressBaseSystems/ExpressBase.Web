@@ -685,7 +685,7 @@
                     }
                 }
                 else
-                    ctrl.__isJustSetValue = false;
+                    ctrl.__isJustSetValue = false;////////////////////////////////////////////????????????????????????????
             }.bind(ctrl)
         });
         //$(`#${name}_Cont .choose-btn`).click(this.Renderer.chooseClick);
@@ -1262,8 +1262,6 @@
     };
 
     this.Numeric = function (ctrl) {
-        //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
-        //setTimeout(function () {
         var id = ctrl.EbSid_CtxId;
         let $input = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.InputMode === 0) {
@@ -1438,8 +1436,22 @@
         };
     };
 
-    this.Phone = function (ctrl) {
+    this.Phone = function (ctrl, ctrlOpts) {
+        $('.phnContextBtn').hide();
+        if (this.Renderer.mode === 'View Mode') {
+            if (this.Renderer.rendererName === "WebForm") {
+                if (ctrl.SendMessage) {
+                    this.ctrlopts = ctrlOpts;
+                    this.phonectrl = ctrl;
+                    this.Contexmenu4SmsColumn(ctrl);
+                }
+            }
+        }
+        
         var phninput = document.querySelector(`#${ctrl.EbSid}`);
+
+       
+
         var iti = window.intlTelInput(phninput, {
             allowDropdown: true,
             // autoHideDialCode: false,
@@ -1473,9 +1485,158 @@
         ctrl.setValue = function (p1) {
             iti.setNumber(p1);
         };
+        
+
     };
 
+    this.Contexmenu4SmsColumn = function (ctrl) {
+        $.contextMenu({
+            selector: ".phnContextBtn",
+            trigger: 'left',
+            build: function ($trigger, e) {
+                return {
+                    items: {
+                        "SENDSMS": {
+                            name: "Send SMS",
+                            icon: "fa-mobile",
+                            callback: this.OpenSMSModal.bind(this)
+                        }
+                    }
+                };
+            }.bind(this)
+        });
+    };
+    this.OpenSMSModal = function (ctrl, opt) {
+        //let colname = $(opt.$trigger).attr("data-colname");
+        //this.phonecolumn = this.EbObject.Columns.$values.filter(obj => obj.name === colname)[0];       
+        this.AppendSMSModal($(opt.$trigger));
+        this.AppendSMSTemplates($(opt.$trigger));
+        $("#smsmodal").modal("show");
+    };
 
+    this.AppendSMSModal = function ($elem) {
+        $("#smsmodal").remove();
+        let modal1 = `<div class="modal fade" tabindex="-1" role="dialog" id='smsmodal'>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">SMS Template</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id='sms-modal-body'>
+        <table class='table'>
+            <tbody>
+                <tr><td><div class='smslabel'>Template :</div></td><td class='smstemplate-select-cont'></td>
+                    <td><div class='smslabel'>To :</div></td>
+                    <td class='sms-number-cont'>
+                        <input class="form-control" type='text' id='sms-number' placeholder='phone number here..'>
+                    </td>
+                </tr>
+                <tr><td colspan='4' class='sms-textarea-cont'><textarea id='sms-textarea'  rows='5' style='resize:none' class="form-control" placeholder='SMS text here..'></textarea></td></tr>
+            </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id='sendbtn'><i class="fa fa-paper-plane" aria-hidden="true"></i><span id='sendbtn-text'>Send</span></button>
+      </div>
+    </div>
+  </div>
+</div>`;
+
+        $("body").prepend(modal1);
+        $("#sendbtn").prop("disabled", true);
+        $("#sendbtn").off("click").on("click", this.SendSMS.bind(this, $elem));
+    }.bind(this);
+
+    this.AppendSMSTemplates = function ($elem) {
+        let template = `<select class="selectpicker smstemplate-select">`;
+        //template += `<option value=''>--- Select SMS Template ---</option>`;
+        $.each(this.phonectrl.Templates.$values, function (i, obj) {
+            template += `<option value='${obj.ObjRefId}'>${obj.ObjDisplayName}</option>`;
+        });
+        template += `<option value=''>Custom Template</option>`;
+        template += `</select>`;
+        $(".smstemplate-select-cont").append(template);
+        $(".smstemplate-select").selectpicker();
+        $('#sms-modal-body .selectpicker').on('changed.bs.select', this.ClickOnTemplate.bind(this, $elem));
+        $('#sms-modal-body .selectpicker').val(this.phonectrl.Templates.$values[0].ObjRefId).change();
+    };
+
+    this.ClickOnTemplate = function ($elem, e, clickedIndex, isSelected, previousValue) {
+        let refid = $(".smstemplate-select option:selected").val();
+        //var idx = this.Api.row($elem.parents().closest("td")).index();
+        //this.rowData = this.unformatedData[idx];
+        //let filters = this.getFilterValues().concat(this.FilterfromRow());
+        let filters = getValsFromForm(this.ctrlopts.formObj);
+        filters.push(new fltr_obj(11, "id", this.Renderer.rowId));
+        $("#sendbtn").prop("disabled", false);
+        if (refid) {
+            $.ajax({
+                type: "POST",
+                url: "../DV/GetSMSPreview",
+                data: { RefId: refid, Params: filters },
+                success: this.AppendSMSPreview.bind(this)
+            });
+        }
+        else
+            this.AppendSMSPreview();
+    };
+    this.AppendSMSPreview = function (result) {
+        if (result) {
+            result = JSON.parse(result);
+            $("#sms-number").val(result.FilledSmsTemplate.SmsTo).prop("disabled", true);
+            $("#sms-textarea").val(atob(result.FilledSmsTemplate.SmsTemplate.Body)).prop("disabled", true);
+        }
+        else {          
+            $("#sms-textarea").val("").prop("disabled", false);
+        }
+    };
+    this.SendSMS = function ($elem) {
+        if (this.MakeSMSValidation()) {
+            $("#smsmodal").modal("hide");
+            $("#eb_common_loader").EbLoader("show");
+            let refid = $(".smstemplate-select option:selected").val();
+            if (refid) {
+                //var idx = this.Api.row($elem.parents().closest("td")).index();
+                //this.rowData = this.unformatedData[idx];
+                //let filters = this.getFilterValues().concat(this.FilterfromRow());
+                let filters = getValsFromForm(this.ctrlopts.formObj);
+                filters.push(new fltr_obj(11, "id", this.Renderer.rowId));
+                $.ajax({
+                    type: "POST",
+                    url: "../DV/SendSMS",
+                    data: { RefId: refid, Params: filters },
+                    success: this.SendSMSSuccess.bind(this)
+                });
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    url: "../DV/SendCustomSMS",
+                    data: { To: $("#sms-number").val(), Body: $("#sms-textarea").val() },
+                    success: this.SendSMSSuccess.bind(this)
+                });
+            }
+        }
+    };
+
+    this.MakeSMSValidation = function () {
+        if ($("#sms-number").val() && $("#sms-textarea").val())
+            return true;
+        else {
+            EbMessage("show", { Message: "Phone number or text is Empty", Background: "#e40707" });
+            return false;
+        }
+    };
+
+    this.SendSMSSuccess = function () {
+        $("#eb_common_loader").EbLoader("hide");
+        EbPopBox("show", { Message: "Message sent", Title: "Success" });
+    };
+
+    ////phonecontrol ends 
 
 };
 

@@ -119,8 +119,8 @@
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
-        if (this.cloneMode && this.formRenderer.notSavedOnce)
-            this.newRowCounter = -i;
+        //if (this.cloneMode && this.formRenderer.notSavedOnce)
+        //    this.newRowCounter = -i;
         return TrsHTML.join();
     };
 
@@ -177,8 +177,8 @@
         this.setCurRow(rowId);
         if ($tr.attr("is-initialised") === 'false')
             this.rowInit_E($tr, rowId);
-        $td.find(".del-row").hide(300);
-        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide(300);
+        $td.find(".del-row").hide();
+        $(`[ebsid='${this.ctrl.EbSid}'] tr[is-checked='true']`).find(`.edit-row`).hide();
         //$addRow.hide(300).attr("is-editing", "false");
         $td.find(".check-row").show();
         this.$addRowBtn.addClass("eb-disablebtn");
@@ -299,12 +299,12 @@
             let ctrl = curRowCtrls[i];
             let Value = ctrl.DataVals.Value;
             if (Value !== null) {
-                if (ctrl.ObjType === "PowerSelect") {
-                    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
-                    ctrl.justInit = true;
-                    ctrl.setDisplayMember(Value);
-                }
-                else
+                //if (ctrl.ObjType === "PowerSelect") {
+                //    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
+                //    ctrl.justInit = true;
+                //    ctrl.setDisplayMember(Value);
+                //}
+                //else
                     ctrl.justSetValue(Value);// should remove
             }
         }
@@ -329,17 +329,30 @@
         let valMsArr = cellObj.Value.toString().split(',');
         let textspn = "";
 
-        for (let i = 0; i < valMsArr.length; i++) {
-            textspn += "<span iblock>";
-            let vm = parseInt(valMsArr[i]);
-            let dispA = cellObj.D[vm];
-            for (let j = 0; j < col.DisplayMembers.$values.length; j++) {
-                let DMName = col.DisplayMembers.$values[j].name;
-                let DMVal = dispA[DMName];
-                textspn += `<span contenteditable='true'onkeydown="event.preventDefault()" class='selected-tag'>${DMVal === null ? "" : DMVal}</span>`;
+        let vm0 = parseInt(valMsArr[0]);
+        let dispDict0 = cellObj.D[vm0];
+        let dispKeys = Object.keys(dispDict0);
+        for (let j = 0; j < dispKeys.length; j++) {
+            let dispKey = dispKeys[j]
+            textspn += "<div iblock>";
+
+            for (let k = 0; k < valMsArr.length; k++) {
+                let vm = parseInt(valMsArr[k]);
+                let dispDict = cellObj.D[vm];
+                let DMVal = dispDict[dispKey];
+                textspn += `<div class='selected-tag'>${DMVal === null ? "" : DMVal}</div>`;
+
             }
-            textspn += "</span>&nbsp;&nbsp;&nbsp;";
+
+            textspn += "</div>&nbsp;&nbsp;&nbsp;";
         }
+
+        //for (let j = 0; j < col.DisplayMembers.$values.length; j++) {
+        //    let DMName = col.DisplayMembers.$values[j].name;
+        //    let DMVal = dispDict[DMName];
+        //    textspn += `<span contenteditable='true'onkeydown="event.preventDefault()" class='selected-tag'>${DMVal === null ? "" : DMVal}</span>`;
+        //}
+        //textspn += "</span>&nbsp;&nbsp;&nbsp;";
 
         return textspn.substr(0, textspn.length - 18);
     };
@@ -1011,8 +1024,8 @@
         let required_valid_flag = true;
         let $notOk1stCtrl = null;
         let $tr = this.get$RowByRowId(rowid);
-        if (!((this.Mode.isEdit || this.cloneMode) && $tr.attr('is-initialised') !== 'true') ||//in edit mode or clone mode untouched DG row skip for 4 checking
-            (this.Mode.isEdit || this.cloneMode) && $tr.attr("is-added") === "true")// avoid newly added rows from first check
+        if (!(this.Mode.isEdit && $tr.attr('is-initialised') !== 'true') ||//in edit mode or clone mode untouched DG row skip for 4 checking
+            this.Mode.isEdit && $tr.attr("is-added") === "true")// avoid newly added rows from first check
         {
             $.each(this.objectMODEL[rowid], function (i, ctrl) {
                 let $ctrl = $("#" + ctrl.EbSid_CtxId);
@@ -1120,8 +1133,8 @@
 
         let $td = $(`#${this.TableId}>tbody>tr[rowid=${rowId}] td.ctrlstd`);
         let $activeTr = $td.closest("tr");
-        $td.find(".check-row").hide(300);
-        $td.find(".del-row").show(300);
+        $td.find(".check-row").hide();
+        $td.find(".del-row").show();
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
         //if ($activeTr.attr("is-checked") === "true") {
@@ -1144,8 +1157,8 @@
         let rowid = $tr.attr("rowid");
         if (!this.RowRequired_valid_Check(rowid))
             return false;
-        $td.find(".check-row").hide(300);
-        $td.find(".del-row").show(300);
+        $td.find(".check-row").hide();
+        $td.find(".del-row").show();
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
 
@@ -1173,8 +1186,8 @@
         let rowid = $tr.attr("rowid");
         if (!this.RowRequired_valid_Check(rowid))
             return false;
-        $td.find(".check-row").hide(300);
-        $td.find(".del-row").show(300);
+        $td.find(".check-row").hide();
+        $td.find(".del-row").show();
         $td.find(".edit-row").show();
         this.$addRowBtn.removeClass("eb-disablebtn");
 
@@ -1411,7 +1424,7 @@
         let ctrl = this.getCtrlByTd($td);
         let oldVal = ctrl.getValue();
         $td.attr("edited", "true");
-        $td.find(".tdtxt").hide(300);
+        $td.find(".tdtxt").hide();
         $td.find(".ctrl-cover").show(300);
     }.bind(this);
 

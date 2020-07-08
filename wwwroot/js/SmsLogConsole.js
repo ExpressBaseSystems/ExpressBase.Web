@@ -1,7 +1,7 @@
 ﻿function smslogconsole(options) {
     this.AllObj = options.AllObj;
 
-    this.DrawJobSelectBox = function () {
+    this.DrawSmsTemplateSelectBox = function () {
         let $Opt = $("<select class='form-control' id='select-sms-template'> </select>");
         $.each(this.AllObj, function (key, value) {
             if (ebcontext.user.Roles.includes("SolutionOwner")) {
@@ -20,15 +20,17 @@
     this.getSmsList = function () {
         $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
         let Refid = $("#select-sms-template").children("option:selected").val();
-        let date = $("#date").val();
-        if (date !== "" && Refid !== null) {
+        let fromDate = $("#from-date").val();
+        let toDate = $("#to-date").val();
+        if (fromDate !== "" && toDate !== "" && Refid !== null) {
             $.ajax(
                 {
                     type: 'POST',
-                    url: "/SMS/Get_SMS_List",
+                    url: "/SMSLog/Get_SMS_List",
                     data: {
                         Refid: Refid,
-                        Date: date
+                        FromDate: fromDate,
+                        ToDate: toDate
                     },
                     success: function (result) {
                         $("#list-of-sms").empty();
@@ -39,7 +41,7 @@
                         o.showFilterRow = true;
                         o.IsPaging = true;
                         o.dvObject = JSON.parse(result.visualization);
-                        o.Source = "sms";
+                        o.Source = "smslog";
                         var data = new EbCommonDataTable(o);
                         $("#layout_div .loader-fb").empty().removeClass("loader-fb");
                     }
@@ -59,11 +61,12 @@
         var month = d.getMonth() + 1;
         var day = d.getDate();
         var output = (day < 10 ? '0' : '') + day + '-' + (month < 10 ? '0' : '') + month + '-' + d.getFullYear();
-        $("#date").val(output);
+        $("#from-date").val(output);
+        $("#to-date").val(output);
     };
     this.init = function () {
         this.currentDate();
-        this.DrawJobSelectBox();
+        this.DrawSmsTemplateSelectBox();
        // $("#list-of-sms").on("click", ".retryBtn", this.SqljobRetry.bind(this));
         $("#show-sms-logs").on("click", this.getSmsList.bind(this));
       //  $("#run-sql-job").on("click", this.RunsqlJobTrigger.bind(this));

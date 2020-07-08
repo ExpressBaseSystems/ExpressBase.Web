@@ -57,6 +57,14 @@ namespace ExpressBase.Web.BaseControllers
             this.Redis = _redis as RedisClient;
             this.httpContextAccessor = _cxtacc as HttpContextAccessor;
         }
+        public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth)
+        {
+            this.ServiceClient = _ssclient as JsonServiceClient;
+            this.Redis = _redis as RedisClient;
+            this.FileClient = _sfc as EbStaticFileClient;
+            this.AuthClient = _auth as EbAuthClient;
+        }
+
         public EbBaseController(IServiceClient _ssclient, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc)
         {
             this.ServiceClient = _ssclient as JsonServiceClient;
@@ -147,42 +155,49 @@ namespace ExpressBase.Web.BaseControllers
             bool isvalid = false;
             try
             {
+                string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
                 if (VerifySignature(sRToken) && VerifySignature(sBToken))
                 {
                     var rToken = new JwtSecurityToken(sRToken);
                     var bToken = new JwtSecurityToken(sBToken);
-
-                    string rSub = rToken.Payload[TokenConstants.SUB].ToString();
-                    string bSub = bToken.Payload[TokenConstants.SUB].ToString();
-                    string _ip = bToken.Payload[TokenConstants.IP].ToString();
-                    Console.WriteLine("Reqst IP : " + this.RequestSourceIp + " - Auth IP : " + _ip);
-                    if (this.RequestSourceIp == _ip || _ip == string.Empty)
+                    if (bToken.Payload[TokenConstants.CID].ToString() == isid)
                     {
-                        Console.WriteLine("IP check success");
-                        DateTime startDate = new DateTime(1970, 1, 1);
-                        DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
-
-                        if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
+                        string rSub = rToken.Payload[TokenConstants.SUB].ToString();
+                        string bSub = bToken.Payload[TokenConstants.SUB].ToString();
+                        string _ip = bToken.Payload[TokenConstants.IP].ToString();
+                        Console.WriteLine("Reqst IP : " + this.RequestSourceIp + " - Auth IP : " + _ip);
+                        if (this.RequestSourceIp == _ip || _ip == string.Empty)
                         {
-                            string[] subParts = rSub.Split(CharConstants.COLON);
+                            Console.WriteLine("IP check success");
+                            DateTime startDate = new DateTime(1970, 1, 1);
+                            DateTime exp_time = startDate.AddSeconds(Convert.ToInt64(rToken.Payload[TokenConstants.EXP]));
 
-                            if (rSub.EndsWith(TokenConstants.TC))
-                                isvalid = true;
-                            else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                            if (exp_time > DateTime.Now && rSub == bSub) // Expiry of Refresh Token and matching Bearer & Refresh
                             {
-                                string isid = this.GetIsolutionId(subdomain.Replace(RoutingConstants.DASHDEV, string.Empty));
-                                if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                                string[] subParts = rSub.Split(CharConstants.COLON);
+
+                                if (rSub.EndsWith(TokenConstants.TC))
                                     isvalid = true;
+                                else if (subdomain.EndsWith(RoutingConstants.DASHDEV))
+                                {
+
+                                    if (subParts[0] == isid && rSub.EndsWith(TokenConstants.DC))
+                                        isvalid = true;
+                                }
+                                else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC))
+                                {
+                                    isvalid = true;
+                                }
                             }
-                            else if (rSub.EndsWith(TokenConstants.UC) || rSub.EndsWith(TokenConstants.BC) || rSub.EndsWith(TokenConstants.MC))
-                            {
-                                isvalid = true;
-                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("IP check failed");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("IP check failed");
+                        Console.WriteLine("Token mismatch");
                     }
                 }
             }
@@ -255,7 +270,7 @@ namespace ExpressBase.Web.BaseControllers
                 solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
                 if (solnId == null || solnId == string.Empty)
                 {
-                    this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest { ExtSolutionId = esid});
+                    this.ServiceClient.Post<UpdateSidMapResponse>(new UpdateSidMapRequest { ExtSolutionId = esid });
                     solnId = this.Redis.Get<string>(string.Format(CoreConstants.SOLUTION_ID_MAP, esid));
                 }
             }

@@ -261,7 +261,6 @@ body {
 
 .del-row, .cancel-row {
     left: 23.5px;
-    height: 30px !important;
     color: #f55d5d;
     /*border-radius: 0 50px 50px 0;*/
     direction: rtl;
@@ -297,14 +296,13 @@ body {
     background-color: transparent;
     border: none;
     width: 50%;
-    height: 30px;
+    height: 100%;
     flex-grow: 1;
 }
 
 .del-c {
     left: 7.5px !important;
     top: 0.5px !important;
-    height: 28px !important;
     width: 29px !important;
     border-radius: 100% !important;
 }
@@ -1001,6 +999,10 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 
 [tdcoltype=DGBooleanColumn] .ctrl-cover {
     border: none
+}
+
+[coltype=DGPowerSelectColumn] {
+    padding: 0;
 }
 
 [tdcoltype=DGPowerSelectColumn] .ctrl-cover .dropdown-toggle {
@@ -2108,35 +2110,37 @@ input.locinp {
     border-radius: 4px;
     min-height: 100px;
 }
+
 .Eb-ctrlContainer[ctype="SimpleFileUploader"] .ctrl-cover {
     border: none;
 }
-    .simpleFUPdiv .SFUPcontainer .SFUPcontent {
-        line-height: 2;
-        position: absolute;
-        top: 0;
-        right: 0;
-        left: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column
-    }
 
-        .simpleFUPdiv .SFUPcontainer .SFUPcontent i {
-            font-size: 3rem;
-        }
-    /*image upload*/
+.simpleFUPdiv .SFUPcontainer .SFUPcontent {
+    line-height: 2;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column
+}
 
-    /* Base style */
-    .simpleFUPdiv .SFUPcontainer {
-        min-height: 175px;
-        /*max-height: 175px;*/
-        overflow: auto;
-        /*border: 1px solid #d9d9d9;*/
-        position: relative;
+    .simpleFUPdiv .SFUPcontainer .SFUPcontent i {
+        font-size: 3rem;
     }
+/*image upload*/
+
+/* Base style */
+.simpleFUPdiv .SFUPcontainer {
+    min-height: 175px;
+    /*max-height: 175px;*/
+    overflow: auto;
+    /*border: 1px solid #d9d9d9;*/
+    position: relative;
+}
 
 
 .msg-cont .simpleFUPdiv .SFUPcontainer {
@@ -2315,7 +2319,7 @@ input.locinp {
         }
 
 
-    /*for bot*/
+/*for bot*/
 .simpleFUPdiv .emtySFUP {
     display: flex;
     justify-content: center;
@@ -2324,88 +2328,89 @@ input.locinp {
     font-weight: 600;
     padding: 10px;
 }
-    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb {
-        border-radius: 4px;
-        float: left;
-        margin: 1%;
-        box-shadow: 1px 1px 5px 0 #a2958a;
-        position: relative;
-        height: 60px;
-        width: 90px
+
+.simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb {
+    border-radius: 4px;
+    float: left;
+    margin: 1%;
+    box-shadow: 1px 1px 5px 0 #a2958a;
+    position: relative;
+    height: 60px;
+    width: 90px
+}
+
+    .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 100%;
     }
 
-        .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            height: 100%;
+        .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file img {
+            max-width: 85px;
+            min-width: 50px;
+            height: 45px;
+            margin: auto;
         }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file img {
-                max-width: 85px;
-                min-width: 50px;
-                height: 45px;
-                margin: auto;
-            }
 
+        .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .success {
+            color: #47af08;
+            font-size: 12px;
+            align-self: center;
+            margin-left: auto;
+            display: none;
+            text-align: right;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .success {
-                color: #47af08;
-                font-size: 12px;
-                align-self: center;
-                margin-left: auto;
-                display: none;
-                text-align: right;
-                position: absolute;
-                bottom: 0;
-                right: 0;
-            }
+        .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .error {
+            color: #f95655;
+            font-size: 12px;
+            align-self: center;
+            margin-left: auto;
+            display: none;
+            text-align: right;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
 
-            .simpleFUPdiv .SFUPcontainer .uploaded .botfilethumb .botuploaded-file .botfiledtls .error {
-                color: #f95655;
-                font-size: 12px;
-                align-self: center;
-                margin-left: auto;
-                display: none;
-                text-align: right;
-                position: absolute;
-                bottom: 0;
-                right: 0;
-            }
+.simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .load_spinner {
+    display: flex;
+    position: absolute;
+}
 
-    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .load_spinner {
-        display: flex;
-        position: absolute;
-    }
+.simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner i {
+    font-size: 38px;
+    color: white;
+}
 
-    .simpleFUPdiv .SFUPcontainer .uploaded .uploaded-file .load_spinner i {
-        font-size: 38px;
-        color: white;
-    }
+.simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image {
+    display: none;
+    cursor: pointer;
+    position: absolute;
+    top: .2rem;
+    right: .2rem;
+    border-radius: 50%;
+    /*padding: .3rem;*/
+    background-color: white;
+    -webkit-appearance: none;
+    border: none;
+}
 
-    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image {
-        display: none;
-        cursor: pointer;
-        position: absolute;
-        top: .2rem;
-        right: .2rem;
-        border-radius: 50%;
-        /*padding: .3rem;*/
-        background-color: white;
-        -webkit-appearance: none;
-        border: none;
-    }
+.simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file:hover .delete-image {
+    display: block;
+}
 
-    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file:hover .delete-image {
-        display: block;
-    }
-
-    .simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image i {
-        color: #5b5959;
-        font-size: 1.5rem;
-    }
+.simpleFUPdiv .SFUPcontainer .uploaded .botuploaded-file .delete-image i {
+    color: #5b5959;
+    font-size: 1.5rem;
+}
 
 
 .ratingDiv_dc {
@@ -2448,3 +2453,18 @@ input.locinp {
 [ctype=SubmitButton] > #captcha {
     pointer-events: none;
 }
+
+/*ebphone control*/
+.phnctrl {
+    padding-left: 80px !important;
+}
+.phnContextBtn {
+    border: 0;
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    padding: 7px;
+}
+    .phnContextBtn i {
+        display: inline-block;
+    }

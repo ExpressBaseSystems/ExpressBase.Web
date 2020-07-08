@@ -30,7 +30,7 @@ namespace ExpressBase.Web.Controllers
 {
 	public class BoteController : EbBaseExtController
 	{
-		public BoteController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc)
+		public BoteController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_client, _redis, _sfc, _auth)
 		{
 		}
 
@@ -351,9 +351,9 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 					{ "iplocationjson", result}
 				};
 
-			this.ServiceClient.Headers.Add("SolId", cid);
+			this.AuthClient.Headers.Add("SolId", cid);
 
-			MyAuthenticateResponse authResponse = this.ServiceClient.Send<MyAuthenticateResponse>(new Authenticate
+			MyAuthenticateResponse authResponse = this.AuthClient.Send<MyAuthenticateResponse>(new Authenticate
 			{
 				provider = CredentialsAuthProvider.Name,
 				UserName = "NIL",
@@ -382,6 +382,15 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 					user.Preference.Locale = "en-IN";
 				returnlist.Add(JsonConvert.SerializeObject(user));
 				returnlist.Add(formlist.BotFormsDisp);
+
+
+				if (authResponse != null)
+				{
+					CookieOptions options = new CookieOptions();
+					Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()), options);
+					Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, authResponse.RefreshToken, options);
+					
+				}
 				foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
 				{
 					string rfid = rfidlst.Key;

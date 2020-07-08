@@ -284,24 +284,51 @@ namespace ExpressBase.Web.Controllers
                     response.DisplayName = authResponse.User.FullName;
                     response.User = authResponse.User;
 
-                    Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
+                    try
+                    {
+                        Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
 
-                    if (authResponse.User.Roles.Contains(SystemRoles.SolutionOwner.ToString()) || authResponse.User.Roles.Contains(SystemRoles.SolutionAdmin.ToString()))
-                    {
-                        response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
-                    }
-                    else if (s_obj != null && authResponse.User.LocationIds != null)
-                    {
-                        if (authResponse.User.LocationIds.Contains(-1))
-                            response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
-                        else
+                        if (authResponse.User.IsAdmin())
                         {
-                            foreach (int _locid in authResponse.User.LocationIds)
+                            response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                        }
+                        else if (s_obj != null && authResponse.User.LocationIds != null)
+                        {
+                            if (authResponse.User.LocationIds.Contains(-1))
+                                response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
+                            else
                             {
-                                if (s_obj.Locations.ContainsKey(_locid))
-                                    response.Locations.Add(s_obj.Locations[_locid]);
+                                foreach (int _locid in authResponse.User.LocationIds)
+                                {
+                                    if (s_obj.Locations.ContainsKey(_locid))
+                                        response.Locations.Add(s_obj.Locations[_locid]);
+                                }
                             }
                         }
+
+                        if (s_obj != null && s_obj.Is2faEnabled)
+                        {
+                            response.Is2FEnabled = s_obj.Is2faEnabled;
+                            this.ServiceClient.BearerToken = authResponse.BearerToken;
+                            this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+
+                            Authenticate2FAResponse resp = this.ServiceClient.Post(new Authenticate2FARequest
+                            {
+                                MyAuthenticateResponse = authResponse,
+                                SolnId = ViewBag.SolutionId,
+                            });
+
+                            if (resp != null)
+                            {
+                                response.TwoFAToken = resp.TwoFAToken;
+                                response.TwoFAStatus = resp.AuthStatus;
+                                response.TwoFAToAddress = resp.OtpTo;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("2FA failed :: " + ex.Message);
                     }
 
                     try
@@ -335,6 +362,55 @@ namespace ExpressBase.Web.Controllers
                 Console.WriteLine("api auth request failed: " + e.Message);
             }
             return response;
+        }
+
+        [HttpPost("/api/verify_or_resend_otp")]
+        public ApiTwoFactorResponse Verify2FA(string token, string otp, bool resend)
+        {
+            ApiTwoFactorResponse resp = new ApiTwoFactorResponse();
+
+            if (Authenticated)
+            {
+                Authenticate2FAResponse response;
+
+                if (resend)
+                {
+                    resp.IsVerification = false;
+
+                    response = this.ServiceClient.Post(new ResendOTP2FARequest
+                    {
+                        Token = token
+                    });
+
+                    if (response != null && response.AuthStatus)
+                    {
+                        resp.IsValid = true;
+                        resp.StatusCode = HttpStatusCode.OK;
+                    } 
+                }
+                else
+                {
+                    resp.IsVerification = true;
+
+                    response = this.ServiceClient.Post(new Validate2FARequest
+                    {
+                        Token = token
+                    });
+
+                    if (response != null && response.AuthStatus)
+                    {
+                        if (otp == this.LoggedInUser.Otp)
+                        {
+                            resp.StatusCode = HttpStatusCode.OK;
+                            resp.IsValid = true;
+                        }
+                    }
+                }
+            }
+            else
+                resp.StatusCode = HttpStatusCode.Unauthorized;
+
+            return resp;
         }
 
         [HttpPost("/api/upload")]
@@ -608,7 +684,40 @@ namespace ExpressBase.Web.Controllers
                 {
                     Export = export
                 });
+
                 data.StatusCode = HttpStatusCode.OK;
+
+                try
+                {
+                    Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
+
+                    if (s_obj == null) throw new Exception("Solution object null");
+
+                    var locations = s_obj.Locations ?? new Dictionary<int, EbLocation>();
+
+                    if (this.LoggedInUser.IsAdmin())
+                    {
+                        data.Locations.AddRange(locations.Select(kvp => kvp.Value).ToList());
+                    }
+                    else if (this.LoggedInUser.LocationIds != null)
+                    {
+                        if (this.LoggedInUser.LocationIds.Contains(-1))
+                            data.Locations.AddRange(locations.Select(kvp => kvp.Value).ToList());
+                        else
+                        {
+                            foreach (int _locid in this.LoggedInUser.LocationIds)
+                            {
+                                if (locations.ContainsKey(_locid))
+                                    data.Locations.Add(locations[_locid]);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Exception at Solution data api,locations :: " + ex.Message);
+                }
+
                 return data;
             }
 

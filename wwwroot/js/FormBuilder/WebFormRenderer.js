@@ -41,6 +41,7 @@ const WebFormRender = function (option) {
         //    this.FRC.setValueExpValsNC(this.flatControls); // issue with powerselect 'initializer' not set on load
 
         this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 
+        this.FRC.setUpdateDependentControlsBehaviorFns();// adds updateDependentControlsBehaviorFns() to formObject 
 
 
         return this.formObject;
@@ -81,7 +82,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-            else if (Obj.ObjType === "ExportButton") {
+            else if ((Obj.ObjType === "ExportButton") || (Obj.ObjType === "Phone")) {
                 opt.formObj = this.FormObj;
                 opt.dataRowId = this.DataMODEL[this.FormObj.TableName][0].RowId;
             }
@@ -137,8 +138,8 @@ const WebFormRender = function (option) {
         this.updateCtrlsUI();
         this.initNCs();// order 1
         this.FRC.bindEbOnChange2Ctrls(this.flatControls);// order 2 - bind data model update to onChange(internal)
-        this.FRC.bindFnsToCtrls(this.flatControls);// order 3 
-        this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
+        this.FRC.bindFnsToCtrls(this.flatControls);// order 3
+        this.FRC.setDisabledControls(this.flatControls);// disables disabled controls 
         this.initDGs();
         this.initReviewCtrl();
 
@@ -150,7 +151,7 @@ const WebFormRender = function (option) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
                 _DG.OnChangeFn.Code = "";
-            this.FRC.bindOnChange(_DG);
+            this.FRC.bindValueUpdateFns_OnChange(_DG);
         }.bind(this));
     };
 
@@ -348,12 +349,15 @@ const WebFormRender = function (option) {
             if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
                 continue;
             ctrl.__eb_EditMode_val = val;
-            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                //ctrl.setDisplayMember = EBPSSetDisplayMember;
-                ctrl.setDisplayMember(val);
-            }
-            else
-                ctrl.justSetValue(val);
+            //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
+            //    //ctrl.setDisplayMember = EBPSSetDisplayMember;
+            //    ctrl.justInit = true;
+            //    ctrl.setDisplayMember(val);
+            //}
+            //else
+            ctrl.___DoNotUpdateDataVals = true;
+            ctrl.justSetValue(val);
+            ctrl.___DoNotUpdateDataVals = false;
         }
 
         //$.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
@@ -830,7 +834,12 @@ const WebFormRender = function (option) {
     };
 
     this.cloneForm = function () {
-        window.open("index?refid=" + this.formRefId + "&mode=clone&rowid=" + this.rowId);
+        let params = [];
+        //params.push(new fltr_obj(16, "srcRefId", this.formRefId));
+        params.push(new fltr_obj(11, "srcRowId", this.rowId));
+        let url = `../WebForm/Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify(params))}&_mode=7`;
+        window.open(url, '_blank');
+        //window.open("index?refid=" + this.formRefId + "&mode=clone&rowid=" + this.rowId);
     };
 
     this.saveForm = function () {
@@ -887,7 +896,6 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToViewMode = function () {
-        this.$cloneBtn.show(200);
         this.formObject.__mode = "view";
         this.Mode.isView = true;
         this.Mode.isEdit = false;
@@ -904,7 +912,7 @@ const WebFormRender = function (option) {
         }
 
         //    this.ApprovalCtrl.disableAllCtrls();
-        this.disbleFlatControls();
+        this.disbleControlsInViewMode();
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
         }.bind(this));
@@ -926,18 +934,21 @@ const WebFormRender = function (option) {
         }.bind(this));
     }.bind(this);
 
-    this.enableFlatControls = function () {
+    this.enableControlsInEditMode = function () {
         $.each(this.flatControls, function (i, ctrl) {
-            if (!ctrl.IsDisable)
-                ctrl.enable();
+            if ((ctrl.IsDisable && ctrl.__IsDisableByExp === undefined) || ctrl.__IsDisableByExp === true)
+                return;
+            ctrl.enable();
         }.bind(this));
     };
 
-    this.disbleFlatControls = function () {
+    this.disbleControlsInViewMode = function () {
         $.each(this.flatControls, function (k, ctrl) {
             if (ctrl.ObjType === "ExportButton")
                 return true;
-            ctrl.disable();
+            if (!ctrl.__IsDisable) {
+                ctrl.disable();
+            }
         }.bind(this));
     };
 
@@ -949,7 +960,6 @@ const WebFormRender = function (option) {
     };
 
     this.SwitchToEditMode = function () {
-        this.$cloneBtn.hide(200);
         this.formObject.__mode = "edit";
         this.Mode.isEdit = true;
         this.Mode.isView = false;
@@ -963,7 +973,7 @@ const WebFormRender = function (option) {
         this.BeforeModeSwitch("Edit Mode");
         this.setHeader("Edit Mode");
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
-        this.enableFlatControls();
+        this.enableControlsInEditMode();
         this.setUniqCtrlsInitialVals();
         this.DynamicTabObject.switchToEditMode();
     };
@@ -1347,7 +1357,7 @@ const WebFormRender = function (option) {
         if (reqstMode === "Edit Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
         }
-        else if (reqstMode === "New Mode" || reqstMode === "Prefill Mode") {
+        else if (reqstMode === "New Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformsave-selbtn", "webformexcel-selbtn"], currentLoc, reqstMode));
         }
         else if (reqstMode === "View Mode") {
@@ -1371,10 +1381,9 @@ const WebFormRender = function (option) {
         }
         catch (e) { console.log("Error in title expression  " + e.message); }
         this.headerObj.setName(_formObj.DisplayName + title_val);
-        let rMode = reqstMode === 'Prefill Mode' ? 'New Mode' : reqstMode;
         if (_renderMode !== 3 && _renderMode !== 5)
-            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${rMode}</span>`);
-        $('title').text(this.FormObj.DisplayName + title_val + `(${rMode})`);
+            this.headerObj.setMode(`<span mode="${reqstMode}" class="fmode">${reqstMode}</span>`);
+        $('title').text(this.FormObj.DisplayName + title_val + `(${reqstMode})`);
 
         if (this.isPartial === "True") {
             this.headerObj.hideElement(["webformnew", "webformdelete", "webformcancel", "webformaudittrail"]);
@@ -1391,7 +1400,7 @@ const WebFormRender = function (option) {
         }
         else {
             for (let i = 0; i < btns.length; i++) {
-                if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
+                if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode'))
                     r.push(btns[i]);
                 else if (btns[i] === "webformsave-selbtn" && this.formPermissions[loc].indexOf('Edit') > -1 && mode === 'Edit Mode')
                     r.push(btns[i]);
@@ -1407,12 +1416,12 @@ const WebFormRender = function (option) {
                     r.push(btns[i]);
                 else if (btns[i] === "webformprint-selbtn" && mode === 'View Mode' && this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0)
                     r.push(btns[i]);
-                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && (mode === 'New Mode' || mode === 'Prefill Mode'))
+                else if (btns[i] === "webformexcel-selbtn" && this.formPermissions[loc].indexOf('New') > -1 && mode === 'New Mode')
                     r.push(btns[i]);
                 if (mode === 'View Mode')
                     r.push('webformclone');
             }
-        } 
+        }
         return r;
     };
 
@@ -1634,9 +1643,9 @@ const WebFormRender = function (option) {
                     processData: false,
                     contentType: false,
                     data: data1,
-                    success: function (message) {    
+                    success: function (message) {
                         EbMessage("show", { Message: 'Successfully Imported', AutoHide: true, Background: '#00aa00' });
-                        this.hideLoader(); 
+                        this.hideLoader();
                     }.bind(this),
                     error: function () {
                         EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
@@ -1679,7 +1688,7 @@ const WebFormRender = function (option) {
         }
     };
 
-   
+
 
     this.selectUIinpOnFocus = function () {
         let el = event.target;
@@ -1693,7 +1702,6 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        this.Mode.isPrefill = false;
         this.Mode.isFail = false;
         this.Mode.isPreview = false;
 
@@ -1705,8 +1713,6 @@ const WebFormRender = function (option) {
         //    this.Mode.isFail = true;
         else if (this.mode === "Edit Mode")
             this.Mode.isEdit = true;
-        else if (this.mode === "Prefill Mode")
-            this.Mode.isPrefill = true;
         else if (this.mode === "Preview Mode")
             this.Mode.isPreview = true;
     };
@@ -1715,7 +1721,6 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        this.Mode.isPrefill = false;
         this.Mode.isFail = false;
         this.Mode.isPreview = false;
 
@@ -1862,6 +1867,9 @@ const WebFormRender = function (option) {
         this.setHeader(this.mode);// contains a hack for preview mode(set as newmode)
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
+
+        a___MT = this.DataMODEL; // debugg helper
+
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
@@ -1874,9 +1882,11 @@ const WebFormRender = function (option) {
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
 
         if (this.Mode.isNew) {
+
             console.log("================== exec default Value Expression   2");
             //this.FRC.setDefaultvalsNC(this.flatControls);// 2nd
             this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);// 2nd
+
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
             if (this.cloneRowId)
@@ -1891,7 +1901,7 @@ const WebFormRender = function (option) {
         }
 
         console.log("================== exec Value Expression   3");
-        if (!(this.Mode.isPrefill || this.Mode.isNew))// 3rd
+        if (!(this.Mode.isNew))// 3rd
             this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
 
 
@@ -1927,6 +1937,5 @@ const WebFormRender = function (option) {
 
     this.init(option);
     a___builder = this;
-    a___MT = this.DataMODEL;
     //a___EO = this.EditModeFormData;
 };

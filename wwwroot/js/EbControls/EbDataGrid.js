@@ -305,7 +305,9 @@
                 //    ctrl.setDisplayMember(Value);
                 //}
                 //else
-                    ctrl.justSetValue(Value);// should remove
+
+                ctrl.___isNotUpdateValExpDepCtrls = true;
+                ctrl.justSetValue(Value);// should remove
             }
         }
     };

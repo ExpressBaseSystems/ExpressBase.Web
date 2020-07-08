@@ -647,6 +647,12 @@ table.dataTable tr.group td {
 #obj_icons .drp_ul a {
     height:30px !important;
 }
+#obj_icons .btn[disabled] {
+    background-color: #efefef;
+    border: transparent;
+    color: black;
+    cursor: not-allowed;
+}
 .sub-windows .stickBtn{
     position:absolute!important;
 }

@@ -2791,6 +2791,7 @@
                     dvcontainerObj.modifyNavigation();
                 }
             }
+            this.excelbtn = $("#btnExcel" + this.tableId);
         }
         else {
             $(".display-none").remove();
@@ -4332,6 +4333,7 @@
 
     this.ExportToExcel = function (e) {
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
         var ob = new Object();
         ob.DataVizObjString = JSON.stringify(this.EbObject);
@@ -4340,7 +4342,8 @@
         this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.cloud', Channels: ["ExportToExcel"] });
         this.ss.onExcelExportSuccess = function (url) {
             window.location.href = url;
-        };
+            this.excelbtn.prop("disabled", false);
+        }.bind(this);
         $.ajax({
             type: "POST",
             url: "../DV/exportToexcel",

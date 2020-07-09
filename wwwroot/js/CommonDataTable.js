@@ -4343,6 +4343,7 @@
         this.ss.onExcelExportSuccess = function (url) {
             window.location.href = url;
             this.excelbtn.prop("disabled", false);
+            event.stopPropagation();
         }.bind(this);
         $.ajax({
             type: "POST",

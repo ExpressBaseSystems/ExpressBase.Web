@@ -513,6 +513,7 @@ namespace ExpressBase.Web.Controllers
             {
                 ExportToExcelMqRequest request = new ExportToExcelMqRequest();
                 EbDataVisualization ebobject = EbSerializers.Json_Deserialize<EbDataVisualization>(req.DataVizObjString);
+                request.SubscriptionId = req.SubscriptionId;
                 request.EbDataVisualization = ebobject;
                 request.Ispaging = false;
                 request.UserInfo = this.LoggedInUser;

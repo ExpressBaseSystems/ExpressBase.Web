@@ -819,7 +819,14 @@ var EbTags = function (settings) {
 function dgOnChangeBind() {
     $.each(this.Controls.$values, function (i, col) {
         if ((col.OnChangeFn && col.OnChangeFn.Code && col.OnChangeFn.Code.trim() !== '') || col.DependedValExp.$values.length > 0) {
-            let FnString = atob(col.OnChangeFn.Code) + (col.DependedValExp.$values.length !== 0 ? ` ; form.updateDependentControls(form.__getCtrlByPath(this.__path))` : '');
+            let FnString = atob(col.OnChangeFn.Code) + (col.DependedValExp.$values.length !== 0 ? `;
+                let curCtrl = form.__getCtrlByPath(this.__path);
+                if(!curCtrl.___isNotUpdateValExpDepCtrls){
+                    form.updateDependentControls(curCtrl)
+                }
+                curCtrl.___isNotUpdateValExpDepCtrls = false;
+
+` : '');
             let OnChangeFn = new Function('form', 'user', `event`, FnString).bind(col, this.formObject, this.__userObject);
 
             col.bindOnChange({ form: this.formObject, col: col, DG: this, user: this.__userObject }, OnChangeFn);

@@ -4,6 +4,7 @@
     this.Channels = options.Channels.join();
     this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
+
     this.onUploadSuccess = function (m, e) { };
     this.onShowMsg = function (m, e) { };
     this.onLogOut = function (m, e) { };
@@ -12,11 +13,14 @@
 
     this.onConnect = function (sub) {
         //console.log("You've connected! welcome " + sub.displayName);
+        if (sub) {
+            window.ebcontext.subscription_id = sub.id;
+        }
     };
 
     this.onJoin = function (user) {
         //console.log("Welcome, " + user.displayName);
-    }
+    };
 
     this.onLeave = function (user) {
         //console.log(user.displayName + " has left the building");
@@ -44,7 +48,7 @@
     this.onNotifyMsg = function (m, e) {
         //console.log("Notification");
         this.onNotification(m, e);
-    }
+    };
 
     this.stopListening = function () {
         this.ES.close();

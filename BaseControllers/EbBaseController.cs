@@ -279,12 +279,20 @@ namespace ExpressBase.Web.BaseControllers
 
         public Eb_Solution GetSolutionObject(string cid)
         {
-            Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
-
-            if (s_obj == null)
+            Eb_Solution s_obj = null;
+            try
             {
-                this.ServiceClient.Post(new UpdateSolutionObjectRequest() { SolnId = cid });
                 s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+
+                if (s_obj == null)
+                {
+                    this.ServiceClient.Post(new UpdateSolutionObjectRequest() { SolnId = cid });
+                    s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", cid));
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message + e.StackTrace);
             }
             return s_obj;
         }

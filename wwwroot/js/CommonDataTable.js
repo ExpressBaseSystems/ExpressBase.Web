@@ -4335,10 +4335,13 @@
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
         this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
+
         var ob = new Object();
         ob.DataVizObjString = JSON.stringify(this.EbObject);
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
+        ob.SubscriptionId = window.ebcontext.subscription_id;
+
         this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["ExportToExcel"] });
         this.ss.onExcelExportSuccess = function (url) {
             window.location.href = url;

@@ -205,7 +205,8 @@
                 font:@Html.Raw(JsonConvert.SerializeObject(EbFont.FontFamilies)),
                 EbObjectMeta:@Html.Raw(ViewBag.EbObjectTypeMeta),
                 se_url: '@ViewBag.ServerEventUrl',
-                setup: {}
+                setup: {},
+                subscription_id: null
             };
     </script>
 </head>

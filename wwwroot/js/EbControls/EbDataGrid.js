@@ -83,8 +83,11 @@
             for (let i = 0; i < inpCtrls.length; i++) {
                 let inpCtrl = inpCtrls[i];
                 let ValueExpr_val = getValueExprValue(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full);
-                if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined)
+                if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined) {
                     inpCtrl.DataVals.Value = ValueExpr_val;
+                    if (inpCtrl.ObjType === "Numeric")
+                        inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
+                }
             }
             //this.onRowPaintFn(["tr"], "check", "e");// --
         }.bind(this));
@@ -135,7 +138,7 @@
             let inpCtrl = rowCtrls[i];
             if (inpCtrl.Hidden)
                 continue;
-            if (!inpCtrl.DataVals && !col.DoNotPersist)
+            if (!inpCtrl.DataVals && !inpCtrl.DoNotPersist)
                 continue;
             tr += this.getTdHtml_(inpCtrl, visibleCtrlIdx);
             if (inpCtrl.IsEditable)
@@ -305,7 +308,9 @@
                 //    ctrl.setDisplayMember(Value);
                 //}
                 //else
-                    ctrl.justSetValue(Value);// should remove
+
+                ctrl.___isNotUpdateValExpDepCtrls = true;
+                ctrl.justSetValue(Value);// should remove
             }
         }
     };

@@ -852,9 +852,7 @@ const WebFormRender = function (option) {
                 return;
             if (!this.DGsB4Save())
                 return;
-            this.DGsB4SaveActions();
-
-            this.saveForm_call();
+            this.FRC.checkUnique4All_save(this.flatControls, true);
         }.bind(this), 4);
     };
 

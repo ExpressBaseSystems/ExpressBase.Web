@@ -274,14 +274,8 @@
                         let ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.FO.formObject, this.FO.userObject)();
                         if (valExpFnStr) {
                             if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
-                                //if (depCtrl.DoNotPersist && depCtrl.isInitialCallInEditMode)
-
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
-                                //if ((!this.FO.Mode.isView && !this.FO.isInitialEditModeDataSet) || depCtrl.DoNotPersist) {
                                 if ((!this.FO.isInitialProgramaticOnchange) || depCtrl.DoNotPersist) {
-                                    //depCtrl.setValue(ValueExpr_val);
-                                    //depCtrl.___isNotUpdateValExpDepCtrls = true;
-                                    //depCtrl.setValue(ValueExpr_val);
                                     depCtrl.justSetValue(ValueExpr_val);
                                     //this.isRequiredOK(depCtrl);
                                 }
@@ -413,51 +407,12 @@
     };
 
     this.bindUniqueCheck = function (control) {
-        $("#" + control.EbSid_CtxId).keyup(debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
+        $("#" + control.EbSid_CtxId).on("input", debounce(this.checkUnique.bind(this, control), 1000)); //delayed check 
         ///.on("blur.dummyNameSpace", this.checkUnique.bind(this, control));
     };
 
-    this.checkUnique = function (ctrl) {/////////////// move
-        if (Object.entries(this.FO.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl))// avoid check if edit mode and value is same as initial
-            return;
-        if (ctrl.ObjType === "Numeric" && ctrl.getValue() === 0)// avoid check if numeric and value is 0
-            return;
-
-        //let unique_flag = true;
-        let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        let val = ctrl.getValueFromDOM();
-        let tableName = ctrl.TableName || this.FO.FormObj.TableName;
-        if (isNaNOrEmpty(val))
-            return;
-        //this.FO.hideLoader();
-        //this.FO.showLoader();
-        hide_inp_loader($ctrl, this.FO.$saveBtn);
-        show_inp_loader($ctrl, this.FO.$saveBtn);
-        $.ajax({
-            type: "POST",
-            url: "../WebForm/DoUniqueCheck",
-            data: {
-                TableName: tableName, Field: ctrl.Name, Value: val, type: "Eb" + ctrl.ObjType
-            },
-            success: function (isUnique) {
-                //this.FO.hideLoader();
-                hide_inp_loader($ctrl, this.FO.$saveBtn);
-                if (!isUnique) {
-                    //unique_flag = false;
-                    $ctrl.attr("uniq-ok", "false");
-                    ctrl.addInvalidStyle("This field is unique, try another value");
-                }
-                else {
-                    $ctrl.attr("uniq-ok", "true");
-                    ctrl.removeInvalidStyle();
-                }
-                //return unique_flag;
-            }.bind(this)
-        });
-    };
-
     this.isSameValInUniqCtrl = function (ctrl) {
-        let val = ctrl.getValue();
+        let val = ctrl.getValueFromDOM();
         return val === this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
     };
 
@@ -475,7 +430,6 @@
                 return false;
             }
         }
-
         return true;
     };
 
@@ -497,8 +451,93 @@
             $notOk1stCtrl[0].scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' })
         }
         required_valid_flag = required_valid_flag && this.runFormValidations();
+
         return required_valid_flag;
     }.bind(this);
+
+    this.checkUnique4All_save = function (controls, isSaveAfter) {/////////////// move
+        let isFromCtrl = !isSaveAfter;
+        let $ctrl_ = $("#" + controls[0].EbSid_CtxId);
+        let UniqObjs = [];
+        let UniqCtrls = {};
+
+        $.each(controls, function (i, ctrl) {
+            if (ctrl.Unique) {
+                let $ctrl = $("#" + ctrl.EbSid_CtxId);
+                let val = ctrl.getValueFromDOM();
+
+                if (isNaNOrEmpty(val) || ctrl.ObjType === "Numeric" && val === 0// avoid check if numeric and value is 0
+                    || Object.entries(this.FO.uniqCtrlsInitialVals).length !== 0 && this.isSameValInUniqCtrl(ctrl)) {// avoid check if edit mode and value is same as initial
+
+                    $ctrl.attr("uniq-ok", "true");
+                    ctrl.removeInvalidStyle();
+                    hide_inp_loader($ctrl, this.FO.$saveBtn);
+                    return;
+                }
+
+                let tableName = ctrl.TableName || this.FO.FormObj.TableName;
+                let UniqObj = { TableName: tableName, Field: ctrl.Name, Value: val, TypeI: ctrl.EbDbType };
+
+                UniqObjs.push(UniqObj);
+                UniqCtrls[ctrl.Name] = ctrl;
+            }
+        }.bind(this));
+
+        if (UniqObjs.length === 0 && !isSaveAfter)
+            return true;
+
+        if (isFromCtrl) {
+            hide_inp_loader($ctrl_, this.FO.$saveBtn);
+            show_inp_loader($ctrl_, this.FO.$saveBtn);
+        }
+        else {
+            this.FO.hideLoader();
+            this.FO.showLoader();
+        }
+
+        $.ajax({
+            type: "POST",
+            url: "../WebForm/DoUniqueCheck",
+            data: { uniqCheckParams: UniqObjs },
+            success: function (resS) {
+                let res = JSON.parse(resS);
+                let unique_flag = true;
+
+
+                if (isFromCtrl)
+                    hide_inp_loader($ctrl_, this.FO.$saveBtn);
+                else
+                    this.FO.hideLoader();
+
+                let ctrlNames = Object.keys(res);
+                for (let i = 0; i < ctrlNames.length; i++) {
+                    let ctrlName = ctrlNames[i];
+                    let ctrl = UniqCtrls[ctrlName];
+                    let $ctrl = $("#" + ctrl.EbSid_CtxId);
+                    let ctrlRes = res[ctrlName];
+
+                    if (!ctrlRes) {
+                        $ctrl.attr("uniq-ok", "false");
+                        ctrl.addInvalidStyle("This field is unique, try another value");
+                        unique_flag = false;
+                    }
+                    else {
+                        $ctrl.attr("uniq-ok", "true");
+                        ctrl.removeInvalidStyle();
+                    }
+                }
+
+                if (isSaveAfter && unique_flag) {
+                    this.FO.DGsB4SaveActions();
+                    this.FO.saveForm_call();
+                }
+            }.bind(this)
+        });
+    };
+
+    this.checkUnique = function (ctrl) {
+        this.checkUnique4All_save([ctrl], false);
+    }
 
     this.runFormValidations = function () {
         let ctrl = this.FO.FormObj;

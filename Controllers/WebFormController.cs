@@ -374,10 +374,10 @@ namespace ExpressBase.Web.Controllers
             return false;
         }
 
-        public bool DoUniqueCheck(string TableName, string Field, string Value, string type)
+        public string DoUniqueCheck(UniqCheckParam[] uniqCheckParams)
         {
-            DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { TableName = TableName, Field = Field, Value = Value, TypeS = type });
-            return (Resp.NoRowsWithSameValue == 0);
+            DoUniqueCheckResponse Resp = ServiceClient.Post<DoUniqueCheckResponse>(new DoUniqueCheckRequest { UniqCheckParam = uniqCheckParams });
+            return JsonConvert.SerializeObject(Resp.Response);
         }
 
         public IActionResult GetPdfReport(string refId, string rowId)

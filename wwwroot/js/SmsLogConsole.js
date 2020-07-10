@@ -17,6 +17,10 @@
         $("#sms-objs").append($Opt);
     };
 
+    this.initComplete = function () {
+          $("#list-of-sms").on("click", ".retryBtn", this.smsRetry.bind(this));
+    };
+
     this.getSmsList = function () {
         $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
         let Refid = $("#select-sms-template").children("option:selected").val();
@@ -41,10 +45,11 @@
                         o.showFilterRow = true;
                         o.IsPaging = true;
                         o.dvObject = JSON.parse(result.visualization);
-                        o.Source = "smslog";
+                        o.Source = "smslog"; 
+                        o.initCompleteCallback = this.initComplete.bind(this);
                         var data = new EbCommonDataTable(o);
                         $("#layout_div .loader-fb").empty().removeClass("loader-fb");
-                    }
+                    }.bind(this)
                 });
         }
     };
@@ -63,7 +68,8 @@
         var output = (day < 10 ? '0' : '') + day + '-' + (month < 10 ? '0' : '') + month + '-' + d.getFullYear();
         $("#from-date").val(output);
         $("#to-date").val(output);
-    };
+    };   
+
     this.init = function () {
         this.currentDate();
         this.DrawSmsTemplateSelectBox();

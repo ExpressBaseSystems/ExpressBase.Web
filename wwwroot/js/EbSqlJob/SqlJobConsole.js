@@ -17,6 +17,9 @@
         $("#sql-job-objs").append($Opt);
     };
 
+    this.initComplete = function () {
+        $("#list-of-sms").on("click", ".retryBtn", this.SqljobRetry.bind(this));
+    };
 
     this.getJobsList = function () {
         $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
@@ -32,18 +35,19 @@
                         Date: date
                     },
                     success: function (result) {
-                            $("#list-of-jobs").empty();
-                            $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
-                            var o = new Object();
-                            o.tableId = "tbl";
-                            o.showCheckboxColumn = false;
-                            o.showFilterRow = true;
-                            o.IsPaging = true;
-                            o.dvObject = JSON.parse(result.visualization);
-                            o.Source = "sqljob";
-                            var data = new EbCommonDataTable(o);
+                        $("#list-of-jobs").empty();
+                        $("#list-of-jobs").append(`<div id="content_tb1" class="wrapper-cont"><table id="tbl" class="table display table-bordered compact"></table></div>`);
+                        var o = new Object();
+                        o.tableId = "tbl";
+                        o.showCheckboxColumn = false;
+                        o.showFilterRow = true;
+                        o.IsPaging = true;
+                        o.dvObject = JSON.parse(result.visualization);
+                        o.Source = "sqljob";
+                        o.initCompleteCallback = this.initComplete.bind(this);
+                        var data = new EbCommonDataTable(o);
                         $("#layout_div .loader-fb").empty().removeClass("loader-fb");
-                    }
+                    }.bind(this)
                 });
         }
     };
@@ -99,8 +103,8 @@
                 "name": $('#sch-name').val(),
                 "expression": $('#result').text(),
                 "objId": $("#select-sql-job").children("option:selected").val().split("-")[3],
-                "type": 5, 
-                "cronstring": JSON.stringify(EbCron)  
+                "type": 5,
+                "cronstring": JSON.stringify(EbCron)
             },
             function () { });
     };
@@ -209,10 +213,11 @@
         var output = (day < 10 ? '0' : '') + day + '-' + (month < 10 ? '0' : '') + month + '-' + d.getFullYear();
         $("#date").val(output);
     };
+
     this.init = function () {
         this.currentDate();
         this.DrawJobSelectBox();
-        $("#list-of-jobs").on("click", ".retryBtn", this.SqljobRetry.bind(this));
+       // $("#list-of-jobs").on("click", ".retryBtn", this.SqljobRetry.bind(this));
         $("#show-sql-jobs").on("click", this.getJobsList.bind(this));
         $("#run-sql-job").on("click", this.RunsqlJobTrigger.bind(this));
         $("#schedule-sql-job").on("click", this.ScheduleSqlJobFunction.bind(this));

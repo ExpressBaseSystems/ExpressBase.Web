@@ -122,8 +122,7 @@
             let rowId = rowIds[i];
             TrsHTML.push(this.getTrHTML_(this.objectMODEL[rowId], rowId, false));
         }
-        //if (this.cloneMode && this.formRenderer.notSavedOnce)
-        //    this.newRowCounter = -i;
+
         return TrsHTML.join();
     };
 
@@ -261,31 +260,7 @@
             if (inpCtrl.IsDisable)
                 inpCtrl.disable();
 
-            //// run DG onChangeFns initially
-            //if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
-            //    try {
-            //        let FnString = atob(inpCtrl.OnChangeFn.Code) +
-            //            `;console.log('GOT IT initially inside dg---'); console.log(this)`;
-            //        let onChangeFn = new Function('form', 'user', `event`, FnString).bind(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject);
-            //        inpCtrl.__onChangeFn = onChangeFn;
-            //        console.log(`>> Starting execution of OnChange function of 'form.${this.ctrl.Name}.${inpCtrl.Name}'`);
-            //        inpCtrl.__onChangeFn();
-            //    }
-            //    catch (e) {
-            //        console.eb_log("eb error :");
-            //        console.eb_log(e);
-            //        alert("  error in 'OnChange function' of : " + inpCtrl.Name + " - " + e.message);
-            //    }
-            //}
-
         }
-
-
-        ////////////////////
-        //if (SingleRow) {
-        //    this.setDataInRow(SingleRow, rowid, CurRowCtrls);
-        //}
-        ////////////////////
 
         //should fire after all default value set
         if (!IsNoValExp) {
@@ -314,12 +289,6 @@
             }
         }
     };
-
-    //this.resetControlValues = function (dataModel) {
-    //    console.log(dataModel);
-    //    this.populateDGWithDataModel(dataModel);
-    //};
-
 
     this.getPSDispMembrs = function (inpCtrl) { // need to rework
         let rowId = inpCtrl.__rowid;
@@ -757,17 +726,17 @@
             this.insertRowAt(insertIdx, $tr);
         } else {
             if (!this.ctrl.AscendingOrder) {
-                if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {
-                    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
-                }
-                else
+                //if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {///
+                //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
+                //}
+                //else
                     $(`#${this.TableId}>tbody`).prepend($tr);
             }
             else {
-                if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
-                    $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
-                }
-                else
+                //if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
+                //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
+                //}
+                //else
                     $(`#${this.TableId}>tbody`).append($tr);
             }
         }
@@ -893,50 +862,6 @@
     this.removeInvalidStyle = function (ctrl) {
         EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
     };
-
-    //this.setDataInRow = function (SingleRow, rowid, CurRowCtrls) {
-
-    //    $.each(SingleRow.Columns, function (j, SingleColumn) {// loop through column controls
-    //        if (j === 0)// to skip id column
-    //            return true;
-    //        let ctrl = getObjByval(CurRowCtrls, "Name", SingleColumn.Name);// get control if SingleRow.Columns contains data of it
-
-    //        if (ctrl === undefined) {
-    //            $.each(CurRowCtrls, function (i, obj) {
-    //                if (obj.ObjType === "DGUserControlColumn") {
-    //                    let innerCtrl = getObjByval(obj.Columns.$values, "Name", SingleColumn.Name);
-    //                    if (innerCtrl) {
-    //                        let val = SingleColumn.Value;
-    //                        if (obj.__DGUCC.AllCtrlValues[rowid] === undefined)
-    //                            obj.__DGUCC.AllCtrlValues[rowid] = {};
-    //                        obj.__DGUCC.AllCtrlValues[rowid][innerCtrl.EbSid] = val;
-    //                    }
-    //                }
-    //            }.bind(this));
-    //        }
-
-    //        if (!ctrl) {// to alert if no ctrl for such data
-    //            if (SingleColumn.Name !== "eb_row_num")
-    //                console.warn(" no ctrl for such data");
-    //            return true;
-    //        }
-
-
-    //        let val = SingleColumn.Value;
-    //        ctrl.__eb_EditMode_val = val;
-    //        if (val === null)
-    //            return true;
-
-    //        if (ctrl.ObjType === "PowerSelect") {
-    //            //ctrl.setDisplayMember = EBPSSetDisplayMember;///////////
-    //            if (val)
-    //                ctrl.setDisplayMember(val);
-    //        }
-    //        else
-    //            ctrl.setValue(val);
-
-    //    }.bind(this));
-    //};
 
     this.getFormVals = function () {
         return getValsFromForm(this.formObject_Full);
@@ -1242,16 +1167,6 @@
             }
         }
     };
-
-    //this.updateAggCols = function (rowId) {
-    //    $.each(this.objectMODEL[rowId], function (i, inpctrl) {
-    //        if (inpctrl.IsAggragate) {
-    //            let colname = inpctrl.Name;
-    //            $(`#${this.TableId}_footer tbody tr [colname='${colname}'] .tdtxt-agg span`).text(this.getAggOfCol(colname));
-    //        }
-    //    }.bind(this));
-
-    //};
 
     this.updateAggCols = function (updateDpnt) {
         $.each(this.ctrl.Controls.$values, function (i, col) {

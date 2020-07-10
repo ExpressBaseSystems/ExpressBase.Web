@@ -726,7 +726,7 @@
             this.insertRowAt(insertIdx, $tr);
         } else {
             if (!this.ctrl.AscendingOrder) {
-                //if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {
+                //if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:first`).length > 0) {///
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
                 //}
                 //else

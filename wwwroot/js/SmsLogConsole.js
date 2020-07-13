@@ -55,6 +55,10 @@
     };
 
     this.SmsLogRetry = function (e) {
+        let colindex = this.dataTable.columns.filter(dd => dd.name === "id")[0].data;
+        let rowindex = $(e.target).closest("tr").index();
+        let hhhh = this.dataTable.unformatedData[rowindex][colindex];
+        alert(hhhh);
         let Refid = $("#select-sms-template").children("option:selected").val();
         let id = e.target.getAttribute("id");
         if (id) {

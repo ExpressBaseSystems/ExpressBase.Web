@@ -18,7 +18,7 @@
     };
 
     this.initComplete = function () {
-        $("#list-of-sms").on("click", ".retryBtn", this.SqljobRetry.bind(this));
+        $("#list-of-jobs").on("click", ".retryBtn", this.SqljobRetry.bind(this));
     };
 
     this.getJobsList = function () {

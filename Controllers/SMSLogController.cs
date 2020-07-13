@@ -111,5 +111,10 @@ namespace ExpressBase.Web.Controllers
 
             return Columns;
         }
+
+        public string SmsRetry(int Id, string RefId)
+        {         
+            return null;
+        }
     }
 }

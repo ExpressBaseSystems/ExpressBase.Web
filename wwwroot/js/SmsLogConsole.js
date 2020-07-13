@@ -18,9 +18,9 @@
     };
 
     this.initComplete = function () {
-          $("#list-of-sms").on("click", ".retryBtn", this.smsRetry.bind(this));
+        $("#list-of-sms").on("click", ".retryBtn", this.SmsLogRetry.bind(this));
     };
-
+       
     this.getSmsList = function () {
         $("#layout_div").append(`<div class="loader-fb"><div class="lds-facebook center-tag-fb"><div></div><div></div><div></div></div></div>`);
         let Refid = $("#select-sms-template").children("option:selected").val();
@@ -47,18 +47,30 @@
                         o.dvObject = JSON.parse(result.visualization);
                         o.Source = "smslog"; 
                         o.initCompleteCallback = this.initComplete.bind(this);
-                        var data = new EbCommonDataTable(o);
+                        this.dataTable = new EbCommonDataTable(o);
                         $("#layout_div .loader-fb").empty().removeClass("loader-fb");
                     }.bind(this)
                 });
         }
     };
 
-    function renderButtonCol(data, type, row, meta) {
-        if (row[row.length - 7] === "success")
-            return "";
-        else
-            return `<button class="retryBtn" id="${row[row.length - 4]}">Retry</button>`
+    this.SmsLogRetry = function (e) {
+        let Refid = $("#select-sms-template").children("option:selected").val();
+        let id = e.target.getAttribute("id");
+        if (id) {
+            $.ajax(
+                {
+                    type: 'POST',
+                    url: "/SMSLog/SmsRetry",
+                    data: {
+                        id: id,
+                        RefId: Refid
+                    },
+                    success: function (result) {
+                        $("#show-sms-logs").click();
+                    }
+                });
+        }
     };
 
     this.currentDate = function () {
@@ -72,13 +84,8 @@
 
     this.init = function () {
         this.currentDate();
-        this.DrawSmsTemplateSelectBox();
-       // $("#list-of-sms").on("click", ".retryBtn", this.SqljobRetry.bind(this));
-        $("#show-sms-logs").on("click", this.getSmsList.bind(this));
-      //  $("#run-sql-job").on("click", this.RunsqlJobTrigger.bind(this));
-        //$("#schedule-sql-job").on("click", this.ScheduleSqlJobFunction.bind(this));
-       // $("#schedule-job").on("click", this.ScheduleJob.bind(this));
-       // $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
+        this.DrawSmsTemplateSelectBox();       
+        $("#show-sms-logs").on("click", this.getSmsList.bind(this));       
     };
     this.init();
 }

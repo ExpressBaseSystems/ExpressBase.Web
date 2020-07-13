@@ -16,6 +16,7 @@
         $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
         $('.resetcss').on('click', this.ResetCssFn.bind(this));
         $('input[name=authtype]').on('click', this.authMethodCheckFn.bind(this));
+        $('input[name=userAuthType]').on('change', this.userAuthTypeFn.bind(this));
         $('#grdntmodalbtn').on('click', this.gradientValueChangeFn.bind(this));
     };
 
@@ -279,6 +280,23 @@
             $('#ebfont_lst').append(fnthtml);
         }
 
+        if (this.AppSettings.Authoptions.UserType_Internal === false) {
+            $('#internalLoginCont').hide();
+            $('#anonymousLoginCont').show();
+        }
+        else if (this.AppSettings.Authoptions.UserType_Internal === true) {
+            $('#anonymousLoginCont').hide();
+            $('#internalLoginCont').show();
+        }
+        if (this.AppSettings.Authoptions.Password_based) {
+            $('#otp_based').prop('checked', false);
+            $('#pswrd_based').prop('checked', true);
+        }
+        else
+            if (this.AppSettings.Authoptions.OTP_based) {
+            $('#pswrd_based').prop('checked', false);
+            $('#otp_based').prop('checked', true);           
+        }
         for (let property in cssobj) {
 
             let html = "";
@@ -329,6 +347,16 @@
         authOptions.FbAppID = $('#fbAppidtxt').val().trim();
         authOptions.FbAppVer = $('#fbAppversn').val().trim();
         authOptions.LoginOpnCount = loginCnt;
+
+        let radio_id = $("input[type='radio'][name='userAuthType']:checked").attr('id');
+        if (radio_id === 'publicUsers') {
+            authOptions.UserType_Internal = false;
+        }
+        else if (radio_id === 'internalUsers') {
+            authOptions.UserType_Internal = true;
+        }
+        authOptions.OTP_based = $('#otp_based').is(":checked");
+        authOptions.Password_based = $('#pswrd_based').is(":checked");
 
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
@@ -399,6 +427,18 @@
             }
         }
     };
+
+    this.userAuthTypeFn = function () {
+        var radio_id = $("input[type='radio'][name='userAuthType']:checked").attr('id');
+        if (radio_id === 'publicUsers') {
+            $('#internalLoginCont').hide();
+            $('#anonymousLoginCont').show();
+        }
+        else if (radio_id === 'internalUsers') {
+            $('#anonymousLoginCont').hide();
+            $('#internalLoginCont').show();
+        }
+    }
 
     this.ResetCssFn = function (e) {
         let cssConst = $(e.target).attr('obname');

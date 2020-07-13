@@ -355,6 +355,11 @@ const WebFormRender = function (option) {
             //    ctrl.setDisplayMember(val);
             //}
             //else
+
+            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
+                ctrl.___isNotUpdateValExpDepCtrls = true;
+            }
+
             ctrl.___DoNotUpdateDataVals = true;
             ctrl.justSetValue(val);
             ctrl.___DoNotUpdateDataVals = false;

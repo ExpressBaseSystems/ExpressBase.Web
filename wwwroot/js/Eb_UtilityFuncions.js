@@ -96,7 +96,7 @@ function EbRunValueExpr(ctrl, formObject, userObject, formObj) {
 
 function valueExpHelper(val, ctrl) {
     ctrl.DataVals.ValueExpr_val = val;
-    let isdifferentValue = ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val;
+    let isdifferentValue = (ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val);
     if (isdifferentValue)
         console.warn(`edit mode value and valueExpression value are different for '${ctrl.Name}' control`);
     else {

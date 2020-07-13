@@ -100,11 +100,21 @@
         }
     }
 
+    createUUID() {
+        return 'xxxxxxxx_xxxx_4xxx_yxxx_xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
     appendGallery() {
+
+        let guid = this.createUUID();
+
         $(`#${this.Options.Container}_FUP_GW .FUP_Bdy_W`).append(`<div id="${this.Options.Container}_GalleryUnq" class="ebFupGalleryOt">
                         <div class="ClpsGalItem_Sgl" Catogory="DEFAULT" alt="Default">
-                            <div class="Col_head collapsed" data-toggle="collapse" data-target="#DEFAULT_ColBdy">DEFAULT <span class="FcnT"></span></div>
-                            <div class="Col_apndBody collapse" id="DEFAULT_ColBdy">
+                            <div class="Col_head collapsed" data-toggle="collapse" data-target="#DEFAULT_ColBdy${guid}">DEFAULT <span class="FcnT"></span></div>
+                            <div class="Col_apndBody collapse" id="DEFAULT_ColBdy${guid}">
                             <div class="Col_apndBody_apndPort"></div>
                             </div>
                         </div>
@@ -163,9 +173,9 @@
             let $countdef = $(`#${this.Options.Container}_GalleryUnq div[Catogory="DEFAULT"] .Col_head .FcnT`);
 
             //for creating tag buttons
-            if (this.FileFlag.tagflag == true) {
+            if (this.FileFlag.tagflag === true) {
                 let taghtml = "";
-                if (renderFiles[i].Meta != null) {
+                if (renderFiles[i].Meta !== null) {
                     if (renderFiles[i].Meta.hasOwnProperty('Tags')) {
                         let filetags = renderFiles[i].Meta.Tags[0].split(',');
                         $.each(filetags, function (j, tagval) {
@@ -180,7 +190,7 @@
                         }.bind(this));
                     }
                 }
-              
+
             }
 
             if ($.isEmptyObject(renderFiles[i].Meta)) {
@@ -224,7 +234,7 @@
             $(this.Gallery).find(".ClpsGalItem_Sgl").each(function (indx, value) {
                 //if ($(value).attr('catogory') != "DEFAULT") {
                 let childLength = $(value).find(".Col_apndBody").find(".Col_apndBody_apndPort").children().length
-                if (childLength == 0) {
+                if (childLength === 0) {
                     $(value).hide();
                 }
                 else {
@@ -235,7 +245,6 @@
         }
     }
 
-
     sortByTagFn(e) {
 
         this.FileFlag.tagflag = false;
@@ -244,7 +253,8 @@
         $(`#${this.Options.Container}`).find('.FUP_TagUl .current').removeClass('current');
         $.each(flLst, function (k, imgdiv) {
             $(imgdiv).remove();
-        }.bind(this))
+        }.bind(this));
+
         if ($(e.target).closest('li').hasClass('showAllFile')) {
             this.renderFiles(this.FileList);
             $(e.target).addClass('current');
@@ -260,9 +270,8 @@
             }
             this.renderFiles(tagsArr);
         }
-
-
     }
+
     rmChecked(evt) {
         if ($(evt.target).closest(".eb_uplGal_thumbO").length <= 0) {
             this.Gallery.find(`.mark-thumb:checkbox:checked`).prop("checked", false);
@@ -566,7 +575,7 @@
         document.getElementById("uploadtest-file-input").value = "";
         this.isDropZoneEmpty();
     }
-//lines commented for testing
+    //lines commented for testing
     setFullscreen(e) {
         //let txt = $(e.target).closest("button").attr("fname") + " (" + $(e.target).closest("button").attr("size") + " Kb)";
         //let ft = $(e.target).closest("button").attr("ftype");

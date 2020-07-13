@@ -4336,11 +4336,14 @@
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
         this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
+
         var ob = new Object();
         ob.DataVizObjString = JSON.stringify(this.EbObject);
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
-        this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.cloud', Channels: ["ExportToExcel"] });
+        ob.SubscriptionId = window.ebcontext.subscription_id;
+
+        this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["ExportToExcel"] });
         this.ss.onExcelExportSuccess = function (url) {
             window.location.href = url;
             this.excelbtn.prop("disabled", false);
@@ -4351,7 +4354,6 @@
             url: "../DV/exportToexcel",
             data: { req: ob }
         });
-
     };
 
     this.ExportToCsv = function (e) {

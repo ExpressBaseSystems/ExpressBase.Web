@@ -94,6 +94,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", "[name=contactSubmitMail]", this.contactSubmitMail);
         $("body").on("click", "[name=contactSubmitPhn]", this.contactSubmitPhn);
         $("body").on("click", "[name=contactSubmitName]", this.contactSubmitName);
+        $("body").on("click", "[name=passwordSubmitBtn]", this.passwordLoginFn);
         $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
@@ -218,7 +219,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //$.ajaxSetup({
         //    //beforeSend: function (xhr) { xhr.setRequestHeader('bToken', this.bearerToken); xhr.setRequestHeader('rToken', this.refreshToken); }.bind(this),
         //    //complete: function (resp) { this.bearerToken = resp.getResponseHeader("btoken"); }.bind(this)
-        
+
         //});
     };
 
@@ -250,7 +251,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 $('.eb-chatBox').empty();
                 this.showDate();
                 this.AskWhatU();
-               // this.ajaxSetup4Future();
+                // this.ajaxSetup4Future();
 
                 /////////////////////////////////////////////////
 
@@ -289,7 +290,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 }.bind(this)
             })
         }
-        
+
     }.bind(this);
 
 
@@ -1503,7 +1504,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };
-   
+
     this.getTime = function () {
         let hour = new Date().getHours();
         let am_pm = "am";
@@ -1660,8 +1661,9 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             <span class="input-group-addon" style="padding: 0px;"> <i class="fa  fa-${icon}" aria-hidden="true"></i> </span>
         </div>
     </div>`;
-        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper"><button class="btn cntct_btn" name="${name}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
-        this.msgFromBot($ctrlCont, function () { $(`#${id}`).focus(); }, "anon_mail");
+        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper">
+                <button class="btn cntct_btn" name="${name}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#${id}`).focus(); }, id);
     };
 
     this.userNameFn = function () {
@@ -1681,6 +1683,37 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         let msg = "Please provide your phone number";
         let ctrlHtml = `<input chat-inp type="tel" id="anon_phno" placeholder="Phone Number">`;
         this.sendWrapedCtrl(msg, ctrlHtml, "anon_phno", "contactSubmitPhn", "phone");
+    }.bind(this);
+
+    this.Password_basedLogin = function (e) {
+        this.msgFromBot("Please provide your username and password");
+        let controlHTML = `<div class="" style='width: calc(100% - 57px)'>
+                            <div class="form-group bot_pswrdLogin">
+                              <label for="username_id">Email:</label>
+                                <div class="username_wrp">
+                                <input type="email" class="form-control" id="username_id" placeholder="Enter email" name="email">
+                                </div>
+                            </div>
+                            <div class="form-group bot_pswrdLogin">
+                              <label for="password_id">Password:</label>
+                                <div class="pswrd_wrp">
+                                <input type="password" class="form-control" id="password_id" placeholder="Enter password" name="pwd">
+                                </div>
+                            </div>
+                        </div>`;
+
+
+        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper">
+                <button class="btn cntct_btn" name="passwordSubmitBtn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#pswdbasedLogin`).focus(); }, "pswdbasedLogin");
+
+
+
+
+        //let ctrlHtml = `<input chat-inp type="text" id="username_id" placeholder="User name">
+        //                <input chat-inp type="password" id="password_id" placeholder="Password">`;
+
+        // this.sendWrapedCtrl(msg, ctrlHtml, "pswdbasedLogin", "passwordSubmitBtn");
     }.bind(this);
 
 
@@ -1787,7 +1820,49 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
 
         }
 
-    }.bind(this);   
+    }.bind(this);
+
+    this.OTP_BasedLogin = function () {
+
+    }
+
+    this.passwordLoginFn = function (e) {
+        $(e.target).closest('button').attr('disabled', true);
+        this.showTypingAnim();
+        $.ajax({
+            url: "../bote/PasswordAuthAndGetformlist",
+            type: "POST",
+            data: {
+                "uname": $("#username_id").val().trim(),
+                "pass": $("#password_id").val().trim(),
+                "cid": this.EXPRESSbase_SOLUTION_ID,
+                "appid": this.EXPRESSbase_APP_ID,
+                "wc": "bc",
+                "user_ip": this.userDtls.ip,
+                "user_browser": this.userDtls.browser,
+            },
+            success: function (result) {
+                this.hideTypingAnim();
+                if (result.length === 1) {
+                    this.msgFromBot(result[0]);
+                }
+                else
+                    if (result.length > 1) {
+                        //this.bearerToken = result[0];
+                        //this.refreshToken = result[1];
+                        this.formsDict = result[2];
+                        window.ebcontext.user = JSON.parse(result[3]);
+                        //this.formNames = Object.values(this.formsDict);
+                        this.formNames = Object.values(result[4]);
+                        this.formIcons = result[5];
+                        $('.eb-chatBox').empty();
+                        this.showDate();
+                        this.AskWhatU();
+                    }
+
+            }.bind(this)
+        });
+    }.bind(this);
 
     this.botStartoverfn = function () {
         if (this.botflg.loadFormlist === false) {
@@ -1796,68 +1871,77 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.showDate();
             this.botUserLogin();
         }
-       
-    }; 
 
-    this.botUserLogin = function() {
+    };
+
+    this.botUserLogin = function () {
         this.msgFromBot(this.welcomeMessage);
+        if (!settings.UserType_Internal) {
+            if (settings.Authoptions.Fblogin) {
+                // This is called with the results from from FB.getLoginStatus().
 
-        if (settings.Authoptions.Fblogin) {
-            // This is called with the results from from FB.getLoginStatus().
+                window.fbAsyncInit = function () {
+                    console.log("bot" + settings.Authoptions.FbAppVer);
+                    FB.init({
+                        appId: settings.Authoptions.FbAppID,
+                        //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
+                        cookie: true,  // enable cookies to allow the server to access
+                        // the session
+                        xfbml: true,  // parse social plugins on this page
+                        version: settings.Authoptions.FbAppVer
+                        //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
+                    });
 
-            window.fbAsyncInit = function () {
-                console.log("bot" + settings.Authoptions.FbAppVer);
-                FB.init({
-                    appId: settings.Authoptions.FbAppID,
-                    //appId: ('@ViewBag.Env' === 'Development' ? '141908109794829' : ('@ViewBag.Env' === 'Staging' ? '1525758114176201' : '2202041803145524')),//'141908109794829',//,'1525758114176201',//
-                    cookie: true,  // enable cookies to allow the server to access
-                    // the session
-                    xfbml: true,  // parse social plugins on this page
-                    version: settings.Authoptions.FbAppVer
-                    //version: ('@ViewBag.Env' === 'Development' ? 'v2.11' : ('@ViewBag.Env' === 'Staging' ? 'v2.8' : 'v3.0')) // use graph api version 2.8
-                });
+                    FB.getLoginStatus(function (response) {
+                        statusChangeCallback(response);
+                    });
 
-                FB.getLoginStatus(function (response) {
-                    statusChangeCallback(response);
-                });
+                };
 
-            };
-
-            // Load the SDK asynchronously
-            (function (d, s, id) {
-                var js, fjs = d.getElementsByTagName(s)[0];
-                if (d.getElementById(id)) return;
-                js = d.createElement(s); js.id = id;
-                js.src = "//connect.facebook.net/en_US/sdk.js";
-                fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
+                // Load the SDK asynchronously
+                (function (d, s, id) {
+                    var js, fjs = d.getElementsByTagName(s)[0];
+                    if (d.getElementById(id)) return;
+                    js = d.createElement(s); js.id = id;
+                    js.src = "//connect.facebook.net/en_US/sdk.js";
+                    fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));
 
 
-            function statusChangeCallback(response) {
-                console.log('statusChangeCallback');
-                this.FB = FB;
-                //if (response.status === 'connected') {
-                //    this.FBLogined();
-                //} else {
-                //    this.FBNotLogined();
-                //}
+                function statusChangeCallback(response) {
+                    console.log('statusChangeCallback');
+                    this.FB = FB;
+                    //if (response.status === 'connected') {
+                    //    this.FBLogined();
+                    //} else {
+                    //    this.FBNotLogined();
+                    //}
+                }
+
+                // This function is called when someone finishes with the Login
+                function checkLoginState() {
+                    FB.getLoginStatus(function (response) {
+                        statusChangeCallback(response);
+                    });
+                };
+
+
+
             }
-
-            // This function is called when someone finishes with the Login
-            function checkLoginState() {
-                FB.getLoginStatus(function (response) {
-                    statusChangeCallback(response);
-                });
-            };
-
-
-
         }
         if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {
             this.getBotformList();
         }
         else {
-            this.AnonymousLoginOptions();
+            if (settings.UserType_Internal) {
+                if (settings.Authoptions.OTP_based) {
+                    this.OTP_BasedLogin();
+                } else if (settings.Authoptions.Password_based) {
+                    this.Password_basedLogin();
+                }
+            } else {
+                this.AnonymousLoginOptions();
+            }
         }
 
     }.bind(this);
@@ -2099,7 +2183,7 @@ function getToken() {
 }
 
 function getTokenFromCookie(name) {
-   // var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
+    // var b = document.cookie.match('(^|;)\\s*bToken\\s*=\\s*([^;]+)');
     var b = document.cookie.match(`(^|;)\\s*${name}\\s*=\\s*([^;]+)`);
     return b ? b.pop() : '';
 }

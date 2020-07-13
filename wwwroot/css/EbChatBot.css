@@ -1224,3 +1224,25 @@ border-radius: 4px;
 .msg-cont-w100 {
     width: 100% !important;
 }
+.bot_pswrdLogin .username_wrp, .bot_pswrdLogin .pswrd_wrp {
+    position: relative;
+    display: flex;
+    align-items: center;
+    color: var(--botThemeColor);
+}
+    .bot_pswrdLogin .username_wrp:before {
+        font-family: FontAwesome;
+        content: "\f007";
+        position: absolute;
+        margin-left: 15px;
+    }
+    .bot_pswrdLogin .pswrd_wrp:before {
+        font-family: FontAwesome;
+        content: "\f084";
+        position: absolute;
+        margin-left: 15px;
+    }
+.bot_pswrdLogin input {
+    margin: 10px 0px;
+    padding-left: 40px
+}

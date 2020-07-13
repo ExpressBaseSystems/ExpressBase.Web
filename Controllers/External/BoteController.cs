@@ -25,6 +25,7 @@ using System.Security.Cryptography;
 using System.IO;
 using ExpressBase.Common.Security;
 using ExpressBase.Data;
+using ExpressBase.Common.Extensions;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -362,44 +363,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			});
 			if (authResponse != null)
 			{
-				this.ServiceClient.BearerToken = authResponse.BearerToken;
-				this.ServiceClient.RefreshToken = authResponse.RefreshToken;
-				var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
 
-				string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-
-				User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, cid, email, wc));
-				var Ids = String.Join(",", user.EbObjectIds);
-				//GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = "{" + Ids + ", 1170, 1172}", AppId = appid });
-				GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
-				List<object> returnlist = new List<object>();
-				List<object> objpro = new List<object>();
-
-				returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
-				returnlist.Add(authResponse.RefreshToken);
-				returnlist.Add(formlist.BotForms);
-				if (user.UserId == 1)
-					user.Preference.Locale = "en-IN";
-				returnlist.Add(JsonConvert.SerializeObject(user));
-				returnlist.Add(formlist.BotFormsDisp);
-
-
-				if (authResponse != null)
-				{
-					CookieOptions options = new CookieOptions();
-					Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()), options);
-					Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, authResponse.RefreshToken, options);
-					
-				}
-				foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
-				{
-					string rfid = rfidlst.Key;
-					EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
-					objpro.Add(BtFrm?.IconPicker);
-				}
-				returnlist.Add(objpro);
-				return returnlist;
-
+				return GetBotformlist(authResponse, cid, wc, appid);
 				//CookieOptions options = new CookieOptions();
 				//Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, this.ServiceClient.BearerToken, options);
 				//Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
@@ -413,6 +378,84 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			}
 		}
 
+
+
+		[HttpPost]
+		public  List<object> PasswordAuthAndGetformlist(string cid, string appid, string socialId, string uname, string anon_phno, string user_ip, string user_browser, string pass, string wc = TokenConstants.BC)
+		{
+			HttpClient client = new HttpClient();
+			IFormCollection req = this.HttpContext.Request.Form;
+			//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
+			//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
+			cid = this.GetIsolutionId(cid);		
+			this.AuthClient.Headers.Add("SolId", cid);
+			MyAuthenticateResponse authResponse = null;
+			List<object> returnlist = new List<object>();
+			try {
+				 authResponse = this.AuthClient.Send<MyAuthenticateResponse>(new Authenticate
+				{
+					provider = CredentialsAuthProvider.Name,
+					UserName = uname,
+					Password = (pass + uname).ToMD5Hash(),
+					Meta = new Dictionary<string, string> {
+							{ RoutingConstants.WC, wc },
+							{ TokenConstants.CID, cid },
+							{ TokenConstants.IP, this.RequestSourceIp},
+							{ RoutingConstants.USER_AGENT, this.UserAgent}
+						},
+					RememberMe = true
+				});
+			}
+			catch(Exception e)
+			{
+				Console.WriteLine("Exception: " + e.ToString());				
+				returnlist.Add(e.Message);
+			}
+			
+			if (authResponse != null)
+			{
+				return GetBotformlist(authResponse,cid,wc,appid);
+			}
+			else
+			{
+				return returnlist;
+			}
+		}
+		public List<object> GetBotformlist(MyAuthenticateResponse authResponse,string cid,string wc,string appid)
+		{
+			this.ServiceClient.BearerToken = authResponse.BearerToken;
+			this.ServiceClient.RefreshToken = authResponse.RefreshToken;
+			var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
+
+			string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
+
+			User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, cid, email, wc));
+			var Ids = String.Join(",", user.EbObjectIds);			
+			GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
+			List<object> returnlist = new List<object>();
+			List<object> objpro = new List<object>();
+
+			returnlist.Add(HelperFunction.GetEncriptedString_Aes(authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()));
+			returnlist.Add(authResponse.RefreshToken);
+			returnlist.Add(formlist.BotForms);
+			if (user.UserId == 1)
+				user.Preference.Locale = "en-IN";
+			returnlist.Add(JsonConvert.SerializeObject(user));
+			returnlist.Add(formlist.BotFormsDisp);
+
+			CookieOptions options = new CookieOptions();
+			Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()), options);
+			Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, authResponse.RefreshToken, options);
+
+			foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
+			{
+				string rfid = rfidlst.Key;
+				EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
+				objpro.Add(BtFrm?.IconPicker);
+			}
+			returnlist.Add(objpro);
+			return returnlist;
+		}
 		public class IpApiResponse
 		{
 			public string As { get; set; }

@@ -280,13 +280,17 @@
             $('#ebfont_lst').append(fnthtml);
         }
 
-        if (this.AppSettings.Authoptions.UserType_Internal === false) {
+        if (this.AppSettings.UserType_Internal === false) {
             $('#internalLoginCont').hide();
             $('#anonymousLoginCont').show();
+            $('#internalUsers').prop('checked', false);
+            $('#publicUsers').prop('checked', true);           
         }
-        else if (this.AppSettings.Authoptions.UserType_Internal === true) {
+        else if (this.AppSettings.UserType_Internal === true) {
             $('#anonymousLoginCont').hide();
             $('#internalLoginCont').show();
+            $('#publicUsers').prop('checked', false);
+            $('#internalUsers').prop('checked', true);
         }
         if (this.AppSettings.Authoptions.Password_based) {
             $('#otp_based').prop('checked', false);
@@ -347,14 +351,7 @@
         authOptions.FbAppID = $('#fbAppidtxt').val().trim();
         authOptions.FbAppVer = $('#fbAppversn').val().trim();
         authOptions.LoginOpnCount = loginCnt;
-
-        let radio_id = $("input[type='radio'][name='userAuthType']:checked").attr('id');
-        if (radio_id === 'publicUsers') {
-            authOptions.UserType_Internal = false;
-        }
-        else if (radio_id === 'internalUsers') {
-            authOptions.UserType_Internal = true;
-        }
+       
         authOptions.OTP_based = $('#otp_based').is(":checked");
         authOptions.Password_based = $('#pswrd_based').is(":checked");
 
@@ -394,6 +391,14 @@
         appSettings["CssContent"] = cssConstObj;
         appSettings["Authoptions"] = authOptions;
         appSettings["BotProp"] = botProperties;
+        let radio_id = $("input[type='radio'][name='userAuthType']:checked").attr('id');
+        if (radio_id === 'publicUsers') {
+            appSettings["UserType_Internal"] = false;
+        }
+        else if (radio_id === 'internalUsers') {
+             appSettings["UserType_Internal"] = true;
+        }
+       
         $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: "POST",

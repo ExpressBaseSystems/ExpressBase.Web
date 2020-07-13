@@ -233,7 +233,8 @@
                 this.FD = true;
                 if (this.isPipped || this.isContextual) {
                     this.placefiltervalues();
-                    this.$submit.trigger("click");
+                    if (!this.FilterDialog.FormObj.AutoRun)
+                        this.$submit.trigger("click");
                 }
                 else {
                     this.FDCont.show();

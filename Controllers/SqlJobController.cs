@@ -124,7 +124,7 @@ namespace ExpressBase.Web.Controllers
                     Columns.Add(_col);
                 }
                 var str1 = String.Format("T0.status == \"{0}\"", "F");
-                Columns.Add(new DVButtonColumn { Data = 7, Name = "Action", sTitle = "Action", ButtonText = "Retry", bVisible = true, IsCustomColumn = true, RenderCondition = new AdvancedCondition { Value = new EbScript { Code = str1, Lang = ScriptingLanguage.CSharp } } });
+                Columns.Add(new DVButtonColumn { Data = 7, Name = "Action", sTitle = "Action", ButtonText = "Retry", bVisible = true, IsCustomColumn = true,ButtonClassName= "retryBtn", RenderCondition = new AdvancedCondition { Value = new EbScript { Code = str1, Lang = ScriptingLanguage.CSharp } } });
             }
             catch (Exception e)
             {

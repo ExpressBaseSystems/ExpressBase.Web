@@ -69,6 +69,7 @@
 }
 
 #ui-datepicker-div {
-    top: 190px;
-    z-index : 3;
+    top: 188px;
+    left: 30px;
+    z-index: 3 !important;
 }

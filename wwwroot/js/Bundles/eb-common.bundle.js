@@ -506,6 +506,7 @@ var EbMenu = function (option) {
     this.start();
 }
 var MeetingRequestView;
+var haaaa;
 class Setup {
 
     constructor(option) {
@@ -513,6 +514,7 @@ class Setup {
         this.se = {};
         this.notification_count = 0;
         this.actions_count = 0;
+        this.meetings_count = 0;
 
         $.extend(this.option, option);
         this.initContainers_DomEvents();
@@ -522,6 +524,7 @@ class Setup {
         this.modal = new EbCommonModal();
 
         MeetingRequestView = this.MeetingRequestView.bind(this);
+        haaaa = this.haaaa.bind(this);
     }
 
     getCurrentLocation() {
@@ -534,6 +537,7 @@ class Setup {
     initContainers_DomEvents() {
         this.nf_container = $(`#nf-window #nf-container`);
         this.actn_container = $(`#nf-window #actn_container`);
+        this.meeting_container = $(`#nf-window #meeting_container`);
         this.nf_window = $("#nf-window.eb-notification-window");
         this.nf_fade = $("#nf-window-fade");
 
@@ -571,7 +575,7 @@ class Setup {
     notified(msg) {
         var o = JSON.parse(msg);
         this.notification_count = this.notification_count + 1;
-        ebcontext.header.updateNCount(this.notification_count + this.actions_count);
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
         //start again
     }
 
@@ -592,8 +596,11 @@ class Setup {
             if ("pendingActions" in data && Array.isArray(data.pendingActions)) {
                 this.drawActions(data.pendingActions);
             }
+            if ("myMeetings" in data && Array.isArray(data.myMeetings)) {
+                this.drawMeetings(data.myMeetings);
+            }
         }
-        ebcontext.header.updateNCount(this.notification_count + this.actions_count);
+        ebcontext.header.updateNCount(this.notification_count + this.actions_count + this.meetings_count);
         $('.status-time').tooltip({
             placement: 'top'
         });
@@ -649,6 +656,31 @@ class Setup {
         }
         $("#nf-window #nf-pendingact-count").text(`(${pa.length})`);
         this.actions_count = pa.length;
+    }
+
+    drawMeetings(pa) {
+        this.meeting_container.empty();
+        if (pa.length > 0) {
+            for (let i = 0; i < pa.length; i++) {
+                let _label = "";
+                let Id = pa[i].myActionId;
+                let url = 'href="#" onclick="haaaa(this); return false;"';
+                this.meeting_container.append(`
+                <li class="nf-tile">
+                        <a ${url} data-id='${Id}'>
+                            <div class='mymeeting_inner'>
+                                <h5>${pa[i].description}</h5>
+                                <div class='icon-status-cont'>${_label} <span class='pending_date status-time' title='${pa[i].createdDate}'>${pa[i].createdDate}</span></div>
+                            </div>
+                        </a>
+                </li>`);
+            }
+        }
+        else {
+            this.meeting_container.append(`<p class="nf-window-eptylbl" style="margin:auto;">No Meeting</p>`);
+        }
+        $("#nf-window #nf-mymeeting-count").text(`(${pa.length})`);
+        this.meetings_count = pa.length;
     }
 
     userNotification() {
@@ -750,7 +782,7 @@ class Setup {
     MeetingRequestView = function(e) {
         let id = $(e).closest("a").attr("data-id");
         //alert(id);
-        $.post("../Webform/GetSlotDetails", { id: id }, function(data) {
+        $.post("../EbMeeting/GetSlotDetails", { id: id }, function(data) {
             let html = JSON.parse(data);     
             let object = {
                 Title: "Meeting Request",
@@ -758,8 +790,8 @@ class Setup {
                 ButtonColor: "#ffffff",
                 ButtonBackground: "#3876ea",
                 ShowHeader: true,
-			    ShowFooter: false
-            }
+                ShowFooter: false
+            };
             ebcontext.setup.modal.setStyle(object);
             ebcontext.setup.modal.setHtml(html);
             $("#tabs").tabs();
@@ -767,19 +799,95 @@ class Setup {
             ebcontext.setup.modal.show();
             $('#accept-meeting').off('click').on('click', function() {
                 let slot = $('#accept-meeting').attr('data-id');
-                $.post("../Webform/AcceptMeeting", { Slot: slot, myactionid: id }, function(data) {
+                $.post("../EbMeeting/AcceptMeeting", { Slot: slot, myactionid: id }, function(data) {
                     let sts = JSON.parse(data);
                     if (sts.ResponseStatus) {
+                        ebcontext.setup.modal.hide();
+                        EbPopBox("show", {
+                            Message: "Success...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
                         $(`#accept-meeting`).attr('disabled', 'disabled');
                     }
                     else {
-                        
+                        ebcontext.setup.modal.hide();
+                        EbPopBox("show", {
+                            Message: "Failed. Some Error Found...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+            $('#pick-slot').off('click').on('click', function () {
+                let slot = $('#pick-slot').attr('data-id');
+                $.post("../EbMeeting/PickSlot", { Slot: slot, myactionid: id }, function (data) {
+                    let sts = JSON.parse(data);
+                    if (sts.ResponseStatus) {
+                        ebcontext.setup.modal.hide();
+                        EbPopBox("show", {
+                            Message: "Success...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
+                        $(`#accept-meeting`).attr('disabled', 'disabled');
+                    }
+                    else {
+                        ebcontext.setup.modal.hide();
+                        EbPopBox("show", {
+                            Message: "Failed. Some Error Found...",
+                            ButtonStyle: {
+                                Text: "Ok",
+                                Color: "white",
+                                Background: "#508bf9",
+                                Callback: function () {
+                                }
+                            }
+                        });
                     }
                 });
             });
         });
 
     };
+
+    haaaa = function (e) {
+        let id = $(e).closest("a").attr("data-id");
+        //alert(id);
+        $.post("../EbMeeting/GetMeetingsDetails", { meetingid: id }, function (data) {
+            let html = JSON.parse(data);
+            let object = {
+                Title: "Meeting Details",
+                ButtonText: "OK",
+                ButtonColor: "#ffffff",
+                ButtonBackground: "#3876ea",
+                ShowHeader: true,
+                ShowFooter: false
+            };
+            ebcontext.setup.modal.setStyle(object);
+            ebcontext.setup.modal.setHtml(html);
+            $("#tabs").tabs();
+            $("#tab-2").height($('#tabs-1').height());
+            ebcontext.setup.modal.show();
+        });
+
+    }
 }
 
 
@@ -1503,6 +1611,7 @@ var EbServerEvents = function (options) {
     this.Channels = options.Channels.join();
     this.Url = this.ServerEventUrl + "/event-stream?channels=" + this.Channels + "&t=" + new Date().getTime();
     this.sEvent = $.ss;
+
     this.onUploadSuccess = function (m, e) { };
     this.onShowMsg = function (m, e) { };
     this.onLogOut = function (m, e) { };
@@ -1511,11 +1620,14 @@ var EbServerEvents = function (options) {
 
     this.onConnect = function (sub) {
         //console.log("You've connected! welcome " + sub.displayName);
+        if (sub) {
+            window.ebcontext.subscription_id = sub.id;
+        }
     };
 
     this.onJoin = function (user) {
         //console.log("Welcome, " + user.displayName);
-    }
+    };
 
     this.onLeave = function (user) {
         //console.log(user.displayName + " has left the building");
@@ -1543,7 +1655,7 @@ var EbServerEvents = function (options) {
     this.onNotifyMsg = function (m, e) {
         //console.log("Notification");
         this.onNotification(m, e);
-    }
+    };
 
     this.stopListening = function () {
         this.ES.close();

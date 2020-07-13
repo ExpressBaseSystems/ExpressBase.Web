@@ -730,14 +730,14 @@
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
                 //}
                 //else
-                    $(`#${this.TableId}>tbody`).prepend($tr);
+                $(`#${this.TableId}>tbody`).prepend($tr);
             }
             else {
                 //if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
                 //}
                 //else
-                    $(`#${this.TableId}>tbody`).append($tr);
+                $(`#${this.TableId}>tbody`).append($tr);
             }
         }
         if (!this.ctrl.AscendingOrder)
@@ -1905,8 +1905,8 @@
                 "insertRowBelow": {
                     name: "Insert row below",
                     icon: "fa-trash",
-                    callback: this.insertRowBelow
-
+                    callback: this.insertRowBelow,
+                    disabled: this.insertRowBelowDisableFn
                 },
                 //"insertRowAbove": {
                 //    name: "Insert row above",
@@ -1923,6 +1923,10 @@
         autoHide: true,
         build: this.ctxBuildFn.bind(this)
     };
+
+    this.insertRowBelowDisableFn = function (key, opt) {
+        return $(`#${this.TableId}>tbody tr[is-editing="true"]`).length === 1;
+    }.bind(this);
 
     this.insertRowBelow = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);

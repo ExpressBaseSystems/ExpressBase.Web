@@ -407,6 +407,42 @@ body, html, .html-root {
     .login-sec-image img {
         height: 70px;
     }
+
+.eb-styledTab {
+    border-bottom:none;
+}
+
+.eb-styledTab .nav > li > a i {
+    margin-right: 2px;
+    color: #717171;
+}
+
+.eb-styledTab > li.active > a, .eb-styledTab > li.active > a:focus {
+    font-weight: 500;
+    color: #508bf9;
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.eb-styledTab > li.active > a:after {
+    content: "";
+    content: "";
+    width: calc(100% - 30px);
+    height: 3px;
+    background: #508bf9;
+    position: absolute;
+    bottom: -1px;
+    left: 15px;
+}
+.login_tabcontent-uc {
+    background: #eee;
+    padding: 20px 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+.login_tabcontent-dc {
+
+}
 /*end login*/
 /*       Slider       */
 .w-100 {

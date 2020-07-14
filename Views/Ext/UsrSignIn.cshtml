@@ -2,6 +2,7 @@
     Layout = "~/Views/Shared/LayoutExternal.cshtml";
     string console = ViewBag.WhichConsole == "dc" ? "Developer" : "User";
     string logo = "/images/logo/" + ViewBag.SolutionId + ".png";
+    string styleClass = ViewBag.WhichConsole == "dc" ? "login_tabcontent-dc" : "login_tabcontent-uc";
 }
 @section JavaScript{
     <script>
@@ -11,84 +12,113 @@
 <section class="eb_login">
     <div class="container">
         <div class="row h-100" style="display: flex;justify-content: center;align-items: center;">
-            <div class="col-md-5 col-lg-5 col-sm-12 col-xs-12 login_container_usr">
+            <div class="col-md-6 col-lg-6 col-sm-12 col-xs-12 login_container_usr">
                 <div class="loader_top" id="loader_profile"></div>
                 <div id="log_form" class="eb-auth-htmlbox">
                     <div class="login-sec-image text-center">
                         <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
                     </div>
                     <h1 class="text-center">@console Login</h1><br>
-                    <div class="form-group mb-25" validator="email">
-                        <label>Email</label>
-                        <div class="log-username">
-                            <input type="email" name="uname" class="form-control ebtext-lg" placeholder="Email" value="@ViewBag.Email" />
-                        </div>
-                        <div class="validator-error"></div>
-                    </div>
-                    <div class="form-group mb-25" validator='password'>
-                        <label>Password</label>
-                        <div class="log-pw">
-                            <input type="password" id="pass" name="pass" class="form-control ebtext-lg" placeholder="Password" />
-                        </div>
-                        <div class="validator-error"></div>
-                    </div>
-                    @*<div class="form-group mb-25">
-                            <div class="fpNdRemMe">
-                                @*<div class="rememberMe">
-                                    <input type="checkbox" /> <span>Remember me</span>
+
+                    @if (ViewBag.WhichConsole == "uc")
+                    {
+
+                        <ul class="nav nav-tabs eb-styledTab" role="tablist">
+                            <li class="active">
+                                <a href="#withpw_container" role="tab" data-toggle="tab">
+                                    With Password
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#withotp_container" role="tab" data-toggle="tab">
+                                    With OTP
+                                </a>
+                            </li>
+                        </ul>
+                    }
+
+                    <div class="tab-content @styleClass">
+                        <div class="tab-pane fade active in" id="withpw_container">
+                            <div class="form-group mb-25" validator="email">
+                                <label>Email or Mobile</label>
+                                <div class="log-username">
+                                    <input type="email" name="uname" class="form-control ebtext-lg" placeholder="Email" value="@ViewBag.Email" />
                                 </div>
-                                @*<a href="/ForgotPassword">Forgot password?</a>
+                                <div class="validator-error"></div>
                             </div>
-                        </div>*@
-                    <div class="g-recaptcha"
-                         data-sitekey="@ViewBag.ReCaptchaKey"
-                         data-callback="validator_recaptcha"
-                         data-size="invisible">
-                    </div>
-                    <div class="form-group">
-                        <button validator="submit" id="logNow" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
-                            Sign In
-                        </button>
-                        @if (ViewBag.HasSignupForm)
-                        {
-                            <a href="../Ext/UsrSignUp" id="Signupform" class="pull-right Signupform " style="margin-top:10px; ">
-                                Create an account
-                            </a>
-                        }
+                            <div class="form-group mb-25" validator='password'>
+                                <label>Password</label>
+                                <div class="log-pw">
+                                    <input type="password" id="pass" name="pass" class="form-control ebtext-lg" placeholder="Password" />
+                                </div>
+                                <div class="validator-error"></div>
+                            </div>
+
+                            <div class="g-recaptcha"
+                                 data-sitekey="@ViewBag.ReCaptchaKey"
+                                 data-callback="validator_recaptcha"
+                                 data-size="invisible">
+                            </div>
+                            <div class="form-group">
+                                <button validator="submit" id="logNow" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
+                                    Sign In
+                                </button>
+                                @if (ViewBag.HasSignupForm)
+                                {
+                                    <a href="../Ext/UsrSignUp" id="Signupform" class="pull-right Signupform " style="margin-top:10px; ">
+                                        Create an account
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="withotp_container">
+                            <div class="form-group mb-25">
+                                <label>Email or Mobile</label>
+                                <div class="log-username">
+                                    <input type="email" name="uname_otp" class="form-control ebtext-lg" value="@ViewBag.Email" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
+                                    Send OTP
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 @*----------2f_form*@
-            <div id="2fauth_form" class="eb-auth-htmlbox" style="display:none; text-align: center">
-                <div class="login-sec-image text-center">
-                    <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
-                </div>
-                <h4 class="text-center">Please enter the OTP to verify your account</h4><br>
-                <div class="otp_warnings"></div>
-                <div class="form-group w-100">
-                    <h5 style="margin-left: 18px;">An OTP has been sent to <span id="lastDigit"></span> </h5>
-                    <div id="divOuter" class="col-md-12">
-                        <div id="divInner">
-                            <input id="partitioned" type="text" maxlength="6" onKeyPress="if (this.value.length == 6) return false; else return isNumber(event);" />
+                <div id="2fauth_form" class="eb-auth-htmlbox" style="display:none; text-align: center">
+                    <div class="login-sec-image text-center">
+                        <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
+                    </div>
+                    <h4 class="text-center">Please enter the OTP to verify your account</h4><br>
+                    <div class="otp_warnings"></div>
+                    <div class="form-group w-100">
+                        <h5 style="margin-left: 18px;">An OTP has been sent to <span id="lastDigit"></span> </h5>
+                        <div id="divOuter" class="col-md-12">
+                            <div id="divInner">
+                                <input id="partitioned" type="text" maxlength="6" onKeyPress="if (this.value.length == 6) return false; else return isNumber(event);" />
+                            </div>
+                        </div>
+                        <button id="otpvalidate" class="btn signin-btn eb_blue w-100">Verify</button>
+                        <div class="col-md-12" ">
+                            <div class="pull-right">
+                                <span id="timer" style="font-weight:bold"></span>
+                            </div>
+                            <div class="pull-left ">
+                                <button class="btn-link" id="resend">Resend</button>
+                            </div>
                         </div>
                     </div>
-                    <button id="otpvalidate" class="btn signin-btn eb_blue w-100">Verify</button>
-                    <div class="col-md-12" ">
-                        <div class="pull-right">
-                            <span id="timer" style="font-weight:bold"></span>
-                        </div>
-                        <div class="pull-left ">
-                            <button class="btn-link" id="resend">Resend</button>
-                        </div>
-                    </div>
                 </div>
-            </div>
 
-            <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
-                <span>Powered by </span><img style="height:25px;" src="images/EB_Logo.png" />
-            </div>
+                <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
+                    <span>Powered by </span><img style="height:25px;" src="images/EB_Logo.png" />
+                </div>
             </div>
         </div>
+    </div>
 </section>
 
 @section JsCode{
@@ -96,16 +126,16 @@
     <script>
         $(document).ready(function () {
             $('.Eb_Image').Lazy();
-        }); 
+        });
 
-         function isNumber(evt) {
-        evt = (evt) ? evt : window.event;
-        var charCode = (evt.which) ? evt.which : evt.keyCode;
-        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-            return false;
+        function isNumber(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
         }
-        return true;
-    }
     </script>
 }
 <style>
@@ -143,7 +173,8 @@
     #partitioned {
         outline: none;
     }
-    #resend{
-         outline: none;
+
+    #resend {
+        outline: none;
     }
 </style>

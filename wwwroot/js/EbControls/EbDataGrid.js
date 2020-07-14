@@ -730,14 +730,14 @@
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:eq(1)`));
                 //}
                 //else
-                    $(`#${this.TableId}>tbody`).prepend($tr);
+                $(`#${this.TableId}>tbody`).prepend($tr);
             }
             else {
                 //if (isAddBeforeLast && $(`#${this.TableId}>tbody>tr:last`).length > 0) {
                 //    $tr.insertBefore($(`#${this.TableId}>tbody>tr:last`));
                 //}
                 //else
-                    $(`#${this.TableId}>tbody`).append($tr);
+                $(`#${this.TableId}>tbody`).append($tr);
             }
         }
         if (!this.ctrl.AscendingOrder)
@@ -1031,6 +1031,9 @@
     }.bind(this);
 
     this.row_dblclick = function (e) {
+        if (!($(e.target).hasClass("tdtxt") || $(e.target).is($(`#${this.TableId}>tbody > tr >td`))))
+            return;
+
         let $activeTr = $(`#${this.TableId}>tbody tr[is-editing="true"]`);
         let rowId = $activeTr.attr("rowid");
         if ($activeTr.length === 1) {
@@ -1799,7 +1802,7 @@
             return;
         }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
-
+        this.formRenderer.DataMODEL[this.ctrl.TableName] = dataModel;// attach to master model object
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
         this.populateDGWithDataModel(dataModel);
@@ -1885,7 +1888,7 @@
         this.$table.on("click", ".del-row", this.delRow_click);
         this.$table.on("click", ".edit-row", this.editRow_click);
         this.$table.on("keydown", ".dgtr", this.dg_rowKeydown);
-        this.$table.on("dblclick", ".tdtxt", this.row_dblclick);
+        this.$table.on("dblclick", ".dgtr > td", this.row_dblclick);
 
         $(`#${this.ctrl.EbSid}Wraper .Dg_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
@@ -1904,37 +1907,60 @@
                 },
                 "insertRowBelow": {
                     name: "Insert row below",
-                    icon: "fa-trash",
-                    callback: this.insertRowBelow
-
+                    icon: "fa-angle-down",
+                    callback: this.insertRowBelow,
+                    //disabled: this.insertRowBelowDisableFn
                 },
-                //"insertRowAbove": {
-                //    name: "Insert row above",
-                //    icon: "fa-trash",
-                //    callback: this.insertRowAbove
+                "insertRowAbove": {
+                    name: "Insert row above",
+                    icon: "fa-angle-up",
+                    callback: this.insertRowAbove
 
-                //}
+                }
             }
         };
     }.bind(this);
 
     this.CtxSettingsObj = {
-        selector: '[eb-form="true"][mode="edit"] .dgtr .tdtxt,[eb-form="true"][mode="new"] .dgtr .tdtxt',
+        selector: '[eb-form="true"][mode="edit"] .dgtr .tdtxt,[eb-form="true"][mode="new"] .dgtr > td',
         autoHide: true,
         build: this.ctxBuildFn.bind(this)
     };
 
+    this.insertRowBelowDisableFn = function (key, opt) {
+        return $(`#${this.TableId}>tbody tr[is-editing="true"]`).length === 1;
+    }.bind(this);
+
     this.insertRowBelow = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))); {
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))) {
                 let td = $activeRow.find('td:last')[0];
-                this.checkRow_click({ target: td }, false, false);
+                this.checkRow_click({ target: td }, false, false, false);
+            }
+            else {
+                return;
             }
         }
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");
         this.addRow({ insertIdx: $tr.index() + 1 });
+    }.bind(this);
+
+    this.insertRowAbove = function (eType, selector, action, originalEvent) {
+        let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
+        if ($activeRow.length === 1) {
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))) {
+                let td = $activeRow.find('td:last')[0];
+                this.checkRow_click({ target: td }, false, false, false);
+            }
+            else {
+                return;
+            }
+        }
+        let $e = selector.$trigger;
+        let $tr = $e.closest("tr");
+        this.addRow({ insertIdx: $tr.index() });
     }.bind(this);
 
     this.del = function (eType, selector, action, originalEvent) {

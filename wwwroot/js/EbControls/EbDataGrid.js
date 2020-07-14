@@ -1905,17 +1905,17 @@
                     icon: "fa-trash",
                     callback: this.del
                 },
-                "insertRowBelow": {
-                    name: "Insert row below",
-                    icon: "fa-angle-down",
-                    callback: this.insertRowBelow,
-                    //disabled: this.insertRowBelowDisableFn
-                },
                 "insertRowAbove": {
                     name: "Insert row above",
                     icon: "fa-angle-up",
                     callback: this.insertRowAbove
 
+                },
+                "insertRowBelow": {
+                    name: "Insert row below",
+                    icon: "fa-angle-down",
+                    callback: this.insertRowBelow,
+                    //disabled: this.insertRowBelowDisableFn
                 }
             }
         };

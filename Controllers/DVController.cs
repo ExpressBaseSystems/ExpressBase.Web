@@ -129,7 +129,7 @@ namespace ExpressBase.Web.Controllers
                 var __columns = (columnresp.Columns.Count > 1) ? columnresp.Columns[1] : columnresp.Columns[0];
                 int _pos = __columns.Count + 100;
                 DVColumnCollection Columns = GetDVcolumns(__columns);
-                returnobj.ColumnOrginal = new DVColumnCollection();
+                returnobj.ColumnOrginal = GetDVcolumns(__columns);
                 //dvobj.Columns.Add(new DVNumericColumn { Data = ++indx, Name = "RATE_GRAFT", sTitle = "RATE+GRAFT", Type = EbDbTypes.Int32, bVisible = true, sWidth = "100px", ClassName = "tdheight dt-body-right",Formula = "T0.RATE+T0.GRAFT" });
                 if (dvobj.Columns == null || dvobj.Columns.Count == 0)
                     returnobj.Columns = Columns;

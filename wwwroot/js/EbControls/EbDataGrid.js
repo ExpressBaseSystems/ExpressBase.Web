@@ -1802,7 +1802,7 @@
             return;
         }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
-
+        this.formRenderer.DataMODEL[this.ctrl.TableName] = dataModel;// attach to master model object
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
         this.populateDGWithDataModel(dataModel);

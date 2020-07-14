@@ -7,17 +7,18 @@
 @{
     Layout = "~/Views/Shared/LayoutInner.cshtml";
     string domurl = string.Empty;
+    var solutionid = ViewBag.cide;
     if (ViewBag.Env == "Development")
     {
-        domurl = "http://localhost:41500";
+        domurl = "http://"+solutionid+".localhost:41500";
     }
     if (ViewBag.Env == "Staging")
     {
-        domurl = "https://eb-test.cloud";
+        domurl = "https://"+solutionid+".eb-test.cloud";
     }
     if (ViewBag.Env == "Production")
     {
-        domurl = "https://expressbase.com";
+        domurl = "https://"+solutionid+".expressbase.com";
     }
 }
 
@@ -530,18 +531,20 @@
                                 </div>
                                 <div class="tab-pane botUserAuth" id="botuserauth" role="tabpanel" aria-labelledby="">
                                     <div class="col-md-2 col-lg-2 col-sm-3 userAuthConfig">
-                                        <ul class="nav nav-tabs tabs-left" id="userAuthconfigUl" role="tablist">
-                                            <li class="nav-item active">
-                                                <a class="nav-link active" id="anonymousLogin_li" data-toggle="tab" href="#anonymousLogin" role="tab" aria-controls="botconfig" aria-selected="true">Anonymous Authentication</a>
-                                            </li>
-                                        </ul>
+                                        <label>User authentication type</label>
+                                        <div class="radio">
+                                            <label><input type="radio" id="publicUsers" name="userAuthType" checked>Public/Anonymous Users</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input type="radio" id="internalUsers" name="userAuthType">Internal Users</label>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-10 col-lg-10 col-sm-9 configUserAuth">
-                                        <div class="tab-content" id="userAuthTabContent">
-                                            <div class="tab-pane   active" id="anonymousLogin" role="tabpanel" aria-labelledby="">
+                                        <div class="" id="anonymousLoginCont">
+                                            <div class="" id="anonymousLogin">
                                                 <div class="selauth">
-                                                    <label>Authentication methods</label>
+                                                    <label>Anonymous user Authentication methods</label>
                                                     <div class="form-check mrg10btm">
                                                         <label class="nrmfntsiz">
                                                             <input class="form-check-input" name="authtype" type="checkbox" value="1" id="email_anony">
@@ -580,6 +583,22 @@
                                                         </label>
                                                     </div>
                                                 </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="" id="internalLoginCont" hidden>
+                                            <div class="" id="internalLogin">
+                                                <div class="selauth">
+                                                    <label>Internal user Authentication methods</label>                                                    
+                                                    <div class="radio">
+                                                        <label><input type="radio" id="pswrd_based" name="internalAuthType" checked>Password Based</label>
+                                                    </div>
+                                                    <div class="radio">
+                                                        <label><input type="radio" id="otp_based" name="internalAuthType">OTP based</label>
+                                                    </div>
+                                                </div>
+                                                
 
                                             </div>
 

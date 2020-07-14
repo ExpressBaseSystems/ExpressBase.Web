@@ -172,12 +172,13 @@
                     /**/
                     /**/
                     var BotList = @BotDtls ;
-                    /**/
-                    var jssrc = "http://localhost:41500";
+                    var solutionId = '@ViewBag.SolutionIdExt';
+                    /**/                   
+                    var jssrc = "https://"+solutionId+".localhost:41502";                   
                     if (d.ebmod === 'Production')
-                        jssrc = "https://files.expressbase.com";
+                        jssrc = "https://"+solutionId+".expressbase.com";
                     else if (d.ebmod === 'Staging')
-                        jssrc = "https://files.eb-test.cloud";
+                        jssrc = "https://" + solutionId + ".eb-test.cloud";
                     window.EXPRESSbase_SOLUTION_ID = window.location.host.split('.')[0].trim();
                     window.EXPRESSbase_APP_IDS = [];
                     d.ebbotThemeColorColl = [];

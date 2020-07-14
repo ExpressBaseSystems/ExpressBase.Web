@@ -233,7 +233,8 @@
                 this.FD = true;
                 if (this.isPipped || this.isContextual) {
                     this.placefiltervalues();
-                    this.$submit.trigger("click");
+                    if (!this.FilterDialog.FormObj.AutoRun)
+                        this.$submit.trigger("click");
                 }
                 else {
                     this.FDCont.show();
@@ -2791,6 +2792,7 @@
                     dvcontainerObj.modifyNavigation();
                 }
             }
+            this.excelbtn = $("#btnExcel" + this.tableId);
         }
         else {
             $(".display-none").remove();
@@ -4332,21 +4334,26 @@
 
     this.ExportToExcel = function (e) {
         //$('#' + this.tableId + '_wrapper').find('.buttons-excel').click();
+        this.excelbtn.prop("disabled", true);
         this.RemoveColumnRef();
+
         var ob = new Object();
         ob.DataVizObjString = JSON.stringify(this.EbObject);
         ob.Params = this.filterValues;
         ob.TFilters = this.columnSearch;
-        this.ss = new EbServerEvents({ ServerEventUrl: 'https://se.eb-test.cloud', Channels: ["ExportToExcel"] });
+        ob.SubscriptionId = window.ebcontext.subscription_id;
+
+        this.ss = new EbServerEvents({ ServerEventUrl: window.ebcontext.se_url, Channels: ["ExportToExcel"] });
         this.ss.onExcelExportSuccess = function (url) {
             window.location.href = url;
-        };
+            this.excelbtn.prop("disabled", false);
+            event.stopPropagation();
+        }.bind(this);
         $.ajax({
             type: "POST",
             url: "../DV/exportToexcel",
             data: { req: ob }
         });
-
     };
 
     this.ExportToCsv = function (e) {

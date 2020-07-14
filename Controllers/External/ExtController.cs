@@ -35,14 +35,14 @@ namespace ExpressBase.Web.Controllers
         //public const string Email = "email";
         public ExtController(IServiceClient _client, IRedisClient _redis, IHttpContextAccessor _cxtacc, IEbMqClient _mqc, IEbAuthClient _auth) : base(_client, _redis, _cxtacc, _mqc, _auth) { }
 
-        [HttpPost]
-        [EnableCors("AllowSpecificOrigin")]
-        public bool JoinBeta()
-        {
-            string Email = this.HttpContext.Request.Form["Email"];
-            JoinbetaResponse f = this.ServiceClient.Post<JoinbetaResponse>(new JoinbetaReq { Email = Email });
-            return f.Status;
-        }
+        //[HttpPost]
+        //[EnableCors("AllowSpecificOrigin")]
+        //public bool JoinBeta()
+        //{
+        //    string Email = this.HttpContext.Request.Form["Email"];
+        //    JoinbetaResponse f = this.ServiceClient.Post<JoinbetaResponse>(new JoinbetaReq { Email = Email });
+        //    return f.Status;
+        //}
 
         [HttpGet]
         public IActionResult QuestionNaire(int id)
@@ -305,11 +305,11 @@ namespace ExpressBase.Web.Controllers
             if (ViewBag.SolutionId != String.Empty && ViewBag.SolutionId != null)
             {
                 IsAvail = isAvailInRedis();
-                if (!IsAvail)
-                {
-                    RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
-                    IsAvail = isAvailInRedis();
-                }
+                //if (!IsAvail)
+                //{
+                //    RefreshSolutionExtResponse res = this.MqClient.Post<RefreshSolutionExtResponse>(new RefreshSolutionExtRequest { SolnId = ViewBag.SolutionId });
+                //    IsAvail = isAvailInRedis();
+                //}
             }
             return IsAvail;
         }
@@ -744,6 +744,7 @@ namespace ExpressBase.Web.Controllers
 
             if (!data.Success && ViewBag.Env == "Production")//captcha error
             {
+                Console.WriteLine("captcha error " + req["uname"]);
                 authresp.AuthStatus = false;
                 if (data.ErrorCodes.Count <= 0)
                 {
@@ -772,8 +773,9 @@ namespace ExpressBase.Web.Controllers
                         break;
                 }
             }
-            else//captcha is ok
+            else
             {
+                Console.WriteLine("captcha ok " + req["uname"]);
                 string tenantid = ViewBag.cid;
                 MyAuthenticateResponse myAuthResponse = null;
                 try
@@ -809,12 +811,15 @@ namespace ExpressBase.Web.Controllers
 
                 if (myAuthResponse != null) // authenticated
                 {
+                    Console.WriteLine("myAuthResponse != null " + req["uname"]);
                     bool is2fa = false;
-                    Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
-                    if (sol_Obj != null && sol_Obj.Is2faEnabled)
-                        is2fa = true;
-
-                    if (is2fa && ViewBag.WhichConsole == "uc") //if 2fa enabled
+                    if (ViewBag.WhichConsole == "uc")
+                    {
+                        Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
+                        if (sol_Obj != null && sol_Obj.Is2faEnabled)
+                            is2fa = true;
+                    }
+                    if (is2fa) //if 2fa enabled
                     {
                         this.ServiceClient.BearerToken = myAuthResponse.BearerToken;
                         this.ServiceClient.RefreshToken = myAuthResponse.RefreshToken;
@@ -838,12 +843,14 @@ namespace ExpressBase.Web.Controllers
 
                     else//2fa NOT enabled
                     {
+                        Console.WriteLine("AuthStatus true, not 2fa " + req["uname"]);
                         authresp.AuthStatus = true;
                         CookieOptions options = new CookieOptions();
                         Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, myAuthResponse.BearerToken, options);
                         Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, myAuthResponse.RefreshToken, options);
                         Response.Cookies.Append(TokenConstants.USERAUTHID, myAuthResponse.User.AuthId, options);
                         Response.Cookies.Append("UserDisplayName", myAuthResponse.User.FullName, options);
+                        Console.WriteLine("AuthStatus true, not 2fa cookie set" + req["uname"]);
                         if (req.ContainsKey("remember"))
                             Response.Cookies.Append("UserName", req["uname"], options);
 
@@ -852,6 +859,10 @@ namespace ExpressBase.Web.Controllers
                         else
                             authresp.RedirectUrl = redirect_url;
                     }
+                }
+                else
+                {
+                    Console.WriteLine("captcha error " + req["uname"]);
                 }
             }
             return authresp;

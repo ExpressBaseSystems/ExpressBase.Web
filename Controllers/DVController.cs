@@ -513,12 +513,28 @@ namespace ExpressBase.Web.Controllers
             {
                 ExportToExcelMqRequest request = new ExportToExcelMqRequest();
                 EbDataVisualization ebobject = EbSerializers.Json_Deserialize<EbDataVisualization>(req.DataVizObjString);
+                request.SubscriptionId = req.SubscriptionId;
                 request.EbDataVisualization = ebobject;
                 request.Ispaging = false;
                 request.UserInfo = this.LoggedInUser;
                 request.RefId = ebobject.DataSourceRefId;
                 request.IsExcel = true;
                 request.Params = req.Params;
+                if (req.TFilters != null)
+                {
+                    foreach (TFilters para in req.TFilters)
+                    {
+
+                        if (para.Type == EbDbTypes.Date || para.Type == EbDbTypes.DateTime)
+                        {
+                            para.Value = DateTime.Parse(para.Value, CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale)).ToString("yyyy-MM-dd");
+                        }
+                        //para.Value = Convert.ToDateTime(DateTime.ParseExact(para.Value.ToString(), (CultureInfo.GetCultureInfo(this.LoggedInUser.Preference.Locale) as CultureInfo).DateTimeFormat.ShortDatePattern, CultureInfo.InvariantCulture)
+                    }
+                }
+                request.TFilters = req.TFilters;
+                Eb_Solution s_obj = GetSolutionObject(ViewBag.cid);
+                request.eb_Solution = s_obj;
                 this.ServiceClient.Post(request);
             }
 

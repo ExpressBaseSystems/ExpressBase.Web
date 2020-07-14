@@ -82,7 +82,7 @@ const WebFormRender = function (option) {
             else if (Obj.ObjType === "Date") {
                 opt.source = "webform";
             }
-            else if (Obj.ObjType === "ExportButton") {
+            else if ((Obj.ObjType === "ExportButton") || (Obj.ObjType === "Phone")) {
                 opt.formObj = this.FormObj;
                 opt.dataRowId = this.DataMODEL[this.FormObj.TableName][0].RowId;
             }
@@ -355,6 +355,11 @@ const WebFormRender = function (option) {
             //    ctrl.setDisplayMember(val);
             //}
             //else
+
+            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
+                ctrl.___isNotUpdateValExpDepCtrls = true;
+            }
+
             ctrl.___DoNotUpdateDataVals = true;
             ctrl.justSetValue(val);
             ctrl.___DoNotUpdateDataVals = false;
@@ -852,9 +857,7 @@ const WebFormRender = function (option) {
                 return;
             if (!this.DGsB4Save())
                 return;
-            this.DGsB4SaveActions();
-
-            this.saveForm_call();
+            this.FRC.checkUnique4All_save(this.flatControls, true);
         }.bind(this), 4);
     };
 

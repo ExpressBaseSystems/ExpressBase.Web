@@ -2,7 +2,7 @@
 var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.Ctrl = ctrl;
     this.type = type;
-   
+    this.SlotIncr = 0;
     this.SlotList = [];
     this.MeetingScheduleObj = {
         Title: '', Description: '', Location: '', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
@@ -10,16 +10,27 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingType: this.Ctrl.MeetingType,
         SlotList: this.SlotList
     };
-    this.ParticipantsList = {}
-    this.ParticipantsList = JSON.parse(ctrl.ParticipantsList);
-    var _UsrArr = new Bloodhound({
+    //this.ParticipantsList = {}
+    //this.ParticipantsList = JSON.parse(ctrl.ParticipantsList);
+    this.HostParticipantsList = JSON.parse(ctrl.HostParticipantsList);
+    this.AttendeeParticipantsList = JSON.parse(ctrl.AttendeeParticipantsList);
+    var _UsrArrHost = new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-        local: $.map(this.ParticipantsList, function (obj, index) {
+        local: $.map(this.HostParticipantsList, function (obj, index) {
             return { id: obj.Id, name: obj.Name, type: obj.Type };
         }.bind(this))
     });
-    _UsrArr.initialize();
+    _UsrArrHost.initialize();
+
+    var _UsrArrAttendee = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: $.map(this.AttendeeParticipantsList, function (obj, index) {
+            return { id: obj.Id, name: obj.Name, type: obj.Type };
+        }.bind(this))
+    });
+    _UsrArrAttendee.initialize();
 
     this.tagsinputFn = function () {
         var temp = $(`.tb-host`).tagsinput({
@@ -31,7 +42,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
                     name: 'usersname',
                     displayKey: 'name',
                     //valueKey: 1,
-                    source: _UsrArr.ttAdapter()
+                    source: _UsrArrHost.ttAdapter()
                 }
             ],
             itemValue: "id",
@@ -49,7 +60,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
                     name: 'usersname',
                     displayKey: 'name',
                     //valueKey: 1,
-                    source: _UsrArr.ttAdapter()
+                    source: _UsrArrAttendee.ttAdapter()
                 }
             ],
             itemValue: "id",
@@ -58,36 +69,37 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             }.bind(this),
             freeInput: false
         });
-    };
-    $('.tb-host').on('itemAdded', function (event) {
-        let pos = event.target.getAttribute("data-id");
-        this.SlotList[pos].Hosts.push(event.item);
-        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-    }.bind(this));
-    $('.tb-attendee').on('itemAdded', function (event) {
-        let pos = event.target.getAttribute("data-id");
-        this.SlotList[pos].Attendees.push(event.item);
-        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-    }.bind(this));
-    $('.tb-attendee').on('itemRemoved', function (event) {
-        // event.item: contains the item
-        let pos = event.target.getAttribute("data-id");
-        const index = this.SlotList[pos].Attendees.indexOf(event.item);
-        if (index > -1) {
-            this.SlotList[pos].attendees.splice(index, 1);
-        }
-        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-    }.bind(this));
+        $('.tb-host').on('itemAdded', function (event) {
+            let pos = event.target.getAttribute("data-id");
+            this.SlotList[pos].Hosts.push(event.item);
+            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        }.bind(this));
+        $('.tb-attendee').on('itemAdded', function (event) {
+            let pos = event.target.getAttribute("data-id");
+            this.SlotList[pos].Attendees.push(event.item);
+            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        }.bind(this));
+        $('.tb-attendee').on('itemRemoved', function (event) {
+            // event.item: contains the item
+            let pos = event.target.getAttribute("data-id");
+            const index = this.SlotList[pos].Attendees.indexOf(event.item);
+            if (index > -1) {
+                this.SlotList[pos].attendees.splice(index, 1);
+            }
+            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        }.bind(this));
 
-    $('.tb-host').on('itemRemoved', function (event) {
-        // event.item: contains the item
-        let pos = event.target.getAttribute("data-id");
-        const index = this.SlotList[pos].Hosts.indexOf(event.item);
-        if (index > -1) {
-            this.SlotList[pos].Hosts.splice(index, 1);
-        }
-        jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-    }.bind(this));
+        $('.tb-host').on('itemRemoved', function (event) {
+            // event.item: contains the item
+            let pos = event.target.getAttribute("data-id");
+            const index = this.SlotList[pos].Hosts.indexOf(event.item);
+            if (index > -1) {
+                this.SlotList[pos].Hosts.splice(index, 1);
+            }
+            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        }.bind(this));
+    };
+    
 
     this.tagsinputFn();
 
@@ -119,7 +131,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     //}.bind(this));
 
     this.AddParticipantList = function (obj) {
-        
+
         if (obj == null) {
             var Obj = {};
             this.SlotList.push(Obj);
@@ -129,18 +141,18 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         }
     };
 
-        //public int Position { get; set; }
-       // public string TimeFrom { get; set; }
-       // public string TimeTo { get; set; }
-       // public string EligibleHosts { get; set; }
-       // public string EligibleAttendees { get; set; }
-       // public string FixedHost { get; set; }
-       // public string FixedAttendee { get; set; }
-       // public List < Participants > Hosts { get; set; }
-       // public List < Participants > Attendees { get; set; }
+    //public int Position { get; set; }
+    // public string TimeFrom { get; set; }
+    // public string TimeTo { get; set; }
+    // public string EligibleHosts { get; set; }
+    // public string EligibleAttendees { get; set; }
+    // public string FixedHost { get; set; }
+    // public string FixedAttendee { get; set; }
+    // public List < Participants > Hosts { get; set; }
+    // public List < Participants > Attendees { get; set; }
     this.AddSlotList = function () {
         SlotObj = {};
-        SlotObj.Position = 0;
+        SlotObj.Position = this.SlotIncr;
         SlotObj.TimeFrom = '';
         SlotObj.TimeTo = '';
         SlotObj.Hosts = [];
@@ -150,6 +162,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.AddSlotList();
     var jsonStr = $(`#${this.Ctrl.EbSid}_MeetingJson`);
     jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+
     this.InitDatePicker = function () {
         DatePick = $(`#${this.Ctrl.EbSid}_meeting-date`).datepicker({
             dateFormat: "yy-mm-dd",
@@ -159,6 +172,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             selectOtherMonths: true,
         });
     }
+
     this.initSpinner = function () {
         //$(`#${this.Ctrl.EbSid}_max-host`).spinner();
         //$(`#${this.Ctrl.EbSid}_min-host`).spinner();
@@ -387,8 +401,26 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     //        this.MeetingScheduleObj.MeetingOpts = 4;
     //    }
     //};
+    this.RemoveSlotFromTable = function () {
+
+    };
+
+    this.addSlot2Table = function () {
+        this.SlotIncr = this.SlotIncr + 1;
+        let str = ` <tr data-id='${this.SlotIncr}' ><th>${this.SlotIncr + 1}</th>
+            <td><input type='time' id='${this.Ctrl.EbSid}_time-from'  data-id='${this.SlotIncr}'  class='mc-input' /></td>
+            <td><input type='time' id='${this.Ctrl.EbSid}_time-to'  data-id='${this.SlotIncr}'  class='mc-input' /></td>
+            <td><input type='text' id='${this.Ctrl.EbSid}_host' data-id='${this.SlotIncr}' class='meeting-participants tb-host'/></td>
+            <td><input type='text' id='${this.Ctrl.EbSid}_attendee'  data-id='${this.SlotIncr}' class='meeting-participants tb-attendee'/></td>
+            <td><button id='${this.Ctrl.EbSid}_remove-slot' data-id='${this.SlotIncr}'>-</button></td></tr>`;
+        this.AddSlotList();
+        $(`#${this.Ctrl.EbSid}_slot-table tbody`).append(str);
+        $(`#${this.Ctrl.EbSid}_remove-slot`).off("click").on("click", this.RemoveSlotFromTable.bind(this));
+        this.tagsinputFn();
+    };
 
     this.init = function () {
+        $(`#${this.Ctrl.EbSid}_add-new-slot`).off("click").on("click", this.addSlot2Table.bind(this));
         this.InitDatePicker();
         this.OnChangeUpdate();
         //this.initSpinner();

@@ -119,7 +119,7 @@ namespace ExpressBase.Web.Components
                     }
                     else if (control is EbMeetingScheduler)
                     {
-                        (control as EbMeetingScheduler).UsersList = WebForm.SolutionObj.Users;
+                        //(control as EbMeetingScheduler).UsersList = WebForm.SolutionObj.Users;
                         (control as EbMeetingScheduler).InitParticipantsList(this.ServiceClient);
                     }
 

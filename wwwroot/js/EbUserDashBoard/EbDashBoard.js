@@ -489,7 +489,7 @@ var DashBoardWrapper = function (options) {
         }
     };
     this.LabelDrop = function (component, column, controlname, tileid) {
-        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null) {
+        if (component !== "" && column !== "" && this.Rowdata[component + "Row"] !== null && this.Rowdata[component + "Row"] !== undefined) {
             let val = getObjByval(this.Procs[component].Columns.$values, "name", column);
             if (val !== undefined) {
                 let index = val.data;
@@ -1309,8 +1309,13 @@ var DashBoardWrapper = function (options) {
             CtrlCounters.DataLabelCounter = 0;
             CtrlCounters.DataObjectCounter = 0;
             //this.DrawTiles();
-            setTimeout(this.DrawTiles.bind(this), 500);
-            setTimeout(this.loader.hide, 1);
+            if (this.EbObject.Tiles.$values.length !== 0) {
+                setTimeout(this.DrawTiles.bind(this), 500);
+                setTimeout(this.loader.hide, 1);
+            }
+            else {
+                this.loader.hide();
+            }
         }
 
     };

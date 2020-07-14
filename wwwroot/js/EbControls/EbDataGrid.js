@@ -1934,9 +1934,12 @@
     this.insertRowBelow = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))); {
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))) {
                 let td = $activeRow.find('td:last')[0];
                 this.checkRow_click({ target: td }, false, false, false);
+            }
+            else {
+                return;
             }
         }
         let $e = selector.$trigger;
@@ -1947,9 +1950,12 @@
     this.insertRowAbove = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))); {
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))) {
                 let td = $activeRow.find('td:last')[0];
                 this.checkRow_click({ target: td }, false, false, false);
+            }
+            else {
+                return;
             }
         }
         let $e = selector.$trigger;

@@ -1794,6 +1794,7 @@ const WebFormRender = function (option) {
 
     this.FORCE_RELOAD = function (newOptions) {
         let t0 = performance.now();
+        $.contextMenu('destroy');
 
         this.resetBuilderVariables(newOptions);
         this.init(option);

@@ -1907,13 +1907,13 @@
                 },
                 "insertRowBelow": {
                     name: "Insert row below",
-                    icon: "fa-trash",
+                    icon: "fa-angle-down",
                     callback: this.insertRowBelow,
                     //disabled: this.insertRowBelowDisableFn
                 },
                 "insertRowAbove": {
                     name: "Insert row above",
-                    icon: "fa-trash",
+                    icon: "fa-angle-up",
                     callback: this.insertRowAbove
 
                 }

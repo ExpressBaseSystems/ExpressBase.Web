@@ -1,8 +1,9 @@
 ﻿//import { Array, Object } from "core-js/library/web/timers";
 
-var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
+var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl) {
     this.EXPRESSbase_SOLUTION_ID = _solid;
     this.EXPRESSbase_APP_ID = _appid;
+    this.EXPRESSbase_cid = cid;
     this.ebbotThemeColor = settings.ThemeColor || "#055c9b";
     this.welcomeMessage = settings.WelcomeMessage || "Hi, I am EBbot from EXPRESSbase!";
     this.ServerEventUrl = _serverEventUrl;
@@ -95,6 +96,8 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", "[name=contactSubmitPhn]", this.contactSubmitPhn);
         $("body").on("click", "[name=contactSubmitName]", this.contactSubmitName);
         $("body").on("click", "[name=passwordSubmitBtn]", this.passwordLoginFn);
+        $("body").on("click", "[name=otpvalidateBtn]", this.otpvalidate);
+        $("body").on("click", "#resendOTP", this.otpResendFn);
         $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
         $("body").on("click", ".btn-box [for=continueAsFBUser]", this.continueAsFBUser);
         $("body").on("click", ".btn-box [for=fblogin]", this.FBlogin);
@@ -104,8 +107,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         $("body").on("click", "[ctrl-type='InputGeoLocation'] .ctrl-submit-btn", this.ctrlSend);
         $("body").on("click", ".poweredby", this.poweredbyClick);
         $("body").on("click", ".ctrlproceedBtn", this.proceedReadonlyCtrl.bind(this));
-        $("body").on("click", "#eb_botStartover", this.botStartoverfn.bind(this));
-        //$("#eb_botStartover").on("click", this.botStartoverfn.bind(this));
+        $("body").on("click", "#eb_botStartover", this.botStartoverfn);
         $('.msg-inp').on("keyup", this.txtboxKeyup);
         $("body").on("keyup", ".chat-ctrl-cont [ui-inp]", this.inpkeyUp);
         $("body").on("keyup", ".chat-ctrl-cont [chat-inp]", this.chatInpkeyUp);
@@ -115,6 +117,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         //$('body').confirmation({
         //    selector: '.eb-chatBox'
         //});
+        this.botUserLogin();
     };
 
     this.poweredbyClick = function () {
@@ -239,20 +242,23 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 "user_name": this.userDtls.name || null
             }, function (result) {
                 this.hideTypingAnim();
-                if (result === null)
-                    this.authFailed();
-                //this.bearerToken = result[0];
-                //this.refreshToken = result[1];
-                this.formsDict = result[2];
-                window.ebcontext.user = JSON.parse(result[3]);
-                //this.formNames = Object.values(this.formsDict);
-                this.formNames = Object.values(result[4]);
-                this.formIcons = result[5];
-                $('.eb-chatBox').empty();
-                this.showDate();
-                this.AskWhatU();
-                // this.ajaxSetup4Future();
+                if (result.status === false) {
+                    this.msgFromBot(result.errorMsg);
+                }
+                else {
+                    //this.bearerToken = result.bearerToken;
+                    //this.refreshToken = result.refreshToken;
+                    this.formsDict = result.botFormDict;
+                    window.ebcontext.user = JSON.parse(result.user);
+                    //this.formNames = Object.values(this.formsDict);
+                    this.formNames = Object.values(result.botFormNames);
+                    this.formIcons = result.botFormIcons;
+                    $('.eb-chatBox').empty();
+                    this.showDate();
+                    this.AskWhatU();
+                    // this.ajaxSetup4Future();
 
+                }
                 /////////////////////////////////////////////////
 
                 setTimeout(function () {
@@ -1555,23 +1561,23 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
                 "user_name": this.userDtls.name || null,
             }, function (result) {
                 this.hideTypingAnim();
-                if (result === null)
-                    this.authFailed();
-                //this.bearerToken = result[0];
-                //this.refreshToken = result[1];
-                this.formsDict = result[2];
-                window.ebcontext.user = JSON.parse(result[3]);
-                //this.formNames = Object.values(this.formsDict););
-                this.formNames = Object.values(result[4]);
-                $('.eb-chatBox').empty();
-                this.showDate();
-                this.AskWhatU();
-                this.ajaxSetup4Future();
-                /////////////////////////////////////////////////Form click
-                setTimeout(function () {
-                    //$(".btn-box .btn:last").click();
-                    //$(".btn-box").find("[idx=3]").click();
-                }.bind(this), this.typeDelay * 2 + 100);
+                if (result.status === false) {
+                    this.msgFromBot(result.errorMsg);
+                }
+                else {
+                    //this.bearerToken = result.bearerToken;
+                    //this.refreshToken = result.refreshToken;
+                    this.formsDict = result.botFormDict;
+                    window.ebcontext.user = JSON.parse(result.user);
+                    //this.formNames = Object.values(this.formsDict);
+                    this.formNames = Object.values(result.botFormNames);
+                    this.formIcons = result.botFormIcons;
+                    $('.eb-chatBox').empty();
+                    this.showDate();
+                    this.AskWhatU();
+                    // this.ajaxSetup4Future();
+                }
+
             }.bind(this));
     }.bind(this);
 
@@ -1708,14 +1714,141 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
         this.msgFromBot($ctrlCont, function () { $(`#pswdbasedLogin`).focus(); }, "pswdbasedLogin");
 
 
-
-
-        //let ctrlHtml = `<input chat-inp type="text" id="username_id" placeholder="User name">
-        //                <input chat-inp type="password" id="password_id" placeholder="Password">`;
-
-        // this.sendWrapedCtrl(msg, ctrlHtml, "pswdbasedLogin", "passwordSubmitBtn");
     }.bind(this);
 
+    this.twoFactorAuthLogin = function (auth) {
+        if (!this.resendOTP) {
+            this.msgFromBot("Please enter the OTP to verify your account");
+        }
+        let controlHTML = `<div class="otp_cont">
+                <div class="login-sec-image text-center">
+                    <img src="/images/logo/${this.EXPRESSbase_cid}.png" data-src= "/images/logo/${this.EXPRESSbase_cid}.png" class="T_logo Eb_Image" />
+                </div>
+                <div class="otp_warnings"></div>                    
+                    <div class="otp_wrp" >
+                        <h5>An OTP has been sent to <span id="lastDigit"> ${auth.otpTo}</span> </h5>
+                          <input id="partitioned" maxlength='6' value=''/>
+                    </div>
+                    <div class="timer_resend_wrp" ">
+                        <div class="pull-right">
+                            <span id="OTPtimer" style="font-weight:bold"></span>
+                        </div>
+                        <div class="pull-left ">
+                            <button class="btn-link" id="resendOTP">Resend</button>
+                        </div>
+                     </div> 
+                </div>`;
+
+
+        //<h5 class="text-center">Please enter the OTP to verify your account</h5> <br>
+        //<button id="otpvalidate" class="btn signin-btn eb_blue w-100">Verify</button>
+
+        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper">
+                <button class="btn cntct_btn" name="otpvalidateBtn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        
+        setTimeout(function () {
+            this.msgFromBot($ctrlCont, function () { $(`#otpvalidate`).focus(); }, "otpvalidate");
+            setTimeout(function () {
+                this.StartOtpTimer();
+            }.bind(this), this.typeDelay);
+
+        }.bind(this), this.typeDelay);
+       
+
+    }.bind(this);
+
+    this.otpvalidate = function (e) {
+        $(e.target).closest('button').attr('disabled', true);
+        this.showTypingAnim();
+        $.post("../bote/ValidateOtp",
+            {
+                otp: $("#partitioned").val(),
+                appid: this.EXPRESSbase_APP_ID
+            },
+            function (result) {
+                if (result.status) {
+                    //this.bearerToken = result.bearerToken;
+                    //this.refreshToken = result.refreshToken;
+                    this.formsDict = result.botFormDict;
+                    window.ebcontext.user = JSON.parse(result.user);
+                    //this.formNames = Object.values(this.formsDict);
+                    this.formNames = Object.values(result.botFormNames);
+                    this.formIcons = result.botFormIcons;
+                    $('.eb-chatBox').empty();
+                    this.showDate();
+                    this.AskWhatU();
+                }
+                else {
+                    $("[for=otpvalidate]").remove();
+                    $("[lbl_for=otpvalidate]").remove();
+                    this.msgFromBot(result.errorMsg);
+                   
+                }
+               
+            }.bind(this)
+        );
+    }.bind(this);
+
+    //otp timer
+    this.resendOTP = false;
+    this.StartOtpTimer = function () {
+        setTimeout(function () {
+            this.resendOTP = false;
+            document.getElementById('OTPtimer').innerHTML = 001 + ":" + 00;
+            this.startTimer();
+        }.bind(this), this.typeDelay);
+       
+    }.bind(this);
+
+    this.startTimer = function () {
+        if (this.resendOTP)
+            return;
+        var presentTime = document.getElementById('OTPtimer').innerHTML;
+        var timeArray = presentTime.split(/[:]+/);
+        var m = timeArray[0];
+        var s = this.checkSecond((timeArray[1] - 1));
+        if (s == 59) { m = m - 1 }
+        if (m < 0) {
+            this.OtpTimeOut();
+            return;
+        }
+
+        document.getElementById('OTPtimer').innerHTML = m + ":" + s;
+        console.log(m);
+        /////////////////////////////////////////////////////////54646546546546565465
+        setTimeout(this.startTimer, 1000);
+    }.bind(this);
+
+    this.OtpTimeOut = function () {
+        this.msgFromBot("Time out");
+       // EbMessage("show", { Background: "red", Message: "Time out" });
+        setTimeout(function () {
+            this.botStartoverfn()
+        }.bind(this), this.typeDelay * 2);
+       
+    }.bind(this);
+
+    this.checkSecond = function (sec) {
+        if (sec < 10 && sec >= 0) { sec = "0" + sec; } // add zero in front of numbers < 10
+        if (sec < 0) { sec = "59"; }
+        return sec;
+    }
+    this.otpResendFn = function () {
+        this.resendOTP = true;
+        $.post("../bote/ResendOtp", function (auth) {
+            if (auth.authStatus) {
+                //this.StartOtpTimer();
+                //$(".otp_warnings").empty();
+                //$(".otp_warnings").text("OTP has been sent again");
+                $("[for=otpvalidate]").remove();
+                this.msgFromBot("OTP has been sent again");
+                this.twoFactorAuthLogin(auth)
+            }
+            else {
+                this.msgFromBot(auth.errorMessage);
+            }
+        }.bind(this));
+    }.bind(this);
 
     this.AnonymousLoginOptions = function () {
         this.hideTypingAnim();
@@ -1843,22 +1976,29 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             },
             success: function (result) {
                 this.hideTypingAnim();
-                if (result.length === 1) {
-                    this.msgFromBot(result[0]);
+                if (result.status === false) {
+                    this.msgFromBot(result.errorMsg);
                 }
-                else
-                    if (result.length > 1) {
-                        //this.bearerToken = result[0];
-                        //this.refreshToken = result[1];
-                        this.formsDict = result[2];
-                        window.ebcontext.user = JSON.parse(result[3]);
+                else {
+                    if (result.is2Factor) {
+                        $("[for=pswdbasedLogin]").remove();
+                        $("[lbl_for=pswdbasedLogin]").remove();
+                        this.twoFactorAuthLogin(result)
+                    }
+                    else {
+                        //this.bearerToken = result.bearerToken;
+                        //this.refreshToken = result.refreshToken;
+                        this.formsDict = result.botFormDict;
+                        window.ebcontext.user = JSON.parse(result.user);
                         //this.formNames = Object.values(this.formsDict);
-                        this.formNames = Object.values(result[4]);
-                        this.formIcons = result[5];
+                        this.formNames = Object.values(result.botFormNames);
+                        this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
                         this.AskWhatU();
                     }
+
+                }
 
             }.bind(this)
         });
@@ -1872,7 +2012,7 @@ var Eb_chatBot = function (_solid, _appid, settings, ssurl, _serverEventUrl) {
             this.botUserLogin();
         }
 
-    };
+    }.bind(this);
 
     this.botUserLogin = function () {
         this.msgFromBot(this.welcomeMessage);

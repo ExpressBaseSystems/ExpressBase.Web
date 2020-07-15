@@ -124,13 +124,6 @@ namespace ExpressBase.Web.Components
                     }
 
                 }
-                foreach (EbControl control in WebForm_L.Controls.FlattenAllEbControls())
-                {
-                    if (control is EbApproval)
-                    {
-                        (control as EbApproval).InitRoles(this.ServiceClient, WebForm.UserObj);
-                    }
-                }
                 ViewBag.HtmlHead = WebForm_L.GetHead();
                 ViewBag.WebFormHtml = WebForm_L.GetHtml();
                 ViewBag.ControlOperations = EbControlContainer.GetControlOpsJS(WebForm_L as EbControlContainer, BuilderType.WebForm);

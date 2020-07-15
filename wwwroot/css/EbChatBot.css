@@ -1246,3 +1246,27 @@ border-radius: 4px;
     margin: 10px 0px;
     padding-left: 40px
 }
+
+
+.otp_cont .otp_wrp{
+    text-align:center;
+}
+
+.otp_cont #partitioned {
+    /*The width of the input is the number of characters times the sum between the letter width (1ch) and the gap width (.5ch). So that's 7*(1ch + .5ch) = 7*1.5ch = 10.5ch.*/
+    border: none;
+    width: 9ch;
+    background: repeating-linear-gradient(90deg, dimgrey 0, dimgrey 1ch, transparent 0, transparent 1.5ch) 0 100%/100% 2px no-repeat;
+    color: dimgrey;
+    font-size: 3.5ch;
+    letter-spacing: .5ch;
+}
+
+    .otp_cont #partitioned:focus {
+        outline: none;
+        color: dimgrey;
+    }
+
+.otp_cont .timer_resend_wrp{
+    padding-top:15px;
+}

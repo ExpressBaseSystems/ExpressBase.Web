@@ -423,10 +423,6 @@
     //    return getObjByval(dataRow.Columns, "Name", col.Name);
     //};
 
-    ctrl.ChangedRowObject = function () {
-        return this.changedRowWT();
-    }.bind(this);
-
     ctrl.isValid = function () {
         return this.isValid() && this.isFinished();
     }.bind(this);
@@ -547,20 +543,6 @@
         this.attachModalCellRef_Row(rowDataModel, rowObjectMODEL);
         return rowDataModel;
     };
-
-    this.changedRowWT = function () {
-        let dataModel = [];
-        $.each(this.objectMODEL, function (rowId, rowObjectMODEL) {
-            if (parseInt(rowId) < 0 && $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to skip newly added and then deleted rows
-                return true;
-            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true") /* - if checked*/
-                dataModel.push(this.getRowDataModel(rowId, rowObjectMODEL));
-            else if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to manage deleted row
-                dataModel.push({ RowId: rowId, IsDelete: true });
-        }.bind(this));
-        console.log(dataModel);
-        return dataModel;
-    }.bind(this);
 
     this.getType = function (_inpCtrl) {
         let type = _inpCtrl.ObjType;
@@ -1711,8 +1693,6 @@
     };
 
     this.setSuggestionVals = function () {
-        //if (!this.formRenderer.isInitNCs)
-        //    return;
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
@@ -1802,7 +1782,7 @@
             return;
         }
         let dataModel = _respObj.FormData.MultipleTables[this.ctrl.TableName];
-
+        this.formRenderer.DataMODEL[this.ctrl.TableName] = dataModel;// attach to master model object
         $(`#${this.TableId}>tbody>.dgtr`).remove();
         //$(`#${this.TableId}_head th`).not(".slno,.ctrlth").remove();
         this.populateDGWithDataModel(dataModel);
@@ -1905,17 +1885,17 @@
                     icon: "fa-trash",
                     callback: this.del
                 },
-                "insertRowBelow": {
-                    name: "Insert row below",
-                    icon: "fa-trash",
-                    callback: this.insertRowBelow,
-                    //disabled: this.insertRowBelowDisableFn
-                },
                 "insertRowAbove": {
                     name: "Insert row above",
-                    icon: "fa-trash",
+                    icon: "fa-angle-up",
                     callback: this.insertRowAbove
 
+                },
+                "insertRowBelow": {
+                    name: "Insert row below",
+                    icon: "fa-angle-down",
+                    callback: this.insertRowBelow,
+                    //disabled: this.insertRowBelowDisableFn
                 }
             }
         };
@@ -1934,10 +1914,10 @@
     this.insertRowBelow = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))); {
-                let td = $activeRow.find('td:last')[0];
-                this.checkRow_click({ target: td }, false, false, false);
-            }
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
+                this.confirmRow();            
+            else 
+                return;            
         }
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");
@@ -1947,10 +1927,10 @@
     this.insertRowAbove = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))); {
-                let td = $activeRow.find('td:last')[0];
-                this.checkRow_click({ target: td }, false, false, false);
-            }
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
+                this.confirmRow();
+            else
+                return;
         }
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");

@@ -67,6 +67,45 @@ function getValueExprValue(ctrl, formObject, userObject) {
     }
 }
 
+function EbRunValueExpr_n(ctrl, formObject, userObject, formObj) {
+    if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
+        return valueExpHelper_n(getValueExprValue(ctrl, formObject, userObject), ctrl);
+    else if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 2 && ctrl.ValueExpr.Code) {
+        let params = [];
+
+        ctrl.ValExpQueryDepCtrls = { $values: ["form.rate"] }; // hard code
+
+        $.each(ctrl.ValExpQueryDepCtrls.$values, function (i, depCtrl_s) {
+            try {
+                let depCtrl = formObject.__getCtrlByPath(depCtrl_s);
+                let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                let val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, formObject, userObject)();
+                let param = { Name: depCtrl.Name, Value: depCtrl.getValue(), Type: "11" }; // hard code
+                params.push(param);
+            }
+            catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                alert("error in 'Value Expression' of : " + curCtrl.Name + " - " + e.message);
+            }
+        }.bind(this));
+
+        ExecQuery(formObj.RefId, ctrl.Name, params, ctrl);
+    }
+}
+
+function valueExpHelper_n(val, ctrl) {
+    ctrl.DataVals.ValueExpr_val = val;
+    let isdifferentValue = (ctrl.DataVals.Value && ctrl.DataVals.Value !== ctrl.DataVals.ValueExpr_val);
+    if (isdifferentValue)
+        console.warn(`edit mode value and valueExpression value are different for '${ctrl.Name}' control`);
+    else {
+        if (ctrl.DataVals.ValueExpr_val)
+            ctrl.justSetValue(ctrl.DataVals.ValueExpr_val);
+    }
+    return ctrl.DataVals.ValueExpr_val;
+}
+
 function EbRunValueExpr(ctrl, formObject, userObject, formObj) {
     if (ctrl.ValueExpr && ctrl.ValueExpr.Lang === 0 && ctrl.ValueExpr.Code)
         return valueExpHelper(getValueExprValue(ctrl, formObject, userObject), ctrl);

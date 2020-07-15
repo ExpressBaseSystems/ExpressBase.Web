@@ -257,7 +257,7 @@ const WebFormRender = function (option) {
             //beforeSend: function (xhr) {
             //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
             //}.bind(this),
-            success: this.reloadForm.bind(this)// divert to force_reload flow
+            success: this.psImportreloadForm.bind(this)// divert to force_reload flow
         });
 
     };
@@ -282,17 +282,19 @@ const WebFormRender = function (option) {
 
     //};
 
-    this.reloadForm = function (_respObjStr) {// need cleanup
+    this.psImportreloadForm = function (_respObjStr) {// need cleanup
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
         console.log(_respObj);
         if (_respObj.Status === 200) {
-            //this.modifyFormData4Import(_respObj);
-            //this.resetDataMODEL(_respObj);
-            this.DataMODEL = _respObj.FormData.MultipleTables;
 
-            this.isEditModeCtrlsSet = false;
-            this.populateControlsWithDataModel(this.DataMODEL);
+            this.callFORCE_RELOAD(0, _respObj.FormData, "New Mode");
+            ////this.modifyFormData4Import(_respObj);
+            ////this.resetDataMODEL(_respObj);
+            //this.DataMODEL = _respObj.FormData.MultipleTables;
+
+            //this.isEditModeCtrlsSet = false;
+            //this.populateControlsWithDataModel(this.DataMODEL);
         }
         else
             console.error(_respObj.MessageInt);
@@ -346,8 +348,6 @@ const WebFormRender = function (option) {
                 continue;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
-            if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
-                continue;
             ctrl.__eb_EditMode_val = val;
             //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
             //    //ctrl.setDisplayMember = EBPSSetDisplayMember;
@@ -1793,8 +1793,8 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.FORCE_RELOAD = function (newOptions) {
-        let t0 = performance.now();
         $.contextMenu('destroy');
+        let t0 = performance.now();
 
         this.resetBuilderVariables(newOptions);
         this.init(option);
@@ -1896,17 +1896,19 @@ const WebFormRender = function (option) {
             if (this.cloneRowId)
                 this.fillCloneData(this.cloneRowId);
         }
-        else if (this.Mode.isView) {
+        else {
+            console.log("================== exec Value Expression   3");
+            //this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
+            this.FRC.execValueExpNC(this.FormObj.DoNotPersistExecOrder);// 2nd
+        }
+
+        if (this.Mode.isView) {
             this.SwitchToViewMode();
             this.locInit4viewMode();
         }
         else if (this.Mode.isEdit) {
             this.SwitchToEditMode();
         }
-
-        console.log("================== exec Value Expression   3");
-        if (!(this.Mode.isNew))// 3rd
-            this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
 
 
         //console.log("================== trigger Initial onchange   4");

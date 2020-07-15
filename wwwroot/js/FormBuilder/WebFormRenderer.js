@@ -37,12 +37,8 @@ const WebFormRender = function (option) {
         }.bind(this));
         this.FRC.setFormObjHelperfns();// adds __getCtrlByPath() to formObject
         this.setFormObjectMode();
-        //if (this.Mode.isNew)
-        //    this.FRC.setValueExpValsNC(this.flatControls); // issue with powerselect 'initializer' not set on load
-
         this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 
-        this.FRC.setUpdateDependentControlsBehaviorFns();// adds updateDependentControlsBehaviorFns() to formObject 
-
+        this.FRC.setUpdateDependentControlsBehaviorFns();// adds updateDependentControlsBehaviorFns() to formObject
 
         return this.formObject;
     };
@@ -470,9 +466,6 @@ const WebFormRender = function (option) {
 
         let outerCtrlsSingleColumns_flat = this.getOuterCtrlsSingleColumns_flat(DataMODEL, OuterCtrlsTblNames);
         this.populateFormOuterCtrlsWithDataModel(outerCtrlsSingleColumns_flat);
-
-        //if (!(this.Mode.isPrefill || this.Mode.isNew))
-        //    this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
     };
 
     //this.getEditModeFormData = function (rowId) {
@@ -1898,7 +1891,6 @@ const WebFormRender = function (option) {
         }
         else {
             console.log("================== exec Value Expression   3");
-            //this.FRC.setValueExpValsNC(this.flatControls);// (set value expression after  DataModel fill - it should resolve initially) 
             this.FRC.execValueExpNC(this.FormObj.DoNotPersistExecOrder);// 2nd
         }
 

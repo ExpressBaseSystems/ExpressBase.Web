@@ -80,14 +80,6 @@
         }
     };
 
-    this.setValueExpValsNC = function (flatControls) {
-        for (let i = 0; i < flatControls.length; i++) {
-            let ctrl = flatControls[i];
-            if (ctrl.DoNotPersist)
-                EbRunValueExpr(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
-        }
-    };
-
 
     this.bindFnsToCtrl = function (Obj) {
         if (Obj.Required)

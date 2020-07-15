@@ -59,7 +59,7 @@
             console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
             return;
         }
-        defaultValsExecOrderArr = defaultValsExecOrder.$values;
+        let defaultValsExecOrderArr = defaultValsExecOrder.$values;
         for (let i = 0; i < defaultValsExecOrderArr.length; i++) {
             let ctrlPath = defaultValsExecOrderArr[i];
             let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
@@ -67,11 +67,16 @@
         }
     };
 
-    this.setValueExpValsNC = function (flatControls) {
-        for (let i = 0; i < flatControls.length; i++) {
-            let ctrl = flatControls[i];
-            if (ctrl.DoNotPersist)
-                EbRunValueExpr(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
+    this.execValueExpNC = function (DoNotPersistExecOrder) {
+        if (!DoNotPersistExecOrder) {//for old forms
+            console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        let doNotPersistExecOrderArr = DoNotPersistExecOrder.$values;
+        for (let i = 0; i < doNotPersistExecOrderArr.length; i++) {
+            let ctrlPath = doNotPersistExecOrderArr[i];
+            let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
+            EbRunValueExpr_n(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
         }
     };
 
@@ -333,7 +338,6 @@
     }.bind(this);
 
     this.PSImportRelatedUpdates = function (curCtrl) {
-        curCtrl.isDataImportCtrl = true;
         this.FO.psDataImport(curCtrl);
     }.bind(this);
 

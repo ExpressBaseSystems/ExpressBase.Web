@@ -409,7 +409,7 @@
 
     this.LabelDrop = function (component, column, controlname, tileid) {
         let val = getObjByval(this.Procs[component].Columns.$values, "name", column);
-        if (component !== "" && column !== "" && val !== undefined && this.Rowdata[component + "Row"] !== null) {
+        if (component !== "" && column !== "" && val !== undefined && this.Rowdata[component + "Row"] !== null && this.Rowdata[component + "Row"] !== undefined) {
             let index = val.data;
             let _data = this.Rowdata[component + "Row"][index];
             this.Procs[controlname].DynamicLabel = _data;

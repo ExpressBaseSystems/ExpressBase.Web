@@ -104,7 +104,7 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.initFilterDialogCtrls();// order 1
             this.FRC.bindEbOnChange2Ctrls(this.FormObj.Controls.$values);// order 2
             this.FRC.setDefaultvalsNC(this.FormObj.Controls.$values);// order 2 // replace with 'execDefaultvalsNC'
-            this.FRC.setValueExpValsNC(this.FormObj.Controls.$values);//
+            this.setValueExpValsNC(this.FormObj.Controls.$values);//
             this.FRC.bindFnsToCtrls(this.flatControls);// order 4
             this.FRC.setDisabledControls(this.flatControls);// disables disabled controls
             this.PSs = getFlatObjOfType(this.FormObj, "PowerSelect");// all PSs in the formObject
@@ -117,6 +117,14 @@ var Eb_FilterDialogRender = function (fObj, wc, curloc, userObj, submitId, onSub
             this.FRC.populateDateCtrlsWithInitialVal(this.FormObj); // ?
             this.FRC.populateRGCtrlsWithInitialVal(this.FormObj);// ?
             this.FRC.populateSSCtrlsWithInitialVal(this.FormObj);// ?
+        };
+
+        this.setValueExpValsNC = function (flatControls) {
+            for (let i = 0; i < flatControls.length; i++) {
+                let ctrl = flatControls[i];
+                if (ctrl.DoNotPersist)
+                    EbRunValueExpr(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
+            }
         };
 
         this.initFilterDialogCtrls = function () {

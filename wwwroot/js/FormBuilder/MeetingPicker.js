@@ -134,9 +134,12 @@ var meetingPicker = function (ctrl, ctrlOpts , type) {
         alert(abc); 
     };
 
+
+
     this.init = function () {
         $(`#${this.ctrl.EbSid}_date_change`).on("click", function () { $(`#${this.ctrl.EbSid}_datepicker`).slideToggle(400); }.bind(this));
         $(`#${this.ctrl.EbSid}_slot_change`).on("click", function () { $(`#${this.ctrl.EbSid}_picker-cont`).slideToggle(400); }.bind(this));
+       
         this.InitDatePicker();
         this.getTimeSlots();
 

@@ -117,11 +117,6 @@
                 continue;
             this.fireInitOnchange(Obj);
         }
-        //$.each(flatControls, function (k, Obj) {
-        //    if (Obj.ObjType === "ScriptButton")
-        //        return true;
-        //    this.fireInitOnchange(Obj);
-        //}.bind(this));
     };
 
     this.bindFnsToCtrls = function (flatControls) {
@@ -532,7 +527,7 @@
                 }
 
                 if (isSaveAfter && unique_flag) {
-                    this.FO.DGsB4SaveActions();
+                    //this.FO.DGsB4SaveActions();
                     this.FO.saveForm_call();
                 }
             }.bind(this)

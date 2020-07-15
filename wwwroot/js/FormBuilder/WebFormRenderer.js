@@ -401,8 +401,8 @@ const WebFormRender = function (option) {
     };
 
     this.startNewMode = function () {
-        if (this.formData_clone) {
-            this.callFORCE_RELOAD(0, this.formData_clone, "New Mode");
+        if (this.emptyFormDataModel_copy) {
+            this.callFORCE_RELOAD(0, this.emptyFormDataModel_copy, "New Mode");
         }
         else {
             this.showLoader();
@@ -507,16 +507,13 @@ const WebFormRender = function (option) {
         $.each(this.DGBuilderObjs, function (k, DGB) {
             DGB.B4saveActions();
         }.bind(this));
-
     };
 
     this.cloneForm = function () {
         let params = [];
-        //params.push(new fltr_obj(16, "srcRefId", this.formRefId));
         params.push(new fltr_obj(11, "srcRowId", this.rowId));
         let url = `../WebForm/Index?refid=${this.formRefId}&_params=${btoa(JSON.stringify(params))}&_mode=7`;
         window.open(url, '_blank');
-        //window.open("index?refid=" + this.formRefId + "&mode=clone&rowid=" + this.rowId);
     };
 
     this.saveForm = function () {
@@ -578,11 +575,8 @@ const WebFormRender = function (option) {
         if (this.ReviewCtrl && this.DataMODEL.hasOwnProperty(this.ReviewCtrl.TableName)) {
             let DataMODEL = this.DataMODEL[this.ReviewCtrl.TableName];
             this.ReviewCtrl._Builder.switch2viewMode(DataMODEL);
-            //let DataMODEL = EditModeFormData[this.ApprovalCtrl.TableName];
-            //this.ApprovalCtrl.populateDGWithDataModel(DataMODEL);
         }
 
-        //    this.ApprovalCtrl.disableAllCtrls();
         this.disbleControlsInViewMode();
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.Name].SwitchToViewMode();
@@ -646,7 +640,7 @@ const WebFormRender = function (option) {
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here re-assign objectcoll with functions
         this.enableControlsInEditMode();
         this.setUniqCtrlsInitialVals();
-        this.DynamicTabObject.switchToEditMode();
+        this.DynamicTabObject.switchToEditMode();// febin
     };
 
     this.BeforeModeSwitch = function (newMode) {
@@ -730,7 +724,6 @@ const WebFormRender = function (option) {
                                 this.hideLoader();
                                 if (result > 0) {
                                     EbMessage("show", { Message: "Deleted " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
-                                    //EbMessage("show", { Message: 'Deleted Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
@@ -781,7 +774,6 @@ const WebFormRender = function (option) {
                                 this.hideLoader();
                                 if (result > 0) {
                                     EbMessage("show", { Message: "Canceled " + this.FormObj.DisplayName + " entry from " + ebcontext.locations.CurrentLocObj.LongName, AutoHide: true, Background: '#00aa00' });
-                                    //EbMessage("show", { Message: 'Canceled Successfully', AutoHide: true, Background: '#00aa00' });
                                     setTimeout(function () { window.close(); }, 3000);
                                 }
                                 else if (result === -1) {
@@ -880,13 +872,6 @@ const WebFormRender = function (option) {
                 });
             });
             if (tempHtml.length !== 0) {
-                //<thead>
-                //  <tr class="table-title-tr">
-                //      <th class="col-md-4 col-sm-4" style='font-weight: 400;'>Field Name</th>
-                //      <th class="col-md-4 col-sm-4" style='font-weight: 400;'>New Value</th>
-                //      <th class="col-md-4 col-sm-4" style='font-weight: 400;'>Old Value</th>
-                //  </tr>
-                //</thead>
                 let temp = `<div class="form-table-div"><table class="table table-bordered first-table" style="width:100%; margin: 0px;">
                      <tbody>`
                     + '@replacethis@' +
@@ -1024,6 +1009,7 @@ const WebFormRender = function (option) {
         }
 
         this.mode = reqstMode;//
+
         //reqstMode = "Edit Mode" or "New Mode" or "View Mode"
         if (reqstMode === "Edit Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformsave-selbtn", "webformaudittrail"], currentLoc, reqstMode));
@@ -1034,10 +1020,6 @@ const WebFormRender = function (option) {
         else if (reqstMode === "View Mode") {
             this.headerObj.showElement(this.filterHeaderBtns(["webformnew", "webformedit", "webformdelete", "webformcancel", "webformaudittrail", "webformprint-selbtn"], currentLoc, reqstMode));
         }
-        //else if (reqstMode === "Fail Mode") {
-        //    EbMessage("show", { Message: 'Error in loading data !', AutoHide: false, Background: '#aa0000' });
-        //    console.error(this.formDataWrapper.Message);
-        //}
         else if (reqstMode === "Preview Mode") {
             this.mode = "New Mode";////////////
         }
@@ -1096,29 +1078,6 @@ const WebFormRender = function (option) {
         return r;
     };
 
-    //this.newAfterSave = function () {
-    //    this.showLoader();
-    //    reloadFormPage();
-    //}.bind(this);
-
-    //this.continueAfterSave = function () {
-    //    this.isInitialEditModeDataSet = true;
-    //    this.populateControlsWithDataModel(this.DataMODEL);
-    //    this.isInitialEditModeDataSet = false;
-
-    //    this.SwitchToEditMode();
-    //}.bind(this);
-
-    //this.viewAfterSave = function () {
-    //    this.populateControlsWithDataModel(this.DataMODEL);
-    //    this.SwitchToViewMode();
-    //}.bind(this);
-
-    //this.closeAfterSave = function () {
-    //    this.showLoader();
-    //    document.location.href = "/";
-    //}.bind(this);
-
     this.saveSelectChange = function () {
         this.saveForm();
         let val = $("#webformsave-selbtn .selectpicker").find("option:selected").attr("data-token");
@@ -1132,24 +1091,15 @@ const WebFormRender = function (option) {
                 let tle = this.FormObj.PrintDocs.$values[i].Title || this.FormObj.PrintDocs.$values[i].ObjDisplayName;
                 $sel.append(`<option data-token="${this.FormObj.PrintDocs.$values[i].ObjRefId}" data-title="${tle}">${tle}</option>`);
             }
-            //test data hardcoded
-            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-424-527-424-527" data-title="Document 1">Document 1</option>`);
-            //$("#webformprint-selbtn .selectpicker").append(`<option data-token="hairocraft_stagging-hairocraft_stagging-3-425-528-425-528" data-title="Document 2">Document 2</option>`);
 
             $sel.selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
             $("#webformprint-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.printDocument.bind(this));
             $("#webformprint").off("click").on("click", function () { this.printDocument(); }.bind(this));
         }
-
-        //if (this.FormObj.PrintDoc && this.FormObj.PrintDoc !== '') {
-        //    $("#webformprint").attr('data-refid', this.FormObj.PrintDoc);
-        //    $("#webformprint").on("click", this.printDocument.bind(this));
-        //}
     };
 
     this.printDocument = function () {
         let rptRefid = $("#webformprint-selbtn .selectpicker").find("option:selected").attr("data-token");
-        //let rptRefid = $("#webformprint").attr('data-refid');
         $("#iFramePdf").attr("src", "/WebForm/GetPdfReport?refId=" + rptRefid + "&rowId=" + this.rowId);
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
@@ -1213,7 +1163,6 @@ const WebFormRender = function (option) {
 
         $("#webformexcel-selbtn").off("click", ".dropdown-menu li").on("click", ".dropdown-menu li", this.excelExportImport.bind(this));
         $("#webformexcel-selbtn .selectpicker").selectpicker({ iconBase: 'fa', tickIcon: 'fa-check' });
-        //$("#webformexcel-selbtn").on('click', this.excelExportImport.bind(this));
         $("#excelfile").off('change').on('change', this.excelUpload.bind(this));
 
         this.$saveBtn.off("click").on("click", this.saveForm.bind(this));
@@ -1227,14 +1176,6 @@ const WebFormRender = function (option) {
         //    window.justbluredElement = event.target;
         //});
         $("body").off("focus", "[ui-inp]").on("focus", "[ui-inp]", this.selectUIinpOnFocus);
-
-        //$("body").on("focus", "[ui-inp]", function () {
-        //    let el = event.target;
-        //    if (event && el) {
-        //        if (el.getAttribute("type") === "search" && window.justbluredElement !== el && $(el).closest("[ctype='PowerSelect']").length === 1)
-        //            $(event.target).select();
-        //    }
-        //});
         $(window).off("keydown").on("keydown", this.windowKeyDown);
     };
 
@@ -1337,7 +1278,7 @@ const WebFormRender = function (option) {
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             if (typeof this[key] !== typeof function () { }) {
-                if (key !== "formData_clone")// persist
+                if (key !== "emptyFormDataModel_copy")// persist
                     delete this[key];
             }
         }
@@ -1348,8 +1289,10 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.FORCE_RELOAD = function (newOptions) {
-        $.contextMenu('destroy');
         let t0 = performance.now();
+
+        $.contextMenu('destroy');
+        $(".xdsoft_datetimepicker.xdsoft_noselect.xdsoft_").remove();
 
         this.resetBuilderVariables(newOptions);
         this.init(option);
@@ -1359,6 +1302,8 @@ const WebFormRender = function (option) {
 
     this.init = function () {
         let t0 = performance.now();
+
+        this.rendererName = 'WebForm';
 
         this.$formCont = option.$formCont;
         this.formHTML = option.formHTML;
@@ -1376,79 +1321,56 @@ const WebFormRender = function (option) {
         this.$closeBtn = $('#' + option.headerBtns['Close']);
         this.$cloneBtn = $('#webformclone');
         this.Env = option.env;
-        this.Cid = option.cid;
-        this.rendererName = 'WebForm';
         this.initControls = new InitControls(this);
-        //this.editModeObj = option.editModeObj;
         this.formRefId = option.formRefId || "";
-        this.rowId = option.rowId;//==========
-        this.mode = option.mode;// ==========
+        this.rowId = option.rowId;
+        this.mode = option.mode;
         this.userObject = option.userObject;
         this.isPartial = option.isPartial;//value is true if form is rendering in iframe
         this.headerObj = option.headerObj;//EbHeader
         this.formPermissions = option.formPermissions;
 
-        //this.formDataWrapper = option.formData;//==========
-        this.formData = option.formData;//==========
+        this.formData = option.formData;
         if (this.mode === "New Mode")
-            this.formData_clone = JSON.parse(JSON.stringify(this.formData));// clone
-        //this.EditModeFormData = this.formData === null ? null : this.formData.MultipleTables;//EditModeFormData
-        this.DataMODEL = this.formData.MultipleTables;//EditModeFormData
+            this.emptyFormDataModel_copy = JSON.parse(JSON.stringify(this.formData));// takes a copy (if switched to new mode)
+        this.DataMODEL = this.formData.MultipleTables;
         this.FormDataExtdObj = { val: this.formData.ExtendedTables }; // next iteration
 
         this.DisableDeleteData = this.formData.DisableDelete;
         this.DisableCancelData = this.formData.DisableCancel;
-        this.TableNames;
         this.Mode = { isEdit: this.mode === "Edit Mode", isView: this.mode === "View Mode", isNew: this.mode === "New Mode" };// to pass by reference
         this.flatControls = getFlatCtrlObjs(this.FormObj);// here without functions
         this.FlatContControls = getInnerFlatContControls(this.FormObj);
-        //this.DataMODEL = this.EditModeFormData;
         this.MasterTable = this.FormObj.TableName;
-        this.formValues = {};
         this.IsPSsInitComplete = {};
-        this.formValidationflag = true;
-        this.isEditModeCtrlsSet = false;
         this.DGBuilderObjs = {};
         this.uniqCtrlsInitialVals = {};
-        this.PSsIsInit = {};
         this.DynamicTabObject = null;
-        this.TabControls = null;
-        this.FRC = new FormRenderCommon({
-            FO: this
-        });
-
+        this.FRC = new FormRenderCommon({ FO: this });
         this.TableNames = this.getNormalTblNames();
         this.ReviewCtrl = getFlatContObjsOfType(this.FormObj, "Review")[0];//Review control in formObject
         this.TabControls = getFlatContObjsOfType(this.FormObj, "TabControl");// all TabControl in the formObject
         this.setHeader(this.mode);// contains a hack for preview mode(set as newmode)
         $('[data-toggle="tooltip"]').tooltip();// init bootstrap tooltip
         this.bindEventFns();
-
         a___MT = this.DataMODEL; // debugg helper
-
         attachModalCellRef_form(this.FormObj, this.DataMODEL);
         this.initWebFormCtrls();
         this.initPrintMenu();
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         this.setMode();
-        this.isInitialProgramaticOnchange = true;
+        this.isInitialProgramaticOnchange = true;// IMPORTANT
 
-        console.log("================== populateDataModel          1");
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
 
         if (this.Mode.isNew) {
-
-            console.log("================== exec default Value Expression   2");
-            //this.FRC.setDefaultvalsNC(this.flatControls);// 2nd
-            this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);// 2nd
-
+            this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
         }
-        else {
-            console.log("================== exec Value Expression   3");
-            this.FRC.execValueExpNC(this.FormObj.DoNotPersistExecOrder);// 2nd
+        else {            
+            this.FRC.execValueExpNC(this.FormObj.DoNotPersistExecOrder);//================== exec Value Expression   2nd
         }
 
         if (this.Mode.isView) {
@@ -1459,10 +1381,7 @@ const WebFormRender = function (option) {
             this.SwitchToEditMode();
         }
 
-
-        //console.log("================== trigger Initial onchange   4");
-        //this.FRC.fireInitOnchangeNC(this.flatControls); //4rth
-        this.isInitialProgramaticOnchange = false;
+        this.isInitialProgramaticOnchange = false;// IMPORTANT
 
         this.LocationInit();
 
@@ -1477,20 +1396,6 @@ const WebFormRender = function (option) {
         console.dev_log("WebFormRender : init() took " + (performance.now() - t0) + " milliseconds.");
     };
 
-
-    this.fixValExpInDataModel = function () { ////////////////////////// cleanup
-        $.each(this.flatControls, function (idx, ctrl) {
-            for (let i = 0; i < ctrl.length; i++) {
-                let inpCtrl = ctrl[i];
-                let ValueExpr_val = getValueExprValue(inpCtrl, this.ctrl.formObject, this.ctrl.__userObject, this.formObject_Full);
-                if (inpCtrl.DoNotPersist && ValueExpr_val !== undefined)
-                    inpCtrl.DataVals.Value = ValueExpr_val;
-            }
-            //this.onRowPaintFn(["tr"], "check", "e");// --
-        }.bind(this));
-    };
-
     this.init(option);
     a___builder = this;
-    //a___EO = this.EditModeFormData;
 };

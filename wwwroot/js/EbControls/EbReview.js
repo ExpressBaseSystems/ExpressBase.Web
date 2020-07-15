@@ -51,9 +51,9 @@
         }.bind(this));
     };
 
-    this.ctrl.ChangedRowObject = function () {
-        return this.changedRowWT();
-    }.bind(this);
+    //this.ctrl.ChangedRowObject = function () {
+    //    return this.changedRowWT();
+    //}.bind(this);
 
     this.changedRowWT = function () {
         let SingleTable = [];
@@ -82,7 +82,7 @@
         this.saveForm_call();
     };
 
-    this.getApprovalTable = function () {
+    this.getReviewTable = function () {
         let FVWTObjColl = {};
         let tOb = this.changedRowWT();
         if (tOb)
@@ -95,7 +95,7 @@
         let reviewTable = {};
         WebformData.MultipleTables = {};
 
-        reviewTable = this.getApprovalTable();
+        reviewTable = this.getReviewTable();
 
         WebformData.MultipleTables = $.extend(WebformData.MultipleTables, reviewTable);// attach approvalTable 
         console.log(WebformData);

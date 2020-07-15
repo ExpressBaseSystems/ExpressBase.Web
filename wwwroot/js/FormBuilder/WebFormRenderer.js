@@ -60,7 +60,7 @@ const WebFormRender = function (option) {
     };
 
     this.initDGs = function () {
-        $.each(this.DGs, function (k, DG) {//dginit
+        $.each(this.DGs, function (k, DG) {//dg Init
             this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, FormDataExtdObj: this.FormDataExtdObj, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
             this.DGBuilderObjs[DG.Name].MultipleTables = this.DataMODEL | [];
         }.bind(this));
@@ -128,8 +128,6 @@ const WebFormRender = function (option) {
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
-        //this.addApprovalMockDATAMODEL();
-        this.ApprovalCtrl = getFlatContObjsOfType(this.FormObj, "Approval")[0];//Approval controls in formObject
         this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
         this.initNCs();// order 1
@@ -139,10 +137,6 @@ const WebFormRender = function (option) {
         this.initDGs();
         this.initReviewCtrl();
 
-
-        //if (this.Mode.isNew)
-        //    this.initDataMODEL();
-
         $.each(this.DGs, function (k, DG) {
             let _DG = new ControlOps[DG.ObjType](DG);
             if (_DG.OnChangeFn.Code === null)
@@ -151,58 +145,7 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
-    this.addApprovalMockDATAMODEL = function () {
-        if (!this.ReviewCtrl)
-            return;
-        this.DataMODEL[this.ReviewCtrl.TableName] = [
-            {
-                RowId: 1,
-                LocId: 0,
-                pId: null,
-                IsUpdate: false,
-                IsDelete: false,
-                Columns: [
-                    { Name: "stage_unique_id", Value: "Review1_approvalstage1", Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
-                    { Name: "action_unique_id", Value: 1, Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
-                    { Name: "eb_my_actions_id", Value: 1, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "comments", Value: "comments_111111", Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "eb_created_at", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "eb_created_by", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" }
-                ]
-            },
-            {
-                RowId: 2,
-                LocId: 0,
-                pId: null,
-                IsUpdate: false,
-                IsDelete: false,
-                Columns: [
-                    { Name: "stage_unique_id", Value: "Review1_approvalstage2", Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
-                    { Name: "action_unique_id", Value: 1, Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
-                    { Name: "eb_my_actions_id", Value: 1, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "comments", Value: "comments_222222", Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "eb_created_at", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "eb_created_by", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" }
-                ]
-            },
-            {
-                RowId: 0,
-                LocId: 0,
-                pId: null,
-                IsUpdate: false,
-                IsDelete: false,
-                Columns: [
-                    { Name: "stage_unique_id", Value: "Review1_approvalstage3", Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
-                    { Name: "action_unique_id", Value: 1, Type: 16, D: null, R: null, ObjType: "action_unique_id", F: "" },
-                    { Name: "eb_my_actions_id", Value: 1, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "comments", Value: "comments_33333", Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "eb_created_at", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" },
-                    { Name: "eb_created_by", Value: null, Type: 16, D: null, R: null, ObjType: "TextBox", F: "" }
-                ]
-            }]
-    };
-
-    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};
+    DynamicTabPaneGlobals = null;//{ DG: 'this.ctrl', $tr: '$tr', action: 'action', event: 'event'};// multiple form related changes will come
     DynamicTabPane = function (args) {
         if (DynamicTabPaneGlobals === null) {
             console.log('Dynamic tab not supported. Please initiate from a data grid.');
@@ -223,7 +166,7 @@ const WebFormRender = function (option) {
         let TabCtrl = getObjByval(this.TabControls, 'EbSid', $initiatorTab.attr("ebsid"));
         this.DynamicTabObject.initDynamicTabPane($.extend(args, { srcDgCtrl: DgCtrl, srcTabCtrl: TabCtrl, action: DynamicTabPaneGlobals.action }));
         DynamicTabPaneGlobals = null;
-    }.bind(this);
+    }.bind(this); // multiple form related changes will come
 
     this.updateCtrlsUI = function () {
         let allFlatControls = [this.FormObj, ...getInnerFlatContControls(this.FormObj).concat(this.flatControls)];
@@ -238,7 +181,6 @@ const WebFormRender = function (option) {
         this.showLoader();
         $.ajax({
             type: "POST",
-            //url: this.ssurl + "/bots",
             url: "/WebForm/ImportFormData",
             data: {
                 _refid: this.formRefId,
@@ -250,79 +192,20 @@ const WebFormRender = function (option) {
                 this.hideLoader();
                 EbMessage("show", { Message: `Something Unexpected Occurred when tried to import data`, AutoHide: true, Background: '#aa0000' });
             }.bind(this),
-            //beforeSend: function (xhr) {
-            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            //}.bind(this),
-            success: this.psImportreloadForm.bind(this)// divert to force_reload flow
+            success: this.psImportreloadForm.bind(this)
         });
 
     };
 
-    //// to add fetched values to data model 
-    //// parameter - _respObj : data model of imported data
-    //this.modifyFormData4Import = function (_respObj) {
-
-    //    this.EditModeFormData = _respObj.FormData.MultipleTables;
-    //    let editModeFormData = _respObj.FormData.MultipleTables;
-
-    //    let SourceEditModeFormDataExceptDG = editModeFormData[this.FormObj.Name];
-
-    //    for (let i = 0; i < this.flatControls.length; i++) {
-    //        let ctrl = this.flatControls[i];
-    //        let dataObj = getObjByval(SourceEditModeFormDataExceptDG[0].Columns, "Name", ctrl.Name);
-    //        if (dataObj) {
-    //            let val = dataObj.Value;
-    //            ctrl.DataVals.Value = val;
-    //        }
-    //    }
-
-    //};
-
-    this.psImportreloadForm = function (_respObjStr) {// need cleanup
+    this.psImportreloadForm = function (_respObjStr) {
         this.hideLoader();
         let _respObj = JSON.parse(_respObjStr);
-        console.log(_respObj);
         if (_respObj.Status === 200) {
-
             this.callFORCE_RELOAD(0, _respObj.FormData, "New Mode");
-            ////this.modifyFormData4Import(_respObj);
-            ////this.resetDataMODEL(_respObj);
-            //this.DataMODEL = _respObj.FormData.MultipleTables;
-
-            //this.isEditModeCtrlsSet = false;
-            //this.populateControlsWithDataModel(this.DataMODEL);
         }
         else
             console.error(_respObj.MessageInt);
-
     }.bind(this);
-
-    this.resetDataMODEL = function (_respObj) {
-        let editModeFormData = _respObj.FormData.MultipleTables;
-
-        // DG = replace DG dataModel with  new one
-        $.each(editModeFormData, function (tblName, Data) {
-            if (tblName !== this.FormObj.TableName) {
-                let DG = getObjByval(this.DGs, "TableName", tblName);
-                if (!DG)
-                    return true;
-                let DGTblName = DG.TableName;
-                delete this.EditModeFormData[tblName];
-                this.EditModeFormData[DGTblName] = Data;
-                this.DataMODEL[DGTblName] = Data;
-            }
-        }.bind(this));
-
-
-
-
-        //this.EditModeFormData = _respObj.FormData.MultipleTables;
-        //this.DataMODEL = this.EditModeFormData;
-    };
-
-    //this.removeRowIds = function () {
-
-    //};
 
     //this.unbindUniqueCheck = function (control) {
     //    $("#" + control.EbSid_CtxId).off("blur.dummyNameSpace");
@@ -333,7 +216,6 @@ const WebFormRender = function (option) {
     }.bind(this);
 
     this.populateFormOuterCtrlsWithDataModel = function (NCCSingleColumns_flat_editmode_data) {
-
         for (let i = 0; i < NCCSingleColumns_flat_editmode_data.length; i++) {
             let SingleColumn = NCCSingleColumns_flat_editmode_data[i];
             let val = SingleColumn.Value;
@@ -360,27 +242,6 @@ const WebFormRender = function (option) {
             ctrl.justSetValue(val);
             ctrl.___DoNotUpdateDataVals = false;
         }
-
-        //$.each(NCCSingleColumns_flat_editmode_data, function (i, SingleColumn) {
-        //    let val = SingleColumn.Value;
-
-        //    if (SingleColumn.Name === "id")
-        //        return true;
-        //    if (val === null)
-        //        return true;
-
-        //    let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
-        //    if (ctrl.isDataImportCtrl)// to skip if call comes from data import function
-        //        return true;
-        //    ctrl.__eb_EditMode_val = val;
-        //    if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-        //        //ctrl.setDisplayMember = EBPSSetDisplayMember;
-        //        ctrl.setDisplayMember(val);
-        //    }
-        //    else
-        //        ctrl.setValue(val);
-        //}.bind(this));
-        this.isInitNCs = true;
     };
 
     this.getNormalTblNames = function () {
@@ -408,47 +269,6 @@ const WebFormRender = function (option) {
         return OuterCtrlsSingleColumns_flat;
     };
 
-    this.ClearControls = function (isForceClear = false) {
-        $.each(this.allFlatControls, function (control) {
-            if (!control.IsMaintainValue && !isForceClear)
-                control.clear();
-        });
-    };
-
-    //this.populateControlsWithDataModel = function () {
-    //    if (this.isEditModeCtrlsSet) {// if already set while mode switching
-    //        $.each(this.DGs, function (k, DG) {
-    //            this.DGBuilderObjs[DG.Name].SwitchToEditMode();
-    //        }.bind(this));
-    //        return;
-    //    }
-    //    let EditModeFormData = this.EditModeFormData;
-    //    let NCCTblNames = this.getNormalTblNames();
-    //    //let DGTblNames = this.getSCCTblNames(this.EditModeFormData, "DataGrid");
-    //    for (let DGName in this.DGBuilderObjs) {
-    //        let DGB = this.DGBuilderObjs[DGName];
-    //        if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
-    //            this.DataMODEL[DGB.ctrl.TableName] = [];
-    //            DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
-    //            continue;
-    //        }
-    //        //let DataMODEL = this.EditModeFormData[DGB.ctrl.TableName];
-    //        let DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
-    //        DGB.populateDGWithDataModel(DataMODEL);
-    //    }
-
-    //    //if (this.ApprovalCtrl.__ready) {
-    //    //let DataMODEL = this.EditModeFormData[this.ApprovalCtrl.TableName];
-    //    //this.ApprovalCtrl.populateDGWithDataModel(DataMODEL);
-    //    //}
-
-    //    let NCCSingleColumns_flat_editmode_data = this.getOuterCtrlsSingleColumns_flat(this.EditModeFormData, NCCTblNames);
-    //    this.populateFormOuterCtrlsWithDataModel(NCCSingleColumns_flat_editmode_data);
-    //    this.isEditModeCtrlsSet = true;
-
-    //    this.FRC.setValueExpValsNC(this.flatControls);
-    //};
-
     // populateControlsWithDataModel
     this.populateControlsWithDataModel = function (DataMODEL) {
         let OuterCtrlsTblNames = this.getNormalTblNames();
@@ -468,52 +288,11 @@ const WebFormRender = function (option) {
         this.populateFormOuterCtrlsWithDataModel(outerCtrlsSingleColumns_flat);
     };
 
-    //this.getEditModeFormData = function (rowId) {
-    //    this.showLoader();
-    //    $.ajax({
-    //        type: "POST",
-    //        url: "/WebForm/getRowdata",
-    //        data: {
-    //            refid: this.formRefId, rowid: parseInt(rowId)
-    //        },
-    //        error: function (xhr, ajaxOptions, thrownError) {
-    //            this.hideLoader();
-    //            EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-    //        }.bind(this),
-    //        success: function (data) {
-    //            this.EditModeFormData = data.formData.multipleTables;
-    //            this.populateControlsWithDataModel();
-    //            this.hideLoader();
-    //        }.bind(this),
-    //    });
-    //};
-
-    this.getApprovalRow = function () {
-        let FVWTObjColl = {};
-        if (this.ReviewCtrl) {
-            let tOb = this.ReviewCtrl.ChangedRowObject();
-            if (tOb)
-                FVWTObjColl[this.ReviewCtrl.TableName] = tOb;
-        }
-        return FVWTObjColl;
-    };
-
-    this.getDG_FVWTObjColl = function () {
-        let FVWTObjColl = {};
-        $.each(this.DGs, function (i, DG) {
-            FVWTObjColl[DG.TableName] = DG.ChangedRowObject();
-        });
-        return FVWTObjColl;
-    };
-
     this.getExtendedTables = function () {
         let ExtendedTables = {};
         $.each(uploadedFileRefList, function (key, values) {
             ExtendedTables[key] = [];
-            //ExtendedTables[key] = [{
-            //    IsUpdate: false,
-            //    Columns: []
-            //}];
+
             for (let i = 0; i < values.length; i++) {
                 let SingleColumn = {};
                 SingleColumn.Name = key;
@@ -523,7 +302,6 @@ const WebFormRender = function (option) {
                     IsUpdate: false,
                     Columns: [SingleColumn]
                 });
-                //ExtendedTables[key][0].Columns.push(SingleColumn);
             }
         });
         return ExtendedTables;
@@ -532,14 +310,12 @@ const WebFormRender = function (option) {
     this.getFormValuesObjWithTypeColl = function () {
         let WebformData = {};
 
-
         //WebformData.MultipleTables = $.extend(formTables, gridTables, approvalTable);
         this.DynamicTabObject.updateDataModel();
         WebformData.MultipleTables = this.formateDS(this.DataMODEL);
         //$.extend(WebformData.MultipleTables, this.formateDS(this.DynamicTabObject.getDataModels()));
         WebformData.ExtendedTables = this.getExtendedTables();
         console.log("form data --");
-
 
         //console.log("old data --");
         //console.log(JSON.stringify(WebformData.MultipleTables));
@@ -552,102 +328,6 @@ const WebFormRender = function (option) {
     this.formateDS = function (_multipleTables) {
         return formatData4webform(_multipleTables);
     };
-
-    this.getCellObjFromEditModeObj = function (ctrl, formData) {
-        let CellObj;
-        for (let i = 0; i < this.TableNames.length; i++) {
-            let tableName = this.TableNames[i];
-            CellObj = getObjByval(formData[tableName][0].Columns, "Name", ctrl.Name);
-            if (CellObj)
-                return CellObj;
-        }
-
-        return CellObj;
-    };
-
-    //this.RefreshOuterFormControls = function (formData) {
-    //    for (let i = 0; i < this.flatControls.length; i++) {
-    //        let ctrl = this.flatControls[i];
-    //        let cellObj = this.getCellObjFromEditModeObj(ctrl, formData);
-    //        if (ctrl.ObjType === "AutoId" && this.isOpenedInCloneMode)
-    //            continue;
-    //        if (cellObj !== undefined) {
-    //            ctrl.reset(cellObj.Value);
-    //        }
-    //        else
-    //            ctrl.clear();
-    //    }
-    //};
-
-    //this.RefreshDGControlValues = function (formData) {
-    //    for (let DGName in this.DGBuilderObjs) {
-    //        let DGB = this.DGBuilderObjs[DGName];
-    //        let DataMODEL = formData[DGB.ctrl.TableName];
-    //        if (DataMODEL)
-    //            DGB.resetControlValues(DataMODEL);
-    //        else
-    //            DGB.clearDG();
-    //    }
-    //};
-
-    //this.RefreshFormControlValues = function (formData) {
-    //    this.RefreshOuterFormControls(formData);
-    //    this.RefreshDGControlValues(formData);
-    //};
-
-    //this.saveSuccess = function (_respObj) {
-    //    this.hideLoader();
-    //    let respObj = JSON.parse(_respObj);
-    //    ebcontext._formSaveResponse = respObj;
-
-    //    if (respObj.Status === 200) {
-    //        if (_renderMode === 3) {
-    //            EbMessage("show", { Message: "Sign up success. Please check mail to login ", AutoHide: false, Background: '#00aa00' });
-    //            setTimeout(function () {
-    //                ebcontext.setup.ss.onLogOutMsg();
-    //            }, 3000);
-    //            return;
-    //        }
-    //        if (_renderMode === 5) {
-    //            EbMessage("show", { Message: "Form save success ", AutoHide: false, Background: '#00aa00' });
-    //            return;
-    //        }
-
-    //        respObj.FormData = JSON.parse(respObj.FormData);
-    //        let locName = ebcontext.locations.CurrentLocObj.LongName;
-    //        let formName = this.FormObj.DisplayName;
-    //        if (_renderMode === 4) {
-    //            EbMessage("show", { Message: "My profile updated successfully", AutoHide: true, Background: '#00aa00' });
-    //        }
-    //        else {
-    //            if (this.rowId > 0)
-    //                EbMessage("show", { Message: "Edited " + formName + " from " + locName, AutoHide: true, Background: '#00aa00' });
-    //            else
-    //                EbMessage("show", { Message: "New " + formName + " entry in " + locName + " created", AutoHide: true, Background: '#00aa00' });
-    //        }
-    //        this.rowId = respObj.RowId;
-    //        //this.EditModeFormData = respObj.FormData.MultipleTables;
-    //        this.DataMODEL = respObj.FormData.MultipleTables;
-    //        a___MT = this.DataMODEL;
-    //        attachModalCellRef_form(this.FormObj, this.DataMODEL);
-
-    //        this.FormDataExtdObj.val = respObj.FormData.ExtendedTables;
-    //        this.FormDataExtended = respObj.FormData.ExtendedTables;
-    //        this.DynamicTabObject.disposeDynamicTab();
-    //        this.reSetMode(this.curAfterSavemodeS);
-    //        //this.RefreshFormControlValues(this.EditModeFormData);
-    //        this.getAfterSaveActionFn(this.curAfterSavemodeS)();
-    //        this.curAfterSavemodeS = this.defaultAfterSavemodeS;
-    //        //window.parent.closeModal();
-    //    }
-    //    else if (respObj.Status === 403) {
-    //        EbMessage("show", { Message: "Access denied to update this data entry!", AutoHide: true, Background: '#aa0000' });
-    //    }
-    //    else {
-    //        EbMessage("show", { Message: respObj.Message, AutoHide: true, Background: '#aa0000' });
-    //        console.error(respObj.MessageInt);
-    //    }
-    //};
 
     this.saveSuccess = function (_respObj) {
         this.hideLoader();
@@ -751,7 +431,6 @@ const WebFormRender = function (option) {
             });
         }
     }.bind(this);
-
 
     this.isAllUniqOK = function () {
         let unique_flag = true;
@@ -859,7 +538,6 @@ const WebFormRender = function (option) {
         let currentLoc = store.get("Eb_Loc-" + _userObject.CId + _userObject.UserId) || _userObject.Preference.DefaultLocation;
         $.ajax({
             type: "POST",
-            //url: this.ssurl + "/bots",
             url: "/WebForm/InsertWebformData",
             data: {
                 TableName: this.FormObj.TableName,
@@ -872,9 +550,6 @@ const WebFormRender = function (option) {
                 this.hideLoader();
                 EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
             }.bind(this),
-            //beforeSend: function (xhr) {
-            //    xhr.setRequestHeader("Authorization", "Bearer " + this.bearerToken);
-            //}.bind(this),
             success: this.saveSuccess.bind(this)
         });
     };
@@ -1450,17 +1125,6 @@ const WebFormRender = function (option) {
         this.curAfterSavemodeS = val;
     }.bind(this);
 
-    //this.getAfterSaveActionFn = function (mode) {
-    //    if (mode === "new")
-    //        return this.newAfterSave;
-    //    else if (mode === "edit")
-    //        return this.continueAfterSave;
-    //    else if (mode === "view")
-    //        return this.viewAfterSave;
-    //    else if (mode === "close")
-    //        return this.closeAfterSave;
-    //};
-
     this.initPrintMenu = function () {
         if (this.FormObj.PrintDocs && this.FormObj.PrintDocs.$values.length > 0) {
             let $sel = $("#webformprint-selbtn .selectpicker");
@@ -1490,29 +1154,6 @@ const WebFormRender = function (option) {
         $("#eb_common_loader").EbLoader("show", { maskItem: { Id: "#WebForm-cont" } });
     };
 
-    //this.initDataMODEL = function () {
-    //    this.DataMODEL = {};
-    //    this.FormDataModels = this.getForm_dataModels();
-    //    this.gridTables = this.getDG_tbl();
-    //    if (this.ApprovalCtrl)
-    //        this.approvalTable = this.getApprovalRow();
-
-    //    this.DataMODEL = $.extend(this.FormDataModels, this.gridTables, this.approvalTable);
-    //    console.log("form data --");
-    //    console.log(this.DataMODEL);
-
-    //};
-
-
-    //this.getDG_tbl = function () {
-    //    let DG_dataModels = {};
-    //    $.each(this.DGBuilderObjs, function (i, DGB) {
-    //        DGB.DataMODEL = [];
-    //        DG_dataModels[DGB.ctrl.TableName] = DGB.DataMODEL;
-    //    });
-    //    return DG_dataModels;
-    //};
-
     this.LocationInit = function () {
         if (ebcontext.locations.Listener) {
             ebcontext.locations.Listener.ChangeLocation = function (o) {
@@ -1527,7 +1168,7 @@ const WebFormRender = function (option) {
                             }
                         },
                         CallBack: function (name) {
-                            reloadFormPage();
+                            this.startNewMode();
                         }.bind(this)
                     });
                 }
@@ -1553,7 +1194,7 @@ const WebFormRender = function (option) {
                         }
                     },
                     CallBack: function (name) {
-                        reloadFormPage();
+                        this.startNewMode();
                     }.bind(this)
                 });
             }
@@ -1561,20 +1202,6 @@ const WebFormRender = function (option) {
                 EbMessage("show", { Message: `Switching from ${odlocO.LongName} to ${nwlocO.LongName}`, AutoHide: true, Background: '#0000aa', Delay: 3000 });
                 ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
                 this.setHeader(this.mode);
-                //EbDialog("show", {
-                //    Message: "Switching from " + odlocO.LongName + " to " + nwlocO.LongName,
-                //    Buttons: {
-                //        "Ok": {
-                //            Background: "green",
-                //            Align: "right",
-                //            FontColor: "white;"
-                //        }
-                //    },
-                //    CallBack: function (name) {
-                //        ebcontext.locations.SwitchLocation(this.formData.MultipleTables[this.formData.MasterTable][0].LocId);
-                //        this.setHeader(this.mode);
-                //    }.bind(this)
-                //});
             }
         }
     };
@@ -1684,8 +1311,6 @@ const WebFormRender = function (option) {
         }
     };
 
-
-
     this.selectUIinpOnFocus = function () {
         let el = event.target;
         if (event && event.target &&
@@ -1698,76 +1323,13 @@ const WebFormRender = function (option) {
         this.Mode.isView = false;
         this.Mode.isEdit = false;
         this.Mode.isNew = false;
-        this.Mode.isFail = false;
-        this.Mode.isPreview = false;
 
         if (this.mode === "View Mode")
             this.Mode.isView = true;
         else if (this.mode === "New Mode")
             this.Mode.isNew = true;
-        //else if (this.mode === "Fail Mode")
-        //    this.Mode.isFail = true;
         else if (this.mode === "Edit Mode")
             this.Mode.isEdit = true;
-        else if (this.mode === "Preview Mode")
-            this.Mode.isPreview = true;
-    };
-
-    this.reSetMode = function (mode) {
-        this.Mode.isView = false;
-        this.Mode.isEdit = false;
-        this.Mode.isNew = false;
-        this.Mode.isFail = false;
-        this.Mode.isPreview = false;
-
-        if (mode === "view")
-            this.Mode.isView = true;
-        else if (mode === "new")
-            this.Mode.isNew = true;
-        else if (mode === "edit")
-            this.Mode.isEdit = true;
-    };
-
-    this.resetRowIds = function (multipleTables) {
-        multipleTables[this.MasterTable][0].RowId = 0;// foem data
-
-        $.each(this.DGBuilderObjs, function (k, DGB) { // all dg datas
-            let rows = multipleTables[DGB.ctrl.TableName];
-            let i = 0;
-            for (i = 0; i < rows.length; i++) {
-                let row = rows[i];
-                row.RowId = -(i + 1);
-            }
-            DGB.cloneMode = true;
-        }.bind(this));
-
-    };
-
-    this.fillCloneData = function (rowId) {// divert to clone mode( datamodel prefilled)
-        this.showLoader();
-        $.ajax({
-            type: "POST",
-            url: "/WebForm/getRowdata",
-            data: {
-                refid: this.formRefId, rowid: parseInt(rowId)
-            },
-            error: function (xhr, ajaxOptions, thrownError) {
-                this.hideLoader();
-                EbMessage("show", { Message: 'Something Unexpected Occurred', AutoHide: true, Background: '#aa0000' });
-            }.bind(this),
-            success: function (_respObjStr) {
-                this.hideLoader();
-                let _respObj = JSON.parse(_respObjStr);
-                if (_respObj.Status === 200) {
-                    this.resetRowIds(_respObj.FormData.MultipleTables);
-                    this.resetDataMODEL(_respObj);
-                    this.RefreshFormControlValues(_respObj.FormData.MultipleTables);
-                }
-                else
-                    console.error(_respObj.MessageInt);
-                this.hideLoader();
-            }.bind(this)
-        });
     };
 
     this.resetBuilderVariables = function (newOptions) {
@@ -1822,8 +1384,6 @@ const WebFormRender = function (option) {
         this.rowId = option.rowId;//==========
         this.mode = option.mode;// ==========
         this.userObject = option.userObject;
-        this.cloneRowId = option.cloneRowId;
-        this.isOpenedInCloneMode = !!option.cloneRowId;
         this.isPartial = option.isPartial;//value is true if form is rendering in iframe
         this.headerObj = option.headerObj;//EbHeader
         this.formPermissions = option.formPermissions;
@@ -1851,7 +1411,6 @@ const WebFormRender = function (option) {
         this.DGBuilderObjs = {};
         this.uniqCtrlsInitialVals = {};
         this.PSsIsInit = {};
-        this.isInitNCs = false;
         this.DynamicTabObject = null;
         this.TabControls = null;
         this.FRC = new FormRenderCommon({
@@ -1886,8 +1445,6 @@ const WebFormRender = function (option) {
 
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
-            if (this.cloneRowId)
-                this.fillCloneData(this.cloneRowId);
         }
         else {
             console.log("================== exec Value Expression   3");

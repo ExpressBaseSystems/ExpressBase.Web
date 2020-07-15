@@ -423,10 +423,6 @@
     //    return getObjByval(dataRow.Columns, "Name", col.Name);
     //};
 
-    ctrl.ChangedRowObject = function () {
-        return this.changedRowWT();
-    }.bind(this);
-
     ctrl.isValid = function () {
         return this.isValid() && this.isFinished();
     }.bind(this);
@@ -547,20 +543,6 @@
         this.attachModalCellRef_Row(rowDataModel, rowObjectMODEL);
         return rowDataModel;
     };
-
-    this.changedRowWT = function () {
-        let dataModel = [];
-        $.each(this.objectMODEL, function (rowId, rowObjectMODEL) {
-            if (parseInt(rowId) < 0 && $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to skip newly added and then deleted rows
-                return true;
-            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true") /* - if checked*/
-                dataModel.push(this.getRowDataModel(rowId, rowObjectMODEL));
-            else if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to manage deleted row
-                dataModel.push({ RowId: rowId, IsDelete: true });
-        }.bind(this));
-        console.log(dataModel);
-        return dataModel;
-    }.bind(this);
 
     this.getType = function (_inpCtrl) {
         let type = _inpCtrl.ObjType;
@@ -1711,8 +1693,6 @@
     };
 
     this.setSuggestionVals = function () {
-        //if (!this.formRenderer.isInitNCs)
-        //    return;
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];

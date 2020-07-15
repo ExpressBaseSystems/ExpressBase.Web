@@ -151,7 +151,7 @@
         $tab.find('.tab-btn-cont ul').append(ahtml);
         $tab.find('.tab-content').append(bhtml);
 
-        let dataModel = $.extend(true, {}, this.formRenderer.EditModeFormData);
+        let dataModel = $.extend(true, {}, this.formRenderer.DataMODEL);
         
         this.dynamicTabPanes[args.srcId] = {
             ctrlObj: paneCtrlNew,
@@ -376,7 +376,7 @@
         this.continueDispose = true;
     };
 
-    this.disposeDynamicTab = function () {        
+    this.disposeDynamicTab = function () {  // ??????      
         //this.lastActiveTabPane = $tab.find(`li.active a`).attr('data-srcid');//note - must look for all
 
         $.each(this.allDynamicTabs, function (i, obj) {

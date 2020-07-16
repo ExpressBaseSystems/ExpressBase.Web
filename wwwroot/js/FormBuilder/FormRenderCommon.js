@@ -1,15 +1,7 @@
 ﻿const FormRenderCommon = function (options) {
     this.FO = options.FO;
-    this.$submitButton = options.submitButtonHtml;
 
-    Number.prototype.fixRounding = function (precision) {
-        var power = Math.pow(10, precision || 0);
-        return Math.round(this * power) / power;
-    };
-
-
-
-    this.fireInitOnchange = function (inpCtrl) {
+    this.fireInitOnchange = function (inpCtrl) { // FD only
         if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
             try {
                 /*console.eb_log(`>> Starting execution of OnChange function of 'form.${inpCtrl.Name}'`);*/
@@ -80,7 +72,6 @@
         }
     };
 
-
     this.bindFnsToCtrl = function (Obj) {
         if (Obj.Required)
             this.bindRequired(Obj);
@@ -131,9 +122,7 @@
         }.bind(this));
     };
 
-    this.wrapInFn = function (fn) {
-        return `(function(){${fn}})();`
-    };
+    this.wrapInFn = function (fn) { return `(function(){${fn}})();` };
 
     this.bindValueUpdateFns_OnChange = function (control) {//2nd onchange Fn bind
         try {
@@ -142,7 +131,7 @@
                 if(!this.___isNotUpdateValExpDepCtrls){
                     form.updateDependentControls(${control.__path}, form);
                 }
-                this.___isNotUpdateValExpDepCtrls = false;` : "");/// cleanup, return if no ...
+                this.___isNotUpdateValExpDepCtrls = false;` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.bindOnChange(onChangeFn);
         } catch (e) {
@@ -191,22 +180,6 @@
         }
     };
 
-    //this.populateSysLocCtrlsWithInitialVal = function (formObj) {
-    //    let allTypeSLCtrls = getFlatObjOfTypes(formObj, ["SysLocation"]);
-    //    for (let i = 0; i < allTypeSLCtrls.length; i++) {
-    //        let ctrl = allTypeSLCtrls[i];
-    //        ctrl.setValue(ebcontext.locations.CurrentLocObj.LocId);
-    //    }
-    //};
-
-    //this.populateCheckBoxCtrlsWithInitialVal = function (formObj) {
-    //    let allTypeCBCtrls = getFlatObjOfTypes(formObj, ["RadioButton"]);
-    //    for (let i = 0; i < allTypeCBCtrls.length; i++) {
-    //        let ctrl = allTypeCBCtrls[i];
-    //        ctrl.setValue("false");
-    //    }
-    //};
-
     this.populateSSCtrlsWithInitialVal = function (formObj) {
         let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect", "PowerSelect"]);
         for (let i = 0; i < allTypeRGCtrls.length; i++) {
@@ -235,7 +208,6 @@
             console.log("error in 'bindEbFnOnChange function' of : " + control.Name + " - " + e.message);
         }
     };
-
 
     this.setFormObjHelperfns = function () {
         this.FO.formObject.__getCtrlByPath = function (path) {
@@ -355,6 +327,7 @@
 
     this.UpdateDisableExpDepCtrls = function (curCtrl) {
         let depCtrls_SArr = curCtrl.DisableExpDependants.$values;
+
         for (let i = 0; i < depCtrls_SArr.length; i++) {
             let depCtrl_s = depCtrls_SArr[i];
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
@@ -414,7 +387,6 @@
         let val = ctrl.getValueFromDOM();
         return val === this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
     };
-
 
     // checks a control value is emptyString
     this.sysValidationsOK = function (ctrl) {
@@ -552,7 +524,6 @@
             let valRes = func();
             if (valRes === false) {
                 if (!Validator.IsWarningOnly) {
-                    color = "#aa0000";
                     EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
                     formValidationflag = false;
                     return false;// break; from loop if one validation failed

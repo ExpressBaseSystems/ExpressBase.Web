@@ -59,7 +59,7 @@
             console.error("Eb error: defaultValsExecOrder not found,  please try saving form in dev side");
             return;
         }
-        defaultValsExecOrderArr = defaultValsExecOrder.$values;
+        let defaultValsExecOrderArr = defaultValsExecOrder.$values;
         for (let i = 0; i < defaultValsExecOrderArr.length; i++) {
             let ctrlPath = defaultValsExecOrderArr[i];
             let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
@@ -67,11 +67,16 @@
         }
     };
 
-    this.setValueExpValsNC = function (flatControls) {
-        for (let i = 0; i < flatControls.length; i++) {
-            let ctrl = flatControls[i];
-            if (ctrl.DoNotPersist)
-                EbRunValueExpr(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
+    this.execValueExpNC = function (DoNotPersistExecOrder) {
+        if (!DoNotPersistExecOrder) {//for old forms
+            console.error("Eb error: DoNotPersistExecOrder not found,  please try saving form in dev side");
+            return;
+        }
+        let doNotPersistExecOrderArr = DoNotPersistExecOrder.$values;
+        for (let i = 0; i < doNotPersistExecOrderArr.length; i++) {
+            let ctrlPath = doNotPersistExecOrderArr[i];
+            let ctrl = this.FO.formObject.__getCtrlByPath(ctrlPath);
+            EbRunValueExpr_n(ctrl, this.FO.formObject, this.FO.userObject, this.FO.FormObj);
         }
     };
 
@@ -112,11 +117,6 @@
                 continue;
             this.fireInitOnchange(Obj);
         }
-        //$.each(flatControls, function (k, Obj) {
-        //    if (Obj.ObjType === "ScriptButton")
-        //        return true;
-        //    this.fireInitOnchange(Obj);
-        //}.bind(this));
     };
 
     this.bindFnsToCtrls = function (flatControls) {
@@ -333,7 +333,6 @@
     }.bind(this);
 
     this.PSImportRelatedUpdates = function (curCtrl) {
-        curCtrl.isDataImportCtrl = true;
         this.FO.psDataImport(curCtrl);
     }.bind(this);
 
@@ -528,7 +527,7 @@
                 }
 
                 if (isSaveAfter && unique_flag) {
-                    this.FO.DGsB4SaveActions();
+                    //this.FO.DGsB4SaveActions();
                     this.FO.saveForm_call();
                 }
             }.bind(this)
@@ -550,8 +549,7 @@
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            this.updateFormValues();
-            let valRes = func(this.FO.formValues, this.FO.userObject);
+            let valRes = func();
             if (valRes === false) {
                 if (!Validator.IsWarningOnly) {
                     color = "#aa0000";
@@ -578,8 +576,7 @@
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            this.updateFormValues();
-            let valRes = func(this.FO.formValues, this.FO.userObject);
+            let valRes = func();
             if (valRes === false) {
                 //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
                 this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
@@ -592,13 +589,6 @@
             }
         }.bind(this));
         return formValidationflag;
-    };
-
-    this.updateFormValues = function () {
-        $.each(this.FO.flatControls, function (i, ctrl) {
-            if (ctrl.ObjType !== "FileUploader")
-                this.FO.formValues[ctrl.Name] = ctrl.getValue();
-        }.bind(this));
     };
 
     this.removeInvalidStyle = function (ctrl) {

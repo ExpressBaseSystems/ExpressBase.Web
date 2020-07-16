@@ -1,14 +1,11 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
     this.DGcols = this.ctrl.Controls.$values;
-    this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
     this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
-    this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
-    //this.ctrl.__DGB = this;
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
     this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
@@ -423,10 +420,6 @@
     //    return getObjByval(dataRow.Columns, "Name", col.Name);
     //};
 
-    ctrl.ChangedRowObject = function () {
-        return this.changedRowWT();
-    }.bind(this);
-
     ctrl.isValid = function () {
         return this.isValid() && this.isFinished();
     }.bind(this);
@@ -547,20 +540,6 @@
         this.attachModalCellRef_Row(rowDataModel, rowObjectMODEL);
         return rowDataModel;
     };
-
-    this.changedRowWT = function () {
-        let dataModel = [];
-        $.each(this.objectMODEL, function (rowId, rowObjectMODEL) {
-            if (parseInt(rowId) < 0 && $(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to skip newly added and then deleted rows
-                return true;
-            if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).attr("is-checked") === "true") /* - if checked*/
-                dataModel.push(this.getRowDataModel(rowId, rowObjectMODEL));
-            else if ($(`#${this.TableId} tbody tr[rowid=${rowId}]`).length === 0)// to manage deleted row
-                dataModel.push({ RowId: rowId, IsDelete: true });
-        }.bind(this));
-        console.log(dataModel);
-        return dataModel;
-    }.bind(this);
 
     this.getType = function (_inpCtrl) {
         let type = _inpCtrl.ObjType;
@@ -1225,13 +1204,13 @@
                     val = inpCtrl.DataVals.Value || 0;
             }
             sum += parseFloat(val) || 0;
-            sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
+            sum = parseFloat(sum.toFixed(getObjByval(colCtrls, "Name", colname).DecimalPlaces));
         }
 
         this.ctrl[colname + "_sum"] = sum;
         if (updateDpnt)
             this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
-        return this.appendDecZeros(sum);
+        return sum.toFixed(getObjByval(colCtrls, "Name", colname).DecimalPlaces);
     };
 
     this.sumOfCol = function (colName) {
@@ -1711,8 +1690,6 @@
     };
 
     this.setSuggestionVals = function () {
-        //if (!this.formRenderer.isInitNCs)
-        //    return;
         let paramsColl__ = this.getParamsColl();
         let paramsColl = paramsColl__[0];
         let lastCtrlName = paramsColl__[1];
@@ -1905,17 +1882,17 @@
                     icon: "fa-trash",
                     callback: this.del
                 },
-                "insertRowBelow": {
-                    name: "Insert row below",
-                    icon: "fa-angle-down",
-                    callback: this.insertRowBelow,
-                    //disabled: this.insertRowBelowDisableFn
-                },
                 "insertRowAbove": {
                     name: "Insert row above",
                     icon: "fa-angle-up",
                     callback: this.insertRowAbove
 
+                },
+                "insertRowBelow": {
+                    name: "Insert row below",
+                    icon: "fa-angle-down",
+                    callback: this.insertRowBelow,
+                    //disabled: this.insertRowBelowDisableFn
                 }
             }
         };
@@ -1934,13 +1911,10 @@
     this.insertRowBelow = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))) {
-                let td = $activeRow.find('td:last')[0];
-                this.checkRow_click({ target: td }, false, false, false);
-            }
-            else {
-                return;
-            }
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
+                this.confirmRow();            
+            else 
+                return;            
         }
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");
@@ -1950,13 +1924,10 @@
     this.insertRowAbove = function (eType, selector, action, originalEvent) {
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid"))) {
-                let td = $activeRow.find('td:last')[0];
-                this.checkRow_click({ target: td }, false, false, false);
-            }
-            else {
+            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
+                this.confirmRow();
+            else
                 return;
-            }
         }
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");

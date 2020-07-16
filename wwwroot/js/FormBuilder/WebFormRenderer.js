@@ -54,7 +54,7 @@ const WebFormRender = function (option) {
 
     this.initReviewCtrl = function () {
         if (this.ReviewCtrl) {
-            let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRenderer: this };
+            let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, formRenderer: this };
             this.ReviewCtrlBuilder = this.initControls.init(this.ReviewCtrl, opt);
         }
     };
@@ -578,9 +578,9 @@ const WebFormRender = function (option) {
         }
 
         this.disbleControlsInViewMode();
-        $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name].SwitchToViewMode();
-        }.bind(this));
+        //$.each(this.DGs, function (k, DG) {
+        //    this.DGBuilderObjs[DG.Name].SwitchToViewMode();
+        //}.bind(this));
         this.DynamicTabObject.switchToViewMode();// febin
     };
 

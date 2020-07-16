@@ -577,7 +577,6 @@
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            this.updateFormValues();
             let valRes = func(this.FO.formValues, this.FO.userObject);
             if (valRes === false) {
                 //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
@@ -591,13 +590,6 @@
             }
         }.bind(this));
         return formValidationflag;
-    };
-
-    this.updateFormValues = function () {
-        $.each(this.FO.flatControls, function (i, ctrl) {
-            if (ctrl.ObjType !== "FileUploader")
-                this.FO.formValues[ctrl.Name] = ctrl.getValue();
-        }.bind(this));
     };
 
     this.removeInvalidStyle = function (ctrl) {

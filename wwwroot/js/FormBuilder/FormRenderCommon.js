@@ -428,7 +428,8 @@
 
     this.checkUnique4All_save = function (controls, isSaveAfter) {/////////////// move
         let isFromCtrl = !isSaveAfter;
-        let $ctrl_ = $("#" + controls[0].EbSid_CtxId);
+        if (isFromCtrl)
+            var $ctrl_ = $("#" + controls[0].EbSid_CtxId);
         let UniqObjs = [];
         let UniqCtrls = {};
 

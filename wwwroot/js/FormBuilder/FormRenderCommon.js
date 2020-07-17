@@ -1,15 +1,7 @@
 ﻿const FormRenderCommon = function (options) {
     this.FO = options.FO;
-    this.$submitButton = options.submitButtonHtml;
 
-    Number.prototype.fixRounding = function (precision) {
-        var power = Math.pow(10, precision || 0);
-        return Math.round(this * power) / power;
-    };
-
-
-
-    this.fireInitOnchange = function (inpCtrl) {
+    this.fireInitOnchange = function (inpCtrl) { // FD only
         if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== '') {
             try {
                 /*console.eb_log(`>> Starting execution of OnChange function of 'form.${inpCtrl.Name}'`);*/
@@ -80,7 +72,6 @@
         }
     };
 
-
     this.bindFnsToCtrl = function (Obj) {
         if (Obj.Required)
             this.bindRequired(Obj);
@@ -117,11 +108,6 @@
                 continue;
             this.fireInitOnchange(Obj);
         }
-        //$.each(flatControls, function (k, Obj) {
-        //    if (Obj.ObjType === "ScriptButton")
-        //        return true;
-        //    this.fireInitOnchange(Obj);
-        //}.bind(this));
     };
 
     this.bindFnsToCtrls = function (flatControls) {
@@ -136,9 +122,7 @@
         }.bind(this));
     };
 
-    this.wrapInFn = function (fn) {
-        return `(function(){${fn}})();`
-    };
+    this.wrapInFn = function (fn) { return `(function(){${fn}})();` };
 
     this.bindValueUpdateFns_OnChange = function (control) {//2nd onchange Fn bind
         try {
@@ -147,7 +131,7 @@
                 if(!this.___isNotUpdateValExpDepCtrls){
                     form.updateDependentControls(${control.__path}, form);
                 }
-                this.___isNotUpdateValExpDepCtrls = false;` : "");/// cleanup, return if no ...
+                this.___isNotUpdateValExpDepCtrls = false;` : "");
             let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
             control.bindOnChange(onChangeFn);
         } catch (e) {
@@ -196,22 +180,6 @@
         }
     };
 
-    //this.populateSysLocCtrlsWithInitialVal = function (formObj) {
-    //    let allTypeSLCtrls = getFlatObjOfTypes(formObj, ["SysLocation"]);
-    //    for (let i = 0; i < allTypeSLCtrls.length; i++) {
-    //        let ctrl = allTypeSLCtrls[i];
-    //        ctrl.setValue(ebcontext.locations.CurrentLocObj.LocId);
-    //    }
-    //};
-
-    //this.populateCheckBoxCtrlsWithInitialVal = function (formObj) {
-    //    let allTypeCBCtrls = getFlatObjOfTypes(formObj, ["RadioButton"]);
-    //    for (let i = 0; i < allTypeCBCtrls.length; i++) {
-    //        let ctrl = allTypeCBCtrls[i];
-    //        ctrl.setValue("false");
-    //    }
-    //};
-
     this.populateSSCtrlsWithInitialVal = function (formObj) {
         let allTypeRGCtrls = getFlatObjOfTypes(formObj, ["SimpleSelect", "PowerSelect"]);
         for (let i = 0; i < allTypeRGCtrls.length; i++) {
@@ -240,7 +208,6 @@
             console.log("error in 'bindEbFnOnChange function' of : " + control.Name + " - " + e.message);
         }
     };
-
 
     this.setFormObjHelperfns = function () {
         this.FO.formObject.__getCtrlByPath = function (path) {
@@ -360,6 +327,7 @@
 
     this.UpdateDisableExpDepCtrls = function (curCtrl) {
         let depCtrls_SArr = curCtrl.DisableExpDependants.$values;
+
         for (let i = 0; i < depCtrls_SArr.length; i++) {
             let depCtrl_s = depCtrls_SArr[i];
             let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
@@ -420,7 +388,6 @@
         return val === this.FO.uniqCtrlsInitialVals[ctrl.EbSid];
     };
 
-
     // checks a control value is emptyString
     this.sysValidationsOK = function (ctrl) {
         // email validation
@@ -461,7 +428,8 @@
 
     this.checkUnique4All_save = function (controls, isSaveAfter) {/////////////// move
         let isFromCtrl = !isSaveAfter;
-        let $ctrl_ = $("#" + controls[0].EbSid_CtxId);
+        if (isFromCtrl)
+            var $ctrl_ = $("#" + controls[0].EbSid_CtxId);
         let UniqObjs = [];
         let UniqCtrls = {};
 
@@ -532,7 +500,7 @@
                 }
 
                 if (isSaveAfter && unique_flag) {
-                    this.FO.DGsB4SaveActions();
+                    //this.FO.DGsB4SaveActions();
                     this.FO.saveForm_call();
                 }
             }.bind(this)
@@ -554,11 +522,9 @@
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            this.updateFormValues();
-            let valRes = func(this.FO.formValues, this.FO.userObject);
+            let valRes = func();
             if (valRes === false) {
                 if (!Validator.IsWarningOnly) {
-                    color = "#aa0000";
                     EbMessage("show", { Message: Validator.FailureMSG, AutoHide: true, Background: "#aa0000" });
                     formValidationflag = false;
                     return false;// break; from loop if one validation failed
@@ -582,8 +548,7 @@
             if (Validator.IsDisabled || !Validator.Script.Code)// continue; from loop if current validation IsDisabled
                 return true;
             let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(ctrl, this.FO.formObject, this.FO.userObject);
-            this.updateFormValues();
-            let valRes = func(this.FO.formValues, this.FO.userObject);
+            let valRes = func();
             if (valRes === false) {
                 //EbMakeInvalid(`#cont_${ctrl.EbSid_CtxId}`, `#${ctrl.EbSid_CtxId}Wraper`, Validator.FailureMSG, Validator.IsWarningOnly ? "warning" : "danger");
                 this.addInvalidStyle(ctrl, Validator.FailureMSG, (Validator.IsWarningOnly ? "warning" : "danger"));
@@ -596,13 +561,6 @@
             }
         }.bind(this));
         return formValidationflag;
-    };
-
-    this.updateFormValues = function () {
-        $.each(this.FO.flatControls, function (i, ctrl) {
-            if (ctrl.ObjType !== "FileUploader")
-                this.FO.formValues[ctrl.Name] = ctrl.getValue();
-        }.bind(this));
     };
 
     this.removeInvalidStyle = function (ctrl) {

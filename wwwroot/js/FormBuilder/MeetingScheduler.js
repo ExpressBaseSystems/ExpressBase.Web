@@ -5,7 +5,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.SlotIncr = 0;
     this.SlotList = [];
     this.MeetingScheduleObj = {
-        Title: '', Description: '', Location: '', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
+        Title: '', Description: '', Location: '', Integration:'', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
         TimeFrom: '', TimeTo: '', Duration: '', MaxHost: 1, MinHost: 1, MaxAttendee: 1, MinAttendee: 1,
         EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingType: this.Ctrl.MeetingType,
         SlotList: this.SlotList
@@ -70,18 +70,18 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             freeInput: false
         });
         $('.tb-host').on('itemAdded', function (event) {
-            let pos = event.target.getAttribute("data-id");
+            let pos = event.target.closest('tr').getAttribute("data-id");
             this.SlotList[pos].Hosts.push(event.item);
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $('.tb-attendee').on('itemAdded', function (event) {
-            let pos = event.target.getAttribute("data-id");
+            let pos = event.target.closest('tr').getAttribute("data-id");
             this.SlotList[pos].Attendees.push(event.item);
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
         $('.tb-attendee').on('itemRemoved', function (event) {
             // event.item: contains the item
-            let pos = event.target.getAttribute("data-id");
+            let pos = event.target.closest('tr').getAttribute("data-id");
             const index = this.SlotList[pos].Attendees.indexOf(event.item);
             if (index > -1) {
                 this.SlotList[pos].attendees.splice(index, 1);
@@ -91,7 +91,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
 
         $('.tb-host').on('itemRemoved', function (event) {
             // event.item: contains the item
-            let pos = event.target.getAttribute("data-id");
+            let pos = event.target.closest('tr').getAttribute("data-id");
             const index = this.SlotList[pos].Hosts.indexOf(event.item);
             if (index > -1) {
                 this.SlotList[pos].Hosts.splice(index, 1);
@@ -99,7 +99,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
     };
-    
+
 
     this.tagsinputFn();
 
@@ -184,6 +184,8 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.OnChangeUpdate = function () {
         this.Title = $(`#${this.Ctrl.EbSid}_meeting-title`);
         this.Description = $(`#${this.Ctrl.EbSid}_description`);
+        this.Location = $(`#${this.Ctrl.EbSid}_location`);
+        this.Integration = $(`#${this.Ctrl.EbSid}_integration`);
         //this.IsSingleMeeting = $(`#${this.Ctrl.EbSid}_single`);
         //this.IsMultipleMeeting = $(`#${this.Ctrl.EbSid}_multiple`);
         this.MeetingDate = $(`#${this.Ctrl.EbSid}_meeting-date`);
@@ -203,7 +205,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
 
-        this.Description.on("change", function (e) {
+        this.Description.off('change').on("change", function (e) {
             this.MeetingScheduleObj.Description = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
@@ -222,35 +224,43 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         //    //this.drawSlots();
         //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         //}.bind(this));
-        this.MeetingDate.on("change", function (e) {
+        this.MeetingDate.off('change').on("change", function (e) {
             this.MeetingScheduleObj.Date = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        this.TimeFrom.on("change", function (e) {
-            let pos = e.target.getAttribute("data-id");
+        this.Location.off('change').on("change", function (e) {
+            this.MeetingScheduleObj.Location = e.target.value;
+            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        }.bind(this));
+        this.Integration.off('change').on("change", function (e) {
+            this.MeetingScheduleObj.Integration = e.target.value;
+            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        }.bind(this));
+        this.TimeFrom.off('change').on("change", function (e) {
+            let pos = e.target.closest('tr').getAttribute("data-id");
             this.SlotList[pos].TimeFrom = e.target.value;
             //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj));
         }.bind(this));
-        this.TimeTo.on("change", function (e) {
-            let pos = e.target.getAttribute("data-id");
+        this.TimeTo.off('change').on("change", function (e) {
+            let pos = e.target.closest('tr').getAttribute("data-id");
             this.SlotList[pos].TimeTo = e.target.value;
             //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        this.MaxHost.on("change", function (e) {
+        this.MaxHost.off('change').on("change", function (e) {
             this.MeetingScheduleObj.MaxHost = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        this.MinHost.on("change", function (e) {
+        this.MinHost.off('change').on("change", function (e) {
             this.MeetingScheduleObj.MinHost = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        this.MaxAttendee.on("change", function (e) {
+        this.MaxAttendee.off('change').on("change", function (e) {
             this.MeetingScheduleObj.MaxAttendee = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
-        this.MinAttendee.on("change", function (e) {
+        this.MinAttendee.off('change').on("change", function (e) {
             this.MeetingScheduleObj.MinAttendee = e.target.value;
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
         }.bind(this));
@@ -401,22 +411,36 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     //        this.MeetingScheduleObj.MeetingOpts = 4;
     //    }
     //};
-    this.RemoveSlotFromTable = function () {
-
+    this.RemoveSlotFromTable = function (e) {
+        let index = e.target.closest('tr').getAttribute("data-id");
+        e.target.closest('tr').remove();
+        if (index != undefined) {
+            this.SlotList.splice(index, 1);
+        }
+        this.UpdateDataIds();
     };
 
     this.addSlot2Table = function () {
         this.SlotIncr = this.SlotIncr + 1;
-        let str = ` <tr data-id='${this.SlotIncr}' ><th>${this.SlotIncr + 1}</th>
-            <td><input type='time' id='${this.Ctrl.EbSid}_time-from'  data-id='${this.SlotIncr}'  class='mc-input' /></td>
-            <td><input type='time' id='${this.Ctrl.EbSid}_time-to'  data-id='${this.SlotIncr}'  class='mc-input' /></td>
-            <td><input type='text' id='${this.Ctrl.EbSid}_host' data-id='${this.SlotIncr}' class='meeting-participants tb-host'/></td>
-            <td><input type='text' id='${this.Ctrl.EbSid}_attendee'  data-id='${this.SlotIncr}' class='meeting-participants tb-attendee'/></td>
-            <td><button id='${this.Ctrl.EbSid}_remove-slot' data-id='${this.SlotIncr}'>-</button></td></tr>`;
+        let str = `<tr data-id='${this.SlotIncr}'>
+            <td  class='time'><input type='time' id='${this.Ctrl.EbSid}_time-from'   class='mc-input time-from' /></td>
+            <td class='time'><input type='time' id='${this.Ctrl.EbSid}_time-to'   class='mc-input time-to' /></td>
+            <td><input type='text' id='${this.Ctrl.EbSid}_host'  class='meeting-participants tb-host'/></td>
+            <td><input type='text' id='${this.Ctrl.EbSid}_attendee'  class='meeting-participants tb-attendee'/></td>
+            <td style='width:5rem;'><button id='${this.Ctrl.EbSid}_remove-slot${this.SlotIncr}' class='remove-slot'><i class='fa fa-window-close'></i></button></td></tr>`;
         this.AddSlotList();
         $(`#${this.Ctrl.EbSid}_slot-table tbody`).append(str);
-        $(`#${this.Ctrl.EbSid}_remove-slot`).off("click").on("click", this.RemoveSlotFromTable.bind(this));
+        $(`.remove-slot`).off("click").on("click", this.RemoveSlotFromTable.bind(this));
         this.tagsinputFn();
+        this.OnChangeUpdate();
+    };
+
+    this.UpdateDataIds = function () {
+        var Tarr = $("table tbody tr");
+        $.each(Tarr, function (index, obj) {
+            $(obj).attr("data-id", index);
+        });
+        this.SlotIncr = Tarr.length - 1;
     };
 
     this.init = function () {
@@ -425,10 +449,8 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         this.OnChangeUpdate();
         //this.initSpinner();
         $(`#${this.Ctrl.EbSid}_duration`).combodate({ firstItem: 'name', minuteStep: 1 });
-
     };
     this.init();
-
     this.TimeFormat = function (time) {
         let Timestr = "";
         if (parseInt(time.split(":")[0]) < 12) {

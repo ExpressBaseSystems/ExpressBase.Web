@@ -1,14 +1,11 @@
 ﻿const EbDataGrid = function (ctrl, options) {
     this.ctrl = ctrl;
     this.DGcols = this.ctrl.Controls.$values;
-    this.FormDataExtdObj = options.FormDataExtdObj;
     this.ctrl.formObject = options.formObject;
     this.formObject_Full = options.formObject_Full;
     this.formRenderer = options.formRenderer;
     this.formRefId = options.formRefId;
     this.ctrl.__userObject = options.userObject;
-    this.ctrl.__userObject.decimalLength = 2;// Hard coding 29-08-2019
-    //this.ctrl.__DGB = this;
     this.initControls = new InitControls(this);
     this.Mode = options.Mode;
     this.RowDataModel = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
@@ -1207,13 +1204,13 @@
                     val = inpCtrl.DataVals.Value || 0;
             }
             sum += parseFloat(val) || 0;
-            sum = parseFloat(sum.toFixed(this.ctrl.__userObject.decimalLength));
+            sum = parseFloat(sum.toFixed(getObjByval(colCtrls, "Name", colname).DecimalPlaces));
         }
 
         this.ctrl[colname + "_sum"] = sum;
         if (updateDpnt)
             this.updateDepCtrl(getObjByval(this.ctrl.Controls.$values, "Name", colname));
-        return this.appendDecZeros(sum);
+        return sum.toFixed(getObjByval(colCtrls, "Name", colname).DecimalPlaces);
     };
 
     this.sumOfCol = function (colName) {

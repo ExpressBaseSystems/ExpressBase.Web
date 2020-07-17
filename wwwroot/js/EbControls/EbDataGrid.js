@@ -1294,6 +1294,8 @@
     }.bind(this);
 
     this.UpdateSlNo = function () {
+        if (!this.ctrl.IsShowSerialNumber)
+            return;
         let $rows = $(`#${this.TableId}>tbody>tr`);
         for (let i = 0; i < $rows.length; i++) {
             let $row = $($rows[i]);
@@ -1303,11 +1305,13 @@
     };
 
     this.resetRowSlNoUnder = function ($tr) {
+        if (!this.ctrl.IsShowSerialNumber)
+            return;
         let curIdx = parseInt($tr.find(".row-no-td").attr("idx"));
         let rowCount = $(`#${this.TableId}>tbody>tr`).length - 1;
         this.rowSLCounter = curIdx;
-        for (this.rowSLCounter; this.rowSLCounter < rowCount + 1; this.rowSLCounter++) {
-            $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${this.rowSLCounter + 1}]`).attr("idx", this.rowSLCounter).text(this.rowSLCounter);
+        for (this.rowSLCounter; this.rowSLCounter < rowCount + 1; this.rowSLCounter++) {            
+            $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${this.rowSLCounter + 1}]`).attr("idx", this.rowSLCounter).text(this.rowSLCounter);            
         }
         this.rowSLCounter--;
     };
@@ -1401,6 +1405,8 @@
     };
 
     this.resetRowSlNo = function (slno) {
+        if (!this.ctrl.IsShowSerialNumber)
+            return;
         let rowCount = $(`#${this.TableId}>tbody>tr`).length;
         for (let i = slno; i < rowCount; i++) {
             $(`#${this.TableId}>tbody>tr td.row-no-td:eq(${i})`).attr("idx", i + 1).text(i + 1);
@@ -1913,9 +1919,9 @@
         let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
         if ($activeRow.length === 1) {
             if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
-                this.confirmRow();            
-            else 
-                return;            
+                this.confirmRow();
+            else
+                return;
         }
         let $e = selector.$trigger;
         let $tr = $e.closest("tr");

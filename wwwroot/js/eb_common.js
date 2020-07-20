@@ -1049,6 +1049,7 @@ function textTransformHelper(element, transform_type) {
 
 
 function EBPSSetDisplayMember(p1, p2) {
+    this.___isNotUpdateValExpDepCtrls = true;
     p1 = p1 + "";
     if (p1 === '')
         return;

@@ -11876,15 +11876,60 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
 
 /*Meeting SCheduler*/
 .slot-tbl {
-    margin-top:2rem;
+    margin-top: 1rem;
+    max-width: 125rem;
 }
+    .slot-tbl .time {
+        width: 13rem;
+        padding-top: 10px;
+    }
+        .slot-tbl .time input {
+            height: 3rem;
+            font-size: 16px;
+            width: 100%;
+            max-width: 11rem;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            color: #555;
+            border-radius: 4px;
+            line-height: 22px;
+            cursor: text;
+            width: 96%;
+        }
 
     .slot-tbl th, .slot-tbl td {
-        border-bottom: solid 1px #adadad;
+        /*border-bottom: solid 1px #adadad;*/
     }
+        /*.slot-tbl td .time {
+            display: flex;
+            max-width: 20rem;
+        }
+        .slot-tbl td .time p {
+            width: 4rem;
+            padding-top: 1px;
+            margin: 0px;
+        }*/
+        /*.slot-tbl td input {
+            height: 3rem;
+            font-size: 16px;
+            width: 100%;
+            max-width: 10rem;
+            border: solid 1px #adadad;
+            margin-bottom: 10px;
+        }*/
 
 .single-meeting {
 }
+    .single-meeting button {
+        border: none;
+        background: transparent;
+        font-size: 16px;
+        outline: none;
+    }
+    .single-meeting button:hover {
+        background:
+    }
 
     .single-meeting .title input {
         height: 3rem;
@@ -11896,11 +11941,11 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
 
     .single-meeting .description textarea {
         resize: none;
-        height: 3rem;
+        height: 7rem;
         font-size: 16px;
         width: 100%;
         border: solid 1px #adadad;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     .single-meeting .location input {
@@ -11920,11 +11965,28 @@ tbody > tr:nth-child(odd):hover, tr:nth-child(even):hover {
     }
 
     .single-meeting .date input {
+        font-size: 16px;
+        width: 100%;
         height: 3rem;
-        border: none;
-        border-bottom: solid 1px #adadad;
+        border: solid 1px #adadad;
         margin-bottom: 10px;
     }
+
+    .single-meeting .bootstrap-tagsinput {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        display: inline-block;
+        /* padding: 4px 6px; */
+        color: #555;
+        vertical-align: middle;
+        border-radius: 4px;
+        /* max-width: 100%; */
+        line-height: 22px;
+        cursor: text;
+        width: 96%;
+    }
+
 /*combodate*/
 .combodate {
 }

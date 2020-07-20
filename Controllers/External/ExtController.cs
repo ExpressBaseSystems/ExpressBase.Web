@@ -353,6 +353,7 @@ namespace ExpressBase.Web.Controllers
                         {
                             ViewBag.HasSignupForm = true;
                         }
+                        ViewBag.Is2fA = solutionObj.Is2faEnabled;
                     }
                 }
                 ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
@@ -722,7 +723,8 @@ namespace ExpressBase.Web.Controllers
             HostString host = this.HttpContext.Request.Host;
             string[] hostParts = host.Host.Split(CharConstants.DOT);
             IFormCollection req = this.HttpContext.Request.Form;
-
+            string UserName;
+            string Password;
             this.DecideConsole(hostParts[0], out string whichconsole);
 
             string redirect_url = Common.Extensions.StringExtensions.FromBase64(req["continue_with"].ToString() ?? string.Empty);
@@ -775,23 +777,45 @@ namespace ExpressBase.Web.Controllers
             }
             else
             {
+
+                if (req["otptype"] == "signinotp")
+                {
+                    EbAuthResponse validateResp = ValidateOtp(req["otp"]);
+                    UserName = req["uname_otp"];
+                    Password = "NIL";
+                    if (!validateResp.AuthStatus)
+                    {
+                        authresp.AuthStatus = false;
+                        authresp.ErrorMessage = validateResp.ErrorMessage;
+                        return authresp;
+                    }
+                }
+                else
+                {
+                    UserName = req["uname"];
+                    Password = (req["pass"] + req["uname"]).ToMD5Hash();
+                }
+
                 Console.WriteLine("captcha ok " + req["uname"]);
                 string tenantid = ViewBag.cid;
                 MyAuthenticateResponse myAuthResponse = null;
                 try
                 {
+
                     myAuthResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
-                        UserName = req["uname"],
-                        Password = (req["pass"] + req["uname"]).ToMD5Hash(),
+                        UserName = UserName,
+                        Password = Password,
                         Meta = new Dictionary<string, string> {
                             { RoutingConstants.WC, whichconsole },
                             { TokenConstants.CID, tenantid },
+                            { "sso", "true" },
                             { TokenConstants.IP, this.RequestSourceIp},
                             { RoutingConstants.USER_AGENT, this.UserAgent}
                         },
-                        RememberMe = true
+                        RememberMe = true,
+
                         //UseTokenCookie = true
                     });
 
@@ -813,7 +837,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     Console.WriteLine("myAuthResponse != null " + req["uname"]);
                     bool is2fa = false;
-                    if (ViewBag.WhichConsole == "uc")
+                    if (ViewBag.WhichConsole == "uc" && req["otptype"] != "signinotp")
                     {
                         Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
                         if (sol_Obj != null && sol_Obj.Is2faEnabled)
@@ -876,25 +900,34 @@ namespace ExpressBase.Web.Controllers
             User _u = this.Redis.Get<User>(authid);
             if (_u != null)
             {
-                this.ServiceClient.BearerToken = _u.BearerToken;
-                this.ServiceClient.RefreshToken = _u.RefreshToken;
-                Authenticate2FAResponse response = this.ServiceClient.Post(new Validate2FARequest { Token = token });
+                //this.ServiceClient.BearerToken = _u.BearerToken;
+                //this.ServiceClient.RefreshToken = _u.RefreshToken;
+                Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = _u.AuthId });
                 authresp.AuthStatus = response.AuthStatus;
                 authresp.ErrorMessage = response.ErrorMessage;
-            }
-            if (authresp.AuthStatus)
-            {
-                if (otp == _u.Otp)
+
+                if (authresp.AuthStatus)
                 {
-                    CookieOptions options = new CookieOptions();
-                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, _u.BearerToken, options);
-                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, _u.RefreshToken, options);
-                    authresp.RedirectUrl = this.RouteToDashboard(RoutingConstants.UC);
-                }
-                else
-                {
-                    authresp.AuthStatus = false;
-                    authresp.ErrorMessage = "The OTP you've entered is incorrect. Please try again.";
+                    if (otp == _u.Otp)
+                    {
+                        IFormCollection req = this.HttpContext.Request.Form;
+                        if (req["otptype"] == "signinotp")
+                        {
+                            authresp.AuthStatus = true;
+                        }
+                        else
+                        {
+                            CookieOptions options = new CookieOptions();
+                            Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, _u.BearerToken, options);
+                            Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, _u.RefreshToken, options);
+                            authresp.RedirectUrl = this.RouteToDashboard(RoutingConstants.UC);
+                        }
+                    }
+                    else
+                    {
+                        authresp.AuthStatus = false;
+                        authresp.ErrorMessage = "The OTP you've entered is incorrect. Please try again.";
+                    }
                 }
             }
             return authresp;
@@ -906,11 +939,51 @@ namespace ExpressBase.Web.Controllers
             string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
             string authid = Request.Cookies[TokenConstants.USERAUTHID];
             User _u = this.Redis.Get<User>(authid);
-            this.ServiceClient.BearerToken = _u.BearerToken;
-            this.ServiceClient.RefreshToken = _u.RefreshToken;
-            Authenticate2FAResponse response = this.ServiceClient.Post(new ResendOTP2FARequest { Token = token });
+            IFormCollection req = this.HttpContext.Request.Form;
+            Authenticate2FAResponse response = null;
+            if (req["otptype"] == "signinotp")
+            {
+                response = this.ServiceClient.Post(new ResendOTPSignInRequest { Token = token, SolnId = ViewBag.SolutionId, UserAuthId = authid });
+            }
+            else
+            {
+                this.ServiceClient.BearerToken = _u.BearerToken;
+                this.ServiceClient.RefreshToken = _u.RefreshToken;
+                response = this.ServiceClient.Post(new ResendOTP2FARequest { Token = token });
+            }
             authresp.AuthStatus = response.AuthStatus;
             authresp.ErrorMessage = response.ErrorMessage;
+            return authresp;
+        }
+
+        public EbAuthResponse SendSignInOtp()
+        {
+            EbAuthResponse authresp = new EbAuthResponse { };
+            IFormCollection req = this.HttpContext.Request.Form;
+            string tenantid = ViewBag.SolutionId;
+            string uname = req["uname"];
+            bool is_email = Convert.ToBoolean(req["is_email"]);
+            bool is_mobile = Convert.ToBoolean(req["is_mobile"]);
+            Authenticate2FAResponse resp = this.ServiceClient.Post<Authenticate2FAResponse>(new SendSignInOtpRequest
+            {
+                UName = uname,
+                SignInOtpType = (is_email) ? SignInOtpType.Email : SignInOtpType.Sms,
+                SolutionId = tenantid
+            });
+            authresp.AuthStatus = resp.AuthStatus;
+            if (authresp.AuthStatus)
+            {
+                authresp.Is2fa = resp.Is2fa;
+                authresp.OtpTo = resp.OtpTo;
+                CookieOptions options = new CookieOptions();
+                Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
+                Response.Cookies.Append(TokenConstants.USERAUTHID, resp.UserAuthId, options);
+            }
+            else
+            {
+                authresp.ErrorMessage = resp.ErrorMessage;
+            }
+
             return authresp;
         }
 

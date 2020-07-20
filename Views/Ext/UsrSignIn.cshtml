@@ -22,19 +22,22 @@
 
                     @if (ViewBag.WhichConsole == "uc")
                     {
+                        @if (!ViewBag.Is2fA)
+                        {
+                            <ul class="nav nav-tabs eb-styledTab" role="tablist">
+                                <li class="active">
+                                    <a href="#withpw_container" role="tab" data-toggle="tab">
+                                        With Password
+                                    </a>
+                                </li>
 
-                        <ul class="nav nav-tabs eb-styledTab" role="tablist">
-                            <li class="active">
-                                <a href="#withpw_container" role="tab" data-toggle="tab">
-                                    With Password
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#withotp_container" role="tab" data-toggle="tab">
-                                    With OTP
-                                </a>
-                            </li>
-                        </ul>
+                                <li>
+                                    <a href="#withotp_container" role="tab" data-toggle="tab">
+                                        With OTP
+                                    </a>
+                                </li>
+                            </ul>
+                        }
                     }
 
                     <div class="tab-content @styleClass">
@@ -42,7 +45,7 @@
                             <div class="form-group mb-25" validator="email">
                                 <label>Email or Mobile</label>
                                 <div class="log-username">
-                                    <input type="email" name="uname" class="form-control ebtext-lg" placeholder="Email" value="@ViewBag.Email" />
+                                    <input type="email" id="uname" name="uname" class="form-control ebtext-lg" placeholder="Email" value="@ViewBag.Email" />
                                 </div>
                                 <div class="validator-error"></div>
                             </div>
@@ -71,110 +74,117 @@
                                 }
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="withotp_container">
-                            <div class="form-group mb-25">
-                                <label>Email or Mobile</label>
-                                <div class="log-username">
-                                    <input type="email" name="uname_otp" class="form-control ebtext-lg" value="@ViewBag.Email" />
+                        @if (ViewBag.WhichConsole == "uc" && ViewBag.Is2fA != null && !ViewBag.Is2fA)
+                        {
+                            <div class="tab-pane fade" id="withotp_container">
+                                <div class="form-group mb-25">
+                                    <label>Email or Mobile</label>
+                                    <div class="log-username">
+                                        <input type="text" id="uname_otp" name="uname_otp" class="form-control ebtext-lg" value="@ViewBag.Email" />
+                                    </div>
+                                    <div class="validator-error"></div>
+                                </div>
+                                <div class="form-group">
+                                    <button id="otplogin" env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
+                                        Send OTP
+                                    </button>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                <button env="@ViewBag.Env" class="btn signin-btn eb_blue w-100">
-                                    Send OTP
-                                </button>
-                            </div>
-                        </div>
+                        }
                     </div>
                 </div>
 
                 @*----------2f_form*@
-                <div id="2fauth_form" class="eb-auth-htmlbox" style="display:none; text-align: center">
-                    <div class="login-sec-image text-center">
-                        <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
-                    </div>
-                    <h4 class="text-center">Please enter the OTP to verify your account</h4><br>
-                    <div class="otp_warnings"></div>
-                    <div class="form-group w-100">
-                        <h5 style="margin-left: 18px;">An OTP has been sent to <span id="lastDigit"></span> </h5>
-                        <div id="divOuter" class="col-md-12">
-                            <div id="divInner">
-                                <input id="partitioned" type="text" maxlength="6" onKeyPress="if (this.value.length == 6) return false; else return isNumber(event);" />
-                            </div>
+                @if (ViewBag.WhichConsole == "uc")
+                {
+                    <div id="2fauth_form" class="eb-auth-htmlbox" style="display:none; text-align: center">
+                        <div class="login-sec-image text-center">
+                            <img src="~/images/nophoto.png" data-src=@logo class="T_logo Eb_Image" />
                         </div>
-                        <button id="otpvalidate" class="btn signin-btn eb_blue w-100">Verify</button>
-                        <div class="col-md-12" ">
-                            <div class="pull-right">
-                                <span id="timer" style="font-weight:bold"></span>
+                        <h4 class="text-center">Please enter the OTP to verify your account</h4><br>
+                        <div class="otp_warnings"></div>
+                        <div class="form-group w-100">
+                            <h5 style="margin-left: 18px;">An OTP has been sent to <span id="lastDigit"></span> </h5>
+                            <div id="divOuter" class="col-md-12">
+                                <div id="divInner">
+                                    <input id="partitioned" type="text" maxlength="6" onKeyPress="if (this.value.length == 6) return false; else return isNumber(event);" />
+                                </div>
                             </div>
-                            <div class="pull-left ">
-                                <button class="btn-link" id="resend">Resend</button>
+                            <button id="otpvalidate" class="btn signin-btn eb_blue w-100">Verify</button>
+                            <div class="col-md-12">
+                                <div class="pull-right">
+                                    <span id="timer" style="font-weight:bold"></span>
+                                </div>
+                                <div class="pull-left ">
+                                    <button class="btn-link" id="resend">Resend</button>
+                                </div>
                             </div>
+                            <input type="hidden" id="otptype" />
                         </div>
                     </div>
-                </div>
-
-                <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
-                    <span>Powered by </span><img style="height:25px;" src="images/EB_Logo.png" />
+                    }
+                    <div style="display:flex;justify-content:center;align-items:center;margin-top:20px;font-weight: 500;">
+                        <span>Powered by </span><img style="height:25px;" src="images/EB_Logo.png" />
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-@section JsCode{
-    <script src="~/js/Auth/eb-authenticate.js" type="text/javascript" asp-append-version="true"></script>
-    <script>
-        $(document).ready(function () {
-            $('.Eb_Image').Lazy();
-        });
+    @section JsCode{
+        <script src="~/js/Auth/eb-authenticate.js" type="text/javascript" asp-append-version="true"></script>
+        <script>
+            $(document).ready(function () {
+                $('.Eb_Image').Lazy();
+            });
 
-        function isNumber(evt) {
-            evt = (evt) ? evt : window.event;
-            var charCode = (evt.which) ? evt.which : evt.keyCode;
-            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                return false;
+            function isNumber(evt) {
+                evt = (evt) ? evt : window.event;
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                    return false;
+                }
+                return true;
             }
-            return true;
+        </script>
+    }
+    <style>
+        .Signupform:hover {
+            font-weight: 500;
+            color: #337ab7;
+            text-decoration: underline;
         }
-    </script>
-}
-<style>
-    .Signupform:hover {
-        font-weight: 500;
-        color: #337ab7;
-        text-decoration: underline;
-    }
 
-    #partitioned {
-        padding-left: 15px;
-        letter-spacing: 42px;
-        border: 0;
-        background-image: linear-gradient(to left, #0371f9cc 70%, rgba(255, 255, 255, 0) 0%);
-        background-position: bottom;
-        background-size: 50px 1px;
-        background-repeat: repeat-x;
-        background-position-x: 35px;
-        width: 330px;
-        min-width: 330px;
-    }
+        #partitioned {
+            padding-left: 15px;
+            letter-spacing: 42px;
+            border: 0;
+            background-image: linear-gradient(to left, #0371f9cc 70%, rgba(255, 255, 255, 0) 0%);
+            background-position: bottom;
+            background-size: 50px 1px;
+            background-repeat: repeat-x;
+            background-position-x: 35px;
+            width: 330px;
+            min-width: 330px;
+        }
 
-    #divOuter {
-        width: 305px;
-        overflow: hidden;
-        margin-bottom: 40px;
-        margin-left: 33px;
-    }
+        #divOuter {
+            width: 305px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            margin-left: 33px;
+        }
 
-    #divInner {
-        left: 0;
-        position: sticky;
-    }
+        #divInner {
+            left: 0;
+            position: sticky;
+        }
 
-    #partitioned {
-        outline: none;
-    }
+        #partitioned {
+            outline: none;
+        }
 
-    #resend {
-        outline: none;
-    }
-</style>
+        #resend {
+            outline: none;
+        }
+    </style>

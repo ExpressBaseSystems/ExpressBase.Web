@@ -392,7 +392,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     resp.IsVerification = true;
 
-                    response = this.ServiceClient.Post(new Validate2FARequest
+                    response = this.ServiceClient.Post(new ValidateOtpRequest
                     {
                         Token = token
                     });

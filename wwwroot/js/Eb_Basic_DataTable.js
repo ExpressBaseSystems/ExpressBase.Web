@@ -55,7 +55,7 @@ var EbBasicDataTable = function (Option) {
 
     this.init = function () {
         if (this.EbObject === null)
-            this.EbObject = new EbObjects.EbTableVisualization(this.tableId);
+            this.EbObject = new EbTableVisualization(this.tableId);
         this.EbObject.IsPaging = Option.IsPaging || false;
         this.$dtLoaderCont = $(`<div id='${this.tableId}dtloadercont' class='dt-loader-cont'></div>`);
         this.$dtLoaderCont.insertBefore($("#" + this.contId));
@@ -257,6 +257,8 @@ var EbBasicDataTable = function (Option) {
         o.dom = this.dom || ((this.EbObject.IsPaging ? "ip" : "") + "<'col-md-12 noPadding display_none'>rt");
         o.paging = this.EbObject.IsPaging;
         o.lengthChange = this.EbObject.IsPaging;
+        o.pagingType = "simple";
+        o.pageLength = 100;
         o.select = true;
         o.keys = true;
         if (this.MainData === null) {

@@ -145,18 +145,15 @@
 
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-        if (!inpCtrl.DoNotPersist)
-            inpCtrl.__eb_EditMode_val = inpCtrl.DataVals.Value;
-
-        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}'>
+            return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
                       <span>${this.getDispMembr(inpCtrl)}</span>
                     </div >                                               
                 </td>`
-            .replace("@isReadonly@", col.IsDisable)
-            .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
-            .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+                .replace("@isReadonly@", col.IsDisable)
+                .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
+                .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getTdHtml = function (inpCtrl, col, i) {
@@ -278,20 +275,21 @@
             let ctrl = curRowCtrls[i];
             let Value = ctrl.DataVals.Value;
             if (Value !== null) {
-                //if (ctrl.ObjType === "PowerSelect") {
-                //    //ctrl.setDisplayMember = EBPSSetDisplayMember;//////
-                //    ctrl.justInit = true;
-                //    ctrl.setDisplayMember(Value);
-                //}
-                //else
 
-                ctrl.___isNotUpdateValExpDepCtrls = true;
-                ctrl.justSetValue(Value);// should remove
+                ctrl.___DoNotUpdateDataVals = true;
+
+                if (ctrl.ObjType === "PowerSelect") {
+                    ctrl.setDisplayMember(Value);
+                }
+                else
+                    ctrl.justSetValue(Value);
+
+                ctrl.___DoNotUpdateDataVals = false;
             }
         }
     };
 
-    this.getPSDispMembrs = function (inpCtrl) { // need to rework
+    this.getPSDispMembrs = function (inpCtrl) {
         let rowId = inpCtrl.__rowid;
         let cellObj = inpCtrl.DataVals;
         let col = inpCtrl.__Col;
@@ -321,13 +319,6 @@
 
             textspn += "</div>&nbsp;&nbsp;&nbsp;";
         }
-
-        //for (let j = 0; j < col.DisplayMembers.$values.length; j++) {
-        //    let DMName = col.DisplayMembers.$values[j].name;
-        //    let DMVal = dispDict[DMName];
-        //    textspn += `<span contenteditable='true'onkeydown="event.preventDefault()" class='selected-tag'>${DMVal === null ? "" : DMVal}</span>`;
-        //}
-        //textspn += "</span>&nbsp;&nbsp;&nbsp;";
 
         return textspn.substr(0, textspn.length - 18);
     };
@@ -1156,10 +1147,10 @@
         let rowId = $tr.attr("rowid");
         $tr.find("td>*").hide(100);
         this.markDelColCtrls(rowId);
-            setTimeout(function () {
-                $tr.remove();
-                this.updateAggCols();
-            }.bind(this), 101);
+        setTimeout(function () {
+            $tr.remove();
+            this.updateAggCols();
+        }.bind(this), 101);
     };
 
     this.delRow_click = function (e) {
@@ -1191,7 +1182,7 @@
             if (rowDataModel.RowId > 0)
                 rowDataModel.IsDelete = true;
             else {
-                    this.DataMODEL.splice(i--, 1);
+                this.DataMODEL.splice(i--, 1);
             }
             this.markDelColCtrls(rowDataModel.RowId);
         }
@@ -1225,7 +1216,7 @@
         let rowCount = $(`#${this.TableId}>tbody>tr`).length - 1;
         this.rowSLCounter = curIdx;
         for (this.rowSLCounter; this.rowSLCounter < rowCount + 1; this.rowSLCounter++) {
-                $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${this.rowSLCounter + 1}]`).attr("idx", this.rowSLCounter).text(this.rowSLCounter);
+            $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${this.rowSLCounter + 1}]`).attr("idx", this.rowSLCounter).text(this.rowSLCounter);
         }
         this.rowSLCounter--;
     };

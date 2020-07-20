@@ -1983,8 +1983,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.twoFactorAuthLogin(result)
                     }
                     else {
-                        //this.bearerToken = result.bearerToken;
-                        //this.refreshToken = result.refreshToken;
+
+                      //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
+                       // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
                         this.formsDict = result.botFormDict;
                         window.ebcontext.user = JSON.parse(result.user);
                         //this.formNames = Object.values(this.formsDict);

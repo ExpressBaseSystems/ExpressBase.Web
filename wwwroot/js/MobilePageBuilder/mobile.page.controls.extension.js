@@ -225,10 +225,12 @@
                 if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
                     root.pg.ShowProperty('FormMode');
                     root.pg.ShowProperty('LinkFormParameters');
+                    root.pg.ShowProperty('ContextToControlMap');
                 }
                 else {
                     root.pg.HideProperty('FormMode');
                     root.pg.HideProperty('LinkFormParameters');
+                    root.pg.HideProperty('ContextToControlMap');
                 }
             }
         }

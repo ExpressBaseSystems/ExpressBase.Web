@@ -1656,17 +1656,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.Query("Would you login with your facebook, So I can remember you !", ["Login with facebook"], "fblogin", ["fbbtnstyl"]);
     }.bind(this);
 
-
-    this.sendWrapedCtrl = function (msg, ctrlHtml, id, name, icon) {
+    ////need to be bootstrap... icon in css
+    this.sendWrapedCtrl = function (msg, ctrlHtml, id, name) {
         this.msgFromBot(msg);
-        let controlHTML = `
-    <div class="ctrl-wraper">
-        <div class="input-group" style="width:100%;">
-            
-           ${ctrlHtml}
-            <span class="input-group-addon" style="padding: 0px;"> <i class="fa  fa-${icon}" aria-hidden="true"></i> </span>
-        </div>
-    </div>`;
+        let controlHTML = `<div class="" style="width: calc(100% - 57px)">
+                                <div class="form-group bot_Login_input" style="margin-bottom: 0px;">
+                                  ${ctrlHtml}
+                               </div>
+                        </div> `;
         let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper">
                 <button class="btn cntct_btn" name="${name}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
         this.msgFromBot($ctrlCont, function () { $(`#${id}`).focus(); }, id);
@@ -1674,33 +1671,33 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.userNameFn = function () {
         let msg = "May I know your name?";
-        let ctrlHtml = `<input chat-inp type="text" id="anon_name" placeholder="Enter Name">`;
-        this.sendWrapedCtrl(msg, ctrlHtml, "anon_name", "contactSubmitName", "user");
+        let ctrlHtml = `<div class="username_wrp"><input chat-inp type="text" id="anon_name" placeholder="Enter Name"></div>`;
+        this.sendWrapedCtrl(msg, ctrlHtml, "anon_name", "contactSubmitName");
     }.bind(this);
 
     this.emailauthFn = function (e) {
         let msg = "Please share your email address so that I can get in touch with you 😊";
-        let ctrlHtml = `<input chat-inp type="email" id="anon_mail" placeholder="Enter Email">`;
-        this.sendWrapedCtrl(msg, ctrlHtml, "anon_mail", "contactSubmitMail", "envelope");
+        let ctrlHtml = `<div class="emailIcon_wrp"><input chat-inp type="email" class="form-control" id="anon_mail" placeholder="Enter Email"></div>`;
+        this.sendWrapedCtrl(msg, ctrlHtml, "anon_mail", "contactSubmitMail");
 
     }.bind(this);
 
     this.phoneauthFn = function (e) {
         let msg = "Please provide your phone number";
-        let ctrlHtml = `<input chat-inp type="tel" id="anon_phno" placeholder="Phone Number">`;
-        this.sendWrapedCtrl(msg, ctrlHtml, "anon_phno", "contactSubmitPhn", "phone");
+        let ctrlHtml = `<div class="phoneIcon_wrp"><input chat-inp type="tel" id="anon_phno" placeholder="Phone Number"></div>`;
+        this.sendWrapedCtrl(msg, ctrlHtml, "anon_phno", "contactSubmitPhn");
     }.bind(this);
 
     this.Password_basedLogin = function (e) {
         this.msgFromBot("Please provide your username and password");
         let controlHTML = `<div class="" style='width: calc(100% - 57px)'>
-                            <div class="form-group bot_pswrdLogin">
+                            <div class="form-group bot_Login_input">
                               <label for="username_id">Email:</label>
                                 <div class="username_wrp">
                                 <input type="email" class="form-control" id="username_id" placeholder="Enter email" name="email">
                                 </div>
                             </div>
-                            <div class="form-group bot_pswrdLogin">
+                            <div class="form-group bot_Login_input">
                               <label for="password_id">Password:</label>
                                 <div class="pswrd_wrp">
                                 <input type="password" class="form-control" id="password_id" placeholder="Enter password" name="pwd">
@@ -1794,7 +1791,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.StartOtpTimer = function () {
         setTimeout(function () {
             this.resendOTP = false;
-            document.getElementById('OTPtimer').innerHTML = 001 + ":" + 00;
+            document.getElementById('OTPtimer').innerHTML = 003 + ":" + 00;
             this.startTimer();
         }.bind(this), this.typeDelay);
        
@@ -2064,9 +2061,6 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         statusChangeCallback(response);
                     });
                 };
-
-
-
             }
         }
         if ((getTokenFromCookie("bot_bToken") != "") && (getTokenFromCookie("bot_rToken") != "")) {

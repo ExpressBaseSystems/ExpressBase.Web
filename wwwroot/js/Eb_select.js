@@ -259,7 +259,7 @@ const EbSelect = function (ctrl, options) {
                 return;
 
             if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
-               
+
                 if (this.datatable) {
                     //this.datatable.columnSearch = [];
                     this.datatable.Api.column(mapedField + ":name").search("").draw();
@@ -772,23 +772,12 @@ const EbSelect = function (ctrl, options) {
         if (this.datatable === null) {
             if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
                 this.reSetColumnvals();
-            if (this.ComboObj.justInit) { // temp from DG.setRowValues_E
-                this.$inp.val(this.Vobj.valueMembers);
-                this.ComboObj.justInit = undefined;
-            }
-            else
-                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            this.$inp.val(this.Vobj.valueMembers).trigger("change");
 
         }
         else {
             this.reSetColumnvals_();
-            if (this.justInit) {
-                this.$inp.val(this.Vobj.valueMembers);
-                //if (this.afterInitComplete4SetVal)
-                this.justInit = undefined;
-            }
-            else
-                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
 
 

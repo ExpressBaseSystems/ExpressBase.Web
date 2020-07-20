@@ -247,10 +247,8 @@
                         if (valExpFnStr) {
                             if (this.FO.formObject.__getCtrlByPath(curCtrl.__path).IsDGCtrl || !depCtrl.IsDGCtrl) {
                                 // if persist - manual onchange only setValue. DoNotPersist always setValue
-                                if ((!this.FO.isInitialProgramaticOnchange) || depCtrl.DoNotPersist) {
-                                    depCtrl.justSetValue(ValueExpr_val);
-                                    //this.isRequiredOK(depCtrl);
-                                }
+                                depCtrl.justSetValue(ValueExpr_val);
+                                //this.isRequiredOK(depCtrl);
                             }
                             else {
                                 $.each(depCtrl.__DG.AllRowCtrls, function (rowid, row) {

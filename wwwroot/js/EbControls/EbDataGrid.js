@@ -967,6 +967,8 @@
 
         this.ctrlToSpan_row(rowId);
         $activeTr.attr("is-checked", "true").attr("is-editing", "false");
+        $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
+        this.onRowPaintFn($tr, "check", e);
         return true;
     };
 

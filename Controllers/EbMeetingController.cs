@@ -100,7 +100,7 @@ namespace ExpressBase.Web.Controllers
             string htm = "";
             string hosts = "";
             string attendees = "";
-            if(Resp.MyActionDetails.MeetingScheduleId == 0)
+            if (Resp.MyActionDetails.MeetingScheduleId == 0)
             {
 
                 for (int i = 0; i < Resp.MeetingRequest.Count; i++)
@@ -153,23 +153,23 @@ namespace ExpressBase.Web.Controllers
                     htm += $@"</div> in valid request </div>";
                 }
             }
-            else if(Resp.MyActionDetails.MeetingScheduleId > 0 && Resp.SlotsRequest.Count > 0)
+            else if (Resp.MyActionDetails.MeetingScheduleId > 0 && Resp.SlotsRequest.Count > 0)
             {
 
                 string Date = Convert.ToDateTime(Resp.SlotsRequest[0].MeetingDate).ToString("dddd, dd MMMM yyyy");
                 string Slots = "";
-                for(int i=0;i< Resp.SlotsRequest.Count; i++)
+                for (int i = 0; i < Resp.SlotsRequest.Count; i++)
                 {
                     string TimeTo = Convert.ToDateTime(Resp.SlotsRequest[i].TimeTo).ToString("hh:mm tt");
                     string TimeFrom = Convert.ToDateTime(Resp.SlotsRequest[0].TimeFrom).ToString("hh:mm tt");
-                    if(Resp.SlotsRequest[i].IsApproved == "F")
+                    if (Resp.SlotsRequest[i].IsApproved == "F")
                     {
                         Slots += $@"<div id='{Resp.SlotsRequest[i].SlotId}' m-id='{Resp.SlotsRequest[i].MeetingScheduleId}' is-approved='{Resp.SlotsRequest[i].IsApproved}'
                     class='slots-div unblocked-slot'> <i class='fa fa-dot-circle-o' aria-hidden='true'></i>{TimeFrom} to {TimeTo}</div>";
                     }
                     else
                     {
-                    Slots += $@"<div id='{Resp.SlotsRequest[i].SlotId}' m-id='{Resp.SlotsRequest[i].MeetingScheduleId}' is-approved='{Resp.SlotsRequest[i].IsApproved}'
+                        Slots += $@"<div id='{Resp.SlotsRequest[i].SlotId}' m-id='{Resp.SlotsRequest[i].MeetingScheduleId}' is-approved='{Resp.SlotsRequest[i].IsApproved}'
                     class='solts-div blocked-slot'> <i class='fa fa-dot-circle-o' aria-hidden='true'></i> {TimeFrom} to {TimeTo}</div>";
                     }
 
@@ -204,7 +204,7 @@ namespace ExpressBase.Web.Controllers
             MeetingCancelByHostResponse Resp = this.ServiceClient.Post<MeetingCancelByHostResponse>(new MeetingCancelByHostRequest { SlotId = Slot, UserInfo = this.LoggedInUser, MyActionId = myactionid });
             return JsonConvert.SerializeObject(Resp);
         }
-        public string GetMeetingsDetails (int meetingid)
+        public string GetMeetingsDetails(int meetingid)
         {
             GetMeetingDetailsResponse Resp = this.ServiceClient.Post<GetMeetingDetailsResponse>(new GetMeetingDetailRequest { MeetingId = meetingid });
 
@@ -258,9 +258,16 @@ namespace ExpressBase.Web.Controllers
             return JsonConvert.SerializeObject(htm);
         }
 
-        public string PickSlot(int Slot , int myactionid)
+        public string PickSlot(int Slot, int myactionid)
         {
-            PickMeetingSLotResponse Resp = this.ServiceClient.Post<PickMeetingSLotResponse>(new PickMeetingSLotRequest { MyActionId = myactionid, SlotId = Slot , UserInfo = this.LoggedInUser });
+            PickMeetingSLotResponse Resp = this.ServiceClient.Post<PickMeetingSLotResponse>(new PickMeetingSLotRequest { MyActionId = myactionid, SlotId = Slot, UserInfo = this.LoggedInUser });
+            return JsonConvert.SerializeObject(Resp);
+        }
+
+        //Meeting Scheduler Participant List who already in a meeting 
+        public string ParticipantBlackList(List<MeetingSuggestion> meetingConfig,string timefrom, string timeto)
+        {
+            ParticipantsListAjaxResponse Resp = this.ServiceClient.Post<ParticipantsListAjaxResponse>(new ParticipantsListAjaxRequest {MeetingConfig = meetingConfig,TimeFrom=timefrom,TimeTo=timeto });
             return JsonConvert.SerializeObject(Resp);
         }
     }

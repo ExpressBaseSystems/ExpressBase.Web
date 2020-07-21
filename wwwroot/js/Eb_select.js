@@ -309,7 +309,7 @@ const EbSelect = function (ctrl, options) {
             //this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             ////}.bind(this));
             //this.datatable.Api.draw(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
-            this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues);
+            this.initComplete4SetVal(callBFn.bind(this, this.ComboObj), StrValues);
         }
         else {
             this.filterArray = [];
@@ -354,7 +354,7 @@ const EbSelect = function (ctrl, options) {
                 }.bind(this));
             }
             else {
-                let $row = $(this.DTSelector + ` tbody tr[role="row"]`);
+                let $row = $(this.DTSelector + ` tbody tr[role="row"][data-uid=${StrValues}]`);
                 if ($row.length === 0) {//
                     console.log(`>> eb message : none available value '${StrValues}' set for  powerSelect '${this.ComboObj.Name}'`);
                     this.$inp.val(StrValues).trigger("change");

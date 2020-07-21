@@ -776,8 +776,7 @@ namespace ExpressBase.Web.Controllers
                 }
             }
             else
-            {
-
+            { 
                 if (req["otptype"] == "signinotp")
                 {
                     EbAuthResponse validateResp = ValidateOtp(req["otp"]);
@@ -788,7 +787,7 @@ namespace ExpressBase.Web.Controllers
                         authresp.AuthStatus = false;
                         authresp.ErrorMessage = validateResp.ErrorMessage;
                         return authresp;
-                    }
+                    } 
                 }
                 else
                 {
@@ -801,8 +800,7 @@ namespace ExpressBase.Web.Controllers
                 MyAuthenticateResponse myAuthResponse = null;
                 try
                 {
-
-                    myAuthResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
+                    Authenticate AuthenticateReq = new Authenticate
                     {
                         provider = CredentialsAuthProvider.Name,
                         UserName = UserName,
@@ -810,14 +808,18 @@ namespace ExpressBase.Web.Controllers
                         Meta = new Dictionary<string, string> {
                             { RoutingConstants.WC, whichconsole },
                             { TokenConstants.CID, tenantid },
-                            { "sso", "true" },
                             { TokenConstants.IP, this.RequestSourceIp},
                             { RoutingConstants.USER_AGENT, this.UserAgent}
                         },
                         RememberMe = true,
 
                         //UseTokenCookie = true
-                    });
+                    };
+                    if (req["otptype"] == "signinotp")
+                    {
+                        AuthenticateReq.Meta.Add("sso", "true");
+                    }
+                    myAuthResponse = this.AuthClient.Get<MyAuthenticateResponse>(AuthenticateReq);
 
                 }
                 catch (WebServiceException wse)

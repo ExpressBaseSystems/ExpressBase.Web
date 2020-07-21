@@ -52,8 +52,8 @@ namespace ExpressBase.Web.Controllers
             //string objid, EbObjectType objtype
             ViewBag.ServiceUrl = Environment.GetEnvironmentVariable(EnvironmentConstants.EB_SERVICESTACK_EXT_URL);
 
-            User _user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
-            ViewBag.user = _user;
+            //User _user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
+            ViewBag.user = this.LoggedInUser;
             ViewBag.currentUser = this.LoggedInUser;
             var typeArray = typeof(EbDataVisualizationObject).GetTypeInfo().Assembly.GetTypes();
             Context2Js _jsResult = new Context2Js(typeArray, BuilderType.DVBuilder, typeof(EbDataVisualizationObject));
@@ -62,7 +62,7 @@ namespace ExpressBase.Web.Controllers
             ViewBag.JsObjects = _jsResult.JsObjects;
             ViewBag.EbObjectType = _jsResult.EbObjectTypes;
 
-            EbObjectWithRelatedDVResponse resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = _user.EbObjectIds.ToString(), DsRefid = null });
+            EbObjectWithRelatedDVResponse resultlist = this.ServiceClient.Get<EbObjectWithRelatedDVResponse>(new EbObjectWithRelatedDVRequest { Refid = refid, Ids = this.LoggedInUser.EbObjectIds.ToString(), DsRefid = null });
             EbDataVisualization dsobj = resultlist.Dsobj;
             if (dsobj.DataSourceRefId != string.Empty)
                 dsobj.AfterRedisGet(this.Redis, this.ServiceClient);

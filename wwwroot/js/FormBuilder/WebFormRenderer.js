@@ -61,10 +61,83 @@ const WebFormRender = function (option) {
 
     this.initDGs = function () {
         $.each(this.DGs, function (k, DG) {//dg Init
-            this.DGBuilderObjs[DG.Name] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
-            this.DGBuilderObjs[DG.Name].MultipleTables = this.DataMODEL | [];
+            this.DGBuilderObjs[DG.EbSid_CtxId] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+            this.DGBuilderObjs[DG.EbSid_CtxId].MultipleTables = this.DataMODEL | [];
+            if (!window.__IsDGctxMenuSet)
+                $.contextMenu({
+                    selector: '[eb-form="true"][mode="edit"] .dgtr:not([is-editing="true"]) > td,[eb-form="true"][mode="new"] .dgtr:not([is-editing="true"]) > td',
+                    autoHide: true,
+                    build: this.ctxBuildFn.bind(this)
+                });
+            window.__IsDGctxMenuSet = true;
         }.bind(this));
     };
+
+    this.ctxBuildFn = function ($trigger, e) {
+        return {
+            items: {
+                "deleteRow": {
+                    name: "Delete row",
+                    icon: "fa-trash",
+                    callback: this.del
+                },
+                "insertRowAbove": {
+                    name: "Insert row above",
+                    icon: "fa-angle-up",
+                    callback: this.insertRowAbove
+
+                },
+                "insertRowBelow": {
+                    name: "Insert row below",
+                    icon: "fa-angle-down",
+                    callback: this.insertRowBelow,
+                    //disabled: this.insertRowBelowDisableFn
+                }
+            }
+        };
+    }.bind(this);
+
+    this.insertRowBelowDisableFn = function (key, opt) {
+        return $(`#${this.TableId}>tbody tr[is-editing="true"]`).length === 1;
+    }.bind(this);
+
+    this.insertRowBelow = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let $tr = $e.closest("tr");
+        let clickedDGEbSid_CtxId = $tr.closest("[ctype=DataGrid]").attr("ebsid");
+        let clickedDGB = this.DGBuilderObjs[clickedDGEbSid_CtxId];
+
+        let $activeRow = $(`#${clickedDGB.TableId} tbody tr[is-editing="true"]`);
+        if ($activeRow.length === 1) {
+            if (clickedDGB.RowRequired_valid_Check($activeRow.attr("rowid")))
+                clickedDGB.confirmRow();
+            else
+                return;
+        }
+        clickedDGB.addRow({ insertIdx: $tr.index() + 1 });
+    }.bind(this);
+
+    this.insertRowAbove = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let $tr = $e.closest("tr");
+        let clickedDGEbSid_CtxId = $tr.closest("[ctype=DataGrid]").attr("ebsid");
+        let clickedDGB = this.DGBuilderObjs[clickedDGEbSid_CtxId];
+
+        let $activeRow = $(`#${clickedDGB.TableId} tbody tr[is-editing="true"]`);
+        if ($activeRow.length === 1) {
+            if (clickedDGB.RowRequired_valid_Check($activeRow.attr("rowid")))
+                clickedDGB.confirmRow();
+            else
+                return;
+        }
+        clickedDGB.addRow({ insertIdx: $tr.index() });
+    }.bind(this);
+
+    this.del = function (eType, selector, action, originalEvent) {
+        let $e = selector.$trigger;
+        let $tr = $e.closest("tr");
+        $tr.find(".del-row").trigger("click");
+    }.bind(this);
 
     this.initNCs = function () {
         $.each(this.flatControls, function (k, Obj) {
@@ -266,8 +339,8 @@ const WebFormRender = function (option) {
     // populateControlsWithDataModel
     this.populateControlsWithDataModel = function (DataMODEL) {
         let OuterCtrlsTblNames = this.getNormalTblNames();
-        for (let DGName in this.DGBuilderObjs) {
-            let DGB = this.DGBuilderObjs[DGName];
+        for (let EbSid_CtxId in this.DGBuilderObjs) {
+            let DGB = this.DGBuilderObjs[EbSid_CtxId];
             if (!DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {// if no Table in datamodel add empty array
                 DataMODEL[DGB.ctrl.TableName] = [];
                 DGB.DataMODEL = DataMODEL[DGB.ctrl.TableName];
@@ -573,7 +646,7 @@ const WebFormRender = function (option) {
 
         this.disbleControlsInViewMode();
         //$.each(this.DGs, function (k, DG) {
-        //    this.DGBuilderObjs[DG.Name].SwitchToViewMode();
+        //    this.DGBuilderObjs[DG.EbSid_CtxId].SwitchToViewMode();
         //}.bind(this));
         this.DynamicTabObject.switchToViewMode();// febin
     };
@@ -589,7 +662,7 @@ const WebFormRender = function (option) {
 
     this.S2EmodeDGCtrls = function () {
         $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name].SwitchToEditMode();
+            this.DGBuilderObjs[DG.EbSid_CtxId].SwitchToEditMode();
         }.bind(this));
     }.bind(this);
 
@@ -1286,6 +1359,7 @@ const WebFormRender = function (option) {
         let t0 = performance.now();
 
         $.contextMenu('destroy');
+        window.__IsDGctxMenuSet = undefined;
         $(".xdsoft_datetimepicker.xdsoft_noselect.xdsoft_").remove();
 
         this.resetBuilderVariables(newOptions);

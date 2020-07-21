@@ -241,12 +241,14 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             this.SlotList[pos].TimeFrom = e.target.value;
             //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj));
+           // this.UpdateParticipantList(pos);
         }.bind(this));
         this.TimeTo.off('change').on("change", function (e) {
             let pos = e.target.closest('tr').getAttribute("data-id");
             this.SlotList[pos].TimeTo = e.target.value;
             //this.drawSlots();
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+            //this.UpdateParticipantList(pos);
         }.bind(this));
         this.MaxHost.off('change').on("change", function (e) {
             this.MeetingScheduleObj.MaxHost = e.target.value;
@@ -315,6 +317,41 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
 
         }
     };
+    //this.UpdateParticipantList = function (pos) {
+    //    //if ($(`[data-id=${pos}] .time-from`).val() != "" && $(`[data-id=${pos}] .time-to`).val() != "") {
+    //    //    let list =[]
+    //    //    var obj = {
+    //    //        MeetingConfig: this.Ctrl.AttendeeConfig ,
+    //    //        MeetingRoles: this.Ctrl.AttendeeRoles ,
+    //    //        MeetingUserGroup: this.Ctrl.AttendeeUserGroup ,
+    //    //        MeetingUsers: this.Ctrl.AttendeeUsers ,
+    //    //        Contacts: this.Ctrl.AttendeeContacts,
+    //    //        ContactFilter: this.Ctrl.AttendeeContactFilter,
+    //    //    }
+    //    //    list.push(obj);
+    //    //     var obj2 = {
+    //    //        MeetingConfig: this.Ctrl.HostConfig ,
+    //    //        MeetingRoles: this.Ctrl.HostRoles ,
+    //    //        MeetingUserGroup: this.Ctrl.HostUserGroup ,
+    //    //        MeetingUsers: this.Ctrl.HostUsers ,
+    //    //        Contacts: this.Ctrl.HostContacts,
+    //    //        ContactFilter: this.Ctrl.HostContactFilter,
+    //    //    }
+    //    //    list.push(obj2);
+
+    //    //    $.ajax(
+    //    //        {
+    //    //            url: '../EbMeeting/UpdateParticipantList',
+    //    //            type: 'POST',
+    //    //            data: { meetingConfig: list, timefrom: $(`[data-id=${pos}] .time-from`).val(), timeto: $(`[data-id=${pos}] .time-to`).val() },
+    //    //            success: this.UpdateParticipantListsuccess.bind(this, pos)
+    //    //        });
+    //    //}
+    //};
+
+    //this.UpdateParticipantListsuccess = function (pos,e) {
+
+    //};
 
     this.drawSlots = function () {
         this.SlotList = [];

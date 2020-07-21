@@ -1,4 +1,43 @@
-﻿const EbPowerSelect = function (ctrl, options) {
+﻿const EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+    this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
+    this.EbSid = id;
+    this.ObjType = 'TableVisualization';
+    this.rowGrouping = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVBaseColumn, ExpressBase.Objects]], System.Private.CoreLib", "$values": [] }; this.LeftFixedColumn = 0; this.RightFixedColumn = 0; this.PageLength = 0; this.DataSourceRefId = ''; this.Description = ''; this.Columns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] }; this.DSColumns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] }; this.data = { "$type": "System.Object, System.Private.CoreLib" }; this.Pippedfrom = ''; this.IsPaged = ''; this.IsPaging = false; this.Name = id;
+
+
+    this.$Control = $("            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>".replace(/@id/g, this.EbSid));
+    this.BareControlHtml = `<table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>`.replace(/@id/g, this.EbSid);
+    this.DesignHtml = "            <div id='cont_@name@' Ctype='TableVisualization' class='Eb-ctrlContainer'>                <table style='width:100%' class='table table-striped' eb-type='Table' id='@name@'></table>            </div>";
+    let MyName = this.constructor.name;
+    this.RenderMe = function () {
+        let NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
+        $.each(metas, function (i, meta) {
+            let name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
+            }
+        });
+        if (!this.IsContainer)
+            $('#' + id).html($(NewHtml).html());
+    };
+    if (jsonObj) {
+        if (jsonObj.IsContainer)
+            jsonObj.Controls = new EbControlCollection({});
+        jsonObj.RenderMe = this.RenderMe;
+        jsonObj.Html = this.Html;
+        jsonObj.Init = this.Init;
+        $.extend(this, jsonObj);
+        //if(this.Init)
+        //    jsonObj.Init(id);
+    }
+    else {
+        if (this.Init)
+            this.Init(id);
+    }
+};
+
+//let EbSelect = function (name, ds_id, dropdownHeight, vmName, dmNames, maxLimit, minLimit, required, servicestack_url, vmValues, ctrl) {
+const EbSelect = function (ctrl, options) {
     //parameters   
     this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;
@@ -220,20 +259,15 @@
                 return;
 
             if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
-
-                if (this.datatable) {
-                    //this.datatable.columnSearch = [];
-                    this.datatable.Api.column(mapedField + ":name").search("").draw();
-                }
+                this.datatable.columnSearch = [];
+                this.datatable.Api.ajax.reload();
                 return;
             }
 
-            if (this.datatable) {
-                //this.datatable.columnSearch = [];
-                //this.datatable.columnSearch.push(new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType));
-                //this.datatable.Api.draw();
-                this.datatable.Api.column(mapedField + ":name").search(searchVal).draw();
-            }
+
+            this.datatable.columnSearch = [];
+            this.datatable.columnSearch.push(new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType));
+            this.datatable.Api.ajax.reload();
         }
     };
 
@@ -252,7 +286,7 @@
             //$.each(this.setvaluesColl, function (i, val) {
             this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
-            this.datatable.Api.draw(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
+            this.datatable.Api.ajax.reload(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
         }
         else {
             this.filterArray = [];
@@ -359,37 +393,19 @@
         this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
     };
 
-    this.getData = function () {
-        this.filterValues = [];
-        let params = this.ajaxData();
-        let url = "../dv/getData4PowerSelect";
-        $.ajax({
-            url: url,
-            type: 'POST',
-            data: params,
-            success: this.receiveAjaxData.bind(this),
-        });
-    };
-    this.ajaxData = function () {
-        var dq = new Object();
-        dq.RefId = this.dsid;
-        this.filterValues = this.getFilterValuesFn();
-        this.AddUserAndLcation();
-        dq.Params = this.filterValues || [];
-        dq.Start = 0;
-        dq.Length = 100;
-        dq.DataVizObjString = JSON.stringify(this.EbObject);
-        dq.TableId = this.name + "tbl";
-        dq.TFilters = this.filterArray;
-        return dq;
-    };
+    // init datatable
+    this.InitDT = function () {
+        let searchVal = this.getMaxLenVal();
+        let _name = this.ComboObj.EbSid_CtxId;
+        if (this.ComboObj.MinSeachLength > searchVal.length) {
+            //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
+            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+            return;
+        }
 
-    this.AddUserAndLcation = function () {
-        this.filterValues.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
-        this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-    };
-
-    this.receiveAjaxData = function (result) {
+        this.IsDatatableInit = true;
+        //this.EbObject = new EbObjects["EbTableVisualization"]("Container");
+        //this.EbObject.DataSourceRefId = this.dsid;
         let o = {};
         o.containerId = this.name + "DDdiv";
         o.dsid = this.dsid;
@@ -403,7 +419,7 @@
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         o.fninitComplete = this.initDTpost.bind(this);
-        //o.columnSearch = this.filterArray;
+        o.columnSearch = this.filterArray;
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rt";
         o.source = "powerselect";
@@ -411,14 +427,13 @@
         o.keys = true;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
-        o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
+        o.columns = this.ComboObj.Columns;//////////////////////////////////////////////////////
         if (options)
             o.rendererName = options.rendererName;
-        //o.getFilterValuesFn = this.getFilterValuesFn;
+        o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
         o.searchCallBack = this.searchCallBack;
-        o.data = result;
         this.datatable = new EbBasicDataTable(o);
 
         setTimeout(function () {
@@ -451,23 +466,52 @@
             div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
             scrollDropDown();
         }.bind(this), 30);
-    };
 
-    // init datatable
-    this.InitDT = function () {
-        let searchVal = this.getMaxLenVal();
-        let _name = this.ComboObj.EbSid_CtxId;
-        if (this.ComboObj.MinSeachLength > searchVal.length) {
-            //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
-            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
-            return;
-        }
+        //this.datatable.Api.on('key-focus', this.arrowSelectionStylingFcs);
+        //this.datatable.Api.on('key-blur', this.arrowSelectionStylingBlr);
+        //$.ajax({
+        //    type: "POST",
+        //    url: "../DS/GetColumns",
+        //    data: { DataSourceRefId: this.dsid },
+        //    success: function (Columns) {
+        //        this.DTColumns = JSON.parse(Columns).$values;
+        //        //$.LoadingOverlay('hide');
+        //    }.bind(this)
+        //});
+        //this.datatable = $(this.DTSelector).DataTable({//change ebsid to name
+        //    processing: true,
+        //    serverSide: true,
+        //    dom: 'rt',
+        //    columns: this.DTColumns,
+        //    ajax: {
+        //        url: "../dv/getData",
+        //        type: 'POST',
+        //        data: function (dq) {
+        //            delete dq.columns; delete dq.order; delete dq.search;
+        //            dq.RefId = this.dsid;
+        //            dq.Params = { Name: "id", Value: "ac", Type: "11" };
+        //        }.bind(this),
+        //        dataSrc: function (dd) {
+        //            return dd.data;
+        //        },
+        //    },
+        //    initComplete: function () {
+        //        this.hideTypingAnim();
+        //        this.AskWhatU();
+        //        $tableCont.show(100);
+        //    }.bind(this)
 
-        this.IsDatatableInit = true;
-        this.EbObject = new EbObjects["EbTableVisualization"]("Container");
-        this.EbObject.DataSourceRefId = this.dsid;
-        this.EbObject.Columns.$values = this.ComboObj.Columns.$values;
-        this.getData();
+        //});
+        //settings: {
+        //    hideCheckbox: (this.ComboObj.MultiSelect === false) ? true : false,
+        //    scrollY: "200px",//this.dropdownHeight,
+        //},
+        //filterParams: { colName: "id", FilterValue: "ac" }, //{ id : "ac", }
+        //initComplete: this.initDTpost.bind(this),
+        //fnDblclickCallbackFunc: this.dblClickOnOptDDEventHand.bind(this),
+        //fnKeyUpCallback:
+        //fnClickCallbackFunc:
+        //});
     };
 
     //this.xxx = function (e, dt, type, indexes) {
@@ -852,8 +896,7 @@
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
-                if (this.datatable)
-                    this.datatable.Api.cell($cell).focus();
+                this.datatable.Api.cell($cell).focus();
                 this.ApplyRowFocusStyle($cell.closest("tr"));
             }.bind(this), 1);
         }
@@ -864,8 +907,7 @@
     };
 
     this.colAdjust = function () {
-        if (this.datatable)
-            $('#' + this.name + 'tbl').DataTable().columns.adjust().draw();
+        $('#' + this.name + 'tbl').DataTable().columns.adjust().draw();
     }.bind(this);
 
     this.V_updateCk = function () {// API..............
@@ -940,7 +982,7 @@
     };
 
     this.reloadDT = function () {
-        this.datatable.Api.draw(this.colAdjust);
+        this.datatable.Api.ajax.reload(this.colAdjust);
     }.bind(this);
 
     this.checkBxClickEventHand = function (e) {

@@ -874,7 +874,6 @@
 
     this.attachModalCellRef_Row = function (row, rowObjectMODEL) {
         for (let i = 0; i < rowObjectMODEL.length; i++) {
-            console.log(i);
             let inpCtrl = rowObjectMODEL[i];
             let SingleColumn = getObjByval(row.Columns, "Name", inpCtrl.Name);
             if (SingleColumn) {

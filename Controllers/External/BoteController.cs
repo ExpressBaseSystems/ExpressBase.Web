@@ -489,7 +489,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			Bot_Obj.User=(JsonConvert.SerializeObject(user));
 			Bot_Obj.BotFormNames=formlist.BotFormsDisp;
 
-			CookieOptions options = new CookieOptions();
+			CookieOptions options = new CookieOptions() {  SameSite = SameSiteMode.None };
 			Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (authResponse.BearerToken + CharConstants.DOT + authResponse.AnonId.ToString()), options);
 			Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, authResponse.RefreshToken, options);
 
@@ -515,7 +515,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			{
 				this.ServiceClient.BearerToken = _u.BearerToken;
 				this.ServiceClient.RefreshToken = _u.RefreshToken;
-				Authenticate2FAResponse response = this.ServiceClient.Post(new Validate2FARequest { Token = token });
+				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token });
 				authresp.AuthStatus = response.AuthStatus;
 				authresp.ErrorMessage = response.ErrorMessage;
 				Bot_Obj.Status = authresp.AuthStatus;

@@ -1049,6 +1049,7 @@ function textTransformHelper(element, transform_type) {
 
 
 function EBPSSetDisplayMember(p1, p2) {
+    this.___isNotUpdateValExpDepCtrls = true;
     p1 = p1 + "";
     if (p1 === '')
         return;
@@ -1087,24 +1088,6 @@ function EBPSSetDisplayMember(p1, p2) {
     }
 
     $("#" + this.EbSid_CtxId).val(p1);
-}
-
-
-function getEbFormatedPSRows(ctrl) {
-    if (!ctrl.DataVals.Value)
-        return {};
-    let rows = ctrl.DataVals.R;
-    let columnVals = {};
-    for (let i = 0; i < rows.length; i++) {
-        let row = rows[i];
-        for (let j = 0; j < row.Columns.length; j++) {
-            let column = row.Columns[j];
-            if (!columnVals[column.Name])
-                columnVals[column.Name] = [];
-            columnVals[column.Name].push(column.Value);
-        }
-    }
-    return columnVals;
 }
 
 function copyObj(destObj, srcObj) {

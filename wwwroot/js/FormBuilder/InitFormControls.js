@@ -166,6 +166,7 @@
             }
         });
     };
+
     this.SetDateFormatter();
 
     this.Date = function (ctrl, ctrlOpts) {
@@ -303,7 +304,6 @@
     };
 
     this.SimpleSelect = function (ctrl) {
-
         let $input = $("#" + ctrl.EbSid_CtxId);
 
         $input.on('loaded.bs.select	', function (e, clickedIndex, isSelected, previousValue) {
@@ -514,7 +514,7 @@
         if (!ctrl.__filterValues)
             ctrl.__filterValues = [];
         if (ctrl.ParamsList) {
-            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });//["form.textbox1", "form.id_max", "form.eb_loc_id", "form.eb_currentuser_id"];//
+            paramsList = ctrl.ParamsList.$values.map(function (obj) { return "form." + obj.Name; });
             for (let i = 0; i < paramsList.length; i++) {
                 let depCtrl_s = paramsList[i];
                 let depCtrl = this.Renderer.formObject.__getCtrlByPath(depCtrl_s);
@@ -737,9 +737,6 @@
             $(`#${EbSid} .location-box:eq(0)`).show();
             this.initMap(ctrl.LocationCollection.$values[0]);
         }
-
-        //this.Renderer.nxtCtrlIdx++;
-        //this.Renderer.callGetControl();
     };
 
     this.initMap = function (ctrl) {
@@ -779,10 +776,6 @@
         }.bind(this);
     };
 
-    //this.Approval = function (ctrl, ctrlOpts) {
-    //    return new EbApproval(ctrl, ctrlOpts);
-    //};
-
     this.Review = function (ctrl, ctrlOpts) {
         return new EbReview(ctrl, ctrlOpts);
     };
@@ -796,7 +789,6 @@
     };
 
     this.PowerSelect = function (ctrl, ctrlOpts) {
-
         let t0 = performance.now();
 
         if (ctrl.RenderAsSimpleSelect) {
@@ -834,7 +826,6 @@
             Bot: this.Renderer,
             CtrlObj: ctrl
         });
-        //this.initCards($('#' + ctrl.Name));
     };
 
     this.DynamicCardSet = function (ctrl) {
@@ -843,7 +834,6 @@
             Bot: this.Renderer,
             CtrlObj: ctrl
         });
-        //this.initCards($('#' + ctrl.Name));
     };
 
     this.ImageUploader = function (ctrl) {
@@ -878,15 +868,13 @@
         });
     };
 
-    this.Button = function (ctrl) {
+    this.Button = function (ctrl) {//////////////////////////////////////
         $('#' + ctrl.EbSid_CtxId).removeAttr("disabled");
         $('#' + ctrl.EbSid_CtxId).on('click', this.iFrameOpen.bind(this, ctrl));
     }.bind(this);
 
     this.SubmitButton = function (ctrl, ctrlOpts) {
-
         //checksubmitbutton
-
         $('#webformsave-selbtn').hide();
         if (ctrlOpts.renderMode === 3 || ctrlOpts.renderMode === 5) {
             $('#webform_submit').parent().prepend(`<div class = "text-center" id = 'captcha'> </div>
@@ -940,44 +928,23 @@
         document.getElementById("captcha").appendChild(canv); // adds the canvas to the body element
     };
 
-
-    this.iFrameOpen = function (ctrl) {
+    this.iFrameOpen = function (ctrl) {//////////////////
         let url = "../WebForm/Index?refid=" + ctrl.FormRefId + "&_mode=12";
         $("#iFrameForm").attr("src", url);
         $("#iFrameFormModal").modal("show");
     };
 
-    this.SysLocation = function (ctrl) {//all sys controls init commented to avoid confusion with the default value in new mode
-
+    this.SysLocation = function (ctrl) {
         if (!(ctrl.IsDisable)) {
             $.each(ebcontext.locations.Locations, function (intex, obj) {
                 $("#" + ctrl.EbSid_CtxId).append(`<option value="${obj.LocId}"> ${obj.ShortName}</option>`);
             });
             $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
         }
-
-
-
-        //if (_rowId === undefined || _rowId === 0) {
-        //    setTimeout(function () {
-        //        if (ctrl.DisplayMember === 1) {
-        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LocId);
-        //        }
-        //        else if (ctrl.DisplayMember === 3) {
-        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.LongName);
-        //        }
-        //        else {
-        //            $("#" + ctrl.EbSid_CtxId).val(ebcontext.locations.CurrentLocObj.ShortName);
-        //        }
-        //    }, 500);
-        //}        
     };
+
     this.SysCreatedBy = function (ctrl) {
         let $input = $("#" + ctrl.EbSid_CtxId);
-        //if (ctrl.DisplayMember === 1) {
-        //    $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
-        //}
-        //else {
         let usrId = ebcontext.user.UserId;
         $input.attr('data-id', usrId);
         $input.text(ebcontext.user.FullName);
@@ -988,25 +955,20 @@
             let width = $(`#td_${ctrl.EbSid_CtxId}`).width() - 34;
             $input.css("width", width + "px");
         }
-        //}
     };
+
     this.SysModifiedBy = function (ctrl) {
-        //if (_rowId > 0) {
-        //    if (ctrl.DisplayMember === 1) {
-        //        $("#" + ctrl.EbSid_CtxId).val(ebcontext.user.UserId);
-        //    }
-        //    else {
         let usrId = ebcontext.user.UserId;
         $("#" + ctrl.EbSid_CtxId).attr('data-id', usrId);
         $("#" + ctrl.EbSid_CtxId).text(ebcontext.user.FullName);
         let usrImg = '/images/dp/' + usrId + '.png';
         $(`#${ctrl.EbSid_CtxId}_usrimg`).attr('src', usrImg);
-        //    }
-        //}        
     };
+
     this.SysCreatedAt = function (ctrl) {
         this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
+
     this.SysModifiedAt = function (ctrl) {
         this.setCurrentDate(ctrl, $("#" + ctrl.EbSid_CtxId));
     };
@@ -1067,7 +1029,6 @@
     //};
 
     this.UserSelect = function (ctrl, ctrlopts) {
-
         let itemList = new EbItemListControl({
             contSelector: `#${ctrl.EbSid_CtxId}Wraper`,
             itemList: ctrl.UserList.$values,
@@ -1080,7 +1041,6 @@
     this.TextBox = function (ctrl, ctrlopts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         if (ctrl.TextMode === 0) {
-            //ctrl.DependedValExp.$values.push("form.tvcontrol1"); // hardCoding temporary
             if (ctrl.AutoSuggestion === true) {
                 $ctrl.autocomplete({ source: ctrl.Suggestions.$values });
             }
@@ -1107,8 +1067,7 @@
     };
 
     this.EmailControl = function (ctrl) {
-        let $ctrl = $("#" + ctrl.EbSid_CtxId);
-        $ctrl.on('input', this.checkEmail.bind(this, ctrl));
+        $("#" + ctrl.EbSid_CtxId).on('input', this.checkEmail.bind(this, ctrl));
     };
 
     this.checkEmail = function (ctrl) {
@@ -1283,9 +1242,7 @@
         }
     };
 
-
     this.BluePrint = function (ctrl, ctrlopts) {
-
         console.log("view mode bp");
         var bphtml = `<div id='bpdiv_${ctrl.EbSid}' >
                         <div id='toolbar_divBP' class='col-md-1 col-lg-1 col-sm-1 toolbarBP_cls_dev'>
@@ -1381,7 +1338,7 @@
         //ctrl.clear = function (p1) {
         //    return $('input[name = ' + ctrl.EbSid_CtxId + '_tags]').va("");
         //}
-    }
+    };
 
     this.RichText = function (ctrl) {
         $(`#${ctrl.EbSid}`).summernote({
@@ -1411,7 +1368,6 @@
     };
 
     this.SimpleFileUploader = function (ctrl) {
-
         let filePlugin = $("#" + ctrl.EbSid).fileUploader({
             fileCtrl: ctrl,
             renderer: this.Renderer.rendererName,
@@ -1447,10 +1403,10 @@
                 }
             }
         }
-        
+
         var phninput = document.querySelector(`#${ctrl.EbSid}`);
 
-       
+
 
         var iti = window.intlTelInput(phninput, {
             allowDropdown: true,
@@ -1485,7 +1441,7 @@
         ctrl.setValue = function (p1) {
             iti.setNumber(p1);
         };
-        
+
 
     };
 
@@ -1506,6 +1462,7 @@
             }.bind(this)
         });
     };
+
     this.OpenSMSModal = function (ctrl, opt) {
         //let colname = $(opt.$trigger).attr("data-colname");
         //this.phonecolumn = this.EbObject.Columns.$values.filter(obj => obj.name === colname)[0];       
@@ -1583,16 +1540,18 @@
         else
             this.AppendSMSPreview();
     };
+
     this.AppendSMSPreview = function (result) {
         if (result) {
             result = JSON.parse(result);
             $("#sms-number").val(result.FilledSmsTemplate.SmsTo).prop("disabled", true);
             $("#sms-textarea").val(atob(result.FilledSmsTemplate.SmsTemplate.Body)).prop("disabled", true);
         }
-        else {          
+        else {
             $("#sms-textarea").val("").prop("disabled", false);
         }
     };
+
     this.SendSMS = function ($elem) {
         if (this.MakeSMSValidation()) {
             $("#smsmodal").modal("hide");

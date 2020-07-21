@@ -31,33 +31,38 @@ body {
 
     .eb-chat-cont .eb-FrameHeader {
         text-align: center;
-        padding:5px;
+        padding: 5px;
     }
+
         .eb-chat-cont .eb-FrameHeader .chat-date {
             display: inline-block;
         }
+
             .eb-chat-cont .eb-FrameHeader .chat-date span {
                 border-radius: 15px;
                 opacity: .8;
                 padding: 2px 8px;
                 font-size: 11px;
             }
+
         .eb-chat-cont .eb-FrameHeader .startOvercont {
             display: inline-block;
-            float:right;
+            float: right;
         }
+
             .eb-chat-cont .eb-FrameHeader .startOvercont button {
                 border-radius: 50%;
                 background-color: var(--botThemeColor);
                 padding: 4px;
-                cursor:pointer;
+                cursor: pointer;
             }
+
                 .eb-chat-cont .eb-FrameHeader .startOvercont button i {
                     font-size: 10px;
                     color: white;
                     font-weight: 600;
                 }
-       
+
 
     .eb-chat-cont .eb-textarea {
         border: none;
@@ -291,8 +296,6 @@ border-radius: 4px;
     margin-top: -12px;
     margin-right: -40px;
 }
-
-
 
 .inline-block {
     display: inline-block;
@@ -1224,33 +1227,59 @@ border-radius: 4px;
 .msg-cont-w100 {
     width: 100% !important;
 }
-.bot_pswrdLogin .username_wrp, .bot_pswrdLogin .pswrd_wrp {
+
+.bot_Login_input .username_wrp, .bot_Login_input .pswrd_wrp, .bot_Login_input .phoneIcon_wrp, .bot_Login_input .emailIcon_wrp {
     position: relative;
     display: flex;
     align-items: center;
     color: var(--botThemeColor);
 }
-    .bot_pswrdLogin .username_wrp:before {
+
+    .bot_Login_input .username_wrp:before {
         font-family: FontAwesome;
         content: "\f007";
         position: absolute;
         margin-left: 15px;
     }
-    .bot_pswrdLogin .pswrd_wrp:before {
+
+    .bot_Login_input .pswrd_wrp:before {
         font-family: FontAwesome;
         content: "\f084";
         position: absolute;
         margin-left: 15px;
     }
-.bot_pswrdLogin input {
+
+    .bot_Login_input .emailIcon_wrp:before {
+        font-family: FontAwesome;
+        content: "\f0e0";
+        position: absolute;
+        margin-left: 15px;
+    }
+
+    .bot_Login_input .phoneIcon_wrp:before {
+        font-family: FontAwesome;
+        content: "\f095";
+        position: absolute;
+        margin-left: 15px;
+    }
+
+.bot_Login_input input {
     margin: 10px 0px;
-    padding-left: 40px
+    padding-left: 40px;
 }
 
 
-.otp_cont .otp_wrp{
-    text-align:center;
+.otp_cont {
+    padding: 10px;
+    background-color: #cacaca2b;
+    width: calc(100% - 57px);
 }
+.otp_cont .otp_wrp {
+    text-align: center;
+}
+    .otp_cont .otp_wrp h5 {
+        word-break: keep-all;
+    }
 
 .otp_cont #partitioned {
     /*The width of the input is the number of characters times the sum between the letter width (1ch) and the gap width (.5ch). So that's 7*(1ch + .5ch) = 7*1.5ch = 10.5ch.*/
@@ -1267,6 +1296,7 @@ border-radius: 4px;
         color: dimgrey;
     }
 
-.otp_cont .timer_resend_wrp{
-    padding-top:15px;
-}
+    .otp_cont .timer_resend_wrp {
+        padding-bottom: 10px;
+        padding-top: 30px;
+    }

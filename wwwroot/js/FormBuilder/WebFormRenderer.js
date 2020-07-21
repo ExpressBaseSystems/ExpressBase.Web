@@ -54,7 +54,7 @@ const WebFormRender = function (option) {
 
     this.initReviewCtrl = function () {
         if (this.ReviewCtrl) {
-            let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRenderer: this };
+            let opt = { Mode: this.Mode, formsaveFn: this.saveForm.bind(this), formObject: this.formObject, userObject: this.userObject, formRenderer: this };
             this.ReviewCtrlBuilder = this.initControls.init(this.ReviewCtrl, opt);
         }
     };
@@ -226,20 +226,14 @@ const WebFormRender = function (option) {
                 continue;
 
             let ctrl = getObjByval(this.flatControls, "Name", SingleColumn.Name);
-            ctrl.__eb_EditMode_val = val;
-            //if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-            //    //ctrl.setDisplayMember = EBPSSetDisplayMember;
-            //    ctrl.justInit = true;
-            //    ctrl.setDisplayMember(val);
-            //}
-            //else
-
-            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect) {
-                ctrl.___isNotUpdateValExpDepCtrls = true;
-            }
 
             ctrl.___DoNotUpdateDataVals = true;
-            ctrl.justSetValue(val);
+
+            if (ctrl.ObjType === "PowerSelect" && !ctrl.RenderAsSimpleSelect)
+                ctrl.setDisplayMember(val);
+            else
+                ctrl.justSetValue(val);
+
             ctrl.___DoNotUpdateDataVals = false;
         }
     };
@@ -578,9 +572,9 @@ const WebFormRender = function (option) {
         }
 
         this.disbleControlsInViewMode();
-        $.each(this.DGs, function (k, DG) {
-            this.DGBuilderObjs[DG.Name].SwitchToViewMode();
-        }.bind(this));
+        //$.each(this.DGs, function (k, DG) {
+        //    this.DGBuilderObjs[DG.Name].SwitchToViewMode();
+        //}.bind(this));
         this.DynamicTabObject.switchToViewMode();// febin
     };
 
@@ -1360,7 +1354,6 @@ const WebFormRender = function (option) {
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         this.setMode();
-        this.isInitialProgramaticOnchange = true;// IMPORTANT
 
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
 
@@ -1369,7 +1362,7 @@ const WebFormRender = function (option) {
             if (this.ReviewCtrl)
                 this.ReviewCtrlBuilder.hide();
         }
-        else {            
+        else {
             this.FRC.execValueExpNC(this.FormObj.DoNotPersistExecOrder);//================== exec Value Expression   2nd
         }
 
@@ -1380,8 +1373,6 @@ const WebFormRender = function (option) {
         else if (this.Mode.isEdit) {
             this.SwitchToEditMode();
         }
-
-        this.isInitialProgramaticOnchange = false;// IMPORTANT
 
         this.LocationInit();
 

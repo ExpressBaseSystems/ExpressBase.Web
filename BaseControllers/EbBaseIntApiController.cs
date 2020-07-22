@@ -18,7 +18,7 @@ namespace ExpressBase.Web.BaseControllers
     {
         protected string ESolutionId { set; get; }
 
-        protected string SultionId { set; get; }
+        protected string SolutionId { set; get; }
 
         protected bool Authenticated { set; get; }
 
@@ -50,11 +50,11 @@ namespace ExpressBase.Web.BaseControllers
 
             this.ESolutionId = hostParts[0].Replace(RoutingConstants.DASHDEV, string.Empty);
 
-            this.SultionId = this.GetIsolutionId(this.ESolutionId);
+            this.SolutionId = this.GetIsolutionId(this.ESolutionId);
 
             Controller controller = (Controller)context.Controller;
 
-            if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, this.SultionId)) == 0)
+            if (this.Redis.Exists(string.Format(CoreConstants.SOLUTION_INTEGRATION_REDIS_KEY, this.SolutionId)) == 0)
             {
                 controller.ViewBag.IsValidSol = false;
                 IsValidSolution = false;

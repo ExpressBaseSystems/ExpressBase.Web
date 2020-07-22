@@ -51,6 +51,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.botQueue = [];
     this.botflg = {};
     this.botflg.loadFormlist = false;
+    this.botflg.otptype = "";
+    this.botflg.uname_otp = "";
     this.formObject = {};// for passing to user defined functions
     this.CurFormflatControls = [];// for passing to user defined functions
 
@@ -96,6 +98,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $("body").on("click", "[name=contactSubmitPhn]", this.contactSubmitPhn);
         $("body").on("click", "[name=contactSubmitName]", this.contactSubmitName);
         $("body").on("click", "[name=passwordSubmitBtn]", this.passwordLoginFn);
+        $("body").on("click", "[name=otpUserSubmitBtn]", this.otpLoginFn);
         $("body").on("click", "[name=otpvalidateBtn]", this.otpvalidate);
         $("body").on("click", "#resendOTP", this.otpResendFn);
         $("body").on("click", ".btn-box_botformlist [for=form-opt]", this.startFormInteraction);
@@ -1688,6 +1691,23 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.sendWrapedCtrl(msg, ctrlHtml, "anon_phno", "contactSubmitPhn");
     }.bind(this);
 
+    this.OTP_BasedLogin = function () {
+        this.msgFromBot("Please Login");
+        let controlHTML = `<div class="" style='width: calc(100% - 57px)'>
+                            <div class="form-group otp_Login_input">
+                              <label for="username_id">Email or Mobile</label>
+                                <div class="username_wrp">
+                                <input type="text" class="form-control" id="otp_login_id" placeholder="Enter email or mobile" name="otp_login">
+                                </div>
+                            </div>
+                        </div>`;
+
+
+        let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper">
+                <button class="btn cntct_btn" name="otpUserSubmitBtn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
+        this.msgFromBot($ctrlCont, function () { $(`#otpUserLogin`).focus(); }, "otpUserLogin");
+    }
+
     this.Password_basedLogin = function (e) {
         this.msgFromBot("Please provide your username and password");
         let controlHTML = `<div class="" style='width: calc(100% - 57px)'>
@@ -1742,7 +1762,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
         let $ctrlCont = $(`<div class="chat-ctrl-cont ctrl-cont-bot">${controlHTML}<div class="ctrl-send-wraper">
                 <button class="btn cntct_btn" name="otpvalidateBtn"><i class="fa fa-chevron-right" aria-hidden="true"></i></button></div></div>`);
-        
+
         setTimeout(function () {
             this.msgFromBot($ctrlCont, function () { $(`#otpvalidate`).focus(); }, "otpvalidate");
             setTimeout(function () {
@@ -1750,40 +1770,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             }.bind(this), this.typeDelay);
 
         }.bind(this), this.typeDelay);
-       
 
-    }.bind(this);
 
-    this.otpvalidate = function (e) {
-        $(e.target).closest('button').attr('disabled', true);
-        this.showTypingAnim();
-        $.post("../bote/ValidateOtp",
-            {
-                otp: $("#partitioned").val(),
-                appid: this.EXPRESSbase_APP_ID
-            },
-            function (result) {
-                if (result.status) {
-                    //this.bearerToken = result.bearerToken;
-                    //this.refreshToken = result.refreshToken;
-                    this.formsDict = result.botFormDict;
-                    window.ebcontext.user = JSON.parse(result.user);
-                    //this.formNames = Object.values(this.formsDict);
-                    this.formNames = Object.values(result.botFormNames);
-                    this.formIcons = result.botFormIcons;
-                    $('.eb-chatBox').empty();
-                    this.showDate();
-                    this.AskWhatU();
-                }
-                else {
-                    $("[for=otpvalidate]").remove();
-                    $("[lbl_for=otpvalidate]").remove();
-                    this.msgFromBot(result.errorMsg);
-                   
-                }
-               
-            }.bind(this)
-        );
     }.bind(this);
 
     //otp timer
@@ -1794,7 +1782,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             document.getElementById('OTPtimer').innerHTML = 003 + ":" + 00;
             this.startTimer();
         }.bind(this), this.typeDelay);
-       
+
     }.bind(this);
 
     this.startTimer = function () {
@@ -1818,11 +1806,11 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.OtpTimeOut = function () {
         this.msgFromBot("Time out");
-       // EbMessage("show", { Background: "red", Message: "Time out" });
+        // EbMessage("show", { Background: "red", Message: "Time out" });
         setTimeout(function () {
             this.botStartoverfn()
         }.bind(this), this.typeDelay * 2);
-       
+
     }.bind(this);
 
     this.checkSecond = function (sec) {
@@ -1830,22 +1818,195 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         if (sec < 0) { sec = "59"; }
         return sec;
     }
+
+    this.otpvalidate = function (e) {
+        $(e.target).closest('button').attr('disabled', true);
+        this.showTypingAnim();
+        if (this.botflg.otptype == "signinotp") {
+            $.ajax({
+                url: "../bote/PasswordAuthAndGetformlist",
+                type: "POST",
+                data: {
+                    "uname": this.botflg.uname_otp,
+                    "cid": this.EXPRESSbase_SOLUTION_ID,
+                    "appid": this.EXPRESSbase_APP_ID,
+                    "wc": "bc",
+                    "user_ip": this.userDtls.ip,
+                    "user_browser": this.userDtls.browser,
+                    "otptype": this.botflg.otptype,
+                    "otp": $("#partitioned").val(),
+                },
+                success: function (result) {
+                    this.hideTypingAnim();
+                    if (result.status === false) {
+                        this.msgFromBot(result.errorMsg);
+                    }
+                    else {
+
+                        //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
+                        // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
+                        this.formsDict = result.botFormDict;
+                        window.ebcontext.user = JSON.parse(result.user);
+                        //this.formNames = Object.values(this.formsDict);
+                        this.formNames = Object.values(result.botFormNames);
+                        this.formIcons = result.botFormIcons;
+                        $('.eb-chatBox').empty();
+                        this.showDate();
+                        this.AskWhatU();
+                    }
+
+                }.bind(this)
+            });
+        }
+        else {
+            $.post("../bote/ValidateOtp",
+                {
+                    otp: $("#partitioned").val(),
+                    appid: this.EXPRESSbase_APP_ID,
+                    otptype: this.botflg.otptype
+                },
+                function (result) {
+                    if (result.status) {
+                        //this.bearerToken = result.bearerToken;
+                        //this.refreshToken = result.refreshToken;
+                        this.formsDict = result.botFormDict;
+                        window.ebcontext.user = JSON.parse(result.user);
+                        //this.formNames = Object.values(this.formsDict);
+                        this.formNames = Object.values(result.botFormNames);
+                        this.formIcons = result.botFormIcons;
+                        $('.eb-chatBox').empty();
+                        this.showDate();
+                        this.AskWhatU();
+                    }
+                    else {
+                        $("[for=otpvalidate]").remove();
+                        $("[lbl_for=otpvalidate]").remove();
+                        this.msgFromBot(result.errorMsg);
+
+                    }
+
+                }.bind(this)
+            );
+        }
+
+    }.bind(this);
+
+
     this.otpResendFn = function () {
         this.resendOTP = true;
-        $.post("../bote/ResendOtp", function (auth) {
-            if (auth.authStatus) {
-                //this.StartOtpTimer();
-                //$(".otp_warnings").empty();
-                //$(".otp_warnings").text("OTP has been sent again");
-                $("[for=otpvalidate]").remove();
-                this.msgFromBot("OTP has been sent again");
-                this.twoFactorAuthLogin(auth)
-            }
-            else {
-                this.msgFromBot(auth.errorMessage);
-            }
-        }.bind(this));
+        $.post("../bote/ResendOtp",
+            { otptype: this.botflg.otptype },
+            function (auth) {
+                if (auth.authStatus) {
+                    $("[for=otpvalidate]").remove();
+                    $("[lbl_for=otpvalidate]").remove();
+                    this.msgFromBot("OTP has been sent again");
+                    this.twoFactorAuthLogin(auth)
+                }
+                else {
+                    this.msgFromBot(auth.errorMessage);
+                }
+            }.bind(this));
     }.bind(this);
+
+
+    this.validateEmail = function (email) {
+        //  var re = /\S+@\S+\.\S+/;
+        let emailReg = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        return emailReg.test(email);
+    }
+
+    this.validateMobile = function (mobile) {
+        // var phoneReg = /^(\+91-|\+91|0)?\d{10}$/;
+        let phoneReg = /^([+]{0,1})([0-9]{10,})$/;
+        return phoneReg.test(mobile);
+    }
+
+    this.otpLoginFn = function (e) {
+        $(e.target).closest('button').attr('disabled', true);
+        this.showTypingAnim();
+        let uname = $("#otp_login_id").val();
+        //let emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+        let is_email = this.validateEmail(uname);
+        //let phoneRegex = /^(\+91-|\+91|0)?\d{10}$/;
+        let is_mobile = this.validateMobile(uname);
+        if (is_email || is_mobile) {
+            $.ajax({
+                url: "../bote/SendSignInOtp",
+                type: "POST",
+                data: {
+                    "uname": uname,
+                    "is_email": is_email,
+                    "is_mobile": is_mobile
+                },
+                success: function (result) {
+                    this.hideTypingAnim();
+
+                    if (result.authStatus) {
+                        $("[for=otpUserLogin]").remove();
+                        $("[lbl_for=otpUserLogin]").remove();
+                        this.botflg.otptype = "signinotp";
+                        this.botflg.uname_otp = uname;
+                        this.twoFactorAuthLogin(result)
+                    }
+                    else if (result.authStatus === false) {
+                        this.msgFromBot(result.errorMessage);
+                    }
+
+                }.bind(this)
+            });
+        }
+
+    }.bind(this);
+
+    this.passwordLoginFn = function (e) {
+        $(e.target).closest('button').attr('disabled', true);
+        this.showTypingAnim();
+        $.ajax({
+            url: "../bote/PasswordAuthAndGetformlist",
+            type: "POST",
+            data: {
+                "uname": $("#username_id").val().trim(),
+                "pass": $("#password_id").val().trim(),
+                "cid": this.EXPRESSbase_SOLUTION_ID,
+                "appid": this.EXPRESSbase_APP_ID,
+                "wc": "bc",
+                "user_ip": this.userDtls.ip,
+                "user_browser": this.userDtls.browser,
+                "otptype": this.botflg.otptype
+            },
+            success: function (result) {
+                this.hideTypingAnim();
+                if (result.status === false) {
+                    this.msgFromBot(result.errorMsg);
+                }
+                else {
+                    if (result.is2Factor) {
+                        $("[for=pswdbasedLogin]").remove();
+                        $("[lbl_for=pswdbasedLogin]").remove();
+                        this.botflg.otptype = "2faotp";
+                        this.twoFactorAuthLogin(result);
+                    }
+                    else {
+
+                        //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
+                        // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
+                        this.formsDict = result.botFormDict;
+                        window.ebcontext.user = JSON.parse(result.user);
+                        //this.formNames = Object.values(this.formsDict);
+                        this.formNames = Object.values(result.botFormNames);
+                        this.formIcons = result.botFormIcons;
+                        $('.eb-chatBox').empty();
+                        this.showDate();
+                        this.AskWhatU();
+                    }
+
+                }
+
+            }.bind(this)
+        });
+    }.bind(this);
+
 
     this.AnonymousLoginOptions = function () {
         this.hideTypingAnim();
@@ -1952,59 +2113,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     }.bind(this);
 
-    this.OTP_BasedLogin = function () {
-
-    }
-
-    this.passwordLoginFn = function (e) {
-        $(e.target).closest('button').attr('disabled', true);
-        this.showTypingAnim();
-        $.ajax({
-            url: "../bote/PasswordAuthAndGetformlist",
-            type: "POST",
-            data: {
-                "uname": $("#username_id").val().trim(),
-                "pass": $("#password_id").val().trim(),
-                "cid": this.EXPRESSbase_SOLUTION_ID,
-                "appid": this.EXPRESSbase_APP_ID,
-                "wc": "bc",
-                "user_ip": this.userDtls.ip,
-                "user_browser": this.userDtls.browser,
-            },
-            success: function (result) {
-                this.hideTypingAnim();
-                if (result.status === false) {
-                    this.msgFromBot(result.errorMsg);
-                }
-                else {
-                    if (result.is2Factor) {
-                        $("[for=pswdbasedLogin]").remove();
-                        $("[lbl_for=pswdbasedLogin]").remove();
-                        this.twoFactorAuthLogin(result)
-                    }
-                    else {
-
-                      //  document.cookie = "bot_bToken=" + result.bearerToken + "; path=/"; 
-                       // document.cookie = "bot_rToken=" + result.refreshToken + "; path=/"; 
-                        this.formsDict = result.botFormDict;
-                        window.ebcontext.user = JSON.parse(result.user);
-                        //this.formNames = Object.values(this.formsDict);
-                        this.formNames = Object.values(result.botFormNames);
-                        this.formIcons = result.botFormIcons;
-                        $('.eb-chatBox').empty();
-                        this.showDate();
-                        this.AskWhatU();
-                    }
-
-                }
-
-            }.bind(this)
-        });
-    }.bind(this);
 
     this.botStartoverfn = function () {
         if (this.botflg.loadFormlist === false) {
             this.ClearFormVariables();
+            this.botflg.otptype = "";//clear flags
+            this.botflg.uname_otp = "";
             $('.eb-chatBox').empty();
             this.showDate();
             this.botUserLogin();

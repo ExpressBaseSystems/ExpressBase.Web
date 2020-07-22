@@ -757,7 +757,7 @@
         //o.rowReorder = this.IsTree;
         if (this.MainData !== null && this.isPipped) {
             if (this.Source === "EbDataTable") {
-                o.dom = "<'col-md-10 noPadding'B><'col-md-2 noPadding'f>rt";
+                o.dom = "<'col-md-10 noPadding'><'col-md-2 noPadding'f>rt";
                 dvcontainerObj.currentObj.data = this.MainData;
                 o.ajax = function (data, callback, settings) {
                     setTimeout(function () {
@@ -773,7 +773,7 @@
             }
             else {
                 if (this.Source === "Calendar") {
-                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
+                    o.dom = "<'col-md-12 noPadding display-none'><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
                 else {
@@ -785,18 +785,18 @@
         }
         else {
             if (this.Source === "EbDataTable")
-                o.dom = "<'pagination-wrapper'liBp>rt";
+                o.dom = "<'pagination-wrapper'lip>rt";
             else
                 o.dom = "<'pagination-wrapper'lip>rt";
             o.paging = this.EbObject.IsPaging;
             o.lengthChange = true;
             if (!this.EbObject.IsPaging) {
                 if (this.IsTree || this.EbObject.IsDataFromApi) {
-                    o.dom = "<'col-md-12 noPadding display-none'B><'col-md-12 info-search-cont'i>rt";
+                    o.dom = "<'col-md-12 noPadding display-none'><'col-md-12 info-search-cont'i>rt";
                     o.language.info = "_START_ - _END_ / _TOTAL_ Entries";
                 }
                 else {
-                    o.dom = "<'col-md-12 noPadding display-none'B>rt";
+                    o.dom = "<'col-md-12 noPadding display-none'>rt";
                 }
                 o.paging = false;
                 o.lengthChange = false;
@@ -2757,34 +2757,11 @@
 
         if (this.Source === "EbDataTable") {
             if ($("#" + this.tableId).children().length > 0) {
-                if (this.login === "dc") {
-                    $("#obj_icons").append(
-                        "<div id='" + this.tableId + "_fileBtns' style='display: inline-block;'>" +
-                        "<div class='btn-group'>" +
-                        "<div class='btn-group'>" +
-                        " <button id='btnPrint" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Print' ><i class='fa fa-print' aria-hidden='true'></i></button>" +
-                        " <div class='btn btn-default dropdown-toggle' data-toggle='dropdown' name='filebtn' style='display: none;'>" +
-                        "   <span class='caret'></span>  <!-- caret --></div>" +
-                        "   <ul class='dropdown-menu' role='menu'>" +
-                        "      <li><a href = '#' id='btnprintAll" + this.tableId + "'> Print All</a></li>" +
-                        "     <li><a href = '#' id='btnprintSelected" + this.tableId + "'> Print Selected</a></li>" +
-                        "</ul>" +
-                        "</div>" +
-                        "<button id='btnExcel" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Excel' ><i class='fa fa-file-excel-o' aria-hidden='true'></i></button>" +
-                        "<button id='btnPdf" + this.tableId + "' class='btn'    name='filebtn'  data-toggle='tooltip' title='Pdf' ><i class='fa fa-file-pdf-o' aria-hidden='true'></i></button>" +
-                        "<button id='btnCsv" + this.tableId + "' class='btn'    name='filebtn' data-toggle='tooltip' title='Csv' ><i class='fa fa-file-text-o' aria-hidden='true'></i></button>  " +
-                        "<button id='btnCopy" + this.tableId + "' class='btn'  name='filebtn' data-toggle='tooltip' title='Copy to Clipboard' ><i class='fa fa-clipboard' aria-hidden='true'></i></button>" +
-                        "</div>" +
-                        "</div>" +
-                        "</div>");
-                }
-                $("#" + this.tableId + "_fileBtns").find("[name=filebtn]").not("#btnExcel" + this.tableId).hide();
-
                 if (this.login === "uc") {
                     $("#obj_icons").append(`<div id='${this.tableId}_fileBtns' style='display: inline-block;'><div class='btn-group'></div></div>`);
                     $.each(this.permission, function (i, obj) {
                         if (obj === "Excel")
-                            $("#" + this.tableId + "_fileBtns .btn-group").append("<button id = 'btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
+                            $("#" + this.tableId + "_fileBtns .btn-group").append("<button id ='btnExcel" + this.tableId + "' class='btn'  name = 'filebtn' data-toggle='tooltip' title = 'Excel' > <i class='fa fa-file-excel-o' aria-hidden='true'></i></button >");
                     }.bind(this));
                 }
 

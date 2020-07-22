@@ -8162,12 +8162,23 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     display: none !important;
 }
 
-.ctrl-cover[eb-readonly="true"] .v-select .selected-tag .close, .ctrl-cover[eb-readonly="true"] .v-select [type="search"] {
+.ctrl-cover[eb-readonly="true"] .v-select .selected-tag .close {
     display: none !important;
+}
+
+.ctrl-cover[eb-readonly="true"] .v-select [type="search"] {
+    visibility: hidden !important;
 }
 
 .ctrl-cover[eb-readonly="true"] .v-select .selected-tag {
     filter: grayscale(0.3);
+}
+
+.ctrl-cover[eb-readonly="true"] input,
+.ctrl-cover[eb-readonly="true"] .input-group-addon,
+.ctrl-cover[eb-readonly="true"] .dropdown-toggle {
+    background-color: #eee !important;
+    pointer-events: none !important;
 }
 
 [isrendermode="false"] .Eb-ctrlContainer .ctrl-cover input, [isrendermode="false"] .Eb-ctrlContainer .ctrl-cover .radio-wrap {
@@ -9380,6 +9391,7 @@ input.locinp {
 .phnctrl {
     padding-left: 80px !important;
 }
+
 .phnContextBtn {
     border: 0;
     position: absolute;
@@ -9387,6 +9399,7 @@ input.locinp {
     right: 1px;
     padding: 7px;
 }
+
     .phnContextBtn i {
         display: inline-block;
     }

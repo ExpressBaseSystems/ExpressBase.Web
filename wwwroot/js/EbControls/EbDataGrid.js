@@ -122,7 +122,7 @@
     this.getTrHTML_ = function (rowCtrls, rowid, isAdded = true) {
         let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-initialised='false' is-checked='true' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
-                    <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
+                    <td class='row-no-td' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
 
         let visibleCtrlIdx = 0;
 
@@ -145,15 +145,15 @@
 
     this.getTdHtml_ = function (inpCtrl, visibleCtrlIdx) {
         let col = inpCtrl.__Col;
-            return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}'>
+        return `<td id ='td_@ebsid@' ctrltdidx='${visibleCtrlIdx}' tdcoltype='${col.ObjType}' agg='${col.IsAggragate}' colname='${col.Name}' style='width:${this.getTdWidth(visibleCtrlIdx, col)}'>
                     <div id='@ebsid@Wraper' style='display:none' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${col.DBareHtml || inpCtrl.BareControlHtml}</div>
                     <div class='tdtxt' style='display:block' coltype='${col.ObjType}'>
                       <span>${this.getDispMembr(inpCtrl)}</span>
                     </div >                                               
                 </td>`
-                .replace("@isReadonly@", col.IsDisable)
-                .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
-                .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+            .replace("@isReadonly@", col.IsDisable)
+            .replace("@singleselect@", col.MultiSelect ? "" : `singleselect=${!col.MultiSelect}`)
+            .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
     };
 
     this.getTdHtml = function (inpCtrl, col, i) {
@@ -543,7 +543,7 @@
     this.getNewTrHTML = function (rowid, isAdded = true) {
         let isAnyColEditable = false;
         let tr = `<tr class='dgtr' is-editing='${isAdded}' is-checked='false' is-added='${isAdded}' tabindex='0' rowid='${rowid}'>
-                    <td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td>`;
+                    <td class='row-no-td' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td>`;
         this.objectMODEL[rowid] = [];
 
         let visibleCtrlIdx = 0;
@@ -618,7 +618,7 @@
         let tr = this.getNewTrHTML(rowId, isAdded);
         let $tr = $(tr).hide();
         this.addRowDataModel(rowId, this.objectMODEL[rowId]);
-        if (insertIdx) {
+        if (insertIdx !== undefined) {
             this.insertRowAt(insertIdx, $tr);
         } else {
             if (!this.ctrl.AscendingOrder) {
@@ -674,7 +674,7 @@
     };
 
     this.addSlNo = function () {//////DG H scroll ?
-        let slnoTrHtml = `<tr><td class='row-no-td' idx='${++this.rowSLCounter}'>${this.rowSLCounter}</td></tr>`;
+        let slnoTrHtml = `<tr><td class='row-no-td' id='${this.TableId + "_" + (++this.rowSLCounter)}_sl' idx='${this.rowSLCounter}'>${this.rowSLCounter}</td></tr>`;
         $(`${this.SlTableId}>tbody`).append(slnoTrHtml);
     }.bind(this);
 
@@ -784,7 +784,7 @@
         for (var i = 0; i < tds.length; i++) {
             this.ctrlToSpan_td($(tds[i]));
         }
-        console.dev_log("ctrlToSpan_row : took " + (performance.now() - t0) + " milliseconds.");
+        //console.dev_log("ctrlToSpan_row : took " + (performance.now() - t0) + " milliseconds.");
     }.bind(this);
 
     this.getCtrlByTd = function ($td) {
@@ -833,7 +833,7 @@
         }
         if (!flag)
             $td.find(".tdtxt").show();
-        console.dev_log("ctrlToSpan_td " + (performance.now() - t0) + " milliseconds.");
+        //console.dev_log("ctrlToSpan_td " + (performance.now() - t0) + " milliseconds.");
     }.bind(this);
 
     ebUpdateDGTD = function ($td) {
@@ -874,7 +874,6 @@
 
     this.attachModalCellRef_Row = function (row, rowObjectMODEL) {
         for (let i = 0; i < rowObjectMODEL.length; i++) {
-            console.log(i);
             let inpCtrl = rowObjectMODEL[i];
             let SingleColumn = getObjByval(row.Columns, "Name", inpCtrl.Name);
             if (SingleColumn) {
@@ -959,7 +958,7 @@
         this.ctrlToSpan_row(rowId);
         $activeTr.attr("is-checked", "true").attr("is-editing", "false");
         $(`#${this.TableId}>tbody>[is-editing=true]:first *:input[type!=hidden]:first`).focus();
-        this.onRowPaintFn($tr, "check", e);
+        this.onRowPaintFn($activeTr, "check", event);
         return true;
     };
 
@@ -1145,10 +1144,13 @@
 
     this.removeTr = function ($tr) {
         let rowId = $tr.attr("rowid");
-        $tr.find("td>*").hide(100);
+        $tr.hide(100);
         this.markDelColCtrls(rowId);
         setTimeout(function () {
             $tr.remove();
+            let t0 = performance.now();
+            this.resetRowSlNo($tr.index() - 1);
+            console.dev_log("resetRowSlNoUnder :  took " + (performance.now() - t0) + " milliseconds.");
             this.updateAggCols();
         }.bind(this), 101);
     };
@@ -1168,10 +1170,7 @@
         this.onRowPaintFn($tr, "delete", e);
 
         this.removeTr($tr);
-
-        let t0 = performance.now();
-        this.resetRowSlNoUnder($tr);
-        console.dev_log("resetRowSlNoUnder :  took " + (performance.now() - t0) + " milliseconds.");
+        //this.resetRowSlNoUnder($tr);
 
     }.bind(this);
 
@@ -1205,21 +1204,30 @@
         for (let i = 0; i < $rows.length; i++) {
             let $row = $($rows[i]);
             let SlNo = i + 1;
-            $row.find("td.row-no-td").attr("idx", SlNo).text(SlNo);
+            $row.find("td.row-no-td").attr("id", `${this.TableId + "_" + SlNo}_sl`).attr("idx", SlNo).text(SlNo);
         }
     };
 
-    this.resetRowSlNoUnder = function ($tr) {
+    this.resetRowSlNo = function (slno) {
         if (!this.ctrl.IsShowSerialNumber)
             return;
-        let curIdx = parseInt($tr.find(".row-no-td").attr("idx"));
-        let rowCount = $(`#${this.TableId}>tbody>tr`).length - 1;
-        this.rowSLCounter = curIdx;
-        for (this.rowSLCounter; this.rowSLCounter < rowCount + 1; this.rowSLCounter++) {
-            $(`#${this.TableId}>tbody>tr td.row-no-td[idx=${this.rowSLCounter + 1}]`).attr("idx", this.rowSLCounter).text(this.rowSLCounter);
+        let rowCount = $(`#${this.TableId}>tbody>tr`).length;
+        for (let i = slno; i < rowCount; i++) {
+            $(`#${this.TableId}>tbody>tr td.row-no-td:eq(${i})`).attr("id", `${this.TableId + "_" + (i + 1)}_sl`).attr("idx", i + 1).text(i + 1);
         }
-        this.rowSLCounter--;
     };
+
+    //this.resetRowSlNoUnder = function ($tr) {
+    //    if (!this.ctrl.IsShowSerialNumber)
+    //        return;
+    //    let curIdx = parseInt($tr.find(".row-no-td").attr("idx"));
+    //    let rowCount = $(`#${this.TableId}>tbody>tr`).length - 1;
+    //    this.rowSLCounter = curIdx;
+    //    for (this.rowSLCounter; this.rowSLCounter < rowCount + 1; this.rowSLCounter++) {
+    //        $(`#${this.TableId + "_" + (this.rowSLCounter + 1)}_sl`).attr("id", `${this.TableId + "_" + this.rowSLCounter}_sl`).attr("idx", this.rowSLCounter).text(this.rowSLCounter);
+    //    }
+    //    this.rowSLCounter--;
+    //};
 
     this.spanToCtrl_row = function ($tr) {
         $tds = $tr.find("td[ctrltdidx]");
@@ -1306,15 +1314,6 @@
         this.resetRowSlNo($addedRow.index());
         if (!this.isPSInDG)
             setTimeout(this.PScallBFn.bind(this, addedRowCols), 1);// call checkRow_click() pass event.target directly
-    };
-
-    this.resetRowSlNo = function (slno) {  //////////////////???
-        if (!this.ctrl.IsShowSerialNumber)
-            return;
-        let rowCount = $(`#${this.TableId}>tbody>tr`).length;
-        for (let i = slno; i < rowCount; i++) {
-            $(`#${this.TableId}>tbody>tr td.row-no-td:eq(${i})`).attr("idx", i + 1).text(i + 1);
-        }
     };
 
     //this.ColGetvalueFn = function (p1) {
@@ -1767,74 +1766,7 @@
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);
-        $.contextMenu(this.CtxSettingsObj);
     };
-
-    this.ctxBuildFn = function ($trigger, e) {
-        return {
-            items: {
-                "deleteRow": {
-                    name: "Delete row",
-                    icon: "fa-trash",
-                    callback: this.del
-                },
-                "insertRowAbove": {
-                    name: "Insert row above",
-                    icon: "fa-angle-up",
-                    callback: this.insertRowAbove
-
-                },
-                "insertRowBelow": {
-                    name: "Insert row below",
-                    icon: "fa-angle-down",
-                    callback: this.insertRowBelow,
-                    //disabled: this.insertRowBelowDisableFn
-                }
-            }
-        };
-    }.bind(this);
-
-    this.CtxSettingsObj = {
-        selector: '[eb-form="true"][mode="edit"] .dgtr .tdtxt,[eb-form="true"][mode="new"] .dgtr > td',
-        autoHide: true,
-        build: this.ctxBuildFn.bind(this)
-    };
-
-    this.insertRowBelowDisableFn = function (key, opt) {
-        return $(`#${this.TableId}>tbody tr[is-editing="true"]`).length === 1;
-    }.bind(this);
-
-    this.insertRowBelow = function (eType, selector, action, originalEvent) {
-        let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
-        if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
-                this.confirmRow();
-            else
-                return;
-        }
-        let $e = selector.$trigger;
-        let $tr = $e.closest("tr");
-        this.addRow({ insertIdx: $tr.index() + 1 });
-    }.bind(this);
-
-    this.insertRowAbove = function (eType, selector, action, originalEvent) {
-        let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
-        if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
-                this.confirmRow();
-            else
-                return;
-        }
-        let $e = selector.$trigger;
-        let $tr = $e.closest("tr");
-        this.addRow({ insertIdx: $tr.index() });
-    }.bind(this);
-
-    this.del = function (eType, selector, action, originalEvent) {
-        let $e = selector.$trigger;
-        let $tr = $e.closest("tr");
-        $tr.find(".del-row").trigger("click");
-    }.bind(this);
 
     this.dg_HScroll = function (e) {
         let $e = $(event.target);

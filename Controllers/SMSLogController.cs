@@ -44,23 +44,43 @@ namespace ExpressBase.Web.Controllers
         public ListSMSLogsResponse Get_SMS_List(string Refid, string FromDate, string ToDate)
         {
             ListSMSLogsResponse resp = new ListSMSLogsResponse();
-            string query = @"
+            string query = string.Empty;
+            List<Param> _params = new List<Param>();
+            if (!string.IsNullOrEmpty(Refid))
+            {
+                query = @"
                     SELECT
 		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, l.status, l.id   
 	                    FROM
 		                    eb_sms_logs l, eb_users u 
 	                    WHERE
-		                    u.id =l.eb_created_by AND
-		                    (l.eb_created_at::date between :from_date AND :to_date) AND 
+		                    l.id NOT IN (SELECT retryof FROM eb_sms_logs WHERE retryof IS NOT NULL) AND u.id =l.eb_created_by AND
+		                    (l.eb_created_at::date BETWEEN :from_date AND :to_date) AND 
 							l.refid = :refid AND COALESCE(l.eb_del,'F') = 'F'
 	                    ORDER BY 
+		                    l.id DESC;";
+                _params.Add(new Param { Name = "refid", Type = ((int)EbDbTypes.String).ToString(), Value = Refid });
+            }
+            else
+            {
+                query = @"
+                    SELECT
+		                    l.send_from, l.send_to, l.message_body, u.fullname as executed_by, l.eb_created_at as executed_at, l.status, l.id   
+	                    FROM
+		                    eb_sms_logs l, eb_users u 
+	                    WHERE
+		                    l.id NOT IN (SELECT retryof FROM eb_sms_logs WHERE retryof IS NOT NULL) AND u.id =l.eb_created_by AND
+		                    (l.eb_created_at::date between :from_date AND :to_date) AND 
+							COALESCE(l.eb_del,'F') = 'F'
+	                    ORDER BY 
 		                    l.id DESC, status ASC;";
-            List<Param> _params = new List<Param>();
+            }
+            
             DateTime Fdate = DateTime.ParseExact(FromDate,"dd-MM-yyyy", null);
             DateTime Tdate = DateTime.ParseExact(ToDate, "dd-MM-yyyy", null);
             _params.Add(new Param { Name = "from_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Fdate.ToString()});
             _params.Add(new Param { Name = "to_date", Type = ((int)EbDbTypes.DateTime).ToString(), Value = Tdate.ToString() });
-            _params.Add(new Param { Name = "refid", Type = ((int)EbDbTypes.String).ToString(), Value = Refid });
+            
             string[] arrayy = new string[] { "From", "To", "Message", "Executed By", "Executed At", "Status", "id" };
             DVColumnCollection DVColumnCollection = GetColumnsForSMSLog(arrayy);
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, ParamsList = _params, Columns = DVColumnCollection, AutoGen = false, IsPaging = true };
@@ -112,9 +132,12 @@ namespace ExpressBase.Web.Controllers
             return Columns;
         }
 
-        public string SmsRetry(int Id, string RefId)
-        {         
-            return null;
+        public RetrySmsResponse SmsRetry(int Id, string RefId)
+        {
+            RetrySmsResponse response = null;
+            if (Id > 0 && RefId != null && RefId != String.Empty)
+                response = this.ServiceClient.Post(new RetrySmsRequest { SmslogId = Id, RefId = RefId });
+            return response;            
         }
     }
 }

@@ -25,6 +25,7 @@ using ExpressBase.Common.Connections;
 using System.Net;
 using ExpressBase.Common.NotificationHubs;
 using Microsoft.Azure.NotificationHubs;
+using ExpressBase.Security;
 
 namespace ExpressBase.Web.Controllers
 {
@@ -192,7 +193,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (ViewBag.IsValidSol)
             {
-                ApiMetaResponse resp = this.ServiceClient.Get(new ApiMetaRequest { Name = api_name, Version = ver, SolutionId = this.SultionId });
+                ApiMetaResponse resp = this.ServiceClient.Get(new ApiMetaRequest { Name = api_name, Version = ver, SolutionId = this.SolutionId });
                 ViewBag.Meta = resp;
             }
             else
@@ -206,7 +207,7 @@ namespace ExpressBase.Web.Controllers
         {
             if (ViewBag.IsValidSol)
             {
-                ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SultionId });
+                ApiAllMetaResponse resp = this.ServiceClient.Get(new ApiAllMetaRequest { SolutionId = this.SolutionId });
                 ViewBag.Allmeta = resp.AllMetas;
             }
             else
@@ -228,7 +229,7 @@ namespace ExpressBase.Web.Controllers
                     Password = (password + username).ToMD5Hash(),
                     Meta = new Dictionary<string, string> {
                         { RoutingConstants.WC, RoutingConstants.MC },
-                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.CID, this.SolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
                         { RoutingConstants.USER_AGENT, this.UserAgent}
                     },
@@ -268,7 +269,7 @@ namespace ExpressBase.Web.Controllers
                     Password = password,
                     Meta = new Dictionary<string, string> {
                         { RoutingConstants.WC, RoutingConstants.MC },
-                        { TokenConstants.CID, this.SultionId },
+                        { TokenConstants.CID, this.SolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
                         { RoutingConstants.USER_AGENT, this.UserAgent}
                     },
@@ -286,25 +287,7 @@ namespace ExpressBase.Web.Controllers
 
                     try
                     {
-                        Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
-
-                        if (authResponse.User.IsAdmin())
-                        {
-                            response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
-                        }
-                        else if (s_obj != null && authResponse.User.LocationIds != null)
-                        {
-                            if (authResponse.User.LocationIds.Contains(-1))
-                                response.Locations.AddRange(s_obj.Locations.Select(kvp => kvp.Value).ToList());
-                            else
-                            {
-                                foreach (int _locid in authResponse.User.LocationIds)
-                                {
-                                    if (s_obj.Locations.ContainsKey(_locid))
-                                        response.Locations.Add(s_obj.Locations[_locid]);
-                                }
-                            }
-                        }
+                        Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SolutionId));
 
                         if (s_obj != null && s_obj.Is2faEnabled)
                         {
@@ -331,27 +314,8 @@ namespace ExpressBase.Web.Controllers
                         Console.WriteLine("2FA failed :: " + ex.Message);
                     }
 
-                    try
-                    {
-                        this.FileClient.BearerToken = response.BToken;
-                        this.FileClient.RefreshToken = response.RToken;
-                        this.FileClient.Headers.Add(CacheConstants.RTOKEN, response.RToken);
-
-                        DownloadFileResponse dfs = this.FileClient.Get(new DownloadDpRequest
-                        {
-                            ImageInfo = new ImageMeta
-                            {
-                                FileName = response.UserId.ToString(),
-                                FileType = StaticFileConstants.PNG,
-                                FileCategory = EbFileCategory.Dp
-                            }
-                        });
-                        response.DisplayPicture = dfs.StreamWrapper.Memorystream.ToArray();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("api auth request getdp: " + ex.Message);
-                    }
+                    //set user dp to the authresponse
+                    SetUserDp(response);
                 }
                 else
                     response.IsValid = false;
@@ -364,51 +328,150 @@ namespace ExpressBase.Web.Controllers
             return response;
         }
 
-        [HttpPost("/api/verify_or_resend_otp")]
-        public ApiTwoFactorResponse Verify2FA(string token, string otp, bool resend)
+        private void SetUserDp(ApiAuthResponse authresp)
         {
-            ApiTwoFactorResponse resp = new ApiTwoFactorResponse();
+            this.FileClient.BearerToken = authresp.BToken;
+            this.FileClient.RefreshToken = authresp.RToken;
+            this.FileClient.Headers.Add(CacheConstants.RTOKEN, authresp.RToken);
 
-            if (Authenticated)
+            try
             {
-                Authenticate2FAResponse response;
-
-                if (resend)
+                DownloadFileResponse dfs = this.FileClient.Get(new DownloadDpRequest
                 {
-                    resp.IsVerification = false;
+                    ImageInfo = new ImageMeta
+                    {
+                        FileName = authresp.UserId.ToString(),
+                        FileType = StaticFileConstants.PNG,
+                        FileCategory = EbFileCategory.Dp
+                    }
+                });
+                authresp.DisplayPicture = dfs.StreamWrapper.Memorystream.ToArray();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("api auth request getdp: " + ex.Message);
+            }
+        }
 
+        [HttpPost("/api/auth_sso")]
+        public ApiAuthResponse ApiLoginBySSO(string username, SignInOtpType type)
+        {
+            ApiAuthResponse response = new ApiAuthResponse();
+
+            if (this.IsValidSolution)
+            {
+                username = username?.Trim();
+
+                try
+                {
+                    Authenticate2FAResponse resp = this.ServiceClient.Post(new SendSignInOtpRequest
+                    {
+                        UName = username,
+                        SignInOtpType = type,
+                        SolutionId = this.SolutionId
+                    });
+
+                    response.IsValid = resp == null ? false : resp.AuthStatus;
+
+                    if (response.IsValid)
+                    {
+                        response.Is2FEnabled = resp.Is2fa;
+                        response.TwoFAToAddress = resp.OtpTo;
+                        response.TwoFAToken = resp.TwoFAToken;
+                        response.User = new User { AuthId = resp.UserAuthId };
+                    }
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Api Autheticate SSO failed");
+                }
+            }
+
+            return response;
+        }
+
+        [HttpPost("/api/verify_otp")]
+        public ApiAuthResponse VerifyOTP(string token, string authid, string otp)
+        {
+            ApiAuthResponse resp = new ApiAuthResponse();
+
+            if (this.IsValidSolution)
+            {
+                User user = this.Authenticated ? this.LoggedInUser : this.Redis.Get<User>(authid);
+
+                try
+                {
+                    Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest
+                    {
+                        Token = token,
+                        UserAuthId = user.AuthId
+                    });
+
+                    if (response != null && response.AuthStatus)
+                    {
+                        if (otp != user.Otp)
+                            throw new Exception("OTP missmatch");
+
+                        resp.IsValid = true;
+
+                        if (!this.Authenticated)
+                        {
+                            resp.BToken = user.BearerToken;
+                            resp.RToken = user.RefreshToken;
+                            resp.UserId = user.UserId;
+                            resp.DisplayName = user.FullName;
+                            resp.User = user;
+
+                            //set user dp to authresponse
+                            SetUserDp(resp);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Verify2FA api failed ::" + ex.Message);
+                }
+            }
+
+            return resp;
+        }
+
+        [HttpPost("/api/resend_otp")]
+        public ApiGenerateOTPResponse ResendOTP(string token, string authid)
+        {
+            ApiGenerateOTPResponse resp = new ApiGenerateOTPResponse();
+
+            if (this.IsValidSolution)
+            {
+                bool sso = !string.IsNullOrEmpty(authid);
+                User user = this.Authenticated ? this.LoggedInUser : this.Redis.Get<User>(authid);
+
+                Authenticate2FAResponse response;
+                if (sso)
+                {
+                    response = this.ServiceClient.Post(new ResendOTPSignInRequest
+                    {
+                        Token = token,
+                        SolnId = this.SolutionId,
+                        UserAuthId = user.AuthId
+                    });
+                }
+                else
+                {
                     response = this.ServiceClient.Post(new ResendOTP2FARequest
                     {
                         Token = token
                     });
-
-                    if (response != null && response.AuthStatus)
-                    {
-                        resp.IsValid = true;
-                        resp.StatusCode = HttpStatusCode.OK;
-                    } 
                 }
-                else
+
+                if (response != null && response.AuthStatus)
                 {
-                    resp.IsVerification = true;
-
-                    response = this.ServiceClient.Post(new ValidateOtpRequest
-                    {
-                        Token = token
-                    });
-
-                    if (response != null && response.AuthStatus)
-                    {
-                        if (otp == this.LoggedInUser.Otp)
-                        {
-                            resp.StatusCode = HttpStatusCode.OK;
-                            resp.IsValid = true;
-                        }
-                    }
+                    resp.IsValid = true;
+                    resp.StatusCode = HttpStatusCode.OK;
                 }
             }
             else
-                resp.StatusCode = HttpStatusCode.Unauthorized;
+                resp.StatusCode = HttpStatusCode.NotFound;
 
             return resp;
         }
@@ -663,7 +726,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     DownloadFileResponse dfs = this.FileClient.Get(new DownloadLogoExtRequest
                     {
-                        SolnId = this.SultionId,
+                        SolnId = this.SolutionId,
                     });
                     resp.Logo = dfs.StreamWrapper.Memorystream.ToArray();
                 }
@@ -689,7 +752,7 @@ namespace ExpressBase.Web.Controllers
 
                 try
                 {
-                    Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SultionId));
+                    Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SolutionId));
 
                     if (s_obj == null) throw new Exception("Solution object null");
 
@@ -724,53 +787,12 @@ namespace ExpressBase.Web.Controllers
             return new EbMobileSolutionData { StatusCode = HttpStatusCode.Unauthorized };
         }
 
-        [HttpGet("api/menu")]
-        public GetMobMenuResonse GetAppData4Mob(int locid = 1)
-        {
-            if (ViewBag.IsValid)
-            {
-                return this.ServiceClient.Get(new GetMobMenuRequest
-                {
-                    LocationId = locid
-                });
-            }
-            else
-            {
-                return new GetMobMenuResonse();
-            }
-        }
-
-        [HttpGet("/api/objects_by_app")]
-        public GetMobilePagesResponse GetObjectsByApp(int appid, int locid, bool pull_data = false)
-        {
-            locid = locid == 0 ? 1 : locid;
-            GetMobilePagesResponse _objs = null;
-
-            if (ViewBag.IsValid)
-            {
-                try
-                {
-                    _objs = this.ServiceClient.Get<GetMobilePagesResponse>(new GetMobilePagesRequest
-                    {
-                        LocationId = locid,
-                        AppId = appid,
-                        PullData = pull_data
-                    });
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    _objs = new GetMobilePagesResponse();
-                }
-            }
-            return _objs;
-        }
-
         [HttpPost("/api/push_data")]
         public InsertDataFromWebformResponse WebFormSaveCommonApi([FromForm]Dictionary<string, string> form)
         {
             InsertDataFromWebformResponse Resp = null;
-            if (ViewBag.IsValid)
+
+            if (Authenticated)
             {
                 try
                 {
@@ -809,7 +831,7 @@ namespace ExpressBase.Web.Controllers
             GetMobileVisDataResponse resp = null;
             try
             {
-                if (ViewBag.IsValid)
+                if (Authenticated)
                 {
                     GetMobileVisDataRequest request = new GetMobileVisDataRequest()
                     {
@@ -844,7 +866,7 @@ namespace ExpressBase.Web.Controllers
             GetMobileFormDataResponse resp = null;
             try
             {
-                if (ViewBag.IsValid)
+                if (Authenticated)
                 {
                     resp = this.ServiceClient.Get(new GetMobileFormDataRequest
                     {
@@ -885,7 +907,7 @@ namespace ExpressBase.Web.Controllers
                     this.ServiceClient.RefreshToken = rToken;
                     this.ServiceClient.Headers.Add(CacheConstants.RTOKEN, rToken);
 
-                    EbConnectionFactory connection = new EbConnectionFactory(this.SultionId, this.Redis);
+                    EbConnectionFactory connection = new EbConnectionFactory(this.SolutionId, this.Redis);
                     EbMapConCollection MapCollection = connection.MapConnection;
 
                     ViewBag.Maps = MapCollection;
@@ -916,7 +938,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (ViewBag.IsValid)
+                if (Authenticated)
                 {
                     return this.ServiceClient.Get(new GetMyActionsRequest());
                 }
@@ -934,7 +956,7 @@ namespace ExpressBase.Web.Controllers
         {
             try
             {
-                if (ViewBag.IsValid)
+                if (Authenticated)
                 {
                     return this.ServiceClient.Get(new GetMyActionInfoRequest
                     {
@@ -951,11 +973,6 @@ namespace ExpressBase.Web.Controllers
             }
             return new GetMyActionInfoResponse();
         }
-
-        /// <summary>
-        /// push notification for 
-        /// </summary>
-        /// <returns></returns>
 
         [HttpGet("api/notifications/register")]
         public async Task<IActionResult> CreatePushRegistrationId()

@@ -175,7 +175,7 @@
       "wwwroot/js/vue-select.js",
       "wwwroot/js/Eb_UtilityFuncions.js",
       "wwwroot/js/FormBuilder/vue.js",
-      "wwwroot/js/Eb_select.js",
+      "wwwroot/js/EbControls/EbPowerSelect.js",
       "wwwroot/js/FormBuilder/InitFormControls.js",
       "wwwroot/js/EbServerEvents/eventsource.min.js",
       "wwwroot/js/EbServerEvents/ss-utils.js",

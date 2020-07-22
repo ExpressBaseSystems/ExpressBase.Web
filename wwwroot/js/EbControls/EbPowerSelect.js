@@ -62,6 +62,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.ComboObj = ctrl;
     this.ComboObj.initializer = this;
     this.name = ctrl.EbSid_CtxId;
+    this.containerId =  this.name + "DDdiv";
     this.dsid = ctrl.DataSourceId;
     this.idField = "name";
     if (!(Object.keys(ctrl.ValueMember).includes("name")))//////////////////
@@ -127,7 +128,7 @@ const EbPowerSelect = function (ctrl, options) {
             $('#' + this.name + 'Wraper').on('click', '[class= close]', this.tagCloseBtnHand.bind(this));//remove ids when tagclose button clicked
             this.$searchBoxes.keydown(this.SearchBoxEveHandler.bind(this));//enter-DDenabling & if'' showall, esc arrow space key based DD enabling , backspace del-valueMember updating
             $('#' + this.name + 'Wraper' + " .dropdown.v-select.searchable").dblclick(this.V_showDD.bind(this));//search box double click -DDenabling
-            this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 300)); //delayed search on combo searchbox
+            this.$searchBoxes.keyup(debounce(this.delayedSearchFN.bind(this), 600)); //delayed search on combo searchbox
             this.$searchBoxes.on("focus", this.searchBoxFocus); // onfocus  searchbox
             this.$searchBoxes.on("blur", this.searchBoxBlur); // onblur  searchbox
             this.Values = [];
@@ -520,7 +521,7 @@ const EbPowerSelect = function (ctrl, options) {
             this.IsFromSetValues = false;
         }
         else {// not from setValue (search,...)
-            if (this.datatable === undefined) {
+            if (this.datatable === null) {
                 this.initDataTable();
             }
             //else
@@ -531,7 +532,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.initDataTable = function () {
         let o = {};
-        o.containerId = this.name + "DDdiv";
+        o.containerId = this.containerId;
         o.dsid = this.dsid;
         o.tableId = this.name + "tbl";
         o.showSerialColumn = false;
@@ -1136,7 +1137,7 @@ const EbPowerSelect = function (ctrl, options) {
         setTimeout(function () {
             let contWidth = $('#' + this.name + 'Container').width();
             contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
-            let div_tble = $("#" + o.containerId);
+            let div_tble = $("#" + this.containerId);
             let parentCont = div_tble.parentsUntil('form').last();
             if (parentCont.attr('ctype') === "TabControl") {
                 div_tble.attr('drp_parent', 'TabControl');

@@ -56,7 +56,7 @@
     }
 };
 
-const EbSelect = function (ctrl, options) {
+const EbPowerSelect = function (ctrl, options) {
     //parameters   
     this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;

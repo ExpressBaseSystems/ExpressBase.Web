@@ -384,10 +384,12 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 
 
 		[HttpPost]
-		public BotAuth_andFormList PasswordAuthAndGetformlist(string cid, string appid, string socialId, string uname, string anon_phno, string user_ip, string user_browser, string pass, string wc = TokenConstants.BC)
+		public BotAuth_andFormList PasswordAuthAndGetformlist(string cid, string appid, string socialId, string uname, string anon_phno, string user_ip, string user_browser, string pass, string otptype, string wc = TokenConstants.BC)
 		{
 			HttpClient client = new HttpClient();
 			IFormCollection req = this.HttpContext.Request.Form;
+			string UserName;
+			string Password;
 			//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
 			//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
 			cid = this.GetIsolutionId(cid);		
@@ -396,19 +398,43 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			List<object> returnlist = new List<object>();
 			BotAuth_andFormList Bot_Obj = new BotAuth_andFormList();
 			try {
-				 authResponse = this.AuthClient.Send<MyAuthenticateResponse>(new Authenticate
+				if (req["otptype"] == "signinotp")
+				{
+					BotAuth_andFormList validateResp = ValidateOtp(req["otp"], appid);
+					UserName = req["uname"];
+					Password = "NIL";
+					if (!validateResp.Status)
+					{
+						Bot_Obj.Status = false;
+						Bot_Obj.ErrorMsg = validateResp.ErrorMsg;
+						return Bot_Obj;
+					}
+				}
+				else
+				{
+					UserName = uname;
+					Password = (pass + uname).ToMD5Hash();
+				}
+			
+				Authenticate AuthenticateReq = new Authenticate
 				{
 					provider = CredentialsAuthProvider.Name,
-					UserName = uname,
-					Password = (pass + uname).ToMD5Hash(),
+					UserName = UserName,
+					Password = Password,
 					Meta = new Dictionary<string, string> {
 							{ RoutingConstants.WC, wc },
 							{ TokenConstants.CID, cid },
 							{ TokenConstants.IP, this.RequestSourceIp},
 							{ RoutingConstants.USER_AGENT, this.UserAgent}
 						},
-					RememberMe = true
-				});
+					RememberMe = true,
+
+				};
+				if (req["otptype"] == "signinotp")
+				{
+					AuthenticateReq.Meta.Add("sso", "true");
+				}
+				authResponse = this.AuthClient.Get<MyAuthenticateResponse>(AuthenticateReq);
 			}
 			catch(Exception e)
 			{
@@ -420,7 +446,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			{
 				Console.WriteLine("authResponse != null " + req["uname"]);
 				bool is2fa = false;
-				////if (ViewBag.WhichConsole == "uc")
+				if (wc == "bc" && req["otptype"] != "signinotp")
 				{
 					 Eb_Solution sol_Obj = GetSolutionObject(ViewBag.SolutionId);
 					if (sol_Obj != null && sol_Obj.Is2faEnabled)
@@ -513,9 +539,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			User _u = this.Redis.Get<User>(authid);
 			if (_u != null)
 			{
-				this.ServiceClient.BearerToken = _u.BearerToken;
-				this.ServiceClient.RefreshToken = _u.RefreshToken;
-				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token });
+				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = _u.AuthId });
 				authresp.AuthStatus = response.AuthStatus;
 				authresp.ErrorMessage = response.ErrorMessage;
 				Bot_Obj.Status = authresp.AuthStatus;
@@ -525,34 +549,41 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			{
 				if (otp == _u.Otp)
 				{
-					this.ServiceClient.BearerToken = _u.BearerToken;
-					this.ServiceClient.RefreshToken = _u.RefreshToken;					
-					var Ids = String.Join(",", _u.EbObjectIds);
-					GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
-					List<object> returnlist = new List<object>();
-					List<object> objpro = new List<object>();
-
-					Bot_Obj.BearerToken = (HelperFunction.GetEncriptedString_Aes(_u.BearerToken + CharConstants.DOT + _u.UserId.ToString()));
-					Bot_Obj.RefreshToken = _u.RefreshToken;
-					Bot_Obj.BotFormDict = formlist.BotForms;
-					if (_u.UserId == 1)
-						_u.Preference.Locale = "en-IN";
-					Bot_Obj.User = (JsonConvert.SerializeObject(_u));
-					Bot_Obj.BotFormNames = formlist.BotFormsDisp;
-
-					CookieOptions options = new CookieOptions();
-					Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (_u.BearerToken + CharConstants.DOT + _u.UserId.ToString()), options);
-					Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, _u.RefreshToken, options);
-
-					foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
+					IFormCollection req = this.HttpContext.Request.Form;
+					if (req["otptype"] == "signinotp")
 					{
-						string rfid = rfidlst.Key;
-						EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
-						objpro.Add(BtFrm?.IconPicker);
+						authresp.AuthStatus = true;
 					}
-					Bot_Obj.BotFormIcons = objpro;
-					Bot_Obj.Status = true;
-					return Bot_Obj;
+					else
+					{
+						this.ServiceClient.BearerToken = _u.BearerToken;
+						this.ServiceClient.RefreshToken = _u.RefreshToken;
+						var Ids = String.Join(",", _u.EbObjectIds);
+						GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
+						List<object> returnlist = new List<object>();
+						List<object> objpro = new List<object>();
+
+						Bot_Obj.BearerToken = (HelperFunction.GetEncriptedString_Aes(_u.BearerToken + CharConstants.DOT + _u.UserId.ToString()));
+						Bot_Obj.RefreshToken = _u.RefreshToken;
+						Bot_Obj.BotFormDict = formlist.BotForms;
+						if (_u.UserId == 1)
+							_u.Preference.Locale = "en-IN";
+						Bot_Obj.User = (JsonConvert.SerializeObject(_u));
+						Bot_Obj.BotFormNames = formlist.BotFormsDisp;
+
+						CookieOptions options = new CookieOptions();
+						Response.Cookies.Append(RoutingConstants.BOT_BEARER_TOKEN, (_u.BearerToken + CharConstants.DOT + _u.UserId.ToString()), options);
+						Response.Cookies.Append(RoutingConstants.BOT_REFRESH_TOKEN, _u.RefreshToken, options);
+
+						foreach (KeyValuePair<string, string> rfidlst in formlist.BotFormsDisp)
+						{
+							string rfid = rfidlst.Key;
+							EbBotForm BtFrm = this.Redis.Get<EbBotForm>(rfid);
+							objpro.Add(BtFrm?.IconPicker);
+						}
+						Bot_Obj.BotFormIcons = objpro;
+						Bot_Obj.Status = true;
+					}
 					
 				}
 				else
@@ -565,20 +596,62 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			return Bot_Obj;
 		}
 
-		public EbAuthResponse ResendOtp()
+		public EbAuthResponse ResendOtp(string otptype)
 		{
 			EbAuthResponse authresp = new EbAuthResponse();
 			string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
 			string authid = Request.Cookies[TokenConstants.USERAUTHID];
 			User _u = this.Redis.Get<User>(authid);
-			this.ServiceClient.BearerToken = _u.BearerToken;
-			this.ServiceClient.RefreshToken = _u.RefreshToken;
-			Authenticate2FAResponse response = this.ServiceClient.Post(new ResendOTP2FARequest { Token = token });
+			IFormCollection req = this.HttpContext.Request.Form;
+			Authenticate2FAResponse response = null;
+			if (req["otptype"] == "signinotp")
+			{
+				response = this.ServiceClient.Post(new ResendOTPSignInRequest { Token = token, SolnId = ViewBag.SolutionId, UserAuthId = authid });
+			}
+			else
+			{
+				this.ServiceClient.BearerToken = _u.BearerToken;
+				this.ServiceClient.RefreshToken = _u.RefreshToken;
+				response = this.ServiceClient.Post(new ResendOTP2FARequest { Token = token });
+			}
 			authresp.AuthStatus = response.AuthStatus;
 			authresp.ErrorMessage = response.ErrorMessage;
 			authresp.Is2fa = response.Is2fa;
 			authresp.OtpTo = response.OtpTo;
 			return authresp;
+		}
+
+		public EbAuthResponse SendSignInOtp()
+		{
+			EbAuthResponse authresp = new EbAuthResponse { };
+			IFormCollection req = this.HttpContext.Request.Form;
+			string tenantid = ViewBag.SolutionId;
+			string uname = req["uname"];
+			bool is_email = Convert.ToBoolean(req["is_email"]);
+			bool is_mobile = Convert.ToBoolean(req["is_mobile"]);
+			Authenticate2FAResponse resp = this.ServiceClient.Post<Authenticate2FAResponse>(new SendSignInOtpRequest
+			{
+				UName = uname,
+				SignInOtpType = (is_email) ? SignInOtpType.Email : SignInOtpType.Sms,
+				SolutionId = tenantid,
+				WhichConsole= TokenConstants.BC
+			});
+			authresp.AuthStatus = resp.AuthStatus;
+			if (authresp.AuthStatus)
+			{
+				authresp.Is2fa = resp.Is2fa;
+				authresp.OtpTo = resp.OtpTo;
+				CookieOptions options = new CookieOptions();
+				Response.Cookies.Append(RoutingConstants.TWOFATOKEN, resp.TwoFAToken, options);
+				Response.Cookies.Append(TokenConstants.USERAUTHID, resp.UserAuthId, options);
+			}
+			else
+			{
+				authresp.ErrorMessage = resp.ErrorMessage;
+			}
+
+			return authresp;
+
 		}
 		public class BotAuth_andFormList
 		{

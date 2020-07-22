@@ -220,8 +220,8 @@
             ebcontext._formLastResponse = dataModel;
             return;
         }
-        for (let DGName in dObj.DGBuilderObjs) {
-            let DGB = dObj.DGBuilderObjs[DGName];
+        for (let EbSid_CtxId in dObj.DGBuilderObjs) {
+            let DGB = dObj.DGBuilderObjs[EbSid_CtxId];
             //if (!this.DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {
             //    this.DataMODEL[DGB.ctrl.TableName] = [];
             //    DGB.DataMODEL = this.DataMODEL[DGB.ctrl.TableName];
@@ -247,7 +247,7 @@
         //dObj.FRC.setDefaultvalsNC(dObj.flatControls);// order 4
 
         for (let i = 0; i < dObj.DGs.length; i++) {
-            dObj.DGBuilderObjs[dObj.DGs[i].Name] = this.initControls.init(dObj.DGs[i], {
+            dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId] = this.initControls.init(dObj.DGs[i], {
                 Mode: this.mode,
                 formObject: dObj.ctrlObj.formObject,
                 userObject: this.userObject,
@@ -257,9 +257,9 @@
                 formRenderer: this.formRenderer,
                 isDynamic: true
             });
-            //dObj.DGBuilderObjs[dObj.DGs[i].Name].MultipleTables = [];
+            //dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].MultipleTables = [];
 
-            //dObj.DGBuilderObjs[dObj.DGs[i].Name].refreshDG([{Name: 'actype', Value: 'Dr'}],'actype');//test
+            //dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].refreshDG([{Name: 'actype', Value: 'Dr'}],'actype');//test
         }
 
         dObj.FRC.fireInitOnchangeNC(dObj.flatControls);
@@ -319,7 +319,7 @@
     //        for (let i = 0; i < dObj.DGs.length; i++) {
     //            if (!mt.hasOwnProperty(dObj.DGs[i].TableName))
     //                mt[dObj.DGs[i].TableName] = [];
-    //            mt[dObj.DGs[i].TableName] = mt[dObj.DGs[i].TableName].concat(dObj.DGBuilderObjs[dObj.DGs[i].Name].DataMODEL);
+    //            mt[dObj.DGs[i].TableName] = mt[dObj.DGs[i].TableName].concat(dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].DataMODEL);
     //        }
     //    }.bind(this));
     //    return mt;
@@ -330,8 +330,8 @@
             for (let i = 0; i < dObj.flatControls.length; i++)
                 dObj.flatControls[i].disable();
             for (let i = 0; i < dObj.DGs.length; i++) {
-                dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToViewMode();
-                //dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
+                dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].SwitchToViewMode();
+                //dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].clearDG();
                 //dObj._DataLoaded = true;
             }
         }.bind(this));
@@ -346,8 +346,8 @@
                     dObj.flatControls[i].enable();
             }
             for (let i = 0; i < dObj.DGs.length; i++) {
-                dObj.DGBuilderObjs[dObj.DGs[i].Name].SwitchToEditMode();
-                //dObj.DGBuilderObjs[dObj.DGs[i].Name].clearDG();
+                dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].SwitchToEditMode();
+                //dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].clearDG();
                 //dObj._DataLoaded = true;
             }
         }.bind(this));
@@ -365,7 +365,7 @@
 
         $.each(this.dynamicTabPanes, function (k, dObj) {
             for (let i = 0; i < dObj.DGs.length; i++) {
-                let DgModel = dObj.DGBuilderObjs[dObj.DGs[i].Name].DataMODEL;
+                let DgModel = dObj.DGBuilderObjs[dObj.DGs[i].EbSid_CtxId].DataMODEL;
                 for (let j = 0; j < DgModel.length; j++) {
                     DgModel[j].pId = k;
                 }

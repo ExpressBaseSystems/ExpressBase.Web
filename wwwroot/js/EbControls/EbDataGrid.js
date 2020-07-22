@@ -618,7 +618,7 @@
         let tr = this.getNewTrHTML(rowId, isAdded);
         let $tr = $(tr).hide();
         this.addRowDataModel(rowId, this.objectMODEL[rowId]);
-        if (insertIdx) {
+        if (insertIdx !== undefined) {
             this.insertRowAt(insertIdx, $tr);
         } else {
             if (!this.ctrl.AscendingOrder) {
@@ -1766,74 +1766,7 @@
         $(`#${this.ctrl.EbSid}Wraper .DgHead_Hscroll`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .Dg_footer`).on("scroll", this.dg_HScroll);
         $(`#${this.ctrl.EbSid}Wraper .dg-body-vscroll`).on("scroll", this.dg_HScroll);
-        $.contextMenu(this.CtxSettingsObj);
     };
-
-    this.ctxBuildFn = function ($trigger, e) {
-        return {
-            items: {
-                "deleteRow": {
-                    name: "Delete row",
-                    icon: "fa-trash",
-                    callback: this.del
-                },
-                "insertRowAbove": {
-                    name: "Insert row above",
-                    icon: "fa-angle-up",
-                    callback: this.insertRowAbove
-
-                },
-                "insertRowBelow": {
-                    name: "Insert row below",
-                    icon: "fa-angle-down",
-                    callback: this.insertRowBelow,
-                    //disabled: this.insertRowBelowDisableFn
-                }
-            }
-        };
-    }.bind(this);
-
-    this.CtxSettingsObj = {
-        selector: '[eb-form="true"][mode="edit"] .dgtr .tdtxt,[eb-form="true"][mode="new"] .dgtr > td',
-        autoHide: true,
-        build: this.ctxBuildFn.bind(this)
-    };
-
-    this.insertRowBelowDisableFn = function (key, opt) {
-        return $(`#${this.TableId}>tbody tr[is-editing="true"]`).length === 1;
-    }.bind(this);
-
-    this.insertRowBelow = function (eType, selector, action, originalEvent) {
-        let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
-        if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
-                this.confirmRow();
-            else
-                return;
-        }
-        let $e = selector.$trigger;
-        let $tr = $e.closest("tr");
-        this.addRow({ insertIdx: $tr.index() + 1 });
-    }.bind(this);
-
-    this.insertRowAbove = function (eType, selector, action, originalEvent) {
-        let $activeRow = $(`#${this.TableId} tbody tr[is-editing="true"]`);
-        if ($activeRow.length === 1) {
-            if (this.RowRequired_valid_Check($activeRow.attr("rowid")))
-                this.confirmRow();
-            else
-                return;
-        }
-        let $e = selector.$trigger;
-        let $tr = $e.closest("tr");
-        this.addRow({ insertIdx: $tr.index() });
-    }.bind(this);
-
-    this.del = function (eType, selector, action, originalEvent) {
-        let $e = selector.$trigger;
-        let $tr = $e.closest("tr");
-        $tr.find(".del-row").trigger("click");
-    }.bind(this);
 
     this.dg_HScroll = function (e) {
         let $e = $(event.target);

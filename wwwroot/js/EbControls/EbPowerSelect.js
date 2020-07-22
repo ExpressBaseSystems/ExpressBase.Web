@@ -111,7 +111,6 @@ const EbPowerSelect = function (ctrl, options) {
     this.Msearch_colName = '';
     this.cols = [];
     this.filterArray = [];
-    this.setValueflag = false;
     // functions
 
     //init() for event binding....
@@ -268,26 +267,32 @@ const EbPowerSelect = function (ctrl, options) {
                 return;
             let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
-            this.InitDT();
             this.V_showDD();
         }
         else {
-            $filterInp.val($e.val());
-            this.Vobj.DDstate = true;
-            EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
-            if (this.ComboObj.MinSeachLength > searchVal.length)
-                return;
+            if (this.ComboObj.IsPreload) {
+                $filterInp.val($e.val());
+                this.Vobj.DDstate = true;
+                EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
+                if (this.ComboObj.MinSeachLength > searchVal.length)
+                    return;
 
-            if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
+                if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
+
+                    if (this.datatable) {
+                        this.datatable.Api.column(mapedField + ":name").search("").draw();
+                    }
+                    return;
+                }
 
                 if (this.datatable) {
-                    this.datatable.Api.column(mapedField + ":name").search("").draw();
+                    this.datatable.Api.column(mapedField + ":name").search(searchVal).draw();
                 }
-                return;
             }
-
-            if (this.datatable) {
-                this.datatable.Api.column(mapedField + ":name").search(searchVal).draw();
+            else {
+                //let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
+                //this.filterArray.push(filterObj);
+                //this.getData();
             }
         }
     };
@@ -297,32 +302,25 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
-        this.setValueflag = true;
         this.clearValues();
         if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
-        if (this.datatable) {
-            //this.datatable.columnSearch = [];
-            ////$.each(this.setvaluesColl, function (i, val) {
-            //this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
-            ////}.bind(this));
-            //this.datatable.Api.draw(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
-            this.initComplete4SetVal(callBFn.bind(this, this.ComboObj), StrValues);
-        }
-        else {
-            this.filterArray = [];
-            //$.each(this.setvaluesColl, function (i, val) {
-            //this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
-            //}.bind(this));
-            if (this.setvaluesColl.length > 0) {
-                this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues);
-                this.InitDT();
-                this.V_showDD();
+        if (this.ComboObj.IsPreload) { // if preLoad
+            if (this.data === undefined) {// if preLoad No data
+                this.IsFromSetValues = true;
+                this.getData();
             }
+            else
+                this.setValues2PSFromData();
         }
-
+        else {// get data with particular rows
+            this.filterArray.clear();
+            this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
+            this.IsFromSetValues = true;
+            this.getData();
+        }
     }.bind(this);
 
     this.getValues = function () {
@@ -425,11 +423,14 @@ const EbPowerSelect = function (ctrl, options) {
             url: url,
             type: 'POST',
             data: params,
-            success: this.receiveAjaxData.bind(this),
+            success: this.getDataSuccess.bind(this),
         });
     };
     this.ajaxData = function () {
-        var dq = new Object();
+        this.EbObject = new EbObjects["EbTableVisualization"]("Container");
+        this.EbObject.DataSourceRefId = this.dsid;
+        this.EbObject.Columns.$values = this.ComboObj.Columns.$values;
+        let dq = new Object();
         dq.RefId = this.dsid;
         this.filterValues = this.getFilterValuesFn();
         this.AddUserAndLcation();
@@ -438,7 +439,12 @@ const EbPowerSelect = function (ctrl, options) {
         dq.Length = 5000;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.name + "tbl";
-        dq.TFilters = [];
+
+        if (this.ComboObj.IsPreload)
+            dq.TFilters = [];
+        else
+            dq.TFilters = this.filterArray;
+
         dq.Ispaging = true;
         return dq;
     };
@@ -448,7 +454,82 @@ const EbPowerSelect = function (ctrl, options) {
         this.filterValues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     };
 
-    this.receiveAjaxData = function (result) {
+    this.getColumnIdx = function (arr, colName) {
+        return arr.filter(o => o.name === colName)[0].data;
+    };
+
+    this.setValues2PSFromData = function () {
+        let VMs = this.Vobj.valueMembers || [];
+        let DMs = this.Vobj.displayMembers || [];
+        let columnVals = this.columnVals || {};
+
+        if (this.setvaluesColl.length > 0)// clear if already values there
+            this.clearValues();
+
+        let valMsArr = this.setvaluesColl;
+        let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
+
+        for (let i = 0; i < valMsArr.length; i++) {
+            let vm = valMsArr[i].trim();
+            VMs.push(vm);
+
+            let RowDataARR = this.formattedData.filter(obj => obj[VMidx] === vm);
+            if (RowDataARR.length === 0) {
+                console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
+                return;
+            }
+            let RowData = RowDataARR[0];
+
+            for (let j = 0; j < this.dmNames.length; j++) {
+                let dmName = this.dmNames[j];
+                if (!DMs[dmName])
+                    DMs[dmName] = []; // dg edit mode call
+                let DMidx = this.getColumnIdx(this.ComboObj.Columns.$values, dmName);
+                DMvalue = RowData[DMidx];
+                DMs[dmName].push(DMvalue);
+            }
+        }
+
+
+        //if (this.initializer.datatable === null) {
+        //    let colNames = Object.keys(this.DataVals.R);
+        //    for (let i = 0; i < valMsArr.length; i++) {
+        //        for (let j = 0; j < colNames.length; j++) {
+        //            let colName = colNames[j];
+        //            let val = this.DataVals.R[colName][i];
+        //            if (columnVals[colName])
+        //                columnVals[colName].push(val);
+        //            else
+        //                console.warn("Not found colName: " + colName);
+        //        }
+        //    }
+        //}
+
+    };
+
+    this.getDataSuccess = function (result) {
+        this.data = result;
+        this.unformattedData = result.data;
+        this.formattedData = result.formattedData;
+
+
+        if (this.IsFromSetValues) {// from set value
+            if (this.setvaluesColl && this.setvaluesColl.length > 0) {
+                this.setValues2PSFromData();
+            }
+            this.IsFromSetValues = false;
+        }
+        else {// not from setValue (search,...)
+            if (this.datatable === undefined) {
+                this.initDataTable();
+            }
+            //else
+            //    this.datatable.redraw();
+
+        }
+    };
+
+    this.initDataTable = function () {
         let o = {};
         o.containerId = this.name + "DDdiv";
         o.dsid = this.dsid;
@@ -478,42 +559,11 @@ const EbPowerSelect = function (ctrl, options) {
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
         o.searchCallBack = this.searchCallBack;
-        o.data = result;
+        o.data = this.data;
         this.datatable = new EbBasicDataTable(o);
-        if (!this.setValueflag)
+        if (this.ComboObj.IsPreload)
             this.Applyfilter();
-        this.setValueflag = false;
-
-        setTimeout(function () {
-            let contWidth = $('#' + this.name + 'Container').width();
-            contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
-            let div_tble = $("#" + o.containerId);
-            let parentCont = div_tble.parentsUntil('form').last();
-            if (parentCont.attr('ctype') === "TabControl") {
-                div_tble.attr('drp_parent', 'TabControl');
-            }
-            let tbl_cod = div_tble.offset();
-            let tbl_height = div_tble.height();
-            let div_detach = div_tble.detach();
-            div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
-            let xtra_wdth = tbl_cod.left;
-            let brow_wdth = $(window).width();
-            if ((contWidth + tbl_cod.left) > brow_wdth)
-                xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
-            let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
-
-            let top = tbl_cod.top;
-            let scrollTop = $form_div.scrollTop();
-            let scrollH = $form_div.prop("scrollHeight");
-            if (scrollTop + tbl_cod.top + tbl_height > scrollH && scrollTop + tbl_cod.top - 60 > tbl_height) {
-                top = tbl_cod.top - tbl_height - 60;
-                div_tble.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
-                if (ebcontext.renderContext !== "WebForm")
-                    top += 38;
-            }
-            div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
-            scrollDropDown();
-        }.bind(this), 30);
+        this.appendDD2Body(); // vrgs
     };
 
     this.Applyfilter = function () {
@@ -522,7 +572,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     // init datatable
-    this.InitDT = function () {
+    this.DDopenInitDT = function () {
         let searchVal = this.getMaxLenVal();
         let _name = this.ComboObj.EbSid_CtxId;
         if (this.ComboObj.MinSeachLength > searchVal.length) {
@@ -532,9 +582,6 @@ const EbPowerSelect = function (ctrl, options) {
         }
 
         this.IsDatatableInit = true;
-        this.EbObject = new EbObjects["EbTableVisualization"]("Container");
-        this.EbObject.DataSourceRefId = this.dsid;
-        this.EbObject.Columns.$values = this.ComboObj.Columns.$values;
         this.getData();
     };
 
@@ -650,7 +697,8 @@ const EbPowerSelect = function (ctrl, options) {
                 cellData = this.datatable.data.filter(ro => ro[vmindex] === val)[0][idx];// unformatted data for date or integer
             else
                 cellData = this.datatable.Api.row($rowEl).data()[idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
-
+            if (type === 11 && cellData === null)///////////
+                cellData = "0";
             let fval = EbConvertValue(cellData, type);
             this.columnVals[name].push(fval);
         }.bind(this));
@@ -860,7 +908,7 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.V_toggleDD = function (e) {
         if (!this.IsDatatableInit)
-            this.InitDT();
+            this.DDopenInitDT();
         if (this.Vobj.DDstate)
             this.V_hideDD();
         else {
@@ -900,17 +948,11 @@ const EbPowerSelect = function (ctrl, options) {
             this.hideCtrlMsg();
 
         this.Vobj.DDstate = true;
+
         if (!this.IsDatatableInit)
-            this.InitDT();
+            this.DDopenInitDT();
         else {
             EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
-            //if ($(e.target).val() !== "") {
-            //    this.delayedSearchFN(e);
-            //}
-            //else {
-            //    this.datatable.columnSearch = [];
-            //    this.datatable.Api.ajax.reload();
-            //}
             setTimeout(function () {
                 this.RemoveRowFocusStyle();
                 let $cell = $(this.DTSelector + ' tbody tr:eq(0) td:eq(0)');
@@ -1088,6 +1130,39 @@ const EbPowerSelect = function (ctrl, options) {
         }
 
         return newDMs;
+    };
+
+    this.appendDD2Body = function () {
+        setTimeout(function () {
+            let contWidth = $('#' + this.name + 'Container').width();
+            contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
+            let div_tble = $("#" + o.containerId);
+            let parentCont = div_tble.parentsUntil('form').last();
+            if (parentCont.attr('ctype') === "TabControl") {
+                div_tble.attr('drp_parent', 'TabControl');
+            }
+            let tbl_cod = div_tble.offset();
+            let tbl_height = div_tble.height();
+            let div_detach = div_tble.detach();
+            div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
+            let xtra_wdth = tbl_cod.left;
+            let brow_wdth = $(window).width();
+            if ((contWidth + tbl_cod.left) > brow_wdth)
+                xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
+            let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+
+            let top = tbl_cod.top;
+            let scrollTop = $form_div.scrollTop();
+            let scrollH = $form_div.prop("scrollHeight");
+            if (scrollTop + tbl_cod.top + tbl_height > scrollH && scrollTop + tbl_cod.top - 60 > tbl_height) {
+                top = tbl_cod.top - tbl_height - 60;
+                div_tble.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
+                if (ebcontext.renderContext !== "WebForm")
+                    top += 38;
+            }
+            div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
+            scrollDropDown();
+        }.bind(this), 30);
     };
 
     this.Renderselect();

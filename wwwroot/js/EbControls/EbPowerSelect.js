@@ -1,4 +1,62 @@
-﻿const EbPowerSelect = function (ctrl, options) {
+﻿const EbTableVisualization = function EbTableVisualization(id, jsonObj) {
+    this.$type = 'ExpressBase.Objects.EbTableVisualization, ExpressBase.Objects';
+    this.EbSid = id;
+    this.RowGroupCollection = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.RowGroupParent,  ExpressBase.Objects]], System.Private.CoreLib", "$values": [] };
+    this.CurrentRowGroup = { "$type": "ExpressBase.Objects.RowGroupParent, ExpressBase.Objects", "Name": null, "DisplayName": null, "RowGrouping": { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVBaseColumn, ExpressBase.Objects]], System.Private.CoreLib", "$values": [] }, "OrderBy": { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVBaseColumn, ExpressBase.Objects]], System.Private.CoreLib", "$values": [] } };
+    this.LeftFixedColumn = 0; this.RightFixedColumn = 0; this.PageLength = 100; this.DisableRowGrouping = false; this.SecondaryTableMapField = '';
+    this.DisableCopy = false; this.AllowMultilineHeader = false;
+    this.OrderBy = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVBaseColumn,  ExpressBase.Objects]], System.Private.CoreLib", "$values": [] };
+    this.FormLinks = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.FormLink,  ExpressBase.Objects]], System.Private.CoreLib", "$values": [] };
+    this.RowHeight = 15; this.AllowLocalSearch = false; this.BackColor = '#FFFFFF'; this.IsGradient = true; this.GradientColor1 = '#3d3d5a'; this.GradientColor2 = '#3b7273';
+    this.Direction = 0; this.BorderColor = '#3d3d5a'; this.BorderRadius = 4; this.FontColor = '#FFFFFF'; this.LinkColor = '#26b3f7'; this.RefId = ''; this.DisplayName = '';
+    this.Name = id; this.Description = ''; this.VersionNumber = ''; this.Status = ''; this.DataSourceRefId = ''; this.IsDataFromApi = false; this.Url = ''; this.Method = 0;
+    this.Headers = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.ApiRequestHeader,  ExpressBase.Objects]], System.Private.CoreLib", "$values": [] };
+    this.Parameters = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.ApiRequestParam,  ExpressBase.Objects]], System.Private.CoreLib", "$values": [] };
+    this.FilterDialogRefId = ''; this.Sql = ''; this.EbSid = id; this.Columns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] };
+    this.DSColumns = { "$type": "ExpressBase.Objects.Objects.DVRelated.DVColumnCollection, ExpressBase.Objects", "$values": [] };
+    this.ColumnsCollection = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVColumnCollection,  ExpressBase.Objects]], System.Private.CoreLib", "$values": [] };
+    this.ParamsList = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Common.Data.Param,  ExpressBase.Common]], System.Private.CoreLib", "$values": [] };
+    this.NotVisibleColumns = { "$type": "System.Collections.Generic.List`1[[ExpressBase.Objects.Objects.DVRelated.DVBaseColumn,  ExpressBase.Objects]], System.Private.CoreLib", "$values": [] };
+    this.data = { "$type": "System.Object, System.Private.CoreLib" }; this.Pippedfrom = ''; this.AutoGen = false; this.IsPaging = true;
+    this.EbSid_CtxId = id;
+
+
+    this.$Control = $("<div class='btn btn-default'> GetDesignHtml() not implemented </div>".replace(/@id/g, this.EbSid));
+    this.BareControlHtml = `<div class='btn btn-default'> GetBareHtml() not implemented </div>`.replace(/@id/g, this.EbSid);
+    this.DesignHtml = "<div class='btn btn-default'> GetDesignHtml() not implemented </div>";
+    var MyName = this.constructor.name;
+    this.RenderMe = function () {
+        var NewHtml = this.$BareControl.outerHTML(), me = this, metas = AllMetas[MyName];
+        $.each(metas, function (i, meta) {
+            var name = meta.name;
+            if (meta.IsUIproperty) {
+                NewHtml = NewHtml.replace('@' + name + ' ', me[name]);
+            }
+        });
+        if (!this.IsContainer)
+            $('#' + id).html($(NewHtml).html());
+    };
+    if (jsonObj) {
+        jsonObj.RenderMe = this.RenderMe;
+        jsonObj.Html = this.Html;
+        jsonObj.Init = this.Init;
+        $.extend(this, jsonObj);
+        //_.mergeWith(
+        // {}, this, jsonObj,
+        //  (a, b) => b === null ? a : undefined
+        //)
+        if (jsonObj.IsContainer)
+            this.Controls = new EbControlCollection({});
+        //if(this.Init)
+        //    jsonObj.Init(id);
+    }
+    else {
+        if (this.Init)
+            this.Init(id);
+    }
+};
+
+const EbSelect = function (ctrl, options) {
     //parameters   
     this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;
@@ -53,6 +111,7 @@
     this.Msearch_colName = '';
     this.cols = [];
     this.filterArray = [];
+    this.setValueflag = false;
     // functions
 
     //init() for event binding....
@@ -222,16 +281,12 @@
             if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
 
                 if (this.datatable) {
-                    //this.datatable.columnSearch = [];
                     this.datatable.Api.column(mapedField + ":name").search("").draw();
                 }
                 return;
             }
 
             if (this.datatable) {
-                //this.datatable.columnSearch = [];
-                //this.datatable.columnSearch.push(new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType));
-                //this.datatable.Api.draw();
                 this.datatable.Api.column(mapedField + ":name").search(searchVal).draw();
             }
         }
@@ -242,22 +297,24 @@
     };
 
     this.setValues = function (StrValues, callBFn = this.defaultDTcallBFn) {
+        this.setValueflag = true;
         this.clearValues();
         if (StrValues === "" || StrValues === null)
             return;
         this.setvaluesColl = (StrValues + "").split(",");// cast
 
         if (this.datatable) {
-            this.datatable.columnSearch = [];
-            //$.each(this.setvaluesColl, function (i, val) {
-            this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
-            //}.bind(this));
-            this.datatable.Api.draw(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
+            //this.datatable.columnSearch = [];
+            ////$.each(this.setvaluesColl, function (i, val) {
+            //this.datatable.columnSearch.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
+            ////}.bind(this));
+            //this.datatable.Api.draw(this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues));
+            this.initComplete4SetVal(callBFn.bind(this, this.ComboObj), StrValues);
         }
         else {
             this.filterArray = [];
             //$.each(this.setvaluesColl, function (i, val) {
-            this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
+            //this.filterArray.push(new filter_obj(this.ComboObj.ValueMember.name, "=", this.setvaluesColl.join("|"), this.ComboObj.ValueMember.Type));
             //}.bind(this));
             if (this.setvaluesColl.length > 0) {
                 this.fninitComplete4SetVal = this.initComplete4SetVal.bind(this, callBFn.bind(this, this.ComboObj), StrValues);
@@ -285,6 +342,7 @@
     this.initComplete4SetVal = function (callBFn, StrValues) {
         this.clearValues();
         if (this.setvaluesColl) {
+            this.datatable.Api.column(this.ComboObj.ValueMember.name + ":name").search(this.setvaluesColl.join("|"), true, false).draw();
             if (this.ComboObj.MultiSelect) {
                 $.each(this.setvaluesColl, function (i, val) {
                     let $checkBox = $(this.DTSelector + ` [type=checkbox][value=${parseInt(val)}]`);
@@ -297,7 +355,7 @@
                 }.bind(this));
             }
             else {
-                let $row = $(this.DTSelector + ` tbody tr[role="row"]`);
+                let $row = $(this.DTSelector + ` tbody tr[role="row"][data-uid=${StrValues}]`);
                 if ($row.length === 0) {//
                     console.log(`>> eb message : none available value '${StrValues}' set for  powerSelect '${this.ComboObj.Name}'`);
                     this.$inp.val(StrValues).trigger("change");
@@ -377,10 +435,11 @@
         this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.Start = 0;
-        dq.Length = 100;
+        dq.Length = 5000;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.name + "tbl";
-        dq.TFilters = this.filterArray;
+        dq.TFilters = [];
+        dq.Ispaging = true;
         return dq;
     };
 
@@ -405,7 +464,8 @@
         o.fninitComplete = this.initDTpost.bind(this);
         //o.columnSearch = this.filterArray;
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
-        o.dom = "rt";
+        o.dom = "<p>rt";
+        o.IsPaging = true;
         o.source = "powerselect";
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
@@ -420,6 +480,9 @@
         o.searchCallBack = this.searchCallBack;
         o.data = result;
         this.datatable = new EbBasicDataTable(o);
+        if (!this.setValueflag)
+            this.Applyfilter();
+        this.setValueflag = false;
 
         setTimeout(function () {
             let contWidth = $('#' + this.name + 'Container').width();
@@ -451,6 +514,11 @@
             div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
             scrollDropDown();
         }.bind(this), 30);
+    };
+
+    this.Applyfilter = function () {
+        if (this.filterArray.length > 0)
+            this.datatable.Api.column(this.filterArray[0].Column + ":name").search(this.filterArray[0].Value).draw();
     };
 
     // init datatable
@@ -502,7 +570,9 @@
         let $tr = $(row.nodes());
         //let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        let vmValue = this.datatable.data[$tr.index()][idx];
+        //let rowindex = this.datatable.Api.page.info().start + $tr.index();
+        let rowdata = this.datatable.Api.row($tr).data();
+        let vmValue = rowdata[idx];
         this.$curEventTarget = $tr;
         this.SelectRow(idx, vmValue);
         this.Vobj.hideDD();
@@ -551,7 +621,7 @@
         //if (!this.ComboObj.MultiSelect)
         vmValue = parseInt(vmValue);
 
-        if (this.curAction = "remove") {
+        if (this.curAction == "remove") {
             this.removeColVals(vmValue);
         }
         else {
@@ -574,11 +644,12 @@
             let type = obj.Type;
             let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
             let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
+            let vmindex = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
             let cellData;
             if (type === 5 || type === 11)
-                cellData = this.datatable.data[$rowEl.index()][idx];// unformatted data for date or integer
+                cellData = this.datatable.data.filter(ro => ro[vmindex] === val)[0][idx];// unformatted data for date or integer
             else
-                cellData = this.datatable.formatteddata[$rowEl.index()][idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
+                cellData = this.datatable.Api.row($rowEl).data()[idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
 
             let fval = EbConvertValue(cellData, type);
             this.columnVals[name].push(fval);
@@ -606,7 +677,9 @@
         this.$curEventTarget = $(e.target);
         //let idx = this.datatable.ebSettings.Columns.$values[getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName).data];
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        let vmValue = this.datatable.data[$(e.target).closest("tr").index()][idx];
+        let rowindex = this.datatable.Api.page.info().start + $(e.target).closest("tr").index();
+        let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+        let vmValue = rowdata[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             this.SelectRow(idx, vmValue);
         }
@@ -733,23 +806,12 @@
         if (this.datatable === null) {
             if (this.Vobj.valueMembers.length < this.columnVals[this.dmNames[0]].length)// to manage tag close before dataTable initialization
                 this.reSetColumnvals();
-            if (this.ComboObj.justInit) { // temp from DG.setRowValues_E
-                this.$inp.val(this.Vobj.valueMembers);
-                this.ComboObj.justInit = undefined;
-            }
-            else
-                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            this.$inp.val(this.Vobj.valueMembers).trigger("change");
 
         }
         else {
             this.reSetColumnvals_();
-            if (this.justInit) {
-                this.$inp.val(this.Vobj.valueMembers);
-                //if (this.afterInitComplete4SetVal)
-                this.justInit = undefined;
-            }
-            else
-                this.$inp.val(this.Vobj.valueMembers).trigger("change");
+            this.$inp.val(this.Vobj.valueMembers).trigger("change");
         }
 
 
@@ -947,7 +1009,9 @@
         this.$curEventTarget = $(e.target);
         let $row = $(e.target).closest('tr');
         //let datas = $(this.DTSelector).DataTable().row($row).data();
-        let datas = this.datatable.data[$row.index()];
+        let rowindex = this.datatable.Api.page.info().start + $row.index();
+        //let datas = this.datatable.data[rowindex];
+        let datas = this.datatable.Api.row($row).data();
 
 
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {

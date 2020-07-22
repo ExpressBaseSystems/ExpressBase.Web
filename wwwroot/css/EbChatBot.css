@@ -1228,14 +1228,14 @@ border-radius: 4px;
     width: 100% !important;
 }
 
-.bot_Login_input .username_wrp, .bot_Login_input .pswrd_wrp, .bot_Login_input .phoneIcon_wrp, .bot_Login_input .emailIcon_wrp {
+.bot_Login_input .username_wrp, .otp_Login_input .username_wrp, .bot_Login_input .pswrd_wrp, .bot_Login_input .phoneIcon_wrp, .bot_Login_input .emailIcon_wrp {
     position: relative;
     display: flex;
     align-items: center;
     color: var(--botThemeColor);
 }
 
-    .bot_Login_input .username_wrp:before {
+    .bot_Login_input .username_wrp:before, .otp_Login_input .username_wrp:before {
         font-family: FontAwesome;
         content: "\f007";
         position: absolute;
@@ -1263,11 +1263,10 @@ border-radius: 4px;
         margin-left: 15px;
     }
 
-.bot_Login_input input {
+.bot_Login_input input, .otp_Login_input input {
     margin: 10px 0px;
     padding-left: 40px;
 }
-
 
 .otp_cont {
     padding: 10px;

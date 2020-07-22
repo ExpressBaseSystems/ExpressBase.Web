@@ -62,7 +62,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.ComboObj = ctrl;
     this.ComboObj.initializer = this;
     this.name = ctrl.EbSid_CtxId;
-    this.containerId =  this.name + "DDdiv";
+    this.containerId = this.name + "DDdiv";
     this.dsid = ctrl.DataSourceId;
     this.idField = "name";
     if (!(Object.keys(ctrl.ValueMember).includes("name")))//////////////////
@@ -473,6 +473,7 @@ const EbPowerSelect = function (ctrl, options) {
         for (let i = 0; i < valMsArr.length; i++) {
             let vm = valMsArr[i].trim();
             VMs.push(vm);
+            this.addColVals(vm);
 
             let RowDataARR = this.formattedData.filter(obj => obj[VMidx] === vm);
             if (RowDataARR.length === 0) {
@@ -507,6 +508,61 @@ const EbPowerSelect = function (ctrl, options) {
         //}
 
     };
+
+    this.addColVals = function (val = this.lastAddedOrDeletedVal) {
+        let VMidx = this.ComboObj.Columns.$values.filter(o => o.name === this.vmName)[0].data;
+
+        let RowDataARR = this.formattedData.filter(obj => obj[VMidx] === val);
+        let RowUnformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === val);
+
+        if (RowDataARR.length === 0) {
+            console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
+            return;
+        }
+        let RowData = RowDataARR[0];
+        let RowUnformattedData = RowUnformattedDataARR[0];
+
+
+        for (let j = 0; j < this.ColNames.length; j++) {
+            let colName = this.ColNames[j];
+            let obj = getObjByval(this.ComboObj.Columns.$values, "name", colName);
+            let type = obj.Type;
+            if (!this.columnVals[colName])
+                this.columnVals[colName] = []; // dg edit mode call
+            let ColIdx = this.getColumnIdx(this.ComboObj.Columns.$values, colName);
+
+            let cellData;
+            if (type === 5 || type === 11)
+                cellData = RowData[ColIdx];// unformatted data for date or integer
+            else
+                cellData = RowUnformattedData[ColIdx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
+            if (type === 11 && cellData === null)///////////
+                cellData = "0";
+            let fval = EbConvertValue(cellData, type);
+            this.columnVals[colName].push(fval);
+        }
+    };
+
+
+
+    //this.addColVals = function (val = this.lastAddedOrDeletedVal) {
+    //    $.each(this.ColNames, function (i, name) {
+    //        let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
+    //        let type = obj.Type;
+    //        let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
+    //        let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
+    //        let vmindex = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
+    //        let cellData;
+    //        if (type === 5 || type === 11)
+    //            cellData = this.datatable.data.filter(ro => ro[vmindex] === val)[0][idx];// unformatted data for date or integer
+    //        else
+    //            cellData = this.datatable.Api.row($rowEl).data()[idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
+    //        if (type === 11 && cellData === null)///////////
+    //            cellData = "0";
+    //        let fval = EbConvertValue(cellData, type);
+    //        this.columnVals[name].push(fval);
+    //    }.bind(this));
+    //};
 
     this.getDataSuccess = function (result) {
         this.data = result;
@@ -684,25 +740,6 @@ const EbPowerSelect = function (ctrl, options) {
         for (let i = 0; i < this.Vobj.valueMembers.length; i++) {
             this.addColVals(this.Vobj.valueMembers[i]);
         }
-    };
-
-    this.addColVals = function (val = this.lastAddedOrDeletedVal) {
-        $.each(this.ColNames, function (i, name) {
-            let obj = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name);
-            let type = obj.Type;
-            let $rowEl = $(`${this.DT_tbodySelector} [data-uid=${val}]`);
-            let idx = getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data;
-            let vmindex = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-            let cellData;
-            if (type === 5 || type === 11)
-                cellData = this.datatable.data.filter(ro => ro[vmindex] === val)[0][idx];// unformatted data for date or integer
-            else
-                cellData = this.datatable.Api.row($rowEl).data()[idx];//this.datatable.Api.row($rowEl).data()[idx];//   formatted data
-            if (type === 11 && cellData === null)///////////
-                cellData = "0";
-            let fval = EbConvertValue(cellData, type);
-            this.columnVals[name].push(fval);
-        }.bind(this));
     };
 
     this.removeColVals = function (vmValue) {

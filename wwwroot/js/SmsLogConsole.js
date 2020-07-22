@@ -2,7 +2,7 @@
     this.AllObj = options.AllObj;
 
     this.DrawSmsTemplateSelectBox = function () {
-        let $Opt = $("<select class='form-control' id='select-sms-template'> </select>");
+        let $Opt = $("<select class='form-control' id='select-sms-template'><option value = ''> Select Template </option></select>");
         $.each(this.AllObj, function (key, value) {
             if (ebcontext.user.Roles.includes("SolutionOwner")) {
                 $Opt.append(`<option value=${value[0].RefId}> ${value[0].DisplayName} </option>`);
@@ -57,10 +57,8 @@
     this.SmsLogRetry = function (e) {
         let colindex = this.dataTable.columns.filter(dd => dd.name === "id")[0].data;
         let rowindex = $(e.target).closest("tr").index();
-        let hhhh = this.dataTable.unformatedData[rowindex][colindex];
-        alert(hhhh);
-        let Refid = $("#select-sms-template").children("option:selected").val();
-        let id = e.target.getAttribute("id");
+        let id = this.dataTable.unformatedData[rowindex][colindex];        
+        let Refid = $("#select-sms-template").children("option:selected").val();        
         if (id) {
             $.ajax(
                 {
@@ -72,6 +70,7 @@
                     },
                     success: function (result) {
                         $("#show-sms-logs").click();
+                        alert("Resending SMS...");
                     }
                 });
         }

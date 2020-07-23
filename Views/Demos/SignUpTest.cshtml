@@ -67,32 +67,43 @@
             });
         }
 
+        var tok = null;
+        var auth = null;
+        var otp = null;
+
         function testAjax() {
             $.ajax({
-                url: "/api/notifications/register",
-                type: "GET",
+                url: "/api/auth_sso",
+                type: "POST",
                 cache: false,
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("bToken", getTok());
-                    xhr.setRequestHeader("rToken", getrToken());
+                data: {
+                    username: "9747063404",
+                    type: 1
                 }
             }).done(function (data) {
-
+                tok = data.twoFAToken;
+                auth = data.userAuthId;
             });
+        }
+
+        function setotp(o) {
+            otp = o;
         }
 
         function testAjax1() {
             $.ajax({
-                url: "/api/get_solution_data",
-                type: "GET",
+                url: "/api/verify_otp",
+                type: "POST",
                 cache: false,
                 data: {
-                    export: false,
-                },
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader("bToken", getTok());
-                    xhr.setRequestHeader("rToken", getrToken());
+                    token: tok,
+                    authid: auth,
+                    otp: otp,
                 }
+                //beforeSend: function (xhr) {
+                //    xhr.setRequestHeader("bToken", getTok());
+                //    xhr.setRequestHeader("rToken", getrToken());
+                //}
             }).done(function (data) {
 
             });

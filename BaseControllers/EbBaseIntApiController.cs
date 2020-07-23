@@ -32,6 +32,8 @@ namespace ExpressBase.Web.BaseControllers
 
         public EbBaseIntApiController(IServiceClient _ssclient, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_ssclient, _redis, _sfc) { }
 
+        public EbBaseIntApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_client, _redis, _sfc, _auth) { }
+
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             string host = context.HttpContext.Request.Host.Host.Replace(RoutingConstants.WWWDOT, string.Empty);

@@ -368,7 +368,8 @@ namespace ExpressBase.Web.Controllers
                     {
                         UName = username,
                         SignInOtpType = type,
-                        SolutionId = this.SolutionId
+                        SolutionId = this.SolutionId,
+                        WhichConsole = TokenConstants.MC
                     });
 
                     response.IsValid = resp == null ? false : resp.AuthStatus;
@@ -378,7 +379,7 @@ namespace ExpressBase.Web.Controllers
                         response.Is2FEnabled = resp.Is2fa;
                         response.TwoFAToAddress = resp.OtpTo;
                         response.TwoFAToken = resp.TwoFAToken;
-                        response.User = new User { AuthId = resp.UserAuthId };
+                        response.UserAuthId = resp.UserAuthId;
                     }
                 }
                 catch (Exception)
@@ -407,8 +408,12 @@ namespace ExpressBase.Web.Controllers
                         UserAuthId = user.AuthId
                     });
 
+                    Console.WriteLine("VerifyOTP API");
+
                     if (response != null && response.AuthStatus)
                     {
+                        Console.WriteLine("VerifyOTP API Status" + response.AuthStatus);
+
                         if (otp != user.Otp)
                             throw new Exception("OTP missmatch");
 
@@ -416,14 +421,25 @@ namespace ExpressBase.Web.Controllers
 
                         if (!this.Authenticated)
                         {
+                            Console.WriteLine("rToken : " + user.BearerToken);
+                            Console.WriteLine("bToken : " + user.RefreshToken);
+
                             resp.BToken = user.BearerToken;
                             resp.RToken = user.RefreshToken;
                             resp.UserId = user.UserId;
                             resp.DisplayName = user.FullName;
                             resp.User = user;
 
-                            //set user dp to authresponse
-                            SetUserDp(resp);
+                            try
+                            {
+                                Console.WriteLine("Seting user dp to authresponse");
+                                //set user dp to authresponse
+                                SetUserDp(resp);
+                            }
+                            catch(Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
                         }
                     }
                 }
@@ -432,7 +448,6 @@ namespace ExpressBase.Web.Controllers
                     Console.WriteLine("Verify2FA api failed ::" + ex.Message);
                 }
             }
-
             return resp;
         }
 

@@ -31,9 +31,9 @@ namespace ExpressBase.Web.Controllers
 {
     public class ApiController : EbBaseIntApiController
     {
-        private NotificationHubProxy _nfClient;
+        private readonly NotificationHubProxy _nfClient;
 
-        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc) : base(_client, _redis, _sfc)
+        public ApiController(IServiceClient _client, IRedisClient _redis, IEbStaticFileClient _sfc, IEbAuthClient _auth) : base(_client, _redis, _sfc, _auth)
         {
             _nfClient = new NotificationHubProxy();
         }
@@ -222,7 +222,7 @@ namespace ExpressBase.Web.Controllers
             ApiAuthResponse response = new ApiAuthResponse();
             try
             {
-                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                MyAuthenticateResponse authResponse = this.AuthClient.Get<MyAuthenticateResponse>(new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
@@ -257,12 +257,12 @@ namespace ExpressBase.Web.Controllers
 
         [HttpGet("/api/auth")]
         [HttpPost("/api/auth")]
-        public ApiAuthResponse ApiLoginByMd5(string username, string password)
+        public ApiAuthResponse ApiLoginByMd5(string username, string password, bool sso = false)
         {
             ApiAuthResponse response = new ApiAuthResponse();
             try
             {
-                MyAuthenticateResponse authResponse = this.ServiceClient.Get<MyAuthenticateResponse>(new Authenticate
+                Authenticate authRequest = new Authenticate
                 {
                     provider = CredentialsAuthProvider.Name,
                     UserName = username,
@@ -274,7 +274,15 @@ namespace ExpressBase.Web.Controllers
                         { RoutingConstants.USER_AGENT, this.UserAgent}
                     },
                     RememberMe = true
-                });
+                };
+
+                if (sso)
+                {
+                    authRequest.Password = "NIL";
+                    authRequest.Meta.Add("sso", "true");
+                }
+
+                MyAuthenticateResponse authResponse = this.AuthClient.Get<MyAuthenticateResponse>(authRequest);
 
                 if (authResponse != null && authResponse.User != null)
                 {
@@ -400,52 +408,46 @@ namespace ExpressBase.Web.Controllers
             {
                 User user = this.Authenticated ? this.LoggedInUser : this.Redis.Get<User>(authid);
 
+                Authenticate2FAResponse validateResp = null;
                 try
                 {
-                    Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest
+                    validateResp = this.ServiceClient.Post(new ValidateOtpRequest
                     {
                         Token = token,
                         UserAuthId = user.AuthId
                     });
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("OTP validation failed" + ex.Message);
+                }
 
-                    Console.WriteLine("VerifyOTP API");
-
-                    if (response != null && response.AuthStatus)
+                if (validateResp != null && validateResp.AuthStatus)
+                {
+                    if (otp == user.Otp)
                     {
-                        Console.WriteLine("VerifyOTP API Status" + response.AuthStatus);
-
-                        if (otp != user.Otp)
-                            throw new Exception("OTP missmatch");
-
                         resp.IsValid = true;
 
                         if (!this.Authenticated)
                         {
-                            Console.WriteLine("rToken : " + user.BearerToken);
-                            Console.WriteLine("bToken : " + user.RefreshToken);
-
-                            resp.BToken = user.BearerToken;
-                            resp.RToken = user.RefreshToken;
-                            resp.UserId = user.UserId;
-                            resp.DisplayName = user.FullName;
-                            resp.User = user;
+                            string username = string.IsNullOrEmpty(user.Email) ? user.PhoneNumber : user.Email;
 
                             try
                             {
-                                Console.WriteLine("Seting user dp to authresponse");
-                                //set user dp to authresponse
-                                SetUserDp(resp);
+                                ApiAuthResponse authresp = this.ApiLoginByMd5(username, null, true);
+                                resp.BToken = authresp.BToken;
+                                resp.RToken = authresp.RToken;
+                                resp.UserId = authresp.User.UserId;
+                                resp.DisplayName = authresp.User.FullName;
+                                resp.User = authresp.User;
+                                resp.DisplayPicture = authresp.DisplayPicture;
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
-                                Console.WriteLine(ex.Message);
+                                Console.WriteLine("Api auth failed to internaly" + ex.Message);
                             }
                         }
                     }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Verify2FA api failed ::" + ex.Message);
                 }
             }
             return resp;

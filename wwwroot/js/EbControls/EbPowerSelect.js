@@ -101,7 +101,6 @@ const EbPowerSelect = function (ctrl, options) {
     $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
 
     this.$curEventTarget = null;
-    this.$progressBar = $("#" + this.ComboObj.EbSid_CtxId + "_pb");
     this.IsDatatableInit = false;
     this.IsSearchBoxFocused = false;
 
@@ -123,6 +122,9 @@ const EbPowerSelect = function (ctrl, options) {
             this.$searchBoxes.on("click", function () { $(this).focus(); });
             this.$searchBoxes.keyup(this.searchboxKeyup);
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
+            this.$progressBar = $("#" + this.ComboObj.EbSid_CtxId + "_pb");
+            this.$DDdiv = $('#' + this.name + 'DDdiv');
+
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
             $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
             $('#' + this.name + 'tbl').keydown(function (e) { if (e.which === 27) this.Vobj.hideDD(); }.bind(this));//hide DD on esc when focused in DD
@@ -291,9 +293,12 @@ const EbPowerSelect = function (ctrl, options) {
                 }
             }
             else {
+                if (this.lastSearchVal === searchVal)
+                    return;
                 this.UpdateFilter(mapedField, searchByExp, searchVal, mapedFieldType);
-                if (this.filterArray.length > 0)
-                    this.getData();
+                //if (this.filterArray.length > 0)
+                this.getData();
+                this.lastSearchVal = searchVal;
             }
         }
     };
@@ -431,7 +436,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getData = function () {
-        //this.$progressBar.EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
+        this.showLoader();
+        //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         let params = this.ajaxData();
         let url = "../dv/getData4PowerSelect";
@@ -441,6 +447,16 @@ const EbPowerSelect = function (ctrl, options) {
             data: params,
             success: this.getDataSuccess.bind(this),
         });
+    };
+
+    this.showLoader = function () {
+        this.$progressBar.EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
+        this.$DDdiv.append('<div class="loader_mask_EB"></div>');
+    };
+
+    this.hideLoader = function () {
+        this.$progressBar.EbLoader("hide");
+        this.$DDdiv.find(".loader_mask_EB").remove();
     };
 
     this.ajaxData = function () {
@@ -453,7 +469,8 @@ const EbPowerSelect = function (ctrl, options) {
         this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.Start = 0;
-        dq.Length = this.ComboObj.DropDownItemLimit || 5000;
+        dq.Length = this.ComboObj.IsPreload ? 0 : this.ComboObj.DropDownItemLimit;
+        //dq.Length = this.ComboObj.DropDownItemLimit || 5000;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.name + "tbl";
 
@@ -586,7 +603,8 @@ const EbPowerSelect = function (ctrl, options) {
                 this.datatable.Api.columns.adjust().draw();
             }
         }
-        //this.$progressBar.EbLoader("hide");
+        this.hideLoader();
+        this.V_showDD();
     };
 
     this.initDataTable = function () {

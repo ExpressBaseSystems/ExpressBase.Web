@@ -453,7 +453,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.Start = 0;
-        dq.Length = this.ComboObj.DropDownItemLimit;
+        dq.Length = this.ComboObj.DropDownItemLimit || 5000;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.name + "tbl";
 

@@ -207,7 +207,7 @@
       "wwwroot/js/splitWindow.js",
       "wwwroot/js/FormBuilder/bootstrap-toggle.min.js",
       "wwwroot/js/FormBuilder/jquery.scrollTo.js",
-      "wwwroot/js/FormBuilder/MeetingPicker.js",
+      "wwwroot/js/FormBuilder/MeetingPicker.js"
     ],
     "minify": {
       "enabled": false

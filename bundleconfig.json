@@ -208,7 +208,6 @@
       "wwwroot/js/FormBuilder/bootstrap-toggle.min.js",
       "wwwroot/js/FormBuilder/jquery.scrollTo.js",
       "wwwroot/js/FormBuilder/MeetingPicker.js",
-      "wwwroot/js/EbControls/EbPhoneControl.js"
     ],
     "minify": {
       "enabled": false

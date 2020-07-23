@@ -122,25 +122,25 @@
             else if (bgtyp === 'bg_grdnt') {
               html.style.setProperty("--eb-bot-bg-color", settings.BotProp.Bg_value);
             } else if (bgtyp === 'bg_img') {
-               html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);      
+               html.style.setProperty("--eb-bot-bg-color", `url("/images/${settings.BotProp.Bg_value}.jpg") no-repeat center`);
             }
         }
         chatBotObj = new Eb_chatBot(solid, appid, settings, '@ViewBag.cid','@ViewBag.ServiceUrl', ServerEventUrl);
         //$.get("https://ipinfo.io", function (response) {
         //    chatBotObj.userDtls.ip = response.ip;
         //    chatBotObj.userDtls.browser = getBrowserName();
-        //}, "jsonp");          
-         
-    });   
+        //}, "jsonp");
+
+    });
 
 
 
-    
+
 </script>
 
 @*BUNDLES*@
-<environment exclude="Development">
-    <script type="text/javascript" src="~/js/Bundles/eb-botpage.bundle.js" defer asp-append-version=@bApnd></script>    
+<environment exclude ="Development">
+    <script type="text/javascript" src="~/js/Bundles/eb-botpage.bundle.js" defer asp-append-version=@bApnd></script>
 </environment>
 
 <environment include="Development">
@@ -192,7 +192,7 @@
     <script src="~/js/FormBuilder/MeetingPicker.js"></script>
     <script src="~/js/EbControls/EbPhoneControl.js" type="text/javascript" asp-append-version=@bApnd></script> @*varghese*@
 </environment>
-
+<script src="~/js/EbControls/EbPhoneControl.js" type="text/javascript" asp-append-version=@bApnd></script>
 <script type="text/javascript" src='https://maps.google.com/maps/api/js?key=AIzaSyDcaoSVEMF_TRq6Lx-dkqh3Rvrv8_w-0tM&libraries=places'></script>
 @*<script type="text/javascript" src="https://npmcdn.com/Chart.Zoom.js@0.3.0/Chart.Zoom.min.js"></script>*@
 

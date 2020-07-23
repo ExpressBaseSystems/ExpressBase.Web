@@ -378,7 +378,7 @@ namespace ExpressBase.Web.Controllers
                         response.Is2FEnabled = resp.Is2fa;
                         response.TwoFAToAddress = resp.OtpTo;
                         response.TwoFAToken = resp.TwoFAToken;
-                        response.User = new User { AuthId = resp.UserAuthId };
+                        response.UserAuthId = resp.UserAuthId;
                     }
                 }
                 catch (Exception)

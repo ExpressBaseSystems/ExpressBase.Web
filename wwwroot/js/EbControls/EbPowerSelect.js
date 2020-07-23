@@ -450,13 +450,16 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.showLoader = function () {
-        this.$progressBar.EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
-        this.$DDdiv.append('<div class="loader_mask_EB"></div>');
+        this.$progressBar.EbLoader("show", { maskItem: { Id: "#" + this.containerId }, maskLoader: false});
+        //this.$DDdiv.append('<div class="loader_mask_EB"></div>');
+        //this.$lastFocusedEl = $(":focus").blur();
     };
 
     this.hideLoader = function () {
+        //if (this.$lastFocusedEl && this.$lastFocusedEl.length === 1)
+        //    this.$lastFocusedEl.focus();
         this.$progressBar.EbLoader("hide");
-        this.$DDdiv.find(".loader_mask_EB").remove();
+        //this.$DDdiv.find(".loader_mask_EB").remove();
     };
 
     this.ajaxData = function () {
@@ -469,7 +472,7 @@ const EbPowerSelect = function (ctrl, options) {
         this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.Start = 0;
-        dq.Length = this.ComboObj.IsPreload ? 0 : this.ComboObj.DropDownItemLimit;
+        dq.Length = this.ComboObj.IsPreload ? 0 : this.ComboObj.SearchLimit;
         //dq.Length = this.ComboObj.DropDownItemLimit || 5000;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.name + "tbl";

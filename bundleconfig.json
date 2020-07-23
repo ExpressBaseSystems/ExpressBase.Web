@@ -183,7 +183,6 @@
       "wwwroot/js/Common/offline.js",
       "wwwroot/js/eb_common.js",
       "wwwroot/js/FormBuilder/bootstrap-confirmation.min.js",
-      "wwwroot/js/ChatBot/Eb_chatBot.js",
       "wwwroot/js/Eb_Basic_DataTable.js",
       "wwwroot/js/FormBuilder/EbSurveyRender.js",
       "wwwroot/js/jQuery Mask Plugin v1.14.9.js",

@@ -241,7 +241,7 @@ const EbPowerSelect = function (ctrl, options) {
     //delayed search on combo searchbox
     this.delayedSearchFN = function (e) {
         let $e = $(e.target);
-        let searchVal = $e.val();
+        let searchVal = $e.val().trim();
         let MaxSearchVal = this.getMaxLenVal();
 
         if (!isPrintable(e) && e.which !== 8)
@@ -278,8 +278,7 @@ const EbPowerSelect = function (ctrl, options) {
                 if (this.ComboObj.MinSeachLength > searchVal.length)
                     return;
 
-                if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
-
+                if (searchVal === "" && this.ComboObj.MinSeachLength === 0) {
                     if (this.datatable) {
                         this.datatable.Api.column(mapedField + ":name").search("").draw();
                     }
@@ -291,10 +290,24 @@ const EbPowerSelect = function (ctrl, options) {
                 }
             }
             else {
-                //let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
-                //this.filterArray.push(filterObj);
-                //this.getData();
+                this.UpdateFilter(mapedField, searchByExp, searchVal, mapedFieldType);
+                if (this.filterArray.length > 0)
+                    this.getData();
             }
+        }
+    };
+
+    this.UpdateFilter = function (mapedField, searchByExp, searchVal, mapedFieldType) {
+        let index = this.filterArray.findIndex(ft => ft.Column === mapedField);
+        if (index !== -1) {
+            if (searchVal === "")
+                this.filterArray.splice(index, 1);
+            else
+                this.filterArray[index].Value = searchVal;
+        }
+        else if (searchVal !== "") {
+            let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
+            this.filterArray.push(filterObj);
         }
     };
 
@@ -491,22 +504,6 @@ const EbPowerSelect = function (ctrl, options) {
                 DMs[dmName].push(DMvalue);
             }
         }
-
-
-        //if (this.initializer.datatable === null) {
-        //    let colNames = Object.keys(this.DataVals.R);
-        //    for (let i = 0; i < valMsArr.length; i++) {
-        //        for (let j = 0; j < colNames.length; j++) {
-        //            let colName = colNames[j];
-        //            let val = this.DataVals.R[colName][i];
-        //            if (columnVals[colName])
-        //                columnVals[colName].push(val);
-        //            else
-        //                console.warn("Not found colName: " + colName);
-        //        }
-        //    }
-        //}
-
     };
 
     this.addColVals = function (val = this.lastAddedOrDeletedVal) {
@@ -580,9 +577,11 @@ const EbPowerSelect = function (ctrl, options) {
             if (this.datatable === null) {
                 this.initDataTable();
             }
-            //else
-            //    this.datatable.redraw();
-
+            else {
+                this.datatable.Api.clear();
+                this.datatable.Api.rows.add(this.formattedData); // Add new data
+                this.datatable.Api.columns.adjust().draw();
+            }
         }
     };
 

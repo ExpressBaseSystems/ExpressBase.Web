@@ -331,7 +331,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 		public async Task<BotAuth_andFormList> AuthAndGetformlist(string cid, string appid, string socialId, string anon_email, string anon_phno, string user_ip, string user_browser, string user_name, string wc = TokenConstants.BC)
 		{
 			HttpClient client = new HttpClient();
-			string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
+			string result = await client.GetStringAsync("http://ip-api.com/json/" + this.RequestSourceIp);
 			IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
 			cid = this.GetIsolutionId(cid);
 			Dictionary<string, string> _Meta;
@@ -393,7 +393,6 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			//string result = await client.GetStringAsync("http://ip-api.com/json/" + user_ip);
 			//IpApiResponse IpApi = JsonConvert.DeserializeObject<IpApiResponse>(result);
 			cid = this.GetIsolutionId(cid);		
-			this.AuthClient.Headers.Add("SolId", cid);
 			MyAuthenticateResponse authResponse = null;
 			List<object> returnlist = new List<object>();
 			BotAuth_andFormList Bot_Obj = new BotAuth_andFormList();
@@ -535,7 +534,6 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			EbAuthResponse authresp = new EbAuthResponse();
 			string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
 			string authid = Request.Cookies[TokenConstants.USERAUTHID];
-			string cid=ViewBag.cid;
 			User _u = this.Redis.Get<User>(authid);
 			if (_u != null)
 			{

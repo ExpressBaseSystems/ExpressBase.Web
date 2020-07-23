@@ -1630,6 +1630,7 @@ var EbBasicDataTable = function (Option) {
         else
             return `<img class='img-thumbnail' src='http://graph.facebook.com/12345678/picture?type=square' />`;
     };
+
     this.getRowDataByUid = function (Uid) {
         var $tr = $("#" + this.tableId + " tr[data-uid='" + Uid + "']");
         var rowData = this.Api.row($tr).data();

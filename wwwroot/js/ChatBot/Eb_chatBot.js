@@ -1674,7 +1674,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.userNameFn = function () {
         let msg = "May I know your name?";
-        let ctrlHtml = `<div class="username_wrp"><input chat-inp type="text" id="anon_name" placeholder="Enter Name"></div>`;
+        let ctrlHtml = `<div class="username_wrp"><input chat-inp type="text" class="form-control" id="anon_name" placeholder="Enter Name"></div>`;
         this.sendWrapedCtrl(msg, ctrlHtml, "anon_name", "contactSubmitName");
     }.bind(this);
 
@@ -1687,7 +1687,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.phoneauthFn = function (e) {
         let msg = "Please provide your phone number";
-        let ctrlHtml = `<div class="phoneIcon_wrp"><input chat-inp type="tel" id="anon_phno" placeholder="Phone Number"></div>`;
+        let ctrlHtml = `<div class="phoneIcon_wrp"><input chat-inp type="tel" class="form-control" id="anon_phno" placeholder="Phone Number"></div>`;
         this.sendWrapedCtrl(msg, ctrlHtml, "anon_phno", "contactSubmitPhn");
     }.bind(this);
 

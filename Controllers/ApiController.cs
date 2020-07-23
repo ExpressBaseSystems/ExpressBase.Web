@@ -276,11 +276,7 @@ namespace ExpressBase.Web.Controllers
                     RememberMe = true
                 };
 
-                if (sso)
-                {
-                    authRequest.Password = "NIL";
-                    authRequest.Meta.Add("sso", "true");
-                }
+                if (sso) authRequest.Meta.Add("sso", "true");
 
                 MyAuthenticateResponse authResponse = this.AuthClient.Get<MyAuthenticateResponse>(authRequest);
 
@@ -434,7 +430,7 @@ namespace ExpressBase.Web.Controllers
 
                             try
                             {
-                                ApiAuthResponse authresp = this.ApiLoginByMd5(username, null, true);
+                                ApiAuthResponse authresp = this.ApiLoginByMd5(username, "NIL", true);
                                 resp.BToken = authresp.BToken;
                                 resp.RToken = authresp.RToken;
                                 resp.UserId = authresp.User.UserId;

@@ -32,18 +32,12 @@ namespace ExpressBase.Web.Components
             string refid = arr[0];
             string Locale = arr[1];
 
-            EbWebForm WebForm = this.Redis.Get<EbWebForm>(refid);
+            EbWebForm WebForm = EbFormHelper.GetEbObject<EbWebForm>(refid, this.ServiceClient, this.Redis, null);
             //String timeStamp = DateTime.Now.ToString();
             //int timeStampInt = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
 
             //WebForm.SetContextId("ctx_" + timeStampInt);
-
-            if (WebForm == null)
-            {
-                EbObjectParticularVersionResponse verResp = this.ServiceClient.Get<EbObjectParticularVersionResponse>(new EbObjectParticularVersionRequest { RefId = refid });
-                WebForm = EbSerializers.Json_Deserialize<EbWebForm>(verResp.Data[0].Json);// form object without localization
-                this.Redis.Set<EbWebForm>(refid, WebForm);
-            }
+            
             WebForm.IsRenderMode = true;//this property must set before AfterRedisGet //userctrl using this prop
             WebForm.AfterRedisGet(this.Redis, this.ServiceClient);
             WebForm.RefId = refid;

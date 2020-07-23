@@ -368,7 +368,8 @@ namespace ExpressBase.Web.Controllers
                     {
                         UName = username,
                         SignInOtpType = type,
-                        SolutionId = this.SolutionId
+                        SolutionId = this.SolutionId,
+                        WhichConsole = TokenConstants.MC
                     });
 
                     response.IsValid = resp == null ? false : resp.AuthStatus;

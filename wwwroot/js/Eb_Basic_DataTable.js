@@ -12,6 +12,7 @@ var EbBasicDataTable = function (Option) {
     this.hiddenFieldName = Option.hiddenFieldName || "id";
     this.columns = Option.columns || null;
     this.dom = Option.dom;
+    this.pageLength = Option.pageLength || 100;
     this.hiddenIndex = null;
     this.isSecondTime = false;
     this.Api = null;
@@ -258,7 +259,7 @@ var EbBasicDataTable = function (Option) {
         o.paging = this.EbObject.IsPaging;
         o.lengthChange = this.EbObject.IsPaging;
         o.pagingType = "simple";
-        o.pageLength = 100;
+        o.pageLength = this.pageLength;
         o.select = true;
         o.keys = true;
         if (this.MainData === null) {

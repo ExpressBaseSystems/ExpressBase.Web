@@ -81,6 +81,9 @@
         if (Obj.DependedValExp.$values.length > 0 || (Obj.DependedDG && Obj.DependedDG.$values.length > 0) || Obj.DataImportId)
             this.bindValueUpdateFns_OnChange(Obj);
 
+        if (Obj.DrDependents.$values.length > 0)
+            this.bindDrUpdateFns_OnChange(Obj);
+
         if ((Obj.OnChangeFn && Obj.OnChangeFn.Code && Obj.OnChangeFn.Code.trim() !== "") ||
             Obj.HiddenExpDependants && Obj.HiddenExpDependants.$values.length > 0 ||
             Obj.DisableExpDependants && Obj.DisableExpDependants.$values.length > 0)
@@ -137,8 +140,16 @@
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+            alert("error in 'Value expression of' of : " + control.Name + " - " + e.message);
         }
+    };
+
+    this.bindDrUpdateFns_OnChange = function (control) {//2.5nd onchange Fn bind
+        let FnString =
+            ((control.DrDependents && control.DrDependents.$values.length !== 0 || control.DependedDG && control.DependedDG.$values.length !== 0 || control.DataImportId) ? `
+                    form.updateDependentCtrlWithDr(${control.__path}, form);` : "");
+        let onChangeFn = new Function("form", "user", `event`, FnString).bind(control, this.FO.formObject, this.FO.userObject);
+        control.bindOnChange(onChangeFn);
     };
 
     this.bindBehaviorFns_OnChange = function (control) {// 3rd onchange Fn bind
@@ -153,7 +164,7 @@
         } catch (e) {
             console.eb_log("eb error :");
             console.eb_log(e);
-            alert("error in 'On Change function' of : " + control.Name + " - " + e.message);
+            alert("error in 'On Change function or Behaviour Expression' of : " + control.Name + " - " + e.message);
         }
     };
 
@@ -229,6 +240,20 @@
                 return "not found";
             }
         }.bind(this);
+    }.bind(this);
+
+    this.UpdateDrDepCtrls = function (curCtrl) {
+        $.each(curCtrl.DrDependents.$values, function (i, depCtrl_s) {
+            let depCtrl = this.FO.formObject.__getCtrlByPath(depCtrl_s);
+            if (depCtrl === "not found")
+                return;
+            if (depCtrl.ObjType === "TVcontrol") {
+                depCtrl.reloadWithParam(curCtrl);
+            }
+            else if (depCtrl.ObjType === "PowerSelect") {
+                depCtrl.initializer.reloadWithParams(curCtrl);
+            }
+        }.bind(this));
     }.bind(this);
 
     this.UpdateValExpDepCtrls = function (curCtrl) {
@@ -354,6 +379,14 @@
             }
             if (curCtrl.DataImportId && this.FO.Mode.isNew) {
                 this.PSImportRelatedUpdates(curCtrl);
+            }
+        }.bind(this);
+    };
+
+    this.setUpdateDependentCtrlWithDrFn = function () {
+        this.FO.formObject.updateDependentCtrlWithDr = function (curCtrl) { //calls in onchange
+            if (curCtrl.DrDependents && curCtrl.DrDependents.$values.length !== 0) {
+                this.UpdateDrDepCtrls(curCtrl);
             }
         }.bind(this);
     };

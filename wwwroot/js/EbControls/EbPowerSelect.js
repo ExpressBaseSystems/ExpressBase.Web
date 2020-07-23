@@ -440,6 +440,7 @@ const EbPowerSelect = function (ctrl, options) {
             success: this.getDataSuccess.bind(this),
         });
     };
+
     this.ajaxData = function () {
         this.EbObject = new EbObjects["EbTableVisualization"]("Container");
         this.EbObject.DataSourceRefId = this.dsid;
@@ -450,7 +451,6 @@ const EbPowerSelect = function (ctrl, options) {
         this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.Start = 0;
-        dq.Length = 5000;
         dq.DataVizObjString = JSON.stringify(this.EbObject);
         dq.TableId = this.name + "tbl";
 
@@ -513,7 +513,7 @@ const EbPowerSelect = function (ctrl, options) {
         let RowUnformattedDataARR = this.unformattedData.filter(obj => obj[VMidx] === val);
 
         if (RowDataARR.length === 0) {
-            console.log(`>> eb message : none available value '${vm}' set for  powerSelect '${this.ComboObj.Name}'`);
+            console.log(`>> eb message : none available value '${val}' set for  powerSelect '${this.ComboObj.Name}'`);
             return;
         }
         let RowData = RowDataARR[0];
@@ -603,6 +603,7 @@ const EbPowerSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "<p>rt";
         o.IsPaging = true;
+        o.pageLength = this.ComboObj.DropDownItemLimit;
         o.source = "powerselect";
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
@@ -944,8 +945,8 @@ const EbPowerSelect = function (ctrl, options) {
     //}.bind(this);
 
     this.V_toggleDD = function (e) {
-        if (!this.IsDatatableInit)
-            this.DDopenInitDT();
+        //if (!this.IsDatatableInit)
+        //    this.DDopenInitDT();
         if (this.Vobj.DDstate)
             this.V_hideDD();
         else {
@@ -1059,7 +1060,7 @@ const EbPowerSelect = function (ctrl, options) {
         $tr = $tr || $(this.DTSelector + " tr.selected");
         if ($tr.length === 0)
             return;
-        //$tr.removeClass('selected');
+        $tr.removeClass('selected');
     };
 
     this.tagCloseBtnHand = function (e) {
@@ -1169,18 +1170,23 @@ const EbPowerSelect = function (ctrl, options) {
         return newDMs;
     };
 
+    this.reloadWithParams = function () {
+        ;
+    };
+
     this.appendDD2Body = function () {
         setTimeout(function () {
             let contWidth = $('#' + this.name + 'Container').width();
             contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
-            let div_tble = $("#" + this.containerId);
-            let parentCont = div_tble.parentsUntil('form').last();
-            if (parentCont.attr('ctype') === "TabControl") {
-                div_tble.attr('drp_parent', 'TabControl');
+            let $DDdiv = $("#" + this.containerId);
+            let $parentCont = $DDdiv.parentsUntil('form').last();
+            if ($parentCont.attr('ctype') === "TabControl") {
+                $DDdiv.attr('drp_parent', 'TabControl');
             }
-            let tbl_cod = div_tble.offset();
-            let tbl_height = div_tble.height();
-            let div_detach = div_tble.detach();
+            $DDdiv.show();
+            let tbl_cod = $DDdiv.offset();
+            let tbl_height = $DDdiv.height();
+            let div_detach = $DDdiv.detach();
             div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
             let xtra_wdth = tbl_cod.left;
             let brow_wdth = $(window).width();
@@ -1193,7 +1199,7 @@ const EbPowerSelect = function (ctrl, options) {
             let scrollH = $form_div.prop("scrollHeight");
             if (scrollTop + tbl_cod.top + tbl_height > scrollH && scrollTop + tbl_cod.top - 60 > tbl_height) {
                 top = tbl_cod.top - tbl_height - 60;
-                div_tble.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
+                $DDdiv.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
                 if (ebcontext.renderContext !== "WebForm")
                     top += 38;
             }

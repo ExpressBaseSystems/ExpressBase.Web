@@ -38,6 +38,7 @@ const WebFormRender = function (option) {
         this.FRC.setFormObjHelperfns();// adds __getCtrlByPath() to formObject
         this.setFormObjectMode();
         this.FRC.setUpdateDependentControlsFn();// adds updateDependentControls() to formObject 
+        this.FRC.setUpdateDependentCtrlWithDrFn();// adds updateDependentControls() to formObject 
         this.FRC.setUpdateDependentControlsBehaviorFns();// adds updateDependentControlsBehaviorFns() to formObject
 
         return this.formObject;

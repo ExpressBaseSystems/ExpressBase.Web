@@ -139,11 +139,11 @@
 </script>
 
 @*BUNDLES*@
-<environment exclude ="Development">
+<environment include  ="Development">
     <script type="text/javascript" src="~/js/Bundles/eb-botpage.bundle.js" defer asp-append-version=@bApnd></script>
 </environment>
 
-<environment include="Development">
+<environment exclude="Development">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
     <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
     <script type="text/javascript" src="~/js/EbDataTable.js" asp-append-version=@bApnd></script>

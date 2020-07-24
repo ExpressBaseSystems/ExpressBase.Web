@@ -173,6 +173,7 @@
       "wwwroot/js/jquery.datetimepicker.min.js",
       "wwwroot/js/EbDataTable.js",
       "wwwroot/js/vue-select.js",
+      "wwwroot/js/vue@2.1.10.min.js",
       "wwwroot/js/Eb_UtilityFuncions.js",
       "wwwroot/js/FormBuilder/vue.js",
       "wwwroot/js/EbControls/EbPowerSelect.js",

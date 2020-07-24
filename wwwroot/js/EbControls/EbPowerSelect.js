@@ -98,6 +98,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.valueMembers = ctrl._ValueMembers;
     this.localDMS = ctrl._DisplayMembers;
     this.columnVals = {};
+    this.DMlastSearchVal = {};
     $.each(this.ColNames, function (i, name) { this.columnVals[name] = []; }.bind(this));
 
     this.$curEventTarget = null;
@@ -105,6 +106,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.IsSearchBoxFocused = false;
 
     $.each(this.dmNames, function (i, name) { this.localDMS[name] = []; }.bind(this));
+    $.each(this.dmNames, function (i, name) { this.DMlastSearchVal[name] = ""; }.bind(this));
 
     this.VMindex = null;
     this.DMindexes = [];
@@ -234,7 +236,7 @@ const EbPowerSelect = function (ctrl, options) {
     }
 
     this.showCtrlMsg = function () {
-        EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+        EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSearchLength} characters to search`, "info");
     }.bind(this);
 
     this.hideCtrlMsg = function () {
@@ -250,7 +252,7 @@ const EbPowerSelect = function (ctrl, options) {
         if (!isPrintable(e) && e.which !== 8)
             return;
 
-        if (this.ComboObj.MinSeachLength > MaxSearchVal.length) {
+        if (this.ComboObj.MinSearchLength > MaxSearchVal.length) {
             this.showCtrlMsg();
             this.V_hideDD();
             return;
@@ -267,7 +269,7 @@ const EbPowerSelect = function (ctrl, options) {
         if (mapedFieldType !== "string")
             searchByExp = " = ";
         if (!this.IsDatatableInit) {
-            if (this.ComboObj.MinSeachLength > searchVal.length)
+            if (this.ComboObj.MinSearchLength > searchVal.length)
                 return;
             let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
@@ -278,10 +280,10 @@ const EbPowerSelect = function (ctrl, options) {
                 $filterInp.val($e.val());
                 this.Vobj.DDstate = true;
                 EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
-                if (this.ComboObj.MinSeachLength > searchVal.length)
+                if (this.ComboObj.MinSearchLength > searchVal.length)
                     return;
 
-                if (searchVal === "" && this.ComboObj.MinSeachLength === 0) {
+                if (searchVal === "" && this.ComboObj.MinSearchLength === 0) {
                     if (this.datatable) {
                         this.datatable.Api.column(mapedField + ":name").search("").draw();
                     }
@@ -293,12 +295,12 @@ const EbPowerSelect = function (ctrl, options) {
                 }
             }
             else {
-                if (this.lastSearchVal === searchVal)
+                if (this.DMlastSearchVal[mapedField] === searchVal)
                     return;
                 this.UpdateFilter(mapedField, searchByExp, searchVal, mapedFieldType);
                 //if (this.filterArray.length > 0)
                 this.getData();
-                this.lastSearchVal = searchVal;
+                this.DMlastSearchVal[mapedField] = searchVal;
             }
         }
     };
@@ -436,7 +438,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getData = function () {
-        this.showLoader();
+            this.showLoader();
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
         this.filterValues = [];
         let params = this.ajaxData();
@@ -450,7 +452,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.showLoader = function () {
-        this.$progressBar.EbLoader("show", { maskItem: { Id: "#" + this.containerId }, maskLoader: false});
+        this.$progressBar.EbLoader("show", { maskItem: { Id: "#" + this.containerId }, maskLoader: false });
         //this.$DDdiv.append('<div class="loader_mask_EB"></div>');
         //this.$lastFocusedEl = $(":focus").blur();
     };
@@ -482,7 +484,7 @@ const EbPowerSelect = function (ctrl, options) {
         else
             dq.TFilters = this.filterArray;
 
-        dq.Ispaging = true;
+        dq.Ispaging = false;
         return dq;
     };
 
@@ -657,9 +659,9 @@ const EbPowerSelect = function (ctrl, options) {
     this.DDopenInitDT = function () {
         let searchVal = this.getMaxLenVal();
         let _name = this.ComboObj.EbSid_CtxId;
-        if (this.ComboObj.MinSeachLength > searchVal.length) {
-            //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
-            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+        if (this.ComboObj.MinSearchLength > searchVal.length) {
+            //alert(`enter minimum ${this.ComboObj.MinSearchLength} charecter in searchBox`);
+            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSearchLength} characters to search`, "info");
             return;
         }
 
@@ -816,26 +818,26 @@ const EbPowerSelect = function (ctrl, options) {
         this.Vobj.toggleDD();
     };
 
-    this.getSelectedRow = function () {
-        if (!this.IsDatatableInit)
-            return;
-        let res = [];
-        $.each(this.ComboObj.TempValue, function (idx, item) {
-            let obj = {};
-            let rowData = this.datatable.getRowDataByUid(item);
-            let temp = this.datatable.sortedColumns;
-            let colNames = temp.map((obj, i) => { return obj.name; });
-            $.grep(temp, function (obj, i) {
-                return obj.name;
-            });
-            $.each(rowData, function (i, cellData) {
-                obj[colNames[i]] = cellData;
-            });
-            res.push(obj);
-        }.bind(this));
-        this.ComboObj.SelectedRow = res;
-        return res;
-    }.bind(this);
+    //this.getSelectedRow = function () {
+    //    if (!this.IsDatatableInit)
+    //        return;
+    //    let res = [];
+    //    $.each(this.ComboObj.TempValue, function (idx, item) {
+    //        let obj = {};
+    //        let rowData = this.datatable.getRowDataByUid(item);
+    //        let temp = this.datatable.sortedColumns;
+    //        let colNames = temp.map((obj, i) => { return obj.name; });
+    //        $.grep(temp, function (obj, i) {
+    //            return obj.name;
+    //        });
+    //        $.each(rowData, function (i, cellData) {
+    //            obj[colNames[i]] = cellData;
+    //        });
+    //        res.push(obj);
+    //    }.bind(this));
+    //    this.ComboObj.SelectedRow = res;
+    //    return res;
+    //}.bind(this);
 
     this.Renderselect = function () {
         if ($('#' + this.name + 'Container').length === 0)
@@ -897,7 +899,7 @@ const EbPowerSelect = function (ctrl, options) {
         }
 
         this.$inp.attr("display-members", this.Vobj.displayMembers[this.dmNames[0]]);
-        this.getSelectedRow();
+        //this.getSelectedRow();
 
         if (VMs.length === 0)
             this.$searchBoxes.css("min-width", "100%");
@@ -976,7 +978,7 @@ const EbPowerSelect = function (ctrl, options) {
             this.V_hideDD();
         else {
             searchVal = this.getMaxLenVal();
-            //if (searchVal === "" || this.ComboObj.MinSeachLength > searchVal.length)
+            //if (searchVal === "" || this.ComboObj.MinSearchLength > searchVal.length)
             //    return;
             //else
             this.V_showDD();
@@ -1003,7 +1005,7 @@ const EbPowerSelect = function (ctrl, options) {
         if (this.Vobj.DDstate)
             return;
         let searchVal = this.getMaxLenVal();
-        if (this.ComboObj.MinSeachLength > searchVal.length) {
+        if (this.ComboObj.MinSearchLength > searchVal.length) {
             this.showCtrlMsg();
             return;
         }
@@ -1196,7 +1198,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.reloadWithParams = function () {
-        ;
+        this.geData();
     };
 
     this.appendDD2Body = function () {

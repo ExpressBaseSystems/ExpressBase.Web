@@ -205,5 +205,23 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-bot_secondary.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/FormBuilder/vue.js",
+      "wwwroot/js/EbDataTable.js",
+      "wwwroot/js/Eb_Basic_DataTable.js",
+      "wwwroot/js/datatables.min.js",
+      "wwwroot/js/CommonDataTable.js",
+      "wwwroot/js/Chart.js",
+      "wwwroot/js/Eb_Basic_chart.js",
+      "wwwroot/js/EbFileViewer/EbFileViewerPlugin.js",
+      "wwwroot/js/EbFileViewer/viewer.js",
+      "wwwroot/js/EbControls/EbPhoneControl.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
   }
 ]

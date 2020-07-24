@@ -312,6 +312,7 @@
     margin-bottom: 0;
     outline: none;
     border: none;
+    border-top: solid 1px #ddd;
 }
 
     .DDdiv .selected-row, .DDdiv table.dataTable tbody > tr.selected {

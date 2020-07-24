@@ -1198,7 +1198,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.reloadWithParams = function () {
-        this.geData();
+        this.clearValues();
+        this.getData();
     };
 
     this.appendDD2Body = function () {

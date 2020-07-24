@@ -51,6 +51,7 @@
 /// <reference path="js/thirdpartysignup.js" />
 /// <reference path="js/validator.js" />
 /// <reference path="js/vue-select.js" />
+/// <reference path="js/vue@2.1.10.min.js" />
 /// <reference path="js/wizardFuns.js" />
 /// <reference path="lib/bootstrap/dist/js/bootstrap.js" />
 /// <reference path="lib/codemirror/lib/codemirror.js" />

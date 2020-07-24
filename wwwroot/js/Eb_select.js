@@ -211,7 +211,7 @@ const EbSelect = function (ctrl, options) {
     }
 
     this.showCtrlMsg = function () {
-        EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+        EbShowCtrlMsg(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`, `Enter minimum ${this.ComboObj.MinSearchLength} characters to search`, "info");
     }.bind(this);
 
     this.hideCtrlMsg = function () {
@@ -227,7 +227,7 @@ const EbSelect = function (ctrl, options) {
         if (!isPrintable(e) && e.which !== 8)
             return;
 
-        if (this.ComboObj.MinSeachLength > MaxSearchVal.length) {
+        if (this.ComboObj.MinSearchLength > MaxSearchVal.length) {
             this.showCtrlMsg();
             this.V_hideDD();
             return;
@@ -244,7 +244,7 @@ const EbSelect = function (ctrl, options) {
         if (mapedFieldType !== "string")
             searchByExp = " = ";
         if (!this.IsDatatableInit) {
-            if (this.ComboObj.MinSeachLength > searchVal.length)
+            if (this.ComboObj.MinSearchLength > searchVal.length)
                 return;
             let filterObj = new filter_obj(mapedField, searchByExp, searchVal, mapedFieldType);
             this.filterArray.push(filterObj);
@@ -255,10 +255,10 @@ const EbSelect = function (ctrl, options) {
             $filterInp.val($e.val());
             this.Vobj.DDstate = true;
             EbMakeValid(`#${this.ComboObj.EbSid_CtxId}Container`, `#${this.ComboObj.EbSid_CtxId}Wraper`);
-            if (this.ComboObj.MinSeachLength > searchVal.length)
+            if (this.ComboObj.MinSearchLength > searchVal.length)
                 return;
 
-            if (searchVal.trim() === "" && this.ComboObj.MinSeachLength === 0) {
+            if (searchVal.trim() === "" && this.ComboObj.MinSearchLength === 0) {
                 this.datatable.columnSearch = [];
                 this.datatable.Api.ajax.reload();
                 return;
@@ -397,9 +397,9 @@ const EbSelect = function (ctrl, options) {
     this.InitDT = function () {
         let searchVal = this.getMaxLenVal();
         let _name = this.ComboObj.EbSid_CtxId;
-        if (this.ComboObj.MinSeachLength > searchVal.length) {
-            //alert(`enter minimum ${this.ComboObj.MinSeachLength} charecter in searchBox`);
-            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSeachLength} characters to search`, "info");
+        if (this.ComboObj.MinSearchLength > searchVal.length) {
+            //alert(`enter minimum ${this.ComboObj.MinSearchLength} charecter in searchBox`);
+            EbShowCtrlMsg(`#${_name}Container`, `#${_name}Wraper`, `Enter minimum ${this.ComboObj.MinSearchLength} characters to search`, "info");
             return;
         }
 
@@ -847,7 +847,7 @@ const EbSelect = function (ctrl, options) {
             this.V_hideDD();
         else {
             searchVal = this.getMaxLenVal();
-            //if (searchVal === "" || this.ComboObj.MinSeachLength > searchVal.length)
+            //if (searchVal === "" || this.ComboObj.MinSearchLength > searchVal.length)
             //    return;
             //else
             this.V_showDD();
@@ -874,7 +874,7 @@ const EbSelect = function (ctrl, options) {
         if (this.Vobj.DDstate)
             return;
         let searchVal = this.getMaxLenVal();
-        if (this.ComboObj.MinSeachLength > searchVal.length) {
+        if (this.ComboObj.MinSearchLength > searchVal.length) {
             this.showCtrlMsg();
             return;
         }

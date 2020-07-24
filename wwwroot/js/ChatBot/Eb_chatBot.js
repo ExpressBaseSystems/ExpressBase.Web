@@ -288,14 +288,21 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 success: function (result) {
                     this.botflg.loadFormlist = false;
                     this.hideTypingAnim();
-                    if (result === null)
+                    if (result === null) {
                         this.authFailed();
-                    this.formsDict = result[0];
-                    window.ebcontext.user = JSON.parse(result[1]);
-                    this.formNames = Object.values(result[2]);
-                    this.formIcons = result[3];
-                    this.AskWhatU();
-
+                    }
+                    else {
+                        if (!$.isEmptyObject(result[2])) {
+                            this.formsDict = result[0];
+                            window.ebcontext.user = JSON.parse(result[1]);
+                            this.formNames = Object.values(result[2]);
+                            this.formIcons = result[3];
+                            this.AskWhatU();
+                        }
+                        else {
+                            this.msgFromBot("Premission is not set for current user");
+                        }
+                    }
                 }.bind(this)
             })
         }
@@ -2119,6 +2126,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             this.ClearFormVariables();
             this.botflg.otptype = "";//clear flags
             this.botflg.uname_otp = "";
+            this.$renderAtBottom.empty();
+            this.curCtrl = null;
+            this.$renderAtBottom.hide();
             $('.eb-chatBox').empty();
             this.showDate();
             this.botUserLogin();

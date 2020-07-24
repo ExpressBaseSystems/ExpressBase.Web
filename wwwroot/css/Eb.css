@@ -352,6 +352,11 @@
     height: 100%;
     margin-top: auto;
     margin-bottom: auto;
+    position: relative;
+}
+
+.ps-pb {
+    bottom: 0;
 }
 
 .ps-srch {

@@ -681,6 +681,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
     border: none;
+    z-index: 0;
 }
 
 

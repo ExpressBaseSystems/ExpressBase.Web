@@ -5188,6 +5188,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     margin-bottom: 0;
     outline: none;
     border: none;
+    border-top: solid 1px #ddd;
 }
 
     .DDdiv .selected-row, .DDdiv table.dataTable tbody > tr.selected {
@@ -8446,7 +8447,7 @@ input.locinp {
 }*/
 
 [eb-type="WebForm"] .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
-    margin-top: -7px;
+    /*margin-top: -7px;*/
 }
 
 .eb-chat-cont .dataTables_wrapper {
@@ -8731,6 +8732,9 @@ input.locinp {
 .webform-cont ::-webkit-scrollbar-thumb {
     background-color: #ddd;
 }
+    .webform-cont ::-webkit-scrollbar-thumb:hover {
+        background-color: #bbb;
+    }
 
 .webform-cont .Dg_body .eb-textarea {
     position: absolute;

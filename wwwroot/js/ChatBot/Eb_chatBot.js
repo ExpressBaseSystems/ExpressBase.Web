@@ -2126,6 +2126,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             this.ClearFormVariables();
             this.botflg.otptype = "";//clear flags
             this.botflg.uname_otp = "";
+            this.$renderAtBottom.empty();
+            this.curCtrl = null;
+            this.$renderAtBottom.hide();
             $('.eb-chatBox').empty();
             this.showDate();
             this.botUserLogin();

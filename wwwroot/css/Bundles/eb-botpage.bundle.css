@@ -5228,6 +5228,11 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     height: 100%;
     margin-top: auto;
     margin-bottom: auto;
+    position: relative;
+}
+
+.ps-pb {
+    bottom: 0;
 }
 
 .ps-srch {
@@ -7603,6 +7608,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
     border: none;
+    z-index: 0;
 }
 
 

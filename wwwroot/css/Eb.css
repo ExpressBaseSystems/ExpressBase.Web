@@ -312,7 +312,6 @@
     margin-bottom: 0;
     outline: none;
     border: none;
-    border-top: solid 1px #ddd;
 }
 
     .DDdiv .selected-row, .DDdiv table.dataTable tbody > tr.selected {
@@ -338,6 +337,19 @@
 .DDdiv .table > tfoot > tr > th, .DDdiv .table > thead > tr > td,
 .DDdiv .table > tbody > tr > td, .DDdiv .table > tfoot > tr > td {
     padding: 4px;
+}
+
+.DDdiv div.dataTables_wrapper div.dataTables_info {
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+}
+
+.DDdiv div.dataTables_wrapper div.dataTables_paginate {
+    height: 28px;
+    position: absolute;
+    right: 8px;
+    bottom: 0px;
 }
 
 .search-wraper {
@@ -405,6 +417,7 @@
     border-top: none;
     border-radius: 0 0 2px 2px;
     box-shadow: 0 6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41);
+    padding-bottom: 32px;
 }
 
     .DDdiv .dataTable {

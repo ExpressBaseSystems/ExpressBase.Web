@@ -188,7 +188,7 @@ var EbBasicDataTable = function (Option) {
 
 
         $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
-        $('#' + this.tableId + ' tbody tr').off('click').on('click', this.rowclick.bind(this));
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
 
     };
 
@@ -669,6 +669,8 @@ var EbBasicDataTable = function (Option) {
         //this.filterDisplay();
         if (Option.searchCallBack)
             Option.searchCallBack();
+        if (Option.drawCallback)
+            Option.drawCallback();
         if (this.Api !== null)
             this.Api.columns.adjust();
     };
@@ -676,13 +678,6 @@ var EbBasicDataTable = function (Option) {
     this.selectCallbackFunc = function (e, dt, type, indexes) {
         if (Option.fnKeyUpCallback)
             Option.fnKeyUpCallback(e, dt, type, indexes);
-    };
-
-    this.clickCallbackFunc = function (e) {
-        //alert($($(e.target).parent()).html());
-        //this.Api.row(e.currentTarget).select();
-        if (this.dtsettings.fnClickCallbackFunc)
-            this.dtsettings.fnClickCallbackFunc(e, this.Api);
     };
 
     this.dblclickCallbackFunc = function (e) {

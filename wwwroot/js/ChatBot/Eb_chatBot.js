@@ -979,7 +979,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 }
             }
             else {
-                if ((this.curCtrl.ObjType === "TVcontrol") || (this.curCtrl.ObjType === "Video") || (this.curCtrl.ObjType === "Image")) {
+                if ((this.curCtrl.ObjType === "TVcontrol") || (this.curCtrl.ObjType === "Locations") || (this.curCtrl.ObjType === "Video") || (this.curCtrl.ObjType === "Image")) {
                     $ctrlCont = $(this.wrapIn_chat_ctrl_readonly(controlHTML));
                 }
             }
@@ -2126,6 +2126,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             this.ClearFormVariables();
             this.botflg.otptype = "";//clear flags
             this.botflg.uname_otp = "";
+            this.$renderAtBottom.empty();
+            this.curCtrl = null;
+            this.$renderAtBottom.hide();
             $('.eb-chatBox').empty();
             this.showDate();
             this.botUserLogin();

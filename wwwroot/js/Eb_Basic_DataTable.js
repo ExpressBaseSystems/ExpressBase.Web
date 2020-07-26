@@ -691,7 +691,8 @@ var EbBasicDataTable = function (Option) {
     };
 
     this.DTKeyPressCallback = function (e, datatable, key, cell, originalEvent) {
-        Option.keyPressCallbackFn(e, datatable, key, cell, originalEvent);
+        if (Option.keyPressCallbackFn)
+            Option.keyPressCallbackFn(e, datatable, key, cell, originalEvent);
     };
 
     this.rowclick = function (e, dt, type, indexes) {

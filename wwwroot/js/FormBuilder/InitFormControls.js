@@ -763,6 +763,10 @@
         return new EbDataGrid(ctrl, ctrlOpts);
     };
 
+    this.DataGrid_New = function (ctrl, ctrlOpts) {
+        return new EbDataGrid_New(ctrl, ctrlOpts);
+    };
+
     this.ExportButton = function (ctrl, ctrlOpts) {
         let $ctrl = $("#" + ctrl.EbSid_CtxId);
         $ctrl[0].onclick = function () {

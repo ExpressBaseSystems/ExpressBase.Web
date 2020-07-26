@@ -171,10 +171,9 @@
     "inputFiles": [
       "wwwroot/js/moment.min.js",
       "wwwroot/js/jquery.datetimepicker.min.js",
-      "wwwroot/js/EbDataTable.js",
       "wwwroot/js/vue-select.js",
+      "wwwroot/js/vue@2.1.10.min.js",
       "wwwroot/js/Eb_UtilityFuncions.js",
-      "wwwroot/js/FormBuilder/vue.js",
       "wwwroot/js/EbControls/EbPowerSelect.js",
       "wwwroot/js/FormBuilder/InitFormControls.js",
       "wwwroot/js/EbServerEvents/eventsource.min.js",
@@ -183,14 +182,12 @@
       "wwwroot/js/Common/offline.js",
       "wwwroot/js/eb_common.js",
       "wwwroot/js/FormBuilder/bootstrap-confirmation.min.js",
-      "wwwroot/js/Eb_Basic_DataTable.js",
+      "wwwroot/js/ChatBot/Eb_chatBot.js",
       "wwwroot/js/FormBuilder/EbSurveyRender.js",
       "wwwroot/js/jQuery Mask Plugin v1.14.9.js",
       "wwwroot/js/FormBuilder/Bootstrap-select.v1.12.2.js",
       "wwwroot/js/slick.min.js",
-      "wwwroot/js/datatables.min.js",
       "wwwroot/js/FormBuilder/locationpicker.jquery.min.js",
-      "wwwroot/js/Chart.js",
       "wwwroot/js/EbControls/EbProgressBar.js",
       "wwwroot/js/EbControls/EbMsgBox.js",
       "wwwroot/js/EbControls/EbPopBox.js",
@@ -198,16 +195,30 @@
       "wwwroot/js/jquery.inputmask.bundle.js",
       "wwwroot/js/FormBuilder/MonthPicker.min.js",
       "wwwroot/js/FormBuilder/jquery.rateyo.min.js",
-      "wwwroot/js/EbFileViewer/EbFileViewerPlugin.js",
-      "wwwroot/js/EbFileViewer/viewer.js",
       "wwwroot/js/EbControls/EbSimpleFileUploader.js",
       "wwwroot/js/yearpicker.js",
-      "wwwroot/js/CommonDataTable.js",
-      "wwwroot/js/Eb_Basic_chart.js",
       "wwwroot/js/splitWindow.js",
       "wwwroot/js/FormBuilder/bootstrap-toggle.min.js",
       "wwwroot/js/FormBuilder/jquery.scrollTo.js",
       "wwwroot/js/FormBuilder/MeetingPicker.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-bot_secondary.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/FormBuilder/vue.js",
+      "wwwroot/js/EbDataTable.js",
+      "wwwroot/js/Eb_Basic_DataTable.js",
+      "wwwroot/js/datatables.min.js",
+      "wwwroot/js/CommonDataTable.js",
+      "wwwroot/js/Chart.js",
+      "wwwroot/js/Eb_Basic_chart.js",
+      "wwwroot/js/EbFileViewer/EbFileViewerPlugin.js",
+      "wwwroot/js/EbFileViewer/viewer.js",
+      "wwwroot/js/EbControls/EbPhoneControl.js"
     ],
     "minify": {
       "enabled": false

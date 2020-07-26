@@ -681,6 +681,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
     transition: box-shadow .1s ease,border-color .1s ease;
     box-shadow: none;
     border: none;
+    z-index: 0;
 }
 
 
@@ -987,7 +988,7 @@ tr[agg='true'] [coltype='DGNumericColumn'] span {
 /*[ctype=PowerSelect] .ctrl-cover .dropdown-toggle,*/
 [ctype=BooleanSelect] .ctrl-cover .dropdown-toggle,
 [tdcoltype=DGSimpleSelectColumn] .ctrl-cover .dropdown-toggle,
-[tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle,
+[tdcoltype=DGBooleanSelectColumn] .ctrl-cover .dropdown-toggle
 {
     /*padding: 0 0px 0 5px;*/
     padding: 3px 0px 0 6px;
@@ -1518,7 +1519,7 @@ input.locinp {
 }*/
 
 [eb-type="WebForm"] .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
-    margin-top: -7px;
+    margin-top: -11px;
 }
 
 .eb-chat-cont .dataTables_wrapper {
@@ -1803,6 +1804,9 @@ input.locinp {
 .webform-cont ::-webkit-scrollbar-thumb {
     background-color: #ddd;
 }
+    .webform-cont ::-webkit-scrollbar-thumb:hover {
+        background-color: #bbb;
+    }
 
 .webform-cont .Dg_body .eb-textarea {
     position: absolute;

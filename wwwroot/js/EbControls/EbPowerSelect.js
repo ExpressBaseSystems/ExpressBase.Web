@@ -500,6 +500,7 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.showLoader = function () {
+        this.hideLoader();
         this.$progressBar.EbLoader("show", { maskItem: { Id: "#" + this.containerId }, maskLoader: false });
         //this.$DDdiv.append('<div class="loader_mask_EB"></div>');
         //this.$lastFocusedEl = $(":focus").blur();

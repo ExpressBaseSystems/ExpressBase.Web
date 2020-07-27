@@ -530,6 +530,10 @@
                         val = ebcontext.user.UserId;
                         name = "eb_currentuser_id";
                     }
+                    else if (depCtrl_s === "form.id") {
+                        val = this.Renderer.rowId;
+                        name = "id";
+                    }
                     else {
                         val = depCtrl.getValue();
                         name = depCtrl.Name;
@@ -761,6 +765,10 @@
 
     this.DataGrid = function (ctrl, ctrlOpts) {
         return new EbDataGrid(ctrl, ctrlOpts);
+    };
+
+    this.DataGrid_New = function (ctrl, ctrlOpts) {
+        return new EbDataGrid_New(ctrl, ctrlOpts);
     };
 
     this.ExportButton = function (ctrl, ctrlOpts) {

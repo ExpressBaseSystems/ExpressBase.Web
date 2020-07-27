@@ -252,8 +252,10 @@
                                     })); h < o; h++)
                                 !0 === (i = d.eq(h).data()).checked && c.push(i.data);
                         else
-                            t && t.css("font-weight", "normal"),
-                                e.css("font-weight", "bold"),
+                            //t && t.css("font-weight", "normal"),
+                            t && t.css({ "background-color": "", "color": "" }),
+                                //e.css("font-weight", "bold"),
+                                e.css({ "background-color": "#242db4", "color": "white" }),
                                 t = e,
                                 i = r.data("data"),
                                 c = [i],

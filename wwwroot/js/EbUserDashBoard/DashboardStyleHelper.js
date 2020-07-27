@@ -173,6 +173,12 @@ function LinkStyle(Obj, tile, TabNum) {
     if (Obj.BackgroundColor) {
         $(`#${Obj.EbSid}`).css("background-image", Obj.BackgroundColor);
     }
+    if (Obj.BackgroundColor) {
+        $(`#${Obj.EbSid}_icon`).css("background-image", Obj.IconBackgroundColor);
+    }
+    if (Obj.FontStyle) {
+        GetFontCss(Obj.FontStyle, $(`#${Obj.EbSid}_link`));
+    }  
     $(`#${Obj.EbSid} i`).removeAttr("class").addClass(`fa ${Obj.Icon}`);
 }
 

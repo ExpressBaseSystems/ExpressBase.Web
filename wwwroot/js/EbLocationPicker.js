@@ -9,6 +9,7 @@
     const SetLoc = "#setLocSub";
     const container = ".loc_switchModal_outer";
     const EmptyLocs = ".no_loc_config";
+    const Loc_close = "#loc_switchModal_close";
     this.EbHeader = new EbHeader();
     this.Listener = {
         ChangeLocation: function (LocObject) {
@@ -21,11 +22,13 @@
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
+        $('#current_loc').text(this.CurrentLocObj.LongName + ` (${this.CurrentLocObj.ShortName})`);
         this.ModifyLocationObject();
         this.drawLocsTree();
         this.setDefault();
         $(TriggerId).off("click").on("click", this.showSwitcher.bind(this));
         $(SetLoc).off("click").on("click", this.setLocation.bind(this));
+        $(Loc_close).off("click").on("click", this.close_LocSwitch.bind(this));
         $("#loc-search").off("keyup").on("keyup", this.searchLoc.bind(this));        
     };
 
@@ -40,7 +43,7 @@
 
     this.ModifyLocationObject = function () {
         for (let i = 0; i < this.Locations.length; i++) {
-            this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: this.Locations[i].LongName});
+            this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: this.Locations[i].LongName +`  (${this.Locations[i].ShortName})`});
         }
         this.Tempdata = JSON.parse(JSON.stringify(this.data));
     };
@@ -85,6 +88,7 @@
             this.Listener.ChangeLocation(this.CurrentLocObj);
             this.PrevLocation = this.CurrentLoc;
         }
+        $('#current_loc').text(this.CurrentLocObj.LongName + ` (${this.CurrentLocObj.ShortName})`);
     };
 
     this.showSwitcher = function (e) {
@@ -96,6 +100,10 @@
                 $(".loc_switchModal_fade").hide();
         });
     };
+
+    this.close_LocSwitch = function () {
+        this.showSwitcher();
+    }
 
     this.searchLoc = function (e) {
         let val = $(e.target).val().toLowerCase();

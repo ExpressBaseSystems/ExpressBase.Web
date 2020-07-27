@@ -238,14 +238,9 @@ namespace ExpressBase.Web.Controllers
                 {
                     if (Resp.MeetingRequest[i].TypeofUser == 2)
                     {
-                        Param Str = new Param();
-                        Str.Name = "id";
-                        Str.Type = "7";
-                        Str.Value = $@"{Resp.MeetingRequest[i].FormDataId}";
-                        string abc = JsonConvert.SerializeObject(Str);
-                        string abcd = JSON.stringify(Str);
+                        string abc = JsonConvert.SerializeObject(new List<Param> (){ new Param() { Name = "id", Type = "7", Value = Convert.ToString(Resp.MeetingRequest[i].FormDataId) } });
                         string Url = "";
-                        string b64 = abcd.ToBase64();
+                        string b64 = abc.ToBase64();
                         //int loc = this.LoggedInUser.LocationIds
                         if (Resp.MeetingRequest[i].FormRefid != "")
                             Url = $@"http://hairocraft.localhost:41500/WebForm/Index?refid={Resp.MeetingRequest[i].FormRefid}&_params={b64}&_mode=1&_locId=1";

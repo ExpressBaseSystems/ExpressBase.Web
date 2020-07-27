@@ -74,6 +74,12 @@ const WebFormRender = function (option) {
         }.bind(this));
     };
 
+    this.initDGsNew = function () {
+        $.each(this.DGsNew, function (k, DG) {//dg Init
+            this.DGNewBuilderObjs[DG.EbSid_CtxId] = this.initControls.init(DG, { Mode: this.Mode, formObject: this.formObject, userObject: this.userObject, formObject_Full: this.FormObj, formRefId: this.formRefId, formRenderer: this });
+        }.bind(this));
+    };
+
     this.ctxBuildFn = function ($trigger, e) {
         return {
             items: {
@@ -202,6 +208,7 @@ const WebFormRender = function (option) {
         this._allPSsInit = false;
 
         this.DGs = getFlatContObjsOfType(this.FormObj, "DataGrid");// all DGs in formObject
+        this.DGsNew = getFlatContObjsOfType(this.FormObj, "DataGrid_New");// all DGs in formObject
         this.setFormObject();// set helper functions to this.formObject and other...
         this.updateCtrlsUI();
         this.initNCs();// order 1
@@ -209,6 +216,7 @@ const WebFormRender = function (option) {
         this.FRC.bindFnsToCtrls(this.flatControls);// order 3
         this.FRC.setDisabledControls(this.flatControls);// disables disabled controls 
         this.initDGs();
+        this.initDGsNew();
         this.initReviewCtrl();
 
         $.each(this.DGs, function (k, DG) {
@@ -342,6 +350,19 @@ const WebFormRender = function (option) {
         let OuterCtrlsTblNames = this.getNormalTblNames();
         for (let EbSid_CtxId in this.DGBuilderObjs) {
             let DGB = this.DGBuilderObjs[EbSid_CtxId];
+            if (!DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {// if no Table in datamodel add empty array
+                DataMODEL[DGB.ctrl.TableName] = [];
+                DGB.DataMODEL = DataMODEL[DGB.ctrl.TableName];
+                continue;
+            }
+
+            let DGDataMODEL = DataMODEL[DGB.ctrl.TableName];
+            DGB.populateDGWithDataModel(DGDataMODEL);
+        }
+
+        //for dg_new
+        for (let EbSid_CtxId in this.DGNewBuilderObjs) {
+            let DGB = this.DGNewBuilderObjs[EbSid_CtxId];
             if (!DataMODEL.hasOwnProperty(DGB.ctrl.TableName)) {// if no Table in datamodel add empty array
                 DataMODEL[DGB.ctrl.TableName] = [];
                 DGB.DataMODEL = DataMODEL[DGB.ctrl.TableName];
@@ -664,6 +685,9 @@ const WebFormRender = function (option) {
     this.S2EmodeDGCtrls = function () {
         $.each(this.DGs, function (k, DG) {
             this.DGBuilderObjs[DG.EbSid_CtxId].SwitchToEditMode();
+        }.bind(this));
+        $.each(this.DGsNew, function (k, DG) {
+            this.DGNewBuilderObjs[DG.EbSid_CtxId].SwitchToEditMode();
         }.bind(this));
     }.bind(this);
 
@@ -1413,6 +1437,7 @@ const WebFormRender = function (option) {
         this.MasterTable = this.FormObj.TableName;
         this.IsPSsInitComplete = {};
         this.DGBuilderObjs = {};
+        this.DGNewBuilderObjs = {};
         this.uniqCtrlsInitialVals = {};
         this.DynamicTabObject = null;
         this.FRC = new FormRenderCommon({ FO: this });

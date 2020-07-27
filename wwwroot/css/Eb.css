@@ -312,7 +312,6 @@
     margin-bottom: 0;
     outline: none;
     border: none;
-    border-top: solid 1px #ddd;
 }
 
     .DDdiv .selected-row, .DDdiv table.dataTable tbody > tr.selected {
@@ -340,6 +339,19 @@
     padding: 4px;
 }
 
+.DDdiv div.dataTables_wrapper div.dataTables_info {
+    position: absolute;
+    bottom: 0;
+    left: -10px;
+}
+
+.DDdiv div.dataTables_wrapper div.dataTables_paginate {
+    height: 28px;
+    position: absolute;
+    right: 8px;
+    bottom: 0px;
+}
+
 .search-wraper {
     display: flex;
     flex-direction: row;
@@ -359,12 +371,17 @@
 .ps-pb {
     bottom: 0;
 }
-
 .ps-srch {
     flex: 0 0 27px;
     display: flex;
     align-items: center;
     background: #eee !important;
+    display: none;
+}
+
+
+.search-block:last-child .ps-srch {
+    display: flex;
 }
 
 .filter-box .input-group-addon.ps-srch > i, .form-buider-form .input-group-addon.ps-srch > i, [eb-type="BotForm"] .input-group-addon.ps-srch > i {
@@ -405,6 +422,7 @@
     border-top: none;
     border-radius: 0 0 2px 2px;
     box-shadow: 0 6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41);
+    padding-bottom: 32px;
 }
 
     .DDdiv .dataTable {
@@ -463,8 +481,14 @@
     background-color: white;
     display: flex;
     flex-grow: 1;
-    width:100%;
+    width: 100%;
+    border-right: solid 3px #ddddde;
 }
+
+
+    .search-block:last-child {
+        border-right: 0;
+    }
 
     .search-block > .input-group {
         display: flex;
@@ -473,17 +497,15 @@
         width: 100%;
     }
 
-.v-select .selected-tag, .tdtxt .selected-tag {
+/*.v-select .selected-tag, .tdtxt .selected-tag { /// old rounded style
     position: relative;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    /*height: 20px !important;*/
     height: auto;
     color: white;
     border: none !important;
     border-radius: 2px !important;
-    /*padding: 0.01em .45em 0.15em 0.45em !important;*/
     padding: 3px 12px;
     margin: 3px 0px 3px 3px !important;
     font-size: 13px;
@@ -493,7 +515,28 @@
     outline: none;
     max-width: calc(100% - 13px);
     cursor: default;
+}*/
+
+.v-select .selected-tag, .tdtxt .selected-tag {
+    position: relative;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    height: auto;
+    color: white;
+    border: none !important;
+    border-radius: 2px !important;
+    padding: 3px 4px;
+    margin: 3px 0px 3px 3px !important;
+    font-size: 13px;
+    border-radius: 8px !important;
+    padding-right: 18px !important;
+    transition-duration: 0.2s;
+    outline: none;
+    max-width: calc(100% - 13px);
+    cursor: default;
 }
+
 .tdtxt .selected-tag {
     display: inline-block;
     max-width: 100%;
@@ -503,25 +546,39 @@
     width: auto;
     display: inline-flex;
 }
-    .v-select .selected-tag .close {
-        color: #fff;
-        text-shadow: 0px 1px 0px #000000d4;
-        opacity: 1;
-        opacity: 1;
-        position: absolute;
-        top: 1.5px;
-        right: 10px;
-        padding: 3px;
-        font-size: 21px;
-        outline: none;
-        font-weight: 500;
-    }
 
-        .v-select .selected-tag .close:hover {
-            color: #f00 !important;
-            text-shadow: 0px 1px 0px #fff;
-            opacity: 1 !important;
-        }
+/*.v-select .selected-tag .close {// old rounded style close style
+    color: #fff;
+    text-shadow: 0px 1px 0px #000000d4;
+    opacity: 1;
+    opacity: 1;
+    position: absolute;
+    top: 1.5px;
+    right: 10px;
+    padding: 3px;
+    font-size: 21px;
+    outline: none;
+    font-weight: 500;
+}*/
+.v-select .selected-tag .close {
+    color: #fff;
+    text-shadow: 0px 1px 0px #000000d4;
+    opacity: 1;
+    opacity: 1;
+    position: absolute;
+    top: 1.5px;
+    right: 3px;
+    padding: 3px;
+    font-size: 21px;
+    outline: none;
+    font-weight: 500;
+}
+
+    .v-select .selected-tag .close:hover {
+        color: #f00 !important;
+        text-shadow: 0px 1px 0px #fff;
+        opacity: 1 !important;
+    }
 
 [iblock] .close {
     display: none;

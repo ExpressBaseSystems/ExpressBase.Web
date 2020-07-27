@@ -569,6 +569,9 @@ function getValsFromForm(formObj) {
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     }
 
     return fltr_collection;

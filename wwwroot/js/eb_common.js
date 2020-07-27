@@ -1108,7 +1108,8 @@ function GetFontCss(obj, jqueryObj) {
         let fontobj = {};
         font.push(`font-size:${obj.Size}px ;`);
         font.push(`color:${obj.color} ;`);
-        font.push(`font-family:${obj.FontName} ;`);
+        if (obj.FontName = 'Arapey') font.push(`font-family: "" ;`);
+        else  font.push(`font-family:${obj.FontName} ;`);
         if (font.Underline) { font.push(`text-decoration: underline ;`); }
         if (font.Strikethrough) { font.push(`text-decoration: line-through ;`); }
         if (font.Caps) { font.push(`text-transform: uppercase;`); }
@@ -1119,6 +1120,8 @@ function GetFontCss(obj, jqueryObj) {
         if (jqueryObj !== undefined) {
             jqueryObj.css(`font-size`, `${obj.Size}px`);
             jqueryObj.css(`color`, `${obj.color}`);
+            if (obj.FontName = 'Arapey') jqueryObj.css(`font-family`, ``);
+            else 
             jqueryObj.css(`font-family`, `${obj.FontName}`);
             if (font.Underline) { jqueryObj.css(`text-decoration`, `underline`); }
             if (font.Strikethrough) { jqueryObj.css(`text-decoration`, `line-through`); }

@@ -589,7 +589,19 @@ const WebFormRender = function (option) {
         else
             return true;
     };
-
+    this.MeetingB4Save = function () {
+        let resp = true;
+        $.each($(`.meeting-scheduler-outer .m-validate`), function (i, Obj) {
+            if (Obj.value == "") {
+                resp = false;
+                $(Obj).css("box-shadow", `0px 0px 2px 0px rgba(255,0,0,1)`);
+            }
+            else {
+                $(Obj).css("box-shadow", `none`);
+            }
+        });
+        return resp;
+    };
     //this.dialogboxAction = function (value) {
     //    if (value === "Yes")
     //        this.saveForm_call();
@@ -617,6 +629,8 @@ const WebFormRender = function (option) {
             if (!this.isAllUniqOK())
                 return;
             if (!this.DGsB4Save())
+                return;
+            if (!this.MeetingB4Save())
                 return;
             this.FRC.checkUnique4All_save(this.flatControls, true);
         }.bind(this), 4);

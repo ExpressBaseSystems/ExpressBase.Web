@@ -347,6 +347,8 @@
                             LinkStyle(obj, this.CurrentTile, this.TabNum);
                             this.TileCollection[t_id].LinksColl.$values[i] = object;
                             this.loader.hide();
+                            $(".link-dashboard-pane").off("click").on("click", this.TileslinkRedirectFn.bind(this));
+                            //$(".ext-linktoform").off("click").on("click", this.TileslinkRedirectFn.bind(this));
                         }.bind(this));
                     }
                     if (currentobj.Transparent) {

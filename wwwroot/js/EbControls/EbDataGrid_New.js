@@ -71,7 +71,8 @@
         o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
-        o.AllowSelect = true;
+        o.LeftFixedColumn = 1;
+        o.RightFixedColumn = 1;
         //o.hiddenFieldName = this.vmName;
         //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  

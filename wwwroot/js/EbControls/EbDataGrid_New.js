@@ -5,7 +5,7 @@
     this.formObject_Full = options.formObject_Full; //original object
     this.formRefId = options.formRefId;
     this.formRenderer = options.formRenderer; 
-    this.initControls = new InitControls(this);
+    this.initControls = new InitControls(options.formRenderer);
     this.RowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
 
     this.$Table = null;
@@ -138,7 +138,7 @@
             let inpCtrl = this.DGColCtrls[i].inpCtrl;
             let opt = {};
             if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
-                opt.getAllCtrlValuesFn = getValsFromForm(this.formObject_Full);
+                opt.getAllCtrlValuesFn = this.getFormVals.bind(this);
             else if (inpCtrl.ObjType === "Date") {
                 opt.source = "webform";
                 opt.userObject = this.ctrl.__userObject;
@@ -156,6 +156,10 @@
             rowFlatCtrls.push(inpCtrl);
         }
         this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
+    };
+
+    this.getFormVals = function () {
+        return getValsFromForm(this.formObject_Full);
     };
 
     this.editRow_click = function (e) {

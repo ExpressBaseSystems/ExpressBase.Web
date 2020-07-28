@@ -635,7 +635,7 @@
 .loc_switchModal_box {
     background: white;
     box-shadow: var(--eb-shadow);
-    min-width: 50%;
+    min-width: 40%;
     display: flex;
     flex-direction: column;
     border-radius: 6px;

@@ -47,9 +47,10 @@
     this.initBasicDataTable = function () {
         this.DVColumns = this.ctrl.DVColumnColl;
         let tempData = {};
-        for (let i = 0; i < this.DVColumns.$values.length; i++)
-            tempData[i] = null;
-        tempData = { data: [tempData] }; //temp fix
+        //for (let i = 0; i < this.DVColumns.$values.length; i++)
+        //    tempData[i] = null;
+        //tempData[this.DVColumns.$values.length] = 0;
+        tempData = { data: [] }; //temp fix
 
         let o = {};
         o.containerId = `tblcont_${this.ctrl.EbSid_CtxId}`;
@@ -67,16 +68,17 @@
         o.dom = "<p>rt";
         //o.IsPaging = true;
         //o.pageLength = this.ComboObj.DropDownItemLimit;
-        o.source = "datagrid";
+        o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
+        o.AllowSelect = true;
         //o.hiddenFieldName = this.vmName;
         //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  
         //o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         //o.searchCallBack = this.searchCallBack;
         o.data = tempData;
-        this.datatable = new EbBasicDataTable(o);
+        this.datatable = new EbCommonDataTable(o);
     };
 
     this.initDGColCtrls = function () {

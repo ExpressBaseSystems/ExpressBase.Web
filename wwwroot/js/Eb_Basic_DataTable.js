@@ -52,6 +52,8 @@ var EbBasicDataTable = function (Option) {
 
     this.action = Option.action || null;
     this.Levels = Option.levels || [];
+    this.PreviousHTML = Option.PreviousHTML;
+    this.NextHTML = Option.NextHTML;
 
 
     this.init = function () {
@@ -252,6 +254,13 @@ var EbBasicDataTable = function (Option) {
         o.processing = true;
         o.language = {
             processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>",
+            info: "_START_ - _END_ / _TOTAL_",
+            paginate: {
+                "previous": this.PreviousHTML || "Prev",
+                "next": this.NextHTML || "Next",
+            },
+            lengthMenu: "_MENU_ / Page",
+            infoFiltered : (this.source === "powerselect") ? "(filtered from _MAX_ records)" : ""
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
@@ -260,6 +269,7 @@ var EbBasicDataTable = function (Option) {
         o.lengthChange = this.EbObject.IsPaging;
         o.pagingType = "simple";
         o.pageLength = this.pageLength;
+        //o.fixedColumns = { leftColumns: 1, rightColumns: 1 };
         o.select = true;
         o.keys = true;
         if (this.MainData === null) {

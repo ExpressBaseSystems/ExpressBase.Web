@@ -99,6 +99,8 @@
     this.LeftFixedColumn = Option.LeftFixedColumn || 0;
     this.RowHeight = Option.RowHeight || "15";
     this.ObjectLinks = Option.ObjectLinks || [];
+    this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
+
 
     if (this.Source === "EbDataTable") {
         this.split = new splitWindow("parent-div0", "contBox");
@@ -601,6 +603,9 @@
             console.log('An error has been reported by DataTables: ', message);
         });
 
+        if (this.Source === "datagrid")
+            this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
@@ -652,7 +657,7 @@
             }
         });
 
-        //this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+       
 
         //this.table_jQO.on('length.dt', function (e, settings, len) {
         //    console.log('New page length: ' + len);
@@ -663,6 +668,7 @@
             EbPopBox("show", { Message: message, Title: "Error" });
         };
 
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
 
         //this.Api.on('row-reorder', function (e, diff, edit) {
         //});
@@ -671,7 +677,7 @@
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
         var serialObj = new Object();
-        serialObj.data = this.EbObject.Columns.$values.length;
+        serialObj.data = (this.Source === "datagrid") ? null : this.EbObject.Columns.$values.length;
         serialObj.searchable = false;
         serialObj.orderable = false;
         serialObj.bVisible = true;
@@ -688,7 +694,7 @@
     this.CheckforColumnID = function () {
         this.FlagPresentId = false;
         $.each(this.EbObject.Columns.$values, function (i, col) {
-            if (col.name === "id") {
+            if (col.name === this.hiddenFieldName.toLocaleLowerCase()) {
                 this.FlagPresentId = true;
                 col.bVisible = false;
                 return false;
@@ -709,6 +715,9 @@
         chkObj.pos = "-1";
 
         this.extraCol.push(chkObj);
+        var _array = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this));
+        if (_array.length > 0)
+            this.hiddenIndex = _array[0].data;
     }
 
     this.createTblObject = function () {
@@ -745,7 +754,7 @@
         o.order = [];
         o.deferRender = true;
         //o.filter = true;
-        //o.select = true;
+        //o.select = this.AllowSelect;
         //o.retrieve = true;
         o.keys = true;
         //this.filterValues = this.getFilterValues();
@@ -1168,7 +1177,7 @@
         this.treeData = dd.tree;
         this.SetColumnRef();
         this.ImageArray = dd.imageList ? JSON.parse(dd.imageList) : [];
-        return dd.formattedData;
+        return dd.formattedData || this.unformatedData;
     };
 
     this.fixedColumnCount = function () {
@@ -1834,6 +1843,18 @@
     };
 
     this.dblclickCallbackFunc = function (e) {
+    };
+
+    this.rowclick = function (e, dt, type, indexes) {
+        let trindex = $(e.target).closest("tr").index();
+        if (this.AllowSelect) {
+            $(".DTFC_LeftBodyLiner tbody tr").removeClass("selected");
+            $(".DTFC_RightBodyLiner tbody tr").removeClass("selected");
+            $(".DTFC_LeftBodyLiner tbody tr").eq(trindex).addClass("selected");
+            $(".DTFC_RightBodyLiner tbody tr").eq(trindex).addClass("selected");
+        }
+        if (Option.rowclick)
+            Option.rowclick(e, dt, type, indexes);
     };
 
     this.rowGroupHandler = function (e) {
@@ -3986,10 +4007,10 @@
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         if (this.FlagPresentId) {
-            var idpos = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
+            this.hiddenIndex  = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            if (row[idpos])
-                return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+            if (row[this.hiddenIndex])
+                return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[this.hiddenIndex].toString() + "'/>";
             else
                 return "<input type='checkbox' class='" + this.tableId + "_select'/>";
         }

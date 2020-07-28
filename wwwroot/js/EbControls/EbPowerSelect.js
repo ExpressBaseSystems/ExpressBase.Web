@@ -660,6 +660,8 @@ const EbPowerSelect = function (ctrl, options) {
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
+        o.NextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
+        o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////

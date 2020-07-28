@@ -904,7 +904,7 @@ namespace ExpressBase.Web.Controllers
             {
                 //this.ServiceClient.BearerToken = _u.BearerToken;
                 //this.ServiceClient.RefreshToken = _u.RefreshToken;
-                Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = _u.AuthId });
+                Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = authid });
                 authresp.AuthStatus = response.AuthStatus;
                 authresp.ErrorMessage = response.ErrorMessage;
 

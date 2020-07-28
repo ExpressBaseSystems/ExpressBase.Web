@@ -537,7 +537,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			User _u = this.Redis.Get<User>(authid);
 			if (_u != null)
 			{
-				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = _u.AuthId });
+				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = authid });
 				authresp.AuthStatus = response.AuthStatus;
 				authresp.ErrorMessage = response.ErrorMessage;
 				Bot_Obj.Status = authresp.AuthStatus;

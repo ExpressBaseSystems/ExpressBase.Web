@@ -1521,7 +1521,7 @@ input.locinp {
     line-height: 10px;
 }*/
 
-[eb-type="WebForm"] .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
+[eb-type="WebForm"] .DDdiv .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
     margin-top: -11px;
 }
 

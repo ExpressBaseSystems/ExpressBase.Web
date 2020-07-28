@@ -1,4 +1,18 @@
-﻿.tablecontainer {
+﻿
+/****  Datagrid ******/
+div.webform-cont div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
+    background-color: white !important;
+}
+
+div.webform-cont div[ctype="DataGrid_New"] td.focus {
+    outline: 0px !important
+}
+
+div.webform-cont div[ctype="DataGrid_New"] tr.selected {
+    color: black !important;
+}
+
+.tablecontainer {
     width: 100%;
     height: auto;
     display: inline-block;
@@ -296,7 +310,7 @@ div.dataTables_wrapper div.dataTables_processing {
 .even {
     background-color: white !important;
 }
-.wrapper-cont tr.odd:hover, .wrapper-cont tr.even:hover {
+.dataTables_wrapper tr.odd:hover, .dataTables_wrapper tr.even:hover {
     background-color: #00000040 !important;
 }
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected, table.dataTable tbody > tr.selected:hover {
@@ -1030,6 +1044,8 @@ div.dataTables_wrapper .info-search-cont .dataTables_info {
     color: black;
     cursor: not-allowed;
 }
+
+
 
 
 

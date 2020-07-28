@@ -530,6 +530,10 @@
                         val = ebcontext.user.UserId;
                         name = "eb_currentuser_id";
                     }
+                    else if (depCtrl_s === "form.id") {
+                        val = this.Renderer.rowId;
+                        name = "id";
+                    }
                     else {
                         val = depCtrl.getValue();
                         name = depCtrl.Name;

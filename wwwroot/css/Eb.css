@@ -352,6 +352,40 @@
     bottom: 0px;
 }
 
+
+.DDdiv > .DDclose {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    color: white;
+    opacity: 0.2;
+    background-color: red;
+    font-size: 14px;
+    width: 22px;
+    text-align: center;
+}
+
+    .DDdiv > .DDclose:hover {
+        opacity: 1;
+    }
+
+.ps-addbtn {
+    width: 32px !important;
+    z-index: 1;
+    position: absolute;
+    background: transparent;
+    display: inline-flex;
+    box-shadow: inset 1px 0 0 0px #ddddde;
+    right: 0;
+    font-size: 14px;
+    height: 100%;
+}
+
+    .ps-addbtn > .fa {
+        margin: auto;
+    }
+
 .search-wraper {
     display: flex;
     flex-direction: row;
@@ -371,6 +405,7 @@
 .ps-pb {
     bottom: 0;
 }
+
 .ps-srch {
     flex: 0 0 27px;
     display: flex;
@@ -391,7 +426,13 @@
 .v-select {
     flex-grow: 1;
     display: flex;
-    max-width: calc(100% - 27px); /*substracting search icon width*/
+    max-width: 100%;
+}
+
+    .v-select:last-child {
+        flex-grow: 1;
+        display: flex;
+        max-width: calc(100% - 27px); /*substracting search icon width*/
 }
 
 [eb-form="true"][mode="view"] .searchable [type="search"] {
@@ -421,9 +462,13 @@
     background-clip: padding-box;
     border-top: none;
     border-radius: 0 0 2px 2px;
-    box-shadow: 0 6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41);
+    box-shadow: 3px 8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222);
     padding-bottom: 32px;
 }
+
+    .DDdiv .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 1px;
+    }
 
     .DDdiv .dataTable {
         margin: 0 !important;
@@ -482,6 +527,7 @@
     display: flex;
     flex-grow: 1;
     width: 100%;
+    border-radius: 9px;
     border-right: solid 3px #ddddde;
 }
 
@@ -492,6 +538,7 @@
 
     .search-block > .input-group {
         display: flex;
+        align-items: stretch;
         align-items: stretch;
         flex: 1 0;
         width: 100%;
@@ -526,11 +573,11 @@
     color: white;
     border: none !important;
     border-radius: 2px !important;
-    padding: 3px 4px;
+    padding: 3px 5px;
     margin: 3px 0px 3px 3px !important;
     font-size: 13px;
     border-radius: 8px !important;
-    padding-right: 18px !important;
+    padding-right: 19px !important;
     transition-duration: 0.2s;
     outline: none;
     max-width: calc(100% - 13px);
@@ -599,7 +646,7 @@
     }
 
     .v-select .selected-tag:nth-child(5n - 2), [iblock] .selected-tag:nth-child(5n - 2) {
-        background-color: rgb(158 91 166 / 75%) !important;
+        background-color: rgb(155 78 180 / 89%) !important;
     }
 
     .v-select .selected-tag:nth-child(5n -1), [iblock] .selected-tag:nth-child(5n -1) {

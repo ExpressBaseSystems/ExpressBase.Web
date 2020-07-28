@@ -5,7 +5,7 @@
     this.formObject_Full = options.formObject_Full; //original object
     this.formRefId = options.formRefId;
     this.formRenderer = options.formRenderer; 
-    this.initControls = new InitControls(this);
+    this.initControls = new InitControls(options.formRenderer);
     this.RowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
 
     this.$Table = null;
@@ -47,9 +47,10 @@
     this.initBasicDataTable = function () {
         this.DVColumns = this.ctrl.DVColumnColl;
         let tempData = {};
-        for (let i = 0; i < this.DVColumns.$values.length; i++)
-            tempData[i] = null;
-        tempData = { data: [tempData] }; //temp fix
+        //for (let i = 0; i < this.DVColumns.$values.length; i++)
+        //    tempData[i] = null;
+        //tempData[this.DVColumns.$values.length] = 0;
+        tempData = { data: [] }; //temp fix
 
         let o = {};
         o.containerId = `tblcont_${this.ctrl.EbSid_CtxId}`;
@@ -67,16 +68,17 @@
         o.dom = "<p>rt";
         //o.IsPaging = true;
         //o.pageLength = this.ComboObj.DropDownItemLimit;
-        o.source = "datagrid";
+        o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
+        o.AllowSelect = true;
         //o.hiddenFieldName = this.vmName;
         //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  
         //o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         //o.searchCallBack = this.searchCallBack;
         o.data = tempData;
-        this.datatable = new EbBasicDataTable(o);
+        this.datatable = new EbCommonDataTable(o);
     };
 
     this.initDGColCtrls = function () {
@@ -138,7 +140,7 @@
             let inpCtrl = this.DGColCtrls[i].inpCtrl;
             let opt = {};
             if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
-                opt.getAllCtrlValuesFn = getValsFromForm(this.formObject_Full);
+                opt.getAllCtrlValuesFn = this.getFormVals.bind(this);
             else if (inpCtrl.ObjType === "Date") {
                 opt.source = "webform";
                 opt.userObject = this.ctrl.__userObject;
@@ -156,6 +158,10 @@
             rowFlatCtrls.push(inpCtrl);
         }
         this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
+    };
+
+    this.getFormVals = function () {
+        return getValsFromForm(this.formObject_Full);
     };
 
     this.editRow_click = function (e) {

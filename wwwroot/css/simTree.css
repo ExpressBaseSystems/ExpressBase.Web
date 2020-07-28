@@ -45,10 +45,12 @@
         color: #333;
         text-decoration: none;
         vertical-align: top;
-        line-height: 26px;
+        line-height: 22px;
+        /*line-height: 26px;*/
     }
 
     .sim-tree .sim-tree-spread {
+        padding: 6px 0px;
         width: 20px;
         padding-left: 5px;
         -webkit-box-sizing: border-box;
@@ -62,7 +64,7 @@
     .sim-tree .sim-tree-spread,
     .sim-tree a {
         display: inline-block !important;
-        height: 26px;
+        /*height: 26px;*/
         cursor: pointer;
     }
 
@@ -144,12 +146,13 @@
 /*custom css*/
 .locs_bdy ul.sim-tree a {
     margin: 3px 0px;
-    padding: 0px 3px;
+    padding: 6px 3px;
     width: 95%;
     border-radius: 4px;
     border: 1px solid #e1e1e2;
     letter-spacing: 0.03em;
     background-color: #f5f5f5bd;
+    cursor:pointer;
     /*box-shadow: -1px 2px 4px 1px #b5b5b547;*/
 }
 
@@ -158,3 +161,9 @@
         background: #3586cc;
         color: white;
     }
+
+.locs_bdy ul.sim-tree a span{
+   display:block;
+   font-size:12px;
+
+}

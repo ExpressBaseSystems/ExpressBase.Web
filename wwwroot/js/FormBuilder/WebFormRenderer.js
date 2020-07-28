@@ -294,7 +294,10 @@ const WebFormRender = function (option) {
     //};
 
     this.getWebFormVals = function () {
-        return getValsFromForm(this.FormObj);
+        let fltr_collection = getValsFromForm(this.FormObj);
+        fltr_collection.push(new fltr_obj(11, this.FormObj.TableName + '_id', this.rowId));
+        fltr_collection.push(new fltr_obj(11, 'id', this.rowId));
+        return fltr_collection;
     }.bind(this);
 
     this.populateFormOuterCtrlsWithDataModel = function (NCCSingleColumns_flat_editmode_data) {
@@ -1400,6 +1403,8 @@ const WebFormRender = function (option) {
         $.contextMenu('destroy');
         window.__IsDGctxMenuSet = undefined;
         $(".xdsoft_datetimepicker.xdsoft_noselect.xdsoft_").remove();
+        let tvCtrls = getFlatObjOfType(this.FormObj, "TVcontrol");
+        $.each(tvCtrls, function (a, b) { b.__filterValues = [];});
 
         this.resetBuilderVariables(newOptions);
         this.init(option);

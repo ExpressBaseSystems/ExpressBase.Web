@@ -154,7 +154,10 @@ const EbPowerSelect = function (ctrl, options) {
                 this.$searchBoxes.css("padding", `${this.ComboObj.Padding.Top}px ${this.ComboObj.Padding.Right}px ${this.ComboObj.Padding.Bottom}px ${this.ComboObj.Padding.Left}px`);
 
             if (this.ComboObj.IsInsertable) {
-                this.ComboObj.__AddButtonInit(this.ComboObj.AddButton);
+                this.ComboObj.__AddButtonInit({
+                    EbSid_CtxId: this.ComboObj.EbSid_CtxId + "_addbtn",
+                    FormRefId: this.ComboObj.FormRefId
+                });
             }
 
             //set id for searchBox
@@ -164,6 +167,7 @@ const EbPowerSelect = function (ctrl, options) {
             if (!this.ComboObj.MultiSelect)
                 $('#' + this.name + 'Wraper').attr("singleselect", "true");
 
+            this.$searchBoxes.attr("autocomplete", "off");
 
             //styles
             $('#' + this.name + 0).children().css("border-top-left-radius", "5px");

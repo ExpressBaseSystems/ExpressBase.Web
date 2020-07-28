@@ -130,6 +130,7 @@ const EbPowerSelect = function (ctrl, options) {
 
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
             $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
+            $('#' + this.name + 'Wraper .DDclose').off("click").on("click", this.DDclose.bind(this)); // dd close button
             $('#' + this.name + 'tbl').keydown(function (e) {
                 if (e.which === 27) {
                     this.lastFocusedDMsearchBox.focus();
@@ -652,11 +653,15 @@ const EbPowerSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
+        o.nextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
+        o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
         o.pageLength = this.ComboObj.DropDownItemLimit;
         o.source = "powerselect";
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
+        o.NextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
+        o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -834,6 +839,10 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.toggleIndicatorBtn = function (e) {
         this.Vobj.toggleDD();
+    };
+
+    this.DDclose = function (e) {
+        this.Vobj.hideDD();
     };
 
     //this.getSelectedRow = function () {

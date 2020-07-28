@@ -569,6 +569,9 @@ function getValsFromForm(formObj) {
         var temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_loc_id"; });
         if (temp.length === 0)
             fltr_collection.push(new fltr_obj(11, "eb_loc_id", store.get("Eb_Loc-" + ebcontext.sid + ebcontext.user.UserId)));
+        temp = $.grep(fltr_collection, function (obj) { return obj.Name === "eb_currentuser_id"; });
+        if (temp.length === 0)
+            fltr_collection.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
     }
 
     return fltr_collection;
@@ -1105,7 +1108,8 @@ function GetFontCss(obj, jqueryObj) {
         let fontobj = {};
         font.push(`font-size:${obj.Size}px ;`);
         font.push(`color:${obj.color} ;`);
-        font.push(`font-family:${obj.FontName} ;`);
+        if (obj.FontName = 'Arapey') font.push(`font-family: "" ;`);
+        else  font.push(`font-family:${obj.FontName} ;`);
         if (font.Underline) { font.push(`text-decoration: underline ;`); }
         if (font.Strikethrough) { font.push(`text-decoration: line-through ;`); }
         if (font.Caps) { font.push(`text-transform: uppercase;`); }
@@ -1116,6 +1120,8 @@ function GetFontCss(obj, jqueryObj) {
         if (jqueryObj !== undefined) {
             jqueryObj.css(`font-size`, `${obj.Size}px`);
             jqueryObj.css(`color`, `${obj.color}`);
+            if (obj.FontName = 'Arapey') jqueryObj.css(`font-family`, ``);
+            else 
             jqueryObj.css(`font-family`, `${obj.FontName}`);
             if (font.Underline) { jqueryObj.css(`text-decoration`, `underline`); }
             if (font.Strikethrough) { jqueryObj.css(`text-decoration`, `line-through`); }

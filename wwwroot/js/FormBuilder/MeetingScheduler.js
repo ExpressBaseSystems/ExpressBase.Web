@@ -6,7 +6,7 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
     this.SlotList = [];
     this.MeetingScheduleObj = {
         Title: '', Description: '', Location: '', Integration:'', IsSingleMeeting: 'T', IsMultipleMeeting: 'F', Date: '',
-        TimeFrom: '', TimeTo: '', Duration: '', MaxHost: 1, MinHost: 1, MaxAttendee: 1, MinAttendee: 1,
+        TimeFrom: '', TimeTo: '', Duration: '', MaxHost: 0, MinHost: 1, MaxAttendee: 0, MinAttendee: 1,
         EligibleHosts: '', EligibleAttendees: '', Host: '', Attendee: '', IsRecuring: 'F', DayCode: 0, MeetingType: this.Ctrl.MeetingType,
         SlotList: this.SlotList
     };
@@ -191,10 +191,10 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
         this.MeetingDate = $(`#${this.Ctrl.EbSid}_meeting-date`);
         this.TimeFrom = $(`.time-from`);
         this.TimeTo = $(`.time-to`);
-        this.MaxHost = $(`#${this.Ctrl.EbSid}_max-host`);
-        this.MinHost = $(`#${this.Ctrl.EbSid}_min-host`);
-        this.MaxAttendee = $(`#${this.Ctrl.EbSid}_max-attendee`);
-        this.MinAttendee = $(`#${this.Ctrl.EbSid}_min-attendee`);
+        //this.MaxHost = $(`#${this.Ctrl.EbSid}_max-host`);
+        //this.MinHost = $(`#${this.Ctrl.EbSid}_min-host`);
+        //this.MaxAttendee = $(`#${this.Ctrl.EbSid}_max-attendee`);
+        //this.MinAttendee = $(`#${this.Ctrl.EbSid}_min-attendee`);
 
         this.Host = $(`.tb-host`);
         this.Attendee = $(`.tb-attendee`);
@@ -250,22 +250,22 @@ var meetingScheduler = function (ctrl, ctrlOpts, type) {
             jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
             //this.UpdateParticipantList(pos);
         }.bind(this));
-        this.MaxHost.off('change').on("change", function (e) {
-            this.MeetingScheduleObj.MaxHost = e.target.value;
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
-        this.MinHost.off('change').on("change", function (e) {
-            this.MeetingScheduleObj.MinHost = e.target.value;
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
-        this.MaxAttendee.off('change').on("change", function (e) {
-            this.MeetingScheduleObj.MaxAttendee = e.target.value;
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
-        this.MinAttendee.off('change').on("change", function (e) {
-            this.MeetingScheduleObj.MinAttendee = e.target.value;
-            jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
-        }.bind(this));
+        //this.MaxHost.off('change').on("change", function (e) {
+        //    this.MeetingScheduleObj.MaxHost = e.target.value;
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        //this.MinHost.off('change').on("change", function (e) {
+        //    this.MeetingScheduleObj.MinHost = e.target.value;
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        //this.MaxAttendee.off('change').on("change", function (e) {
+        //    this.MeetingScheduleObj.MaxAttendee = e.target.value;
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
+        //this.MinAttendee.off('change').on("change", function (e) {
+        //    this.MeetingScheduleObj.MinAttendee = e.target.value;
+        //    jsonStr.val(JSON.stringify(this.MeetingScheduleObj)).trigger("change");
+        //}.bind(this));
 
         //this.Host.on("change", function (e) {
         //    this.MeetingScheduleObj.Host = e.target.value;

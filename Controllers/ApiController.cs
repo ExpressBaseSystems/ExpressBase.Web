@@ -410,7 +410,7 @@ namespace ExpressBase.Web.Controllers
                     validateResp = this.ServiceClient.Post(new ValidateOtpRequest
                     {
                         Token = token,
-                        UserAuthId = user.AuthId
+                        UserAuthId = authid
                     });
                 }
                 catch (Exception ex)

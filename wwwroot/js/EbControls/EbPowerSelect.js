@@ -1020,8 +1020,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.V_hideDD = function () {
-        this.Vobj.DDstate = false;
         this.RemoveRowFocusStyle();
+        this.Vobj.DDstate = false;
+        this.$DDdiv.hide();
     };
 
     this.getMaxLenVal = function () {
@@ -1125,16 +1126,15 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.ApplyRowFocusStyle = function ($tr) {
         $tr.find('.focus').removeClass('focus');
-        setTimeout(function () {
+        //setTimeout(function () {
             $tr.addClass('selected');
-        }, 10);
+        //}, 10);
     };
 
     this.RemoveRowFocusStyle = function ($tr) {
-        $tr = $tr || $(this.DTSelector + " tr.selected");
-        if ($tr.length === 0)
-            return;
-        $tr.removeClass('selected');
+        let tr = ($tr && $tr[0]) || document.querySelector(this.DTSelector + " tr.selected");
+        if (tr)
+            tr.classList.remove('selected');
     };
 
     this.tagCloseBtnHand = function (e) {

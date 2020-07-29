@@ -10,13 +10,15 @@
     <ul class="menuwrapper_ul_outer">
         <li>
             <ul class="outer sub-menuObj collapse in" list-wraper="true">
+
+                <li klink='true'>
+                    <a href="/SupportTicket/BugSupport" target="_blank" class="list-group-item inner_li Obj_link for_brd">
+                        <div class="apibox"><i class="fa fa-life-ring"></i></div> Support
+                    </a>
+                </li>
+
                 @if (ViewBag.wc.Equals("dc"))
                 {
-                    <li klink='true'>
-                        <a href="/SupportTicket/BugSupport" target="_blank" class="list-group-item inner_li Obj_link for_brd">
-                            <div class="apibox"><i class="fa fa-life-ring"></i></div> Support
-                        </a>
-                    </li>
                     <li klink='true'>
                         <a href="/Dev/SolutionConsole" target="_blank" class="list-group-item inner_li Obj_link for_brd">
                             <div class="apibox"><i class="fa fa-cog"></i></div> Solution Settings
@@ -27,25 +29,32 @@
                             <div class="apibox"><i class="fa fa-database"></i></div> Database Explorer
                         </a>
                     </li>
+                }
+
+                <li klink='true'>
+                    <a href="/SMSLog/SMSLogConsole" target="_blank" class="list-group-item inner_li Obj_link for_brd">
+                        <div class="apibox"><i class="fa fa-commenting-o"></i></div> Communication Console
+                    </a>
+                </li>
+
+                @if (ViewBag.wc.Equals("dc"))
+                {
                     <li trigger="menu" Appid="0" klink='true'>
                         <a href="#" class="list-group-item inner_li Obj_link for_brd">
                             <div class="apibox"><i class="fa fa-thumb-tack fa-rotate-90"></i></div> Common
                         </a>
                     </li>
                 }
+
                 @if (ViewBag.wc.Equals("uc"))
                 {
-                    <li klink='true'>
-                        <a href="/SupportTicket/BugSupport" target="_blank" class="list-group-item inner_li Obj_link for_brd">
-                            <div class="apibox"><i class="fa fa-life-ring"></i></div> Support
-                        </a>
-                    </li>
                     <li trigger="favourites" klink='true'>
                         <a href="#" class="list-group-item inner_li Obj_link for_brd">
                             <div class="apibox"><i class="fa fa-heart"></i></div> Favourites
                         </a>
                     </li>
                 }
+
                 @if (ViewBag.wc.Equals("uc") && (ViewBag.Role.Contains("SolutionOwner") || ViewBag.Role.Contains("SolutionAdmin")))
                 {
                     <li trigger="security" klink='true'>
@@ -59,6 +68,7 @@
                         </a>
                     </li>
                 }
+
                 @Html.Raw(ViewBag.menu)
             </ul>
         </li>

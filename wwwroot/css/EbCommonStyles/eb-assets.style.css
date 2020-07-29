@@ -664,36 +664,37 @@
         margin: 5px 0px;
     }
     /*new loc window styles*/
-    .loc_switchModal_box .locs_head .locs_headSub .loc_searchInput {
+    .loc_switchModal_box .locs_head .loc_searchInput {
         display: flex;
         align-items: center;
+        float: right;
     }
 
-        .loc_switchModal_box .locs_head .locs_headSub .loc_searchInput:before {
+        .loc_switchModal_box .locs_head  .loc_searchInput:before {
             content: "\f002";
             font-family: FontAwesome;
             position: absolute;
             margin-left: 10px;
         }
 
-        .loc_switchModal_box .locs_head .locs_headSub .loc_searchInput input {
+        .loc_switchModal_box .locs_head  .loc_searchInput input {
             height: 30px;
             padding-left: 35px;
         }
+      
+   
 
-    .loc_switchModal_box .locs_head .locs_headSub {
-        /*display: flex;
-        align-items: center;*/
-    }
-
-        .loc_switchModal_box .locs_head .locs_headSub .loc_current_wrp {
-            padding-bottom: 8px;
-            padding-top: 8px;
+        .loc_switchModal_box .locs_head  .loc_current_wrp {
+            padding-top: 3px;
         }
 
-            .loc_switchModal_box .locs_head .locs_headSub .loc_current_wrp span {
+            .loc_switchModal_box .locs_head .loc_current_wrp span {
                 font-weight: 500;
             }
+                .loc_switchModal_box .locs_head .loc_current_wrp span i {
+                    font-size: 16px;
+                    color:green;
+                }
 
 .loc_switchModal_close {
     float: right;

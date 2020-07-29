@@ -22,7 +22,7 @@
         this.CurrentLoc = this.getCurrent();
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
-        this.EbHeader.setLocation(this.CurrentLocObj.ShortName);        
+        this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.ModifyLocationObject();
         this.findParent_loc();
         this.drawLocsTree();
@@ -30,12 +30,11 @@
         $(TriggerId).off("click").on("click", this.showSwitcher.bind(this));
         $(SetLoc).off("click").on("click", this.setLocation.bind(this));
         $(Loc_close).off("click").on("click", this.close_LocSwitch.bind(this));
-        $(".locs_bdy").off("dblclick").on("dblclick", "li a", this.setLocation.bind(this));
-        //  $(".locs_bdy").off("click").on("click","li a", this.highlight_loc.bind(this));
+        $(".locs_bdy").off("dblclick").on("dblclick", "li a", this.confirmLocFn.bind(this));
         $("#loc-search").off("keyup").on("keyup", this.searchLoc.bind(this));
-        $(".locs_bdy").off("keyup").on("keyup", "li a", this.Keypress_selectLoc.bind(this));       
+        $("body").off("keyup").on("keyup", this.Keypress_selectLoc.bind(this));
         let s = this.getParentPath(this.CurrentLoc);
-        $('#current_loc').text(s);
+        $('#current_loc').attr('loc_id', this.CurrentLoc).text(s);
     };
 
     this.getCurrent = function () {
@@ -76,7 +75,7 @@
     };
 
     this.ClickLocation = function (items) {
-        if (items.length > 0) {            
+        if (items.length > 0) {
             $(".loc_switchModal_box .locs_bdy li").removeClass("active-loc");
             $(".loc_switchModal_box .locs_bdy li[data-id=" + items[0].id + "]").addClass("active-loc").parents("ul").addClass("show");
             this.CurrentLoc = items[0].id;
@@ -86,8 +85,7 @@
             if ($(LocModId).is(":visible")) {
                 if ($('#loc-search').val() != "") {
                     this.setParentPath();
-                    //  $(".loc_switchModal_box .locs_bdy ul").addClass("show")
-                } 
+                }
             }
         }
     };
@@ -110,13 +108,74 @@
     this.Keypress_selectLoc = function (e) {
         var keycode = (e.keyCode ? e.keyCode : e.which);
         if (keycode == '13') {
-            this.setLocation();
+            this.confirmLocFn();
         }
+        else if (keycode == '27') {
+            this.showSwitcher();
+        }
+        else if (keycode == '37') {
+            var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
+            if (y.find("ul.show").length) {
+                y = y.find("ul.show");
+                while (y.hasClass("show")) {
+                    let k = y.closest("li");
+                    k.find("a:first").trigger('click');
+                    k.find('.sim-tree-spread:first').trigger('click');
+                }
+            }
+        }
+        else if (keycode == '38') {
+            let y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
+
+            if (y.prev().length) {
+                y = y.prev();
+                if (y.children("ul.show").length) {
+                    y = y.find('ul.show').find('li:last-child')
+                }
+                y.find('a:first').trigger('click');
+            }
+            else {
+                if (y.closest('ul.show').length) {
+                    if (y.closest('ul.show').closest("li").length) {
+                        y = y.closest('ul.show').closest("li");
+                        y.find('a:first').trigger('click');
+                    }
+                }
+
+            }
+        }
+        else if (keycode == '39') {
+            let y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
+
+            if (y.children("ul:first").length) {
+                if (!y.children("ul:first").hasClass("show")) {
+                    y.find('.sim-tree-spread:first').trigger('click');
+
+                }
+                else {
+                    y = y.find("ul:first").find("li:first")
+                    y.find("a:first").trigger('click');
+                }
+            }
+        }
+        else if (keycode == '40') {
+            let y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
+            if (y.children("ul:first").hasClass("show")) {
+                y = y.find("ul:first").find("li:first")
+            }
+            else if (y.next('li').length) {
+                y = y.next('li');
+            }
+            else {
+                y = y.closest('ul.show').parent("li").next("li");
+            }
+
+            y.find("a:first").trigger('click');
+
+        }
+
     }
 
-    //this.highlight_loc = function () {
-    //    $("#loc-search").val('');
-    //}
 
     this.showSwitcher = function (e) {
         $(LocModId).toggle("fast", function () {
@@ -194,10 +253,10 @@
             let m = "";
             for (let i = 0; i < this.loc_parents[k].length; i++) {
                 m += this.loc_parents[k][i];
-                if (i < this.loc_parents[k].length-1)
-                { m += " " + '\u2192' + " "; }
-                else if (i == this.loc_parents[k].length-1)
-                {
+                if (i < this.loc_parents[k].length - 1)
+                //{ m += " " + '\u2192' + " "; }
+                { m += " > "; }
+                else if (i == this.loc_parents[k].length - 1) {
                     let idx = this.Locations.findIndex(x => x.LocId === k);
                     m += " (" + this.Locations[idx].ShortName + ")";
                 }
@@ -210,11 +269,33 @@
     this.setParentPath = function () {
         for (i = 0; i < this.Locations.length; i++) {
             p = this.getParentPath(this.Locations[i].LocId);
-            let k=$(".loc_switchModal_box .locs_bdy li[data-id=" + this.Locations[i].LocId + "]").find('a')[0];
-            $(k).append(`<span>${p}</span>`);
+            let k = $(".loc_switchModal_box .locs_bdy li[data-id=" + this.Locations[i].LocId + "]").find('a')[0];
+            $(k).prepend(`<span>${p}</span>`);
         }
-       
+
     }
 
+    this.confirmLocFn = function () {
+        let m = `<div class="modal fade" id="confirmLoc" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <p style=" text-align: center; font-size:18px;font-weight:600;">Change current location.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="loc_cancel" style="background:red;color:white;" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
+          <button type="button" id="loc_confirm" style="background:green;color:white;" class="btn btn-default pull-right" data-dismiss="modal">Confirm</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>`
+        $('body').append(m);
+        $('#confirmLoc').modal('show');
+        $("#loc_confirm").off("click").on("click", this.close_LocSwitch.bind(this));
+    }.bind(this);
+    this.close_LocSwitch = function () {
+        this.setLocation();
+    }
     this.Init();
 };

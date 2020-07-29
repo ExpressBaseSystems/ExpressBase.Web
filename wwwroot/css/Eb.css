@@ -325,7 +325,7 @@
 }
 
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th {
-    padding-top: 15px;
+    padding-top: 9px;
     border-right: dotted 1px #dddddd;
     background-color: white;
     color: #656565f0;
@@ -350,6 +350,10 @@
     position: absolute;
     right: 8px;
     bottom: 0px;
+}
+
+.DDdiv .eb_selallPowerSelect1tbl {
+    margin:0;
 }
 
 

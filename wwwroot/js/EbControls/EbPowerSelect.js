@@ -1254,8 +1254,7 @@ const EbPowerSelect = function (ctrl, options) {
         let $DDdiv = $("#" + this.containerId);
         if ($DDdiv.attr("detch_select") === "true")
             return;
-        setTimeout(function () {
-
+        //setTimeout(function () {
             let $ctrl = $('#' + this.name + 'Container');
             let contWidth = $ctrl.width();
             let WIDTH = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
@@ -1291,14 +1290,13 @@ const EbPowerSelect = function (ctrl, options) {
             let scrollH = $form_div.prop("scrollHeight");
             div_detach.appendTo($form_div);
             if (scrollTop + DDoffset.top + DD_height > scrollH && scrollTop + DDoffset.top - 60 > DD_height) {
-                TOP = DDoffset.top - DD_height - 60;
-                $DDdiv.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
-                if (ebcontext.renderContext !== "WebForm")
-                    TOP += 38;
-                let pageHeight = $form_div.height() + formTopOffset;
-                let cotrolBottom = $ctrl.position().top + $ctrl.outerHeight(true);
-                var BOTTOM = pageHeight - cotrolBottom;
+                $DDdiv.addClass("dd-ctrl-top");
 
+                let pageHeight = $form_div.outerHeight()+ formTopOffset;
+                let cotrolTop= $ctrl.offset().top + scrollTop;
+                let BOTTOM = (pageHeight - cotrolTop) + 1;
+                console.log("scrollTop :" + scrollTop);
+                console.log("cotrolTop :" + cotrolTop);
                 div_detach.css("top", "unset");
                 div_detach.css("bottom", BOTTOM);
             }
@@ -1309,7 +1307,7 @@ const EbPowerSelect = function (ctrl, options) {
             div_detach.offset({ left: LEFT })
             div_detach.width(WIDTH);
             scrollDropDown();
-        }.bind(this), 30);
+        //}.bind(this), 30);
     };
 
     this.Renderselect();

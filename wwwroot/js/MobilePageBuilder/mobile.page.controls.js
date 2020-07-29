@@ -3,6 +3,9 @@
     this.FilterControls = [];//only for vis filter
 
     this.initForm = function (o) {
+
+        $(".emulator_f").css("display", "flex");
+
         this.Root.makeDropable(o.EbSid, "EbMobileForm");
         this.Root.makeSortable(o.EbSid);
         this.setColumnTree(o);
@@ -14,6 +17,8 @@
     };
 
     this.initVisualization = function (o) {
+
+        $(".emulator_f").css("display","none");
 
         let tobj = this.Root.makeElement("EbMobileTableLayout", "TableLayout");
         $(`#${o.EbSid} .eb_mob_container_inner .vis-table-container`).append(tobj.$Control.outerHTML());
@@ -31,6 +36,7 @@
             this.Root.getColums4ListView(o);
             this.setSortColumns(o);
             this.setLinkFormControls(o);
+            o.propertyChanged("ShowNewButton");
         }
     };
 

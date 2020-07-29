@@ -226,11 +226,23 @@
                     root.pg.ShowProperty('FormMode');
                     root.pg.ShowProperty('LinkFormParameters');
                     root.pg.ShowProperty('ContextToControlMap');
+                    root.pg.ShowProperty('ShowNewButton');
                 }
                 else {
                     root.pg.HideProperty('FormMode');
                     root.pg.HideProperty('LinkFormParameters');
                     root.pg.HideProperty('ContextToControlMap');
+                    root.pg.HideProperty('ShowNewButton');
+                }
+            },
+            propertyChanged: function (propname) {
+                if (propname === "ShowNewButton") {
+                    if (this.ShowNewButton) {
+                        $(`#${this.EbSid} .vis-container-newbtn`).show();
+                    }
+                    else {
+                        $(`#${this.EbSid} .vis-container-newbtn`).hide();
+                    }
                 }
             }
         }

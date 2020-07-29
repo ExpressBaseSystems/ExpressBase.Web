@@ -39,9 +39,9 @@
         this.$Table.empty();
         this.$Table.parent().attr("id", `tblcont_${this.ctrl.EbSid_CtxId}`);
         this.$Table.parent().css("overflow-y", "unset");
-        this.$Table.parent().css("padding-top", "1px");
         this.$Table.parent().removeClass("Dg_body");
         this.$Table.parent().siblings('.Dg_head, .Dg_footer').remove();
+        this.TableCont = `tblcont_${this.ctrl.EbSid_CtxId}`;
     };
 
     this.initBasicDataTable = function () {
@@ -53,7 +53,7 @@
         tempData = { data: [] }; //temp fix
 
         let o = {};
-        o.containerId = `tblcont_${this.ctrl.EbSid_CtxId}`;
+        o.containerId = this.TableCont;
         //o.dsid = this.dsid;
         o.tableId = `tbl_${this.ctrl.EbSid_CtxId}`;
         o.showSerialColumn = true;
@@ -65,6 +65,7 @@
         //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         //o.fninitComplete = this.initDTpost.bind(this);
+        o.initCompleteCallback = this.dataTableInitCallback.bind(this),
         o.dom = "<p>rt";
         //o.IsPaging = true;
         //o.pageLength = this.ComboObj.DropDownItemLimit;
@@ -82,61 +83,26 @@
         this.datatable = new EbCommonDataTable(o);
     };
 
-    this.initDGColCtrls = function () {
-        this.DGColCtrls = {};
-        for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {            
-            let ctrl = this.ctrl.Controls.$values[i];
-            let inpCtrl = new EbObjects[ctrl.InputControlType](ctrl.EbSid_CtxId, ctrl);// creates object
-            inpCtrl.ObjType = ctrl.InputControlType.substring(2);
-            inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);// attach getValue(), ... methods
-            let ctrlHtml = `<div id='@ebsid@Wraper' style='' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${ctrl.DBareHtml || inpCtrl.BareControlHtml}</div>`
-                .replace("@isReadonly@", ctrl.IsDisable)
-                .replace("@singleselect@", ctrl.MultiSelect ? "" : `singleselect=${!ctrl.MultiSelect}`)
-                .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
-            this.DGColCtrls[i] = { colCtrl: ctrl, html: ctrlHtml, inpCtrl: inpCtrl};
-        }
-    };
+    this.dataTableInitCallback = function () {
+        debugger;
 
-    this.addRowBtn_click = function () {
-        this.setupCurTrCtrls(true, 0, 0);
-    };
+        let Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
+        let $trCtrls = $(`<tr id="${this.ctrl.Name}_tr_pointer"></tr>`);//style="display: none;"
+        $trCtrls.append(`<td></td>`);
 
-    this.setupCurTrCtrls = function (isNew, index, RowId) {
-        if (this.currentTrIndex !== -1) {
-            console.log('active row found. unable to continue.');
-            return;
-        }
-        let Row, dtTr;
-        if (isNew) {
-            Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
-            Row.RowId = this.addRowCounter--;
-        }
-        else {
-            Row = getObjByval(this.dataModel, "RowId", parseInt(RowId));
-        }
-        
-        let curRow = {};
-        let j = 0;
-        for (; j < this.ctrl.Controls.$values.length; j++) {
+        for (let j = 0; j < this.ctrl.Controls.$values.length; j++) {
             let inpCtrl = this.DGColCtrls[j].inpCtrl;
             let Column = getObjByval(Row.Columns, "Name", inpCtrl.Name);
             inpCtrl.DataVals = Column;
-            curRow[j] = this.DGColCtrls[j].html;
+            $trCtrls.append(`<td>${this.DGColCtrls[j].html}</td>`);
         }
-        curRow[j++] = Row.RowId;
-        curRow[j] = this.getCogTdHtml('editing');
-        if (isNew) {
-            dtTr = this.datatable.Api.row.add(curRow).draw(false);
-        }
-        else {
-            dtTr = this.datatable.Api.row(index).data(curRow).draw(false);
-        }
+        $trCtrls.append(`<td>${this.getCogTdHtml('editing')}</td>`);
+        this.$Table.find("tbody").prepend($trCtrls);
 
-        this.currentTrIndex = dtTr.index();
-
-        this.dataModel.push(Row);
+        //$(`#${this.TableCont}`).find(".DTFC_LeftBodyLiner")
+        //this.datatable.Api.rows().nodes().eq(index)
+        
         let rowFlatCtrls = [];
-
         for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
             let inpCtrl = this.DGColCtrls[i].inpCtrl;
             let opt = {};
@@ -158,7 +124,29 @@
             }
             rowFlatCtrls.push(inpCtrl);
         }
+
         this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
+    };
+
+    this.initDGColCtrls = function () {
+        this.DGColCtrls = {};
+        for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {            
+            let ctrl = this.ctrl.Controls.$values[i];
+            let inpCtrl = new EbObjects[ctrl.InputControlType](ctrl.EbSid_CtxId, ctrl);// creates object
+            inpCtrl.ObjType = ctrl.InputControlType.substring(2);
+            inpCtrl = new ControlOps[inpCtrl.ObjType](inpCtrl);// attach getValue(), ... methods
+            let ctrlHtml = `<div id='@ebsid@Wraper' style='' class='ctrl-cover' eb-readonly='@isReadonly@' @singleselect@>${ctrl.DBareHtml || inpCtrl.BareControlHtml}</div>`
+                .replace("@isReadonly@", ctrl.IsDisable)
+                .replace("@singleselect@", ctrl.MultiSelect ? "" : `singleselect=${!ctrl.MultiSelect}`)
+                .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
+            this.DGColCtrls[i] = { colCtrl: ctrl, html: ctrlHtml, inpCtrl: inpCtrl};
+        }
+    };
+
+    this.addRowBtn_click = function () {
+        //this.setupCurTrCtrls(true, 0, 0);
+
+        //move tr_pointer to last then show
     };
 
     this.getFormVals = function () {
@@ -169,7 +157,9 @@
         let $tr = $(e.target).closest('tr');        
         let data_row = this.datatable.Api.row($tr.index()).data();
         let rowid = data_row[this.datatable.hiddenIndex];
-        this.setupCurTrCtrls(false, $tr.index(), parseInt(rowid));        
+        //this.setupCurTrCtrls(false, $tr.index(), parseInt(rowid));
+
+        //move tr_pointer to index than show
     };
 
     this.checkRow_click = function (e) {
@@ -258,6 +248,66 @@
         this.$Table.find(`.ctrlstd`).attr("mode", "edit");
         this.mode_s = "edit";
     };
+
+    //this.setupCurTrCtrls = function (isNew, index, RowId) {
+    //    if (this.currentTrIndex !== -1) {
+    //        console.log('active row found. unable to continue.');
+    //        return;
+    //    }
+    //    let Row, dtTr;
+    //    if (isNew) {
+    //        Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
+    //        Row.RowId = this.addRowCounter--;
+    //    }
+    //    else {
+    //        Row = getObjByval(this.dataModel, "RowId", parseInt(RowId));
+    //    }
+
+    //    let curRow = {};
+    //    let j = 0;
+    //    for (; j < this.ctrl.Controls.$values.length; j++) {
+    //        let inpCtrl = this.DGColCtrls[j].inpCtrl;
+    //        let Column = getObjByval(Row.Columns, "Name", inpCtrl.Name);
+    //        inpCtrl.DataVals = Column;
+    //        curRow[j] = this.DGColCtrls[j].html;
+    //    }
+    //    curRow[j++] = Row.RowId;
+    //    curRow[j] = this.getCogTdHtml('editing');
+    //    if (isNew) {
+    //        dtTr = this.datatable.Api.row.add(curRow).draw(false);
+    //    }
+    //    else {
+    //        dtTr = this.datatable.Api.row(index).data(curRow).draw(false);
+    //    }
+
+    //    this.currentTrIndex = dtTr.index();
+
+    //    this.dataModel.push(Row);
+    //    let rowFlatCtrls = [];
+
+    //    for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
+    //        let inpCtrl = this.DGColCtrls[i].inpCtrl;
+    //        let opt = {};
+    //        if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
+    //            opt.getAllCtrlValuesFn = this.getFormVals.bind(this);
+    //        else if (inpCtrl.ObjType === "Date") {
+    //            opt.source = "webform";
+    //            opt.userObject = this.ctrl.__userObject;
+    //        }
+    //        this.initControls.init(inpCtrl, opt);
+
+    //        if (inpCtrl.DataVals.Value !== null) {
+    //            inpCtrl.___DoNotUpdateDataVals = true;
+    //            if (ctrl.ObjType === "PowerSelect")
+    //                inpCtrl.setDisplayMember(inpCtrl.DataVals.Value);
+    //            else
+    //                inpCtrl.justSetValue(inpCtrl.DataVals.Value);
+    //            inpCtrl.___DoNotUpdateDataVals = false;
+    //        }
+    //        rowFlatCtrls.push(inpCtrl);
+    //    }
+    //    this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
+    //};
 
     this.init();
 };

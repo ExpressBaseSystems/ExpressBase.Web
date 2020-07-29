@@ -5,7 +5,7 @@
     this.formObject_Full = options.formObject_Full; //original object
     this.formRefId = options.formRefId;
     this.formRenderer = options.formRenderer; 
-    this.initControls = new InitControls(this);
+    this.initControls = new InitControls(options.formRenderer);
     this.RowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
 
     this.$Table = null;
@@ -39,9 +39,9 @@
         this.$Table.empty();
         this.$Table.parent().attr("id", `tblcont_${this.ctrl.EbSid_CtxId}`);
         this.$Table.parent().css("overflow-y", "unset");
-        this.$Table.parent().css("padding-top", "1px");
         this.$Table.parent().removeClass("Dg_body");
         this.$Table.parent().siblings('.Dg_head, .Dg_footer').remove();
+        this.TableCont = `tblcont_${this.ctrl.EbSid_CtxId}`;
     };
 
     this.initBasicDataTable = function () {
@@ -53,7 +53,7 @@
         tempData = { data: [] }; //temp fix
 
         let o = {};
-        o.containerId = `tblcont_${this.ctrl.EbSid_CtxId}`;
+        o.containerId = this.TableCont;
         //o.dsid = this.dsid;
         o.tableId = `tbl_${this.ctrl.EbSid_CtxId}`;
         o.showSerialColumn = true;
@@ -65,13 +65,15 @@
         //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         //o.fninitComplete = this.initDTpost.bind(this);
+        o.initCompleteCallback = this.dataTableInitCallback.bind(this),
         o.dom = "<p>rt";
         //o.IsPaging = true;
         //o.pageLength = this.ComboObj.DropDownItemLimit;
         o.Source = "datagrid";
         o.hiddenFieldName = "id";
         o.keys = true;
-        o.AllowSelect = true;
+        o.LeftFixedColumn = 1;
+        o.RightFixedColumn = 1;
         //o.hiddenFieldName = this.vmName;
         //o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  
@@ -79,6 +81,51 @@
         //o.searchCallBack = this.searchCallBack;
         o.data = tempData;
         this.datatable = new EbCommonDataTable(o);
+    };
+
+    this.dataTableInitCallback = function () {
+        debugger;
+
+        let Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
+        let $trCtrls = $(`<tr id="${this.ctrl.Name}_tr_pointer"></tr>`);//style="display: none;"
+        $trCtrls.append(`<td></td>`);
+
+        for (let j = 0; j < this.ctrl.Controls.$values.length; j++) {
+            let inpCtrl = this.DGColCtrls[j].inpCtrl;
+            let Column = getObjByval(Row.Columns, "Name", inpCtrl.Name);
+            inpCtrl.DataVals = Column;
+            $trCtrls.append(`<td>${this.DGColCtrls[j].html}</td>`);
+        }
+        $trCtrls.append(`<td>${this.getCogTdHtml('editing')}</td>`);
+        this.$Table.find("tbody").prepend($trCtrls);
+
+        //$(`#${this.TableCont}`).find(".DTFC_LeftBodyLiner")
+        //this.datatable.Api.rows().nodes().eq(index)
+        
+        let rowFlatCtrls = [];
+        for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
+            let inpCtrl = this.DGColCtrls[i].inpCtrl;
+            let opt = {};
+            if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
+                opt.getAllCtrlValuesFn = this.getFormVals.bind(this);
+            else if (inpCtrl.ObjType === "Date") {
+                opt.source = "webform";
+                opt.userObject = this.ctrl.__userObject;
+            }
+            this.initControls.init(inpCtrl, opt);
+
+            if (inpCtrl.DataVals.Value !== null) {
+                inpCtrl.___DoNotUpdateDataVals = true;
+                if (ctrl.ObjType === "PowerSelect")
+                    inpCtrl.setDisplayMember(inpCtrl.DataVals.Value);
+                else
+                    inpCtrl.justSetValue(inpCtrl.DataVals.Value);
+                inpCtrl.___DoNotUpdateDataVals = false;
+            }
+            rowFlatCtrls.push(inpCtrl);
+        }
+
+        this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
     };
 
     this.initDGColCtrls = function () {
@@ -97,74 +144,22 @@
     };
 
     this.addRowBtn_click = function () {
-        this.setupCurTrCtrls(true, 0, 0);
+        //this.setupCurTrCtrls(true, 0, 0);
+
+        //move tr_pointer to last then show
     };
 
-    this.setupCurTrCtrls = function (isNew, index, RowId) {
-        if (this.currentTrIndex !== -1) {
-            console.log('active row found. unable to continue.');
-            return;
-        }
-        let Row, dtTr;
-        if (isNew) {
-            Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
-            Row.RowId = this.addRowCounter--;
-        }
-        else {
-            Row = getObjByval(this.dataModel, "RowId", parseInt(RowId));
-        }
-        
-        let curRow = {};
-        let j = 0;
-        for (; j < this.ctrl.Controls.$values.length; j++) {
-            let inpCtrl = this.DGColCtrls[j].inpCtrl;
-            let Column = getObjByval(Row.Columns, "Name", inpCtrl.Name);
-            inpCtrl.DataVals = Column;
-            curRow[j] = this.DGColCtrls[j].html;
-        }
-        curRow[j++] = Row.RowId;
-        curRow[j] = this.getCogTdHtml('editing');
-        if (isNew) {
-            dtTr = this.datatable.Api.row.add(curRow).draw(false);
-        }
-        else {
-            dtTr = this.datatable.Api.row(index).data(curRow).draw(false);
-        }
-
-        this.currentTrIndex = dtTr.index();
-
-        this.dataModel.push(Row);
-        let rowFlatCtrls = [];
-
-        for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
-            let inpCtrl = this.DGColCtrls[i].inpCtrl;
-            let opt = {};
-            if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
-                opt.getAllCtrlValuesFn = getValsFromForm(this.formObject_Full);
-            else if (inpCtrl.ObjType === "Date") {
-                opt.source = "webform";
-                opt.userObject = this.ctrl.__userObject;
-            }
-            this.initControls.init(inpCtrl, opt);
-
-            if (inpCtrl.DataVals.Value !== null) {
-                inpCtrl.___DoNotUpdateDataVals = true;
-                if (ctrl.ObjType === "PowerSelect")
-                    inpCtrl.setDisplayMember(inpCtrl.DataVals.Value);
-                else
-                    inpCtrl.justSetValue(inpCtrl.DataVals.Value);
-                inpCtrl.___DoNotUpdateDataVals = false;
-            }
-            rowFlatCtrls.push(inpCtrl);
-        }
-        this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
+    this.getFormVals = function () {
+        return getValsFromForm(this.formObject_Full);
     };
 
     this.editRow_click = function (e) {
         let $tr = $(e.target).closest('tr');        
         let data_row = this.datatable.Api.row($tr.index()).data();
         let rowid = data_row[this.datatable.hiddenIndex];
-        this.setupCurTrCtrls(false, $tr.index(), parseInt(rowid));        
+        //this.setupCurTrCtrls(false, $tr.index(), parseInt(rowid));
+
+        //move tr_pointer to index than show
     };
 
     this.checkRow_click = function (e) {
@@ -253,6 +248,66 @@
         this.$Table.find(`.ctrlstd`).attr("mode", "edit");
         this.mode_s = "edit";
     };
+
+    //this.setupCurTrCtrls = function (isNew, index, RowId) {
+    //    if (this.currentTrIndex !== -1) {
+    //        console.log('active row found. unable to continue.');
+    //        return;
+    //    }
+    //    let Row, dtTr;
+    //    if (isNew) {
+    //        Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
+    //        Row.RowId = this.addRowCounter--;
+    //    }
+    //    else {
+    //        Row = getObjByval(this.dataModel, "RowId", parseInt(RowId));
+    //    }
+
+    //    let curRow = {};
+    //    let j = 0;
+    //    for (; j < this.ctrl.Controls.$values.length; j++) {
+    //        let inpCtrl = this.DGColCtrls[j].inpCtrl;
+    //        let Column = getObjByval(Row.Columns, "Name", inpCtrl.Name);
+    //        inpCtrl.DataVals = Column;
+    //        curRow[j] = this.DGColCtrls[j].html;
+    //    }
+    //    curRow[j++] = Row.RowId;
+    //    curRow[j] = this.getCogTdHtml('editing');
+    //    if (isNew) {
+    //        dtTr = this.datatable.Api.row.add(curRow).draw(false);
+    //    }
+    //    else {
+    //        dtTr = this.datatable.Api.row(index).data(curRow).draw(false);
+    //    }
+
+    //    this.currentTrIndex = dtTr.index();
+
+    //    this.dataModel.push(Row);
+    //    let rowFlatCtrls = [];
+
+    //    for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
+    //        let inpCtrl = this.DGColCtrls[i].inpCtrl;
+    //        let opt = {};
+    //        if (inpCtrl.ObjType === "PowerSelect")// || inpCtrl.ObjType === "DGPowerSelectColumn")
+    //            opt.getAllCtrlValuesFn = this.getFormVals.bind(this);
+    //        else if (inpCtrl.ObjType === "Date") {
+    //            opt.source = "webform";
+    //            opt.userObject = this.ctrl.__userObject;
+    //        }
+    //        this.initControls.init(inpCtrl, opt);
+
+    //        if (inpCtrl.DataVals.Value !== null) {
+    //            inpCtrl.___DoNotUpdateDataVals = true;
+    //            if (ctrl.ObjType === "PowerSelect")
+    //                inpCtrl.setDisplayMember(inpCtrl.DataVals.Value);
+    //            else
+    //                inpCtrl.justSetValue(inpCtrl.DataVals.Value);
+    //            inpCtrl.___DoNotUpdateDataVals = false;
+    //        }
+    //        rowFlatCtrls.push(inpCtrl);
+    //    }
+    //    this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
+    //};
 
     this.init();
 };

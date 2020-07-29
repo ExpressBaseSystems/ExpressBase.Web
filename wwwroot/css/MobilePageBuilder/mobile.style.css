@@ -185,7 +185,7 @@
 
 .emulator_h {
     height: 60px;
-    background: #508bf9;
+    background: #0046bb;/*#508bf9;*/
     width: 100%;
     border-top-left-radius: 30%;
     border-top-right-radius: 30%;
@@ -198,7 +198,7 @@
 
 .emulator_f {
     height: 50px;
-    background: #508bf9;
+    background: #0046bb;
     width: 100%;
     border-bottom-left-radius: 50%;
     border-bottom-right-radius: 50%;
@@ -296,6 +296,17 @@
     width: 100%;
     height: 25px;
     border-radius: 4px;
+}
+.eb_stacklayout .dp-avatar {
+    text-align:center;
+    border:1px solid #ccc;
+    border-radius:4px;
+    margin-bottom:5px;
+    background:#ddd;
+    height:100px;
+}
+.eb_stacklayout .dp-avatar img{
+    height:100%;
 }
 /*table layout*/
 .eb_mob_tablelayout {
@@ -443,6 +454,20 @@
             margin-bottom: 10px;
         }
 
+.eb_mob_vis_container .vis-container-newbtn {
+    position: absolute;
+    background: #0046bb;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    text-align: center;
+    color: white;
+    padding: 6px;
+    right: 10px;
+    bottom: 10px;
+    font-size: 14px;
+    display:none;
+}
 /*DASBOARD CONTAINER*/
 .eb_mob_dashboard_container {
     width: 100%;

@@ -22,6 +22,7 @@
         this.CurrentLoc = this.getCurrent();
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
+        this.prev_loc_name = this.CurrentLocObj.LongName;
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.ModifyLocationObject();
         this.findParent_loc();
@@ -32,7 +33,8 @@
         $(Loc_close).off("click").on("click", this.close_LocSwitch.bind(this));
         $(".locs_bdy").off("dblclick").on("dblclick", "li a", this.confirmLocFn.bind(this));
         $("#loc-search").off("keyup").on("keyup", this.searchLoc.bind(this));
-        $("body").off("keyup").on("keyup", this.Keypress_selectLoc.bind(this));
+        $(LocModId).off("keyup").on("keyup", this.Keypress_selectLoc.bind(this));
+        $(".locs_bdy").off("keyup").on("keyup", "li a", this.SelectLoc_enter.bind(this));
         let s = this.getParentPath(this.CurrentLoc);
         $('#current_loc').attr('loc_id', this.CurrentLoc).text(s);
     };
@@ -99,19 +101,28 @@
         if (this.PrevLocation !== this.CurrentLoc) {
             this.Listener.ChangeLocation(this.CurrentLocObj);
             this.PrevLocation = this.CurrentLoc;
+            this.prev_loc_name = this.CurrentLocObj.LongName;
         }
         let s = this.getParentPath(this.CurrentLoc);
         //$('#current_loc').text(this.CurrentLocObj.LongName + ` (${this.CurrentLocObj.ShortName})`);
-        $('#current_loc').text(s);
+        $('#current_loc').text(s);s
     };
-
-    this.Keypress_selectLoc = function (e) {
+    this.SelectLoc_enter = function (e) {
         var keycode = (e.keyCode ? e.keyCode : e.which);
         if (keycode == '13') {
+
             this.confirmLocFn();
         }
-        else if (keycode == '27') {
-            this.showSwitcher();
+    }
+    this.Keypress_selectLoc = function (e) {
+        var keycode = (e.keyCode ? e.keyCode : e.which);
+        if (keycode == '37' || '38' || '39' || '40') {
+            e.preventDefault();
+        }
+
+        if (keycode == '27') {
+            $(LocModId).hide();
+            $(".loc_switchModal_fade").hide();
         }
         else if (keycode == '37') {
             var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
@@ -185,6 +196,10 @@
             else
                 $(".loc_switchModal_fade").hide();
         });
+
+        //if ($(LocModId).is(":visible")) { 
+        //    $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a`).trigger("click");
+        //}
     };
 
     this.close_LocSwitch = function () {
@@ -276,11 +291,13 @@
     }
 
     this.confirmLocFn = function () {
-        let m = `<div class="modal fade" id="confirmLoc" role="dialog">
+
+        $("#confirmLoc").remove();
+        let m = `<div class="modal fade" id="confirmLoc"  style="position: absolute;top: 58%;left: 50%;transform: translate(-50%, -50%);display: block;padding-right: 16px;" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-body">
-          <p style=" text-align: center; font-size:18px;font-weight:600;">Change current location.</p>
+        <div class="modal-body" style="display: flex;justify-content: center;">
+          <span id="confirmLocspan" style=" text-align:center; font-size:16px;">Change location from <strong> ${this.prev_loc_name} </strong> to <strong> ${this.CurrentLocObj.LongName}</strong>.</span>
         </div>
         <div class="modal-footer">
           <button type="button" id="loc_cancel" style="background:red;color:white;" class="btn btn-default pull-left" data-dismiss="modal">Cancel</button>
@@ -290,12 +307,15 @@
       
     </div>
   </div>`
-        $('body').append(m);
+            $('body').append(m);
+        
+        
         $('#confirmLoc').modal('show');
         $("#loc_confirm").off("click").on("click", this.close_LocSwitch.bind(this));
     }.bind(this);
+
     this.close_LocSwitch = function () {
         this.setLocation();
-    }
+    }.bind(this);
     this.Init();
 };

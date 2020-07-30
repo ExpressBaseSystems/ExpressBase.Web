@@ -76,6 +76,9 @@
     };
 
     this.AppendFD = function (result) {
+        $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
         this.loader.hide();
         $('.db-user-filter').remove();
         $("#dashbord-user-view").prepend(`
@@ -94,18 +97,19 @@
         $("#btnGo").empty().append("Apply");
         if (typeof FilterDialog !== "undefined") {
             $(".param-div-cont").show();
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".db-user-filter"),
-                $extCont: $(".db-user-filter"),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                style: { top: "85px" },
-                delay:1
-            });
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: $(".db-user-filter"),
+            //    $extCont: $(".db-user-filter"),
+            //    icon: "fa-filter",
+            //    dir: "left",
+            //    label: "Parameters",
+            //    style: { top: "85px" },
+            //    delay:1
+            //});
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
             $("#btnGo").trigger("click");
+            $("#filter-dg").off("click").on("click", this.toggleFilter.bind(this));
         }
         else {
             $(".param-div-cont").hide();
@@ -113,8 +117,11 @@
         }
     };
 
+    this.toggleFilter = function () {
+        $(".db-user-filter").toggle(300);
+    }
     this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+       // this.stickBtn.minimise();
     }
 
     this.placefiltervalues = function () {
@@ -188,7 +195,7 @@
         //
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
             $('.db-user-filter').remove();
-            if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            //if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             grid.removeAll();
             this.DrawTiles();
         }
@@ -666,14 +673,14 @@
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+        //if (this.stickBtn) { this.stickBtn.minimise(); }
     };
 
 
     this.GetFilterValues = function () {
         this.loader.show();
         this.filtervalues = [];
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+        //if (this.stickBtn) { this.stickBtn.minimise(); }
 
         if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);

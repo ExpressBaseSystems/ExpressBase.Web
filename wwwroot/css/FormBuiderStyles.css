@@ -1521,9 +1521,9 @@ input.locinp {
     line-height: 10px;
 }*/
 
-[eb-type="WebForm"] .DDdiv .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
+/*[eb-type="WebForm"] .DDdiv .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
     margin-top: -11px;
-}
+}*/
 
 .eb-chat-cont .dataTables_wrapper {
     box-shadow: -7px 10px 8px 0px #8282822e;

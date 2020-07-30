@@ -325,7 +325,7 @@
 }
 
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th {
-    padding-top: 15px;
+    padding-top: 9px;
     border-right: dotted 1px #dddddd;
     background-color: white;
     color: #656565f0;
@@ -350,6 +350,10 @@
     position: absolute;
     right: 8px;
     bottom: 0px;
+}
+
+.DDdiv .eb_selallPowerSelect1tbl {
+    margin:0;
 }
 
 
@@ -465,10 +469,15 @@
     box-shadow: 3px 8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222);
     padding-bottom: 32px;
 }
-
-    .DDdiv .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
-        border-bottom-width: 1px;
+    .DDdiv.dd-ctrl-top {
+        box-shadow: 0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41);
+        box-shadow: 3px -8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222);
+        border-radius: 2px 2px 0px 0;
     }
+
+.DDdiv .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+    border-bottom-width: 1px;
+}
 
     .DDdiv .dataTable {
         margin: 0 !important;

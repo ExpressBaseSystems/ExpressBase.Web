@@ -33,9 +33,10 @@
         $(Loc_close).off("click").on("click", this.close_LocSwitch.bind(this));
         $(".locs_bdy").off("dblclick").on("dblclick", "li a", this.confirmLocFn.bind(this));
         $("#loc-search").off("keyup").on("keyup", this.searchLoc.bind(this));
-        $("body").off("keyup").on("keyup", this.Keypress_selectLoc.bind(this));
+      
         $(".locs_bdy").off("keyup").on("keyup", "li a", this.SelectLoc_enter.bind(this));
-        $("body").off("keyup").on("keyup", this.SelectLoc_esc.bind(this));
+       // $("body").off("keyup").on("keyup", this.SelectLoc_esc.bind(this));
+        $("body").off("keyup").on("keyup", this.Keypress_selectLoc.bind(this));
         let s = this.getParentPath(this.CurrentLoc);
         $('#current_loc').attr('loc_id', this.CurrentLoc).text(s);
     };
@@ -117,19 +118,24 @@
         }
     }
 
-    this.SelectLoc_esc = function (e) {
-        var keycode = (e.keyCode ? e.keyCode : e.which);
-        if (keycode == '27') {
-            $(LocModId).hide();
-            $(".loc_switchModal_fade").hide();
-        }
-    }
+    //this.SelectLoc_esc = function (e) {
+        
+    //}
 
     this.Keypress_selectLoc = function (e) {
         if ($(LocModId).is(":visible")) {
             var keycode = (e.keyCode ? e.keyCode : e.which);
+            if (keycode == '27') {
+                $(LocModId).hide();
+                $(".loc_switchModal_fade").hide();
+            }
+
             if (keycode == '37' || '38' || '39' || '40') {
                 e.preventDefault();
+            }
+            if (keycode == '27') {
+                $(LocModId).hide();
+                $(".loc_switchModal_fade").hide();
             }
             if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");

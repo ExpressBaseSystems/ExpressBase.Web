@@ -681,7 +681,6 @@ const EbPowerSelect = function (ctrl, options) {
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
         this.focus1stRow();
-        this.appendDD2Body(); // vrgs
     };
 
     this.Applyfilter = function () {
@@ -1045,6 +1044,7 @@ const EbPowerSelect = function (ctrl, options) {
         else
             this.hideCtrlMsg();
 
+        this.appendDD2Body(); // vrgs
         this.Vobj.DDstate = true;
 
         if (!this.IsDatatableInit)
@@ -1127,7 +1127,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.ApplyRowFocusStyle = function ($tr) {
         $tr.find('.focus').removeClass('focus');
         //setTimeout(function () {
-            $tr.addClass('selected');
+        $tr.addClass('selected');
         //}, 10);
     };
 
@@ -1251,41 +1251,64 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.appendDD2Body = function () {
-        setTimeout(function () {
-            let contWidth = $('#' + this.name + 'Container').width();
-            contWidth = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
-            let $DDdiv = $("#" + this.containerId);
-            let $parentCont = $DDdiv.parentsUntil('form').last();
-            if ($parentCont.attr('ctype') === "TabControl") {
-                $DDdiv.attr('drp_parent', 'TabControl');
-            }
-            {// offset only work on visible elements
-                $DDdiv.show();
-                var tbl_cod = $DDdiv.offset();
-                if (this.fromReloadWithParams)
-                    $DDdiv.hide();
-            }
-            let tbl_height = $DDdiv.height();
-            let div_detach = $DDdiv.detach();
-            div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
-            let xtra_wdth = tbl_cod.left;
-            let brow_wdth = $(window).width();
-            if ((contWidth + tbl_cod.left) > brow_wdth)
-                xtra_wdth = tbl_cod.left + (brow_wdth - (contWidth + tbl_cod.left));
-            let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+        let $DDdiv = $("#" + this.containerId);
+        if ($DDdiv.attr("detch_select") === "true")
+            return;
+        //setTimeout(function () {
+        let $ctrl = $('#' + this.name + 'Container');
+        let contWidth = $ctrl.width();
+        let WIDTH = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
+        let $parentCont = $DDdiv.parentsUntil('form').last();
+        if ($parentCont.attr('ctype') === "TabControl") {
+            $DDdiv.attr('drp_parent', 'TabControl');
+        }
+        {// offset only work on visible elements
+            $DDdiv.show();
+            var DDoffset = $DDdiv.offset();
+            if (this.fromReloadWithParams)
+                $DDdiv.hide();
+        }
+        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
+        let div_detach = $DDdiv.detach();
+        div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
+        let LEFT = DDoffset.left;
+        let bodyWidth = $(window).width();
 
-            let top = tbl_cod.top;
-            let scrollTop = $form_div.scrollTop();
-            let scrollH = $form_div.prop("scrollHeight");
-            if (scrollTop + tbl_cod.top + tbl_height > scrollH && scrollTop + tbl_cod.top - 60 > tbl_height) {
-                top = tbl_cod.top - tbl_height - 60;
-                $DDdiv.css("box-shadow", "0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41)");
-                if (ebcontext.renderContext !== "WebForm")
-                    top += 38;
-            }
-            div_detach.appendTo($form_div).offset({ top: top, left: xtra_wdth }).width(contWidth);
-            scrollDropDown();
-        }.bind(this), 30);
+        if (WIDTH !== contWidth)
+            LEFT = DDoffset.left - ((WIDTH - contWidth) / 2);
+
+        if ((WIDTH + LEFT) > bodyWidth)
+            LEFT = bodyWidth - WIDTH;
+        else if (LEFT < 3)
+            LEFT = 3;
+
+        let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+
+        let scrollTop = $form_div.scrollTop();
+        let formTopOffset = $form_div.offset().top;
+        let TOP = DDoffset.top + scrollTop - formTopOffset;
+        let scrollH = $form_div.prop("scrollHeight");
+        div_detach.appendTo($form_div);
+        //if (scrollTop + DDoffset.top + DD_height > scrollH && scrollTop + DDoffset.top - 60 > DD_height) {
+        if (scrollTop + DDoffset.top - formTopOffset + DD_height > scrollH) {// && scrollTop + DDoffset.top - $('#cont_' + this.name).outerHeight() > DD_height) {
+            $DDdiv.addClass("dd-ctrl-top");
+
+            let pageHeight = $form_div.outerHeight() + formTopOffset;
+            let cotrolTop = $ctrl.offset().top + scrollTop;
+            let BOTTOM = (pageHeight - cotrolTop) + 1;
+            console.log("scrollTop :" + scrollTop);
+            console.log("cotrolTop :" + cotrolTop);
+            div_detach.css("top", "unset");
+            div_detach.css("bottom", BOTTOM);
+        }
+        else
+            div_detach.css("top", TOP);
+        //div_detach.appendTo($form_div).offset({ top: top - formTopOffset, left: xtra_wdth }).width(contWidth);
+        //div_detach.css("left", xtra_wdth);
+        div_detach.offset({ left: LEFT })
+        div_detach.width(WIDTH);
+        scrollDropDown();
+        //}.bind(this), 30);
     };
 
     this.Renderselect();

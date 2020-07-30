@@ -92,6 +92,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.clmAdjst = 0;
     this.onDataLoadCallBackFns = [];
 
+    this.scrollableContSelectors = ['.tab-content', '.Dg_body'];
 
     ctrl._DisplayMembers = [];
     ctrl._ValueMembers = [];
@@ -127,6 +128,7 @@ const EbPowerSelect = function (ctrl, options) {
             this.$inp = $("#" + this.ComboObj.EbSid_CtxId);
             this.$progressBar = $("#" + this.ComboObj.EbSid_CtxId + "_pb");
             this.$DDdiv = $('#' + this.name + 'DDdiv');
+            this.isDGps = this.ComboObj.constructor.name === "DGPowerSelectColumn";
 
             $(document).mouseup(this.hideDDclickOutside.bind(this));//hide DD when click outside select or DD &  required ( if  not reach minLimit) 
             $('#' + this.name + 'Wraper .ps-srch').off("click").on("click", this.toggleIndicatorBtn.bind(this)); //search button toggle DD
@@ -1205,8 +1207,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.required_min_Check = function () {
         let reqNotOK = false;
         let minLimitNotOk = false;
-
-        let contId = (this.ComboObj.constructor.name === "DGPowerSelectColumn") ? `#td_${this.ComboObj.EbSid_CtxId}` : `#${this.ComboObj.EbSid_CtxId}Container`;// to handle special case of DG powerselect 
+        let contId = this.isDGps ? `#td_${this.ComboObj.EbSid_CtxId}` : `#cont_${this.ComboObj.EbSid_CtxId}`;// to handle special case of DG powerselect 
         let wraperId = `#${this.ComboObj.EbSid_CtxId}Wraper`;
         let msg = "This field is required";
 
@@ -1248,6 +1249,29 @@ const EbPowerSelect = function (ctrl, options) {
         this.clearValues();
         this.fromReloadWithParams = true;
         this.getData();
+    };
+
+    this.bindUpdatePositionOnContScroll = function () {
+        for (let i = 0; i < this.scrollableContSelectors.length; i++) {
+            let contSelc = this.scrollableContSelectors[i];
+            $(contSelc).scroll(function (event) {
+                let contST = $(event.target).scrollTop();
+                let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+
+                let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+                let formTopOffset = $form_div.offset().top;
+
+                let ctrlTop = $ctrlCont.offset().top;
+
+                let DDoffsetTop = this.$DDdiv.offset().top;
+                let TOP = ctrlTop + $ctrlCont.outerHeight() - formTopOffset;
+
+                //if ()
+                this.$DDdiv.css("top", TOP);
+
+                debugger;
+            }.bind(this));
+        }
     };
 
     this.appendDD2Body = function () {
@@ -1303,11 +1327,11 @@ const EbPowerSelect = function (ctrl, options) {
         }
         else
             div_detach.css("top", TOP);
-        //div_detach.appendTo($form_div).offset({ top: top - formTopOffset, left: xtra_wdth }).width(contWidth);
-        //div_detach.css("left", xtra_wdth);
+
         div_detach.offset({ left: LEFT })
         div_detach.width(WIDTH);
-        scrollDropDown();
+        //this.bindUpdatePositionOnContScroll();
+        //scrollDropDown();
         //}.bind(this), 30);
     };
 

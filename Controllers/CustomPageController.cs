@@ -50,9 +50,10 @@ namespace ExpressBase.Web.Controllers
 			ViewBag.SubCategoryList = fr.SubCategoryList;
 			ViewBag.StatusDict = fr.StatusDict;
 			ViewBag.ServiceList = fr.ServiceList;
+			ViewBag.CustomerCategoryDict = fr.CustomerCategoryDict;
 
-            //ViewBag.ImageIdList = fr.ImageIdList;
-            ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
+			//ViewBag.ImageIdList = fr.ImageIdList;
+			ViewBag.Permission = this.LoggedInUser.Roles.Contains(SystemRoles.SolutionOwner.ToString());
 
             if (mode == 1)
 			{

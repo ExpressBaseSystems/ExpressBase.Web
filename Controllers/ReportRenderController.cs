@@ -40,8 +40,8 @@ namespace ExpressBase.Web.Controllers
             try
             {
                 ProtoBufServiceClient pclient = new ProtoBufServiceClient(this.ServiceClient);
-                User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
-                Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUser = user, ReadingUser = user,Params = Params });
+                //User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
+                Res = pclient.Get<ReportRenderResponse>(new ReportRenderRequest { Refid = refid, RenderingUser = this.LoggedInUser, ReadingUser = this.LoggedInUser,Params = Params });
                 Res.StreamWrapper.Memorystream.Position = 0;
             }
             catch (Exception e)

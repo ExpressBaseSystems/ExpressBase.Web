@@ -497,10 +497,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			this.ServiceClient.BearerToken = authResponse.BearerToken;
 			this.ServiceClient.RefreshToken = authResponse.RefreshToken;
 			var tokenS = (new JwtSecurityTokenHandler()).ReadToken(authResponse.BearerToken) as JwtSecurityToken;
-
-			string email = tokenS.Claims.First(claim => claim.Type == "email").Value;
-
-			User user = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, cid, email, wc));
+			string email = tokenS.Claims.First(claim => claim.Type == "email").Value; 
+			User user = GetUserObject(authResponse.UserId);
 			var Ids = String.Join(",", user.EbObjectIds);			
 			GetBotForm4UserResponse formlist = this.ServiceClient.Get<GetBotForm4UserResponse>(new GetBotForm4UserRequest { BotFormIds = Ids, AppId = appid });
 			List<object> returnlist = new List<object>();
@@ -534,7 +532,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			EbAuthResponse authresp = new EbAuthResponse();
 			string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
 			string authid = Request.Cookies[TokenConstants.USERAUTHID];
-			User _u = this.Redis.Get<User>(authid);
+			User _u = GetUserObject(authid);
 			if (_u != null)
 			{
 				Authenticate2FAResponse response = this.ServiceClient.Post(new ValidateOtpRequest { Token = token, UserAuthId = authid });
@@ -599,7 +597,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			EbAuthResponse authresp = new EbAuthResponse();
 			string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
 			string authid = Request.Cookies[TokenConstants.USERAUTHID];
-			User _u = this.Redis.Get<User>(authid);
+			User _u = GetUserObject(authid);
 			IFormCollection req = this.HttpContext.Request.Form;
 			Authenticate2FAResponse response = null;
 			if (req["otptype"] == "signinotp")

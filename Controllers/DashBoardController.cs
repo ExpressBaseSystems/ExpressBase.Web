@@ -29,7 +29,7 @@ namespace ExpressBase.Web.Controllers
                 RefId = refid
             });
 
-            return EbSerializers.Json_Serialize(EbSerializers.Json_Deserialize( Resp.Data[0].Json));
+            return EbSerializers.Json_Serialize(EbSerializers.Json_Deserialize(Resp.Data[0].Json));
         }
         public IActionResult DashBoardView(string refid, string rowData, string filterValues, int tabNum)
         {
@@ -57,7 +57,7 @@ namespace ExpressBase.Web.Controllers
             return View();
         }
 
-        public string UserControlGetObj(string refid , List<Param> param)
+        public string UserControlGetObj(string refid, List<Param> param)
         {
             param = new List<Param> { new Param { Name = "id", Type = "7", Value = "10" } };
             GetDashBoardUserCtrlResponse Resp = this.ServiceClient.Post(new GetDashBoardUserCtrlRequest() { RefId = refid, Param = param });
@@ -69,10 +69,10 @@ namespace ExpressBase.Web.Controllers
         {
             var dsObject = EbSerializers.Json_Deserialize(dvobj);
             dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-            Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+            Eb_Solution solu = GetSolutionObject(ViewBag.cid);
             if (dsObject.FilterDialog != null)
                 EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
-            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true }); 
+            return ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });
         }
     }
 }

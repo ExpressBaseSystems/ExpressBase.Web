@@ -291,7 +291,7 @@ namespace ExpressBase.Web.Controllers
 
                     try
                     {
-                        Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SolutionId));
+                        Eb_Solution s_obj = GetSolutionObject(this.SolutionId);
 
                         if (s_obj != null && s_obj.Is2faEnabled)
                         {
@@ -402,7 +402,7 @@ namespace ExpressBase.Web.Controllers
 
             if (this.IsValidSolution)
             {
-                User user = this.Authenticated ? this.LoggedInUser : this.Redis.Get<User>(authid);
+                User user = this.Authenticated ? this.LoggedInUser : GetUserObject(authid);
 
                 Authenticate2FAResponse validateResp = null;
                 try
@@ -457,7 +457,7 @@ namespace ExpressBase.Web.Controllers
             if (this.IsValidSolution)
             {
                 bool sso = !string.IsNullOrEmpty(authid);
-                User user = this.Authenticated ? this.LoggedInUser : this.Redis.Get<User>(authid);
+                User user = this.Authenticated ? this.LoggedInUser : GetUserObject(authid);
 
                 Authenticate2FAResponse response;
                 if (sso)
@@ -765,7 +765,7 @@ namespace ExpressBase.Web.Controllers
 
                 try
                 {
-                    Eb_Solution s_obj = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", this.SolutionId));
+                    Eb_Solution s_obj = GetSolutionObject(this.SolutionId);
 
                     if (s_obj == null) throw new Exception("Solution object null");
 

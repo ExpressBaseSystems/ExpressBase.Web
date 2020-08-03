@@ -776,7 +776,7 @@ namespace ExpressBase.Web.Controllers
                 }
             }
             else
-            { 
+            {
                 if (req["otptype"] == "signinotp")
                 {
                     EbAuthResponse validateResp = ValidateOtp(req["otp"]);
@@ -787,7 +787,7 @@ namespace ExpressBase.Web.Controllers
                         authresp.AuthStatus = false;
                         authresp.ErrorMessage = validateResp.ErrorMessage;
                         return authresp;
-                    } 
+                    }
                 }
                 else
                 {
@@ -899,7 +899,7 @@ namespace ExpressBase.Web.Controllers
             EbAuthResponse authresp = new EbAuthResponse();
             string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
             string authid = Request.Cookies[TokenConstants.USERAUTHID];
-            User _u = this.Redis.Get<User>(authid);
+            User _u = GetUserObject(authid);
             if (_u != null)
             {
                 //this.ServiceClient.BearerToken = _u.BearerToken;
@@ -940,7 +940,7 @@ namespace ExpressBase.Web.Controllers
             EbAuthResponse authresp = new EbAuthResponse();
             string token = Request.Cookies[RoutingConstants.TWOFATOKEN];
             string authid = Request.Cookies[TokenConstants.USERAUTHID];
-            User _u = this.Redis.Get<User>(authid);
+            User _u = GetUserObject(authid);
             IFormCollection req = this.HttpContext.Request.Form;
             Authenticate2FAResponse response = null;
             if (req["otptype"] == "signinotp")
@@ -1325,7 +1325,7 @@ namespace ExpressBase.Web.Controllers
                         Isloggedin = true;
                         JwtSecurityToken jwtToken = new JwtSecurityToken(sBToken);
                         string uid = jwtToken.Payload[TokenConstants.SUB].ToString();
-                        usr = usr = this.Redis.Get<User>(uid); ;
+                        usr = GetUserObject(uid);
                     }
                 }
                 if (!Isloggedin)

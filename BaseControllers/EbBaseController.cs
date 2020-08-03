@@ -297,31 +297,31 @@ namespace ExpressBase.Web.BaseControllers
             return s_obj;
         }
 
-        //public User GetUserObject(string userAuthId)
-        //{
-        //    User user = null;
-        //    try
-        //    {
-        //        if (userAuthId != string.Empty)
-        //        {
-        //            string[] parts = userAuthId.Split(":"); // iSolutionId:UserId:WhichConsole
-        //            if (parts.Length == 3)
-        //            {
-        //                user = this.Redis.Get<User>(userAuthId);
-        //                if (user == null)
-        //                {
-        //                    this.ServiceClient.Post(new UpdateUserObjectRequest() { SolnId = parts[0], UserId = Convert.ToInt32(parts[1]), UserAuthId = userAuthId });
-        //                    user = this.Redis.Get<User>(userAuthId);
-        //                }
-        //            }
-        //            else
-        //            { Console.WriteLine("userAuthId incorrect" + userAuthId); }
-        //        }
-        //        else
-        //        { Console.WriteLine("userAuthId incorrect" + userAuthId); }
-        //    }
-        //    catch (Exception e) { Console.WriteLine(e.Message + e.StackTrace); }
-        //    return user;
-        //}
+        public User GetUserObject(string userAuthId)
+        {
+            User user = null;
+            try
+            {
+                if (userAuthId != string.Empty)
+                {
+                    string[] parts = userAuthId.Split(":"); // iSolutionId:UserId:WhichConsole
+                    if (parts.Length == 3)
+                    {
+                        user = this.Redis.Get<User>(userAuthId);
+                        if (user == null)
+                        {
+                            this.ServiceClient.Post(new UpdateUserObjectRequest() { SolnId = parts[0], UserId = Convert.ToInt32(parts[1]), UserAuthId = userAuthId });
+                            user = this.Redis.Get<User>(userAuthId);
+                        }
+                    }
+                    else
+                    { Console.WriteLine("userAuthId incorrect" + userAuthId); }
+                }
+                else
+                { Console.WriteLine("userAuthId incorrect" + userAuthId); }
+            }
+            catch (Exception e) { Console.WriteLine(e.Message + e.StackTrace); }
+            return user;
+        }
     }
 }

@@ -200,7 +200,7 @@ namespace ExpressBase.Web.Controllers
                 if (dsObject != null)
                 {
                     dsObject.AfterRedisGet(this.Redis, this.ServiceClient);
-                    Eb_Solution solu = this.Redis.Get<Eb_Solution>(String.Format("solution_{0}", ViewBag.cid));
+                    Eb_Solution solu = GetSolutionObject(ViewBag.cid);
                     if (dsObject.FilterDialog != null)
                         EbControlContainer.SetContextId(dsObject.FilterDialog, contextId);
                     result = ViewComponent("ParameterDiv", new { FilterDialogObj = dsObject.FilterDialog, _user = this.LoggedInUser, _sol = solu, wc = "dc", noCtrlOps = true });

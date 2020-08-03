@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using ServiceStack;
 using ServiceStack.Redis;
 using System;
+using ExpressBase.Security;
+using ExpressBase.Objects.ServiceStack_Artifacts;
 
 namespace ExpressBase.Web.BaseControllers
 {
@@ -58,7 +60,5 @@ namespace ExpressBase.Web.BaseControllers
                 Console.WriteLine("Exception:" + ane.Message.ToString());
             }
         }
-
-
     }
 }

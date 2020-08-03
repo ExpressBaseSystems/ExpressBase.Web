@@ -341,7 +341,10 @@
 }
 
 #filterBox {
+    height: calc(100% - 27px);
     padding: 5px 15px;
+    position: relative;
+    overflow-y: auto;
 }
 
 .filterCont {

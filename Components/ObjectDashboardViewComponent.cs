@@ -45,7 +45,7 @@ namespace ExpressBase.Web.Components
                 ViewBag.tile = _dashbord_tiles;
             else
             {
-                User u = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, ViewBag.cid, ViewBag.email, ViewBag.wc));
+                User u = this.Redis.Get<User>(ViewBag.UAuthid);
                 ViewBag.tile = new EbObj_Dashboard { OwnerUid = ViewBag.Uid, OwnerName = u.FullName, OwnerTs = DateTime.UtcNow };
             }
             ViewBag.versioning = _versioning;

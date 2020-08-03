@@ -109,6 +109,7 @@
             this.filterDialog = FilterDialog;
             //this.placefiltervalues();
             $("#btnGo").trigger("click");
+            this.CloseParamDiv();
             $("#filter-dg").off("click").on("click", this.toggleFilter.bind(this));
         }
         else {
@@ -121,7 +122,7 @@
         $(".db-user-filter").toggle(300);
     }
     this.CloseParamDiv = function () {
-       // this.stickBtn.minimise();
+        $(".db-user-filter").hide(300);
     }
 
     this.placefiltervalues = function () {

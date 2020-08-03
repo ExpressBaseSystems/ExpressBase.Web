@@ -37,9 +37,12 @@
 <script src="~/js/GoogleMap/Googlemap.js"></script>
 <script src="~/js/EbUserDashBoard/EbDashBoardView.js" asp-append-version=@bApnd></script>
 <script src="~/js/EbUserDashBoard/Eb_UserControl_Helper.js" asp-append-version=@bApnd></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
+@*<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.0/lodash.min.js"></script>*@
+<script src="~/js/DV/lodash4.min.js"></script>
+@*<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"></script>*@
+<script src="~/js/DV/lodash3.min.js"></script>
+@*<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>*@
+<script src="~/js/DV/knockout-min.js"></script>
 <script src="~/js/Eb_Basic_chart.js" asp-append-version=@bApnd></script>
 
 
@@ -47,8 +50,10 @@
 <script src="~/js/EbGauges/gauge.js"></script>
 <script src="~/js/EbGauges/ProgressGauge.js"></script>
 <script src="~/js/EbGauges/SpeedoMeter.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+@*<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>*@
+<script src="~/js/DV/apexcharts.js"></script>
+@*<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>*@
+<script type="text/javascript" src="~/js/DV/loader.js"></script>
 
 <script>
     @Html.Raw(ViewBag.Meta);
@@ -89,7 +94,7 @@
     {
         <script>
             $(".dash-loader").hide();
-            </script>
+        </script>
     }
 }
 <script type="text/javascript">

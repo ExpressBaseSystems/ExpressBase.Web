@@ -33,10 +33,10 @@
         $(Loc_close).off("click").on("click", this.close_LocSwitch.bind(this));
         $(".locs_bdy").off("dblclick").on("dblclick", "li a", this.confirmLocFn.bind(this));
         $("#loc-search").off("keyup").on("keyup", this.searchLoc.bind(this));
-      
-        $(".locs_bdy").off("keyup").on("keyup", "li a", this.SelectLoc_enter.bind(this));
-       // $("body").off("keyup").on("keyup", this.SelectLoc_esc.bind(this));
-        $("body").off("keyup").on("keyup", this.Keypress_selectLoc.bind(this));
+
+        //$(".locs_bdy").off("keyup").on("keyup", "li a", this.SelectLoc_enter.bind(this));
+        // $("body").off("keyup").on("keyup", this.SelectLoc_esc.bind(this));
+        $("body").off("keydown").on("keydown", this.Keypress_selectLoc.bind(this));
         let s = this.getParentPath(this.CurrentLoc);
         $('#current_loc').attr('loc_id', this.CurrentLoc).text(s);
     };
@@ -55,10 +55,12 @@
             this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: this.Locations[i].LongName + `  (${this.Locations[i].ShortName})` });
         }
         this.Tempdata = JSON.parse(JSON.stringify(this.data));
+        this.loc_data = this.Tempdata;
     };
 
     this.drawLocsTree = function () {
         if (this.Tempdata.length > 0) {
+            $(EmptyLocs).hide();
             this.TreeApi = simTree({
                 el: $(container + " .locs_bdy"),
                 data: this.Tempdata,
@@ -110,34 +112,34 @@
         $('#current_loc').text(s); s
     };
 
-    this.SelectLoc_enter = function (e) {
-        var keycode = (e.keyCode ? e.keyCode : e.which);
-        if (keycode == '13') {
+    //this.SelectLoc_enter = function (e) {
+    //    var keycode = (e.keyCode ? e.keyCode : e.which);
+    //    if (keycode == '13') {
 
-            this.confirmLocFn();
-        }
-    }
+    //        this.confirmLocFn();
+    //    }
+    //}
 
     //this.SelectLoc_esc = function (e) {
-        
+
     //}
 
     this.Keypress_selectLoc = function (e) {
         if ($(LocModId).is(":visible")) {
             var keycode = (e.keyCode ? e.keyCode : e.which);
-            if (keycode == '27') {
-                $(LocModId).hide();
-                $(".loc_switchModal_fade").hide();
-            }
 
-            if (keycode == '37' || '38' || '39' || '40') {
-                e.preventDefault();
+            if (keycode >= 37 && keycode <= 40) {
+                //  e.preventDefault();
+                //e.stopPropagation()
             }
-            if (keycode == '27') {
+            if (keycode == '13') {
+                this.confirmLocFn();
+            }
+            else if (keycode == '27') {
                 $(LocModId).hide();
                 $(".loc_switchModal_fade").hide();
             }
-            if (keycode == '37') {
+            else if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
                 if (y.find("ul.show").length) {
                     y = y.find("ul.show");
@@ -152,11 +154,11 @@
                 let y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
 
                 if (y.prev().length) {
-                    y = y.prev();
-                    if (y.children("ul.show").length) {
-                        y = y.find('ul.show').find('li:last-child')
+                    let z = y.prev();
+                    if (z.children("ul.show").length) {
+                        z = z.find('ul.show:first').find('li:last')
                     }
-                    y.find('a:first').trigger('click');
+                    z.find('a:first').trigger('click');
                 }
                 else {
                     if (y.closest('ul.show').length) {
@@ -187,16 +189,48 @@
                 if (y.children("ul:first").hasClass("show")) {
                     y = y.find("ul:first").find("li:first")
                 }
-                else if (y.next('li').length) {
+                else
+                if (y.next('li').length) {
                     y = y.next('li');
                 }
                 else {
-                    y = y.closest('ul.show').parent("li").next("li");
+                    let c = 0;
+                    while ((c == 0) && (y.closest('ul.show').parent("li").length == 1)) {
+                        if (y.closest('ul.show').parent("li").next("li").length) {
+                            y = y.closest('ul.show').parent("li").next("li");
+                            c = 1;
+                        }
+                        else {
+                            y = y.closest('ul.show').parent("li");
+                        }
+
+                    }
                 }
 
                 y.find("a:first").trigger('click');
 
             }
+
+            //if (keycode >= 37 && keycode <= 40) {
+            //    var $el = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
+            //    let cont = $(".locs_bdy");
+            //    var elH = $el.height();
+            //    let el_pos = elH + $el.scrollTop();
+            //    let x = elH + $el.offset().top;
+            //    let ch = cont.height();
+            //    var scrollTop = $(".locs_bdy").scrollTop();
+            //    var viewport = scrollTop + $(".locs_bdy").height();
+            //    var elOffset = $el.scrollTop();
+            //    var el_repos = $el.offset().top - $(".locs_bdy").offset().top;
+            //    console.log('vport', viewport, 'sTop', scrollTop, ' el', elH, ' elOffset', elOffset);
+            //    //if (elOffset < scrollTop || (elOffset + elHeight) > viewport)
+            //    //    $el.scrollTop(relativeY);
+            //    if ((el_repos + elH) > ch) {
+
+            //        cont.scrollTop(el_repos - elH);
+            //    }
+
+            //}
 
         }
 
@@ -217,18 +251,23 @@
             //$(".locs_bdy").animate({
             //    scrollTop: k.offset().top - 10
             //}, 'slow');
+
+            $(".locs_bdy").empty();
             this.CurrentLoc = this.getCurrent();
             this.PrevLocation = this.CurrentLoc;
             this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
             this.prev_loc_name = this.CurrentLocObj.LongName;
+            this.Tempdata = this.loc_data;
+            this.drawLocsTree();
+            this.setDefault();
 
             var scrollTo = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
             scrollTo.trigger('click');
             var container = $('.locs_bdy');
-               
+
             container.animate({
                 scrollTop: scrollTo.offset().top - container.offset().top +
-                    container.scrollTop()-100
+                    container.scrollTop() - 100
             });
         }
     };

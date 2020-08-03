@@ -425,3 +425,16 @@ function scrollDropDown(e) {
 
     //}, true);
 }
+
+//function isScrolledIntoViewOfContainer(elem, cont) {
+//    //let contViewTop = $(cont).scrollTop();
+//    //let contViewBottom = contViewTop + $(cont).height();
+
+//    let contTop = $(cont).offset().top;
+//    let contBottom = contTop + $(cont).height();
+
+//    let elemTop = $(elem).offset().top;
+//    let elemBottom = elemTop + $(elem).outerHeight();
+
+//    return ((elemBottom > contTop) && (elemTop < contBottom));
+//}

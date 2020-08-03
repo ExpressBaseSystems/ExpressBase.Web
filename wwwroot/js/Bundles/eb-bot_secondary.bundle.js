@@ -12661,6 +12661,8 @@ var EbBasicDataTable = function (Option) {
 
     this.action = Option.action || null;
     this.Levels = Option.levels || [];
+    this.PreviousHTML = Option.PreviousHTML;
+    this.NextHTML = Option.NextHTML;
 
 
     this.init = function () {
@@ -12861,6 +12863,13 @@ var EbBasicDataTable = function (Option) {
         o.processing = true;
         o.language = {
             processing: "<div class='fa fa-spinner fa-pulse fa-3x fa-fw'></div>",
+            info: "_START_ - _END_ / _TOTAL_",
+            paginate: {
+                "previous": this.PreviousHTML || "Prev",
+                "next": this.NextHTML || "Next",
+            },
+            lengthMenu: "_MENU_ / Page",
+            infoFiltered : (this.source === "powerselect") ? "(filtered from _MAX_ records)" : ""
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
@@ -12869,6 +12878,7 @@ var EbBasicDataTable = function (Option) {
         o.lengthChange = this.EbObject.IsPaging;
         o.pagingType = "simple";
         o.pageLength = this.pageLength;
+        //o.fixedColumns = { leftColumns: 1, rightColumns: 1 };
         o.select = true;
         o.keys = true;
         if (this.MainData === null) {
@@ -15005,6 +15015,8 @@ var EbCommonDataTable = function (Option) {
     this.LeftFixedColumn = Option.LeftFixedColumn || 0;
     this.RowHeight = Option.RowHeight || "15";
     this.ObjectLinks = Option.ObjectLinks || [];
+    this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
+
 
     if (this.Source === "EbDataTable") {
         this.split = new splitWindow("parent-div0", "contBox");
@@ -15507,6 +15519,9 @@ var EbCommonDataTable = function (Option) {
             console.log('An error has been reported by DataTables: ', message);
         });
 
+        if (this.Source === "datagrid")
+            this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+
         this.Api = this.table_jQO.DataTable(this.createTblObject());
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
@@ -15558,7 +15573,7 @@ var EbCommonDataTable = function (Option) {
             }
         });
 
-        //this.table_jQO.off('draw.dt').on('draw.dt', this.doSerial.bind(this));
+       
 
         //this.table_jQO.on('length.dt', function (e, settings, len) {
         //    console.log('New page length: ' + len);
@@ -15569,6 +15584,7 @@ var EbCommonDataTable = function (Option) {
             EbPopBox("show", { Message: message, Title: "Error" });
         };
 
+        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
 
         //this.Api.on('row-reorder', function (e, diff, edit) {
         //});
@@ -15577,7 +15593,7 @@ var EbCommonDataTable = function (Option) {
     this.addSerialAndCheckboxColumns = function () {
         this.CheckforColumnID();//, 
         var serialObj = new Object();
-        serialObj.data = this.EbObject.Columns.$values.length;
+        serialObj.data = (this.Source === "datagrid") ? null : this.EbObject.Columns.$values.length;
         serialObj.searchable = false;
         serialObj.orderable = false;
         serialObj.bVisible = true;
@@ -15594,7 +15610,7 @@ var EbCommonDataTable = function (Option) {
     this.CheckforColumnID = function () {
         this.FlagPresentId = false;
         $.each(this.EbObject.Columns.$values, function (i, col) {
-            if (col.name === "id") {
+            if (col.name === this.hiddenFieldName.toLocaleLowerCase()) {
                 this.FlagPresentId = true;
                 col.bVisible = false;
                 return false;
@@ -15615,6 +15631,9 @@ var EbCommonDataTable = function (Option) {
         chkObj.pos = "-1";
 
         this.extraCol.push(chkObj);
+        var _array = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this));
+        if (_array.length > 0)
+            this.hiddenIndex = _array[0].data;
     }
 
     this.createTblObject = function () {
@@ -15651,7 +15670,7 @@ var EbCommonDataTable = function (Option) {
         o.order = [];
         o.deferRender = true;
         //o.filter = true;
-        //o.select = true;
+        //o.select = this.AllowSelect;
         //o.retrieve = true;
         o.keys = true;
         //this.filterValues = this.getFilterValues();
@@ -16074,7 +16093,7 @@ var EbCommonDataTable = function (Option) {
         this.treeData = dd.tree;
         this.SetColumnRef();
         this.ImageArray = dd.imageList ? JSON.parse(dd.imageList) : [];
-        return dd.formattedData;
+        return dd.formattedData || this.unformatedData;
     };
 
     this.fixedColumnCount = function () {
@@ -16740,6 +16759,18 @@ var EbCommonDataTable = function (Option) {
     };
 
     this.dblclickCallbackFunc = function (e) {
+    };
+
+    this.rowclick = function (e, dt, type, indexes) {
+        let trindex = $(e.target).closest("tr").index();
+        if (this.AllowSelect) {
+            $(".DTFC_LeftBodyLiner tbody tr").removeClass("selected");
+            $(".DTFC_RightBodyLiner tbody tr").removeClass("selected");
+            $(".DTFC_LeftBodyLiner tbody tr").eq(trindex).addClass("selected");
+            $(".DTFC_RightBodyLiner tbody tr").eq(trindex).addClass("selected");
+        }
+        if (Option.rowclick)
+            Option.rowclick(e, dt, type, indexes);
     };
 
     this.rowGroupHandler = function (e) {
@@ -18892,10 +18923,10 @@ var EbCommonDataTable = function (Option) {
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         if (this.FlagPresentId) {
-            var idpos = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
+            this.hiddenIndex  = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
-            if (row[idpos])
-                return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[idpos].toString() + "'/>";
+            if (row[this.hiddenIndex])
+                return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[this.hiddenIndex].toString() + "'/>";
             else
                 return "<input type='checkbox' class='" + this.tableId + "_select'/>";
         }

@@ -100,7 +100,8 @@ namespace ExpressBase.Web.Controllers
             string htm = "";
             string hosts = "";
             string attendees = "";
-            if (Resp.IsDirectMeeting)
+            MeetingResponse Response = new MeetingResponse();
+            if (Resp.IsDirectMeeting && Resp.ResponseStatus )
             {
 
                 for (int i = 0; i < Resp.ParticipantList.Count; i++)
@@ -155,7 +156,7 @@ namespace ExpressBase.Web.Controllers
                     htm += $@"</div> in valid request </div>";
                 }
             }
-            else if (Resp.IsDirectMeeting == false && Resp.SlotList.Count > 1)
+            else if (Resp.IsDirectMeeting == false && Resp.SlotList.Count > 1  && Resp.ResponseStatus)
             {
 
                 string Date = Convert.ToDateTime(Resp.MeetingScheduleDetails.Date).ToString("dddd, dd MMMM yyyy");
@@ -190,7 +191,7 @@ namespace ExpressBase.Web.Controllers
                     ";
                 htm += $@"<div></div>";
             }
-            else if (Resp.IsDirectMeeting == false && Resp.SlotList.Count == 1)
+            else if (Resp.IsDirectMeeting == false && Resp.SlotList.Count == 1 && Resp.ResponseStatus)
             {
                 string Date = Convert.ToDateTime(Resp.MeetingScheduleDetails.Date).ToString("dddd, dd MMMM yyyy");
                 string TimeFrom = Convert.ToDateTime(Resp.SlotList[0].TimeFrom).ToString("hh:mm tt");
@@ -209,7 +210,9 @@ namespace ExpressBase.Web.Controllers
                     ";
                 htm += $@"<div></div>";
             }
-            return JsonConvert.SerializeObject(htm);
+            Response.Html = htm;
+            Response.ResponseStatus = Resp.ResponseStatus;
+            return JsonConvert.SerializeObject(Response);
         }
         public string AcceptMeeting(int Slot, int myactionid)
         {
@@ -299,11 +302,11 @@ namespace ExpressBase.Web.Controllers
             ParticipantsListAjaxResponse Resp = this.ServiceClient.Post<ParticipantsListAjaxResponse>(new ParticipantsListAjaxRequest { MeetingConfig = meetingConfig, TimeFrom = timefrom, TimeTo = timeto });
             return JsonConvert.SerializeObject(Resp);
         }
-        public class TempForm
+        public class MeetingResponse
         {
-            public string Name { get; set; }
-            public string Type { get; set; }
-            public string Value { get; set; }
+            public bool ResponseStatus { get; set; }
+            public string Html { get; set; }
+
         }
     }
 }

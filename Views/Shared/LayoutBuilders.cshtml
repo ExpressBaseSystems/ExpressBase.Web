@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.css">
 
     @*jith*@
-    <link rel="stylesheet" type="text/css" href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css">
+    <link rel="stylesheet" type="text/css" href="~/css/DV/bootstrap-toggle.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap-checkbox.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="~/css/bootstrap-select.min.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
@@ -71,7 +71,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gridstack@1.1.1/dist/gridstack.min.css" />
 
     @*roby*@
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/rateYo/2.3.2/jquery.rateyo.min.css">
+    <link rel="stylesheet" href="~/css/DV/jquery.rateyo.min.css">
     <link rel="stylesheet" type="text/css" href="~/css/datatables.min.css" asp-append-version=@bApnd />
     <link rel="stylesheet" type="text/css" href="~/css/simTree.css" />
 
@@ -96,7 +96,7 @@
     @* BOOTSTRAP JS *@
     <script type="text/javascript" src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.2/js/bootstrap-select.min.js"></script>
-    <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
+    <script type="text/javascript" src="~/js/DV/bootstrap-tagsinput.js"></script>
     @*<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>*@
 
     @*nithin*@
@@ -228,15 +228,14 @@
                             <div class="loc_switchModal_box">
                                 <div class="locs_head">
                                     <button type="button" id="loc_switchModal_close" class="loc_switchModal_close">&times;</button>
-                                    <h4>Switch Location</h4>
-                                    <div class="locs_headSub row">
-                                        <div class="loc_current_wrp col-md-7 col-lg-7">
-                                            <span>Current Location: </span>  <span id="current_loc" style="font-size: 12px;"> </span>
-                                        </div>
-                                        <div class="loc_searchInput col-md-5 col-lg-5">
-                                            <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
-                                        </div>
+                                    <div class="loc_searchInput col-md-5 col-lg-5">
+                                        <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
                                     </div>
+                                    <h4>Switch Location</h4>
+                                    
+                                        <div class="loc_current_wrp ">
+                                            <span><i class="fa fa-check-circle-o "></i></span>  <span id="current_loc" loc_id="" style="font-size: 12px; cursor:pointer"> </span>
+                                        </div>  
                                 </div>
                                 <div class="locs_bdy"></div>
                                 <div class="locs_foot">

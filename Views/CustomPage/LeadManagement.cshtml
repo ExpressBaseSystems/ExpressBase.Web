@@ -11,17 +11,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.css" />
 <link href="~/css/Docs.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="https://rawgit.com/timschlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.css" />
-<link href="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.css" rel="stylesheet" type="text/css" />
+<link href="~/css/DV/MonthPicker.min.css" rel="stylesheet" type="text/css" />
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/croppie/2.6.2/croppie.min.js"></script>
 <script src="https://rawgit.com/KidSysco/jquery-ui-month-picker/v3.0.0/demo/MonthPicker.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
 
-<script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
+<script type="text/javascript" src="~/js/DV/bootstrap-tagsinput.js"></script>
 
 <link rel="stylesheet" type="text/css" href="~/css/Eb.css" asp-append-version=@bApnd />    <!-- Add the slick-theme.css if you want default styling -->
-<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.css" />
-<script type="text/javascript" src="//cdn.jsdelivr.net/gh/kenwheeler/slick@1.8.1/slick/slick.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/css/DV/slick.css" />
+<script type="text/javascript" src="~/js/DV/Slick.js"></script>
 
 <script type="text/javascript" src="~/js/jquery.datetimepicker.min.js" asp-append-version=@bApnd></script>
 <script type="text/javascript" src="~/js/LeadManagement.js" asp-append-version=@bApnd></script>
@@ -356,25 +356,25 @@
                     </div>
                 </div>
                 <div class="lm-form-inline">
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             <label>City</label>
                             <input id="txtCrntCity" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2" style="padding-left: 5px;">
                         <div class="form-group">
                             <label>Country</label>
                             <input id="txtCrntCountry" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" style="padding-left: 5px;">
                         <div class="form-group">
                             <label>Home City</label>
                             <input id="txtHomeCity" type="text" class="form-control">
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2" style="padding-left: 5px;">
                         <div class="form-group">
                             <label>Home District</label>
                             <select id="selHomeDistrict" class="form-control">
@@ -382,6 +382,20 @@
                                     foreach (string str in ViewBag.DistrictList)
                                     {
                                         <option value="@str">@str</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3" style="padding-left: 5px;">
+                        <div class="form-group">
+                            <label>Customer Category</label>
+                            <select id="selCustomerCategory" class="form-control">
+                                <option value="0">- Select -</option>
+                                @{
+                                    foreach (KeyValuePair<int, string> item in ViewBag.CustomerCategoryDict)
+                                    {
+                                        <option value="@item.Key">@item.Value</option>
                                     }
                                 }
                             </select>

@@ -46,6 +46,7 @@
     this.$HfCurrently = $("#selHfCurrently");
     this.$HtPreviously = $("#selHtPreviously");
     this.$CountryCode = $("#selCountryCode");
+    this.$CustomerCategory = $("#selCustomerCategory");
 
     this.$ConsultedDate = $("#txtConsultedDate");
     this.$Doctor = $("#selDoctor");
@@ -882,6 +883,7 @@
         this.$HfCurrently.val(this.CustomerInfo["hfcurrently"]);
         this.$HtPreviously.val(this.CustomerInfo["htpreviously"]);
         this.$CountryCode.val(this.CustomerInfo["country_code"]);
+        this.$CustomerCategory.val(this.CustomerInfo["cust_category"]);
         if (this.CustomerInfo["dprefid"] !== "0") {
             let id = this.CustomerInfo["dprefid"];
             $("#divCustomerDp").children().remove();
@@ -979,6 +981,7 @@
         this.pushToList("hfcurrently", this.$HfCurrently.val());
         this.pushToList("htpreviously", this.$HtPreviously.val());
         this.pushToList("country_code", this.$CountryCode.val());
+        this.pushToList("cust_category", this.$CustomerCategory.val());
 
         this.pushToList("consdate", this.$ConsultedDate.val());
         this.pushToList("consultingdoctor", this.$Doctor.val());

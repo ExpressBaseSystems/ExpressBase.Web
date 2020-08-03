@@ -52,7 +52,7 @@
     @******************************************* JavaScript includes ********************** *@
 
     <script type="text/javascript" src="~/js/Bundles/bootsrap_jq.bundle.min.js" asp-append-version=@bApnd></script>
-    <script type="text/javascript" src="https://rawgit.com/TimSchlechter/bootstrap-tagsinput/master/src/bootstrap-tagsinput.js"></script>
+    <script type="text/javascript" src="~/js/DV/bootstrap-tagsinput.js"></script>
 
     <script src="~/js/validator.js" type="text/javascript" asp-append-version=@bApnd></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
@@ -160,14 +160,13 @@
                                 <div class="loc_switchModal_box">
                                     <div class="locs_head">
                                         <button type="button" id="loc_switchModal_close" class="loc_switchModal_close">&times;</button>
+                                        <div class="loc_searchInput col-md-5 col-lg-5">
+                                            <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
+                                        </div>
                                         <h4>Switch Location</h4>
-                                        <div class="locs_headSub row">
-                                            <div class="loc_current_wrp col-md-7 col-lg-7">
-                                                <span>Current Location: </span>  <span id="current_loc" style="font-size: 12px;"> </span>
-                                            </div>
-                                            <div class="loc_searchInput col-md-5 col-lg-5">
-                                                <input type="text" class="form-control" id="loc-search" placeholder="Search Location." />
-                                            </div>
+
+                                        <div class="loc_current_wrp ">
+                                            <span><i class="fa fa-check-circle-o "></i></span>  <span id="current_loc" loc_id="" style="font-size: 12px; cursor:pointer"> </span>
                                         </div>
                                     </div>
                                     <div class="locs_bdy"></div>
@@ -178,7 +177,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>                   
+                    </div>
                 }
             }
         }

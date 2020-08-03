@@ -882,7 +882,7 @@
 
 .db-user-filter {
     top: 0px;
-    left: 0px;
+    right: 0px;
     width: 32rem;
     position: fixed;
     display: block;
@@ -896,6 +896,7 @@
         background: white;
         height: 100%;
         border-right: solid 1px #b2b2b2;
+        border-left: solid 1px #b2b2b2;
     }
 
         .db-user-filter .param-div .filter-run {

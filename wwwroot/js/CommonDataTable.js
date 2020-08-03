@@ -97,6 +97,7 @@
     this.scrollHeight = Option.scrollHeight || "inherit";
     this.IsPaging = typeof Option.IsPaging !== 'undefined' ? Option.IsPaging : true;
     this.LeftFixedColumn = Option.LeftFixedColumn || 0;
+    this.RightFixedColumn = Option.RightFixedColumn || 0;
     this.RowHeight = Option.RowHeight || "15";
     this.ObjectLinks = Option.ObjectLinks || [];
     this.AllowSelect = typeof Option.AllowSelect !== 'undefined' ? Option.AllowSelect : true;
@@ -417,7 +418,12 @@
             $("#" + this.contId).empty();
             $("#" + this.contId).append(`<table id="${this.tableId}" class="table display table-bordered compact"></table>`);
             this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
+            this.EbObject.RightFixedColumn = 0;
             this.EbObject.RowHeight = this.RowHeight;
+        }
+        else if (this.Source === "datagrid") {
+            this.EbObject.LeftFixedColumn = this.LeftFixedColumn;
+            this.EbObject.RightFixedColumn = this.RightFixedColumn;
         }
         this.getNotvisibleColumns();
         this.initCompleteflag = false;
@@ -657,8 +663,6 @@
             }
         });
 
-       
-
         //this.table_jQO.on('length.dt', function (e, settings, len) {
         //    console.log('New page length: ' + len);
         //});
@@ -668,7 +672,8 @@
             EbPopBox("show", { Message: message, Title: "Error" });
         };
 
-        $('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
+        //$('#' + this.tableId + ' tbody').off('click').on('click', 'tr', this.rowclick.bind(this));
+        //$('#' + this.tableId + ' tbody').off('mouseenter').on('mouseenter mouseleave', 'tr', this.mouseenter.bind(this));
 
         //this.Api.on('row-reorder', function (e, diff, edit) {
         //});
@@ -723,7 +728,7 @@
     this.createTblObject = function () {
         var o = new Object();
         o.scrollY = this.scrollHeight;
-        o.scrollX = "100%";
+        o.scrollX = true;
         //o.scrollXInner = "110%";
         o.scrollCollapse = true;
         if (this.Source === "EbDataTable") {
@@ -1846,15 +1851,15 @@
     };
 
     this.rowclick = function (e, dt, type, indexes) {
-        let trindex = $(e.target).closest("tr").index();
-        if (this.AllowSelect) {
-            $(".DTFC_LeftBodyLiner tbody tr").removeClass("selected");
-            $(".DTFC_RightBodyLiner tbody tr").removeClass("selected");
-            $(".DTFC_LeftBodyLiner tbody tr").eq(trindex).addClass("selected");
-            $(".DTFC_RightBodyLiner tbody tr").eq(trindex).addClass("selected");
-        }
         if (Option.rowclick)
             Option.rowclick(e, dt, type, indexes);
+    };
+
+    this.mouseenter = function (e, dt, type, indexes) {
+        let trindex = $(e.target).closest("tr").index();
+        let bgcolor = $(e.target).closest("tr").css("background-color");
+        $(".DTFC_LeftBodyLiner tbody tr").eq(trindex).style("background-color", bgcolor,"important");
+        $(".DTFC_RightBodyLiner tbody tr").eq(trindex).style("background-color", bgcolor, "important");
     };
 
     this.rowGroupHandler = function (e) {
@@ -2648,7 +2653,10 @@
 
         this.Api.on('key-focus', function (e, datatable, cell) {
             datatable.rows().deselect();
-            datatable.row(cell.index().row).select();
+            let trindex = cell.index().row;
+            datatable.row(trindex).select();
+            //$(".DTFC_LeftBodyLiner tbody tr").eq(trindex).addClass("selected");
+            //$(".DTFC_RightBodyLiner tbody tr").eq(trindex).addClass("selected");
         });
 
         //this.filterbtn.off("click").on("click", this.showOrHideFilter.bind(this));
@@ -2882,7 +2890,7 @@
         $('#sms-modal-body .selectpicker').val(this.phonecolumn.Templates.$values[0].ObjRefId).change();
     };
 
-    this.ClickOnTemplate = function ($elem,e, clickedIndex, isSelected, previousValue) {
+    this.ClickOnTemplate = function ($elem, e, clickedIndex, isSelected, previousValue) {
         let refid = $(".smstemplate-select option:selected").val();
         var idx = this.Api.row($elem.parents().closest("td")).index();
         this.rowData = this.unformatedData[idx];
@@ -4007,7 +4015,7 @@
 
     this.renderCheckBoxCol = function (data2, type, row, meta) {
         if (this.FlagPresentId) {
-            this.hiddenIndex  = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
+            this.hiddenIndex = $.grep(this.EbObject.Columns.$values, function (obj) { return obj.name.toLocaleLowerCase() === this.hiddenFieldName.toLocaleLowerCase(); }.bind(this))[0].data;
             this.rowId = meta.row; //do not remove - for updateAlSlct
             if (row[this.hiddenIndex])
                 return "<input type='checkbox' class='" + this.tableId + "_select' name='" + this.tableId + "_id' value='" + row[this.hiddenIndex].toString() + "'/>";

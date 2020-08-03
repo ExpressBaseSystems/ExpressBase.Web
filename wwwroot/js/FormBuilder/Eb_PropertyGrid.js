@@ -602,6 +602,18 @@
         if (this.CurProp === 'DataSourceId' && this.PropsObj.ObjType !== "DataGrid") {
             this.PGHelper.dataSourceInit();
         }
+        if (this.CurProp === 'Url' && this.PropsObj.ObjType !== "DataGrid") {
+            if (this.PropsObj.IsDataFromApi) {
+                let opt = {
+                    url: "../DS/GetColumnsFromApi",
+                    apiUrl: this.PropsObj.Url,
+                    headers: this.PropsObj.Headers,
+                    parameters: this.PropsObj.Parameters,
+                    method: this.PropsObj.Method
+                }
+                this.PGHelper.UrlInit(opt);
+            }
+        }
         this.PropertyChanged(this.PropsObj, this.CurProp, newVal, oldVal);
     };
 

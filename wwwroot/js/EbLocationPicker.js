@@ -12,6 +12,7 @@
     const Loc_close = "#loc_switchModal_close";
     this.EbHeader = new EbHeader();
     this.loc_parents = {};
+    this.loc_parent_id = {};
     this.Listener = {
         ChangeLocation: function (LocObject) {
 
@@ -136,8 +137,14 @@
                 this.confirmLocFn();
             }
             else if (keycode == '27') {
-                $(LocModId).hide();
-                $(".loc_switchModal_fade").hide();
+                if ($("#confirmLoc").is(":visible")) {
+                    $('#confirmLoc').modal('hide');
+                }
+                else {
+                    $(LocModId).hide();
+                    $(".loc_switchModal_fade").hide();
+                }
+                
             }
             else if (keycode == '37') {
                 var y = $(".locs_bdy [data-id='" + this.CurrentLoc + "'] ");
@@ -206,7 +213,6 @@
 
                     }
                 }
-
                 y.find("a:first").trigger('click');
 
             }
@@ -225,9 +231,12 @@
             //    console.log('vport', viewport, 'sTop', scrollTop, ' el', elH, ' elOffset', elOffset);
             //    //if (elOffset < scrollTop || (elOffset + elHeight) > viewport)
             //    //    $el.scrollTop(relativeY);
-            //    if ((el_repos + elH) > ch) {
+            //    if ((ch + elH) > el_repos ) {
 
-            //        cont.scrollTop(el_repos - elH);
+            //        cont.scrollTop(x);
+            //        //cont.animate({
+            //        //    scrollTop: el_repos - elH
+            //        //});
             //    }
 
             //}
@@ -238,13 +247,26 @@
 
 
     this.showSwitcher = function (e) {
+        //$(LocModId).toggle("fast", function () {
+        //    if ($(this).is(":visible")) {
+        //        $(".loc_switchModal_fade").show();
+        //    }
+        //    else
+        //        $(".loc_switchModal_fade").hide();
+        //});
+
         $(LocModId).toggle("fast", function () {
             if ($(this).is(":visible")) {
+                $(".html-root").style("overflow", "hidden", "important");
                 $(".loc_switchModal_fade").show();
             }
-            else
+            else {
+                $(".html-root").style("overflow", "visible", "important");
                 $(".loc_switchModal_fade").hide();
+            }
+
         });
+
 
         if ($(LocModId).is(":visible")) {
             //let k = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a`);
@@ -261,6 +283,7 @@
             this.drawLocsTree();
             this.setDefault();
 
+            this.setIcon(this.CurrentLoc);
             var scrollTo = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
             scrollTo.trigger('click');
             var container = $('.locs_bdy');
@@ -316,19 +339,24 @@
     this.findParent_loc = function () {
         for (let i = 0; i < this.Locations.length; i++) {
             let t = [];
+            let x = [];
             let l = this.Locations[i].LocId;
             let p = this.Locations[i].ParentId;
             let n = this.Locations[i].LongName;
             t.push(n);
+            x.push(l);
             while (p > 0) {
                 idx = this.Locations.findIndex(x => x.LocId === p);
                 l = this.Locations[idx].LocId;
                 p = this.Locations[idx].ParentId;
                 n = this.Locations[idx].LongName;
                 t.push(n);
+                x.push(l);
             }
             t.reverse();
+            x.reverse();
             this.loc_parents[this.Locations[i].LocId] = t;
+            this.loc_parent_id[this.Locations[i].LocId] = x;
 
         }
     };
@@ -349,6 +377,18 @@
             return m;
         }
         return;
+    }
+
+    this.setIcon = function (k) {
+        if (this.loc_parent_id.hasOwnProperty(k)) {
+            for (let i = 0; i < this.loc_parent_id[k].length; i++) {
+                var x = $(".locs_bdy [data-id='" + this.loc_parent_id[k][i] + "'] ");
+                var y = x.find(".sim-icon-r:first")
+                if (y.length) {
+                    y.removeClass("sim-icon-r").addClass("sim-icon-d");
+                }
+            }
+        }
     }
 
     this.setParentPath = function () {

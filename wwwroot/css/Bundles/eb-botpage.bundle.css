@@ -5201,7 +5201,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
 }
 
 .DDdiv .table > thead > tr > th, .DDdiv .table > tbody > tr > th {
-    padding-top: 15px;
+    padding-top: 9px;
     border-right: dotted 1px #dddddd;
     background-color: white;
     color: #656565f0;
@@ -5228,6 +5228,10 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     bottom: 0px;
 }
 
+.DDdiv .eb_selallPowerSelect1tbl {
+    margin:0;
+}
+
 
 .DDdiv > .DDclose {
     position: absolute;
@@ -5246,21 +5250,19 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
         opacity: 1;
     }
 
-.ps-addbtn-cont > button {
-    width: 35px !important;
-    z-index: 1000;
+.ps-addbtn {
+    width: 32px !important;
+    z-index: 1;
     position: absolute;
-    color: #008300;
-    top: 1;
     background: transparent;
-    padding: auto;
-    display: inline-block;
-    border: 0;
+    display: inline-flex;
+    box-shadow: inset 1px 0 0 0px #ddddde;
     right: 0;
+    font-size: 14px;
     height: 100%;
 }
 
-    .ps-addbtn-cont > button > .fa {
+    .ps-addbtn > .fa {
         margin: auto;
     }
 
@@ -5311,7 +5313,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
         flex-grow: 1;
         display: flex;
         max-width: calc(100% - 27px); /*substracting search icon width*/
-    }
+}
 
 [eb-form="true"][mode="view"] .searchable [type="search"] {
     background-color: rgb(243, 243, 243) !important;
@@ -5343,10 +5345,15 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     box-shadow: 3px 8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222);
     padding-bottom: 32px;
 }
-
-    .DDdiv .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
-        border-bottom-width: 1px;
+    .DDdiv.dd-ctrl-top {
+        box-shadow: 0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41);
+        box-shadow: 3px -8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222);
+        border-radius: 2px 2px 0px 0;
     }
+
+.DDdiv .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+    border-bottom-width: 1px;
+}
 
     .DDdiv .dataTable {
         margin: 0 !important;
@@ -5451,7 +5458,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     color: white;
     border: none !important;
     border-radius: 2px !important;
-    padding: 3px 5px;
+    padding: 2px 5px;
     margin: 3px 0px 3px 3px !important;
     font-size: 13px;
     border-radius: 8px !important;
@@ -5997,13 +6004,14 @@ div[iblock] .selected-tag:empty::before {
     color: #bbb;
 }
 
-/****  Datagrid ******/
+/*/****  Datagrid ******/
 div.webform-cont div[ctype="DataGrid_New"] table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected {
-    background-color: white !important;
+    background-color: #eee !important;
 }
 
 div.webform-cont div[ctype="DataGrid_New"] td.focus {
-    outline: 0px !important
+    outline: none !important;
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.14), 0 2px 2px 0 rgba(0,0,0,.098), 0 1px 5px 0 rgba(0,0,0,.084);
 }
 
 div.webform-cont div[ctype="DataGrid_New"] tr.selected {
@@ -6308,7 +6316,7 @@ div.dataTables_wrapper div.dataTables_processing {
 .even {
     background-color: white !important;
 }
-.dataTables_wrapper tr.odd:hover, .dataTables_wrapper tr.even:hover {
+div.dataTables_wrapper tr.odd:hover, div.dataTables_wrapper tr.even:hover {
     background-color: #00000040 !important;
 }
 table.dataTable tbody > tr.selected, table.dataTable tbody > tr > .selected, table.dataTable tbody > tr.selected:hover {
@@ -8572,9 +8580,9 @@ input.locinp {
     line-height: 10px;
 }*/
 
-[eb-type="WebForm"] .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
+/*[eb-type="WebForm"] .DDdiv .dataTables_wrapper, .eb-chat-cont .dataTables_wrapper {
     margin-top: -11px;
-}
+}*/
 
 .eb-chat-cont .dataTables_wrapper {
     box-shadow: -7px 10px 8px 0px #8282822e;

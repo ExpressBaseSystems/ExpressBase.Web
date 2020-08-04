@@ -407,6 +407,42 @@ body, html, .html-root {
     .login-sec-image img {
         height: 70px;
     }
+
+.eb-styledTab {
+    border-bottom:none;
+}
+
+.eb-styledTab .nav > li > a i {
+    margin-right: 2px;
+    color: #717171;
+}
+
+.eb-styledTab > li.active > a, .eb-styledTab > li.active > a:focus {
+    font-weight: 500;
+    color: #508bf9;
+    border: none !important;
+    background-color: transparent !important;
+}
+
+.eb-styledTab > li.active > a:after {
+    content: "";
+    content: "";
+    width: calc(100% - 30px);
+    height: 3px;
+    background: #508bf9;
+    position: absolute;
+    bottom: -1px;
+    left: 15px;
+}
+.login_tabcontent-uc {
+    background: #eee;
+    padding: 20px 15px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+.login_tabcontent-dc {
+
+}
 /*end login*/
 /*       Slider       */
 .w-100 {
@@ -2433,11 +2469,11 @@ body {
 .loc_switchModal_box {
     background: white;
     box-shadow: var(--eb-shadow);
-    min-width: 60%;
+    min-width: 40%;
     display: flex;
     flex-direction: column;
     border-radius: 6px;
-    max-width: 60%;
+    max-width: 50%;
 }
 
 .loc_switchModal_outer {
@@ -2449,30 +2485,76 @@ body {
 }
 
 .loc_switchModal_box .locs_head {
-    padding: 10px 20px;
+    padding: 5px 20px;
+    padding-top: 10px;
     background: #ececec;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     border-bottom: 1px solid #e2e0e0;
     position: relative;
 }
+
+    .loc_switchModal_box .locs_head h4 {
+        margin: 5px 0px;
+    }
     /*new loc window styles*/
     .loc_switchModal_box .locs_head .loc_searchInput {
         display: flex;
         align-items: center;
+        float: right;
     }
 
-        .loc_switchModal_box .locs_head .loc_searchInput:before {
+        .loc_switchModal_box .locs_head  .loc_searchInput:before {
             content: "\f002";
             font-family: FontAwesome;
             position: absolute;
             margin-left: 10px;
         }
 
-        .loc_switchModal_box .locs_head .loc_searchInput input {
-            height: 40px;
+        .loc_switchModal_box .locs_head  .loc_searchInput input {
+            height: 30px;
             padding-left: 35px;
         }
+      
+   
+
+        .loc_switchModal_box .locs_head  .loc_current_wrp {
+            padding-top: 3px;
+        }
+
+            .loc_switchModal_box .locs_head .loc_current_wrp span {
+                font-weight: 500;
+            }
+                .loc_switchModal_box .locs_head .loc_current_wrp span i {
+                    font-size: 16px;
+                    color:green;
+                }
+
+.loc_switchModal_close {
+    float: right;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: .5;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    opacity: .4;
+    border: none;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+    .loc_switchModal_close:hover {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+        filter: alpha(opacity=50);
+        opacity: .6;
+    }
+
+    .loc_switchModal_close:focus {
+        outline: none;
+    }
 
 .loc-item {
     padding: 5px;
@@ -2540,10 +2622,11 @@ body {
 
 .loc_switchModal_box .locs_bdy {
     overflow: auto;
-    padding: 15px 15px 5px 15px;
+    padding: 15px 15px 15px 15px;
     max-height: 50vh;
     overflow-y: auto;
     min-height: 50vh;
+    border: .5px solid #d4d4d4;
 }
 
     .loc_switchModal_box .locs_bdy li.active-loc a:first-child {
@@ -2551,8 +2634,12 @@ body {
     }
 
 .loc_switchModal_box .locs_foot {
-    padding: 10px 20px 10px 10px;
+    padding: 7px 20px 7px 10px
 }
+    .loc_switchModal_box .locs_foot button {
+        letter-spacing: 0.1em;
+        font-weight: 500;
+    }
 
 .loc_switchModal_fade {
     display: none;
@@ -2896,8 +2983,9 @@ pd-10 {
 .import_obj_expand_objlinks:hover {
     background: #3876ea;
     color: white;
-    cursor:pointer;
+    cursor: pointer;
 }
+
 .import_obj_expand_objlinks.selected {
     background: #3876ea;
     color: white;

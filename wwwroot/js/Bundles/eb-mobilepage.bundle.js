@@ -435,6 +435,9 @@ function MobileControls(root) {
     this.FilterControls = [];//only for vis filter
 
     this.initForm = function (o) {
+
+        $(".emulator_f").css("display", "flex");
+
         this.Root.makeDropable(o.EbSid, "EbMobileForm");
         this.Root.makeSortable(o.EbSid);
         this.setColumnTree(o);
@@ -446,6 +449,8 @@ function MobileControls(root) {
     };
 
     this.initVisualization = function (o) {
+
+        $(".emulator_f").css("display","none");
 
         let tobj = this.Root.makeElement("EbMobileTableLayout", "TableLayout");
         $(`#${o.EbSid} .eb_mob_container_inner .vis-table-container`).append(tobj.$Control.outerHTML());
@@ -463,6 +468,7 @@ function MobileControls(root) {
             this.Root.getColums4ListView(o);
             this.setSortColumns(o);
             this.setLinkFormControls(o);
+            o.propertyChanged("ShowNewButton");
         }
     };
 
@@ -1027,10 +1033,24 @@ function MobileMenu(option) {
                 if (this.hasOwnProperty("LinkTypeForm") && this.LinkTypeForm) {
                     root.pg.ShowProperty('FormMode');
                     root.pg.ShowProperty('LinkFormParameters');
+                    root.pg.ShowProperty('ContextToControlMap');
+                    root.pg.ShowProperty('ShowNewButton');
                 }
                 else {
                     root.pg.HideProperty('FormMode');
                     root.pg.HideProperty('LinkFormParameters');
+                    root.pg.HideProperty('ContextToControlMap');
+                    root.pg.HideProperty('ShowNewButton');
+                }
+            },
+            propertyChanged: function (propname) {
+                if (propname === "ShowNewButton") {
+                    if (this.ShowNewButton) {
+                        $(`#${this.EbSid} .vis-container-newbtn`).show();
+                    }
+                    else {
+                        $(`#${this.EbSid} .vis-container-newbtn`).hide();
+                    }
                 }
             }
         }

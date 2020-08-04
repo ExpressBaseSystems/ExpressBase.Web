@@ -223,5 +223,45 @@
     "minify": {
       "enabled": false
     }
+  },
+  {
+    "outputFileName": "wwwroot/js/Bundles/eb-Dashboard.bundle.js",
+    "inputFiles": [
+      "wwwroot/js/DV/Chart.min.js",
+      "wwwroot/js/DV/Chart.Zoom.min.js",
+      "wwwroot/js/DV/randomColor.min.js",
+      "wwwroot/js/EbUserDashBoard/EbDashBoard.js",
+      "wwwroot/js/CommonDataTable.js",
+      "wwwroot/js/GoogleMap/Googlemap.js",
+      "wwwroot/js/EbUserDashBoard/EbDashBoardView.js",
+      "wwwroot/js/DV/lodash4.min.js",
+      "wwwroot/js/DV/lodash3.min.js",
+      "wwwroot/js/DV/knockout-min.js",
+      "wwwroot/js/Eb_Basic_chart.js",
+      "wwwroot/js/EbUserDashBoard/DashboardStyleHelper.js",
+      "wwwroot/js/EbGauges/gauge.js",
+      "wwwroot/js/EbGauges/ProgressGauge.js",
+      "wwwroot/js/EbGauges/SpeedoMeter.js",
+      "wwwroot/js/DV/apexcharts.js",
+      "wwwroot/js/DV/loader.js",
+      "wwwroot/js/EbMapView/MapView.js",
+      "wwwroot/js/DV/leaflet.js"
+    ],
+    "minify": {
+      "enabled": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/Bundles/eb-Dashboard.bundle.css",
+    "inputFiles": [
+      "wwwroot/css/EbDashBoard/DashBoardStyle.css",
+      "wwwroot/css/ChartStyle.css",
+      "wwwroot/css/Eb_datatable.css",
+      "wwwroot/css/EbDashBoard/GridStackExtra.css"
+    ],
+    "minify": {
+      "enabled": false
+    }
   }
+
 ]

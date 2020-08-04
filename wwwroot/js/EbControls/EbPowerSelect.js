@@ -674,15 +674,13 @@ const EbPowerSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
-        o.nextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
-        o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
         o.pageLength = this.ComboObj.DropDownItemLimit;
         o.source = "powerselect";
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
-        o.NextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
-        o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
+        o.NextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
+        o.PreviousHTML = '<i class="fa fa-chevron-left" aria-hidden="true"></i>';
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -1390,8 +1388,10 @@ const EbPowerSelect = function (ctrl, options) {
             $div_detach.css("top", "unset");
             $div_detach.css("bottom", BOTTOM);
         }
-        else
+        else {
+            $DDdiv.removeClass("dd-ctrl-top");
             $div_detach.css("top", TOP);
+        }
         console.log("$div_detach:" + TOP);
 
         $div_detach.offset({ left: LEFT });

@@ -56,6 +56,11 @@
             this.data.push({ id: this.Locations[i].LocId, pid: this.Locations[i].ParentId, name: this.Locations[i].LongName + `  (${this.Locations[i].ShortName})` });
         }
         this.Tempdata = JSON.parse(JSON.stringify(this.data));
+        this.Tempdata.sort(function (a, b) {
+            var textA = a.name.toUpperCase().trim();
+            var textB = b.name.toUpperCase().trim();
+            return textA.localeCompare(textB);
+        });
         this.loc_data = this.Tempdata;
     };
 
@@ -108,31 +113,14 @@
             this.PrevLocation = this.CurrentLoc;
             this.prev_loc_name = this.CurrentLocObj.LongName;
         }
-        let s = this.getParentPath(this.CurrentLoc);
-        //$('#current_loc').text(this.CurrentLocObj.LongName + ` (${this.CurrentLocObj.ShortName})`);
+        let s = this.getParentPath(this.CurrentLoc);        
         $('#current_loc').text(s); s
     };
-
-    //this.SelectLoc_enter = function (e) {
-    //    var keycode = (e.keyCode ? e.keyCode : e.which);
-    //    if (keycode == '13') {
-
-    //        this.confirmLocFn();
-    //    }
-    //}
-
-    //this.SelectLoc_esc = function (e) {
-
-    //}
 
     this.Keypress_selectLoc = function (e) {
         if ($(LocModId).is(":visible")) {
             var keycode = (e.keyCode ? e.keyCode : e.which);
 
-            if (keycode >= 37 && keycode <= 40) {
-                //  e.preventDefault();
-                //e.stopPropagation()
-            }
             if (keycode == '13') {
                 this.confirmLocFn();
             }
@@ -165,13 +153,17 @@
                     if (z.children("ul.show").length) {
                         z = z.find('ul.show:first').find('li:last')
                     }
-                    z.find('a:first').trigger('click');
+                    z = z.find('a:first');
+                    z.trigger('click');
+                    z.focus();
                 }
                 else {
                     if (y.closest('ul.show').length) {
                         if (y.closest('ul.show').closest("li").length) {
                             y = y.closest('ul.show').closest("li");
-                            y.find('a:first').trigger('click');
+                            y = y.find("a:first")
+                            y.trigger('click');
+                            y.focus();
                         }
                     }
 
@@ -187,7 +179,9 @@
                     }
                     else {
                         y = y.find("ul:first").find("li:first")
-                        y.find("a:first").trigger('click');
+                        y = y.find("a:first")
+                        y.trigger('click');
+                        y.focus();
                     }
                 }
             }
@@ -213,33 +207,13 @@
 
                     }
                 }
-                y.find("a:first").trigger('click');
+                y = y.find("a:first")
+                y.trigger('click');
+                y.focus();
 
             }
 
-            //if (keycode >= 37 && keycode <= 40) {
-            //    var $el = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
-            //    let cont = $(".locs_bdy");
-            //    var elH = $el.height();
-            //    let el_pos = elH + $el.scrollTop();
-            //    let x = elH + $el.offset().top;
-            //    let ch = cont.height();
-            //    var scrollTop = $(".locs_bdy").scrollTop();
-            //    var viewport = scrollTop + $(".locs_bdy").height();
-            //    var elOffset = $el.scrollTop();
-            //    var el_repos = $el.offset().top - $(".locs_bdy").offset().top;
-            //    console.log('vport', viewport, 'sTop', scrollTop, ' el', elH, ' elOffset', elOffset);
-            //    //if (elOffset < scrollTop || (elOffset + elHeight) > viewport)
-            //    //    $el.scrollTop(relativeY);
-            //    if ((ch + elH) > el_repos ) {
-
-            //        cont.scrollTop(x);
-            //        //cont.animate({
-            //        //    scrollTop: el_repos - elH
-            //        //});
-            //    }
-
-            //}
+           
 
         }
 
@@ -247,13 +221,7 @@
 
 
     this.showSwitcher = function (e) {
-        //$(LocModId).toggle("fast", function () {
-        //    if ($(this).is(":visible")) {
-        //        $(".loc_switchModal_fade").show();
-        //    }
-        //    else
-        //        $(".loc_switchModal_fade").hide();
-        //});
+  
 
         $(LocModId).toggle("fast", function () {
             if ($(this).is(":visible")) {
@@ -269,10 +237,7 @@
 
 
         if ($(LocModId).is(":visible")) {
-            //let k = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a`);
-            //$(".locs_bdy").animate({
-            //    scrollTop: k.offset().top - 10
-            //}, 'slow');
+           
 
             $(".locs_bdy").empty();
             this.CurrentLoc = this.getCurrent();
@@ -287,11 +252,12 @@
             var scrollTo = $(".loc_switchModal_box").find(`li[data-id='${this.CurrentLoc}'] a:first`);
             scrollTo.trigger('click');
             var container = $('.locs_bdy');
-
+            //$(".locs_bdy").scrollTo(scrollTo);
             container.animate({
                 scrollTop: scrollTo.offset().top - container.offset().top +
                     container.scrollTop() - 100
-            });
+            },'medium');
+            scrollTo.focus();
         }
     };
 
@@ -382,11 +348,14 @@
     this.setIcon = function (k) {
         if (this.loc_parent_id.hasOwnProperty(k)) {
             for (let i = 0; i < this.loc_parent_id[k].length; i++) {
-                var x = $(".locs_bdy [data-id='" + this.loc_parent_id[k][i] + "'] ");
-                var y = x.find(".sim-icon-r:first")
-                if (y.length) {
-                    y.removeClass("sim-icon-r").addClass("sim-icon-d");
+                if (i < this.loc_parents[k].length - 1) {
+                    var x = $(".locs_bdy [data-id='" + this.loc_parent_id[k][i] + "'] ");
+                    var y = x.find(".sim-icon-r:first")
+                    if (y.length) {
+                        y.removeClass("sim-icon-r").addClass("sim-icon-d");
+                    }
                 }
+               
             }
         }
     }

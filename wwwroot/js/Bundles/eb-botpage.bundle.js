@@ -4476,6 +4476,8 @@ var InitControls = function (option) {
     ////phonecontrol ends 
     this.PdfControl = function (ctrl) {
         let k = ctrl;
+        let m = `<iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
+        $("body").append(m);
     }
 };
 

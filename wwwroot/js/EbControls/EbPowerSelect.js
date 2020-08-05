@@ -659,15 +659,15 @@ const EbPowerSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
-        o.nextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
-        o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
+        o.nextHTML = '<i class="fa fa-caret-right fa-lg" aria-hidden="true"></i>';
+        o.previousHTML = '<i class="fa fa-caret-left fa-lg" aria-hidden="true"></i>';
         o.pageLength = this.ComboObj.DropDownItemLimit;
         o.source = "powerselect";
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
-        o.NextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
-        o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
+        //o.NextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
+        //o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////

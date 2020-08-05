@@ -1035,6 +1035,7 @@
         }
         this.Metas = metas;
         this.PropsObj = props;
+        this.initNullpropsWithDefaultVals();
         this.setOldValues();
         if (!this.PropsObj.__OSElist)
             this.PropsObj.__OSElist = {};
@@ -1049,6 +1050,21 @@
         setObjectCallBack();
     };
 
+    this.initNullpropsWithDefaultVals = function () {
+        let keys = Object.keys(this.PropsObj);
+        let consName = this.PropsObj.constructor.name;
+        if (consName === "Object")
+            return;
+        let dummyObj = new EbObjects[consName]("dummyObj_PG", {});
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            if ((this.PropsObj[key] === null || this.PropsObj[key] === undefined) && this.PropsObj[key] !== dummyObj[key]) {
+                this.PropsObj[key] = dummyObj[key];
+                console.warn(`property '${key}' of '${this.PropsObj.Name}' is assigned with it's default value as it was null or undefined`);
+            }
+        }
+    };
+
     this.setDependentpropsList = function () {
         if (this.CurObj.__isDependentpropsSet)
             return;
@@ -1056,6 +1072,8 @@
         for (let i = 0; i < this.Metas.length; i++) {
             let meta = this.Metas[i];
             if (meta.source && (meta.editor === 8 || meta.editor === 22 || meta.editor === 27)) {
+                if (meta.source.trimStart().startsWith("return "))
+                    return;
                 let sourceMeta = getObjByval(this.Metas, "name", meta.source);
                 if (sourceMeta.dependentPropsList === undefined)
                     sourceMeta.dependentPropsList = [];

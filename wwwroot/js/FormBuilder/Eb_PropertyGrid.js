@@ -559,7 +559,7 @@
         let oldVal = "";
         let subTypeOf = null;
         if (e) {
-            let $e = $(e.target);
+            var $e = $(e.target);
             this.CurProp = $e.closest("tr").attr("name").slice(0, -2);
             subTypeOf = $e.closest("tr").attr("subtype-of");
         }
@@ -603,6 +603,18 @@
             this.PGHelper.dataSourceInit();
         }
         if (this.CurProp === 'Url' && this.PropsObj.ObjType !== "DataGrid") {
+            if (!EbIsValidURL(this.PropsObj.Url.trim())) {
+                this.EbAlert.alert({
+                    id: this.CurProp + "EbIsValidURL",
+                    head: "Invalid URL string.",
+                    body: " The value entered '" + this.PropsObj.Url + "' is an invalid URL.",
+                    type: "warning",
+                    delay: 3000
+                });
+                if (e)
+                    $e.select();
+                return;
+            }
             if (this.PropsObj.IsDataFromApi) {
                 let opt = {
                     url: "../DS/GetColumnsFromApi",
@@ -1006,6 +1018,8 @@
 
     // sets Object to property grid
     this.setObject = function (props, metas, setObjectCallBack = function () { }) {
+        if (this.isBussy)
+            return;
         //params check
         {
             if (typeof props === 'string' || typeof metas === 'string') {

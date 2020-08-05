@@ -24,6 +24,7 @@
         this.PrevLocation = this.CurrentLoc;
         this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
         this.prev_loc_name = this.CurrentLocObj.LongName;
+        this.prev_loc = this.CurrentLoc;
         this.EbHeader.setLocation(this.CurrentLocObj.ShortName);
         this.ModifyLocationObject();
         this.findParent_loc();
@@ -112,6 +113,7 @@
             this.Listener.ChangeLocation(this.CurrentLocObj);
             this.PrevLocation = this.CurrentLoc;
             this.prev_loc_name = this.CurrentLocObj.LongName;
+            this.prev_loc = this.CurrentLoc;
         }
         let s = this.getParentPath(this.CurrentLoc);        
         $('#current_loc').text(s); s
@@ -120,9 +122,19 @@
     this.Keypress_selectLoc = function (e) {
         if ($(LocModId).is(":visible")) {
             var keycode = (e.keyCode ? e.keyCode : e.which);
-
+            if (keycode >= '37' && keycode <= '40') {
+                e.preventDefault();
+                e.stopPropagation();
+            }
             if (keycode == '13') {
-                this.confirmLocFn();
+                if ($("#confirmLoc").is(":visible")) {
+                    this.confirm_LocSwitch();
+                    $('#confirmLoc').modal('hide');
+                }
+                else {
+                    this.confirmLocFn();
+                }
+                
             }
             else if (keycode == '27') {
                 if ($("#confirmLoc").is(":visible")) {
@@ -225,11 +237,11 @@
 
         $(LocModId).toggle("fast", function () {
             if ($(this).is(":visible")) {
-                $(".html-root").style("overflow", "hidden", "important");
+               // $(".html-root").style("overflow", "hidden", "important");
                 $(".loc_switchModal_fade").show();
             }
             else {
-                $(".html-root").style("overflow", "visible", "important");
+              //  $(".html-root").style("overflow", "visible", "important");
                 $(".loc_switchModal_fade").hide();
             }
 
@@ -238,12 +250,14 @@
 
         if ($(LocModId).is(":visible")) {
            
-
+            $("#loc-search").val("");
             $(".locs_bdy").empty();
+
             this.CurrentLoc = this.getCurrent();
             this.PrevLocation = this.CurrentLoc;
             this.CurrentLocObj = this.Locations.filter(el => el.LocId === parseInt(this.CurrentLoc))[0];
             this.prev_loc_name = this.CurrentLocObj.LongName;
+            this.prev_loc = this.CurrentLoc;
             this.Tempdata = this.loc_data;
             this.drawLocsTree();
             this.setDefault();
@@ -370,9 +384,9 @@
     }
 
     this.confirmLocFn = function () {
-
-        $("#confirmLoc").remove();
-        let m = `<div class="modal fade" id="confirmLoc"  style="position: absolute;top: 58%;left: 50%;transform: translate(-50%, -50%);display: block;padding-right: 16px;" role="dialog">
+        if (this.prev_loc != this.CurrentLoc) {
+            $("#confirmLoc").remove();
+            let m = `<div class="modal fade" id="confirmLoc"  style="position: absolute;top: 58%;left: 50%;transform: translate(-50%, -50%);display: block;padding-right: 16px;" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-body" style="display: flex;justify-content: center;">
@@ -386,11 +400,16 @@
       
     </div>
   </div>`
-        $('body').append(m);
+            $('body').append(m);
 
 
-        $('#confirmLoc').modal('show');
-        $("#loc_confirm").off("click").on("click", this.confirm_LocSwitch.bind(this));
+            $('#confirmLoc').modal('show');
+            $("#loc_confirm").off("click").on("click", this.confirm_LocSwitch.bind(this));
+        }
+        else if (this.prev_loc == this.CurrentLoc){
+            this.confirm_LocSwitch();
+        }
+        
     }.bind(this);
 
     this.confirm_LocSwitch = function () {

@@ -192,10 +192,10 @@ namespace ExpressBase.Web2.Controllers
         public string GetLocationTree()
         {
             ListSqlJobsResponse resp = new ListSqlJobsResponse();
-            string query = @"SELECT id, longname, shortname, image, parent_id, (CASE WHEN is_group = 'F' THEN false ELSE true END) as is_group,
+            string query = @"SELECT id, TRIM (longname) as longname, shortname, image, parent_id, (CASE WHEN is_group = 'F' THEN false ELSE true END) as is_group,
             eb_location_types_id, meta_json  FROM eb_locations WHERE COALESCE(eb_del,'F') = 'F';";
             string[] arrayy = new string[] { "id", "longname", "shortname", "image", "parent_id", "is_group", "eb_location_types_id", "meta_json" };
-            DVColumnCollection DVColumnCollection = GetColumnsForLocationTree(arrayy);
+            DVColumnCollection DVColumnCollection = GetColumnsForLocationTree(arrayy);            
             EbDataVisualization Visualization = new EbTableVisualization { Sql = query, Columns = DVColumnCollection, AutoGen = false, IsPaging = false };
             return EbSerializers.Json_Serialize(Visualization);
         }
@@ -222,7 +222,8 @@ namespace ExpressBase.Web2.Controllers
                             ParentColumn = new List<DVBaseColumn>(),
                             GroupingColumn = new List<DVBaseColumn>(),
                             GroupFormId = new List<DVBaseColumn>(),
-                            IsTree = true
+                            IsTree = true,
+                            NeedAlphabeticOrder = true
                         };
                     if (str == "shortname")
                         _col = new DVStringColumn { Data = 2, Name = str, sTitle = "Short Name", Type = EbDbTypes.String, bVisible = true };

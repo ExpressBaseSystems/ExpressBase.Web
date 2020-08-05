@@ -6,6 +6,7 @@
             return;
 
         $.LoadingOverlay('show');
+        this.PGobj.isBussy = true;
         $.ajax({
             type: "POST",
             url: "../DS/GetColumns4Control",
@@ -14,6 +15,7 @@
                 this.clearDependantProps("Columns");// destination name hard coding
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
                 this.PGobj.refresh();
+                this.PGobj.isBussy = false;
                 $.LoadingOverlay('hide');
             }.bind(this)
         });
@@ -24,6 +26,7 @@
             return;
 
         $.LoadingOverlay('show');
+        this.PGobj.isBussy = true;
         $.ajax({
             type: "POST",
             url: opt.url,
@@ -32,6 +35,7 @@
                 this.clearDependantProps("Columns");// destination name hard coding
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
                 this.PGobj.refresh();
+                this.PGobj.isBussy = false;
                 $.LoadingOverlay('hide');
             }.bind(this)
         });

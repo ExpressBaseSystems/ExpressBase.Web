@@ -134,6 +134,7 @@ namespace ExpressBase.Web.Controllers
                                 CookieOptions options = new CookieOptions();
                                 Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                                 Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                                Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
                                 this.ServiceClient.BearerToken = authResponse.BearerToken;
                                 this.ServiceClient.RefreshToken = authResponse.RefreshToken;
                             }
@@ -678,13 +679,18 @@ namespace ExpressBase.Web.Controllers
             }
             catch (WebServiceException wse) { Console.WriteLine("Exception:" + wse.ToString()); }
             catch (Exception wse) { Console.WriteLine("Exception:" + wse.ToString()); }
-            if (authResponse != null && authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
-            else //AUTH SUCCESS
+            if (authResponse != null)
             {
-                CookieOptions options = new CookieOptions();
-                Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
-                Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
-                return true;
+                if (authResponse.ResponseStatus != null && authResponse.ResponseStatus.ErrorCode == "EbUnauthorized") { }
+                else //AUTH SUCCESS
+                {
+                    CookieOptions options = new CookieOptions();
+                    Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
+                    Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
+
+                    return true;
+                }
             }
             return false;
         }
@@ -1061,6 +1067,7 @@ namespace ExpressBase.Web.Controllers
                     CookieOptions options = new CookieOptions();
                     Response.Cookies.Append(RoutingConstants.BEARER_TOKEN, authResponse.BearerToken, options);
                     Response.Cookies.Append(RoutingConstants.REFRESH_TOKEN, authResponse.RefreshToken, options);
+                    Response.Cookies.Append(TokenConstants.USERAUTHID, authResponse.User.AuthId, options);
                     return RedirectToAction("TenantDashboard", "Tenant");
                     //if (lg <= 1)
                     //{

@@ -979,9 +979,9 @@ document.addEventListener("click", function (e) {
     let ebSid_CtxId = "";
     let container = "";
     //to check select click is on datagrid
-    if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid")) {
+    if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid") || ($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid_New") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid_New")) {
         //initial click of select
-        if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid")) {
+        if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid_New")) {
             par_ebSid = $(e.target).closest(".dropdown").find("select").attr("name");
             ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
             container = $('.dd_of_' + par_ebSid);

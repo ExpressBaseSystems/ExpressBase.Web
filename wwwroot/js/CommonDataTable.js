@@ -616,6 +616,10 @@
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
+        this.Api.off('key-focus').on('key-focus', this.DTKeyFocusCallback.bind(this));
+
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
+
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {
@@ -1381,7 +1385,7 @@
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -1844,10 +1848,17 @@
     this.selectCallbackFunc = function (e, dt, type, indexes) {
     };
 
+    this.DTKeyFocusCallback = function (e, datatable, cell, originalEvent) {
+        if (Option.keyFocusCallbackFn)
+            Option.keyFocusCallbackFn(e, datatable, cell, originalEvent);
+    };
+
     this.clickCallbackFunc = function (e) {
     };
 
     this.dblclickCallbackFunc = function (e) {
+        if (Option.fnDblclickCallback)
+            Option.fnDblclickCallback(e);
     };
 
     this.rowclick = function (e, dt, type, indexes) {
@@ -2413,11 +2424,17 @@
 
                 var col = api.column(agginfo.colname + ':name');
                 var summary_val = 0;
-
-                if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
-                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+                if (opScroll === '∑' || opLF === '∑' || opRF === '∑') {
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().sum().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+                }
                 if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
-                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                    if (this.Source === "datagrid")
+                        summary_val = col.data().average().toFixed(agginfo.deci_val);
+                    else
+                        summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
                 }
                 if (opScroll !== "")
                     $(ftrtxtScroll).val(summary_val);
@@ -3983,20 +4000,28 @@
         $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
         var table = $(element).attr('data-table');
         var colum = $(element).attr('data-column');
-        var decip = $(element).attr('data-decip');
+        var decip =parseInt( $(element).attr('data-decip'));
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
-        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; });
+        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; })[0];
         ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
         if ($(ftrtxt).length === 0)
             ftrtxt = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
         if ($(ftrtxt).length === 0)
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
-        if (selValue === '∑')
-            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
-        else if (selValue === 'x̄')
-            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][1] : 0;
+        if (selValue === '∑') {
+            if (this.Source === "datagrid")
+                pageTotal = col.data().sum().toFixed(agginfo.deci_val);
+            else
+                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+        }
+        else if (selValue === 'x̄') {
+            if (this.Source === "datagrid")
+                pageTotal = col.data().average().toFixed(agginfo.deci_val);
+            else
+                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+        }
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();

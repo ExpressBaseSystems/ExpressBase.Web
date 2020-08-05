@@ -616,6 +616,10 @@
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
+        this.Api.off('key-focus').on('key-focus', this.DTKeyFocusCallback.bind(this));
+
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
+
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {
@@ -1844,10 +1848,17 @@
     this.selectCallbackFunc = function (e, dt, type, indexes) {
     };
 
+    this.DTKeyFocusCallback = function (e, datatable, cell, originalEvent) {
+        if (Option.keyFocusCallbackFn)
+            Option.keyFocusCallbackFn(e, datatable, cell, originalEvent);
+    };
+
     this.clickCallbackFunc = function (e) {
     };
 
     this.dblclickCallbackFunc = function (e) {
+        if (Option.fnDblclickCallback)
+            Option.fnDblclickCallback(e);
     };
 
     this.rowclick = function (e, dt, type, indexes) {

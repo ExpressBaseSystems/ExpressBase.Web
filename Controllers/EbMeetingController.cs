@@ -246,7 +246,7 @@ namespace ExpressBase.Web.Controllers
                         string b64 = abc.ToBase64();
                         //int loc = this.LoggedInUser.LocationIds
                         if (Resp.MeetingRequest[i].FormRefid != "")
-                            Url = $@"http://hairocraft.localhost:41500/WebForm/Index?refid={Resp.MeetingRequest[i].FormRefid}&_params={b64}&_mode=1&_locId=1";
+                            Url = $@"/WebForm/Index?refid={Resp.MeetingRequest[i].FormRefid}&_params={b64}&_mode=1&_locId=1";
                         attendees += $@"<a href='{Url}' class='mr-attendees'>{Resp.MeetingRequest[i].Fullname}</a>";
                     }
                     else

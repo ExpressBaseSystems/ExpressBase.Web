@@ -156,6 +156,9 @@
     /*box-shadow: -1px 2px 4px 1px #b5b5b547;*/
 }
 
+    .locs_bdy ul.sim-tree a:focus {
+        outline:none;
+    }
     .locs_bdy ul.sim-tree a:hover {
         border-radius: 4px;
         background: #3586cc;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ExpressBase.Common;
 using ExpressBase.Common.Data;
 using ExpressBase.Common.Structures;
+using ExpressBase.Objects;
 using ExpressBase.Objects.Objects.DVRelated;
 using ExpressBase.Objects.ServiceStack_Artifacts;
 using ExpressBase.Web.BaseControllers;
@@ -55,6 +56,35 @@ namespace ExpressBase.Web.Controllers
             foreach (ColumnColletion _columns in _ColumnColl)
                 dvColumnCollection.Add(GetColumns(_columns));
             return dvColumnCollection;
+        }
+
+        public string GetColumnsFromApi(string url, List<ApiRequestHeader> headers, List<ApiRequestParam> parameters, ApiMethods method)
+        {
+            ReturnColumns returnobj = new ReturnColumns();
+            ApiConversionResponse resultlist1 = null;
+            ApiConversionRequest request = new ApiConversionRequest();
+            request.Url = url;
+            request.Headers = headers;
+            request.Parameters = parameters;
+            request.Method = method;
+            try
+            {
+                this.ServiceClient.Timeout = new TimeSpan(0, 5, 0);
+                resultlist1 = this.ServiceClient.Post<ApiConversionResponse>(request);
+                returnobj.Columns = GetColumns(resultlist1.dataset.Tables[0].Columns);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Exception: " + e.ToString());
+                if (resultlist1 != null)
+                {
+                    returnobj.Message = resultlist1.Message;
+                }
+                else
+                    returnobj.Message = e.ToString();
+            }
+            //return resultlist1;
+            return EbSerializers.Json_Serialize(returnobj.Columns);
         }
 
         public string GetColumns4Control(string DataSourceRefId)

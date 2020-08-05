@@ -1162,7 +1162,7 @@ var DashBoardWrapper = function (options) {
             o.filtervalues = this.filtervalues;
             o.googlekey = this.googlekey;
             o.DisplayName = this.EbObject.DisplayName;
-            var dt = new EbGoogleMap(o);
+            var dt = new mapView(o);
             $(`[data-id="${id}"]`).parent().removeAttr("style");
             $(`#${id}`).addClass("box-shadow-style");
         }

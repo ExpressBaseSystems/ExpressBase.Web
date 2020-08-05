@@ -520,14 +520,29 @@ const EbPowerSelect = function (ctrl, options) {
         //this.$DDdiv.find(".loader_mask_EB").remove();
     };
 
+    this.ModifyToRequestParams = function () {
+        this.EbObject.Parameters.$values = this.filterValues.map(function (row) {
+            return { ParamName: row.Name, Value: row.Value, Type: row.Type }
+        });
+    };
+
     this.ajaxData = function () {
         this.EbObject = new EbObjects["EbTableVisualization"]("Container");
-        this.EbObject.DataSourceRefId = this.dsid;
+        this.filterValues = this.getFilterValuesFn();
+        this.AddUserAndLcation();
+
+        if (this.ComboObj.IsDataFromApi) {
+            this.ModifyToRequestParams();
+            this.EbObject.IsDataFromApi = true;
+            this.EbObject.Url = this.ComboObj.Url;
+            this.EbObject.Method = this.ComboObj.Method;
+            this.EbObject.Headers = this.ComboObj.Headers;
+        }
+        else
+            this.EbObject.DataSourceRefId = this.dsid;
         this.EbObject.Columns.$values = this.ComboObj.Columns.$values;
         let dq = new Object();
         dq.RefId = this.dsid;
-        this.filterValues = this.getFilterValuesFn();
-        this.AddUserAndLcation();
         dq.Params = this.filterValues || [];
         dq.Start = 0;
         dq.Length = this.ComboObj.IsPreload ? 0 : this.ComboObj.SearchLimit;
@@ -666,8 +681,8 @@ const EbPowerSelect = function (ctrl, options) {
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
-        //o.NextHTML = '<i class="fa fa-step-forward" aria-hidden="true"></i>';
-        //o.PreviousHTML = '<i class="fa fa-step-backward" aria-hidden="true"></i>';
+        o.NextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
+        o.PreviousHTML = '<i class="fa fa-chevron-left" aria-hidden="true"></i>';
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -1255,19 +1270,6 @@ const EbPowerSelect = function (ctrl, options) {
         this.getData();
     };
 
-    this.adjustDDposition = function () {
-        let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
-        let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
-
-        let ctrlContOffset = $ctrlCont.offset();
-        let ctrlHeight = $ctrlCont.outerHeight();
-        let formScrollTop = $form_div.scrollTop();
-        let formTopOffset = $form_div.offset().top;
-        let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
-
-        this.$DDdiv.css("top", TOP);
-    };
-
     //this.bindUpdatePositionOnContScroll = function () {
     //    this.lastScrollOffset = 0;
     //    for (let i = 0; i < this.scrollableContSelectors.length; i++) {
@@ -1302,64 +1304,68 @@ const EbPowerSelect = function (ctrl, options) {
         }
     };
 
-    this.appendDD2Body = function () {
-        let $DDdiv = $("#" + this.containerId);
-        //setTimeout(function () {
+    this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');
-        let contWidth = $ctrl.width();
-        let WIDTH = (this.ComboObj.DropdownWidth === 0) ? contWidth : (this.ComboObj.DropdownWidth / 100) * contWidth;
-        let $parentCont = $DDdiv.parentsUntil('form').last();
-        if ($parentCont.attr('ctype') === "TabControl") {
-            $DDdiv.attr('drp_parent', 'TabControl');
-        }
-        {// offset only work on visible elements
-            $DDdiv.show();
-            var DDoffset = $DDdiv.offset();
-            if (this.fromReloadWithParams)
-                $DDdiv.hide();
-        }
-        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
-        let $div_detach = $DDdiv.detach();
-        $div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
-        let LEFT = DDoffset.left;
-        let bodyWidth = $(window).width();
-
-        if (WIDTH !== contWidth)
-            LEFT = DDoffset.left - ((WIDTH - contWidth) / 2);
-
-        if ((WIDTH + LEFT) > bodyWidth)
-            LEFT = bodyWidth - WIDTH;
-        else if (LEFT < 3)
-            LEFT = 3;
-
+        let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
         let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+        let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 
+        let ctrlContOffset = $ctrlCont.offset();
+        let ctrlHeight = $ctrlCont.outerHeight();
+        let ctrlWidth = $ctrl.width();
+        let ctrlBottom = ctrlHeight + ctrlContOffset.top;
         let formScrollTop = $form_div.scrollTop();
         let formTopOffset = $form_div.offset().top;
-        let TOP = DDoffset.top + formScrollTop - formTopOffset;
-        let scrollH = $form_div.prop("scrollHeight");
-        $div_detach.appendTo($form_div);
-        //if (scrollTop + DDoffset.top + DD_height > scrollH && scrollTop + DDoffset.top - 60 > DD_height) {
-        if (formScrollTop + DDoffset.top - formTopOffset + DD_height > scrollH) {// && scrollTop + DDoffset.top - $('#cont_' + this.name).outerHeight() > DD_height) {
-            $DDdiv.addClass("dd-ctrl-top");
+        let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
+
+        let LEFT = $ctrl.offset().left;
+        let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
+        let windowWidth = $(window).width();
+        let windowHeight = $(window).height();
+
+        //if (WIDTH !== ctrlWidth)
+        //    LEFT = DDoffset.left - ((WIDTH - ctrlWidth) / 2);
+
+        if (WIDTH > windowWidth) {
+            WIDTH = windowWidth - 20;
+            LEFT = 10;
+        }
+        else if ((WIDTH + LEFT) > windowWidth)
+            LEFT = ($ctrl.offset().left + ctrlWidth) - WIDTH;
+        else if (LEFT < 10)
+            LEFT = 10;
+
+
+        if (ctrlBottom + DD_height > windowHeight) {
+            this.$DDdiv.addClass("dd-ctrl-top");
 
             let pageHeight = $form_div.outerHeight() + formTopOffset;
             let cotrolTop = $ctrl.offset().top + formScrollTop;
             let BOTTOM = (pageHeight - cotrolTop) + 1;
             console.log("scrollTop :" + formScrollTop);
             console.log("cotrolTop :" + cotrolTop);
-            $div_detach.css("top", "unset");
-            $div_detach.css("bottom", BOTTOM);
+            this.$DDdiv.css("top", "unset");
+            this.$DDdiv.css("bottom", BOTTOM);
         }
-        else
-            $div_detach.css("top", TOP);
-        console.log("$div_detach:" + TOP);
+        else {
+            this.$DDdiv.css("bottom", "unset");
+            this.$DDdiv.css("top", TOP);
+            this.$DDdiv.removeClass("dd-ctrl-top");
+        }
 
-        $div_detach.offset({ left: LEFT })
-        $div_detach.width(WIDTH);
+        this.$DDdiv.css("left", LEFT);
+        this.$DDdiv.width(WIDTH);
+    };
+
+    this.appendDD2Body = function () {
+        if (this.fromReloadWithParams)
+            this.$DDdiv.hide();
+        let $div_detach = this.$DDdiv.detach();
+        $div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
+        let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+        $div_detach.appendTo($form_div);
+        this.adjustDDposition();
         this.bindHideDDonScroll();
-        //scrollDropDown();
-        //}.bind(this), 30);
     };
 
     this.Renderselect();

@@ -6,6 +6,7 @@
             return;
 
         $.LoadingOverlay('show');
+        this.PGobj.isBussy = true;
         $.ajax({
             type: "POST",
             url: "../DS/GetColumns4Control",
@@ -14,6 +15,27 @@
                 this.clearDependantProps("Columns");// destination name hard coding
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
                 this.PGobj.refresh();
+                this.PGobj.isBussy = false;
+                $.LoadingOverlay('hide');
+            }.bind(this)
+        });
+    }.bind(this);
+
+    this.UrlInit = function (opt) {
+        if (getObjByval(this.PGobj.Metas, "name", "Columns") === undefined)
+            return;
+
+        $.LoadingOverlay('show');
+        this.PGobj.isBussy = true;
+        $.ajax({
+            type: "POST",
+            url: opt.url,
+            data: { url: opt.apiUrl, headers: opt.headers, parameters: opt.parameters, method: opt.method },
+            success: function (Columns) {
+                this.clearDependantProps("Columns");// destination name hard coding
+                this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
+                this.PGobj.refresh();
+                this.PGobj.isBussy = false;
                 $.LoadingOverlay('hide');
             }.bind(this)
         });
@@ -34,7 +56,7 @@
     };
 
     this.clearProp = function (meta) {
-        if (meta.editor === 24 ||meta.editor === 27 || (meta.editor === 8 && meta.Limit !== 1))
+        if (meta.editor === 24 || meta.editor === 27 || (meta.editor === 8 && meta.Limit !== 1))
             this.PGobj.PropsObj[meta.name].$values = [];
         else if (meta.editor === 8 && meta.Limit === 1)
             this.PGobj.PropsObj[meta.name] = null;

@@ -52,8 +52,8 @@ var EbBasicDataTable = function (Option) {
 
     this.action = Option.action || null;
     this.Levels = Option.levels || [];
-    this.PreviousHTML = Option.PreviousHTML;
-    this.NextHTML = Option.NextHTML;
+    this.PreviousHTML = Option.previousHTML;
+    this.NextHTML = Option.nextHTML;
 
 
     this.init = function () {
@@ -260,7 +260,8 @@ var EbBasicDataTable = function (Option) {
                 "next": this.NextHTML || "Next",
             },
             lengthMenu: "_MENU_ / Page",
-            infoFiltered : (this.source === "powerselect") ? "(filtered from _MAX_ records)" : ""
+            infoFiltered: (this.source === "powerselect") ? "(total _MAX_)" : "",
+            infoEmpty: "_TOTAL_  / _TOTAL_"
         };
         o.columns = this.extraCol.concat(this.ebSettings.Columns.$values);
         o.order = [];
@@ -532,8 +533,11 @@ var EbBasicDataTable = function (Option) {
         this.Api.columns.adjust();
         this.$dtLoaderCont.EbLoader("hide");
 
-        if (this.showFilterRow)
+        if (this.showFilterRow) {
             this.createFilterRowHeader();
+            if(this.source === "powerselect")
+                $("#" + this.tableId + "_wrapper tr.addedbyeb .input-group-btn").hide();
+        }
         this.addFilterEventListeners();
         setTimeout(function () {
             if (Option.fninitComplete)
@@ -1133,7 +1137,7 @@ var EbBasicDataTable = function (Option) {
                 _ls += (span + "<a class='btn btn-sm center-block'  id='clearfilterbtn_" + this.tableId + "' data-table='@tableId' data-toggle='tooltip' title='Clear Filter' style='height:100%'><i class='fa fa-filter' aria-hidden='true' style='color:black'></i></a>");
             }
             else {
-                var type = col.type || col.Type
+                var type = col.type || col.Type;
                 if (type === parseInt(gettypefromString("Int32")) || type === parseInt(gettypefromString("Decimal")) || type === parseInt(gettypefromString("Int64")) || type === parseInt(gettypefromString("Double")) || type === parseInt(gettypefromString("Numeric"))) {
 
                     _ls += span + this.getFilterForNumeric(header_text1, header_select, data_table, htext_class, data_colum, header_text2, this.zindex);

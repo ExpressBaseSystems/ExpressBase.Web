@@ -50,7 +50,7 @@ namespace ExpressBase.Web.Components
         private void UserConsole(string solnid, string email, string console, int locid)
         {
             var resultlist = new SidebarUserResponse();
-            this.UserObject = this.Redis.Get<User>(string.Format(TokenConstants.SUB_FORMAT, solnid, email, console));
+            this.UserObject = this.Redis.Get<User>(Request.Cookies["UserAuthId"]);
             Dictionary<int, EbObjectTypeWrap> _dict = this.GetObjectType();
 
             if (ValidateLocId(locid) || this.UserObject.Roles.Contains("SolutionOwner") || this.UserObject.Roles.Contains("SolutionAdmin"))

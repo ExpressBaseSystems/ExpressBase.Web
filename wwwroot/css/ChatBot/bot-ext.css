@@ -123,8 +123,8 @@ width: 100%;*/
         width: 100% !important;
     }
 
-    .chatmaximize {
-        display: none !important;
+    .eb__-bot___-chatmaximize {
+        /*display: none !important;*/
     }
 }
 
@@ -157,23 +157,25 @@ width: 100%;*/
     display: inline-block;
 }
 
-.chatclose {
-    display: inline-block;
+.eb__-bot___-chatclose {
+    BOT_CLOSE_BUTTON
+    /*display: inline-block;
     float: right;
     font-size: 1.2em;
     padding: 0px 5px;
     margin: 10px 0px;
-    cursor: pointer;
+    cursor: pointer;*/
 }
 
-.chatmaximize {
-    margin-left: auto !important;
+.eb__-bot___-chatmaximize {
+    BOT_MAXIMIZE_BUTTON
+    /*margin-left: auto !important;
     display: inline-block;
     float: right;
     font-size: 1.2em;
     padding: 0px 5px;
     margin: 8px 3px;
-    cursor: pointer;
+    cursor: pointer;*/
 }
 
 .cssload-container {

@@ -256,6 +256,7 @@
             this.EbObject = dvGlobal.Current_obj;
             this.getColumnsSuccess();
         }
+        this.FDCont.css("left", "0");
     }.bind(this);
 
     this.GetFD = function () {

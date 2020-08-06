@@ -389,7 +389,7 @@
             if (this.editor === 8)
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").hide();// hide PG
             if (this.editor === 35) {
-                
+
                 $(this.pgCXE_Cont_Slctr + " .modal-body td:eq(2)").empty().prepend(`<div class='CE-controls-head'>${this.CurMeta.Dprop2}</div><div id="${this.CE_mapper_ctrlsContId}" class="CE-mapper-ctrlsCont"></div>`);
                 let metaOfControlsSource = getObjByval(this.PGobj.Metas, "name", mapListSrc);
 
@@ -1179,8 +1179,10 @@
         $("#" + containerId).empty();
         $("#" + this.CEctrlsContId).empty();
         let idField = "name";//////////////////////
-        if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
+        if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && (Object.keys(this.CElistFromSrc[0]).includes("ColumnName")))//////////////////
             idField = "ColumnName";////////////////////////
+        else if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && Object.keys(this.CElistFromSrc[0]).includes("Name"))//////////////////
+            idField = "Name";////////////////////////
         $.each(values, function (i, control) {
             let name = (control.name || control.Name || control.ColumnName);
             let type = control.$type.split(",")[0].split(".").pop();
@@ -1459,8 +1461,12 @@
     };
 
     this.changeCopyToRef = function () {
+        if (this.selectedCols.length === 0)
+            return;
         $.each(this.CElistFromSrc, function (i, colObj) {
             let RObj = getObjByval(this.selectedCols, "name", colObj.name);
+            if (!RObj)
+                RObj = getObjByval(this.selectedCols, "name", colObj.Name);
             if (RObj) {
                 if (RObj === colObj)/// if already reference exit
                     return false;

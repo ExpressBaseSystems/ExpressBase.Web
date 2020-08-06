@@ -185,11 +185,18 @@ function getObjByval(ObjArray, key, val) {
         console.error("ObjArray undefined");
         return false;
     }
-    if (ObjArray.length === 0)
-        return false;
-    if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")))
-        key = "ColumnName";
-    return ObjArray.filter(function (obj) { return obj[key] == val; })[0];
+    try {
+        if (ObjArray.length === 0)
+            return false;
+        if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")) && (Object.keys(ObjArray[0]).includes("ColumnName")))
+            key = "ColumnName";
+        else if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")) && (Object.keys(ObjArray[0]).includes("Name")))
+            key = "Name";
+        return ObjArray.filter(function (obj) { return obj[key] == val; })[0];
+    }
+    catch (e) {
+        debugger;
+    }
 }
 
 function getChildByName(ObjArray, key, val) {

@@ -124,6 +124,12 @@ var DashBoardWrapper = function (options) {
     };
 
     this.AppendFD = function (result) {
+        $(".form-group #filter-dg").remove();
+        $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+        this.FilterBtn = $("#filter-dg");
+        this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
         $('.param-div-cont').remove();
         this.loader.hide();
         $("#dashbord-view").prepend(`
@@ -138,32 +144,36 @@ var DashBoardWrapper = function (options) {
                 `);
 
         $('#paramdiv' + this.TabNum).append(result);
-        $('#close_paramdiv' + this.TabNum).off('click').on('click', this.CloseParamDiv.bind(this));
+        $('#close_paramdiv' + this.TabNum).off('click').on('click', this.FilterToggle.bind(this));
         $("#btnGo").off("click").on("click", this.GetFilterValues.bind(this));
+        this.FilterDiv = $(".param-div-cont");
         if (typeof FilterDialog !== "undefined") {
             $(".param-div-cont").show();
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".param-div-cont"),
-                $extCont: $(".param-div-cont"),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                style: { top: "230px" }
-            });
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: $(".param-div-cont"),
+            //    $extCont: $(".param-div-cont"),
+            //    icon: "fa-filter",
+            //    dir: "left",
+            //    label: "Parameters",
+            //    style: { top: "230px" }
+            //});
             this.filterDialog = FilterDialog;
             $("#btnGo").trigger("click");
         }
         else {
-            $(".param-div-cont").hide();
+            this.FilterDiv.hide();
             this.filterDialog = null;
         }
         this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
 
     };
 
-    this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+    this.FilterToggle = function () {
+        this.FilterDiv.toggle('drop', { direction: 'right' }, 150);
     };
+    //this.CloseParamDiv = function () {
+    //    this.stickBtn.minimise();
+    //};
 
     //Toolbox
     this.AppendToolBox = function () {
@@ -609,7 +619,9 @@ var DashBoardWrapper = function (options) {
         $(`#${abc}`).toggle(100);
 
     };
-
+    this.togglePG = function () {
+        this.PropertyDiv.toggle('drop', { direction: 'right' }, 150);
+    };
     this.init = function () {
         $(".dash-loader").show();
         this.AppendToolBox();
@@ -620,6 +632,11 @@ var DashBoardWrapper = function (options) {
         }
         else
             this.edit = true;
+
+        $(".form-group #ppt-grid").remove();
+        $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
         this.propGrid = new Eb_PropertyGrid({
             id: "propGrid",
             wc: this.Wc,
@@ -629,11 +646,18 @@ var DashBoardWrapper = function (options) {
         });
         this.propGrid.setObject(this.EbObject, AllMetas["EbDashBoard"]);
         this.propGrid.PropertyChanged = this.popChanged.bind(this);
+        this.propGrid.stickBtn.hide();
+        this.PropertyDiv = $("#ppt-dash");
+        $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+        $("#ppt-dash .pull-right.pgpin").remove();
+        $("#ppt-dash .pgHead").append(`<div class="icon-cont  pull-right" id="prop-close"><i class="fa fa-times" aria-hidden="true"></i></div>`);
+        $("#prop-close").off("click").on("click", this.togglePG.bind(this));
+
         commonO.Current_obj = this.EbObject;
-        this.propGrid.ClosePG();
+        this.PropertyDiv.hide();
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
             $('.db-user-filter').remove();
-            if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+            if (this.FilterBtn) this.FilterBtn.remove();
             grid.removeAll();
             this.DrawTiles();
         }
@@ -996,7 +1020,7 @@ var DashBoardWrapper = function (options) {
             }
             else {
                 $('.param-div-cont').remove();
-                if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
+                if (this.FilterBtn)this.FilterBtn.remove();
             }
         }
         if (obj.$type.indexOf("EbDataObject") > -1 && pname === "DataSource") {
@@ -1286,14 +1310,14 @@ var DashBoardWrapper = function (options) {
         temp = $.grep(this.filtervalues, function (obj) { return obj.Name === "eb_currentuser_id"; });
         if (temp.length === 0)
             this.filtervalues.push(new fltr_obj(11, "eb_currentuser_id", ebcontext.user.UserId));
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+        if (this.FilterDiv) { this.FilterDiv.hide(); }
     };
 
 
     this.GetFilterValues = function () {
         this.loader.show();
         this.filtervalues = [];
-        if (this.stickBtn) { this.stickBtn.minimise(); }
+        if (this.FilterDiv) { this.FilterDiv.hide(); }
 
         if (this.filterDialog)
             this.filtervalues = getValsForViz(this.filterDialog.FormObj);

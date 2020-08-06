@@ -1524,7 +1524,7 @@ class DvBuilder {
         else if (type === 7 || type === 8 || type === 10 || type === 11 || type === 12 || type === 21) {
             return "DVNumericColumn";
         }
-        else if (type === 3) {
+        else if (type === 3 || type === 30) {
             return "DVBooleanColumn";
         }
         else if (type === 5 || type === 6 || type === 17 || type === 26) {

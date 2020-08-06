@@ -125,16 +125,22 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.FDCont.hide();
 
         if (this.login === "dc") {
-            this.stickBtn = new EbStickButton({
-                $wraper: this.FDCont,
-                $extCont: this.FDCont,
-                //$scope: $(subDivId),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                //btnTop: 42,
-                style: { top: "112px" }
-            });
+            $(".form-group #filter-dg").remove();
+            $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+            this.FilterBtn = $("#filter-dg");
+            this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: this.FDCont,
+            //    $extCont: this.FDCont,
+            //    //$scope: $(subDivId),
+            //    icon: "fa-filter",
+            //    dir: "left",
+            //    label: "Parameters",
+            //    //btnTop: 42,
+            //    style: { top: "112px" }
+            //});
         }
     };
 
@@ -183,16 +189,22 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
         if (this.login === "uc") {
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".dv-body"),
-                $extCont: this.FDCont,
-                $scope: $("#" + focusedId),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                //btnTop: 42,
-                style: { position: "absolute", top: "41px" }
-            });
+            $(".form-group #filter-dg").remove();
+            $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+            this.FilterBtn = $("#filter-dg");
+            this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: $(".dv-body"),
+            //    $extCont: this.FDCont,
+            //    $scope: $("#" + focusedId),
+            //    icon: "fa-filter",
+            //    dir: "left",
+            //    label: "Parameters",
+            //    //btnTop: 42,
+            //    style: { position: "absolute", top: "41px" }
+            //});
         }
 
         if (typeof commonO !== "undefined")
@@ -204,10 +216,12 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {
-                this.stickBtn.hide();
+                this.FilterBtn.hide();
+                //this.stickBtn.hide();
             }
             else {
-                dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                this.FilterBtn.hide();
             }
             $("#btnGo" + this.tabNum).trigger("click");
             $("#eb_common_loader").EbLoader("hide");
@@ -228,11 +242,19 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         this.PcFlag = false;
     }.bind(this);
 
+    this.FilterToggle = function () {
+        $(".filterCont").toggle('drop', { direction: 'right' }, 150);
+    };
+
     this.start = function () {
         if (this.EbObject === null) {
             this.EbObject = new EbObjects["EbChartVisualization"]("Container_" + Date.now());
             split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
             if (this.login === "dc") {
+                $(".form-group #ppt-grid").remove();
+                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
                     wc: "dc",
@@ -242,6 +264,12 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 });
 
                 this.propGrid.PropertyChanged = this.tmpPropertyChanged;
+                $(".stickBtn").hide();
+                this.PropertyDiv = $("#pp_inner");
+                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+                $("#pp_inner .pull-right.pgpin").remove();
+                //$("#pp_inner .remove-pg").off("click").on("click", this.togglePG.bind(this));
+
             }
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             this.startRelated();
@@ -252,18 +280,30 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             else
                 split.createContentWindow(this.EbObject.EbSid + "_" + this.tabNum + "_" + counter, "EbChartVisualization");
             if (this.login === "dc" && this.propGrid === null) {
+                $(".form-group #ppt-grid").remove();
+                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
                 this.propGrid = new Eb_PropertyGrid({
                     id: "pp_inner",
                     wc: "dc",
                     cid: this.cid,
                     $extCont: $(".ppcont")
                 });
+                $(".stickBtn").hide();
+                this.PropertyDiv = $("#pp_inner");
+                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+                $("#pp_inner .pull-right.pgpin").remove();
+                //$("#pp_inner remove-pg").off("click").on("click", this.togglePG.bind(this));
             }
             this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
             this.startRelated();
             this.call2FD();
         }
+    };
+    this.togglePG = function () {
+        this.PropertyDiv.toggle('drop', { direction: 'right' }, 150);
     };
 
     this.tmpPropertyChanged = function (obj, Pname) {
@@ -284,22 +324,36 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     }.bind(this);
 
     this.init = function () {
+        if (this.propGrid != null) {
+            $(".form-group #ppt-grid").remove();
+            $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
+            $(".stickBtn").hide();
+            this.PropertyDiv = $("#pp_inner");
+            $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+            $("#pp_inner .pull-right.pgpin").remove();
+        }
         this.EbObject = this.EbObject;
         if (this.EbObject.Type !== "")
             this.type = this.EbObject.Type;
         //$.event.props.push('dataTransfer');
-            this.createChartDivs();
+        this.createChartDivs();
         this.appendColumns();
         if (!this.bot) {
-                this.appendXandYAxis();
+            this.appendXandYAxis();
             if (this.login === "uc") {
                 this.collapseGraph();
             }
-            this.propGrid.ClosePG();
+            //this.propGrid.ClosePG();
+            if (this.PropertyDiv)
+                this.PropertyDiv.hide();
             if (this.FD)
-                this.stickBtn.minimise();
+                // this.stickBtn.minimise();
+                this.FilterToggle();
             else
-                this.stickBtn.hide();
+                // this.stickBtn.hide();
+                this.FilterBtn.hide();
 
             filterChanged = false;
             if (this.MainData !== null) {
@@ -329,7 +383,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                     type: 'POST',
                     url: "../DV/getdata",
                     data: { DataVizObjString: JSON.stringify(this.EbObject), draw: 1, RefId: this.EbObject.DataSourceRefId, Start: 0, Length: 50, TFilters: [], Params: this.filterValues, dvRefId: this.Refid },
-                    
+
                     success: this.getDataSuccess.bind(this),
                     error: function () { }
                 });
@@ -341,7 +395,8 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     };
 
     this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+        //this.stickBtn.minimise();
+        this.FilterToggle();
     };
 
     this.validateFD = function () {
@@ -509,7 +564,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         //        return false;
         //    }
         //}.bind(this));
-        if (!this.bot ) {
+        if (!this.bot) {
             if (this.EbObject.Xaxis.$values.length > 0 && this.EbObject.Yaxis.$values.length > 0) {
                 $.each(this.EbObject.Xaxis.$values, this.AddXcolumns.bind(this, Xcol));
                 $.each(this.EbObject.Columns.$values, this.RemoveXcolumns.bind(this, colsAll_X, Xcol));
@@ -663,16 +718,16 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 this.YLabel = [];
                 for (j = 0; j < this.data.length; j++)
                     this.YLabel.push(this.data[j][ydx[k]]);
-                    if (this.type !== "pie") {
-                        this.piedataFlag = false;
-                        this.dataset.push(new datasetObj(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
-                    }
-                    else {
-                        this.dataset.push(new datasetObj4Pie(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
-                        this.piedataFlag = true;
-                    }
+                if (this.type !== "pie") {
+                    this.piedataFlag = false;
+                    this.dataset.push(new datasetObj(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
+                }
+                else {
+                    this.dataset.push(new datasetObj4Pie(this.EbObject.Yaxis.$values[k].name, this.YLabel, this.EbObject.LegendColor.$values[k].Color, this.EbObject.LegendColor.$values[k].Color, false));
+                    this.piedataFlag = true;
+                }
             }
-            
+
         }
     };
 
@@ -973,7 +1028,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
     this.RemoveAndAddToColumns = function (e) {
         var str = $(e.target).parent().text();
         let tempObj = new Object();
-        tempObj.Type = parseInt( $(e.target).parent().attr("data-type"));
+        tempObj.Type = parseInt($(e.target).parent().attr("data-type"));
         tempObj.name = str.substr(0, str.length - 1).trim();
         tempObj.data = $(e.target).parent().attr("data-id");
 
@@ -1103,7 +1158,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.type = "bar";
         this.propGrid.setObject(this.EbObject, AllMetas["EbChartVisualization"]);
         $("#graphDropdown_tab" + this.tableId).show();
-        
+
     };
 
     this.toolTipCallback = function (item, data) {

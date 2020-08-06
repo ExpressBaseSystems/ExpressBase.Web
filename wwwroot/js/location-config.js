@@ -108,11 +108,11 @@
             }
         }.bind(this));
     };
-
+   
     this.imageUploader = function (container, toggle, prev, extra, viwportresize) {
         let resize = viwportresize ? true : false;
 
-        this.Cropies[extra.Name] = new EbFileUpload({
+        this.Cropies[extra.Name] = new EbFileUpload({       
             Type: "image",
             Toggle: toggle,
             TenantId: this.Tid,
@@ -121,19 +121,27 @@
             Multiple: false,
             ServerEventUrl: 'https://se.eb-test.cloud',
             EnableTag: false,
-            EnableCrop: true,
+            MaxSize: 1,
+            //EnableCrop: true,
             ExtraData: extra,//extra data for location optional for other
             Context: "location",//if single and crop
-            ResizeViewPort: resize //if single and crop
+            ResizeViewPort: false //if single and crop
         });
 
-        this.Cropies[extra.Name].uploadSuccess = function (fileid) {
-            EbMessage("show", { Message: "Uploaded Successfully" });
-            $(`input[name='${extra.Name}']`).val(o.objectId);
+        this.Cropies[extra.Name].uploadSuccess = function (fileid) {       
+            $("#loc_logoId").val("");
+            if (fileid > 0) {
+                EbMessage("show", { Message: "Uploaded Successfully" });
+                $("#loc_logoId").val(fileid);
+            }
+            else {
+                EbMessage("show", { Background: "red", Message: "Uploaded Failed" });
+            }
         };
-        this.Cropies[extra.Name].windowClose = function () {
-            //EbMessage("show", { Message: "window closed", Background: "red" });
-        };
+        //this.Cropies[extra.Name].windowClose = function () {
+        //    logo_img.windowClose = function () {
+        //    //EbMessage("show", { Message: "window closed", Background: "red" });
+        //};
     };
 
     //this._CreateLocation = function (e) {
@@ -330,7 +338,7 @@
         o.LocId = $("input[name='_LocId']").val();
         o.LongName = $("input[name='_longname']").val();
         o.ShortName = $("input[name='_shortname']").val();
-        o.Logo = $(`input[name='Logo']`).val();
+        o.Logo = $(`#loc_logoId`).val();
         o.TypeId = $("#loc_type").val();
         o.IsGroup = true;
         o.ParentId = $("#_parentId").val();

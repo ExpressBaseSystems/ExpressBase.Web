@@ -635,44 +635,59 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<string> UploadLocAsync(string base64, string extra)
-        {
+        public async Task<int> UploadLocAsync(int i)
+		{
+			UploadAsyncResponse res = new UploadAsyncResponse();
+			try
+			{
+				var req = this.HttpContext.Request.Form;
+				List<string> tags = string.IsNullOrEmpty(req["Tags"]) ? new List<string>() : req["Tags"].ToList<string>();
+				List<string> catogory = string.IsNullOrEmpty(req["Category"]) ? new List<string>() : req["Category"].ToList<string>();
+				string context = (req.ContainsKey("Context")) ? context = req["Context"] : StaticFileConstants.CONTEXT_DEFAULT;
 
-            var dict = extra.IsEmpty() ? null : JsonConvert.DeserializeObject<Dictionary<string, string>>(extra);
+				UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
+				uploadImageRequest.ImageInfo = new ImageMeta();
+				foreach (var formFile in req.Files)
+				{
+					if (formFile.Length > 0 && Enum.IsDefined(typeof(ImageTypes), formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower()))
+					{
+						byte[] myFileContent;
+						using (var memoryStream = new MemoryStream())
+						{
+							await formFile.CopyToAsync(memoryStream);
+							memoryStream.Seek(0, SeekOrigin.Begin);
+							myFileContent = new byte[memoryStream.Length];
+							await memoryStream.ReadAsync(myFileContent, 0, myFileContent.Length);
+							uploadImageRequest.ImageByte = myFileContent;
+						}
+						uploadImageRequest.ImageInfo.MetaDataDictionary = new Dictionary<String, List<string>>();
+						uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Tags", tags);
+						uploadImageRequest.ImageInfo.MetaDataDictionary.Add("Category", catogory);
+						uploadImageRequest.ImageInfo.Context = context;
 
-            UploadAsyncResponse res = new UploadAsyncResponse();
-            string Id = string.Empty;
-            string url = string.Empty;
-            byte[] myFileContent;
-            try
-            {
-                UploadImageAsyncRequest uploadImageRequest = new UploadImageAsyncRequest();
-                uploadImageRequest.ImageInfo = new ImageMeta();
-                string base64Norm = base64.Replace("data:image/png;base64,", "");
-                myFileContent = System.Convert.FromBase64String(base64Norm);
-                uploadImageRequest.ImageByte = myFileContent;
-                uploadImageRequest.ImageInfo.FileType = StaticFileConstants.JPG;
-                uploadImageRequest.ImageInfo.FileName = String.Format("loc_{0}.{1}", dict["FileName"].ToLower(), uploadImageRequest.ImageInfo.FileType);
-                uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
-                uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.LocationFile;
-                uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+						uploadImageRequest.ImageInfo.FileName = formFile.FileName.ToLower();
+						uploadImageRequest.ImageInfo.FileType = formFile.FileName.SplitOnLast(CharConstants.DOT).Last().ToLower();
+						uploadImageRequest.ImageInfo.Length = uploadImageRequest.ImageByte.Length;
+						uploadImageRequest.ImageInfo.FileCategory = EbFileCategory.LocationFile;
+						uploadImageRequest.ImageInfo.ImageQuality = ImageQuality.original;
+
+						res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
+
+						if (res.FileRefId > 0)
+							Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
+						else
+							Console.WriteLine("Exception: Img Upload Failure");
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Exception:" + e.ToString() + "\nResponse: " + res.ResponseStatus.Message);
+			}
+			return res.FileRefId;
 
 
-                res = this.FileClient.Post<UploadAsyncResponse>(uploadImageRequest);
-
-                if (res.FileRefId > 0)
-                    Console.WriteLine(String.Format("Img Upload Success [RefId:{0}]", res.FileRefId));
-                else
-                    Console.WriteLine("Exception: Img Upload Failure");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Exception:" + e.ToString() + "\n Response:" + res.ResponseStatus.Message);
-                return "upload failed";
-            }
-
-            return url;
-        }
+		}
 
         public List<FileMeta> FindFilesByTags(int i, string tags, string bucketname)
         {

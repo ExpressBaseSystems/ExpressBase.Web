@@ -192,7 +192,8 @@ namespace ExpressBase.Web2.Controllers
         public string GetLocationTree()
         {
             ListSqlJobsResponse resp = new ListSqlJobsResponse();
-            string query = @"SELECT id, TRIM (longname) as longname, shortname, image, parent_id, (CASE WHEN is_group = 'F' THEN false ELSE true END) as is_group,
+            string query = @"SELECT id, TRIM (longname) as longname, shortname,  (CASE WHEN image = '../img' THEN ' ' ELSE image END) as image, 
+            parent_id, (CASE WHEN is_group = 'F' THEN false ELSE true END) as is_group,
             eb_location_types_id, meta_json  FROM eb_locations WHERE COALESCE(eb_del,'F') = 'F';";
             string[] arrayy = new string[] { "id", "longname", "shortname", "image", "parent_id", "is_group", "eb_location_types_id", "meta_json" };
             DVColumnCollection DVColumnCollection = GetColumnsForLocationTree(arrayy);            
@@ -228,7 +229,8 @@ namespace ExpressBase.Web2.Controllers
                     if (str == "shortname")
                         _col = new DVStringColumn { Data = 2, Name = str, sTitle = "Short Name", Type = EbDbTypes.String, bVisible = true };
                     if (str == "image")
-                        _col = new DVStringColumn { Data = 3, Name = str, sTitle = "Logo", Type = EbDbTypes.String, bVisible = true };
+                        _col = new DVStringColumn { Data = 3, Name = str, sTitle = "Logo", Type = EbDbTypes.String, bVisible = true, RenderAs=StringRenderType.Image,
+                        ImageHeight = 50, ImageWidth = 50};
                     if (str == "parent_id")
                         _col = new DVNumericColumn { Data = 4, Name = str, sTitle = str, Type = EbDbTypes.Int32, bVisible = false };
                     if (str == "is_group")

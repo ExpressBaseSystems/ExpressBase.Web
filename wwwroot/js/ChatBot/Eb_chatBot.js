@@ -258,7 +258,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.formIcons = result.botFormIcons;
                     $('.eb-chatBox').empty();
                     this.showDate();
-                    this.AskWhatU();
+                    if (Object.keys(this.formsDict).length == 1) {
+                        this.getForm(Object.keys(this.formsDict)[0])
+                    }
+                    else {
+                        this.AskWhatU();
+                    }
                     // this.ajaxSetup4Future();
 
                 }
@@ -297,7 +302,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             window.ebcontext.user = JSON.parse(result[1]);
                             this.formNames = Object.values(result[2]);
                             this.formIcons = result[3];
-                            this.AskWhatU();
+                            if (Object.keys(this.formsDict).length == 1) {
+                                this.getForm(Object.keys(this.formsDict)[0])
+                            }
+                            else {
+                                this.AskWhatU();
+                            }
                         }
                         else {
                             this.msgFromBot("Premission is not set for current user");
@@ -1584,7 +1594,13 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.formIcons = result.botFormIcons;
                     $('.eb-chatBox').empty();
                     this.showDate();
-                    this.AskWhatU();
+                    if (Object.keys(this.formsDict).length == 1) {
+                        this.getForm(Object.keys(this.formsDict)[0])
+                    }
+                    else {
+                        this.AskWhatU();
+                    }
+                    
                     // this.ajaxSetup4Future();
                 }
 
@@ -1859,7 +1875,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.getForm(Object.keys(this.formsDict)[0])
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
 
                 }.bind(this)
@@ -1883,7 +1904,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.getForm(Object.keys(this.formsDict)[0])
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
                     else {
                         $("[for=otpvalidate]").remove();
@@ -2005,7 +2031,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.getForm(Object.keys(this.formsDict)[0])
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
 
                 }

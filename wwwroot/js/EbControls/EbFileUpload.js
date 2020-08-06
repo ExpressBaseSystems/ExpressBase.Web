@@ -589,7 +589,10 @@ class EbFileUpload extends EbFupStaticData {
                 }.bind(this)
             }).done(function (refid) {
                 $(`#${this.Options.Container}-loader`).EbLoader("hide");
-                this.toggleM()
+                this.toggleM();
+                if (this.Options.Context === "location") {
+                    this.uploadSuccess(refid);
+                }              
             }.bind(this));
         }
     }

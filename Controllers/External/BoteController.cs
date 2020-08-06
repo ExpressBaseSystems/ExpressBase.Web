@@ -682,7 +682,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 		}
 
 		[HttpGet("Bots")]
-		public IActionResult Bots(string bt)
+		public IActionResult Bots(string bt,string s)
 		{
 			//var host = this.HttpContext.Request.Host;
 			//string[] hostParts = host.Host.Split(CharConstants.DOT);
@@ -692,9 +692,19 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			//}
 			if (ViewBag.WhichConsole == "uc")
 			{
+				if (String.Equals(s, "true"))
+				{
+					bt = bt.Split('-')[0];
+					ViewBag.singlebot = true;					
+				}
+				else
+				{
+					ViewBag.singlebot = false;
+				}
 				this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
 				GetBotsResponse BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { Id_lst = bt });
 				ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
+
 				return View();
 			}
 			else

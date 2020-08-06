@@ -1210,11 +1210,18 @@ function getObjByval(ObjArray, key, val) {
         console.error("ObjArray undefined");
         return false;
     }
-    if (ObjArray.length === 0)
-        return false;
-    if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")))
-        key = "ColumnName";
-    return ObjArray.filter(function (obj) { return obj[key] == val; })[0];
+    try {
+        if (ObjArray.length === 0)
+            return false;
+        if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")) && (Object.keys(ObjArray[0]).includes("ColumnName")))
+            key = "ColumnName";
+        else if (key === "name" && !(Object.keys(ObjArray[0]).includes("name")) && (Object.keys(ObjArray[0]).includes("Name")))
+            key = "Name";
+        return ObjArray.filter(function (obj) { return obj[key] == val; })[0];
+    }
+    catch (e) {
+        debugger;
+    }
 }
 
 function getChildByName(ObjArray, key, val) {
@@ -2139,13 +2146,13 @@ const EbPowerSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
+        o.nextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
+        o.previousHTML = '<i class="fa fa-chevron-left" aria-hidden="true"></i>';
         o.pageLength = this.ComboObj.DropDownItemLimit;
         o.source = "powerselect";
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
-        o.NextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
-        o.PreviousHTML = '<i class="fa fa-chevron-left" aria-hidden="true"></i>';
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -6169,9 +6176,9 @@ document.addEventListener("click", function (e) {
     let ebSid_CtxId = "";
     let container = "";
     //to check select click is on datagrid
-    if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid")) {
+    if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid") || ($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid_New") || ($(document.activeElement).closest('[ebsid]').attr("ctype") == "DataGrid_New")) {
         //initial click of select
-        if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid")) {
+        if (($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid") || ($(e.target).closest("[ebsid]").attr("ctype") == "DataGrid_New")) {
             par_ebSid = $(e.target).closest(".dropdown").find("select").attr("name");
             ebSid_CtxId = $(document.activeElement).closest('[ebsid]').attr("ebsid");
             container = $('.dd_of_' + par_ebSid);
@@ -6406,6 +6413,16 @@ function EbvalidateEmail(email) {
     if (email === "")
         return true;
     return EbIsEmailOK(email);
+}
+
+function EbIsValidURL(str) {
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    return !!pattern.test(str);
 }
 
 //function EbfixTrailingZeros(val, decLen) {

@@ -143,14 +143,14 @@
 
     //creata a maximize btn and append in chathead div ie, division for header part of chat bot
     var maximizeDiv = d.createElement("div");
-    maximizeDiv.className = "chatmaximize";
+    maximizeDiv.className = "chatmaximize eb__-bot___-chatmaximize";
     maximizeDiv.id = "maximizediv" + AppId;
     maximizeDiv.innerHTML = '&#128470;';
     chatHead.appendChild(maximizeDiv);
 
     //creata a close btn and append in chathead div ie, division for header part of chat bot
     var closeDiv = d.createElement("div");
-    closeDiv.className = "chatclose";
+    closeDiv.className = "chatclose eb__-bot___-chatclose";
     closeDiv.id = "closediv" + AppId;
     closeDiv.innerHTML = '&#10006;';
     chatHead.appendChild(closeDiv);

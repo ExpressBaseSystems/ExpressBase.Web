@@ -140,24 +140,30 @@
 <body>
 
     <div class="botslst_pge">
-        <div class="ext-pageheader" id="pgheaderExt">
-            <div class="solun_logo_cont">
-                <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="solution_logo Eb_Image" />
-            </div>
-            <div class="secHeadCont col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                <span class="livebothead">Live Bots</span>
-            </div>
-        </div>
+        @{
+            if (!ViewBag.singlebot)
+            {
+                <div class="ext-pageheader" id="pgheaderExt">
+                    <div class="solun_logo_cont">
+                        <img src="~/images/your_company_logo.png" data-src=@LogoUrl class="solution_logo Eb_Image" />
+                    </div>
+                    <div class="secHeadCont col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                        <span class="livebothead">Live Bots</span>
+                    </div>
+                </div>
 
 
-        <div class="botlstCont ">
-            <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 botBtnsParent">
-                <div class="botBtnsCont row">
+                <div class="botlstCont ">
+                    <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12 botBtnsParent">
+                        <div class="botBtnsCont row">
+
+                        </div>
+                    </div>
 
                 </div>
-            </div>
+            }
+        }
 
-        </div>
     </div>
     <div class="usecase-bots-cont"></div>
     <script type="text/javascript">
@@ -173,8 +179,8 @@
                     /**/
                     var BotList = @BotDtls ;
                     var solutionId = '@ViewBag.SolutionIdExt';
-                    /**/                   
-                    var jssrc = "https://"+solutionId+".localhost:41502";                   
+                    /**/
+                    var jssrc = "https://"+solutionId+".localhost:41502";
                     if (d.ebmod === 'Production')
                         jssrc = "https://"+solutionId+".expressbase.com";
                     else if (d.ebmod === 'Staging')
@@ -222,7 +228,8 @@
                             d.getElementsByTagName("head")[0].appendChild(s);
                         });
                     }
-                    $.each(d.createBotFns, function (i, fun) {
+                    if ('@ViewBag.singlebot' != false) {
+                         $.each(d.createBotFns, function (i, fun) {
                          $(".botBtnsCont").append(`<div class="btnOutCont col col-md-6 col-lg-6 col-sm-12 col-xs-12">
                                                         <div class="btnInnerCont" id='botno${d.appIdColl[i]}' onclick="clickOnDiv(${i}, ${d.appIdColl[i]});">
                                                             <div class='btn_txtcont'>
@@ -236,7 +243,9 @@
                                                             </div>
                                                         </div>
                                                       </div>`);
-                    });
+                         });
+                    }
+
 
 
                     if (d.appIdColl.length > 0) {
@@ -244,8 +253,8 @@
                     }
                 });
 
-
-                function clickOnDiv(i, appid, e) {
+        if ('@ViewBag.singlebot' != false) {
+              function clickOnDiv(i, appid, e) {
                     $('.btnInnerCont').removeClass('actvbot');
                     //console.error(7);
                     console.log(354345);
@@ -267,6 +276,8 @@
                     //setTimeout(function () { $(`#maximizediv${appid}`).click();}, 2000);//////////
                     d.latestAppid = appid;
                 }
+        }
+              
     </script>
     <script>
         $('.Eb_Image').Lazy();

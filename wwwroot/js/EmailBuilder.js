@@ -6,7 +6,7 @@
 
     this.emailpropG = new Eb_PropertyGrid({
         id: "PropertyG",
-        wc: "uc",
+        wc: "dc",
         cid: this.cid,
         $extCont: $(".emailpg")
     });

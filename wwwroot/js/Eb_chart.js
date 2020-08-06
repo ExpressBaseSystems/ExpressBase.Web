@@ -240,6 +240,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         }
         $(subDivId).focus();
         this.PcFlag = false;
+        this.FDCont.css("right", "0");
     }.bind(this);
 
     this.FilterToggle = function () {

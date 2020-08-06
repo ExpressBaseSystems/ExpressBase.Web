@@ -122,7 +122,7 @@
             ServerEventUrl: 'https://se.eb-test.cloud',
             EnableTag: false,
             MaxSize: 1,
-            //EnableCrop: true,
+            EnableCrop: true,
             ExtraData: extra,//extra data for location optional for other
             Context: "location",//if single and crop
             ResizeViewPort: false //if single and crop
@@ -380,6 +380,7 @@
         $("#add_location").text("Add"); 
         $("input[name='_LocId']").val("");
         $(`input[name='Logo']`).val("");
+        $(`#loc_logoId`).val("");
         $("#loc_type").val("");
         $("#add_location_modal").find("input[type='text']").val("");
     };
@@ -404,6 +405,7 @@
     this.AddRootLocationButton = function(){
         $("#tbl_filter").append(`<button id="add_root_loc" class="ebbtn eb_btnblue eb_btn-sm pull-right" data-toggle="modal" data-target="#add_location_modal" > Add New Root Location </button>`);
         $('#add_root_loc').off("click").on('click', this.AddLocationRoot.bind(this));//createloc
+        $(`#loc_logoId`).val("");
     };
 
     //---------------------------------------------------

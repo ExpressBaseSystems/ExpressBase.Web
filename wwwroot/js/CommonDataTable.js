@@ -624,9 +624,13 @@
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {
                     a = a.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(a))
+                        a = 0;
                 }
                 if (typeof b === 'string') {
                     b = b.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(b))
+                        b = 0;
                 }
 
                 return a + b;
@@ -638,9 +642,13 @@
             var sum = data.reduce(function (a, b) {
                 if (typeof a === 'string') {
                     a = a.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(a))
+                        a = 0;
                 }
                 if (typeof b === 'string') {
                     b = b.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(b))
+                        b = 0;
                 }
 
                 return (a * 1) + (b * 1); // cast values in-case they are strings

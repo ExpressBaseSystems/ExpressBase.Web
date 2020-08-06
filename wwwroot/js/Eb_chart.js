@@ -269,6 +269,9 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 this.PropertyDiv = $("#pp_inner");
                 $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
                 $("#pp_inner .pull-right.pgpin").remove();
+                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
                 //$("#pp_inner .remove-pg").off("click").on("click", this.togglePG.bind(this));
 
             }
@@ -295,6 +298,9 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
                 this.PropertyDiv = $("#pp_inner");
                 $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
                 $("#pp_inner .pull-right.pgpin").remove();
+                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
                 //$("#pp_inner remove-pg").off("click").on("click", this.togglePG.bind(this));
             }
             this.propGrid.PropertyChanged = this.tmpPropertyChanged;
@@ -304,6 +310,7 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
         }
     };
     this.togglePG = function () {
+        //$(".filterCont.fd").hide();
         this.PropertyDiv.toggle('drop', { direction: 'right' }, 150);
     };
 
@@ -334,6 +341,9 @@ var eb_chart = function (googlekey, refid, ver_num, type, dsobj, cur_status, tab
             this.PropertyDiv = $("#pp_inner");
             $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
             $("#pp_inner .pull-right.pgpin").remove();
+            $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+            $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
         }
         this.EbObject = this.EbObject;
         if (this.EbObject.Type !== "")

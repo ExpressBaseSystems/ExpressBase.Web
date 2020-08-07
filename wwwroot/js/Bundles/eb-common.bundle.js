@@ -783,7 +783,7 @@ class Setup {
         let id = $(e).closest("a").attr("data-id");
         //alert(id);
         $.post("../EbMeeting/GetSlotDetails", { id: id }, function(data) {
-            let html = JSON.parse(data);     
+            let Resp = JSON.parse(data);     
             let object = {
                 Title: "Meeting Request",
                 ButtonText: "OK",
@@ -792,77 +792,91 @@ class Setup {
                 ShowHeader: true,
                 ShowFooter: false
             };
-            ebcontext.setup.modal.setStyle(object);
-            ebcontext.setup.modal.setHtml(html);
-            $("#tabs").tabs();
-            $("#tab-2").height($('#tabs-1').height());
-            ebcontext.setup.modal.show();
-            $('#accept-meeting').off('click').on('click', function() {
-                let slot = $('#accept-meeting').attr('data-id');
-                $.post("../EbMeeting/AcceptMeeting", { Slot: slot, myactionid: id }, function(data) {
-                    let sts = JSON.parse(data);
-                    if (sts.ResponseStatus) {
-                        ebcontext.setup.modal.hide();
-                        EbPopBox("show", {
-                            Message: "Success...",
-                            ButtonStyle: {
-                                Text: "Ok",
-                                Color: "white",
-                                Background: "#508bf9",
-                                Callback: function () {
+            if (Resp.ResponseStatus) {
+                ebcontext.setup.modal.setStyle(object);
+                ebcontext.setup.modal.setHtml(Resp.Html);
+                $("#tabs").tabs();
+                $("#tab-2").height($('#tabs-1').height());
+                ebcontext.setup.modal.show();
+                $('#accept-meeting').off('click').on('click', function () {
+                    let slot = $('#accept-meeting').attr('data-id');
+                    $.post("../EbMeeting/AcceptMeeting", { Slot: slot, myactionid: id }, function (data) {
+                        let sts = JSON.parse(data);
+                        if (sts.ResponseStatus) {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Success...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
                                 }
-                            }
-                        });
-                        $(`#accept-meeting`).attr('disabled', 'disabled');
-                    }
-                    else {
-                        ebcontext.setup.modal.hide();
-                        EbPopBox("show", {
-                            Message: "Failed. Some Error Found...",
-                            ButtonStyle: {
-                                Text: "Ok",
-                                Color: "white",
-                                Background: "#508bf9",
-                                Callback: function () {
+                            });
+                            $(`#accept-meeting`).attr('disabled', 'disabled');
+                        }
+                        else {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Failed. Some Error Found...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        }
+                    });
+                });
+                $('#pick-slot').off('click').on('click', function () {
+                    let slot = $('#pick-slot').attr('data-id');
+                    $.post("../EbMeeting/PickSlot", { Slot: slot, myactionid: id }, function (data) {
+                        let sts = JSON.parse(data);
+                        if (sts.ResponseStatus) {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Success...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
+                                }
+                            });
+                            $(`#accept-meeting`).attr('disabled', 'disabled');
+                        }
+                        else {
+                            ebcontext.setup.modal.hide();
+                            EbPopBox("show", {
+                                Message: "Failed. Some Error Found...",
+                                ButtonStyle: {
+                                    Text: "Ok",
+                                    Color: "white",
+                                    Background: "#508bf9",
+                                    Callback: function () {
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+            else {
+                EbPopBox("show", {
+                    Message: "Invalid Action...",
+                    ButtonStyle: {
+                        Text: "Ok",
+                        Color: "white",
+                        Background: "#508bf9",
+                        Callback: function () {
+                        }
                     }
                 });
-            });
-            $('#pick-slot').off('click').on('click', function () {
-                let slot = $('#pick-slot').attr('data-id');
-                $.post("../EbMeeting/PickSlot", { Slot: slot, myactionid: id }, function (data) {
-                    let sts = JSON.parse(data);
-                    if (sts.ResponseStatus) {
-                        ebcontext.setup.modal.hide();
-                        EbPopBox("show", {
-                            Message: "Success...",
-                            ButtonStyle: {
-                                Text: "Ok",
-                                Color: "white",
-                                Background: "#508bf9",
-                                Callback: function () {
-                                }
-                            }
-                        });
-                        $(`#accept-meeting`).attr('disabled', 'disabled');
-                    }
-                    else {
-                        ebcontext.setup.modal.hide();
-                        EbPopBox("show", {
-                            Message: "Failed. Some Error Found...",
-                            ButtonStyle: {
-                                Text: "Ok",
-                                Color: "white",
-                                Background: "#508bf9",
-                                Callback: function () {
-                                }
-                            }
-                        });
-                    }
-                });
-            });
+            }
         });
 
     };

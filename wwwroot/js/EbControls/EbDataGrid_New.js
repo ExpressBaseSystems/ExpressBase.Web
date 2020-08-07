@@ -7,7 +7,7 @@
     this.formRefId = options.formRefId;
     this.formRenderer = options.formRenderer;
     this.initControls = new InitControls(options.formRenderer);
-    this.RowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
+    this.rowDataModel_empty = this.formRenderer.formData.DGsRowDataModel[this.ctrl.TableName];
 
     this.$Table = null;
     this.DGColCtrls = [];// datagrid column controls - all info
@@ -16,7 +16,9 @@
     this.mode_s = options.Mode.isView ? "view" : "edit";
     this.addRowCounter = -1;
     this.currentTr = null;// datatable active tr
-    this.CurRowModel = null;
+    this.curRowDataModelCopy = null;
+    this.dtDataRowIdIndex = null;
+    this.$dtFooterDD = null;
 
     //dataTable related variables
     this.DVColumns = null; //DVColumnCollection
@@ -26,9 +28,9 @@
         this.initDGColCtrls();
         this.makeHtmlSuitable();//temporary
         this.initBasicDataTable();
+        setTimeout(function () { this.$dtFooterDD = this.$TableCont.find(".addedbyeb .footerDD"); }.bind(this), 1500);
 
         $(`#${this.ctrl.EbSid}Wraper`).on("click", ".addrow-btn", this.addRowBtn_click.bind(this));
-
         this.$TableCont.on("click", ".edit-rowc", this.editRow_click.bind(this));
         this.$TableCont.on("click", ".check-rowc", this.checkRow_click.bind(this));
         this.$TableCont.on("click", ".del-rowc", this.delRow_click.bind(this));
@@ -63,8 +65,8 @@
         //o.arrowFocusCallback = this.arrowSelectionStylingFcs;
         //o.arrowBlurCallback = this.arrowSelectionStylingBlr;
         //o.fninitComplete = this.initDTpost.bind(this);
-        o.initCompleteCallback = this.dataTableInitCallback.bind(this),
-            o.dom = "<p>rt";
+        o.initCompleteCallback = this.dataTableInitCallback.bind(this);
+        o.dom = "<p>rt";
         //o.IsPaging = true;
         //o.pageLength = this.ComboObj.DropDownItemLimit;
         o.Source = "datagrid";
@@ -77,6 +79,7 @@
         o.columns = this.DVColumns.$values;//////////////////////////////////////////////////////  
         //o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         //o.searchCallBack = this.searchCallBack;
+        o.fnCanUpdateFooter = this.canUpdateFooter.bind(this);
         o.data = { data: [] };
         this.datatable = new EbCommonDataTable(o);
     };
@@ -97,6 +100,13 @@
 
     };
 
+    this.canUpdateFooter = function () {
+        if (this.curRowDataModelCopy === null)
+            return true;
+        else
+            return false;
+    };
+
     this.initDGColCtrls = function () {
         this.DGColCtrls = [];
         for (let i = 0; i < this.ctrl.Controls.$values.length; i++) {
@@ -110,12 +120,13 @@
                 .replace(/@ebsid@/g, inpCtrl.EbSid_CtxId);
             this.DGColCtrls.push({ colCtrl: ctrl, html: ctrlHtml, inpCtrl: inpCtrl });
         }
+        this.dtDataRowIdIndex = this.ctrl.Controls.$values.length;
     };
 
     this.addRowBtn_click = function () {
         if (this.currentTr !== null) {
             if (this.canFinalizeTrEdit(this.currentTr))
-                this.finalizeTrEdit(this.currentTr, 'check');
+                this.finalizeTrEdit(this.currentTr);
             else {
                 console.log('active row found. commit then continue.');
                 return;
@@ -131,12 +142,12 @@
     this.editRow_click = function (e) {
         let $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
-        let rowid = dtTr.data()[this.datatable.hiddenIndex];
+        let rowid = dtTr.data()[this.dtDataRowIdIndex];
         if (this.currentTr !== null) {
-            if (rowid === this.CurRowModel.RowId)
+            if (rowid === this.curRowDataModelCopy.RowId)
                 return;
             if (this.canFinalizeTrEdit(this.currentTr))
-                this.finalizeTrEdit(this.currentTr, 'check');
+                this.finalizeTrEdit(this.currentTr);
             else {
                 console.log('active row found. commit then continue.');
                 return;
@@ -150,13 +161,13 @@
         let $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
         if (this.canFinalizeTrEdit(dtTr))
-            this.finalizeTrEdit(dtTr, 'check');
+            this.finalizeTrEdit(dtTr);
     };
 
     this.delRow_click = function (e) {
         let $tr = $(e.target).closest('tr');
         let data_row = this.datatable.Api.row($tr).data();
-        let rowid = parseInt(data_row[this.datatable.hiddenIndex]);
+        let rowid = parseInt(data_row[this.dtDataRowIdIndex]);
         if (rowid > 0) {
             let Row = getObjByval(this.dataMODEL, "RowId", rowid);
             Row.IsDelete = true;
@@ -166,35 +177,32 @@
             this.dataMODEL.splice(index, 1);
         }
         delete this.objectMODEL[rowid];
-        this.datatable.Api.row($(e.target).closest("tr")).remove().draw(false);
-
-        if (this.CurRowModel.RowId === rowid) {
+        if (this.curRowDataModelCopy && this.curRowDataModelCopy.RowId === rowid) {
             this.currentTr = null;
-            this.CurRowModel = null;
+            this.curRowDataModelCopy = null;
         }
+        this.datatable.Api.row($(e.target).closest("tr")).remove().draw(false);
     };
 
     this.cancelRow_click = function (e) {
         let $tr = $(e.target).closest('tr');
         let dtTr = this.datatable.Api.row($tr);
-        this.finalizeTrEdit(dtTr, 'cancel');
+        let rowid = dtTr.data()[this.dtDataRowIdIndex];
+        let Row = getObjByval(this.dataMODEL, "RowId", rowid);
+        if (rowid !== this.curRowDataModelCopy.RowId) {
+            console.error('Mismatch in RowId and curRowDataModelCopy.RowId');
+            return;
+        }
+        this.CopyRowToRow(this.curRowDataModelCopy, Row);
+        this.finalizeTrEdit(dtTr);
     };
 
-    this.finalizeTrEdit = function (dtTr, action) {
-        //dtTr => current datatable tr;action => check, cancel;
-        let data_row = dtTr.data();
-        let rowid = data_row[this.datatable.hiddenIndex];
+    this.finalizeTrEdit = function (dtTr) {
+        //dtTr => current datatable tr;
+        let rowid = dtTr.data()[this.dtDataRowIdIndex];
         let Row = getObjByval(this.dataMODEL, "RowId", parseInt(rowid));
-        if (action === 'check') {
-            if (parseInt(rowid) !== this.CurRowModel.RowId) {
-                console.error('Mismatch in RowId and CurRowModel.RowId');
-                return;
-            }
-            this.CopyRowToRow(this.CurRowModel, Row);
-        }
         let curRow = {};
-        let j = 0;
-        for (; j < this.DGColCtrls.length; j++) {
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
             let _control = this.DGColCtrls[j].colCtrl;
             let Column = getObjByval(Row.Columns, "Name", _control.Name);
             curRow[j] = this.getTdPlainHtml(Column, _control);
@@ -207,15 +215,16 @@
                 $('#' + _control.EbSid_CtxId).selectpicker('destroy');
             }
         }
-        curRow[j++] = Row.RowId;
-        curRow[j] = this.getCogTdHtml('viewing');
-        dtTr.data(curRow).draw(false);
+        curRow[this.dtDataRowIdIndex] = Row.RowId;
+        curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('viewing');
         this.currentTr = null;
-        this.CurRowModel = null;
+        this.curRowDataModelCopy = null;
+        dtTr.data(curRow).draw(false);
+        this.$dtFooterDD.prop("disabled", false);
     };
 
     this.canFinalizeTrEdit = function (dtTr) {
-        let rowId = dtTr.data()[this.datatable.hiddenIndex];
+        let rowId = dtTr.data()[this.dtDataRowIdIndex];
         let canFinalize = true;
         $.each(this.objectMODEL[rowId], function (k, ObjModelColumn) {
             let inpCtrl = ObjModelColumn.DGColCtrlObj.inpCtrl;
@@ -248,7 +257,7 @@
         }
         let Row;// SingleRow
         if (isNew) {
-            Row = JSON.parse(JSON.stringify(this.RowDataModel_empty));
+            Row = JSON.parse(JSON.stringify(this.rowDataModel_empty));
             Row.RowId = this.addRowCounter--;
             this.addToObjectModel(Row);
             this.fixDefaultValExpInDataModel(Row);
@@ -256,22 +265,20 @@
         else {
             Row = getObjByval(this.dataMODEL, "RowId", parseInt(RowId));
         }
-        this.CurRowModel = JSON.parse(JSON.stringify(Row));
-        //this.CurRowModel._ActiveRow = Row;///////
+        this.curRowDataModelCopy = JSON.parse(JSON.stringify(Row));
+        //this.curRowDataModelCopy._ActiveRow = Row;///////
 
         let curRow = {};
-        let j = 0;
-        for (; j < this.DGColCtrls.length; j++) {
+        for (let j = 0; j < this.DGColCtrls.length; j++) {
             let inpCtrl = this.DGColCtrls[j].inpCtrl;
-            let Column = getObjByval(this.CurRowModel.Columns, "Name", inpCtrl.Name);
-            inpCtrl.DataVals = Column;
+            inpCtrl.DataVals = getObjByval(Row.Columns, "Name", inpCtrl.Name);
             curRow[j] = this.DGColCtrls[j].html;
         }
-        curRow[j++] = this.CurRowModel.RowId;
+        curRow[this.dtDataRowIdIndex] = Row.RowId;
         if (isNew)
-            curRow[j] = this.getCogTdHtml('firstEditing');
+            curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('firstEditing');
         else
-            curRow[j] = this.getCogTdHtml('editing');
+            curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('editing');
         if (isNew) {
             this.currentTr = this.datatable.Api.row.add(curRow).draw(false);
             this.dataMODEL.push(Row);
@@ -282,8 +289,10 @@
             this.currentTr = dtTr.data(curRow).draw(false);
         }
 
+        this.$dtFooterDD.prop("disabled", true);
         let rowFlatCtrls = [];
 
+        //Control initialization
         for (let i = 0; i < this.DGColCtrls.length; i++) {
             let inpCtrl = this.DGColCtrls[i].inpCtrl;
             let opt = {};
@@ -294,7 +303,25 @@
                 opt.userObject = this.ctrl.__userObject;
             }
             this.initControls.init(inpCtrl, opt);
+            rowFlatCtrls.push(inpCtrl);
 
+            if (inpCtrl.IsDisable)
+                inpCtrl.disable();
+        }
+
+        //OnChange binding
+        $.each(rowFlatCtrls, function (k, inpCtrl) {
+            try {
+                inpCtrl.bindOnChange(this.dgCtrlOnChangeFnAll.bind(this, inpCtrl, this.DGColCtrls[k].colCtrl));// binding to onchange
+            } catch (e) {
+                console.eb_log("eb error :");
+                console.eb_log(e);
+                console.log("error in 'bindEbFnOnChange function' of : " + inpCtrl.Name + " - " + e.message);
+            }
+        }.bind(this));
+
+        //Data population
+        $.each(rowFlatCtrls, function (k, inpCtrl) {
             if (inpCtrl.DataVals.Value !== null) {
                 inpCtrl.___DoNotUpdateDataVals = true;
                 if (ctrl.ObjType === "PowerSelect")
@@ -303,21 +330,9 @@
                     inpCtrl.justSetValue(inpCtrl.DataVals.Value);
                 inpCtrl.___DoNotUpdateDataVals = false;
             }
-            rowFlatCtrls.push(inpCtrl);
-        }
-        //this.formRenderer.FRC.bindEbOnChange2Ctrls(rowFlatCtrls);
-
-        $.each(rowFlatCtrls, function (k, inpCtrl) {
-            try {
-                inpCtrl.bindOnChange(this.DataValsUpdate.bind(this, inpCtrl, this.DGColCtrls[k].colCtrl));// binding to onchange
-            } catch (e) {
-                console.eb_log("eb error :");
-                console.eb_log(e);
-                console.log("error in 'bindEbFnOnChange function' of : " + inpCtrl.Name + " - " + e.message);
-            }
         }.bind(this));
 
-
+        //Required-Unique-Validator binding
         $.each(rowFlatCtrls, function (k, inpCtrl) {
             inpCtrl.__CheckFlags = { isRequiredOK: true, isUniqueOK: true, isValidationOK: true };
             let $inpCtrl = $(`#${inpCtrl.EbSid_CtxId}`);
@@ -339,20 +354,19 @@
         let failedValidator = null;
         inpCtrl.Validators.$values = sortByProp(inpCtrl.Validators.$values, "IsWarningOnly");// sort Validators like warnings comes last
         if (this.currentTr !== null) {
-            let rowId = this.currentTr.data()[this.datatable.hiddenIndex];
+            let rowId = this.currentTr.data()[this.dtDataRowIdIndex];
             this.setCurRowInGlobals(rowId);
         }
         $.each(inpCtrl.Validators.$values, function (i, Validator) {
             if (Validator.IsDisabled || !Validator.Script.Code)// continue;
                 return true;
-            let func = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(inpCtrl, this.formObject, this.userObject);
             let valRes = false;
             try {
-                valRes = func();
+                valRes = new Function('form', 'user', `event`, atob(Validator.Script.Code)).bind(inpCtrl, this.formObject, this.userObject)();
             }
             catch (e) {
-                console.error(`Error in validator: ${e}`);
-                console.log(atob(Validator.Script.Code));
+                console.error("Error in 'Validator' of DG ctrl: " + inpCtrl.Name + " - " + e.message);
+                console.log('Code: ' + Validator.Script.Code);
             }
             if (valRes !== true) {
                 failedValidator = Validator;
@@ -382,7 +396,7 @@
         }
         let exists = false;
         $.each(this.objectMODEL, function (k, objModelRow) {
-            if (parseInt(k) === this.CurRowModel.RowId)
+            if (parseInt(k) === this.curRowDataModelCopy.RowId)
                 return true;
             if (objModelRow[ctrlIndex].getValue() === value) {
                 exists = true;
@@ -424,7 +438,8 @@
         //EbMakeValid(`#td_${ctrl.EbSid_CtxId}`, `.ctrl-cover`);
     };
 
-    this.DataValsUpdate = function (inpCtrl, _control) {
+    this.dgCtrlOnChangeFnAll = function (inpCtrl, colCtrl) {
+        //Update DataVals
         if (!inpCtrl.___DoNotUpdateDataVals) {
             if (inpCtrl.DataVals) {
                 inpCtrl.DataVals.Value = inpCtrl.getValueFromDOM();
@@ -433,10 +448,77 @@
                     //inpCtrl.DataVals.R = {};
                 }
                 else {
-                    inpCtrl.DataVals.F = this.getTdPlainHtml(inpCtrl.DataVals, _control);
+                    inpCtrl.DataVals.F = this.getTdPlainHtml(inpCtrl.DataVals, colCtrl);
                 }
             }
         }
+
+        //Update value expression dependents data
+        if (inpCtrl.DependedValExp && inpCtrl.DependedValExp.$values.length > 0) {
+            if (!inpCtrl.___isNotUpdateValExpDepCtrls) {
+                $.each(inpCtrl.DependedValExp.$values, function (i, depCtrl_s) {
+                    let depCtrl = this.formObject.__getCtrlByPath(depCtrl_s);
+                    if (depCtrl === "not found")
+                        return true;
+                    if (depCtrl.IsDGCtrl)
+                        depCtrl = depCtrl.DGColCtrlObj.inpCtrl;
+                    if (depCtrl.ValueExpr && depCtrl.ValueExpr.Lang === 0 && depCtrl.ValueExpr.Code) {
+                        try {
+                            let valExpFnStr = atob(depCtrl.ValueExpr.Code);
+                            let ValueExpr_val = undefined;
+                            ValueExpr_val = new Function("form", "user", `event`, valExpFnStr).bind(depCtrl_s, this.formObject, this.userObject)();
+                            if (ValueExpr_val !== undefined)
+                                depCtrl.justSetValue(ValueExpr_val);
+                        }
+                        catch (e) {
+                            console.error("Error in 'Value Expression' of DG ctrl: " + depCtrl.Name + " - " + e.message);
+                            console.log('Code: ' + depCtrl.ValueExpr.Code);
+                        }
+                    }
+                }.bind(this));
+            }
+            inpCtrl.___isNotUpdateValExpDepCtrls = false;
+        }
+
+        //OnChnageFn execution
+        if (inpCtrl.OnChangeFn && inpCtrl.OnChangeFn.Code && inpCtrl.OnChangeFn.Code.trim() !== "") {
+            try {
+                let onChngFnStr = atob(inpCtrl.OnChangeFn.Code);
+                new Function("form", "user", `event`, onChngFnStr).bind(inpCtrl.Name, this.formObject, this.userObject)();
+            }
+            catch (e) {
+                console.error("Error in 'OnChangeFn' of DG ctrl: " + inpCtrl.Name + " - " + e.message);
+                console.log('Code: ' + inpCtrl.OnChangeFn.Code);
+            }
+        }
+
+        //Disable expression execution
+        if (inpCtrl.DisableExpDependants && inpCtrl.DisableExpDependants.$values.length > 0) {
+            let depCtrls_SArr = inpCtrl.DisableExpDependants.$values;
+            for (let i = 0; i < depCtrls_SArr.length; i++) {
+                let depCtrl_s = depCtrls_SArr[i];
+                let depCtrl = this.formObject.__getCtrlByPath(depCtrl_s);
+                if (depCtrl === "not found")
+                    continue;
+                if (depCtrl.IsDGCtrl)
+                    depCtrl = depCtrl.DGColCtrlObj.inpCtrl;
+                if (depCtrl.DisableExpr && depCtrl.DisableExpr.Code) {
+                    try {
+                        let disableExpFnStr = atob(depCtrl.DisableExpr.Code);
+                        let disableExpVal = new Function("form", "user", `event`, disableExpFnStr).bind(depCtrl_s, this.formObject, this.userObject)();
+                        if (disableExpVal)
+                            depCtrl.disable.bind(depCtrl)();
+                        else
+                            depCtrl.enable.bind(depCtrl)();
+                    }
+                    catch (e) {
+                        console.error("Error in 'DisableExpr' of DG ctrl: " + depCtrl.Name + " - " + e.message);
+                        console.log('Code: ' + depCtrl.DisableExpr.Code);
+                    }
+                }
+            }
+        }
+
     };
 
     //public function
@@ -479,6 +561,8 @@
     this.getObjModelColumn = function (Column, DGColCtrlObj) {
         let ObjModelColumn = { DataVals: Column, DGColCtrlObj: DGColCtrlObj };
         ObjModelColumn['getValue'] = function () { return this.DataVals.Value; };
+        ObjModelColumn['disable'] = function () { return this.DGColCtrlObj.inpCtrl.disable; };
+        ObjModelColumn['enable'] = function () { return this.DGColCtrlObj.inpCtrl.enable; };
         if (DGColCtrlObj.inpCtrl.ObjType === 'PowerSelect') {
             ObjModelColumn['getColumn'] = function () { console.error('Not implemented'); return {}; };
         }
@@ -490,14 +574,13 @@
         for (let i = 0; i < DgDataModel.length; i++) {
             let Row = DgDataModel[i];
             let curRow = {};
-            let j = 0;
-            for (; j < this.DGColCtrls.length; j++) {
+            for (let j = 0; j < this.DGColCtrls.length; j++) {
                 let _control = this.DGColCtrls[j].colCtrl;
                 let Column = getObjByval(Row.Columns, "Name", _control.Name);
                 curRow[j] = this.getTdPlainHtml(Column, _control);
             }
-            curRow[j++] = Row.RowId;
-            curRow[j] = this.getCogTdHtml('viewing');
+            curRow[this.dtDataRowIdIndex] = Row.RowId;
+            curRow[this.dtDataRowIdIndex + 1] = this.getCogTdHtml('viewing');
             dvdata.push(curRow);
         }
         return dvdata;
@@ -509,22 +592,26 @@
             for (let i = 0; i < ObjModelRow.length; i++) {
                 let inpCtrl = ObjModelRow[i].DGColCtrlObj.inpCtrl;
                 let ValueExpr_val = null;
-                if (inpCtrl.ValueExpr && inpCtrl.ValueExpr.Lang === 0 && inpCtrl.ValueExpr.Code) {
-                    let fun = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(ObjModelRow[i], this.formObject, this.userObject);
+                if (inpCtrl.DoNotPersist && inpCtrl.ValueExpr && inpCtrl.ValueExpr.Lang === 0 && inpCtrl.ValueExpr.Code) {
                     try {
-                        ValueExpr_val = fun();
+                        ValueExpr_val = new Function("form", "user", `event`, atob(inpCtrl.ValueExpr.Code)).bind(ObjModelRow[i], this.formObject, this.userObject)();
                     }
                     catch (e) {
                         console.error(`Error in valueExpression of ${inpCtrl.Name}: ${e}`);
-                        console.log('Code: ' + atob(inpCtrl.ValueExpr.Code));
+                        console.log('Code: ' + inpCtrl.ValueExpr.Code);
                     }
                     //val = EbConvertValue(val, ctrl.ObjType);
+                    if (ValueExpr_val) {
+                        ObjModelRow[i].DataVals.Value = ValueExpr_val;
+                        //if (inpCtrl.ObjType === "Numeric")
+                        //    inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
+                    }
                 }
-                if (inpCtrl.DoNotPersist && ValueExpr_val !== null) {
-                    ObjModelRow[i].DataVals.Value = ValueExpr_val;
-                    //if (inpCtrl.ObjType === "Numeric")
-                    //    inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
-                }
+                //if (inpCtrl.DoNotPersist && ValueExpr_val !== null) {
+                //    ObjModelRow[i].DataVals.Value = ValueExpr_val;
+                //    //if (inpCtrl.ObjType === "Numeric")
+                //    //    inpCtrl.DataVals.F = ValueExpr_val.toFixed(inpCtrl.DecimalPlaces);
+                //}
             }
             //this.onRowPaintFn(["tr"], "check", "e");// --
         }.bind(this));
@@ -537,17 +624,16 @@
             let inpCtrl = ObjModelRow[i].DGColCtrlObj.inpCtrl;
             let DefaultValueExpr_val = null;
             if (inpCtrl.DefaultValueExpression && inpCtrl.DefaultValueExpression.Lang === 0 && inpCtrl.DefaultValueExpression.Code) {
-                let fun = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(ObjModelRow[i], this.formObject, this.userObject);
                 try {
-                    DefaultValueExpr_val = fun();
+                    DefaultValueExpr_val = new Function("form", "user", `event`, atob(inpCtrl.DefaultValueExpression.Code)).bind(ObjModelRow[i], this.formObject, this.userObject)();
                 }
                 catch (e) {
                     console.error(`Error in DefaultValueExpression of ${inpCtrl.Name}: ${e}`);
-                    console.log('Code: ' + atob(inpCtrl.ValueExpr.Code));
+                    console.log('Code: ' + inpCtrl.ValueExpr.Code);
                 }
-            }
-            if (inpCtrl.DoNotPersist && DefaultValueExpr_val !== null) {
-                ObjModelRow[i].DataVals.Value = DefaultValueExpr_val;
+                if (DefaultValueExpr_val) {
+                    ObjModelRow[i].DataVals.Value = DefaultValueExpr_val;
+                }
             }
         }
     };
@@ -564,10 +650,7 @@
         this.ctrl.currentRow['__rowId'] = rowId;
     };
 
-
-
     EbDataGrid_New_Extended.bind(this)();
-
     this.init();
 };
 
@@ -576,6 +659,14 @@ const EbDataGrid_New_Extended = function () {
     this.SwitchToEditMode = function () {
         this.$TableCont.find(`.ctrlstd_dg`).attr("mode", "edit");
         this.mode_s = "edit";
+    };
+
+    //public function
+    this.hasActiveRow = function () {
+        if (this.curRowDataModelCopy === null)
+            return false;
+        else
+            return true;
     };
 
     this.getTdCtrlHtml = function (col) {

@@ -32,6 +32,7 @@ const WebFormRender = function (option) {
 
     this.setFormObject = function () {
         this.flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
+        this.flatControlsWithDG = this.flatControls.concat(this.DGsNew);// all DGsNew in the formObject + all controls as flat
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));
@@ -589,6 +590,23 @@ const WebFormRender = function (option) {
         else
             return true;
     };
+
+    this.DGsNewB4Save = function () {
+        let hasActiveRows = false;
+        $.each(this.DGNewBuilderObjs, function (k, DGB) {
+            if (DGB.hasActiveRow()) {
+                hasActiveRows = true;
+                return false;
+            }
+        }.bind(this));
+        if (hasActiveRows) {
+            EbDialog("show", { Message: "Please commit or delete uncommited rows" });
+            return false;
+        }
+        else
+            return true;
+    };
+
     this.MeetingB4Save = function () {
         let resp = true;
         $.each($(`.meeting-scheduler-outer .m-validate`), function (i, Obj) {
@@ -629,6 +647,8 @@ const WebFormRender = function (option) {
             if (!this.isAllUniqOK())
                 return;
             if (!this.DGsB4Save())
+                return;
+            if (!this.DGsNewB4Save())
                 return;
             if (!this.MeetingB4Save())
                 return;

@@ -681,6 +681,7 @@ const EbPowerSelect = function (ctrl, options) {
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
+        o.scrollHeight = this.scrollHeight;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -693,11 +694,17 @@ const EbPowerSelect = function (ctrl, options) {
         o.searchCallBack = this.searchCallBack;
         o.rowclick = this.DTrowclick;
         o.data = this.data;
+        //$(document).on('preInit.dt', this.preInit);// should off in preInit after max-height set
         this.datatable = new EbBasicDataTable(o);
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
         this.focus1stRow();
     };
+
+    //this.preInit = function (e, settings) {
+    //    $(`#${this.name}tbl_wrapper > div.dataTables_scroll > div.dataTables_scrollBody`).css("max-height", this.scrollHeight);
+    //    $(document).off('preInit.dt');
+    //}.bind(this);
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
@@ -717,10 +724,6 @@ const EbPowerSelect = function (ctrl, options) {
         this.IsDatatableInit = true;
         this.getData();
     };
-
-    this.DTinitComplete = function () {
-        $(`#${this.name}tbl_wrapper > div.dataTables_scroll > div.dataTables_scrollBody`).css("max-height", this.scrollHeight);
-    }.bind(this)
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
         if ($(":focus").hasClass("eb_finput"))
@@ -1310,6 +1313,7 @@ const EbPowerSelect = function (ctrl, options) {
     this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');
         let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+        //let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
         let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 

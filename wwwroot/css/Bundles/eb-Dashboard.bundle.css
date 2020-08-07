@@ -670,7 +670,8 @@
 /*filter dialog*/
 .param-div-cont {
     top: 0px;
-    left: 0px;
+    /*left: 0px;*/
+    right: 0px;
     width: 350px;
     position: fixed;
     display: block;
@@ -683,6 +684,7 @@
         display: block;
         background: white;
         height: 100%;
+        border-left: solid 1px #e0e0e0;
     }
 
     .param-div-cont #filterBox {
@@ -879,11 +881,10 @@
             background: #555;
         }
 
-
 .db-user-filter {
     top: 0px;
     right: 0px;
-    width: 32rem;
+    width: 350px;
     position: fixed;
     display: block;
     margin-top: 37px;
@@ -1610,6 +1611,7 @@ canvas:visited {
     height: 100%;
     background-size: 88px;
 }
+
 .dv {
     height: calc(100vh - 72px);
     width: inherit;

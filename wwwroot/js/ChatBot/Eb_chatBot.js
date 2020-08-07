@@ -261,7 +261,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.showDate();
                     if (Object.keys(this.formsDict).length == 1) {
                         this.botflg.singleBotApp = true;
-                        this.getForm(Object.keys(this.formsDict)[0])
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
                     }
                     else {
                         this.AskWhatU();
@@ -306,7 +307,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             this.formIcons = result[3];
                             if (Object.keys(this.formsDict).length == 1) {
                                 this.botflg.singleBotApp = true;
-                                this.getForm(Object.keys(this.formsDict)[0])
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
                             }
                             else {
                                 this.AskWhatU();
@@ -1607,7 +1609,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.showDate();
                     if (Object.keys(this.formsDict).length == 1) {
                         this.botflg.singleBotApp = true;
-                        this.getForm(Object.keys(this.formsDict)[0])
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
                     }
                     else {
                         this.AskWhatU();
@@ -1889,7 +1892,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -1919,7 +1923,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -2047,7 +2052,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();

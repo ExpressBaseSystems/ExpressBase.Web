@@ -657,6 +657,7 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.initDataTable = function () {
+        this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         let o = {};
         o.containerId = this.containerId;
         o.dsid = this.dsid;
@@ -664,7 +665,6 @@ const EbPowerSelect = function (ctrl, options) {
         o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -689,6 +689,7 @@ const EbPowerSelect = function (ctrl, options) {
         //o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
+        o.fninitComplete = this.DTinitComplete;
         o.searchCallBack = this.searchCallBack;
         o.rowclick = this.DTrowclick;
         o.data = this.data;
@@ -716,6 +717,10 @@ const EbPowerSelect = function (ctrl, options) {
         this.IsDatatableInit = true;
         this.getData();
     };
+
+    this.DTinitComplete = function () {
+        $(`#${this.name}tbl_wrapper > div.dataTables_scroll > div.dataTables_scrollBody`).css("max-height", this.scrollHeight);
+    }.bind(this)
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
         if ($(":focus").hasClass("eb_finput"))

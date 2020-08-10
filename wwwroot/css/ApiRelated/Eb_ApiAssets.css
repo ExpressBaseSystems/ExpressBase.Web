@@ -231,8 +231,8 @@
             padding-left: 15px;
             list-style: none;
         }
-    /*json window*/
-    /*.objkey {
+/*json window*/
+/*.objkey {
             color: #204a87;
         }
 .objval {
@@ -241,17 +241,17 @@
 .a_ob_o, .a_ob_c{
     color: #729fcf;
 }*/
-    .Json_reqOrRespWrpr .regRespWHead {
-        position: absolute;
-        background: #316396;
-        color: white;
-        padding: 2px 30px 2px 15px;
-        top: -25px;
-        font-size: 14px;
-        text-align: center;
-        -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
-        clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
-    }
+.Json_reqOrRespWrpr .regRespWHead {
+    position: absolute;
+    background: #316396;
+    color: white;
+    padding: 2px 30px 2px 15px;
+    top: -25px;
+    font-size: 14px;
+    text-align: center;
+    -webkit-clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+    clip-path: polygon(0 0, 80% 0, 100% 100%, 0% 100%);
+}
 
         .Json_reqOrRespWrpr .regRespWHead i {
             font-size: 13px;
@@ -357,7 +357,6 @@
     overflow: auto;
 }
 .context-menu-item {
-    font-family: Montserrat !important;
     padding: 8px 2em;
     font-size: 14px;
 }

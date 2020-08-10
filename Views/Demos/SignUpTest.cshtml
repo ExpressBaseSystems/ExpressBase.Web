@@ -92,18 +92,22 @@
 
         function testAjax1() {
             $.ajax({
-                url: "/api/verify_otp",
+                url: "/api/jhg/1.0.0",
                 type: "POST",
-                cache: false,
                 data: {
-                    token: tok,
-                    authid: auth,
-                    otp: otp,
+                    name: "dsd",
+                    email: "",
+                    mobile: "e32",
+                    service: "dsd",
+                    grade: 23,
+                    message: "dsd",
+                    country_code: "32",
+                    submitted_page: 1
+                },
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader("bToken", getTok());
+                    xhr.setRequestHeader("rToken", getrToken());
                 }
-                //beforeSend: function (xhr) {
-                //    xhr.setRequestHeader("bToken", getTok());
-                //    xhr.setRequestHeader("rToken", getrToken());
-                //}
             }).done(function (data) {
 
             });

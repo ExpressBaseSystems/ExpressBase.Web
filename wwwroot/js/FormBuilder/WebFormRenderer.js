@@ -32,7 +32,7 @@ const WebFormRender = function (option) {
 
     this.setFormObject = function () {
         this.flatControlsWithDG = this.flatControls.concat(this.DGs);// all DGs in the formObject + all controls as flat
-        this.flatControlsWithDG = this.flatControls.concat(this.DGsNew);// all DGsNew in the formObject + all controls as flat
+        this.flatControlsWithDG = this.flatControlsWithDG.concat(this.DGsNew);// all DGsNew in the formObject + all controls as flat
         $.each(this.flatControlsWithDG, function (i, ctrl) {
             this.formObject[ctrl.Name] = ctrl;
         }.bind(this));

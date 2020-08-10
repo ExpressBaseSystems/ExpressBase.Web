@@ -2129,6 +2129,7 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.initDataTable = function () {
+        this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         let o = {};
         o.containerId = this.containerId;
         o.dsid = this.dsid;
@@ -2136,7 +2137,6 @@ const EbPowerSelect = function (ctrl, options) {
         o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -2161,6 +2161,7 @@ const EbPowerSelect = function (ctrl, options) {
         //o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
+        o.fninitComplete = this.DTinitComplete;
         o.searchCallBack = this.searchCallBack;
         o.rowclick = this.DTrowclick;
         o.data = this.data;
@@ -2188,6 +2189,10 @@ const EbPowerSelect = function (ctrl, options) {
         this.IsDatatableInit = true;
         this.getData();
     };
+
+    this.DTinitComplete = function () {
+        $(`#${this.name}tbl_wrapper > div.dataTables_scroll > div.dataTables_scrollBody`).css("max-height", this.scrollHeight);
+    }.bind(this)
 
     this.DDKeyPress = function (e, datatable, key, cell, originalEvent) {
         if ($(":focus").hasClass("eb_finput"))
@@ -6501,6 +6506,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.botflg = {};
     this.botflg.loadFormlist = false;
     this.botflg.singleBotApp = false;
+    this.botflg.startover = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
     this.formObject = {};// for passing to user defined functions
@@ -6710,7 +6716,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.showDate();
                     if (Object.keys(this.formsDict).length == 1) {
                         this.botflg.singleBotApp = true;
-                        this.getForm(Object.keys(this.formsDict)[0])
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
                     }
                     else {
                         this.AskWhatU();
@@ -6755,7 +6762,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             this.formIcons = result[3];
                             if (Object.keys(this.formsDict).length == 1) {
                                 this.botflg.singleBotApp = true;
-                                this.getForm(Object.keys(this.formsDict)[0])
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
                             }
                             else {
                                 this.AskWhatU();
@@ -8056,7 +8064,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.showDate();
                     if (Object.keys(this.formsDict).length == 1) {
                         this.botflg.singleBotApp = true;
-                        this.getForm(Object.keys(this.formsDict)[0])
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
                     }
                     else {
                         this.AskWhatU();
@@ -8338,7 +8347,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -8368,7 +8378,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -8496,7 +8507,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -8618,18 +8630,18 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.botStartoverfn = function () {
 
-        //if (this.botflg.loadFormlist === false) {   
-            
-        //    this.ClearFormVariables();
-        //    this.botflg.otptype = "";//clear flags
-        //    this.botflg.uname_otp = "";
-        //    this.$renderAtBottom.empty();
-        //    this.curCtrl = null;
-        //    this.$renderAtBottom.hide();
-        //    $('.eb-chatBox').empty();
-        //    this.showDate();
-        //    this.botUserLogin();
-        //}
+        if (this.botflg.loadFormlist === false) {   
+            this.botflg.startover = false;
+            this.ClearFormVariables();
+            this.botflg.otptype = "";//clear flags
+            this.botflg.uname_otp = "";
+            this.$renderAtBottom.empty();
+            this.curCtrl = null;
+            this.$renderAtBottom.hide();
+            $('.eb-chatBox').empty();
+            this.showDate();
+            this.botUserLogin();
+        }
 
     }.bind(this);
 

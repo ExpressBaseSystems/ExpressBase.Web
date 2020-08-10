@@ -1235,22 +1235,22 @@ var DashBoardWrapper = function (options) {
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
-            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
-            let height = $(`#${id}`).height();
-            let opts = {
-                parentDiv: '#' + id + '_UserCtrl',
-                refId: obj.RefId,
-                params: this.filtervalues,
-                height: height
-            }
-            new EbUserCtrlHelper(opts);
-            $(`[data-id="${id}"]`).parent().css("background", "transparent");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).empty();
-            $(`#${id}`).addClass("user-control-tile-opt");
-            $(`#${id} .i-opt-obj`).hide();
-            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+            //$(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
+            //let height = $(`#${id}`).height();
+            //let opts = {
+            //    parentDiv: '#' + id + '_UserCtrl',
+            //    refId: obj.RefId,
+            //    params: this.filtervalues,
+            //    height: height
+            //}
+            ////new EbUserCtrlHelper(opts);
+            //$(`[data-id="${id}"]`).parent().css("background", "transparent");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`#${id} .db-title`).empty();
+            //$(`#${id}`).addClass("user-control-tile-opt");
+            //$(`#${id} .i-opt-obj`).hide();
+            //$(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -1798,6 +1798,7 @@ var EbCommonDataTable = function (Option) {
             this.EbObject = dvGlobal.Current_obj;
             this.getColumnsSuccess();
         }
+        this.FDCont.css("left", "0");
     }.bind(this);
 
     this.GetFD = function () {
@@ -7758,19 +7759,19 @@ let DashBoardViewWrapper = function (options) {
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
-            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
-            let opts = {
-                parentDiv: '#' + id + '_UserCtrl',
-                refId: obj.RefId
-            }
-            new EbUserCtrlHelper(opts);
-            $(`[data-id="${id}"]`).parent().css("background", "transparent");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).empty();
-            $(`#${id}`).addClass("user-control-tile-opt");
-            $(`#${id} .i-opt-obj`).hide();
-            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+            //$(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
+            //let opts = {
+            //    parentDiv: '#' + id + '_UserCtrl',
+            //    refId: obj.RefId
+            //}
+            ////new EbUserCtrlHelper(opts);
+            //$(`[data-id="${id}"]`).parent().css("background", "transparent");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`#${id} .db-title`).empty();
+            //$(`#${id}`).addClass("user-control-tile-opt");
+            //$(`#${id} .i-opt-obj`).hide();
+            //$(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);
@@ -11466,6 +11467,7 @@ var mapView = function (option) {
         }
         $(subDivId).focus();
         this.PcFlag = false;
+        this.FDCont.css("right", "0");
     }.bind(this);
 
     this.FilterToggle = function () {

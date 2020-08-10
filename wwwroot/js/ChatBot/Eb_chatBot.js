@@ -52,6 +52,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.botflg = {};
     this.botflg.loadFormlist = false;
     this.botflg.singleBotApp = false;
+    this.botflg.startover = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
     this.formObject = {};// for passing to user defined functions
@@ -261,7 +262,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.showDate();
                     if (Object.keys(this.formsDict).length == 1) {
                         this.botflg.singleBotApp = true;
-                        this.getForm(Object.keys(this.formsDict)[0])
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
                     }
                     else {
                         this.AskWhatU();
@@ -306,7 +308,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             this.formIcons = result[3];
                             if (Object.keys(this.formsDict).length == 1) {
                                 this.botflg.singleBotApp = true;
-                                this.getForm(Object.keys(this.formsDict)[0])
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
                             }
                             else {
                                 this.AskWhatU();
@@ -659,7 +662,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             }
             text = res.slice(0, -5);
         }
-        if (ctrl.ObjType === "SimpleFileUploader") {
+        else if (ctrl.ObjType === "SimpleFileUploader") {
             let tempCtrl = $("#" + ctrl.EbSid).clone();
             tempCtrl.find('input[type="file"]').remove();
             tempCtrl.find('input[type="text"]').remove();
@@ -673,6 +676,10 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 tempCtrl.find('.SFUPcontainer').empty().append('<span>No file uploaded</span>');
             }
             text = tempCtrl[0].outerHTML;
+        }
+        else if (ctrl.ObjType === "Rating") {
+            let tempCtrl = $("#" + ctrl.EbSid).clone();
+            text = `<div style="display: inline-block;">${tempCtrl[0].outerHTML}</div>` ;
         }
         return text;
     };
@@ -1512,7 +1519,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         if (this.botflg.singleBotApp == false) {
             this.AskWhatU();
         }
-       
+
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 
@@ -1537,7 +1544,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.setStartOver = function () {
-        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="display:none" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };
@@ -1607,12 +1614,13 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.showDate();
                     if (Object.keys(this.formsDict).length == 1) {
                         this.botflg.singleBotApp = true;
-                        this.getForm(Object.keys(this.formsDict)[0])
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
                     }
                     else {
                         this.AskWhatU();
                     }
-                    
+
                     // this.ajaxSetup4Future();
                 }
 
@@ -1889,7 +1897,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -1919,7 +1928,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -2047,7 +2057,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.showDate();
                         if (Object.keys(this.formsDict).length == 1) {
                             this.botflg.singleBotApp = true;
-                            this.getForm(Object.keys(this.formsDict)[0])
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
                         }
                         else {
                             this.AskWhatU();
@@ -2169,24 +2180,24 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.botStartoverfn = function () {
 
-        //if (this.botflg.loadFormlist === false) {   
-            
-        //    this.ClearFormVariables();
-        //    this.botflg.otptype = "";//clear flags
-        //    this.botflg.uname_otp = "";
-        //    this.$renderAtBottom.empty();
-        //    this.curCtrl = null;
-        //    this.$renderAtBottom.hide();
-        //    $('.eb-chatBox').empty();
-        //    this.showDate();
-        //    this.botUserLogin();
-        //}
+        if (this.botflg.loadFormlist === false) {
+            this.botflg.startover = false;
+            this.ClearFormVariables();
+            this.botflg.otptype = "";//clear flags
+            this.botflg.uname_otp = "";
+            this.$renderAtBottom.empty();
+            this.curCtrl = null;
+            this.$renderAtBottom.hide();
+            $('.eb-chatBox').empty();
+            this.showDate();
+            this.botUserLogin();
+        }
 
     }.bind(this);
 
-    this.botUserLogin = function () {   
+    this.botUserLogin = function () {
         this.msgFromBot(this.welcomeMessage);
-       
+
         if (!settings.UserType_Internal) {
             if (settings.Authoptions.Fblogin) {
                 // This is called with the results from from FB.getLoginStatus().
@@ -2250,8 +2261,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             } else {
                 this.AnonymousLoginOptions();
             }
-        }       
-       
+        }
+
     }.bind(this);
 
 

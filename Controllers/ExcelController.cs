@@ -40,7 +40,7 @@ namespace ExpressBase.Web.Controllers
         }
 
         [HttpPost]
-        public async void UploadExcelAsync()  
+        public async void UploadExcelAsync()
         {
             InsertBatchDataResponse response = null;
             IFormFileCollection files = Request.Form.Files;
@@ -64,16 +64,34 @@ namespace ExpressBase.Web.Controllers
                     var startRow = hasHeader ? 2 : 1;
                     for (int rowNum = startRow; rowNum <= worksheet.Dimension.End.Row; rowNum++)
                     {
-                        int colIndex1 = 0;
                         var row = worksheet.Cells[rowNum, 1, rowNum, worksheet.Dimension.End.Column];
                         EbDataRow rr = tbl.NewDataRow2();
+                        int colIndex1 = 0;
                         foreach (var cell in row)
                         {
-                            rr[cell.Start.Column - 1] = cell.Text;
+                            if (tbl.Columns[colIndex1].Type == EbDbTypes.DateTime)
+                            {
+                                //string s = cell.Value.ToString();
+                                //long dateNum = long.Parse(s);
+                                DateTime dt = DateTime.FromOADate(Convert.ToDouble(cell.Value));
+                                rr[cell.Start.Column - 1] = dt.ToString("yyyy-MM-dd HH:mm:ss");
+                            }
+                            else if(tbl.Columns[colIndex1].Type == EbDbTypes.Boolean)
+                            {
+                                if (cell.Value.ToString() == "Yes")
+                                    cell.Value = 'T';
+                                else
+                                    cell.Value = "F";
+                                rr[cell.Start.Column - 1] = cell.Value.ToString();
+                            }
+                            else
+                                rr[cell.Start.Column - 1] = cell.Text;
+
+                            colIndex1++;
                         }
-                            
+
                         tbl.Rows.Add(rr);
-                        colIndex1++;
+                        //colIndex1++;
                     }
 
                     if (tbl.Columns.Contains(new EbDataColumn("eb_loc_id", EbDbTypes.Int32)))
@@ -88,7 +106,7 @@ namespace ExpressBase.Web.Controllers
             }
         }
 
-        public  FileStreamResult download(string refid)
+        public FileStreamResult download(string refid)
         {
             ExcelDownloadResponse response = this.ServiceClient.Get<ExcelDownloadResponse>(new ExcelDownloadRequest { _refid = refid });
             string _excelName = response.formName + ".xlsx";
@@ -101,7 +119,7 @@ namespace ExpressBase.Web.Controllers
                 {
                     var workSheet = excel.Workbook.Worksheets.Add("Worksheet Name");
                     int colIndex = 1;
-                    
+
                     foreach (ColumnsInfo _col in response.colsInfo)
                     {
                         workSheet.Cells[1, colIndex].Value = _col.Label;
@@ -129,31 +147,62 @@ namespace ExpressBase.Web.Controllers
                             IExcelDataValidationDateTime validate = workSheet.DataValidations.AddDateTimeValidation(range);
                             validate.ErrorStyle = ExcelDataValidationWarningStyle.stop;
                             validate.PromptTitle = "Enter valid date here";
-                            validate.Prompt = "YYYY-DD-MM format allowed";
+                            validate.Prompt = "YYYY-MM-DD format allowed";
                             validate.ShowInputMessage = true;
                             validate.ErrorTitle = "Invalid Date entered";
-                            validate.Error = "This cell must be a valid positive number.";
+                            validate.Error = "This cell must be a date in YYYY-MM-DD format";
                             validate.ShowErrorMessage = true;
                             validate.Operator = ExcelDataValidationOperator.greaterThanOrEqual;
-                            validate.Formula.Value = new DateTime(1800,01,01);
+                            validate.Formula.Value = new DateTime(1800, 01, 01);
                             workSheet.Column(colIndex).Style.Numberformat.Format = "YYYY-MM-DD";
                             validate.AllowBlank = true;
                         }
-                          
+
+                        else if (_col.DbType.ToString() == "DateTime")
+                        {
+                            IExcelDataValidationDateTime validate = workSheet.DataValidations.AddDateTimeValidation(range);
+                            validate.ErrorStyle = ExcelDataValidationWarningStyle.stop;
+                            validate.PromptTitle = "Enter valid Date Time";
+                            validate.Prompt = "yyyy-MM-dd HH:mm:ss";
+                            validate.ShowInputMessage = true;
+                            validate.ErrorTitle = "Invalid Date Time entered";
+                            validate.Error = "This cell must be a Date Time in yyyy-MM-dd HH:mm:ss format";
+                            validate.ShowErrorMessage = true;
+                            validate.Operator = ExcelDataValidationOperator.greaterThanOrEqual;
+                            validate.Formula.Value = new DateTime(1800, 01, 01);
+                            workSheet.Column(colIndex).Style.Numberformat.Format = "yyyy-MM-dd HH:mm:ss";
+                            validate.AllowBlank = true;
+                        }
+                        
+                        else if(_col.DbType.ToString() == "Boolean")
+                        {
+                            IExcelDataValidationList validate = workSheet.DataValidations.AddListValidation(range);
+                            validate.ErrorStyle = ExcelDataValidationWarningStyle.stop;
+                            validate.PromptTitle = "Enter Yes/No";
+                            validate.Prompt = "Yes/No";
+                            validate.ShowInputMessage = true;
+                            validate.ErrorTitle = "Invalid formate";
+                            validate.Error = "This cell must be in Yes/No format";
+                            validate.ShowErrorMessage = true;
+                            validate.Formula.Values.Add("Yes");
+                            validate.Formula.Values.Add("No");
+                            validate.AllowBlank = false;
+                            
+                        }
                         else { }
                         workSheet.Column(colIndex).AutoFit();
                         colIndex++;
                     }
-                    
+
                     excel.SaveAs(ms);
                 }
                 ms.Position = 0;
-                 fs = new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                fs = new FileStreamResult(ms, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
                 fs.FileDownloadName = _excelName;
             }
             return fs;
         }
-       
+
     }
 
     public class ExcelColumns

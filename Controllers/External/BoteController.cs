@@ -211,8 +211,8 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 					}
 
 				}
-
-				if (settings.CssContent==null || settings.CssContent.Count <9)
+				//////change count if any css Constant is added or removed
+				if (settings.CssContent==null || settings.CssContent.Count <11)
 				{
 					settings.CssContent = FetchCss(settings.CssContent);
 				}

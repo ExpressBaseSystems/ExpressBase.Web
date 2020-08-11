@@ -1325,7 +1325,7 @@ const EbPowerSelect = function (ctrl, options) {
         let formTopOffset = $form_div.offset().top;
         let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
 
-        let LEFT = $ctrl.offset().left;
+        let LEFT = $ctrl.offset().left - $('#' + this.name).closest("[eb-root-obj-container]").offset().left;
         let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
         let windowWidth = $(window).width();
         let windowHeight = $(window).height();

@@ -690,7 +690,7 @@ const EbPowerSelect = function (ctrl, options) {
         //o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
-        o.fninitComplete = this.DTinitComplete;
+        //o.fninitComplete = this.DTinitComplete;
         o.searchCallBack = this.searchCallBack;
         o.rowclick = this.DTrowclick;
         o.data = this.data;
@@ -1314,7 +1314,7 @@ const EbPowerSelect = function (ctrl, options) {
         let $ctrl = $('#' + this.name + 'Container');
         //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
         let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
-        let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+        let $form_div = $(document).find("[eb-root-obj-container]:first");
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 
         let ctrlContOffset = $ctrlCont.offset();
@@ -1325,7 +1325,7 @@ const EbPowerSelect = function (ctrl, options) {
         let formTopOffset = $form_div.offset().top;
         let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
 
-        let LEFT = $ctrl.offset().left - $('#' + this.name).closest("[eb-root-obj-container]").offset().left;
+        let LEFT = $ctrl.offset().left - $form_div.offset().left;
         let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
         let windowWidth = $(window).width();
         let windowHeight = $(window).height();
@@ -1369,7 +1369,7 @@ const EbPowerSelect = function (ctrl, options) {
             this.$DDdiv.hide();
         let $div_detach = this.$DDdiv.detach();
         $div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
-        let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+        let $form_div = $(document).find("[eb-root-obj-container]:first");
         $div_detach.appendTo($form_div);
         this.adjustDDposition();
         this.bindHideDDonScroll();

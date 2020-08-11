@@ -67,7 +67,8 @@ namespace ExpressBase.Web.Controllers
                 EbBotSettings settings = JsonConvert.DeserializeObject<EbBotSettings>(_objects.AppInfo.AppSettings);
                 if (settings != null)
                 {
-                    if (settings.CssContent == null || settings.CssContent.Count < 9)
+					//////change count if any css Constant is added or removed
+                    if (settings.CssContent == null || settings.CssContent.Count < 11)
                     {
 
                         settings.CssContent = CssContent(settings.CssContent);
@@ -93,7 +94,9 @@ namespace ExpressBase.Web.Controllers
             int i = 0;
             List<string> CssList = new List<string>();
             List<string> NameArr = new List<string>();
-            //if any changes change in bote too
+
+            //////if any changes change in bote too
+			
             foreach (var item in Cssconst)
             {
                 NameArr.Add(item.Key);
@@ -145,6 +148,10 @@ namespace ExpressBase.Web.Controllers
                 return BotConstants.BOT_IMAGE_CONT;
             if (cssConst.Equals("BOT_BUTTON_IMAGE"))
                 return BotConstants.BOT_BUTTON_IMAGE;
+            if (cssConst.Equals("BOT_CLOSE_BUTTON"))
+                return BotConstants.BOT_CLOSE_BUTTON;
+            if (cssConst.Equals("BOT_MAXIMIZE_BUTTON"))
+                return BotConstants.BOT_MAXIMIZE_BUTTON;
             else
                 return "";
         }

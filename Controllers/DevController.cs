@@ -788,42 +788,56 @@ namespace ExpressBase.Web.Controllers
         {
             ApiParams pr = JsonConvert.DeserializeObject<ApiParams>(param);
             ApiResponse resp = null;
-            if (component == null)
-            {
-                var watch = new System.Diagnostics.Stopwatch(); watch.Start();
-                Dictionary<string, object> d = pr.Default.Select(p => new { prop = p.Name, val = p.Value })
-                    .ToDictionary(x => x.prop, x => x.val as object);
 
-                foreach (Param p in pr.Custom)
+            try
+            {
+                if (component == null)
                 {
-                    d.Add(p.Name, p.ValueTo);
+                    List<Param> defaultParams = pr.Default.GroupBy(p => p.Name).Select(g => g.First()).ToList();
+
+                    var watch = new System.Diagnostics.Stopwatch(); watch.Start();
+
+                    Dictionary<string, object> d = defaultParams.Select(p => new { prop = p.Name, val = p.Value })
+                        .ToDictionary(x => x.prop, x => x.val as object);
+
+                    foreach (Param p in pr.Custom)
+                    {
+                        d.Add(p.Name, p.ValueTo);
+                    }
+                    resp = this.ServiceClient.Get(new ApiRequest
+                    {
+                        Name = name,
+                        Version = vers,
+                        Data = d
+                    });
+
+                    watch.Stop();
+                    resp.Name = name;
+                    resp.Version = vers;
+                    resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
+                    resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
                 }
-                resp = this.ServiceClient.Get(new ApiRequest
+                else
                 {
-                    Name = name,
-                    Version = vers,
-                    Data = d
-                });
-
-                watch.Stop();
-                resp.Name = name;
-                resp.Version = vers;
-                resp.Message.ExecutedOn = DateTime.UtcNow.ToString();
-                resp.Message.ExecutionTime = watch.ElapsedMilliseconds.ToString() + " ms";
-            }
-            else
-            {
-                resp = this.ServiceClient.Post(new ApiComponetRequest
+                    resp = this.ServiceClient.Post(new ApiComponetRequest
+                    {
+                        Component = EbSerializers.Json_Deserialize(component),
+                        Params = pr.Default
+                    });
+                }
+                if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
                 {
-                    Component = EbSerializers.Json_Deserialize(component),
-                    Params = pr.Default
-                });
+                    resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                }
             }
-            if (resp.Result != null && resp.Result.GetType() == typeof(ApiScript))
+            catch(Exception ex)
             {
-                resp.Result = JsonConvert.DeserializeObject<dynamic>((resp.Result as ApiScript).Data);
+                if(resp == null)
+                {
+                    resp = new ApiResponse();
+                }
+                resp.Message.Description = ex.Message;
             }
-
             return JsonConvert.SerializeObject(resp);
         }
 

@@ -228,7 +228,7 @@ namespace ExpressBase.Web.Controllers
                     UserName = username,
                     Password = (password + username).ToMD5Hash(),
                     Meta = new Dictionary<string, string> {
-                        { RoutingConstants.WC, RoutingConstants.MC },
+                        { RoutingConstants.WC, RoutingConstants.UC },
                         { TokenConstants.CID, this.SolutionId },
                         { TokenConstants.IP, this.RequestSourceIp},
                         { RoutingConstants.USER_AGENT, this.UserAgent}

@@ -11,6 +11,7 @@
         if (this.AppType === 3) {
             this.botConfigFn();
             this.BgImageUpload();
+            this.DpImageUpload();
         }
 
         $('#updateBotSettings, #updateBotAppearance').on('click', this.UpdateBotSettingsFn.bind(this));
@@ -224,6 +225,7 @@
         let cssobj = this.AppSettings.CssContent;
         $('#useEbtag').attr('checked', this.AppSettings.BotProp.EbTag);
         $('#headerIcon').attr('checked', this.AppSettings.BotProp.HeaderIcon);
+        $('#Use_Sol_logo').attr('checked', this.AppSettings.BotProp.Use_Sol_logo);
         $('#headerSubtxt').attr('checked', this.AppSettings.BotProp.HeaderSubtxt);
         $('#email_anony').attr('checked', this.AppSettings.Authoptions.EmailAuth);
         $('#name_anony').attr('checked', this.AppSettings.Authoptions.UserName);
@@ -232,6 +234,13 @@
         $('#fbAppidtxt').val(this.AppSettings.Authoptions.FbAppID);
         $('#fbAppversn').val(this.AppSettings.Authoptions.FbAppVer);
         $('#ebfont_size').val(this.AppSettings.BotProp.AppFontSize);
+        if (/^\d+$/.test(this.AppSettings.DpUrl)) {
+            $('#bot_dp_url').attr("dpRefid", this.AppSettings.DpUrl);
+
+            $('#bot_dp_url').val(`../images/${this.AppSettings.DpUrl}.png`);
+            let k = ` <div class="demodpdiv" style=" background:url('/images/${this.AppSettings.DpUrl}.png')center center no-repeat" "></div>`;
+            $("#dp_modal").append(k);
+        }
 
         if (this.AppSettings.BotProp.Bg_value) {
             if (this.AppSettings.BotProp.Bg_type === 'bg_grdnt') {
@@ -284,7 +293,7 @@
             $('#internalLoginCont').hide();
             $('#anonymousLoginCont').show();
             $('#internalUsers').prop('checked', false);
-            $('#publicUsers').prop('checked', true);           
+            $('#publicUsers').prop('checked', true);
         }
         else if (this.AppSettings.UserType_Internal === true) {
             $('#anonymousLoginCont').hide();
@@ -298,9 +307,9 @@
         }
         else
             if (this.AppSettings.Authoptions.OTP_based) {
-            $('#pswrd_based').prop('checked', false);
-            $('#otp_based').prop('checked', true);           
-        }
+                $('#pswrd_based').prop('checked', false);
+                $('#otp_based').prop('checked', true);
+            }
         for (let property in cssobj) {
 
             let html = "";
@@ -351,13 +360,14 @@
         authOptions.FbAppID = $('#fbAppidtxt').val().trim();
         authOptions.FbAppVer = $('#fbAppversn').val().trim();
         authOptions.LoginOpnCount = loginCnt;
-       
+
         authOptions.OTP_based = $('#otp_based').is(":checked");
         authOptions.Password_based = $('#pswrd_based').is(":checked");
 
         botProperties.EbTag = $('#useEbtag').is(":checked");
         botProperties.HeaderIcon = $('#headerIcon').is(":checked");
         botProperties.HeaderSubtxt = $('#headerSubtxt').is(":checked");
+        botProperties.Use_Sol_logo = $('#Use_Sol_logo').is(":checked");
         botProperties.AppFontSize = $('#ebfont_size').val();
         botProperties.AppFont = $('#ebfont_lst :selected').val();
         bgtyp = $('input[name="bgradio"]:checked').val();
@@ -387,7 +397,7 @@
         appSettings["Description"] = this.AppInfo.Description;
         appSettings["WelcomeMessage"] = $("#bot_wc_msg").val();
         appSettings["ThemeColor"] = $("#bot_tm_color").val();
-        appSettings["DpUrl"] = $("#bot_dp_url").val();
+        appSettings["DpUrl"] = $('#bot_dp_url').attr("dpRefid") ? $('#bot_dp_url').attr("dpRefid"):$("#bot_dp_url").val();
         appSettings["CssContent"] = cssConstObj;
         appSettings["Authoptions"] = authOptions;
         appSettings["BotProp"] = botProperties;
@@ -396,9 +406,9 @@
             appSettings["UserType_Internal"] = false;
         }
         else if (radio_id === 'internalUsers') {
-             appSettings["UserType_Internal"] = true;
+            appSettings["UserType_Internal"] = true;
         }
-       
+
         $("#eb_common_loader").EbLoader("show");
         $.ajax({
             type: "POST",
@@ -456,6 +466,32 @@
                 $('#' + cssConst + '_txt').val(data);
             }
         });
+    };
+    this.DpImageUpload = function () {
+
+        var dpImg = new EbFileUpload({
+            Type: "image",
+            Toggle: "#dpBrowse",
+            TenantId: "ViewBagcid",
+            SolutionId: this.Sid,
+            Container: "container",
+            MaxSize: 1,
+            Multiple: false,
+            ServerEventUrl: 'https://se.eb-test.xyz',
+            EnableTag: false,
+            //EnableCrop: true,
+            ResizeViewPort: false //if single and crop
+        });
+
+        dpImg.uploadSuccess = function (fileid) {
+            if (fileid > 0) {
+                let k = ` <div class="demodpdiv" style=" background:url('../images/demobotdp6.png')center center no-repeat" "></div>`;
+
+                $('#bot_dp_url').val(`../images/${fileid}.png`);
+                $('#bot_dp_url').attr("dpRefid",fileid)
+            }
+
+        };
     };
 
     this.BgImageUpload = function () {

@@ -76,6 +76,7 @@
     };
 
     this.AppendFD = function (result) {
+        $(".form-group #filter-dg").remove();
         $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
                                     <i class="fa fa-filter" aria-expanded="false"></i>
                                 </button>`);
@@ -119,7 +120,7 @@
     };
 
     this.toggleFilter = function () {
-        $(".db-user-filter").toggle(300);
+        $(".db-user-filter").toggle('drop', { direction: 'right' }, 150);
     }
     this.CloseParamDiv = function () {
         $(".db-user-filter").hide(300);
@@ -196,6 +197,7 @@
         //
         if (this.EbObject.Filter_Dialogue === null || this.EbObject.Filter_Dialogue === undefined || this.EbObject.Filter_Dialogue === "" && this.EbObject.Tiles.$values.length !== 0) {
             $('.db-user-filter').remove();
+            $(".form-group #filter-dg").remove();
             //if (this.stickBtn) { this.stickBtn.$stickBtn.remove(); }
             grid.removeAll();
             this.DrawTiles();
@@ -624,19 +626,19 @@
             $(`#${id}`).addClass("box-shadow-style");
         }
         else if (obj.$type.indexOf("EbUserControl") >= 0) {
-            $(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
-            let opts = {
-                parentDiv: '#' + id + '_UserCtrl',
-                refId: obj.RefId
-            }
-            new EbUserCtrlHelper(opts);
-            $(`[data-id="${id}"]`).parent().css("background", "transparent");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`[data-id="${id}"]`).parent().css("border", "0px solid");
-            $(`#${id} .db-title`).empty();
-            $(`#${id}`).addClass("user-control-tile-opt");
-            $(`#${id} .i-opt-obj`).hide();
-            $(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
+            //$(`[data-id="${id}"]`).append(`<div id="${id}_UserCtrl" class="Db-user-ctrl"></div>`);
+            //let opts = {
+            //    parentDiv: '#' + id + '_UserCtrl',
+            //    refId: obj.RefId
+            //}
+            ////new EbUserCtrlHelper(opts);
+            //$(`[data-id="${id}"]`).parent().css("background", "transparent");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`[data-id="${id}"]`).parent().css("border", "0px solid");
+            //$(`#${id} .db-title`).empty();
+            //$(`#${id}`).addClass("user-control-tile-opt");
+            //$(`#${id} .i-opt-obj`).hide();
+            //$(`#${id} .i-opt-restart`).css({ "border": "solid 0px #dcdcdc" });
         }
         else if (obj.$type.indexOf("EbGoogleMap") >= 0) {
             $(`[data-id="${id}"]`).append(`<div id="canvasDivtb1${id}" class="CanvasDiv"></div>`);

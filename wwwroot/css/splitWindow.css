@@ -349,8 +349,9 @@
 
 .filterCont {
     padding-bottom: 5px;
-    left: 0;
-    width: 300px;
+    /*left: 0;*/
+    width: 350px;
+    border-left: solid 1px #d2d2d2;
     position: fixed;
     height: calc(100% - 38px);
     overflow-y: auto;

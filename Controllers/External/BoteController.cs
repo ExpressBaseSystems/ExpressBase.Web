@@ -131,8 +131,10 @@ namespace ExpressBase.Web.Controllers
 					}
 					
 				}
+				////when pushcontent is updated update in bots.cshtml also as d.
 				PushContent = string.Format(@"
                     window.EXPRESSbase_SOLUTION_ID = '{0}';
+                    window.EXPRESSbase_cid = '{9}';
                     window.EXPRESSbase_APP_ID = {1};
                     d.ebbotName = '{2}' || '< EBbot >';
                     d.ebbotThemeColor = '{3}' || '#055c9b';
@@ -140,7 +142,7 @@ namespace ExpressBase.Web.Controllers
                     d.botWelcomeMsg = '{5}' || 'Hi, I am EBbot from EXPRESSbase!!';					
 					d.ebmod='{6}';
 					d.botsubtext='{7}';
-d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env, settings.Description,(JSON.stringify( settings.BotProp)) );
+d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl, settings.WelcomeMessage, env, settings.Description,(JSON.stringify( settings.BotProp)),cid );
 
 
 			}
@@ -682,7 +684,7 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 		}
 
 		[HttpGet("Bots")]
-		public IActionResult Bots(string bt)
+		public IActionResult Bots(string bt,string s)
 		{
 			//var host = this.HttpContext.Request.Host;
 			//string[] hostParts = host.Host.Split(CharConstants.DOT);
@@ -692,9 +694,19 @@ d.botProp={8}", solid, appid, settings.Name, settings.ThemeColor, settings.DpUrl
 			//}
 			if (ViewBag.WhichConsole == "uc")
 			{
+				if (String.Equals(s, "true"))
+				{
+					bt = bt.Split('-')[0];
+					ViewBag.singlebot = true;					
+				}
+				else
+				{
+					ViewBag.singlebot = false;
+				}
 				this.ServiceClient.Headers.Add("SolId", ViewBag.SolutionId);
 				GetBotsResponse BotsObj = this.ServiceClient.Get<GetBotsResponse>(new GetBotsRequest { Id_lst = bt });
 				ViewBag.BotDetails = EbSerializers.Json_Serialize(BotsObj.BotList);
+
 				return View();
 			}
 			else

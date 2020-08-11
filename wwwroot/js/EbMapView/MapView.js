@@ -197,6 +197,19 @@ var mapView = function (option) {
             if (this.propGrid === null) {
                 this.CreatePg();
             }
+            else {
+                $(".form-group #ppt-grid").remove();
+                $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
+                $(".stickBtn").hide();
+                this.PropertyDiv = $("#pp_inner");
+                $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+                $("#pp_inner .pull-right.pgpin").remove();
+                $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+                $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
+            }
             this.InitParamWindow();
             if (this.Mode === BuilderMode.EDIT)
                 this.call2FD();
@@ -216,6 +229,10 @@ var mapView = function (option) {
         };
 
         this.CreatePg = function () {
+            $(".form-group #ppt-grid").remove();
+            $(".form-group").prepend(`<button class="btn filter_menu" id="ppt-grid">
+                                    <i class="fa fa-cog" aria-expanded="false"></i>
+                                </button>`);
             this.propGrid = new Eb_PropertyGrid({
                 id: "pp_inner",
                 wc: "dc",
@@ -225,8 +242,17 @@ var mapView = function (option) {
             this.propGrid.PropertyChanged = this.tmpPropertyChanged;
             commonO.Current_obj = this.EbObject;
             this.MapSwitch(this.EbObject, this.CurrentMapType);
+            $(".stickBtn").hide();
+            this.PropertyDiv = $("#pp_inner");
+            $("#ppt-grid").off("click").on("click", this.togglePG.bind(this));
+            $("#pp_inner .pull-right.pgpin").remove();
+            $("#pp_inner .pgHead").append(`<div class="icon-cont  pull-right" id="${this.tabNum}_pg-close">
+                <i class="fa fa-thumb-tack" style="transform: rotate(90deg);"></i></div>`);
+            $(`#${this.tabNum}_pg-close`).off("click").on("click", this.togglePG.bind(this));
         };
-
+        this.togglePG = function () {
+            this.PropertyDiv.toggle('drop', { direction: 'right' }, 150);
+        };
         this.MapSwitch = function (obj, newVal) {
             if (this.CurrentMapType == 0) {
                 this.TempEbObject.Maptype = 0;
@@ -254,16 +280,22 @@ var mapView = function (option) {
             this.FDCont.hide();
 
             if (this.login === "dc") {
-                this.stickBtn = new EbStickButton({
-                    $wraper: this.FDCont,
-                    $extCont: this.FDCont,
-                    //$scope: $(subDivId),
-                    icon: "fa-filter",
-                    dir: "left",
-                    label: "Parameters",
-                    //btnTop: 42,
-                    style: { top: "112px" }
-                });
+                $(".form-group #filter-dg").remove();
+                $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+                this.FilterBtn = $("#filter-dg");
+                this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
+                //this.stickBtn = new EbStickButton({
+                //    $wraper: this.FDCont,
+                //    $extCont: this.FDCont,
+                //    //$scope: $(subDivId),
+                //    icon: "fa-filter",
+                //    dir: "left",
+                //    label: "Parameters",
+                //    //btnTop: 42,
+                //    style: { top: "112px" }
+                //});
             }
         };
 
@@ -339,16 +371,22 @@ var mapView = function (option) {
 
         this.FilterDialog = (typeof (FilterDialog) !== "undefined") ? FilterDialog : {};
         if (this.login === "uc") {
-            this.stickBtn = new EbStickButton({
-                $wraper: $(".dv-body"),
-                $extCont: this.FDCont,
-                $scope: $("#" + focusedId),
-                icon: "fa-filter",
-                dir: "left",
-                label: "Parameters",
-                //btnTop: 42,
-                style: { position: "absolute", top: "41px" }
-            });
+            $(".form-group #filter-dg").remove();
+            $(".form-group").prepend(`<button class="btn filter_menu" id="filter-dg">
+                                    <i class="fa fa-filter" aria-expanded="false"></i>
+                                </button>`);
+            this.FilterBtn = $("#filter-dg");
+            this.FilterBtn.off("click").on("click", this.FilterToggle.bind(this));
+            //this.stickBtn = new EbStickButton({
+            //    $wraper: $(".dv-body"),
+            //    $extCont: this.FDCont,
+            //    $scope: $("#" + focusedId),
+            //    icon: "fa-filter",
+            //    dir: "left",
+            //    label: "Parameters",
+            //    //btnTop: 42,
+            //    style: { position: "absolute", top: "41px" }
+            //});
         }
 
         if (typeof commonO !== "undefined")
@@ -360,10 +398,12 @@ var mapView = function (option) {
             this.FD = false;
             this.FDCont.hide();
             if (this.login === "dc") {
-                this.stickBtn.hide();
+                //this.stickBtn.hide();
+                this.FilterBtn.hide();
             }
             else {
-                dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                //dvcontainerObj.dvcol[focusedId].stickBtn.hide();
+                this.FilterBtn.hide();
             }
             $("#btnGo" + this.tabNum).trigger("click");
             $("#eb_common_loader").EbLoader("hide");
@@ -382,10 +422,15 @@ var mapView = function (option) {
         }
         $(subDivId).focus();
         this.PcFlag = false;
+        this.FDCont.css("right", "0");
     }.bind(this);
 
+    this.FilterToggle = function () {
+        $(".filterCont").toggle('drop', { direction: 'right' }, 150);
+    };
     this.CloseParamDiv = function () {
-        this.stickBtn.minimise();
+        //this.stickBtn.minimise();
+        this.FilterToggle();
     };
 
     this.Getdata = function () {
@@ -397,11 +442,16 @@ var mapView = function (option) {
         if (this.login === "uc") {
             this.collapseGraph();
         }
-        this.propGrid.ClosePG();
-        if (this.FD)
-            this.stickBtn.minimise();
-        else
-            this.stickBtn.hide();
+        //this.propGrid.ClosePG();
+        this.PropertyDiv.hide();
+        if (this.FD) {
+            this.FilterToggle();
+            //this.stickBtn.minimise();
+        }
+        else {
+            this.FilterBtn.hide();
+            //this.stickBtn.hide();
+        }
 
         filterChanged = false;
         if (this.MainData !== null && !this.isSecondTime) {

@@ -657,6 +657,7 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.initDataTable = function () {
+        this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         let o = {};
         o.containerId = this.containerId;
         o.dsid = this.dsid;
@@ -664,7 +665,6 @@ const EbPowerSelect = function (ctrl, options) {
         o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -674,13 +674,14 @@ const EbPowerSelect = function (ctrl, options) {
         o.headerDisplay = (this.ComboObj.Columns.$values.filter((obj) => obj.bVisible === true && obj.name !== "id").length === 1) ? false : true;// (this.ComboObj.Columns.$values.length > 2) ? true : false;
         o.dom = "rti<p>";
         o.IsPaging = true;
+        o.nextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
+        o.previousHTML = '<i class="fa fa-chevron-left" aria-hidden="true"></i>';
         o.pageLength = this.ComboObj.DropDownItemLimit;
         o.source = "powerselect";
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
-        o.NextHTML = '<i class="fa fa-chevron-right" aria-hidden="true"></i>';
-        o.PreviousHTML = '<i class="fa fa-chevron-left" aria-hidden="true"></i>';
+        o.scrollHeight = this.scrollHeight;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -689,14 +690,21 @@ const EbPowerSelect = function (ctrl, options) {
         //o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
+        o.fninitComplete = this.DTinitComplete;
         o.searchCallBack = this.searchCallBack;
         o.rowclick = this.DTrowclick;
         o.data = this.data;
+        //$(document).on('preInit.dt', this.preInit);// should off in preInit after max-height set
         this.datatable = new EbBasicDataTable(o);
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
         this.focus1stRow();
     };
+
+    //this.preInit = function (e, settings) {
+    //    $(`#${this.name}tbl_wrapper > div.dataTables_scroll > div.dataTables_scrollBody`).css("max-height", this.scrollHeight);
+    //    $(document).off('preInit.dt');
+    //}.bind(this);
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
@@ -1304,7 +1312,8 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');
-        let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+        //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+        let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
         let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 

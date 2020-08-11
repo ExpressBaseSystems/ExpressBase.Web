@@ -51,6 +51,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.botQueue = [];
     this.botflg = {};
     this.botflg.loadFormlist = false;
+    this.botflg.singleBotApp = false;
+    this.botflg.startover = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
     this.formObject = {};// for passing to user defined functions
@@ -258,7 +260,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.formIcons = result.botFormIcons;
                     $('.eb-chatBox').empty();
                     this.showDate();
-                    this.AskWhatU();
+                    if (Object.keys(this.formsDict).length == 1) {
+                        this.botflg.singleBotApp = true;
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
+                    }
+                    else {
+                        this.AskWhatU();
+                    }
                     // this.ajaxSetup4Future();
 
                 }
@@ -297,7 +306,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             window.ebcontext.user = JSON.parse(result[1]);
                             this.formNames = Object.values(result[2]);
                             this.formIcons = result[3];
-                            this.AskWhatU();
+                            if (Object.keys(this.formsDict).length == 1) {
+                                this.botflg.singleBotApp = true;
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
+                            }
+                            else {
+                                this.AskWhatU();
+                            }
                         }
                         else {
                             this.msgFromBot("Premission is not set for current user");
@@ -646,7 +662,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             }
             text = res.slice(0, -5);
         }
-        if (ctrl.ObjType === "SimpleFileUploader") {
+        else if (ctrl.ObjType === "SimpleFileUploader") {
             let tempCtrl = $("#" + ctrl.EbSid).clone();
             tempCtrl.find('input[type="file"]').remove();
             tempCtrl.find('input[type="text"]').remove();
@@ -660,6 +676,10 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 tempCtrl.find('.SFUPcontainer').empty().append('<span>No file uploaded</span>');
             }
             text = tempCtrl[0].outerHTML;
+        }
+        else if (ctrl.ObjType === "Rating") {
+            let tempCtrl = $("#" + ctrl.EbSid).clone();
+            text = `<div style="display: inline-block;">${tempCtrl[0].outerHTML}</div>` ;
         }
         return text;
     };
@@ -1414,7 +1434,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.ClearFormVariables();
         $('.eb-chatBox').empty();
         this.showDate();
-        this.AskWhatU();
+        if (this.botflg.singleBotApp == true) {
+            this.getForm(Object.keys(this.formsDict)[0])
+        }
+        else {
+            this.AskWhatU();
+        }
     }.bind(this);
 
     this.showConfirm = function () {
@@ -1491,7 +1516,10 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $('.eb-chatBox').empty();
         this.showDate();
         this.msgFromBot(msg);
-        this.AskWhatU();
+        if (this.botflg.singleBotApp == false) {
+            this.AskWhatU();
+        }
+
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 
@@ -1516,7 +1544,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.setStartOver = function () {
-        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" title="Start Over"> <button type="button" id="eb_botStartover" class="btn btn-default btn-sm">
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="display:none" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };
@@ -1584,7 +1612,15 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.formIcons = result.botFormIcons;
                     $('.eb-chatBox').empty();
                     this.showDate();
-                    this.AskWhatU();
+                    if (Object.keys(this.formsDict).length == 1) {
+                        this.botflg.singleBotApp = true;
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
+                    }
+                    else {
+                        this.AskWhatU();
+                    }
+
                     // this.ajaxSetup4Future();
                 }
 
@@ -1859,7 +1895,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
 
                 }.bind(this)
@@ -1883,7 +1926,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
                     else {
                         $("[for=otpvalidate]").remove();
@@ -2005,7 +2055,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
 
                 }
@@ -2122,7 +2179,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
 
     this.botStartoverfn = function () {
+
         if (this.botflg.loadFormlist === false) {
+            this.botflg.startover = false;
             this.ClearFormVariables();
             this.botflg.otptype = "";//clear flags
             this.botflg.uname_otp = "";
@@ -2138,6 +2197,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.botUserLogin = function () {
         this.msgFromBot(this.welcomeMessage);
+
         if (!settings.UserType_Internal) {
             if (settings.Authoptions.Fblogin) {
                 // This is called with the results from from FB.getLoginStatus().

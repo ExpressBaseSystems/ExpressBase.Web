@@ -316,8 +316,8 @@
                 <div class="form-group">
                     <label class="col-sm-3">Logo</label>
                     <div class="col-sm-3">
-                        <input type="hidden" value="" name="Logo" />
-                        <button key="Logo" id="Logo_toggle_btn" class="btn btn-default disablebtn" disabled>Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
+                        <input type="hidden" value="" id="loc_logoId"name="Logo" />
+                        <button key="Logo" id="Logo_toggle_btn" class="btn btn-default disablebtn">Choose file <i class="fa fa-cloud-upload" aria-hidden="true"></i></button>
                     </div>
                     <div class="col-md-6 logo_img_cont">
                         <img src="" class="img-responsive pull-right" id="Logo_prev" />
@@ -354,6 +354,10 @@
         display: flex;
         margin-bottom: 2px;
         justify-content: space-between;
+    }
+
+    div.dataTables_wrapper tr.selected {
+       background-color: #0083c5 !important;
     }
 
     .display-none {

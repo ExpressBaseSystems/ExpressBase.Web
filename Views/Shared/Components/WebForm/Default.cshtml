@@ -242,6 +242,61 @@
         padding: 0 15px 15px 15px;
         display: inline-block;
     }
+
+    /*DataGridNew related styles - Beginning*/
+    [ctype="DataGrid_New"] .ctrlstd_dg {
+        min-height: 36px;
+        display: inline-flex;
+    }
+
+    [ctype="DataGrid_New"] [mode="view"] .edit-rowc, [ctype="DataGrid_New"] [mode="view"] .del-rowc {
+        background: transparent;
+        border: none;
+        color: gray;
+        pointer-events: none;
+    }
+
+    [ctype="DataGrid_New"] [mode="edit"] .edit-rowc {
+        background: transparent;
+        border: none;
+        color: #7171ff;
+    }
+        [ctype="DataGrid_New"] [mode="edit"] .edit-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #adadef !important;
+        }
+
+    [ctype="DataGrid_New"] [mode="edit"] .del-rowc {
+        background: transparent;
+        border: none;
+        color: #f55d5d;
+    }
+        [ctype="DataGrid_New"] [mode="edit"] .del-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
+        }
+
+    [ctype="DataGrid_New"] .check-rowc {
+        background: transparent;
+        border: none;
+        color: #019a01;
+    }
+        [ctype="DataGrid_New"] .check-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #87c987 !important;
+        }
+
+    [ctype="DataGrid_New"] .cancel-rowc {
+        background: transparent;
+        border: none;
+        color: #f55d5d;
+    }
+        [ctype="DataGrid_New"] .cancel-rowc:hover {
+            box-shadow: inset 0 0 2.5px 1px #fdd2d2 !important;
+        }
+
+    [ctype="DataGrid_New"] table.dataTable{
+        margin-top: 0px !important;
+    }
+
+    /*DataGridNew related styles - End*/
 </style>
 
 <div id='WebForm-cont' class="webform-cont">

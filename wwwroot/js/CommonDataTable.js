@@ -256,6 +256,7 @@
             this.EbObject = dvGlobal.Current_obj;
             this.getColumnsSuccess();
         }
+        this.FDCont.css("left", "0");
     }.bind(this);
 
     this.GetFD = function () {
@@ -616,13 +617,21 @@
 
         this.Api.off('select').on('select', this.selectCallbackFunc.bind(this));
 
+        this.Api.off('key-focus').on('key-focus', this.DTKeyFocusCallback.bind(this));
+
+        $('#' + this.tableId + ' tbody').off('dblclick').on('dblclick', 'tr', this.dblclickCallbackFunc.bind(this));
+
         jQuery.fn.dataTable.Api.register('sum()', function () {
             return this.flatten().reduce(function (a, b) {
                 if (typeof a === 'string') {
                     a = a.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(a))
+                        a = 0;
                 }
                 if (typeof b === 'string') {
                     b = b.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(b))
+                        b = 0;
                 }
 
                 return a + b;
@@ -634,9 +643,13 @@
             var sum = data.reduce(function (a, b) {
                 if (typeof a === 'string') {
                     a = a.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(a))
+                        a = 0;
                 }
                 if (typeof b === 'string') {
                     b = b.replace(/[^\d.-]/g, '') * 1;
+                    if (isNaN(b))
+                        b = 0;
                 }
 
                 return (a * 1) + (b * 1); // cast values in-case they are strings
@@ -1381,7 +1394,7 @@
             }
             this.isSecondTime = true;
 
-            if (this.Source !== "EbDataTable") {
+            if (this.Source !== "EbDataTable" && this.Source !== "datagrid") {
                 $('#' + this.tableId + '_wrapper .dataTables_scrollFoot').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_LeftFootWrapper').hide();
                 $('#' + this.tableId + '_wrapper .DTFC_RightFootWrapper').hide();
@@ -1844,10 +1857,17 @@
     this.selectCallbackFunc = function (e, dt, type, indexes) {
     };
 
+    this.DTKeyFocusCallback = function (e, datatable, cell, originalEvent) {
+        if (Option.keyFocusCallbackFn)
+            Option.keyFocusCallbackFn(e, datatable, cell, originalEvent);
+    };
+
     this.clickCallbackFunc = function (e) {
     };
 
     this.dblclickCallbackFunc = function (e) {
+        if (Option.fnDblclickCallback)
+            Option.fnDblclickCallback(e);
     };
 
     this.rowclick = function (e, dt, type, indexes) {
@@ -2378,7 +2398,7 @@
 
                 _ls = "<div class='input-group input-group-sm'>" +
                     "<div class='input-group-btn dropup'>" +
-                    "<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
+                    "<button type='button' class='btn btn-default dropdown-toggle footerDD' data-toggle='dropdown' id='" + footer_select_id + "'>&sum;</button>" +
                     " <ul class='dropdown-menu'>" +
                     "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' data-sum='Sum' " + data_table + " " + data_colum + " " + data_decip + "> &sum; </a><span class='footertext eb_ftsel" + this.tableId + "'>Sum</span></li>" +
                     "  <li class='footerli'><a href ='#' class='eb_ftsel" + this.tableId + "' " + data_table + " " + data_colum + " " + data_decip + " {4}> x&#772; </a><span class='footertext eb_ftsel" + this.tableId + "'>Average</span></li>" +
@@ -2395,38 +2415,49 @@
     };
 
     this.summarize2 = function () {
-        var api = this.Api;
-        var tableId = this.tableId;
-        var scrollY = this.EbObject.scrollY;
-        var opScroll;
-        var ftrtxtScroll;
-        $.each(this.eb_agginfo, function (index, agginfo) {
-            if (agginfo.colname) {
-                opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+        let isUpdatable = true;
+        if (Option.fnCanUpdateFooter)
+            isUpdatable = Option.fnCanUpdateFooter();
+        if (isUpdatable) {
+            var api = this.Api;
+            var tableId = this.tableId;
+            var scrollY = this.EbObject.scrollY;
+            var opScroll;
+            var ftrtxtScroll;
+            $.each(this.eb_agginfo, function (index, agginfo) {
+                if (agginfo.colname) {
+                    opScroll = $('.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                    ftrtxtScroll = '.dataTables_scrollFootInner #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    opLF = $('.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                    ftrtxtLF = '.DTFC_LeftFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
-                ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
+                    opRF = $('.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_sel0').text().trim();
+                    ftrtxtRF = '.DTFC_RightFootWrapper #' + tableId + '_' + agginfo.colname + '_ftr_txt0';
 
-                var col = api.column(agginfo.colname + ':name');
-                var summary_val = 0;
-
-                if (opScroll === '∑' || opLF === '∑' || opRF === '∑')
-                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
-                if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
-                    summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                    var col = api.column(agginfo.colname + ':name');
+                    var summary_val = 0;
+                    if (opScroll === '∑' || opLF === '∑' || opRF === '∑') {
+                        if (this.Source === "datagrid")
+                            summary_val = col.data().sum().toFixed(agginfo.deci_val);
+                        else
+                            summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+                    }
+                    if (opScroll === 'x̄' || opLF === 'x̄' || opRF === 'x̄') {
+                        if (this.Source === "datagrid")
+                            summary_val = col.data().average().toFixed(agginfo.deci_val);
+                        else
+                            summary_val = (typeof this.summary[agginfo.data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+                    }
+                    if (opScroll !== "")
+                        $(ftrtxtScroll).val(summary_val);
+                    if (opLF !== "")
+                        $(ftrtxtLF).val(summary_val);
+                    if (opRF !== "")
+                        $(ftrtxtRF).val(summary_val);
                 }
-                if (opScroll !== "")
-                    $(ftrtxtScroll).val(summary_val);
-                if (opLF !== "")
-                    $(ftrtxtLF).val(summary_val);
-                if (opRF !== "")
-                    $(ftrtxtRF).val(summary_val);
-            }
-        }.bind(this));
+            }.bind(this));
+        }
     };
 
     this.createFilterRowHeader = function () {
@@ -3983,20 +4014,28 @@
         $(element).parents('.input-group-btn').find('.dropdown-toggle').html(selValue);
         var table = $(element).attr('data-table');
         var colum = $(element).attr('data-column');
-        var decip = $(element).attr('data-decip');
+        var decip =parseInt( $(element).attr('data-decip'));
         var col = this.Api.column(colum + ':name');
         var ftrtxt;
-        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; });
+        var agginfo = $.grep(this.eb_agginfo, function (obj) { return obj.colname === colum; })[0];
         ftrtxt = '.dataTables_scrollFootInner #' + this.tableId + '_' + colum + '_ftr_txt0';
         if ($(ftrtxt).length === 0)
             ftrtxt = '.DTFC_LeftFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
         if ($(ftrtxt).length === 0)
             ftrtxt = '.DTFC_RightFootWrapper #' + this.tableId + '_' + colum + '_ftr_txt0';
 
-        if (selValue === '∑')
-            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][0] : 0;
-        else if (selValue === 'x̄')
-            pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo[0].data][1] : 0;
+        if (selValue === '∑') {
+            if (this.Source === "datagrid")
+                pageTotal = col.data().sum().toFixed(agginfo.deci_val);
+            else
+                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][0] : 0;
+        }
+        else if (selValue === 'x̄') {
+            if (this.Source === "datagrid")
+                pageTotal = col.data().average().toFixed(agginfo.deci_val);
+            else
+                pageTotal = (typeof this.summary[agginfo[0].data] !== "undefined") ? this.summary[agginfo.data][1] : 0;
+        }
 
         $(ftrtxt).val(pageTotal);
         e.preventDefault();

@@ -1335,7 +1335,13 @@
                 ratedFill: ctrl.RatingColor
             });
             if (ctrl.RemoveBorder == true) {
-                $(`[ebsid=${ctrl.EbSid}]`).find('#' + ctrl.EbSid + 'Wraper').css({ 'border': 'none' });
+                if (this.Renderer.rendererName === "Bot") {
+                    $(`#cont_${ctrl.EbSid}`).css({ 'border': 'none' });
+                }
+                else {
+                    $(`#${ctrl.EbSid}Wraper`).css({ 'border': 'none' });
+                }
+                
             }
         }
 
@@ -1605,7 +1611,11 @@
     };
 
     ////phonecontrol ends 
-
+    //this.PdfControl = function (ctrl) {
+    //    let k = ctrl;
+    //    let m = `<iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
+    //    $("#" + ctrl.EbSid).append(m);
+    //}
 };
 
 

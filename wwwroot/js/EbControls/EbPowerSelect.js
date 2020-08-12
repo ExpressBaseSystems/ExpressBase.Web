@@ -776,7 +776,8 @@ const EbPowerSelect = function (ctrl, options) {
         //let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
         //let rowindex = this.datatable.Api.page.info().start + $tr.index();
-        let rowdata = this.datatable.Api.row($tr).data();
+        //let rowdata = this.datatable.Api.row($tr).data();
+        let rowdata = this.unformattedData[$tr.index()];
         let vmValue = rowdata[idx];
         this.$curEventTarget = $tr;
         this.SelectRow(idx, vmValue);
@@ -852,7 +853,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setDmValues = function (i, name) {
-        let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
+        //let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
+        let cellData = this.unformattedData[this.$curEventTarget.closest("tr").index()][getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];;
         if (this.maxLimit === 1)
             this.localDMS[name].shift();
         this.localDMS[name].push(cellData);
@@ -862,7 +864,8 @@ const EbPowerSelect = function (ctrl, options) {
         if (!this.ComboObj.MultiSelect) {
             this.$curEventTarget = $(e.target);
             let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-            let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+            //let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+            let rowdata = this.unformattedData[$(e.target).closest("tr").index()];
             let vmValue = rowdata[idx];
             if (!(this.Vobj.valueMembers.contains(vmValue))) {
                 this.SelectRow(idx, vmValue);
@@ -874,7 +877,8 @@ const EbPowerSelect = function (ctrl, options) {
     this.dblClickOnOptDDEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+        //let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+        let rowdata = this.unformattedData[$(e.target).closest("tr").index()];
         let vmValue = rowdata[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             this.SelectRow(idx, vmValue);
@@ -1222,7 +1226,8 @@ const EbPowerSelect = function (ctrl, options) {
         //let datas = $(this.DTSelector).DataTable().row($row).data();
         let rowindex = this.datatable.Api.page.info().start + $row.index();
         //let datas = this.datatable.data[rowindex];
-        let datas = this.datatable.Api.row($row).data();
+        //let datas = this.datatable.Api.row($row).data();
+        let datas = this.unformattedData[$row.index()];
 
 
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
@@ -1397,6 +1402,12 @@ const EbPowerSelect = function (ctrl, options) {
         $div_detach.appendTo($form_div);
         this.adjustDDposition();
         this.bindHideDDonScroll();
+        $(window).resize(function () {
+            waitForFinalEvent(function () {
+                if (this.Vobj.DDstate)
+                    this.adjustDDposition();
+            }.bind(this), 300, this.name);
+        }.bind(this));
     };
 
     this.Renderselect();

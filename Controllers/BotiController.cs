@@ -21,6 +21,7 @@ using ExpressBase.Common.Enums;
 using System.Net;
 using System.IdentityModel.Tokens.Jwt;
 using ExpressBase.Common.Security;
+using ExpressBase.Common.Structures;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -264,6 +265,8 @@ namespace ExpressBase.Web.Controllers
             {
                 EbBotForm BotForm = this.GetBotForm(refid);
                 WebformData Values = JsonConvert.DeserializeObject<WebformData>(data);
+                Values.MultipleTables.First().Value[0].Columns.Add(new SingleColumn { Name = "eb_created_aid", Type = (int)EbDbTypes.Int32, Value = this.AnonUserId });
+                
                 InsertDataFromWebformResponse Resp = ServiceClient.Post<InsertDataFromWebformResponse>(
                     new InsertDataFromWebformRequest
                     {

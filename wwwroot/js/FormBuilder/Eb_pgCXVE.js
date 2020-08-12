@@ -1212,8 +1212,10 @@
         let idField = "name";//////////////////////
         let selObjs = [];
         if (this.selectedCols.length !== 0) {
-            if (!(Object.keys(this.CElistFromSrc[0]).includes("name")))//////////////////
+            if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && (Object.keys(this.CElistFromSrc[0]).includes("ColumnName")))//////////////////
                 idField = "ColumnName";////////////////////////
+            else if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && Object.keys(this.CElistFromSrc[0]).includes("Name"))//////////////////
+                idField = "Name";////////////////////////
             $.each(this.selectedCols, function (i, ctrl) {
                 let obj = getObjByval(this.CElistFromSrc, idField, ctrl[idField]);
                 if (obj)
@@ -1461,10 +1463,16 @@
     };
 
     this.changeCopyToRef = function () {
+        let idField = "name";//////////////////////
+        if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && (Object.keys(this.CElistFromSrc[0]).includes("ColumnName")))//////////////////
+            idField = "ColumnName";////////////////////////
+        else if (!(Object.keys(this.CElistFromSrc[0]).includes("name")) && Object.keys(this.CElistFromSrc[0]).includes("Name"))//////////////////
+            idField = "Name";////////////////////////
+
         if (this.selectedCols.length === 0)
             return;
         $.each(this.CElistFromSrc, function (i, colObj) {
-            let RObj = getObjByval(this.selectedCols, "name", colObj.name);
+            let RObj = getObjByval(this.selectedCols, idField, colObj[idField]);
             if (!RObj)
                 RObj = getObjByval(this.selectedCols, "name", colObj.Name);
             if (RObj) {

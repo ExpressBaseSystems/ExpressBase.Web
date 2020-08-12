@@ -2129,6 +2129,7 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.initDataTable = function () {
+        this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         let o = {};
         o.containerId = this.containerId;
         o.dsid = this.dsid;
@@ -2136,7 +2137,6 @@ const EbPowerSelect = function (ctrl, options) {
         o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -2153,6 +2153,7 @@ const EbPowerSelect = function (ctrl, options) {
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
+        o.scrollHeight = this.scrollHeight;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -2161,14 +2162,21 @@ const EbPowerSelect = function (ctrl, options) {
         //o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
+        o.fninitComplete = this.DTinitComplete;
         o.searchCallBack = this.searchCallBack;
         o.rowclick = this.DTrowclick;
         o.data = this.data;
+        //$(document).on('preInit.dt', this.preInit);// should off in preInit after max-height set
         this.datatable = new EbBasicDataTable(o);
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
         this.focus1stRow();
     };
+
+    //this.preInit = function (e, settings) {
+    //    $(`#${this.name}tbl_wrapper > div.dataTables_scroll > div.dataTables_scrollBody`).css("max-height", this.scrollHeight);
+    //    $(document).off('preInit.dt');
+    //}.bind(this);
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
@@ -2776,7 +2784,8 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');
-        let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+        //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+        let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
         let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 
@@ -2788,7 +2797,7 @@ const EbPowerSelect = function (ctrl, options) {
         let formTopOffset = $form_div.offset().top;
         let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
 
-        let LEFT = $ctrl.offset().left;
+        let LEFT = $ctrl.offset().left - $('#' + this.name).closest("[eb-root-obj-container]").offset().left;
         let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
         let windowWidth = $(window).width();
         let windowHeight = $(window).height();
@@ -4448,8 +4457,65 @@ var InitControls = function (option) {
     ////phonecontrol ends 
     this.PdfControl = function (ctrl) {
         let k = ctrl;
-        let m = `<iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
-        $("body").append(m);
+        //let m = `<iframe id="iFramePdf" style="width: 100%; height: 80vh; border: none;" src="/WebForm/GetPdfReport?refId=${ctrl.PdfRefid.$values[0].ObjRefId}"></iframe>`;
+        let m =`<canvas id="the-canvas"></canvas>`
+        $("#" + ctrl.EbSid).append(m);
+
+        var pdfData = atob(
+            'JVBERi0xLjcKCjEgMCBvYmogICUgZW50cnkgcG9pbnQKPDwKICAvVHlwZSAvQ2F0YWxvZwog' +
+            'IC9QYWdlcyAyIDAgUgo+PgplbmRvYmoKCjIgMCBvYmoKPDwKICAvVHlwZSAvUGFnZXMKICAv' +
+            'TWVkaWFCb3ggWyAwIDAgMjAwIDIwMCBdCiAgL0NvdW50IDEKICAvS2lkcyBbIDMgMCBSIF0K' +
+            'Pj4KZW5kb2JqCgozIDAgb2JqCjw8CiAgL1R5cGUgL1BhZ2UKICAvUGFyZW50IDIgMCBSCiAg' +
+            'L1Jlc291cmNlcyA8PAogICAgL0ZvbnQgPDwKICAgICAgL0YxIDQgMCBSIAogICAgPj4KICA+' +
+            'PgogIC9Db250ZW50cyA1IDAgUgo+PgplbmRvYmoKCjQgMCBvYmoKPDwKICAvVHlwZSAvRm9u' +
+            'dAogIC9TdWJ0eXBlIC9UeXBlMQogIC9CYXNlRm9udCAvVGltZXMtUm9tYW4KPj4KZW5kb2Jq' +
+            'Cgo1IDAgb2JqICAlIHBhZ2UgY29udGVudAo8PAogIC9MZW5ndGggNDQKPj4Kc3RyZWFtCkJU' +
+            'CjcwIDUwIFRECi9GMSAxMiBUZgooSGVsbG8sIHdvcmxkISkgVGoKRVQKZW5kc3RyZWFtCmVu' +
+            'ZG9iagoKeHJlZgowIDYKMDAwMDAwMDAwMCA2NTUzNSBmIAowMDAwMDAwMDEwIDAwMDAwIG4g' +
+            'CjAwMDAwMDAwNzkgMDAwMDAgbiAKMDAwMDAwMDE3MyAwMDAwMCBuIAowMDAwMDAwMzAxIDAw' +
+            'MDAwIG4gCjAwMDAwMDAzODAgMDAwMDAgbiAKdHJhaWxlcgo8PAogIC9TaXplIDYKICAvUm9v' +
+            'dCAxIDAgUgo+PgpzdGFydHhyZWYKNDkyCiUlRU9G');
+
+        // Loaded via <script> tag, create shortcut to access PDF.js exports.
+        var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+
+
+        // Using DocumentInitParameters object to load binary data.
+        var loadingTask = pdfjsLib.getDocument({ data: pdfData });
+        loadingTask.promise.then(function (pdf) {
+            console.log('PDF loaded');
+
+            // Fetch the first page
+            var pageNumber = 1;
+            pdf.getPage(pageNumber).then(function (page) {
+                console.log('Page loaded');
+
+                var scale = 1.5;
+                var viewport = page.getViewport({ scale: scale });
+
+                // Prepare canvas using PDF page dimensions
+                var canvas = document.getElementById('the-canvas');
+                var context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Render PDF page into canvas context
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                var renderTask = page.render(renderContext);
+                renderTask.promise.then(function () {
+                    console.log('Page rendered');
+                });
+            });
+        }, function (reason) {
+            // PDF loading error
+            console.error(reason);
+        });
+
+        
     }
 };
 
@@ -6500,6 +6566,8 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     this.botQueue = [];
     this.botflg = {};
     this.botflg.loadFormlist = false;
+    this.botflg.singleBotApp = false;
+    this.botflg.startover = false;
     this.botflg.otptype = "";
     this.botflg.uname_otp = "";
     this.formObject = {};// for passing to user defined functions
@@ -6707,7 +6775,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.formIcons = result.botFormIcons;
                     $('.eb-chatBox').empty();
                     this.showDate();
-                    this.AskWhatU();
+                    if (Object.keys(this.formsDict).length == 1) {
+                        this.botflg.singleBotApp = true;
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
+                    }
+                    else {
+                        this.AskWhatU();
+                    }
                     // this.ajaxSetup4Future();
 
                 }
@@ -6746,7 +6821,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                             window.ebcontext.user = JSON.parse(result[1]);
                             this.formNames = Object.values(result[2]);
                             this.formIcons = result[3];
-                            this.AskWhatU();
+                            if (Object.keys(this.formsDict).length == 1) {
+                                this.botflg.singleBotApp = true;
+                                this.curRefid = Object.keys(this.formsDict)[0];
+                                this.getForm(this.curRefid);
+                            }
+                            else {
+                                this.AskWhatU();
+                            }
                         }
                         else {
                             this.msgFromBot("Premission is not set for current user");
@@ -7095,7 +7177,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
             }
             text = res.slice(0, -5);
         }
-        if (ctrl.ObjType === "SimpleFileUploader") {
+        else if (ctrl.ObjType === "SimpleFileUploader") {
             let tempCtrl = $("#" + ctrl.EbSid).clone();
             tempCtrl.find('input[type="file"]').remove();
             tempCtrl.find('input[type="text"]').remove();
@@ -7109,6 +7191,10 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                 tempCtrl.find('.SFUPcontainer').empty().append('<span>No file uploaded</span>');
             }
             text = tempCtrl[0].outerHTML;
+        }
+        else if (ctrl.ObjType === "Rating") {
+            let tempCtrl = $("#" + ctrl.EbSid).clone();
+            text = `<div style="display: inline-block;">${tempCtrl[0].outerHTML}</div>` ;
         }
         return text;
     };
@@ -7863,7 +7949,12 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         this.ClearFormVariables();
         $('.eb-chatBox').empty();
         this.showDate();
-        this.AskWhatU();
+        if (this.botflg.singleBotApp == true) {
+            this.getForm(Object.keys(this.formsDict)[0])
+        }
+        else {
+            this.AskWhatU();
+        }
     }.bind(this);
 
     this.showConfirm = function () {
@@ -7940,7 +8031,10 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
         $('.eb-chatBox').empty();
         this.showDate();
         this.msgFromBot(msg);
-        this.AskWhatU();
+        if (this.botflg.singleBotApp == false) {
+            this.AskWhatU();
+        }
+
         //EbMessage("show", { Message: 'DataCollection Success', AutoHide: false, Backgorund: '#bf1e1e' });
     };
 
@@ -7965,7 +8059,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
     };
 
     this.setStartOver = function () {
-        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" title="Start Over"> <button type="button" id="eb_botStartover" class="btn btn-default btn-sm">
+        this.$chatBox.append(this.$frameHeader.append(`<div class="startOvercont" style="display:none" title="Start Over"> <button type="button" id="eb_botStartover"  class="btn btn-default btn-sm">
          <i class="fa fa-repeat"></i>
         </button></div>`));
     };
@@ -8033,7 +8127,15 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                     this.formIcons = result.botFormIcons;
                     $('.eb-chatBox').empty();
                     this.showDate();
-                    this.AskWhatU();
+                    if (Object.keys(this.formsDict).length == 1) {
+                        this.botflg.singleBotApp = true;
+                        this.curRefid = Object.keys(this.formsDict)[0];
+                        this.getForm(this.curRefid);
+                    }
+                    else {
+                        this.AskWhatU();
+                    }
+
                     // this.ajaxSetup4Future();
                 }
 
@@ -8308,7 +8410,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
 
                 }.bind(this)
@@ -8332,7 +8441,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
                     else {
                         $("[for=otpvalidate]").remove();
@@ -8454,7 +8570,14 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
                         this.formIcons = result.botFormIcons;
                         $('.eb-chatBox').empty();
                         this.showDate();
-                        this.AskWhatU();
+                        if (Object.keys(this.formsDict).length == 1) {
+                            this.botflg.singleBotApp = true;
+                            this.curRefid = Object.keys(this.formsDict)[0];
+                            this.getForm(this.curRefid);
+                        }
+                        else {
+                            this.AskWhatU();
+                        }
                     }
 
                 }
@@ -8571,7 +8694,9 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
 
     this.botStartoverfn = function () {
+
         if (this.botflg.loadFormlist === false) {
+            this.botflg.startover = false;
             this.ClearFormVariables();
             this.botflg.otptype = "";//clear flags
             this.botflg.uname_otp = "";
@@ -8587,6 +8712,7 @@ var Eb_chatBot = function (_solid, _appid, settings, cid, ssurl, _serverEventUrl
 
     this.botUserLogin = function () {
         this.msgFromBot(this.welcomeMessage);
+
         if (!settings.UserType_Internal) {
             if (settings.Authoptions.Fblogin) {
                 // This is called with the results from from FB.getLoginStatus().

@@ -60,6 +60,7 @@ const EbPowerSelect = function (ctrl, options) {
     //parameters   
     this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;
+    this.renderer = options.renderer;
     this.ComboObj.initializer = this;
     this.name = ctrl.EbSid_CtxId;
     this.containerId = this.name + "DDdiv";
@@ -456,6 +457,24 @@ const EbPowerSelect = function (ctrl, options) {
         this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
     };
 
+    this.attachParams2Url = function () {
+        let url = new URL(this.ComboObj.Url);
+
+        //this.ComboObj.para
+        for (let i = 0; i < this.ComboObj.ParamsList.$values.length; i++) {
+            let ctrl = this.ComboObj.ParamsList.$values[i];
+            url.searchParams.append(ctrl.Name, getObjByval(this.renderer.flatControls, "Name", ctrl.Name).getValue());
+        }
+        this.URLwithParams = url.toString();
+    };
+
+    this.reloadWithParams = function () {
+        this.clearValues();
+        this.fromReloadWithParams = true;
+        this.attachParams2Url();
+        this.getData();
+    };
+
     this.getData = function () {
         this.showLoader();
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
@@ -471,6 +490,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getDataSuccess = function (result) {
+        if (result === undefined) {
+            return;
+        }
         this.data = result;
         this.unformattedData = result.data;
         this.formattedData = result.formattedData;
@@ -532,9 +554,9 @@ const EbPowerSelect = function (ctrl, options) {
         this.AddUserAndLcation();
 
         if (this.ComboObj.IsDataFromApi) {
-            this.ModifyToRequestParams();
+            //this.ModifyToRequestParams();
             this.EbObject.IsDataFromApi = true;
-            this.EbObject.Url = this.ComboObj.Url;
+            this.EbObject.Url = this.URLwithParams || this.ComboObj.Url;
             this.EbObject.Method = this.ComboObj.Method;
             this.EbObject.Headers = this.ComboObj.Headers;
         }
@@ -657,6 +679,7 @@ const EbPowerSelect = function (ctrl, options) {
     //};
 
     this.initDataTable = function () {
+        this.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         let o = {};
         o.containerId = this.containerId;
         o.dsid = this.dsid;
@@ -664,7 +687,6 @@ const EbPowerSelect = function (ctrl, options) {
         o.showSerialColumn = false;
         o.showCheckboxColumn = this.ComboObj.MultiSelect;
         o.showFilterRow = true;
-        o.scrollHeight = this.ComboObj.DropdownHeight === 0 ? "500px" : this.ComboObj.DropdownHeight + "px";
         o.fnDblclickCallback = this.dblClickOnOptDDEventHand.bind(this);
         //o.fnKeyUpCallback = this.xxx.bind(this);
         o.arrowFocusCallback = this.arrowSelectionStylingFcs;
@@ -681,6 +703,7 @@ const EbPowerSelect = function (ctrl, options) {
         o.drawCallback = this.drawCallback;
         o.hiddenFieldName = this.vmName || "id";
         o.keys = true;
+        o.scrollHeight = this.scrollHeight;
         //o.hiddenFieldName = this.vmName;
         o.keyPressCallbackFn = this.DDKeyPress.bind(this);
         o.columns = this.ComboObj.Columns.$values;//////////////////////////////////////////////////////
@@ -689,14 +712,21 @@ const EbPowerSelect = function (ctrl, options) {
         //o.getFilterValuesFn = this.getFilterValuesFn;
         o.fninitComplete4SetVal = this.fninitComplete4SetVal;
         o.fns4PSonLoad = this.onDataLoadCallBackFns;
+        //o.fninitComplete = this.DTinitComplete;
         o.searchCallBack = this.searchCallBack;
         o.rowclick = this.DTrowclick;
         o.data = this.data;
+        //$(document).on('preInit.dt', this.preInit);// should off in preInit after max-height set
         this.datatable = new EbBasicDataTable(o);
         if (this.ComboObj.IsPreload)
             this.Applyfilter();
         this.focus1stRow();
     };
+
+    //this.preInit = function (e, settings) {
+    //    $(`#${this.name}tbl_wrapper > div.dataTables_scroll > div.dataTables_scrollBody`).css("max-height", this.scrollHeight);
+    //    $(document).off('preInit.dt');
+    //}.bind(this);
 
     this.Applyfilter = function () {
         if (this.filterArray.length > 0)
@@ -746,7 +776,8 @@ const EbPowerSelect = function (ctrl, options) {
         //let idx = this.datatable.ebSettings.Columns.$values.indexOf(getObjByval(this.datatable.ebSettings.Columns.$values, "name", this.vmName));
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
         //let rowindex = this.datatable.Api.page.info().start + $tr.index();
-        let rowdata = this.datatable.Api.row($tr).data();
+        //let rowdata = this.datatable.Api.row($tr).data();
+        let rowdata = this.unformattedData[$tr.index()];
         let vmValue = rowdata[idx];
         this.$curEventTarget = $tr;
         this.SelectRow(idx, vmValue);
@@ -822,7 +853,8 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.setDmValues = function (i, name) {
-        let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
+        //let cellData = this.datatable.Api.row(this.$curEventTarget.closest("tr")).data()[getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];
+        let cellData = this.unformattedData[this.$curEventTarget.closest("tr").index()][getObjByval(this.datatable.ebSettings.Columns.$values, "name", name).data];;
         if (this.maxLimit === 1)
             this.localDMS[name].shift();
         this.localDMS[name].push(cellData);
@@ -832,7 +864,8 @@ const EbPowerSelect = function (ctrl, options) {
         if (!this.ComboObj.MultiSelect) {
             this.$curEventTarget = $(e.target);
             let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-            let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+            //let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+            let rowdata = this.unformattedData[$(e.target).closest("tr").index()];
             let vmValue = rowdata[idx];
             if (!(this.Vobj.valueMembers.contains(vmValue))) {
                 this.SelectRow(idx, vmValue);
@@ -844,7 +877,8 @@ const EbPowerSelect = function (ctrl, options) {
     this.dblClickOnOptDDEventHand = function (e) {
         this.$curEventTarget = $(e.target);
         let idx = $.grep(this.datatable.ebSettings.Columns.$values, function (obj) { return obj.name === this.vmName; }.bind(this))[0].data;
-        let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+        //let rowdata = this.datatable.Api.row($(e.target).closest("tr")).data();
+        let rowdata = this.unformattedData[$(e.target).closest("tr").index()];
         let vmValue = rowdata[idx];
         if (!(this.Vobj.valueMembers.contains(vmValue))) {
             this.SelectRow(idx, vmValue);
@@ -1035,8 +1069,16 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.V_hideDD = function () {
         this.RemoveRowFocusStyle();
+        this.clearfilterInputs();
         this.Vobj.DDstate = false;
         this.$DDdiv.hide();
+    };
+
+    this.clearfilterInputs = function () {
+        if (!this.IsDatatableInit || !this.datatable)
+            return;
+        this.$DDdiv.find(".eb_finput").val('');
+        this.datatable.Api.columns().search("").draw();
     };
 
     this.getMaxLenVal = function () {
@@ -1184,7 +1226,8 @@ const EbPowerSelect = function (ctrl, options) {
         //let datas = $(this.DTSelector).DataTable().row($row).data();
         let rowindex = this.datatable.Api.page.info().start + $row.index();
         //let datas = this.datatable.data[rowindex];
-        let datas = this.datatable.Api.row($row).data();
+        //let datas = this.datatable.Api.row($row).data();
+        let datas = this.unformattedData[$row.index()];
 
 
         if (!(this.Vobj.valueMembers.contains(datas[this.VMindex]))) {
@@ -1262,12 +1305,6 @@ const EbPowerSelect = function (ctrl, options) {
         return newDMs;
     };
 
-    this.reloadWithParams = function () {
-        this.clearValues();
-        this.fromReloadWithParams = true;
-        this.getData();
-    };
-
     //this.bindUpdatePositionOnContScroll = function () {
     //    this.lastScrollOffset = 0;
     //    for (let i = 0; i < this.scrollableContSelectors.length; i++) {
@@ -1304,8 +1341,9 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.adjustDDposition = function () {
         let $ctrl = $('#' + this.name + 'Container');
-        let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
-        let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+        //let $ctrlCont = this.isDGps ? $(`#td_${this.ComboObj.EbSid_CtxId}`) : $('#cont_' + this.name);
+        let $ctrlCont = this.isDGps ? $(`#${this.ComboObj.EbSid_CtxId}Wraper`) : $('#cont_' + this.name);
+        let $form_div = $(document).find("[eb-root-obj-container]:first");
         let DD_height = (this.ComboObj.DropdownHeight === 0 ? 500 : this.ComboObj.DropdownHeight) + 100;
 
         let ctrlContOffset = $ctrlCont.offset();
@@ -1316,7 +1354,7 @@ const EbPowerSelect = function (ctrl, options) {
         let formTopOffset = $form_div.offset().top;
         let TOP = ctrlContOffset.top + formScrollTop - formTopOffset + ctrlHeight;
 
-        let LEFT = $ctrl.offset().left;
+        let LEFT = $ctrl.offset().left - $form_div.offset().left;
         let WIDTH = (this.ComboObj.DropdownWidth === 0) ? ctrlWidth : (this.ComboObj.DropdownWidth / 100) * ctrlWidth;
         let windowWidth = $(window).width();
         let windowHeight = $(window).height();
@@ -1360,10 +1398,16 @@ const EbPowerSelect = function (ctrl, options) {
             this.$DDdiv.hide();
         let $div_detach = this.$DDdiv.detach();
         $div_detach.attr({ "detch_select": true, "par_ebsid": this.name, "MultiSelect": this.ComboObj.MultiSelect, "objtype": this.ComboObj.ObjType });
-        let $form_div = $('#' + this.name).closest("[eb-root-obj-container]");
+        let $form_div = $(document).find("[eb-root-obj-container]:first");
         $div_detach.appendTo($form_div);
         this.adjustDDposition();
         this.bindHideDDonScroll();
+        $(window).resize(function () {
+            waitForFinalEvent(function () {
+                if (this.Vobj.DDstate)
+                    this.adjustDDposition();
+            }.bind(this), 300, this.name);
+        }.bind(this));
     };
 
     this.Renderselect();

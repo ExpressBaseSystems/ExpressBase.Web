@@ -21,9 +21,17 @@
     var html;
     var dpurl;
     var subtxt;
+    var headerLogo = `images/logo/${window.EXPRESSbase_cid}.png`;
     if (d.appIdColl) {
         AppId = d.appIdColl[d.appIdCount];
-        dpurl = d.botdpURLColl[d.appIdCount] || '../images/demobotdp4.png';
+
+        if (d.appIdColl ? d.botPropColl[d.appIdCount].Use_Sol_logo : d.botProp.Use_Sol_logo) {
+            dpurl = headerLogo;
+        }
+        else {
+            dpurl = (/^\d+$/.test(d.botdpURLColl[d.appIdCount])) ? (`images/${d.botdpURLColl[d.appIdCount]}.png`) : (d.botdpURLColl[d.appIdCount] || '../images/demobotdp4.png');
+        }
+        
         themeColor = d.ebbotThemeColorColl[d.appIdCount] || '#055c9b';
         subtxt = d.ebbotSubtextColl[d.appIdCount] || '';
         html = d.getElementsByTagName('html')[0];
@@ -31,9 +39,14 @@
     }
     else {
         AppId = window.EXPRESSbase_APP_ID;
-        dpurl = d.botdpURL || '../images/demobotdp4.png';
+        if (d.appIdColl ? d.botPropColl[d.appIdCount].Use_Sol_logo : d.botProp.Use_Sol_logo) {
+            dpurl = headerLogo;
+        }
+        else {
+            dpurl = (/^\d+$/.test(d.botdpURL)) ? `images/${d.botdpURL}.png` : (d.botdpURL || '../images/demobotdp4.png');
+        }
         themeColor = d.ebbotThemeColor;
-        subtxt = d.botsubtext||'';
+        subtxt = d.botsubtext || '';
         html = d.getElementsByTagName('html')[0];
         html.style.setProperty("--ebbotThemeColor", themeColor);
     }
@@ -95,7 +108,7 @@
 
     //chatHead.appendChild(botdp);
 
-   
+
 
     if (d.appIdColl ? d.botPropColl[d.appIdCount].HeaderSubtxt : d.botProp.HeaderSubtxt) {
         var headersubtext = d.createElement("div");
@@ -143,14 +156,14 @@
 
     //creata a maximize btn and append in chathead div ie, division for header part of chat bot
     var maximizeDiv = d.createElement("div");
-    maximizeDiv.className = "chatmaximize";
+    maximizeDiv.className = "chatmaximize eb__-bot___-chatmaximize";
     maximizeDiv.id = "maximizediv" + AppId;
     maximizeDiv.innerHTML = '&#128470;';
     chatHead.appendChild(maximizeDiv);
 
     //creata a close btn and append in chathead div ie, division for header part of chat bot
     var closeDiv = d.createElement("div");
-    closeDiv.className = "chatclose";
+    closeDiv.className = "chatclose eb__-bot___-chatclose";
     closeDiv.id = "closediv" + AppId;
     closeDiv.innerHTML = '&#10006;';
     chatHead.appendChild(closeDiv);
@@ -159,13 +172,13 @@
         chatHead.style.visibility = 'visible';
     }
     //???
-    iframe.onload = function (e) {        
-            console.log("iframe:" + (window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount]));
+    iframe.onload = function (e) {
+        console.log("iframe:" + (window.EXPRESSbase_APP_ID || window.EXPRESSbase_APP_IDS[d.appIdCount]));
         iframe.style.visibility = 'visible';
         //loaderDiv.style.background = 'none';
     };
 
-    
+
 
     //to close chatbot
     closeDiv.onclick = function () {

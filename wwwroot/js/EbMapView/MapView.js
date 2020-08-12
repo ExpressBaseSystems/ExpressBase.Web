@@ -422,6 +422,7 @@ var mapView = function (option) {
         }
         $(subDivId).focus();
         this.PcFlag = false;
+        this.FDCont.css("right", "0");
     }.bind(this);
 
     this.FilterToggle = function () {

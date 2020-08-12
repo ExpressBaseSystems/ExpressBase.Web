@@ -60,6 +60,7 @@ const EbPowerSelect = function (ctrl, options) {
     //parameters   
     this.getFilterValuesFn = options.getFilterValuesFn;
     this.ComboObj = ctrl;
+    this.renderer = options.renderer;
     this.ComboObj.initializer = this;
     this.name = ctrl.EbSid_CtxId;
     this.containerId = this.name + "DDdiv";
@@ -456,6 +457,24 @@ const EbPowerSelect = function (ctrl, options) {
         this.Vobj.displayMembers[this.dmNames[i]].pop(); //= this.Vobj.displayMembers[this.dmNames[i]].splice(0, this.maxLimit);
     };
 
+    this.attachParams2Url = function () {
+        let url = new URL(this.ComboObj.Url);
+
+        //this.ComboObj.para
+        for (let i = 0; i < this.ComboObj.ParamsList.$values.length; i++) {
+            let ctrl = this.ComboObj.ParamsList.$values[i];
+            url.searchParams.append(ctrl.Name, getObjByval(this.renderer.flatControls, "Name", ctrl.Name).getValue());
+        }
+        this.URLwithParams = url.toString();
+    };
+
+    this.reloadWithParams = function () {
+        this.clearValues();
+        this.fromReloadWithParams = true;
+        this.attachParams2Url();
+        this.getData();
+    };
+
     this.getData = function () {
         this.showLoader();
         //$("#PowerSelect1_pb").EbLoader("show", { maskItem: { Id: `#${this.container}` }, maskLoader: false });
@@ -471,6 +490,9 @@ const EbPowerSelect = function (ctrl, options) {
     };
 
     this.getDataSuccess = function (result) {
+        if (result === undefined) {
+            return;
+        }
         this.data = result;
         this.unformattedData = result.data;
         this.formattedData = result.formattedData;
@@ -532,9 +554,9 @@ const EbPowerSelect = function (ctrl, options) {
         this.AddUserAndLcation();
 
         if (this.ComboObj.IsDataFromApi) {
-            this.ModifyToRequestParams();
+            //this.ModifyToRequestParams();
             this.EbObject.IsDataFromApi = true;
-            this.EbObject.Url = this.ComboObj.Url;
+            this.EbObject.Url = this.URLwithParams || this.ComboObj.Url;
             this.EbObject.Method = this.ComboObj.Method;
             this.EbObject.Headers = this.ComboObj.Headers;
         }
@@ -1043,8 +1065,16 @@ const EbPowerSelect = function (ctrl, options) {
 
     this.V_hideDD = function () {
         this.RemoveRowFocusStyle();
+        this.clearfilterInputs();
         this.Vobj.DDstate = false;
         this.$DDdiv.hide();
+    };
+
+    this.clearfilterInputs = function () {
+        if (!this.IsDatatableInit || !this.datatable)
+            return;
+        this.$DDdiv.find(".eb_finput").val('');
+        this.datatable.Api.columns().search("").draw();
     };
 
     this.getMaxLenVal = function () {
@@ -1268,12 +1298,6 @@ const EbPowerSelect = function (ctrl, options) {
         }
 
         return newDMs;
-    };
-
-    this.reloadWithParams = function () {
-        this.clearValues();
-        this.fromReloadWithParams = true;
-        this.getData();
     };
 
     //this.bindUpdatePositionOnContScroll = function () {

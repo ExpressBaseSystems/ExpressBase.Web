@@ -815,7 +815,8 @@
 
         let EbCombo = new EbPowerSelect(ctrl, {
             getFilterValuesFn: ctrlOpts.getAllCtrlValuesFn,
-            rendererName: this.Renderer.rendererName
+            rendererName: this.Renderer.rendererName,
+            renderer:this.Renderer
         });
 
         if (this.Bot && this.Bot.curCtrl !== undefined)

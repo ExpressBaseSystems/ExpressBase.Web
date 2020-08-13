@@ -1493,8 +1493,9 @@ const WebFormRender = function (option) {
         this.defaultAfterSavemodeS = getKeyByVal(EbEnums.WebFormAfterSaveModes, this.FormObj.FormModeAfterSave.toString()).split("_")[0].toLowerCase();
         this.curAfterSavemodeS = this.defaultAfterSavemodeS;
         this.setMode();
-
+        this.isInitiallyPopulating = true;
         this.populateControlsWithDataModel(this.DataMODEL);// 1st
+        this.isInitiallyPopulating = false;
 
         if (this.Mode.isNew) {
             this.FRC.execDefaultvalsNC(this.FormObj.DefaultValsExecOrder);//exec default Value Expression 2nd

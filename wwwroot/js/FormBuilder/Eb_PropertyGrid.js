@@ -1073,7 +1073,7 @@
             let meta = this.Metas[i];
             if (meta.source && (meta.editor === 8 || meta.editor === 22 || meta.editor === 27)) {
                 if (meta.source.trimStart().startsWith("return "))
-                    return;
+                    continue;
                 let sourceMeta = getObjByval(this.Metas, "name", meta.source);
                 if (sourceMeta.dependentPropsList === undefined)
                     sourceMeta.dependentPropsList = [];

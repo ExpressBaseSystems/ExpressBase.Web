@@ -14,8 +14,8 @@
             success: function (Columns) {
                 this.clearDependantProps("Columns");// destination name hard coding
                 this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
-                this.PGobj.refresh();
                 this.PGobj.isBussy = false;
+                this.PGobj.refresh();
                 $.LoadingOverlay('hide');
             }.bind(this)
         });
@@ -43,6 +43,7 @@
                 else {
                     this.clearDependantProps("Columns");// destination name hard coding
                     this.PGobj.PropsObj["Columns"] = JSON.parse(Columns);
+                    this.PGobj.isBussy = false;
                     this.PGobj.refresh();
                 }
                 this.PGobj.isBussy = false;

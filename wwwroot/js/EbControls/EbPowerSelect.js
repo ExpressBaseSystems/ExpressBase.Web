@@ -472,7 +472,8 @@ const EbPowerSelect = function (ctrl, options) {
     this.reloadWithParams = function () {
         this.clearValues();
         this.fromReloadWithParams = true;
-        this.attachParams2Url();
+        if (this.ComboObj.IsDataFromApi);
+            this.attachParams2Url();
         this.getData();
     };
 

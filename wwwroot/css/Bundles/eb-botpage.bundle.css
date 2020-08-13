@@ -5229,7 +5229,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
 }
 
 .DDdiv .eb_selallPowerSelect1tbl {
-    margin:0;
+    margin: 0;
 }
 
 
@@ -5237,7 +5237,7 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     position: absolute;
     right: 0;
     top: 0;
-    z-index: 1;
+    z-index: 999;
     color: white;
     opacity: 0.2;
     background-color: red;
@@ -5291,12 +5291,12 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     display: flex;
     align-items: center;
     background: #eee !important;
-    display: none;
+    display: flex;
 }
 
-
-.search-block:last-child .ps-srch {
-    display: flex;
+.search-block-wraper {
+    width: calc(100% - 27px);
+    display: inline-flex;
 }
 
 .filter-box .input-group-addon.ps-srch > i, .form-buider-form .input-group-addon.ps-srch > i, [eb-type="BotForm"] .input-group-addon.ps-srch > i {
@@ -5307,12 +5307,6 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     flex-grow: 1;
     display: flex;
     max-width: 100%;
-}
-
-    .v-select:last-child {
-        flex-grow: 1;
-        display: flex;
-        max-width: calc(100% - 27px); /*substracting search icon width*/
 }
 
 [eb-form="true"][mode="view"] .searchable [type="search"] {
@@ -5345,15 +5339,16 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
     box-shadow: 3px 8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222);
     padding-bottom: 32px;
 }
+
     .DDdiv.dd-ctrl-top {
         box-shadow: 0 -6px 12px rgba(0,0,0,.175), 0 0 0 1px rgba(204, 204, 204, 0.41);
         box-shadow: 3px -8px 12px 2px rgb(0 0 0 / 12%), 0 0 0 1px rgb(221 221 222);
         border-radius: 3px 3px 0px 0;
     }
 
-.DDdiv .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
-    border-bottom-width: 1px;
-}
+    .DDdiv .table-bordered > thead > tr > td, .table-bordered > thead > tr > th {
+        border-bottom-width: 1px;
+    }
 
     .DDdiv .dataTable {
         margin: 0 !important;
@@ -5421,13 +5416,12 @@ table.dataTable tbody>tr.selected,table.dataTable tbody>tr>.selected{background-
         border-right: 0;
     }
 
-    .search-block > .input-group {
-        display: flex;
-        align-items: stretch;
-        align-items: stretch;
-        flex: 1 0;
-        width: 100%;
-    }
+.search-wraper > .input-group {
+    display: flex;
+    align-items: stretch;
+    flex: 1 0;
+    width: 100%;
+}
 
 /*.v-select .selected-tag, .tdtxt .selected-tag { /// old rounded style
     position: relative;

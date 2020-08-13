@@ -179,7 +179,6 @@
             }
         }
         this.setupCurTrCtrls(false, dtTr, parseInt(rowid));
-        this.datatable.Api.columns.adjust();
     };
 
     this.checkRow_click = function (e) {
@@ -191,8 +190,12 @@
 
     this.delRow_click = function (e) {
         let $tr = $(e.target).closest('tr');
-        let data_row = this.datatable.Api.row($tr).data();
-        let rowid = parseInt(data_row[this.dtDataRowIdIndex]);
+        let dtTr = this.datatable.Api.row($tr);
+        let rowid = parseInt(dtTr.data()[this.dtDataRowIdIndex]);
+
+        if (this.curRowDataModelCopy && this.curRowDataModelCopy.RowId === rowid) 
+            this.finalizeTrEdit(dtTr);
+        
         if (rowid > 0) {
             let Row = this.getObjByValue(this.dataMODEL, "RowId", rowid);
             Row.IsDelete = true;
@@ -202,10 +205,7 @@
             this.dataMODEL.splice(index, 1);
         }
         delete this.objectMODEL[rowid];
-        if (this.curRowDataModelCopy && this.curRowDataModelCopy.RowId === rowid) 
-            this.curRowDataModelCopy = null;
-
-        this.datatable.Api.row($(e.target).closest("tr")).remove().draw(false);
+        dtTr.remove().draw(false);
     };
 
     this.cancelRow_click = function (e) {
@@ -248,6 +248,7 @@
         this.curRowDataModelCopy = null;
         dtTr.data(curRow).draw(false);
         this.$dtFooterDD.prop("disabled", false);
+        this.datatable.Api.columns.adjust();
     };
 
     this.canFinalizeTrEdit = function (dtTr) {
@@ -273,7 +274,7 @@
                 Column.D = obj.D;
                 Column.R = obj.R;
             }
-        });
+        }.bind(this));
     };
 
     this.setupCurTrCtrls = function (isNew, dtTr, RowId, insB4Index = 0) {
@@ -377,6 +378,8 @@
                 $inpCtrl.on("blur", this.isValidationsOK.bind(this, inpCtrl));
             }
         }.bind(this));
+
+        this.datatable.Api.columns.adjust();
     };
 
     this.InsertDtTrToIndex = function (index, Row) {
@@ -593,7 +596,6 @@
         this.datatable.Api.row(dtTrIdx).data(curRow).draw(false);
     }.bind(this);
 
-    window.xxx = this;
     //-----------------------------------------
 
     EbDataGrid_New_Extended.bind(this)();
